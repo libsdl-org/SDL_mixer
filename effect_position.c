@@ -272,9 +272,9 @@ static void _Eff_position_s16lsb(int chan, void *stream, int len, void *udata)
     int i;
 
     for (i = 0; i < len; i += sizeof (Sint16) * 2) {
-        Sint16 swapl = (Sint16) ((((float) SDL_SwapLE16(*(ptr+0))) *
+        Sint16 swapl = (Sint16) ((((float) (Sint16) SDL_SwapLE16(*(ptr+0))) *
                                     args->left_f) * args->distance_f);
-        Sint16 swapr = (Sint16) ((((float) SDL_SwapLE16(*(ptr+1))) *
+        Sint16 swapr = (Sint16) ((((float) (Sint16) SDL_SwapLE16(*(ptr+1))) *
                                     args->right_f) * args->distance_f);
         *(ptr++) = (Sint16) SDL_SwapLE16(swapl);
         *(ptr++) = (Sint16) SDL_SwapLE16(swapr);
@@ -310,9 +310,9 @@ static void _Eff_position_s16msb(int chan, void *stream, int len, void *udata)
     int i;
 
     for (i = 0; i < len; i += sizeof (Sint16) * 2) {
-        Sint16 swapl = (Sint16) ((((float) SDL_SwapBE16(*(ptr+0))) *
+        Sint16 swapl = (Sint16) ((((float) (Sint16) SDL_SwapBE16(*(ptr+0))) *
                                     args->left_f) * args->distance_f);
-        Sint16 swapr = (Sint16) ((((float) SDL_SwapBE16(*(ptr+1))) *
+        Sint16 swapr = (Sint16) ((((float) (Sint16) SDL_SwapBE16(*(ptr+1))) *
                                     args->right_f) * args->distance_f);
         *(ptr++) = (Sint16) SDL_SwapBE16(swapl);
         *(ptr++) = (Sint16) SDL_SwapBE16(swapr);
