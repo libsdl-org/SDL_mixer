@@ -709,38 +709,41 @@ BOOL IT_Load(BOOL curious)
 				}
 			} else {
 				/* load IT 2xx volume, pan and pitch envelopes */
-#ifdef __STDC__
-#define IT_LoadEnvelope(name,type) 											\
-				ih.##name##flg   =_mm_read_UBYTE(modreader);				\
-				ih.##name##pts   =_mm_read_UBYTE(modreader);				\
-				ih.##name##beg   =_mm_read_UBYTE(modreader);				\
-				ih.##name##end   =_mm_read_UBYTE(modreader);				\
-				ih.##name##susbeg=_mm_read_UBYTE(modreader);				\
-				ih.##name##susend=_mm_read_UBYTE(modreader);				\
-				for(lp=0;lp<ITENVCNT;lp++) {								\
-					ih.##name##node[lp]=_mm_read_##type##(modreader);		\
-					ih.##name##tick[lp]=_mm_read_I_UWORD(modreader);		\
-				}															\
-				_mm_read_UBYTE(modreader);
-#else
-#define IT_LoadEnvelope(name,type) 											\
-				ih./**/name/**/flg   =_mm_read_UBYTE(modreader);			\
-				ih./**/name/**/pts   =_mm_read_UBYTE(modreader);			\
-				ih./**/name/**/beg   =_mm_read_UBYTE(modreader);			\
-				ih./**/name/**/end   =_mm_read_UBYTE(modreader);			\
-				ih./**/name/**/susbeg=_mm_read_UBYTE(modreader);			\
-				ih./**/name/**/susend=_mm_read_UBYTE(modreader);			\
-				for(lp=0;lp<ITENVCNT;lp++) {								\
-					ih./**/name/**/node[lp]=_mm_read_/**/type/**/(modreader);\
-					ih./**/name/**/tick[lp]=_mm_read_I_UWORD(modreader);	\
-				}															\
-				_mm_read_UBYTE(modreader);
-#endif
 
-				IT_LoadEnvelope(vol,UBYTE);
-				IT_LoadEnvelope(pan,SBYTE);
-				IT_LoadEnvelope(pit,SBYTE);
-#undef IT_LoadEnvelope
+ ih.volflg   =_mm_read_UBYTE(modreader);             
+ ih.volpts   =_mm_read_UBYTE(modreader);             
+ ih.volbeg   =_mm_read_UBYTE(modreader);             
+ ih.volend   =_mm_read_UBYTE(modreader);             
+ ih.volsusbeg=_mm_read_UBYTE(modreader);             
+ ih.volsusend=_mm_read_UBYTE(modreader);             
+ for(lp=0;lp<ITENVCNT;lp++) {
+ ih.volnode[lp]=_mm_read_UBYTE(modreader);
+ ih.voltick[lp]=_mm_read_I_UWORD(modreader); 
+ }                                                            
+ _mm_read_UBYTE(modreader);
+ ih.panflg   =_mm_read_UBYTE(modreader);             
+ ih.panpts   =_mm_read_UBYTE(modreader);             
+ ih.panbeg   =_mm_read_UBYTE(modreader);             
+ ih.panend   =_mm_read_UBYTE(modreader);             
+ ih.pansusbeg=_mm_read_UBYTE(modreader);             
+ ih.pansusend=_mm_read_UBYTE(modreader);             
+ for(lp=0;lp<ITENVCNT;lp++) {
+ ih.pannode[lp]=_mm_read_SBYTE(modreader);
+ ih.pantick[lp]=_mm_read_I_UWORD(modreader); 
+ }                                                            
+ _mm_read_UBYTE(modreader);
+ ih.pitflg   =_mm_read_UBYTE(modreader);             
+ ih.pitpts   =_mm_read_UBYTE(modreader);             
+ ih.pitbeg   =_mm_read_UBYTE(modreader);             
+ ih.pitend   =_mm_read_UBYTE(modreader);             
+ ih.pitsusbeg=_mm_read_UBYTE(modreader);             
+ ih.pitsusend=_mm_read_UBYTE(modreader);             
+ for(lp=0;lp < ITENVCNT; lp++) {
+ ih.pitnode[lp]=_mm_read_SBYTE(modreader);
+ ih.pittick[lp]=_mm_read_I_UWORD(modreader); 
+ }                                                            
+ _mm_read_UBYTE(modreader);
+
 			}
 
 			if(_mm_eof(modreader)) {
@@ -797,53 +800,49 @@ BOOL IT_Load(BOOL curious)
 					d->rpanvar = ih.rpanvar;
 				}
 
-#ifdef __STDC__
-#define IT_ProcessEnvelope(name) 											\
-				if(ih.##name##flg&1) d->##name##flg|=EF_ON;					\
-				if(ih.##name##flg&2) d->##name##flg|=EF_LOOP;				\
-				if(ih.##name##flg&4) d->##name##flg|=EF_SUSTAIN;			\
-				d->##name##pts=ih.##name##pts;								\
-				d->##name##beg=ih.##name##beg;								\
-				d->##name##end=ih.##name##end;								\
-				d->##name##susbeg=ih.##name##susbeg;						\
-				d->##name##susend=ih.##name##susend;						\
-																			\
-				for(u=0;u<ih.##name##pts;u++)								\
-					d->##name##env[u].pos=ih.##name##tick[u];				\
-																			\
-				if((d->##name##flg&EF_ON)&&(d->##name##pts<2))				\
-					d->##name##flg&=~EF_ON;
-#else
-#define IT_ProcessEnvelope(name) 											\
-				if(ih./**/name/**/flg&1) d->/**/name/**/flg|=EF_ON;			\
-				if(ih./**/name/**/flg&2) d->/**/name/**/flg|=EF_LOOP;		\
-				if(ih./**/name/**/flg&4) d->/**/name/**/flg|=EF_SUSTAIN;	\
-				d->/**/name/**/pts=ih./**/name/**/pts;						\
-				d->/**/name/**/beg=ih./**/name/**/beg;						\
-				d->/**/name/**/end=ih./**/name/**/end;						\
-				d->/**/name/**/susbeg=ih./**/name/**/susbeg;				\
-				d->/**/name/**/susend=ih./**/name/**/susend;				\
-																			\
-				for(u=0;u<ih./**/name/**/pts;u++)							\
-					d->/**/name/**/env[u].pos=ih./**/name/**/tick[u];		\
-																			\
-				if((d->/**/name/**/flg&EF_ON)&&(d->/**/name/**/pts<2))		\
-					d->/**/name/**/flg&=~EF_ON;
-#endif
+if(ih.volflg&1) d->volflg|=EF_ON;
+if(ih.volflg&2) d->volflg|=EF_LOOP;
+if(ih.volflg&4) d->volflg|=EF_SUSTAIN;
+d->volpts=ih.volpts;
+d->volbeg=ih.volbeg;
+d->volend=ih.volend;
+d->volsusbeg=ih.volsusbeg;
+d->volsusend=ih.volsusend;
+for(u=0;u<ih.volpts;u++)
+ d->volenv[u].pos=ih.voltick[u];                               if((d->volflg&EF_ON)&&(d->volpts<2))                          
+ d->volflg&=~EF_ON;
+for(u=0;u<ih.volpts;u++)
+ d->volenv[u].val=(ih.volnode[u]<<2);
+                               
+if(ih.panflg&1) d->panflg|=EF_ON;
+if(ih.panflg&2) d->panflg|=EF_LOOP;
+if(ih.panflg&4) d->panflg|=EF_SUSTAIN;
+d->panpts=ih.panpts;
+d->panbeg=ih.panbeg;
+d->panend=ih.panend;                                                   
+d->pansusbeg=ih.pansusbeg;
+d->pansusend=ih.pansusend;
+for(u=0;u<ih.panpts;u++)
+ d->panenv[u].pos=ih.pantick[u];                               
+if((d->panflg&EF_ON)&&(d->panpts<2))         
+d->panflg&=~EF_ON;                 
+ for(u=0;u<ih.panpts;u++)
+  d->panenv[u].val=ih.pannode[u]==32?255:(ih.pannode[u]+32)<<2;
 
-				IT_ProcessEnvelope(vol);
-				for(u=0;u<ih.volpts;u++)
-					d->volenv[u].val=(ih.volnode[u]<<2);
-
-				IT_ProcessEnvelope(pan);
-				for(u=0;u<ih.panpts;u++)
-					d->panenv[u].val=
-					  ih.pannode[u]==32?255:(ih.pannode[u]+32)<<2;
-
-				IT_ProcessEnvelope(pit);
-				for(u=0;u<ih.pitpts;u++)
-					d->pitenv[u].val=ih.pitnode[u]+32;
-#undef IT_ProcessEnvelope
+if(ih.pitflg&1) d->pitflg|=EF_ON;
+if(ih.pitflg&2) d->pitflg|=EF_LOOP;
+if(ih.pitflg&4) d->pitflg|=EF_SUSTAIN;
+d->pitpts=ih.pitpts;
+d->pitbeg=ih.pitbeg;
+d->pitend=ih.pitend;                                                   
+d->pitsusbeg=ih.pitsusbeg;                                            
+d->pitsusend=ih.pitsusend;                                            
+for(u=0;u<ih.pitpts;u++)                                                    
+d->pitenv[u].pos=ih.pittick[u];                               
+if((d->pitflg&EF_ON)&&(d->pitpts<2))
+d->pitflg&=~EF_ON;
+ for(u=0;u<ih.pitpts;u++)
+  d->pitenv[u].val=ih.pitnode[u]+32;
 
 				if(ih.pitflg&0x80) {
 					/* filter envelopes not supported yet */

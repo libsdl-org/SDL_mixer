@@ -44,7 +44,7 @@
 
 #include "mikmod_internals.h"
 
-#ifdef macintosh
+#if defined(macintosh) || defined(__APPLE__)
 #define NO_64BIT_MIXER
 #endif
 /*

@@ -456,47 +456,32 @@ static BOOL LoadInstruments(void)
 					d->samplenumber[u]=pth.what[u]+of.numsmp;
 				d->volfade = pth.volfade;
 
-#ifdef __STDC__
-#define XM_ProcessEnvelope(name) 											\
-				memcpy(d->##name##env,pth.##name##env,XMENVCNT);			\
-				if (pth.##name##flg&1) d->##name##flg|=EF_ON;				\
-				if (pth.##name##flg&2) d->##name##flg|=EF_SUSTAIN;			\
-				if (pth.##name##flg&4) d->##name##flg|=EF_LOOP;				\
-				d->##name##susbeg=d->##name##susend=pth.##name##sus;		\
-				d->##name##beg=pth.##name##beg;								\
-				d->##name##end=pth.##name##end;								\
-				d->##name##pts=pth.##name##pts;								\
-																			\
-				/* scale envelope */										\
-				for (p=0;p<XMENVCNT/2;p++)									\
-					d->##name##env[p].val<<=2;								\
-																			\
-				if ((d->##name##flg&EF_ON)&&(d->##name##pts<2))				\
-					d->##name##flg&=~EF_ON;
-#else
-#define XM_ProcessEnvelope(name) 											\
-				memcpy(d->/**/name/**/env,pth./**/name/**/env,XMENVCNT);	\
-				if (pth./**/name/**/flg&1) d->/**/name/**/flg|=EF_ON;		\
-				if (pth./**/name/**/flg&2) d->/**/name/**/flg|=EF_SUSTAIN;	\
-				if (pth./**/name/**/flg&4) d->/**/name/**/flg|=EF_LOOP;		\
-				d->/**/name/**/susbeg=d->/**/name/**/susend=				\
-				                      pth./**/name/**/sus;					\
-				d->/**/name/**/beg=pth./**/name/**/beg;						\
-				d->/**/name/**/end=pth./**/name/**/end;						\
-				d->/**/name/**/pts=pth./**/name/**/pts;						\
-																			\
-				/* scale envelope */										\
-				for (p=0;p<XMENVCNT/2;p++)									\
-					d->/**/name/**/env[p].val<<=2;							\
-																			\
-				if ((d->/**/name/**/flg&EF_ON)&&(d->/**/name/**/pts<2))		\
-					d->/**/name/**/flg&=~EF_ON;
-#endif
-
-				XM_ProcessEnvelope(vol);
-				XM_ProcessEnvelope(pan);
-#undef XM_ProcessEnvelope
-
+memcpy(d->volenv,pth.volenv,XMENVCNT);
+if (pth.volflg&1) d->volflg|=EF_ON;
+if (pth.volflg&2) d->volflg|=EF_SUSTAIN;
+if (pth.volflg&4) d->volflg|=EF_LOOP;
+d->volsusbeg=d->volsusend=pth.volsus;                                      
+d->volbeg=pth.volbeg;
+d->volend=pth.volend;
+d->volpts=pth.volpts;
+/* scale envelope */
+for (p=0;p<XMENVCNT/2;p++)                                                       
+ d->volenv[p].val<<=2;
+if ((d->volflg&EF_ON)&&(d->volpts<2))
+ d->volflg&=~EF_ON;
+memcpy(d->panenv,pth.panenv,XMENVCNT);
+if (pth.panflg&1) d->panflg|=EF_ON;
+if (pth.panflg&2) d->panflg|=EF_SUSTAIN;
+if (pth.panflg&4) d->panflg|=EF_LOOP;
+d->pansusbeg=d->pansusend=pth.pansus;                                      
+d->panbeg=pth.panbeg;
+d->panend=pth.panend;
+d->panpts=pth.panpts;
+/* scale envelope */
+for (p=0;p<XMENVCNT/2;p++)                                                       
+ d->panenv[p].val<<=2;
+if ((d->panflg&EF_ON)&&(d->panpts<2))
+ d->panflg&=~EF_ON;
 				/* Samples are stored outside the instrument struct now, so we
 				   have to load them all into a temp area, count the of.numsmp
 				   along the way and then do an AllocSamples() and move
