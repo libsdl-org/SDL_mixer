@@ -3,7 +3,7 @@
 lib_LTLIBRARIES = libSDL_mixer.la
 
 SUBDIRS = @MUSIC_SUBDIRS@
-DIST_SUBDIRS = mikmod timidity native_midi
+DIST_SUBDIRS = mikmod timidity native_midi native_midi_gpl
 
 libSDL_mixerincludedir = $(includedir)/SDL
 libSDL_mixerinclude_HEADERS =	\
@@ -38,7 +38,11 @@ else
 TIMIDITY_LIB =
 endif
 if USE_NATIVE_MIDI
+if USE_NATIVE_MIDI_GPL
+NATIVE_MIDI_LIB = native_midi_gpl/libnativemidi_gpl.la
+else
 NATIVE_MIDI_LIB = native_midi/libnativemidi.la
+endif
 else
 NATIVE_MIDI_LIB =
 endif
