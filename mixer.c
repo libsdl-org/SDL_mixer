@@ -37,6 +37,7 @@
 #include "load_voc.h"
 
 /* Magic numbers for various audio file formats */
+#define RIFF		0x46464952		/* "RIFF" */
 #define WAVE		0x45564157		/* "WAVE" */
 #define FORM		0x4d524f46		/* "FORM" */
 
@@ -418,6 +419,7 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
 
 	switch (magic) {
 		case WAVE:
+		case RIFF:
 			loaded = SDL_LoadWAV_RW(src, freesrc, &wavespec,
 					(Uint8 **)&chunk->abuf, &chunk->alen);
 			break;
