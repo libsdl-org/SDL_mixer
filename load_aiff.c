@@ -22,6 +22,8 @@
     act as identically to SDL_LoadWAV_RW() as possible.
 
     This file by Torbjörn Andersson (torbjorn.andersson@eurotime.se)
+    8SVX file support added by Marc Le Douarain (mavati@club-internet.fr)
+    in december 2002.
 */
 
 /* $Id$ */
@@ -37,9 +39,14 @@
 /* Define values for AIFF (IFF audio) format */
 /*********************************************/
 #define FORM		0x4d524f46		/* "FORM" */
+
 #define AIFF		0x46464941		/* "AIFF" */
 #define SSND		0x444e5353		/* "SSND" */
 #define COMM		0x4d4d4f43		/* "COMM" */
+
+#define _8SVX		0x58565338		/* "8SVX" */
+#define VHDR		0x52444856		/* "VHDR" */
+#define BODY		0x59444F42		/* "BODY" */
 
 /* This function was taken from libsndfile. I don't pretend to fully
  * understand it.
@@ -64,6 +71,8 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
 	int was_error;
 	int found_SSND;
 	int found_COMM;
+	int found_VHDR;
+	int found_BODY;
 	long start = 0;
 
 	Uint32 chunk_type;
@@ -101,8 +110,8 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
 	} else {
 		AIFFmagic    = SDL_ReadLE32(src);
 	}
-	if ( (FORMchunk != FORM) || (AIFFmagic != AIFF) ) {
-		SDL_SetError("Unrecognized file type (not AIFF)");
+	if ( (FORMchunk != FORM) || ( (AIFFmagic != AIFF) && (AIFFmagic != _8SVX) ) ) {
+		SDL_SetError("Unrecognized file type (not AIFF nor 8SVX)");
 		was_error = 1;
 		goto done;
 	}
@@ -111,12 +120,13 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
 
 	found_SSND = 0;
 	found_COMM = 0;
+	found_VHDR = 0;
+	found_BODY = 0;
 
 	do {
 		chunk_type	= SDL_ReadLE32(src);
 		chunk_length	= SDL_ReadBE32(src);
 		next_chunk	= SDL_RWtell(src) + chunk_length;
-
 		/* Paranoia to avoid infinite loops */
 		if (chunk_length == 0)
 			break;
@@ -143,20 +153,52 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
 				}
 				break;
 
+			case VHDR:
+				found_VHDR	= 1;
+				SDL_ReadBE32(src);
+				SDL_ReadBE32(src);
+				SDL_ReadBE32(src);
+				frequency = SDL_ReadBE16(src);
+				channels = 1;
+				samplesize = 8;
+				break;
+
+			case BODY:
+				found_BODY	= 1;
+				numsamples	= chunk_length;
+				start		= SDL_RWtell(src);
+				break;
+
 			default:
 				break;
 		}
-	} while ( ( !found_SSND || !found_COMM )
+		/* a 0 pad byte can be stored for any odd-length chunk */
+		if (chunk_length&1)
+			next_chunk++;
+	} while ( ( ( (AIFFmagic == AIFF) && ( !found_SSND || !found_COMM ) )
+		  || ( (AIFFmagic == _8SVX ) && ( !found_VHDR || !found_BODY ) ) )
 		  && SDL_RWseek(src, next_chunk, SEEK_SET) != 1 );
 
-	if ( !found_SSND ) {
+	if ( (AIFFmagic == AIFF) && !found_SSND ) {
 		SDL_SetError("Bad AIFF (no SSND chunk)");
 		was_error = 1;
 		goto done;
 	}
 
-	if ( !found_COMM ) {
+	if ( (AIFFmagic == AIFF) && !found_COMM ) {
 		SDL_SetError("Bad AIFF (no COMM chunk)");
+		was_error = 1;
+		goto done;
+	}
+
+	if ( (AIFFmagic == _8SVX) && !found_VHDR ) {
+		SDL_SetError("Bad 8SVX (no VHDR chunk)");
+		was_error = 1;
+		goto done;
+	}
+
+	if ( (AIFFmagic == _8SVX) && !found_BODY ) {
+		SDL_SetError("Bad 8SVX (no BODY chunk)");
 		was_error = 1;
 		goto done;
 	}
@@ -203,3 +245,4 @@ done:
 	}
 	return(spec);
 }
+

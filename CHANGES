@@ -1,4 +1,6 @@
 1.2.5:
+Marc Le Douarain - Sat, 15 Feb 2003 14:46:41 +0100
+ * Added 8SVX format support to the AIFF loader
 Sam Lantinga Wed Feb 12 21:03:57 PST 2003
  * Fixed volume control on WAVE music chunks
 Ben Nason - Mon, 10 Feb 2003 11:50:27 -0800
