@@ -194,8 +194,8 @@ static void _Eff_position_table_s8(int chan, void *stream, int len, void *udata)
     Sint8 *ptr = (Sint8 *) stream;
     Uint32 *p;
     int i;
-    Sint8 *l = ((Uint8 *) _Eff_volume_table) + (256 * args->left_u8);
-    Sint8 *r = ((Uint8 *) _Eff_volume_table) + (256 * args->right_u8);
+    Sint8 *l = ((Sint8 *) _Eff_volume_table) + (256 * args->left_u8);
+    Sint8 *r = ((Sint8 *) _Eff_volume_table) + (256 * args->right_u8);
     Sint8 *d = ((Sint8 *) _Eff_volume_table) + (256 * args->distance_u8);
 
 
