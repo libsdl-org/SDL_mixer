@@ -1,5 +1,4 @@
 /*
-    SDL - Simple DirectMedia Layer
     SDL_mixer:  An audio mixer library based on the SDL library
     Copyright (C) 1997, 1998, 1999, 2000, 2001  Sam Lantinga
 
@@ -21,10 +20,7 @@
     slouken@libsdl.org
 */
 
-#ifdef SAVE_RCSID
-static char rcsid =
- "@(#) $Id$";
-#endif
+/* $id:$ */
 
 #ifndef _MIXER_H_
 #define _MIXER_H_
