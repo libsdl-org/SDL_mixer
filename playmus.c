@@ -91,7 +91,7 @@ void IntHandler(int sig)
 	}
 }
 
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	int audio_rate;
 	Uint16 audio_format;
