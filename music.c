@@ -743,7 +743,7 @@ int Mix_VolumeMusic(int volume)
 
 	prev_volume = music_volume;
 	if ( volume < 0 ) {
-		volume = 0;
+		return prev_volume;
 	}
 	if ( volume > SDL_MIX_MAXVOLUME ) {
 		volume = SDL_MIX_MAXVOLUME;

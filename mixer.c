@@ -722,13 +722,12 @@ int Mix_Volume(int which, int volume)
 		prev_volume /= num_channels;
 	} else {
 		prev_volume = mix_channel[which].volume;
-		if ( volume < 0 ) {
-			volume = 0;
+		if ( volume >= 0 ) {
+			if ( volume > SDL_MIX_MAXVOLUME ) {
+				volume = SDL_MIX_MAXVOLUME;
+			}
+			mix_channel[which].volume = volume;
 		}
-		if ( volume > SDL_MIX_MAXVOLUME ) {
-			volume = SDL_MIX_MAXVOLUME;
-		}
-		mix_channel[which].volume = volume;
 	}
 	return(prev_volume);
 }
