@@ -142,8 +142,17 @@ extern void WAVStream_PlaySome(Uint8 *stream, int len)
 			if ( (theWave->stop - pos) < original_len ) {
 				original_len = (theWave->stop - pos);
 			}
+			original_len = fread(theWave->cvt.buf,1,original_len,theWave->wavefp);
+			/* At least at the time of writing, SDL_ConvertAudio()
+			   does byte-order swapping starting at the end of the
+			   buffer. Thus, if we are reading 16-bit samples, we
+			   had better make damn sure that we get an even
+			   number of bytes, or we'll get garbage.
+			 */
+			if ( (theWave->cvt.src_format & 0x0010) && (original_len & 1) ) {
+				original_len--;
+			}
 			theWave->cvt.len = original_len;
-			fread(theWave->cvt.buf,original_len,1,theWave->wavefp);
 			SDL_ConvertAudio(&theWave->cvt);
 			memcpy(stream, theWave->cvt.buf, theWave->cvt.len_cvt);
 		} else {
@@ -414,6 +423,9 @@ static FILE *LoadAIFFStream (const char *file, SDL_AudioSpec *spec,
 
 	/* From what I understand of the specification, chunks may appear in
          * any order, and we should just ignore unknown ones.
+	 *
+	 * TODO: Better sanity-checking. E.g. what happens if the AIFF file
+	 *       contains compressed sound data?
          */
 
 	found_SSND = 0;
@@ -465,14 +477,14 @@ static FILE *LoadAIFFStream (const char *file, SDL_AudioSpec *spec,
 	    goto done;
 	}
 
-	*stop = *start + channels * numsamples * (samplesize / 8) - 1;
+	*stop = *start + channels * numsamples * (samplesize / 8);
 
 	/* Decode the audio data format */
 	memset(spec, 0, (sizeof *spec));
 	spec->freq = frequency;
 	switch (samplesize) {
 		case 8:
-			spec->format = AUDIO_U8;
+			spec->format = AUDIO_S8;
 			break;
 		case 16:
 			spec->format = AUDIO_S16MSB;
