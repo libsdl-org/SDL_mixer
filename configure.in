@@ -103,9 +103,47 @@ AC_ARG_ENABLE(music-wave,
 if test x$enable_music_wave = xyes; then
     CFLAGS="$CFLAGS -DWAV_MUSIC"
 fi
+no_libmikmod=no
+libmikmod_maj=3
+libmikmod_min=1
+libmikmod_rev=10
+libmikmod_ver="$libmikmod_maj.$libmikmod_min.$libmikmod_rev"
+AC_ARG_ENABLE(music-libmikmod,
+[  --enable-music-libmikmod  enable MOD music via externl libmikmod [default=yes]],
+              , enable_music_libmikmod=yes)
+if test x$enable_music_libmikmod = xyes; then
+	AC_PATH_PROG(LIBMIKMOD_CONFIG, libmikmod-config, no, [$PATH])
+	if test "$LIBMIKMOD_CONFIG" = "no" ; then
+		no_libmikmod==yes
+	else
+		CFLAGS_SAVED="$CFLAGS"
+		LIBS_SAVED="$LIBS"
+		CFLAGS="$CFLAGS -DLIBMIKMOD_MUSIC `$LIBMIKMOD_CONFIG --cflags`"
+		LIBS="$LIBS `$LIBMIKMOD_CONFIG --libs`"
+		AC_MSG_CHECKING([for libmikmod - version >= $libmikmod_ver])
+		AC_TRY_RUN([
+#include "mikmod.h"
+#include "stdio.h"
+
+int main(int argc, char **argv)
+{
+	long maj=$libmikmod_maj,min=$libmikmod_min,rev=$libmikmod_rev,ver=MikMod_GetVersion();
+	/*printf("(%d.%d.%d) ",ver>>16,(ver>>8)&0xff,ver&0xff);*/
+	if(ver>=((maj<<16)|(min<<8)|(rev))) {
+		printf("yes\n");
+		return 0;
+	}
+	printf("no\n*** libmikmod is older than %d.%d.%d, not using.\n",maj,min,rev);
+	return 1;
+}
+],, no_libmikmod=yes;CFLAGS="$CFLAGS_SAVED";LIBS="$LIBS_SAVED",
+[echo $ac_n "cross compiling; assumed OK... $ac_c"])
+	fi
+fi
+
 AC_ARG_ENABLE(music-mod,
 [  --enable-music-mod      enable MOD music via mikmod [default=yes]],
-              , enable_music_mod=yes)
+, enable_music_mod=$no_libmikmod)
 if test x$enable_music_mod = xyes; then
     CFLAGS="$CFLAGS -DMOD_MUSIC -I\$(top_srcdir)/mikmod"
     MUSIC_SUBDIRS="$MUSIC_SUBDIRS mikmod"

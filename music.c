@@ -44,20 +44,25 @@
 #undef CMD_MUSIC
 #endif
 
+inline static void noop(const char *a, ...) {}
+#define debug noop
+
 #ifdef CMD_MUSIC
 #include "music_cmd.h"
 #endif
 #ifdef WAV_MUSIC
 #include "wavestream.h"
 #endif
-#ifdef MOD_MUSIC
+#if defined(MOD_MUSIC) || defined(LIBMIKMOD_MUSIC)
 #  include "mikmod.h"
 #  if defined(LIBMIKMOD_VERSION)                /* libmikmod 3.1.8 */
 #    define UNIMOD			MODULE
 #    define MikMod_Init()		MikMod_Init(NULL)
 #    define MikMod_LoadSong(a,b)	Player_Load(a,b,0)
 #    ifdef USE_RWOPS
+#      ifndef LIBMIKMOD_MUSIC
 #      define MikMod_LoadSongRW(a,b)	Player_LoadRW(a,b,0)
+#    endif
 #    endif
 #    define MikMod_FreeSong		Player_Free
      extern int MikMod_errno;
@@ -106,7 +111,7 @@ struct _Mix_Music {
 #ifdef WAV_MUSIC
 		WAVStream *wave;
 #endif
-#ifdef MOD_MUSIC
+#if defined(MOD_MUSIC) || defined(LIBMIKMOD_MUSIC)
 		UNIMOD *module;
 #endif
 #ifdef MID_MUSIC
@@ -220,7 +225,7 @@ void music_mixer(void *udata, Uint8 *stream, int len)
 				WAVStream_PlaySome(stream, len);
 				break;
 #endif
-#ifdef MOD_MUSIC
+#if defined(MOD_MUSIC) || defined(LIBMIKMOD_MUSIC)
 			case MUS_MOD:
 				if (current_output_channels > 2) {
 					int small_len = 2 * len / current_output_channels;
@@ -334,7 +339,7 @@ int open_music(SDL_AudioSpec *mixer)
 		++music_error;
 	}
 #endif
-#ifdef MOD_MUSIC
+#if defined(MOD_MUSIC) || defined(LIBMIKMOD_MUSIC)
 	/* Set the MikMod music format */
 	music_swap8 = 0;
 	music_swap16 = 0;
@@ -384,8 +389,17 @@ int open_music(SDL_AudioSpec *mixer)
 	md_sndfxvolume = 128;
 	md_pansep	  = 128;
 	md_reverb	  = 0;
-	MikMod_RegisterAllLoaders();
+#ifdef LIBMIKMOD_MUSIC
+	md_mode |= DMODE_HQMIXER|DMODE_SOFT_MUSIC|DMODE_SURROUND;
+#endif
+#ifdef LIBMIKMOD_MUSIC
+	if(!MikMod_InfoDriver())
+#endif
 	MikMod_RegisterAllDrivers();
+#ifdef LIBMIKMOD_MUSIC
+	if(!MikMod_InfoLoader())
+#endif
+	MikMod_RegisterAllLoaders();
 	if ( MikMod_Init() ) {
 		Mix_SetError("%s", MikMod_strerror(MikMod_errno));
 		++music_error;
@@ -563,7 +577,7 @@ Mix_Music *Mix_LoadMUS(const char *file)
 		}
 	} else
 #endif
-#ifdef MOD_MUSIC
+#if defined(MOD_MUSIC) || defined(LIBMIKMOD_MUSIC)
 	if ( 1 ) {
 		music->type = MUS_MOD;
 		music->data.module = MikMod_LoadSong((char *)file, 64);
@@ -623,7 +637,7 @@ void Mix_FreeMusic(Mix_Music *music)
 				WAVStream_FreeSong(music->data.wave);
 				break;
 #endif
-#ifdef MOD_MUSIC
+#if defined(MOD_MUSIC) || defined(LIBMIKMOD_MUSIC)
 			case MUS_MOD:
 				MikMod_FreeSong(music->data.module);
 				break;
@@ -708,7 +722,7 @@ static int music_internal_play(Mix_Music *music, double position)
 		WAVStream_Start(music->data.wave);
 		break;
 #endif
-#ifdef MOD_MUSIC
+#if defined(MOD_MUSIC) || defined(LIBMIKMOD_MUSIC)
 	    case MUS_MOD:
 		Player_Start(music->data.module);
 		/* Player_SetVolume() does nothing before Player_Start() */
@@ -814,7 +828,7 @@ int music_internal_position(double position)
 	int retval = 0;
 
 	switch (music_playing->type) {
-#ifdef MOD_MUSIC
+#if defined(MOD_MUSIC) || defined(LIBMIKMOD_MUSIC)
 	    case MUS_MOD:
 		Player_SetPosition((UWORD)position);
 		break;
@@ -884,7 +898,7 @@ static void music_internal_volume(int volume)
 		WAVStream_SetVolume(volume);
 		break;
 #endif
-#ifdef MOD_MUSIC
+#if defined(MOD_MUSIC) || defined(LIBMIKMOD_MUSIC)
 	    case MUS_MOD:
 		Player_SetVolume((SWORD)volume);
 		break;
@@ -952,7 +966,7 @@ static void music_internal_halt(void)
 		WAVStream_Stop();
 		break;
 #endif
-#ifdef MOD_MUSIC
+#if defined(MOD_MUSIC) || defined(LIBMIKMOD_MUSIC)
 	    case MUS_MOD:
 		Player_Stop();
 		break;
@@ -1069,7 +1083,7 @@ static int music_internal_playing()
 		}
 		break;
 #endif
-#ifdef MOD_MUSIC
+#if defined(MOD_MUSIC) || defined(LIBMIKMOD_MUSIC)
 	    case MUS_MOD:
 		if ( ! Player_Active() ) {
 			playing = 0;
@@ -1142,11 +1156,26 @@ int Mix_SetMusicCMD(const char *command)
 	return(0);
 }
 
+#ifdef LIBMIKMOD_MUSIC
+static int _pl_synchro_value;
+void Player_SetSynchroValue(int i)
+{
+	fprintf(stderr,"SDL_mixer: Player_SetSynchroValue is not supported.\n");
+	_pl_synchro_value = i;
+}
+
+int Player_GetSynchroValue(void)
+{
+	fprintf(stderr,"SDL_mixer: Player_GetSynchroValue is not supported.\n");
+	return _pl_synchro_value;
+}
+#endif
+
 int Mix_SetSynchroValue(int i)
 {
 	if ( music_playing && ! music_stopped ) {
 		switch (music_playing->type) {
-#ifdef MOD_MUSIC
+#if defined(MOD_MUSIC) || defined(LIBMIKMOD_MUSIC)
 		    case MUS_MOD:
 			if ( ! Player_Active() ) {
 				return(-1);
@@ -1168,7 +1197,7 @@ int Mix_GetSynchroValue(void)
 {
 	if ( music_playing && ! music_stopped ) {
 		switch (music_playing->type) {
-#ifdef MOD_MUSIC
+#if defined(MOD_MUSIC) || defined(LIBMIKMOD_MUSIC)
 		    case MUS_MOD:
 			if ( ! Player_Active() ) {
 				return(-1);
@@ -1193,14 +1222,96 @@ void close_music(void)
 #ifdef CMD_MUSIC
 	Mix_SetMusicCMD(NULL);
 #endif
-#ifdef MOD_MUSIC
+#if defined(MOD_MUSIC) || defined(LIBMIKMOD_MUSIC)
 	MikMod_Exit();
+# ifndef LIBMIKMOD_MUSIC
 	MikMod_UnregisterAllLoaders();
 	MikMod_UnregisterAllDrivers();
+# endif
 #endif
 }
 
 #ifdef USE_RWOPS
+
+# ifdef LIBMIKMOD_MUSIC
+typedef struct
+{
+	MREADER mr;
+	int offset;
+	int eof;
+	SDL_RWops *rw;
+} LMM_MREADER;
+BOOL LMM_Seek(struct MREADER *mr,long to,int dir)
+{
+	int at;
+	LMM_MREADER* lmmmr=(LMM_MREADER*)mr;
+	debug("LMM_Seek(%p, %ld, %d) = ",mr,to,dir);
+	if(dir==SEEK_SET)
+		to+=lmmmr->offset;
+	at=SDL_RWseek(lmmmr->rw, to, dir);
+	debug("%d (%d)\n",at-lmmmr->offset, at<lmmmr->offset);
+	return at<lmmmr->offset;
+}
+long LMM_Tell(struct MREADER *mr)
+{
+	int at;
+	LMM_MREADER* lmmmr=(LMM_MREADER*)mr;
+	debug("LMM_Tell(%p) = ",mr);
+	at=SDL_RWtell(lmmmr->rw)-lmmmr->offset;
+	debug("%d\n",at);
+	return at;
+}
+BOOL LMM_Read(struct MREADER *mr,void *buf,size_t sz)
+{
+	int got;
+	LMM_MREADER* lmmmr=(LMM_MREADER*)mr;
+	debug("LMM_Read(%p,%p,%lu) = ",mr,buf,sz);
+	got=SDL_RWread(lmmmr->rw, buf, sz, 1);
+	debug("%d\n",got);
+	return got;
+}
+int LMM_Get(struct MREADER *mr)
+{
+	unsigned char c;
+	int i=EOF;
+	LMM_MREADER* lmmmr=(LMM_MREADER*)mr;
+	debug("LMM_Get(%p) = ",mr);
+	if(SDL_RWread(lmmmr->rw,&c,1,1))
+		i=c;
+	debug("%d\n",i);
+	return i;
+}
+BOOL LMM_Eof(struct MREADER *mr)
+{
+	int offset;
+	LMM_MREADER* lmmmr=(LMM_MREADER*)mr;
+	debug("LMM_Eof(%p) = ",mr);
+	offset=LMM_Tell(mr);
+	debug("%d\n", offset>=lmmmr->eof);
+	return offset>=lmmmr->eof;
+}
+MODULE *MikMod_LoadSongRW(SDL_RWops *rw, int maxchan)
+{
+	LMM_MREADER lmmmr={
+		LMM_Seek,
+		LMM_Tell,
+		LMM_Read,
+		LMM_Get,
+		LMM_Eof,
+		0,
+		0,
+		rw
+	};
+	MODULE *m;
+	lmmmr.offset=SDL_RWtell(rw);
+	SDL_RWseek(rw,0,SEEK_END);
+	lmmmr.eof=SDL_RWtell(rw);
+	SDL_RWseek(rw,lmmmr.offset,SEEK_SET);
+	m=Player_LoadGeneric((MREADER*)&lmmmr,maxchan,0);
+	debug("MikMod_LoadSongRW(%p,%d) = %p\n",rw,maxchan,m);
+	return m;
+}
+# endif
 
 Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw) {
 	Uint8 magic[5];	  /*Apparently there is no way to check if the file is really a MOD,*/
@@ -1237,7 +1348,7 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw) {
 		}
 	} else
 #endif
-#ifdef MOD_MUSIC
+#if defined(MOD_MUSIC) || defined(LIBMIKMOD_MUSIC)
 	if (1) {
 		music->type=MUS_MOD;
 		music->data.module=MikMod_LoadSongRW(rw,64);
