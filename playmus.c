@@ -57,7 +57,7 @@ void CleanUp(void)
 
 void Usage(char *argv0)
 {
-	fprintf(stderr, "Usage: %s [-i] |-l] [-8] [-r rate] [-b buffers] [-s] <musicfile>\n", argv0);
+	fprintf(stderr, "Usage: %s [-i] [-l] [-8] [-r rate] [-b buffers] [-v N] <musicfile>\n", argv0);
 }
 
 void Menu(void)
@@ -97,6 +97,7 @@ int main(int argc, char *argv[])
 	Uint16 audio_format;
 	int audio_channels;
 	int audio_buffers;
+	int audio_volume = MIX_MAX_VOLUME;
 	int looping = 0;
 	int interactive = 0;
 	int i;
@@ -116,6 +117,10 @@ int main(int argc, char *argv[])
 		if ( (strcmp(argv[i], "-b") == 0) && argv[i+1] ) {
 			++i;
 			audio_buffers = atoi(argv[i]);
+		} else
+		if ( (strcmp(argv[i], "-v") == 0) && argv[i+1] ) {
+			++i;
+			audio_volume = atoi(argv[i]);
 		} else
 		if ( strcmp(argv[i], "-m") == 0 ) {
 			audio_channels = 1;
@@ -159,6 +164,9 @@ int main(int argc, char *argv[])
 			audio_buffers );
 	}
 	audio_open = 1;
+
+	/* Set the music volume */
+	Mix_VolumeMusic(audio_volume);
 
 	/* Set the external music player, if any */
 	Mix_SetMusicCMD(getenv("MUSIC_CMD"));

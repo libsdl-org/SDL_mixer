@@ -1,4 +1,6 @@
 1.2.5:
+Sam Lantinga Wed Feb 12 21:03:57 PST 2003
+ * Fixed volume control on WAVE music chunks
 Ben Nason - Mon, 10 Feb 2003 11:50:27 -0800
  * Fixed volume control on MOD music chunks
 Patrice Mandin - Fri, 31 Jan 2003 15:17:30 +0100

@@ -92,6 +92,7 @@ static WAVStream *music = NULL;
 
 /* This is the format of the audio mixer data */
 static SDL_AudioSpec mixer;
+static int wavestream_volume = MIX_MAX_VOLUME;
 
 /* Function to load the WAV/AIFF stream */
 static FILE *LoadWAVStream (const char *file, SDL_AudioSpec *spec,
@@ -108,13 +109,13 @@ int WAVStream_Init(SDL_AudioSpec *mixerfmt)
 	return(0);
 }
 
-/* Unimplemented */
-extern void WAVStream_SetVolume(int volume)
+void WAVStream_SetVolume(int volume)
 {
+	wavestream_volume = volume;
 }
 
 /* Load a WAV stream from the given file */
-extern WAVStream *WAVStream_LoadSong(const char *file, const char *magic)
+WAVStream *WAVStream_LoadSong(const char *file, const char *magic)
 {
 	WAVStream *wave;
 	SDL_AudioSpec wavespec;
@@ -148,7 +149,7 @@ extern WAVStream *WAVStream_LoadSong(const char *file, const char *magic)
 }
 
 /* Start playback of a given WAV stream */
-extern void WAVStream_Start(WAVStream *wave)
+void WAVStream_Start(WAVStream *wave)
 {
 	clearerr(wave->wavefp);
 	fseek(wave->wavefp, wave->start, SEEK_SET);
@@ -156,7 +157,7 @@ extern void WAVStream_Start(WAVStream *wave)
 }
 
 /* Play some of a stream previously started with WAVStream_Start() */
-extern void WAVStream_PlaySome(Uint8 *stream, int len)
+void WAVStream_PlaySome(Uint8 *stream, int len)
 {
 	long pos;
 
@@ -192,7 +193,7 @@ extern void WAVStream_PlaySome(Uint8 *stream, int len)
 			}
 			music->cvt.len = original_len;
 			SDL_ConvertAudio(&music->cvt);
-			memcpy(stream, music->cvt.buf, music->cvt.len_cvt);
+			SDL_MixAudio(stream, music->cvt.buf, music->cvt.len_cvt, wavestream_volume);
 		} else {
 			if ( (music->stop - pos) < len ) {
 				len = (music->stop - pos);
@@ -203,13 +204,13 @@ extern void WAVStream_PlaySome(Uint8 *stream, int len)
 }
 
 /* Stop playback of a stream previously started with WAVStream_Start() */
-extern void WAVStream_Stop(void)
+void WAVStream_Stop(void)
 {
 	music = NULL;
 }
 
 /* Close the given WAV stream */
-extern void WAVStream_FreeSong(WAVStream *wave)
+void WAVStream_FreeSong(WAVStream *wave)
 {
 	if ( wave ) {
 		/* Clean up associated data */
@@ -224,7 +225,7 @@ extern void WAVStream_FreeSong(WAVStream *wave)
 }
 
 /* Return non-zero if a stream is currently playing */
-extern int WAVStream_Active(void)
+int WAVStream_Active(void)
 {
 	int active;
 
