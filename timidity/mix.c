@@ -432,6 +432,9 @@ static void ramp_out(sample_t *sp, int32 *lp, int v, int32 c)
 
   sample_t s=0; /* silly warning about uninitialized s */
 
+  /* Fix by James Caldwell */
+  if ( c == 0 ) c = 1;
+
   left=voice[v].left_mix;
   li=-(left/c);
   if (!li) li=-1;
