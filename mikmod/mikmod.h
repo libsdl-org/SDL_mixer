@@ -550,6 +550,8 @@ MIKMODAPI extern void    Player_Mute(SLONG,...);
 MIKMODAPI extern void    Player_ToggleMute(SLONG,...);
 MIKMODAPI extern int     Player_GetChannelVoice(UBYTE);
 MIKMODAPI extern UWORD   Player_GetChannelPeriod(UBYTE);
+MIKMODAPI extern void    Player_SetSynchroValue(int);
+MIKMODAPI extern int     Player_GetSynchroValue(void);
 
 typedef void (MikMod_player)(void);
 typedef MikMod_player *MikMod_player_t;

@@ -336,6 +336,7 @@ enum {
 	UNI_MEDEFFECTF1,   /* play note twice */
 	UNI_MEDEFFECTF2,   /* delay note */
 	UNI_MEDEFFECTF3,   /* play note three times */
+	UNI_XMEFFECTZ,     /* XM Z synchro */
 
 	UNI_LAST
 };

@@ -286,6 +286,9 @@ static UBYTE* XM_Convert(XMNOTE* xmtrack,UWORD rows)
 						break;
 				}
 				break;
+			case 'Z'-55: /* Z - synchro */
+				UniEffect(UNI_XMEFFECTZ,dat);
+				break;
 			default:
 				if(eff<=0xf) {
 					/* the pattern jump destination is written in decimal,

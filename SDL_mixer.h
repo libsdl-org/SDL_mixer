@@ -41,7 +41,7 @@ extern "C" {
 */
 #define MIX_MAJOR_VERSION	1
 #define MIX_MINOR_VERSION	2
-#define MIX_PATCHLEVEL		1
+#define MIX_PATCHLEVEL		2
 
 /* This macro can be used to fill a version structure with the compile-time
  * version of the SDL_mixer library.
@@ -460,6 +460,7 @@ extern DECLSPEC int Mix_PlayMusic(Mix_Music *music, int loops);
 
 /* Fade in music or a channel over "ms" milliseconds, same semantics as the "Play" functions */
 extern DECLSPEC int Mix_FadeInMusic(Mix_Music *music, int loops, int ms);
+extern DECLSPEC int Mix_FadeInMusicPos(Mix_Music *music, int loops, int ms, int position);
 #define Mix_FadeInChannel(channel,chunk,loops,ms) Mix_FadeInChannelTimed(channel,chunk,loops,ms,-1)
 extern DECLSPEC int Mix_FadeInChannelTimed(int channel, Mix_Chunk *chunk, int loops, int ms, int ticks);
 
@@ -506,6 +507,12 @@ extern DECLSPEC void Mix_ResumeMusic(void);
 extern DECLSPEC void Mix_RewindMusic(void);
 extern DECLSPEC int  Mix_PausedMusic(void);
 
+/* Set the current position in the music stream.
+   This returns 0 if successful, or -1 if it failed or isn't implemented.
+   This function is only implemented for MOD music formats at the moment.
+*/
+extern DECLSPEC int Mix_SetMusicPosition(int position);
+
 /* Check the status of a specific channel.
    If the specified channel is -1, check all channels.
 */
@@ -514,6 +521,10 @@ extern DECLSPEC int Mix_PlayingMusic(void);
 
 /* Stop music and set external music playback command */
 extern DECLSPEC int Mix_SetMusicCMD(const char *command);
+
+/* Synchro value is set by MikMod from modules while playing */
+extern DECLSPEC int Mix_SetSynchroValue(int value);
+extern DECLSPEC int Mix_GetSynchroValue(void);
 
 /* Get the Mix_Chunk currently associated with a mixer channel
     Returns NULL if it's an invalid channel, or there's no chunk associated.

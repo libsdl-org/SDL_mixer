@@ -679,8 +679,26 @@ int Mix_PlayMusic(Mix_Music *music, int loops)
 	return(0);
 }
 
+int Mix_SetMusicPosition(int position)
+{
+	if ( music_playing && !music_stopped ) {
+		switch ( music_playing->type ) {
+#ifdef MOD_MUSIC
+		case MUS_MOD:
+			Player_SetPosition(position);
+			return(0);
+			break;
+#endif
+		default:
+			/* TODO: Implement this for other music backends */
+			return(-1);
+			break;
+		}
+	}
+}
+
 /* Fade in a music over "ms" milliseconds */
-int Mix_FadeInMusic(Mix_Music *music, int loops, int ms)
+int Mix_FadeInMusicPos(Mix_Music *music, int loops, int ms, int position)
 {
 	if ( music && music_volume > 0 ) { /* No need to fade if we can't hear it */
 		music->fade_volume = music_volume;
@@ -688,11 +706,22 @@ int Mix_FadeInMusic(Mix_Music *music, int loops, int ms)
 		if ( Mix_PlayMusic(music, loops) < 0 ) {
 			return(-1);
 		}
+		if ( position ) {
+			if ( Mix_SetMusicPosition(position) < 0 ) {
+				Mix_HaltMusic();
+				return(-1);
+			}
+		}
 		music_playing->fade_step = 0;
 		music_playing->fade_steps = ms/ms_per_step;
 		music_playing->fading = MIX_FADING_IN;
 	}
 	return(0);
+}
+
+int Mix_FadeInMusic(Mix_Music *music, int loops, int ms)
+{
+	return Mix_FadeInMusicPos(music, loops, ms, 0);
 }
 
 /* Set the music volume */
@@ -979,6 +1008,50 @@ int Mix_SetMusicCMD(const char *command)
 	}
 	return(0);
 }
+
+int Mix_SetSynchroValue(int i)
+{
+	if ( music_playing && ! music_stopped ) {
+		switch (music_playing->type) {
+#ifdef MOD_MUSIC
+			case MUS_MOD:
+				if ( ! Player_Active() ) {
+					return(-1);
+				}
+				Player_SetSynchroValue(i);
+				return 0;
+				break;
+#endif
+			default:
+				return(-1);
+				break;
+		}
+		return(-1);
+	}
+	return(-1);
+}
+
+int Mix_GetSynchroValue(void)
+{
+	if ( music_playing && ! music_stopped ) {
+		switch (music_playing->type) {
+#ifdef MOD_MUSIC
+			case MUS_MOD:
+				if ( ! Player_Active() ) {
+					return(-1);
+				}
+				return Player_GetSynchroValue();
+				break;
+#endif
+			default:
+				return(-1);
+				break;
+		}
+		return(-1);
+	}
+	return(-1);
+}
+
 
 /* Uninitialize the music players */
 void close_music(void)

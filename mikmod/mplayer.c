@@ -1806,6 +1806,9 @@ static void pt_playeffects(void)
 			case UNI_MEDEFFECTF3:
 				DoEEffects(0x90|(pf->sngspd/3));
 				break;
+			case UNI_XMEFFECTZ:
+				Player_SetSynchroValue(UniGetByte());
+				break;
 			default:
 				a->sliding=oldsliding;
 				UniSkipOpcode(c);
@@ -2896,5 +2899,17 @@ void Player_SetTempo(UWORD tempo)
 	}
 	MUTEX_UNLOCK(vars);
 }
+
+static int _pl_synchro_value;
+void Player_SetSynchroValue(int i)
+{
+	_pl_synchro_value = i;
+}
+
+int Player_GetSynchroValue(void)
+{
+	return _pl_synchro_value;
+}
+	
 
 /* ex:set ts=4: */

@@ -98,7 +98,8 @@ UWORD unioperands[UNI_LAST]={
 	2, /* UNI_MEDSPEED */
 	0, /* UNI_MEDEFFECTF1 */
 	0, /* UNI_MEDEFFECTF2 */
-	0  /* UNI_MEDEFFECTF3 */
+	0, /* UNI_MEDEFFECTF3 */
+	1  /* UNI_XMEFFECTZ */
 };
 
 /* Sparse description of the internal module format
