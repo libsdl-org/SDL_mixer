@@ -448,7 +448,7 @@ Mix_Music *Mix_LoadMUS(const char *file)
 	/* MIDI files have the magic four bytes "MThd" */
 	if ( (ext && (MIX_string_equals(ext, "MID") == 0)) ||
 	     (ext && (MIX_string_equals(ext, "MIDI") == 0)) ||
-	     strcmp(magic, "MThd") == 0 ) {
+	     strcmp((char *)magic, "MThd") == 0 ) {
 		music->type = MUS_MID;
 #ifdef USE_NATIVE_MIDI
   		if ( native_midi_ok ) {
@@ -476,7 +476,7 @@ Mix_Music *Mix_LoadMUS(const char *file)
 #ifdef OGG_MUSIC
 	/* Ogg Vorbis files have the magic four bytes "OggS" */
 	if ( (ext && (MIX_string_equals(ext, "OGG") == 0)) ||
-	     strcmp(magic, "OggS") == 0 ) {
+	     strcmp((char *)magic, "OggS") == 0 ) {
 		music->type = MUS_OGG;
 		music->data.ogg = OGG_new(file);
 		if ( music->data.ogg == NULL ) {
