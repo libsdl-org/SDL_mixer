@@ -1,7 +1,7 @@
 
 1.2.2:
 Guillaume Cottenceau - Wed Dec 19 08:59:05 PST 2001
- * Added an API for seeking in music files (implemented for MOD files)
+ * Added an API for seeking in music files (implemented for MOD and Ogg music)
 	Mix_FadeInMusicPos(), Mix_SetMusicPosition()
  * Exposed the mikmod synchro value for music synchronization
 	Mix_SetSynchroValue(), Mix_GetSynchroValue()

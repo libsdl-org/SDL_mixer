@@ -679,7 +679,7 @@ int Mix_PlayMusic(Mix_Music *music, int loops)
 	return(0);
 }
 
-int Mix_SetMusicPosition(int position)
+int Mix_SetMusicPosition(double position)
 {
 	if ( music_playing && !music_stopped ) {
 		switch ( music_playing->type ) {
@@ -689,16 +689,22 @@ int Mix_SetMusicPosition(int position)
 			return(0);
 			break;
 #endif
+#ifdef OGG_MUSIC
+		case MUS_OGG:
+			OGG_jump_to_time(music_playing->data.ogg, position);
+			return(0);
+			break;
+#endif
 		default:
 			/* TODO: Implement this for other music backends */
-			return(-1);
 			break;
 		}
 	}
+	return(-1);
 }
 
 /* Fade in a music over "ms" milliseconds */
-int Mix_FadeInMusicPos(Mix_Music *music, int loops, int ms, int position)
+int Mix_FadeInMusicPos(Mix_Music *music, int loops, int ms, double position)
 {
 	if ( music && music_volume > 0 ) { /* No need to fade if we can't hear it */
 		music->fade_volume = music_volume;

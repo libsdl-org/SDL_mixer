@@ -460,7 +460,7 @@ extern DECLSPEC int Mix_PlayMusic(Mix_Music *music, int loops);
 
 /* Fade in music or a channel over "ms" milliseconds, same semantics as the "Play" functions */
 extern DECLSPEC int Mix_FadeInMusic(Mix_Music *music, int loops, int ms);
-extern DECLSPEC int Mix_FadeInMusicPos(Mix_Music *music, int loops, int ms, int position);
+extern DECLSPEC int Mix_FadeInMusicPos(Mix_Music *music, int loops, int ms, double position);
 #define Mix_FadeInChannel(channel,chunk,loops,ms) Mix_FadeInChannelTimed(channel,chunk,loops,ms,-1)
 extern DECLSPEC int Mix_FadeInChannelTimed(int channel, Mix_Chunk *chunk, int loops, int ms, int ticks);
 
@@ -509,9 +509,11 @@ extern DECLSPEC int  Mix_PausedMusic(void);
 
 /* Set the current position in the music stream.
    This returns 0 if successful, or -1 if it failed or isn't implemented.
-   This function is only implemented for MOD music formats at the moment.
+   This function is only implemented for MOD music formats (set pattern
+   order number) and for OGG music (set position in seconds), at the
+   moment.
 */
-extern DECLSPEC int Mix_SetMusicPosition(int position);
+extern DECLSPEC int Mix_SetMusicPosition(double position);
 
 /* Check the status of a specific channel.
    If the specified channel is -1, check all channels.

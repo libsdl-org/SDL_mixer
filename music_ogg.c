@@ -183,4 +183,10 @@ void OGG_delete(OGG_music *music)
 	}
 }
 
+/* Jump (seek) to a given position (time is in seconds) */
+void OGG_jump_to_time(OGG_music *music, double time)
+{
+       ov_time_seek( &music->vf, time );
+}
+
 #endif /* OGG_MUSIC */

@@ -177,7 +177,7 @@ int main(int argc, char *argv[])
 		/* Play and then exit */
 		printf("Playing %s\n", argv[i]);
 		Mix_FadeInMusic(music,looping,2000);
-		while ( !next_track && Mix_PlayingMusic() || Mix_PausedMusic() ) {
+		while ( !next_track && (Mix_PlayingMusic() || Mix_PausedMusic()) ) {
 			if(interactive)
 				Menu();
 			else

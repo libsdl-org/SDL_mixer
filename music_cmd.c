@@ -33,6 +33,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <signal.h>
+#include <ctype.h>
 
 #include "SDL_mixer.h"
 #include "music_cmd.h"
