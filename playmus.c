@@ -184,6 +184,7 @@ main(int argc, char *argv[])
 				SDL_Delay(100);
 		}
 		Mix_FreeMusic(music);
+		music = NULL;
 
 		/* If the user presses Ctrl-C more than once, exit. */
 		SDL_Delay(500);
