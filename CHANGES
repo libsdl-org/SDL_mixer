@@ -1,5 +1,7 @@
 
 1.2.3:
+Guillaume Cottenceau - Wed Feb 13 15:43:20 PST 2002
+ * Implemented Ogg Vorbis stream rewinding
 Peter Kutak - Wed Feb 13 10:26:57 PST 2002
  * Added native midi support on Linux, using GPL code
 	--enable-music-native-midi-gpl

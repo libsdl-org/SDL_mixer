@@ -135,14 +135,6 @@ if test x$enable_music_midi = xyes; then
                 use_music_native_midi=yes
                 LIBS="$LIBS -framework QuickTime"
                 ;;
-            *-*-linux* | *-*-freebsd*)
-                if test x$enable_music_native_midi_gpl != xyes; then
-                    AC_ERROR([the native midi code is GPL code, use --enable-music-native-midi-gpl])
-                fi
-                ;;
-            *)
-                AC_ERROR([native MIDI not supported on this platform])
-                ;;
         esac
         if test x$use_music_native_midi = xyes; then
             CFLAGS="$CFLAGS -DUSE_NATIVE_MIDI -I\$(top_srcdir)/native_midi"
@@ -157,9 +149,6 @@ if test x$enable_music_midi = xyes; then
         case "$target" in
             *-*-linux* | *-*-freebsd*)
                 use_music_native_midi_gpl=yes
-                ;;
-            *)
-                AC_ERROR([native MIDI not supported on this platform])
                 ;;
         esac
         if test x$use_music_native_midi_gpl = xyes; then

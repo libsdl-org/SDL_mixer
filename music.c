@@ -919,6 +919,11 @@ void Mix_RewindMusic(void)
 			SMPEG_rewind(music_playing->data.mp3);
 			break;
 #endif
+#ifdef OGG_MUSIC
+		case MUS_OGG:
+			OGG_jump_to_time(music_playing->data.ogg, 0);
+			break;
+#endif
 #ifdef MID_MUSIC
 		case MUS_MID:
 #ifdef USE_NATIVE_MIDI
