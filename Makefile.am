@@ -62,7 +62,8 @@ EXTRA_DIST =			\
 libSDL_mixer_la_LDFLAGS = 	\
 	-no-undefined		\
 	-release $(LT_RELEASE)	\
-	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
+	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
+	-export-symbols-regex Mix_.*
 libSDL_mixer_la_LIBADD = $(MIKMOD_LIB) $(TIMIDITY_LIB) $(NATIVE_MIDI_LIB) @SYSTEM_LIBS@ @SDL_LIBS@
 
 noinst_PROGRAMS = playwave playmus
