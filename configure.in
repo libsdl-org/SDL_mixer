@@ -85,10 +85,6 @@ AM_PATH_SDL($SDL_VERSION,
 )
 CFLAGS="$CFLAGS $SDL_CFLAGS"
 
-dnl Flag for using SDL_RWops
-dnl Matt Campbell (matt@campbellhome.dhs.org)
-CFLAGS="$CFLAGS -DUSE_RWOPS"
-
 dnl Check command-line options
 
 AC_ARG_ENABLE(music-cmd,
@@ -114,7 +110,7 @@ AC_ARG_ENABLE(music-libmikmod,
 if test x$enable_music_libmikmod = xyes; then
 	AC_PATH_PROG(LIBMIKMOD_CONFIG, libmikmod-config, no, [$PATH])
 	if test "$LIBMIKMOD_CONFIG" = "no" ; then
-		no_libmikmod==yes
+		no_libmikmod=yes
 	else
 		CFLAGS_SAVED="$CFLAGS"
 		LIBS_SAVED="$LIBS"

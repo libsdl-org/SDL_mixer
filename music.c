@@ -56,10 +56,8 @@
 #    define UNIMOD			MODULE
 #    define MikMod_Init()		MikMod_Init(NULL)
 #    define MikMod_LoadSong(a,b)	Player_Load(a,b,0)
-#    ifdef USE_RWOPS
-#      ifndef LIBMIKMOD_MUSIC
-#      define MikMod_LoadSongRW(a,b)	Player_LoadRW(a,b,0)
-#    endif
+#    ifndef LIBMIKMOD_MUSIC
+#    define MikMod_LoadSongRW(a,b)	Player_LoadRW(a,b,0)
 #    endif
 #    define MikMod_FreeSong		Player_Free
      extern int MikMod_errno;
@@ -1228,8 +1226,6 @@ void close_music(void)
 #endif
 }
 
-#ifdef USE_RWOPS
-
 # ifdef LIBMIKMOD_MUSIC
 typedef struct
 {
@@ -1354,5 +1350,3 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw) {
 	}
 	return(music);
 }
-
-#endif /* USE_RWOPS */

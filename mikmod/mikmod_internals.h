@@ -136,10 +136,8 @@ DECLARE_MUTEX(vars);
 /*========== Portable file I/O */
 
 /* SDL_RWops compatability */
-#ifdef USE_RWOPS
 extern MREADER *_mm_new_rwops_reader(SDL_RWops * rw);
 extern void _mm_delete_rwops_reader (MREADER*);
-#endif /* USE_RWOPS */
 /* End SDL_RWops compatability */
 
 extern MREADER* _mm_new_file_reader(FILE* fp);

@@ -538,7 +538,6 @@ MODULE* Player_Load(CHAR* filename,int maxchan,BOOL curious)
 }
 
 /* SDL_RWops compatability */
-#ifdef USE_RWOPS
 
 /* Open a module via an SDL_rwop.  The loader will initialize the specified
    song-player 'player'. */
@@ -554,7 +553,6 @@ MODULE* Player_LoadRW(SDL_RWops *rw,int maxchan,BOOL curious)
 	return result;
 }
 
-#endif /* USE_RWOPS */
 /* End SDL_RWops compatability */
 
 /* ex:set ts=4: */
