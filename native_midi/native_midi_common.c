@@ -23,11 +23,7 @@
 
 #include "native_midi_common.h"
 
-#if 0 /* Can't include SDL_mixer.h on cygwin --- stupid... */
 #include "SDL_mixer.h"
-#else
-#define Mix_SetError(X)
-#endif
 
 #include <stdlib.h>
 #include <string.h>
