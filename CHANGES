@@ -1,5 +1,7 @@
 
 1.2.1:
+Florian Schulze - Sun Aug 19 14:55:37 PDT 2001
+ * Added native MIDI music support on Windows
 Sam Lantinga - Sun Aug 19 02:20:55 PDT 2001
  * Added Project Builder projects for building MacOS X framework
 Darrell Walisser - Sun Aug 19 00:47:22 PDT 2001

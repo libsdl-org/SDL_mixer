@@ -56,6 +56,9 @@
 #endif
 #ifdef MID_MUSIC
 #include "timidity.h"
+#ifdef USE_NATIVE_MIDI
+#include "native_midi.h"
+#endif
 #endif
 #ifdef OGG_MUSIC
 #include "music_ogg.h"
@@ -97,6 +100,9 @@ struct _Mix_Music {
 #endif
 #ifdef MID_MUSIC
 		MidiSong *midi;
+#ifdef USE_NATIVE_MIDI
+		NativeMidiSong *nativemidi;
+#endif
 #endif
 #ifdef OGG_MUSIC
 		OGG_music *ogg;
@@ -113,6 +119,9 @@ struct _Mix_Music {
 };
 #ifdef MID_MUSIC
 static int timidity_ok;
+#ifdef USE_NATIVE_MIDI
+static int native_midi_ok;
+#endif
 #endif
 
 /* Used to calculate fading steps */
@@ -224,7 +233,10 @@ void music_mixer(void *udata, Uint8 *stream, int len)
 #endif
 #ifdef MID_MUSIC
 			case MUS_MID:
-				Timidity_PlaySome(stream, len/samplesize);
+				if ( timidity_ok ) {
+					int samples = len / samplesize;
+  					Timidity_PlaySome(stream, samples);
+				}
 				break;
 #endif
 #ifdef OGG_MUSIC
@@ -312,11 +324,20 @@ int open_music(SDL_AudioSpec *mixer)
 	}
 #endif
 #ifdef MID_MUSIC
-	samplesize	 = mixer->size/mixer->samples;
-	if ( Timidity_Init(mixer->freq,
-			mixer->format, mixer->channels, mixer->samples) == 0 ) {
-		timidity_ok = 1;
+	samplesize = mixer->size/mixer->samples;
+#ifdef USE_NATIVE_MIDI
+	if ( native_midi_init() ) {
+		native_midi_ok = 1;
 	} else {
+		native_midi_ok = 0;
+	}
+	timidity_ok = !native_midi_ok;
+#else
+	timidity_ok = 1;
+#endif
+	if ( timidity_ok &&
+	     (Timidity_Init(mixer->freq, mixer->format,
+	                    mixer->channels, mixer->samples) != 0) ) {
 		timidity_ok = 0;
 	}
 #endif
@@ -395,14 +416,22 @@ Mix_Music *Mix_LoadMUS(const char *file)
 	/* MIDI files have the magic four bytes "MThd" */
 	if ( strcmp(magic, "MThd") == 0 ) {
 		music->type = MUS_MID;
+#ifdef USE_NATIVE_MIDI
+  		if ( native_midi_ok ) {
+  			music->data.nativemidi = native_midi_loadsong((char *)file);
+	  		if ( music->data.nativemidi == NULL ) {
+		  		Mix_SetError("%s", native_midi_error());
+			  	music->error = 1;
+			}
+      		} else
+#endif
 		if ( timidity_ok ) {
 			music->data.midi = Timidity_LoadSong((char *)file);
 			if ( music->data.midi == NULL ) {
 				Mix_SetError("%s", Timidity_Error());
 				music->error = 1;
 			}
-		}
-		else {
+		} else {
 			Mix_SetError("%s", Timidity_Error());
 			music->error = 1;
 		}
@@ -484,7 +513,14 @@ void Mix_FreeMusic(Mix_Music *music)
 #endif
 #ifdef MID_MUSIC
 			case MUS_MID:
-				Timidity_FreeSong(music->data.midi);
+#ifdef USE_NATIVE_MIDI
+  				if ( native_midi_ok ) {
+					native_midi_freesong(music->data.nativemidi);
+				} else
+#endif
+				if ( timidity_ok ) {
+					Timidity_FreeSong(music->data.midi);
+				}
 				break;
 #endif
 #ifdef OGG_MUSIC
@@ -532,8 +568,16 @@ static int lowlevel_play(Mix_Music *music)
 #endif
 #ifdef MID_MUSIC
 		case MUS_MID:
-			Timidity_SetVolume(music_volume);
-			Timidity_Start(music->data.midi);
+#ifdef USE_NATIVE_MIDI
+  			if ( native_midi_ok ) {
+				native_midi_setvolume(music_volume);
+				native_midi_start(music->data.nativemidi);
+			} else
+#endif
+			if ( timidity_ok ) {
+				Timidity_SetVolume(music_volume);
+				Timidity_Start(music->data.midi);
+			}
 			break;
 #endif
 #ifdef OGG_MUSIC
@@ -629,7 +673,14 @@ int Mix_VolumeMusic(int volume)
 #endif
 #ifdef MID_MUSIC
 		case MUS_MID:
-			Timidity_SetVolume(music_volume);
+#ifdef USE_NATIVE_MIDI
+			if ( native_midi_ok ) {
+				native_midi_setvolume(music_volume);
+			} else
+#endif
+			if ( timidity_ok ) {
+				Timidity_SetVolume(music_volume);
+			}
 			break;
 #endif
 #ifdef OGG_MUSIC
@@ -670,7 +721,14 @@ static void lowlevel_halt(void)
 #endif
 #ifdef MID_MUSIC
 	case MUS_MID:
-		Timidity_Stop();
+#ifdef USE_NATIVE_MIDI
+		if ( native_midi_ok ) {
+			native_midi_stop();
+		} else
+#endif
+		if ( timidity_ok ) {
+			Timidity_Stop();
+		}
 		break;
 #endif
 #ifdef OGG_MUSIC
@@ -762,6 +820,15 @@ void Mix_RewindMusic(void)
 			SMPEG_rewind(music_playing->data.mp3);
 			break;
 #endif
+#ifdef MID_MUSIC
+		case MUS_MID:
+#ifdef USE_NATIVE_MIDI
+			if ( native_midi_ok ) {
+				native_midi_stop();
+			}
+#endif
+			break;
+#endif
 		default:
 			/* TODO: Implement this for other music backends */
 			break;
@@ -802,8 +869,15 @@ int Mix_PlayingMusic(void)
 #endif
 #ifdef MID_MUSIC
 			case MUS_MID:
-				if ( ! Timidity_Active() ) {
-					return(0);
+#ifdef USE_NATIVE_MIDI
+				if ( native_midi_ok ) {
+					if ( ! native_midi_active() )
+						return(0);
+				} else
+#endif
+				if ( timidity_ok ) {
+					if ( ! Timidity_Active() )
+						return(0);
 				}
 				break;
 #endif
@@ -816,7 +890,7 @@ int Mix_PlayingMusic(void)
 #endif
 #ifdef MP3_MUSIC
 			case MUS_MP3:
-				if(SMPEG_status(music_playing->data.mp3)!=SMPEG_PLAYING)
+				if ( SMPEG_status(music_playing->data.mp3) != SMPEG_PLAYING )
 					return(0);
 				break;
 #endif
