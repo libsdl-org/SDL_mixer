@@ -94,9 +94,9 @@ static void *music_data = NULL;
 /* rcg06192001 get linked library's version. */
 const SDL_version *Mix_Linked_Version(void)
 {
-	static SDL_version linked_mixver;
-	MIX_VERSION(&linked_mixver);
-	return(&linked_mixver);
+	static SDL_version linked_version;
+	MIX_VERSION(&linked_version);
+	return(&linked_version);
 }
 
 static int _Mix_remove_all_effects(int channel, effect_info **e);
