@@ -185,14 +185,8 @@ typedef double FLOAT_T;
 #define LITTLE_ENDIAN
 #endif
 
-/* DEC MMS has 64 bit long words */
-#ifdef DEC
 typedef unsigned int uint32;
 typedef int int32; 
-#else
-typedef unsigned long uint32;
-typedef long int32; 
-#endif
 typedef unsigned short uint16;
 typedef short int16;
 typedef unsigned char uint8;
