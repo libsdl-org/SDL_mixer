@@ -1,3 +1,8 @@
+1.2.7:
+Sam Lantinga - Tue Dec 21 09:51:29 PST 2004
+ * Fixed building mikmod support on UNIX
+ * Always build SDL_RWops music support
+
 1.2.6:
 Jonathan Atkins - Wed, 15 Sep 2004 23:26:42 -0500
  * Added support for using the system version of libmikmod
