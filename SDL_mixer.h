@@ -144,7 +144,7 @@ extern DECLSPEC void SDLCALL Mix_FreeMusic(Mix_Music *music);
 /* Find out the music format of a mixer music, or the currently playing
    music, if 'music' is NULL.
 */
-extern DECLSPEC Mix_MusicType Mix_GetMusicType(const Mix_Music *music);
+extern DECLSPEC Mix_MusicType SDLCALL Mix_GetMusicType(const Mix_Music *music);
 
 /* Set a function that is called after all mixing is performed.
    This can be used to provide real-time visual display of the audio stream

@@ -126,12 +126,14 @@ FILE *open_file(char *name, int decompress, int noise_mode)
   if ((fp=try_to_open(current_filename, decompress, noise_mode)))
     return fp;
 
+#ifdef ENOENT
   if (noise_mode && (errno != ENOENT))
     {
       ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "%s: %s", 
 	   current_filename, strerror(errno));
       return 0;
     }
+#endif
   
   if (name[0] != PATH_SEP)
     while (plp)  /* Try along the path then */
@@ -148,12 +150,14 @@ FILE *open_file(char *name, int decompress, int noise_mode)
 	ctl->cmsg(CMSG_INFO, VERB_DEBUG, "Trying to open %s", current_filename);
 	if ((fp=try_to_open(current_filename, decompress, noise_mode)))
 	  return fp;
+#ifdef ENOENT
 	if (noise_mode && (errno != ENOENT))
 	  {
 	    ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "%s: %s", 
 		 current_filename, strerror(errno));
 	    return 0;
 	  }
+#endif
 	plp=plp->next;
       }
   
@@ -209,6 +213,7 @@ void *safe_malloc(size_t count)
 
   ctl->close();
   exit(10);
+  return(NULL);
 }
 
 /* This adds a directory to the path list */

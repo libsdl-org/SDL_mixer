@@ -1,5 +1,7 @@
 
 1.2.4:
+Sam Lantinga - Mon May 20 09:11:22 PDT 2002
+ * Updated the CodeWarrior project files
 Sam Lantinga - Sun May 19 13:46:29 PDT 2002
  * Added a function to query the music format: Mix_GetMusicType()
 Sam Lantinga - Sat May 18 12:45:16 PDT 2002

@@ -52,7 +52,7 @@ EXTRA_DIST =			\
 	VisualC.zip		\
 	PBProjects.tar.gz	\
 	MPWmake.sea.bin		\
-	CWprojects.sea.hqx	\
+	CWProjects.sea.bin	\
 	SDL_mixer.spec		\
 	SDL_mixer.spec.in	\
 	autogen.sh
