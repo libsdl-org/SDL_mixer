@@ -70,6 +70,9 @@ case "$target" in
             fi
         fi
         ;;
+    *-*-darwin*)
+        AC_DEFINE(MACOSX)
+        ;;
 esac
 
 dnl Check for SDL
@@ -138,6 +141,7 @@ if test x$enable_music_midi = xyes; then
                 ;;
             *-*-darwin*)
                 use_music_native_midi=yes
+                LIBS="$LIBS -framework QuickTime"
                 ;;
         esac
         if test x$use_music_native_midi = xyes; then

@@ -20,12 +20,16 @@
     max@quendi.de
 */
 
-#if defined(macintosh) || defined(__APPLE__)
+#if defined(macintosh) || defined(MACOSX)
 
 #include "native_midi.h"
 #include "native_midi_common.h"
 
+#ifdef MACOSX
+#include <QuickTime/QuickTimeMusic.h>
+#else
 #include <QuickTimeMusic.h>
+#endif
 
 #include <assert.h>
 #include <stdlib.h>

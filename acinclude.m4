@@ -58,6 +58,17 @@ dnl Now check if the installed SDL is sufficiently new. (Also sanity
 dnl checks the results of sdl-config to some extent
 dnl
       rm -f conf.sdltest
+      case "$target" in
+          *-*-darwin*)
+            cp -r `$SDL_CONFIG --nib` .
+            dnl create an Info.plist file, unless one exists
+            if test -f Info.plist ; then
+             :
+            else
+             cp `$SDL_CONFIG --plist` .
+            fi
+              ;;
+      esac
       AC_TRY_RUN([
 #include <stdio.h>
 #include <stdlib.h>
@@ -140,6 +151,11 @@ int main (int argc, char *argv[])
           AC_TRY_LINK([
 #include <stdio.h>
 #include "SDL.h"
+
+int main(int argc, char *argv[])
+{ return 0; }
+#undef  main
+#define main K_and_R_C_main
 ],      [ return 0; ],
         [ echo "*** The test program compiled, but did not run. This usually means"
           echo "*** that the run-time linker is not finding SDL or finding the wrong"
@@ -164,6 +180,12 @@ int main (int argc, char *argv[])
   fi
   AC_SUBST(SDL_CFLAGS)
   AC_SUBST(SDL_LIBS)
+      case "$target" in
+          *-*-darwin*)
+              SDL_APPLE_CREATOR="????"
+              AC_SUBST(SDL_APPLE_CREATOR)
+              ;;
+      esac
   rm -f conf.sdltest
 ])
 # Configure paths for SMPEG
