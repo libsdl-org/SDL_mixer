@@ -411,7 +411,7 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
 	/* Find out what kind of audio file this is */
 	magic = SDL_ReadLE32(src);
 	/* Seek backwards for compatibility with older loaders */
-	SDL_RWseek(src, -sizeof(Uint32), SEEK_CUR);
+	SDL_RWseek(src, -(int)sizeof(Uint32), SEEK_CUR);
 
 	switch (magic) {
 		case WAVE:
