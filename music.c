@@ -685,7 +685,7 @@ int Mix_SetMusicPosition(double position)
 		switch ( music_playing->type ) {
 #ifdef MOD_MUSIC
 		case MUS_MOD:
-			Player_SetPosition(position);
+			Player_SetPosition((UWORD)position);
 			return(0);
 			break;
 #endif
