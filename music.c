@@ -81,7 +81,6 @@ int volatile music_active = 1;
 static int volatile music_stopped = 0;
 static int music_loops = 0;
 static char *music_cmd = NULL;
-static int samplesize;
 static Mix_Music * volatile music_playing = NULL;
 static int music_volume = MIX_MAX_VOLUME;
 static int music_swap8;
@@ -130,6 +129,7 @@ struct _Mix_Music {
 #ifdef MID_MUSIC
 #ifdef USE_TIMIDITY_MIDI
 static int timidity_ok;
+static int samplesize;
 #endif
 #ifdef USE_NATIVE_MIDI
 static int native_midi_ok;
@@ -338,7 +338,7 @@ int open_music(SDL_AudioSpec *mixer)
 #endif
 #ifdef MID_MUSIC
 #ifdef USE_TIMIDITY_MIDI
-	samplesize = mixer->size/mixer->samples;
+	samplesize = mixer->size / mixer->samples;
 	if ( Timidity_Init(mixer->freq, mixer->format,
 	                    mixer->channels, mixer->samples) == 0 ) {
 		timidity_ok = 1;

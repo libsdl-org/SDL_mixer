@@ -26,8 +26,10 @@
 
 /* $Id$ */
 
+#include <stdlib.h>
 #include <string.h>
 
+#include "SDL_endian.h"
 #include "SDL_mixer.h"
 #include "load_aiff.h"
 
@@ -62,7 +64,7 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
 	int was_error;
 	int found_SSND;
 	int found_COMM;
-	long start;
+	long start = 0;
 
 	Uint32 chunk_type;
 	Uint32 chunk_length;
@@ -77,11 +79,11 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
 	Uint32 blocksize;
 
 	/* COMM format chunk */
-	Uint16 channels;
-	Uint32 numsamples;
-	Uint16 samplesize;
+	Uint16 channels = 0;
+	Uint32 numsamples = 0;
+	Uint16 samplesize = 0;
 	Uint8 sane_freq[10];
-	Uint32 frequency;
+	Uint32 frequency = 0;
 
 	/* Make sure we are passed a valid data source */
 	was_error = 0;

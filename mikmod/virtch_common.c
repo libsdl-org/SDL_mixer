@@ -105,22 +105,22 @@ static ULONG (*VC_VoiceRealVolume_ptr)(UBYTE);
 
 #ifdef __STDC__
 #define VC_PROC0(suffix) \
-void VC_##suffix##(void) { VC_##suffix##_ptr(); }
+void VC_##suffix (void) { VC_##suffix##_ptr(); }
 
 #define VC_FUNC0(suffix,ret) \
-ret VC_##suffix##(void) { return VC_##suffix##_ptr(); }
+ret VC_##suffix (void) { return VC_##suffix##_ptr(); }
 
 #define VC_PROC1(suffix,typ1) \
-void VC_##suffix##(typ1 a) { VC_##suffix##_ptr(a); }
+void VC_##suffix (typ1 a) { VC_##suffix##_ptr(a); }
 
 #define VC_FUNC1(suffix,ret,typ1) \
-ret VC_##suffix##(typ1 a) { return VC_##suffix##_ptr(a); }
+ret VC_##suffix (typ1 a) { return VC_##suffix##_ptr(a); }
 
 #define VC_PROC2(suffix,typ1,typ2) \
-void VC_##suffix##(typ1 a,typ2 b) { VC_##suffix##_ptr(a,b); }
+void VC_##suffix (typ1 a,typ2 b) { VC_##suffix##_ptr(a,b); }
 
 #define VC_FUNC2(suffix,ret,typ1,typ2) \
-ret VC_##suffix##(typ1 a,typ2 b) { return VC_##suffix##_ptr(a,b); }
+ret VC_##suffix (typ1 a,typ2 b) { return VC_##suffix##_ptr(a,b); }
 #else
 #define VC_PROC0(suffix) \
 void VC_/**/suffix/**/(void) { VC_/**/suffix/**/_ptr(); }
@@ -141,7 +141,7 @@ void VC_/**/suffix/**/(typ1 a,typ2 b) { VC_/**/suffix/**/_ptr(a,b); }
 ret VC_/**/suffix/**/(typ1 a,typ2 b) { return VC_/**/suffix/**/_ptr(a,b); }
 #endif
 
-VC_FUNC0(Init,BOOL)
+VC_FUNC0(Init,BOOL);
 VC_PROC0(Exit)
 VC_FUNC0(SetNumVoices,BOOL)
 VC_FUNC1(SampleSpace,ULONG,int)

@@ -105,8 +105,6 @@ const SDL_version *Mix_Linked_Version(void)
 /* rcg06122001 Cleanup effect callbacks. */
 static void Mix_ChannelDonePlaying(int channel)
 {
-	effect_info *i = NULL;
-
 	if (channel_done_callback) {
 	    channel_done_callback(channel);
 	}

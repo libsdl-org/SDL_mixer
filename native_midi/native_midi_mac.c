@@ -498,7 +498,7 @@ Uint32 *BuildTuneSequence(MIDIEvent *evntlist, int ppqn, int part_poly_max[32], 
 			   but for QTMA, we specify it as a 8.8 fixed point of semitones
 			   TODO: detect "pitch bend range changes" & honor them!
 			*/
-			bend = eventPos->data[0] & 0x7f | (eventPos->data[1] & 0x7f) << 7;
+			bend = (eventPos->data[0] & 0x7f) | ((eventPos->data[1] & 0x7f) << 7);
 			
 			/* "Center" the bend */
 			bend -= 0x2000;

@@ -761,7 +761,7 @@ static int compute_data(void *stream, int32 count)
 
 int Timidity_PlaySome(void *stream, int samples)
 {
-  int rc;
+  int rc = RC_NONE;
   int32 end_sample;
   
   if ( ! midi_playing ) {

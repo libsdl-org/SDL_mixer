@@ -90,14 +90,6 @@ CFLAGS="$CFLAGS -DUSE_RWOPS"
 
 dnl Check command-line options
 
-dnl rcg06052001 VOC file support by Ryan C. Gordon (icculus@linuxgames.com).
-AC_ARG_ENABLE(samples-voc,
-[  --enable-samples-voc    enable support for VOC samples [default=yes]],
-              , enable_samples_voc=yes)
-if test x$enable_samples_voc = xyes; then
-    CFLAGS="$CFLAGS -DVOC_SAMPLES"
-fi
-
 AC_ARG_ENABLE(music-cmd,
 [  --enable-music-cmd      support an external music player [default=yes]],
               , enable_music_cmd=yes)

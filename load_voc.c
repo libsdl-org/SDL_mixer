@@ -40,8 +40,6 @@
 #include "SDL_mixer.h"
 #include "load_voc.h"
 
-#ifdef VOC_SAMPLES
-
 /* Private data for VOC file */
 typedef struct vocstuff {
 	Uint32	rest;			/* bytes remaining in current block */
@@ -457,16 +455,5 @@ done:
 
     return(spec);
 } /* Mix_LoadVOC_RW */
-
-#else
-
-SDL_AudioSpec *Mix_LoadVOC_RW (SDL_RWops *src, int freesrc,
-        SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
-{
-    SDL_SetError("VOC file loading not supported");
-    return(NULL);
-}
-
-#endif /* VOC_SAMPLES */
 
 /* end of load_voc.c ... */

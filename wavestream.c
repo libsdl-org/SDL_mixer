@@ -446,11 +446,11 @@ static FILE *LoadAIFFStream (const char *file, SDL_AudioSpec *spec,
 	Uint32 offset;
 	Uint32 blocksize;
 	/* COMM format chunk */
-	Uint16 channels;
-	Uint32 numsamples;
-	Uint16 samplesize;
+	Uint16 channels = 0;
+	Uint32 numsamples = 0;
+	Uint16 samplesize = 0;
 	Uint8 sane_freq[10];
-	Uint32 frequency;
+	Uint32 frequency = 0;
 
 
 	/* Make sure we are passed a valid data source */
