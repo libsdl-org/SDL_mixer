@@ -434,7 +434,9 @@ extern DECLSPEC int Mix_ReserveChannels(int num);
 extern DECLSPEC int Mix_GroupChannel(int which, int tag);
 /* Assign several consecutive channels to a group */
 extern DECLSPEC int Mix_GroupChannels(int from, int to, int tag);
-/* Finds the first available channel in a group of channels */
+/* Finds the first available channel in a group of channels,
+   returning -1 if none are available.
+ */
 extern DECLSPEC int Mix_GroupAvailable(int tag);
 /* Returns the number of channels in a group. This is also a subtle
    way to get the total number of channels when 'tag' is -1
