@@ -104,7 +104,7 @@ static MIDIEvent *MIDITracktoStream(MIDITrack *track)
 {
 	Uint32 atime = 0;
 	Uint32 len = 0;
-	Uint8 event,type,a,b,c;
+	Uint8 event,type,a,b;
 	Uint8 laststatus = 0;
 	Uint8 lastchan = 0;
 	int currentPos = 0;
@@ -208,8 +208,7 @@ static MIDIEvent *MIDITracktoStream(MIDITrack *track)
 			}
 		}
 	}
-
-end:	
+	
 	currentEvent = head->next;
 	free(head);	/* release the dummy head event */
 	return currentEvent;
@@ -226,8 +225,7 @@ static MIDIEvent *MIDItoStream(MIDIFile *mididata)
 	MIDIEvent *head = CreateEvent(0,0,0,0);	/* dummy event to make handling the list easier */
 	MIDIEvent *currentEvent = head;
 	int trackID;
-	int time = 0;
-	
+
 	if (NULL == head)
 		return NULL;
 	
@@ -239,7 +237,7 @@ static MIDIEvent *MIDItoStream(MIDIFile *mididata)
 	/* TODO */
 	while(1)
 	{
-		int lowestTime = INT_MAX;
+		Uint32 lowestTime = INT_MAX;
 		int currentTrackID = -1;
 		
 		/* Find the next event */
