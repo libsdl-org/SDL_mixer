@@ -1,3 +1,7 @@
+current:
+Ryan C. Gordon - Fri Dec 27 10:14:07 EST 2002
+ * Patch from Steven Fuller to fix panning effect with 8-bit sounds.
+
 1.2.5:
 Ryan C. Gordon - Wed Oct 30 07:12:06 EST 2002
  * Small, looping music samples should now be able to fade out correctly.
