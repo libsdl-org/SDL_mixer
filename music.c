@@ -48,6 +48,9 @@
 #    define UNIMOD			MODULE
 #    define MikMod_Init()		MikMod_Init(NULL)
 #    define MikMod_LoadSong(a,b)	Player_Load(a,b,0)
+#    ifdef USE_RWOPS
+#      define MikMod_LoadSongRW(a,b)	Player_LoadRW(a,b,0)
+#    endif
 #    define MikMod_FreeSong		Player_Free
      extern int MikMod_errno;
 #  else                                        /* old MikMod 3.0.3 */
@@ -1115,3 +1118,50 @@ void close_music(void)
 #endif
 }
 
+#ifdef USE_RWOPS
+
+Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw) {
+	/*Uint8     magic[5]; Apparently there is no way to check if the file is really a MOD,*/
+      /*		    or there are too many formats supported by MikMod or MikMod does */
+      /*		    this check by itself. If someone implements other formats (e.g. MP3) */
+      /*		    the check can be uncommented */
+	Mix_Music *music;
+
+      /* Just skip the check */
+	/* Figure out what kind of file this is */
+	/*if (SDL_RWread(rw,magic,1,4)!=4) {
+		Mix_SetError("Couldn't read from RWops");
+		return NULL;
+	}
+	magic[4]='\0';*/
+
+	/* Allocate memory for the music structure */
+	music=(Mix_Music *)malloc(sizeof(Mix_Music));
+	if (music==NULL ) {
+		Mix_SetError("Out of memory");
+		return(NULL);
+	}
+	music->error = 0;
+
+#ifdef MOD_MUSIC
+	if (1) {
+		music->type=MUS_MOD;
+		music->data.module=MikMod_LoadSongRW(rw,64);
+		if (music->data.module==NULL) {
+			Mix_SetError("%s",MikMod_strerror(MikMod_errno));
+			music->error=1;
+		}
+	} else
+#endif
+	{
+		Mix_SetError("Unrecognized music format");
+		music->error=1;
+	}
+	if (music->error) {
+		free(music);
+		music=NULL;
+	}
+	return(music);
+}
+
+#endif /* USE_RWOPS */

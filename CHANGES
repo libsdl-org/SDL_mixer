@@ -1,4 +1,6 @@
 1.2.6:
+Andre Leiradella - Fri, 30 May 2003 16:12:03 -0300
+ * Added SDL_RWops support for reading MOD files
 Kyle Davenport - Sat, 19 Apr 2003 17:13:31 -0500
  * Added .la files to the development RPM, fixing RPM build on RedHat 8
 
