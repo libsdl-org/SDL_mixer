@@ -485,7 +485,7 @@ static void kill_others(int i)
 
 static void clone_voice(Instrument *ip, int v, MidiEvent *e, int clone_type, int variationbank)
 {
-  int w, k, played_note, chorus=0, reverb=0, milli;
+  int w, played_note, chorus=0, reverb=0, milli;
   int chan = voice[v].channel;
 
   if (clone_type == STEREO_CLONE) {
@@ -1450,7 +1450,7 @@ static void do_compute_data(uint32 count)
 	{
 	  if (!voice[i].sample_offset && voice[i].echo_delay_count)
 	    {
-		if (voice[i].echo_delay_count >= count) voice[i].echo_delay_count -= count;
+		if ((uint32)voice[i].echo_delay_count >= count) voice[i].echo_delay_count -= count;
 		else
 		  {
 	            mix_voice(buffer_pointer+voice[i].echo_delay_count, i, count-voice[i].echo_delay_count);

@@ -1179,10 +1179,10 @@ static Mix_EffectFunc_t get_position_effect_func(Uint16 format, int channels)
                                                  		_Eff_position_u8;
 	    		break;
 	    	    case 4:
-                        _Eff_position_u8_c4;
+                        f = _Eff_position_u8_c4;
 	    		break;
 	    	    case 6:
-                        _Eff_position_u8_c6;
+                        f = _Eff_position_u8_c6;
 	    		break;
 	    }
             break;
@@ -1195,10 +1195,10 @@ static Mix_EffectFunc_t get_position_effect_func(Uint16 format, int channels)
                                                  		_Eff_position_s8;
 	    		break;
 	    	    case 4:
-                        _Eff_position_s8_c4;
+                    f = _Eff_position_s8_c4;
 	    		break;
 	    	    case 6:
-                        _Eff_position_s8_c6;
+                    f = _Eff_position_s8_c6;
 	    		break;
 	    }
             break;

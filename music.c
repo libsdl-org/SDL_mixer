@@ -44,9 +44,6 @@
 #undef CMD_MUSIC
 #endif
 
-inline static void noop(const char *a, ...) {}
-#define debug noop
-
 #ifdef CMD_MUSIC
 #include "music_cmd.h"
 #endif
@@ -1245,29 +1242,23 @@ BOOL LMM_Seek(struct MREADER *mr,long to,int dir)
 {
 	int at;
 	LMM_MREADER* lmmmr=(LMM_MREADER*)mr;
-	debug("LMM_Seek(%p, %ld, %d) = ",mr,to,dir);
 	if(dir==SEEK_SET)
 		to+=lmmmr->offset;
 	at=SDL_RWseek(lmmmr->rw, to, dir);
-	debug("%d (%d)\n",at-lmmmr->offset, at<lmmmr->offset);
 	return at<lmmmr->offset;
 }
 long LMM_Tell(struct MREADER *mr)
 {
 	int at;
 	LMM_MREADER* lmmmr=(LMM_MREADER*)mr;
-	debug("LMM_Tell(%p) = ",mr);
 	at=SDL_RWtell(lmmmr->rw)-lmmmr->offset;
-	debug("%d\n",at);
 	return at;
 }
 BOOL LMM_Read(struct MREADER *mr,void *buf,size_t sz)
 {
 	int got;
 	LMM_MREADER* lmmmr=(LMM_MREADER*)mr;
-	debug("LMM_Read(%p,%p,%lu) = ",mr,buf,sz);
 	got=SDL_RWread(lmmmr->rw, buf, sz, 1);
-	debug("%d\n",got);
 	return got;
 }
 int LMM_Get(struct MREADER *mr)
@@ -1275,19 +1266,15 @@ int LMM_Get(struct MREADER *mr)
 	unsigned char c;
 	int i=EOF;
 	LMM_MREADER* lmmmr=(LMM_MREADER*)mr;
-	debug("LMM_Get(%p) = ",mr);
 	if(SDL_RWread(lmmmr->rw,&c,1,1))
 		i=c;
-	debug("%d\n",i);
 	return i;
 }
 BOOL LMM_Eof(struct MREADER *mr)
 {
 	int offset;
 	LMM_MREADER* lmmmr=(LMM_MREADER*)mr;
-	debug("LMM_Eof(%p) = ",mr);
 	offset=LMM_Tell(mr);
-	debug("%d\n", offset>=lmmmr->eof);
 	return offset>=lmmmr->eof;
 }
 MODULE *MikMod_LoadSongRW(SDL_RWops *rw, int maxchan)
@@ -1308,7 +1295,6 @@ MODULE *MikMod_LoadSongRW(SDL_RWops *rw, int maxchan)
 	lmmmr.eof=SDL_RWtell(rw);
 	SDL_RWseek(rw,lmmmr.offset,SEEK_SET);
 	m=Player_LoadGeneric((MREADER*)&lmmmr,maxchan,0);
-	debug("MikMod_LoadSongRW(%p,%d) = %p\n",rw,maxchan,m);
 	return m;
 }
 # endif
