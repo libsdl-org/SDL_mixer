@@ -619,6 +619,7 @@ int Mix_PlayChannelTimed(int which, Mix_Chunk *chunk, int loops, int ticks)
 
 	/* Don't play null pointers :-) */
 	if ( chunk == NULL ) {
+		Mix_SetError("Tried to play a NULL chunk");
 		return(-1);
 	}
 
@@ -632,6 +633,7 @@ int Mix_PlayChannelTimed(int which, Mix_Chunk *chunk, int loops, int ticks)
 					break;
 			}
 			if ( i == num_channels ) {
+				Mix_SetError("No free channels available");
 				which = -1;
 			} else {
 				which = i;
