@@ -127,6 +127,12 @@
 /* This is enforced by some computations that must fit in an int */
 #define MAX_CONTROL_RATIO 255
 
+#if MACOSX
+#undef LITTLE_ENDIAN
+#undef BIG_ENDIAN
+#define BIG_ENDIAN 1
+#endif
+
 /* Byte order, defined in <machine/endian.h> for FreeBSD and DEC OSF/1 */
 #ifdef DEC
 #include <machine/endian.h>
