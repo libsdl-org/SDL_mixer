@@ -37,11 +37,11 @@
 /*
  * rcg06132001 various mixer tests. Define the ones you want.
  */
-#define TEST_MIX_VERSIONS
-#define TEST_MIX_CHANNELFINISHED
+/*#define TEST_MIX_VERSIONS*/
+/*#define TEST_MIX_CHANNELFINISHED*/
 /*#define TEST_MIX_PANNING*/
 /*#define TEST_MIX_DISTANCE*/
-#define TEST_MIX_POSITION
+/*#define TEST_MIX_POSITION*/
 
 
 #if (defined TEST_MIX_POSITION)
