@@ -91,6 +91,16 @@ typedef enum {
 	MIX_FADING_IN
 } Mix_Fading;
 
+typedef enum {
+	MUS_NONE,
+	MUS_CMD,
+	MUS_WAV,
+	MUS_MOD,
+	MUS_MID,
+	MUS_OGG,
+	MUS_MP3
+} Mix_MusicType;
+
 /* The internal format for a music chunk interpreted via mikmod */
 typedef struct _Mix_Music Mix_Music;
 
@@ -130,6 +140,11 @@ extern DECLSPEC Mix_Chunk * SDLCALL Mix_QuickLoad_RAW(Uint8 *mem, Uint32 len);
 /* Free an audio chunk previously loaded */
 extern DECLSPEC void SDLCALL Mix_FreeChunk(Mix_Chunk *chunk);
 extern DECLSPEC void SDLCALL Mix_FreeMusic(Mix_Music *music);
+
+/* Find out the music format of a mixer music, or the currently playing
+   music, if 'music' is NULL.
+*/
+extern DECLSPEC Mix_MusicType Mix_GetMusicType(const Mix_Music *music);
 
 /* Set a function that is called after all mixing is performed.
    This can be used to provide real-time visual display of the audio stream

@@ -1,6 +1,8 @@
 
 1.2.4:
-Sam Lantinga Sat May 18 12:45:16 PDT 2002
+Sam Lantinga - Sun May 19 13:46:29 PDT 2002
+ * Added a function to query the music format: Mix_GetMusicType()
+Sam Lantinga - Sat May 18 12:45:16 PDT 2002
  * Added a function to load audio data from memory: Mix_QuickLoad_RAW()
 Sam Lantinga - Thu May 16 11:26:46 PDT 2002
  * Cleaned up threading issues in the music playback code

@@ -87,14 +87,7 @@ static int music_swap8;
 static int music_swap16;
 
 struct _Mix_Music {
-	enum {
-		MUS_CMD,
-		MUS_WAV,
-		MUS_MOD,
-		MUS_MID,
-		MUS_OGG,
-		MUS_MP3
-	} type;
+	Mix_MusicType type;
 	union {
 #ifdef CMD_MUSIC
 		MusicCMD *cmd;
@@ -587,6 +580,25 @@ void Mix_FreeMusic(Mix_Music *music)
 		}
 		free(music);
 	}
+}
+
+/* Find out the music format of a mixer music, or the currently playing
+   music, if 'music' is NULL.
+*/
+Mix_MusicType Mix_GetMusicType(const Mix_Music *music)
+{
+	Mix_MusicType type = MUS_NONE;
+
+	if ( music ) {
+		type = music->type;
+	} else {
+		SDL_LockAudio();
+		if ( music_playing ) {
+			type = music_playing->type;
+		}
+		SDL_UnlockAudio();
+	}
+	return(type);
 }
 
 /* Play a music chunk.  Returns 0, or -1 if there was an error.
