@@ -4,6 +4,7 @@ Martin_Storsjö -  Sun, 22 Aug 2004 02:21:14 +0300 (EEST)
 Greg Lee - Wed, 14 Jul 2004 05:13:14 -1000
  * Added 4 and 6 channel surround sound output support
  * Added support for RMID format MIDI files
+ * Improved timidity support (reverb, chorus, Roland & Yamaha sysex dumps, etc.)
 Sam Lantinga - Wed Nov 19 00:23:44 PST 2003
  * Updated libtool support for new mingw32 DLL build process
 Ryan C. Gordon - Sun Nov  9 23:34:47 EST 2003
