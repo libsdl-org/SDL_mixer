@@ -99,19 +99,18 @@ AC_ARG_ENABLE(music-wave,
 if test x$enable_music_wave = xyes; then
     CFLAGS="$CFLAGS -DWAV_MUSIC"
 fi
-no_libmikmod=no
+no_libmikmod=yes
 libmikmod_maj=3
 libmikmod_min=1
 libmikmod_rev=10
 libmikmod_ver="$libmikmod_maj.$libmikmod_min.$libmikmod_rev"
 AC_ARG_ENABLE(music-libmikmod,
-[  --enable-music-libmikmod  enable MOD music via externl libmikmod [default=yes]],
-              , enable_music_libmikmod=yes)
+[  --enable-music-libmikmod  enable MOD music via external libmikmod [default=no]],
+              , enable_music_libmikmod=no)
 if test x$enable_music_libmikmod = xyes; then
 	AC_PATH_PROG(LIBMIKMOD_CONFIG, libmikmod-config, no, [$PATH])
-	if test "$LIBMIKMOD_CONFIG" = "no" ; then
-		no_libmikmod=yes
-	else
+	if test "$LIBMIKMOD_CONFIG" != "no" ; then
+		no_libmikmod=no
 		CFLAGS_SAVED="$CFLAGS"
 		LIBS_SAVED="$LIBS"
 		CFLAGS="$CFLAGS -DLIBMIKMOD_MUSIC `$LIBMIKMOD_CONFIG --cflags`"
@@ -132,7 +131,7 @@ int main(int argc, char **argv)
 	printf("no\n*** libmikmod is older than %d.%d.%d, not using.\n",maj,min,rev);
 	return 1;
 }
-],, no_libmikmod=yes;CFLAGS="$CFLAGS_SAVED";LIBS="$LIBS_SAVED",
+],,CFLAGS="$CFLAGS_SAVED";LIBS="$LIBS_SAVED",
 [echo $ac_n "cross compiling; assumed OK... $ac_c"])
 	fi
 fi

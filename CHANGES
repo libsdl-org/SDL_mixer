@@ -1,4 +1,6 @@
 1.2.7:
+Sam Lantinga - Wed Dec 22 17:14:32 PST 2004
+ * Disabled support for the system version of libmikmod by default
 Sam Lantinga - Tue Dec 21 09:51:29 PST 2004
  * Fixed building mikmod support on UNIX
  * Always build SDL_RWops music support

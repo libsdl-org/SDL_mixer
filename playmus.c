@@ -187,7 +187,7 @@ int main(int argc, char *argv[])
 		/* Load the requested music file */
 		if ( rwops ) {
 			rwfp = SDL_RWFromFile(argv[i], "rb");
-			music = Mix_LoadMUS(argv[i]);
+			music = Mix_LoadMUS_RW(rwfp);
 		} else {
 			music = Mix_LoadMUS(argv[i]);
 		}
