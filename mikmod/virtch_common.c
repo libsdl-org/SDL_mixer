@@ -374,6 +374,12 @@ SWORD VC1_SampleLoad(struct SAMPLOAD* sload,int type)
 	length    = s->length;
 	loopstart = s->loopstart;
 	loopend   = s->loopend;
+        
+        /* Fix loops */
+        if (((loopend-loopstart)>2) && (loopstart > loopend) && (loopstart>length))
+        {
+            loopstart /= 2;
+        }
 
 	SL_SampleSigned(sload);
 	SL_Sample8to16(sload);
