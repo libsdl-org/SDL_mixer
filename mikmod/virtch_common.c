@@ -347,7 +347,7 @@ void VC1_VoiceSetPanning(UBYTE voice,ULONG pan)
 
 void VC1_SampleUnload(SWORD handle)
 {
-	if (handle<MAXSAMPLEHANDLES) {
+	if (Samples && handle<MAXSAMPLEHANDLES) {
 		if (Samples[handle])
 			free(Samples[handle]);
 		Samples[handle]=NULL;
