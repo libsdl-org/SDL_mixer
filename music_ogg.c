@@ -27,6 +27,7 @@
 /* This file supports Ogg Vorbis music streams */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "SDL_mixer.h"
