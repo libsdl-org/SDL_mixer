@@ -1,3 +1,7 @@
+current:
+Ryan C. Gordon - Wed Oct 16 17:10:08 EDT 2002
+ * Pete Shinners sent in a patch to correctly report an error when using an
+    unknown filetype.
 
 1.2.5:
 Vaclav Slavik - Sun Sep  8 18:57:38 PDT 2002
