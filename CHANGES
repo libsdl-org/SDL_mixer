@@ -1,4 +1,6 @@
 1.2.6:
+Laurent Ganter - Mon, 6 Oct 2003 11:51:33 +0200
+ * Fixed bug with MIDI volume in native Windows playback
 Andre Leiradella - Fri, 30 May 2003 16:12:03 -0300
  * Added SDL_RWops support for reading MOD files
 Kyle Davenport - Sat, 19 Apr 2003 17:13:31 -0500

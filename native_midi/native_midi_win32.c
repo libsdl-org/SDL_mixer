@@ -273,16 +273,14 @@ int native_midi_active()
 
 void native_midi_setvolume(int volume)
 {
-  int calcVolume = volume << 1;
-  if(calcVolume > 255)
-  {
-    calcVolume = 255;
-  }
-  else if (calcVolume < 0)
-  {
-    calcVolume = 0;
-  }
-  midiOutSetVolume((HMIDIOUT)hMidiStream, MAKEWORD(calcVolume , calcVolume));
+  int calcVolume;
+  if (volume > 128)
+    volume = 128;
+  if (volume < 0)
+    volume = 0;
+  calcVolume = (65535 * volume / 128);
+
+  midiOutSetVolume((HMIDIOUT)hMidiStream, MAKELONG(calcVolume , calcVolume));
 }
 
 char *native_midi_error()
