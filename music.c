@@ -308,7 +308,6 @@ int open_music(SDL_AudioSpec *mixer)
 		}
 		md_mode |= DMODE_STEREO;
 	}
-	samplesize	 = mixer->size/mixer->samples;
 	md_mixfreq	 = mixer->freq;
 	md_device	  = 0;
 	md_volume	  = 96;
@@ -325,21 +324,18 @@ int open_music(SDL_AudioSpec *mixer)
 #endif
 #ifdef MID_MUSIC
 	samplesize = mixer->size/mixer->samples;
-#ifdef USE_NATIVE_MIDI
-	if ( native_midi_init() ) {
-		native_midi_ok = 1;
+	if ( Timidity_Init(mixer->freq, mixer->format,
+	                    mixer->channels, mixer->samples) != 0 ) {
+		timidity_ok = 1;
 	} else {
-		native_midi_ok = 0;
-	}
-	timidity_ok = !native_midi_ok;
-#else
-	timidity_ok = 1;
-#endif
-	if ( timidity_ok &&
-	     (Timidity_Init(mixer->freq, mixer->format,
-	                    mixer->channels, mixer->samples) != 0) ) {
 		timidity_ok = 0;
 	}
+#ifdef USE_NATIVE_MIDI
+	native_midi_ok = !timidity_ok;
+	if ( native_midi_ok ) {
+		native_midi_ok = native_midi_init();
+	}
+#endif
 #endif
 #ifdef OGG_MUSIC
 	if ( OGG_init(mixer) < 0 ) {
