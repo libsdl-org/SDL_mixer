@@ -30,6 +30,7 @@
 
 #include "SDL.h"
 #include "SDL_mixer.h"
+#include "SDL_endian.h"
 
 #define __MIX_INTERNAL_EFFECT__
 #include "effects_internal.h"
@@ -142,7 +143,7 @@ static void _Eff_position_table_u8(int chan, void *stream, int len, void *udata)
     p = (Uint32 *) ptr;
 
     for (i = 0; i < len; i += sizeof (Uint32)) {
-#if (SDL_BYTE_ORDER == SDL_BIG_ENDIAN)
+#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
         *(p++) = (d[l[(*p & 0xFF000000) >> 24]] << 24) |
                  (d[r[(*p & 0x00FF0000) >> 16]] << 16) |
                  (d[l[(*p & 0x0000FF00) >>  8]] <<  8) |
@@ -209,7 +210,7 @@ static void _Eff_position_table_s8(int chan, void *stream, int len, void *udata)
     p = (Uint32 *) ptr;
 
     for (i = 0; i < len; i += sizeof (Uint32)) {
-#if (SDL_BYTE_ORDER == SDL_BIG_ENDIAN)
+#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
         *(p++) = (d[l[((Sint16)(Sint8)((*p & 0xFF000000) >> 24))+128]] << 24) |
                  (d[r[((Sint16)(Sint8)((*p & 0x00FF0000) >> 16))+128]] << 16) |
                  (d[l[((Sint16)(Sint8)((*p & 0x0000FF00) >>  8))+128]] <<  8) |
@@ -235,10 +236,10 @@ static void _Eff_position_u16lsb(int chan, void *stream, int len, void *udata)
     int i;
 
     for (i = 0; i < len; i += sizeof (Uint16) * 2) {
-#if (SDL_BYTE_ORDER == SDL_BIG_ENDIAN)
+#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
         Uint16 swapl = (Uint16) ((((float) SDL_Swap16(*(ptr))) *
                                     args->left_f) * args->distance_f);
-        Uint16 swapr = (Uint16) (((float) SDL_Swap16(*(ptr+1))) *
+        Uint16 swapr = (Uint16) ((((float) SDL_Swap16(*(ptr+1))) *
                                     args->right_f) * args->distance_f);
         *(ptr++) = (Uint16) SDL_Swap16(swapl);
         *(ptr++) = (Uint16) SDL_Swap16(swapr);
@@ -257,10 +258,10 @@ static void _Eff_position_s16lsb(int chan, void *stream, int len, void *udata)
     int i;
 
     for (i = 0; i < len; i += sizeof (Sint16) * 2) {
-#if (SDL_BYTE_ORDER == SDL_BIG_ENDIAN)
+#if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
         Sint16 swapl = (Sint16) ((((float) SDL_Swap16(*(ptr))) *
                                     args->left_f) * args->distance_f);
-        Sint16 swapr = (Sint16) (((float) SDL_Swap16(*(ptr+1))) *
+        Sint16 swapr = (Sint16) ((((float) SDL_Swap16(*(ptr+1))) *
                                     args->right_f) * args->distance_f);
         *(ptr++) = (Sint16) SDL_Swap16(swapl);
         *(ptr++) = (Sint16) SDL_Swap16(swapr);
@@ -279,10 +280,10 @@ static void _Eff_position_u16msb(int chan, void *stream, int len, void *udata)
     int i;
 
     for (i = 0; i < len; i += sizeof (Sint16) * 2) {
-#if (SDL_BYTE_ORDER == SDL_LIL_ENDIAN)
+#if (SDL_BYTEORDER == SDL_LIL_ENDIAN)
         Uint16 swapl = (Uint16) ((((float) SDL_Swap16(*(ptr))) *
                                     args->left_f) * args->distance_f);
-        Uint16 swapr = (Uint16) (((float) SDL_Swap16(*(ptr+1))) *
+        Uint16 swapr = (Uint16) ((((float) SDL_Swap16(*(ptr+1))) *
                                     args->right_f) * args->distance_f);
         *(ptr++) = (Uint16) SDL_Swap16(swapl);
         *(ptr++) = (Uint16) SDL_Swap16(swapr);
@@ -301,10 +302,10 @@ static void _Eff_position_s16msb(int chan, void *stream, int len, void *udata)
     int i;
 
     for (i = 0; i < len; i += sizeof (Sint16) * 2) {
-#if (SDL_BYTE_ORDER == SDL_LIL_ENDIAN)
+#if (SDL_BYTEORDER == SDL_LIL_ENDIAN)
         Sint16 swapl = (Sint16) ((((float) SDL_Swap16(*(ptr))) *
                                     args->left_f) * args->distance_f);
-        Sint16 swapr = (Sint16) (((float) SDL_Swap16(*(ptr+1))) *
+        Sint16 swapr = (Sint16) ((((float) SDL_Swap16(*(ptr+1))) *
                                     args->right_f) * args->distance_f);
         *(ptr++) = (Sint16) SDL_Swap16(swapl);
         *(ptr++) = (Sint16) SDL_Swap16(swapr);
