@@ -24,6 +24,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "SDL_endian.h"
 #include "SDL_audio.h"
 #include "SDL_timer.h"
@@ -375,10 +376,24 @@ int open_music(SDL_AudioSpec *mixer)
 	return(0);
 }
 
+/* Portable case-insensitive string compare function */
+int MIX_string_equals(const char *str1, const char *str2)
+{
+	while ( *str1 && *str2 ) {
+		if ( toupper((unsigned char)*str1) !=
+		     toupper((unsigned char)*str2) )
+			break;
+		++str1;
+		++str2;
+	}
+	return (!*str1 && !*str2);
+}
+
 /* Load a music file */
 Mix_Music *Mix_LoadMUS(const char *file)
 {
 	FILE *fp;
+	char *ext;
 	Uint8 magic[5];
 	Mix_Music *music;
 
@@ -393,6 +408,10 @@ Mix_Music *Mix_LoadMUS(const char *file)
 	}
 	magic[4] = '\0';
 	fclose(fp);
+
+	/* Figure out the file extension, so we can determine the type */
+	ext = strrchr(file, '.');
+	if ( ext ) ++ext; /* skip the dot in the extension */
 
 	/* Allocate memory for the music structure */
 	music = (Mix_Music *)malloc(sizeof(Mix_Music));
@@ -415,7 +434,8 @@ Mix_Music *Mix_LoadMUS(const char *file)
 	/* WAVE files have the magic four bytes "RIFF"
 	   AIFF files have the magic 12 bytes "FORM" XXXX "AIFF"
 	 */
-	if ( (strcmp((char *)magic, "RIFF") == 0) ||
+	if ( (ext && (MIX_string_equals(ext, "WAV") == 0)) ||
+	     (strcmp((char *)magic, "RIFF") == 0) ||
 	     (strcmp((char *)magic, "FORM") == 0) ) {
 		music->type = MUS_WAV;
 		music->data.wave = WAVStream_LoadSong(file, (char *)magic);
@@ -426,7 +446,9 @@ Mix_Music *Mix_LoadMUS(const char *file)
 #endif
 #ifdef MID_MUSIC
 	/* MIDI files have the magic four bytes "MThd" */
-	if ( strcmp(magic, "MThd") == 0 ) {
+	if ( (ext && (MIX_string_equals(ext, "MID") == 0)) ||
+	     (ext && (MIX_string_equals(ext, "MIDI") == 0)) ||
+	     strcmp(magic, "MThd") == 0 ) {
 		music->type = MUS_MID;
 #ifdef USE_NATIVE_MIDI
   		if ( native_midi_ok ) {
@@ -453,7 +475,8 @@ Mix_Music *Mix_LoadMUS(const char *file)
 #endif
 #ifdef OGG_MUSIC
 	/* Ogg Vorbis files have the magic four bytes "OggS" */
-	if ( strcmp(magic, "OggS") == 0 ) {
+	if ( (ext && (MIX_string_equals(ext, "OGG") == 0)) ||
+	     strcmp(magic, "OggS") == 0 ) {
 		music->type = MUS_OGG;
 		music->data.ogg = OGG_new(file);
 		if ( music->data.ogg == NULL ) {
@@ -462,7 +485,9 @@ Mix_Music *Mix_LoadMUS(const char *file)
 	} else
 #endif
 #ifdef MP3_MUSIC
-	if ( magic[0]==0xFF && (magic[1]&0xF0)==0xF0) {
+	if ( (ext && (MIX_string_equals(ext, "MPG") == 0)) ||
+	     (ext && (MIX_string_equals(ext, "MPEG") == 0)) ||
+	     magic[0]==0xFF && (magic[1]&0xF0)==0xF0) {
 		SMPEG_Info info;
 		music->type = MUS_MP3;
 		music->data.mp3 = SMPEG_new(file, &info, 0);
