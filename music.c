@@ -325,7 +325,7 @@ int open_music(SDL_AudioSpec *mixer)
 #ifdef MID_MUSIC
 	samplesize = mixer->size/mixer->samples;
 	if ( Timidity_Init(mixer->freq, mixer->format,
-	                    mixer->channels, mixer->samples) != 0 ) {
+	                    mixer->channels, mixer->samples) == 0 ) {
 		timidity_ok = 1;
 	} else {
 		timidity_ok = 0;
