@@ -500,6 +500,33 @@ Mix_Chunk *Mix_QuickLoad_WAV(Uint8 *mem)
 	return(chunk);
 }
 
+/* Load raw audio data of the mixer format from a memory buffer */
+Mix_Chunk *Mix_QuickLoad_RAW(Uint8 *mem, Uint32 len)
+{
+	Mix_Chunk *chunk;
+
+	/* Make sure audio has been opened */
+	if ( ! audio_opened ) {
+		SDL_SetError("Audio device hasn't been opened");
+		return(NULL);
+	}
+
+	/* Allocate the chunk memory */
+	chunk = (Mix_Chunk *)malloc(sizeof(Mix_Chunk));
+	if ( chunk == NULL ) {
+		SDL_SetError("Out of memory");
+		return(NULL);
+	}
+
+	/* Essentially just point at the audio data (no error checking - fast) */
+	chunk->allocated = 0;
+	chunk->alen = len;
+	chunk->abuf = mem;
+	chunk->volume = MIX_MAX_VOLUME;
+
+	return(chunk);
+}
+
 /* Free an audio chunk previously loaded */
 void Mix_FreeChunk(Mix_Chunk *chunk)
 {
