@@ -14,6 +14,8 @@ libSDL_mixer_la_SOURCES =	\
 	load_aiff.h		\
 	load_voc.c		\
 	load_voc.h		\
+	load_ogg.c		\
+	load_ogg.h		\
 	mixer.c			\
 	music.c			\
 	music_cmd.c		\

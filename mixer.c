@@ -33,11 +33,13 @@
 #include "SDL_mixer.h"
 #include "load_aiff.h"
 #include "load_voc.h"
+#include "load_ogg.h"
 
 /* Magic numbers for various audio file formats */
 #define RIFF		0x46464952		/* "RIFF" */
 #define WAVE		0x45564157		/* "WAVE" */
 #define FORM		0x4d524f46		/* "FORM" */
+#define OGGS		0x5367674f		/* "OggS" */
 
 static int audio_opened = 0;
 static SDL_AudioSpec mixer;
@@ -429,6 +431,12 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
 			loaded = Mix_LoadAIFF_RW(src, freesrc, &wavespec,
 					(Uint8 **)&chunk->abuf, &chunk->alen);
 			break;
+#ifdef OGG_MUSIC
+		case OGGS:
+			loaded = Mix_LoadOGG_RW(src, freesrc, &wavespec,
+					(Uint8 **)&chunk->abuf, &chunk->alen);
+			break;
+#endif
 		default:
 			loaded = Mix_LoadVOC_RW(src, freesrc, &wavespec,
 					(Uint8 **)&chunk->abuf, &chunk->alen);
