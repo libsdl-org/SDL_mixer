@@ -206,4 +206,5 @@ timidity/Makefile
 native_midi/Makefile
 native_midi_gpl/Makefile
 SDL_mixer.spec
+SDL_mixer.qpg
 ])
