@@ -1203,19 +1203,21 @@ void close_music(void)
 #ifdef USE_RWOPS
 
 Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw) {
-	/*Uint8     magic[5]; Apparently there is no way to check if the file is really a MOD,*/
-      /*		    or there are too many formats supported by MikMod or MikMod does */
-      /*		    this check by itself. If someone implements other formats (e.g. MP3) */
-      /*		    the check can be uncommented */
+	Uint8 magic[5];	  /*Apparently there is no way to check if the file is really a MOD,*/
+	/*		    or there are too many formats supported by MikMod or MikMod does */
+	/*		    this check by itself. If someone implements other formats (e.g. MP3) */
+	/*		    the check can be uncommented */
 	Mix_Music *music;
+	int start;
 
-      /* Just skip the check */
 	/* Figure out what kind of file this is */
-	/*if (SDL_RWread(rw,magic,1,4)!=4) {
+	start = SDL_RWtell(rw);
+	if (SDL_RWread(rw,magic,1,4)!=4) {
 		Mix_SetError("Couldn't read from RWops");
 		return NULL;
 	}
-	magic[4]='\0';*/
+	SDL_RWseek(rw, start, SEEK_SET);
+	magic[4]='\0';
 
 	/* Allocate memory for the music structure */
 	music=(Mix_Music *)malloc(sizeof(Mix_Music));
@@ -1225,6 +1227,16 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw) {
 	}
 	music->error = 0;
 
+#ifdef OGG_MUSIC
+	/* Ogg Vorbis files have the magic four bytes "OggS" */
+	if ( strcmp((char *)magic, "OggS") == 0 ) {
+		music->type = MUS_OGG;
+		music->data.ogg = OGG_new_RW(rw);
+		if ( music->data.ogg == NULL ) {
+			music->error = 1;
+		}
+	} else
+#endif
 #ifdef MOD_MUSIC
 	if (1) {
 		music->type=MUS_MOD;

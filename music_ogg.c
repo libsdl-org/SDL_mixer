@@ -83,6 +83,58 @@ OGG_music *OGG_new(const char *file)
 	return(music);
 }
 
+
+static size_t sdl_read_func(void *ptr, size_t size, size_t nmemb, void *datasource)
+{
+    return SDL_RWread((SDL_RWops*)datasource, ptr, size, nmemb);
+}
+
+static int sdl_seek_func(void *datasource, ogg_int64_t offset, int whence)
+{
+    return SDL_RWseek((SDL_RWops*)datasource, (int)offset, whence);
+}
+
+static int sdl_close_func(void *datasource)
+{
+    return SDL_RWclose((SDL_RWops*)datasource);
+}
+
+static long sdl_tell_func(void *datasource)
+{
+    return SDL_RWtell((SDL_RWops*)datasource);
+}
+
+/* Load an OGG stream from an SDL_RWops object */
+OGG_music *OGG_new_RW(SDL_RWops *rw)
+{
+	OGG_music *music;
+	ov_callbacks callbacks;
+
+	callbacks.read_func = sdl_read_func;
+	callbacks.seek_func = sdl_seek_func;
+	callbacks.close_func = sdl_close_func;
+	callbacks.tell_func = sdl_tell_func;
+
+	music = (OGG_music *)malloc(sizeof *music);
+	if ( music ) {
+		/* Initialize the music structure */
+		memset(music, 0, (sizeof *music));
+		OGG_stop(music);
+		OGG_setvolume(music, MIX_MAX_VOLUME);
+		music->section = -1;
+
+		if ( ov_open_callbacks(rw, &music->vf, NULL, 0, callbacks) < 0 ) {
+			SDL_SetError("Not an Ogg Vorbis audio stream");
+			free(music);
+			SDL_RWclose(rw);
+			return(NULL);
+		}
+	} else {
+		SDL_SetError("Out of memory");
+	}
+	return(music);
+}
+
 /* Start playback of a given OGG stream */
 void OGG_play(OGG_music *music)
 {

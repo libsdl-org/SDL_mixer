@@ -49,6 +49,9 @@ extern void OGG_setvolume(OGG_music *music, int volume);
 /* Load an OGG stream from the given file */
 extern OGG_music *OGG_new(const char *file);
 
+/* Load an OGG stream from an SDL_RWops object */
+extern OGG_music *OGG_new_RW(SDL_RWops *rw);
+
 /* Start playback of a given OGG stream */
 extern void OGG_play(OGG_music *music);
 
