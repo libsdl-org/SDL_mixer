@@ -406,7 +406,7 @@ Uint32 *BuildTuneSequence(MIDIEvent *evntlist, int ppqn, int part_poly_max[32], 
 					int duration = (int)((noteOffPos->time - eventPos->time)*tick);
 					
 					REST_IF_NECESSARY();
-					/* Now we need to check if we get along with a normal Note Even, or if we need an extended one... */
+					/* Now we need to check if we get along with a normal Note Event, or if we need an extended one... */
 					if (duration < 2048 && pitch>=32 && pitch<=95 && velocity>=0 && velocity<=127)
 					{
 						qtma_StuffNoteEvent(*tunePos, part, pitch, velocity, duration);
@@ -421,7 +421,7 @@ Uint32 *BuildTuneSequence(MIDIEvent *evntlist, int ppqn, int part_poly_max[32], 
 			}
 			break;
 		case MIDI_STATUS_AFTERTOUCH:
-			/* NYI */
+			/* NYI - use kControllerAfterTouch. But how are the parameters to be mapped? */
 			break;
 		case MIDI_STATUS_CONTROLLER:
 			controller = eventPos->data[0];
@@ -444,9 +444,9 @@ Uint32 *BuildTuneSequence(MIDIEvent *evntlist, int ppqn, int part_poly_max[32], 
 				}
 				break;
 			case kControllerPan:
-				if(channel_pan[channel] != ((value-64)<<8))
+				if(channel_pan[channel] != (value << 1) + 256)
 				{
-					channel_pan[channel] = (value-64)<<8;
+					channel_pan[channel] = (value << 1) + 256;
 					if(part>=0 && part<=31)
 					{
 						REST_IF_NECESSARY();
