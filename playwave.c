@@ -34,10 +34,223 @@
 #include "SDL_mixer.h"
 
 
+/*
+ * rcg06132001 various mixer tests. Define the ones you want.
+ */
+#define TEST_MIX_VERSIONS
+#define TEST_MIX_CHANNELFINISHED
+/*#define TEST_MIX_PANNING*/
+/*#define TEST_MIX_DISTANCE*/
+#define TEST_MIX_POSITION
+
+
+#if (defined TEST_MIX_POSITION)
+
+#if (defined TEST_MIX_PANNING)
+#error TEST_MIX_POSITION interferes with TEST_MIX_PANNING.
+#endif
+
+#if (defined TEST_MIX_DISTANCE)
+#error TEST_MIX_POSITION interferes with TEST_MIX_DISTANCE.
+#endif
+
+#endif
+
+
+/* rcg06192001 for debugging purposes. */
+static void output_test_warnings(void)
+{
+#if (defined TEST_MIX_CHANNELFINISHED)
+	fprintf(stderr, "Warning: TEST_MIX_CHANNELFINISHED is enabled in this binary...\n");
+#endif
+#if (defined TEST_MIX_PANNING)
+	fprintf(stderr, "Warning: TEST_MIX_PANNING is enabled in this binary...\n");
+#endif
+#if (defined TEST_MIX_VERSIONS)
+	fprintf(stderr, "Warning: TEST_MIX_VERSIONS is enabled in this binary...\n");
+#endif
+#if (defined TEST_MIX_DISTANCE)
+	fprintf(stderr, "Warning: TEST_MIX_DISTANCE is enabled in this binary...\n");
+#endif
+#if (defined TEST_MIX_POSITION)
+	fprintf(stderr, "Warning: TEST_MIX_POSITION is enabled in this binary...\n");
+#endif
+}
+
+
 static int audio_open = 0;
 static Mix_Chunk *wave = NULL;
 
-void CleanUp(void)
+
+/* rcg06192001 Check new Mixer version API. */
+#if (defined TEST_MIX_VERSIONS)
+static void output_versions(const char *libname, const SDL_version *compiled,
+							const SDL_version *linked)
+{
+	fprintf(stderr,
+			"This program was compiled against %s %d.%d.%d,\n"
+			" and is dynamically linked to %d.%d.%d.\n", libname,
+			compiled->major, compiled->minor, compiled->patch,
+			linked->major, linked->minor, linked->patch);
+}
+
+static void test_versions(void)
+{
+	SDL_version compiled;
+	const SDL_version *linked;
+
+	SDL_VERSION(&compiled);
+	linked = SDL_Linked_Version();
+	output_versions("SDL", &compiled, linked);
+
+	MIX_VERSION(&compiled);
+	linked = Mix_Linked_Version();
+	output_versions("SDL_mixer", &compiled, linked);
+}
+#endif
+
+
+#ifdef TEST_MIX_CHANNELFINISHED  /* rcg06072001 */
+static volatile int channel_is_done = 0;
+static void channel_complete_callback(int chan)
+{
+	Mix_Chunk *done_chunk = Mix_GetChunk(chan);
+	fprintf(stderr, "We were just alerted that Mixer channel #%d is done.\n", chan);
+	fprintf(stderr, "Channel's chunk pointer is (%p).\n", done_chunk);
+	fprintf(stderr, " Which %s correct.\n", (wave == done_chunk) ? "is" : "is NOT");
+	channel_is_done = 1;
+}
+#endif
+
+
+/* rcg06192001 abstract this out for testing purposes. */
+static int still_playing(void)
+{
+#ifdef TEST_MIX_CHANNELFINISHED
+	return(!channel_is_done);
+#else
+	return(Mix_Playing(0));
+#endif
+}
+
+
+#if (defined TEST_MIX_PANNING)
+static void do_panning_update(void)
+{
+	static Uint8 leftvol = 128;
+	static Uint8 rightvol = 128;
+	static Uint8 leftincr = -1;
+	static Uint8 rightincr = 1;
+	static int panningok = 1;
+	static Uint32 next_panning_update = 0;
+
+	if ((panningok) && (SDL_GetTicks() >= next_panning_update)) {
+		panningok = Mix_SetPanning(0, leftvol, rightvol);
+		if (!panningok) {
+			fprintf(stderr, "Mix_SetPanning(0, %d, %d) failed!\n",
+					(int) leftvol, (int) rightvol);
+			fprintf(stderr, "Reason: [%s].\n", Mix_GetError());
+		}
+
+		if ((leftvol == 255) || (leftvol == 0)) {
+			if (leftvol == 255)
+				printf("All the way in the left speaker.\n");
+				leftincr *= -1;
+		}
+
+		if ((rightvol == 255) || (rightvol == 0)) {
+			if (rightvol == 255)
+				printf("All the way in the right speaker.\n");
+			rightincr *= -1;
+		}
+
+		leftvol += leftincr;
+		rightvol += rightincr;
+		next_panning_update = SDL_GetTicks() + 10;
+	}
+}
+#endif
+
+
+#if (defined TEST_MIX_DISTANCE)
+static void do_distance_update(void)
+{
+	static Uint8 distance = 1;
+	static Uint8 distincr = 1;
+	static int distanceok = 1;
+	static Uint32 next_distance_update = 0;
+
+	if ((distanceok) && (SDL_GetTicks() >= next_distance_update)) {
+		distanceok = Mix_SetDistance(0, distance);
+		if (!distanceok) {
+			fprintf(stderr, "Mix_SetDistance(0, %d) failed!\n", (int) distance);
+			fprintf(stderr, "Reason: [%s].\n", Mix_GetError());
+		}
+
+		if (distance == 0) {
+			printf("Distance at nearest point.\n");
+			distincr *= -1;
+		}
+		else if (distance == 255) {
+			printf("Distance at furthest point.\n");
+			distincr *= -1;
+		}
+
+		distance += distincr;
+		next_distance_update = SDL_GetTicks() + 15;
+	}
+}
+#endif
+
+
+#if (defined TEST_MIX_POSITION)
+static void do_position_update(void)
+{
+	static Sint16 distance = 1;
+	static Sint8 distincr = 1;
+	static Uint16 angle = 0;
+	static Sint8 angleincr = 1;
+	static int positionok = 1;
+	static Uint32 next_position_update = 0;
+
+	if ((positionok) && (SDL_GetTicks() >= next_position_update)) {
+		positionok = Mix_SetPosition(0, angle, distance);
+		if (!positionok) {
+			fprintf(stderr, "Mix_SetPosition(0, %d, %d) failed!\n",
+					(int) angle, (int) distance);
+			fprintf(stderr, "Reason: [%s].\n", Mix_GetError());
+		}
+
+		if (angle == 0) {
+			printf("Due north; now rotating clockwise...\n");
+			angleincr = 1;
+		}
+
+		else if (angle == 360) {
+			printf("Due north; now rotating counter-clockwise...\n");
+			angleincr = -1;
+		}
+
+		distance += distincr;
+
+		if (distance < 0) {
+			distance = 0;
+			distincr = 3;
+			printf("Distance is very, very near. Stepping away by threes...\n");
+		} else if (distance > 255) {
+			distance = 255;
+			distincr = -3;
+			printf("Distance is very, very far. Stepping towards by threes...\n");
+		}
+
+		angle += angleincr;
+		next_position_update = SDL_GetTicks() + 30;
+	}
+}
+#endif
+
+
+static void CleanUp(void)
 {
 	if ( wave ) {
 		Mix_FreeChunk(wave);
@@ -50,33 +263,88 @@ void CleanUp(void)
 	SDL_Quit();
 }
 
-void Usage(char *argv0)
+
+static void Usage(char *argv0)
 {
-	fprintf(stderr, "Usage: %s [-8] [-r rate] [-l] [-m] <wavefile>\n", argv0);
+	fprintf(stderr, "Usage: %s [-8] [-r rate] [-f] [-F] [-l] [-m] <wavefile>\n", argv0);
 }
 
 
-/*#define TEST_MIX_CHANNELFINISHED*/
-#ifdef TEST_MIX_CHANNELFINISHED  /* rcg06072001 */
-static volatile int channel_is_done = 0;
-static void channel_complete_callback(int chan)
+/*
+ * rcg06182001 This is sick, but cool.
+ *
+ *  Actually, it's meant to be an example of how to manipulate a voice
+ *  without having to use the mixer effects API. This is more processing
+ *  up front, but no extra during the mixing process. Also, in a case like
+ *  this, when you need to touch the whole sample at once, it's the only
+ *  option you've got. And, with the effects API, you are altering a copy of
+ *  the original sample for each playback, and thus, your changes aren't
+ *  permanent; here, you've got a reversed sample, and that's that until
+ *  you either reverse it again, or reload it.
+ */
+static void flip_sample(Mix_Chunk *wave)
 {
-	Mix_Chunk *done_chunk = Mix_GetChunk(chan);
-	printf("We were just alerted that Mixer channel #%d is done.\n", chan);
-	printf("Channel's chunk pointer is (%p).\n", done_chunk);
-	printf(" Which %s correct.\n", (wave == done_chunk) ? "is" : "is NOT");
-	channel_is_done = 1;
+	Uint16 format;
+	int channels, i, incr;
+	Uint8 *start = wave->abuf;
+	Uint8 *end = wave->abuf + wave->alen;
+
+	Mix_QuerySpec(NULL, &format, &channels);
+	incr = (format & 0xFF) * channels;
+
+	end -= incr;
+
+	switch (incr) {
+		case 8:
+			for (i = wave->alen / 2; i >= 0; i -= 1) {
+				Uint8 tmp = *start;
+				*start = *end;
+				*end = tmp;
+				start++;
+				end--;
+			}
+			break;
+
+		case 16:
+			for (i = wave->alen / 2; i >= 0; i -= 2) {
+				Uint16 tmp = *start;
+				*((Uint16 *) start) = *((Uint16 *) end);
+				*((Uint16 *) end) = tmp;
+				start += 2;
+				end -= 2;
+			}
+			break;
+
+		case 32:
+			for (i = wave->alen / 2; i >= 0; i -= 4) {
+				Uint32 tmp = *start;
+				*((Uint32 *) start) = *((Uint32 *) end);
+				*((Uint32 *) end) = tmp;
+				start += 4;
+				end -= 4;
+			}
+			break;
+
+		default:
+			fprintf(stderr, "Unhandled format in sample flipping.\n");
+			return;
+	}
 }
-#endif
 
 
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	int audio_rate;
 	Uint16 audio_format;
 	int audio_channels;
 	int loops = 0;
 	int i;
+	int reverse_stereo = 0;
+	int reverse_sample = 0;
+
+	setbuf(stdout, NULL);    /* rcg06132001 for debugging purposes. */
+	setbuf(stderr, NULL);    /* rcg06192001 for debugging purposes, too. */
+	output_test_warnings();
 
 	/* Initialize variables */
 	audio_rate = MIX_DEFAULT_FREQUENCY;
@@ -97,6 +365,12 @@ main(int argc, char *argv[])
 		} else
 		if ( strcmp(argv[i], "-8") == 0 ) {
 			audio_format = AUDIO_U8;
+		} else
+		if ( strcmp(argv[i], "-f") == 0 ) { /* rcg06122001 flip stereo */
+			reverse_stereo = 1;
+		} else
+		if ( strcmp(argv[i], "-F") == 0 ) { /* rcg06172001 flip sample */
+			reverse_sample = 1;
 		} else {
 			Usage(argv[0]);
 			return(1);
@@ -133,6 +407,10 @@ main(int argc, char *argv[])
 	}
 	audio_open = 1;
 
+#if (defined TEST_MIX_VERSIONS)
+    test_versions();
+#endif
+
 	/* Load the requested wave file */
 	wave = Mix_LoadWAV(argv[i]);
 	if ( wave == NULL ) {
@@ -141,23 +419,44 @@ main(int argc, char *argv[])
 		return(2);
 	}
 
+	if (reverse_sample) {
+		flip_sample(wave);
+	}
+
 #ifdef TEST_MIX_CHANNELFINISHED  /* rcg06072001 */
-	setbuf(stdout, NULL);
 	Mix_ChannelFinished(channel_complete_callback);
 #endif
+
+	if ( (!Mix_SetReverseStereo(MIX_CHANNEL_POST, reverse_stereo)) &&
+		 (reverse_stereo) )
+	{
+		printf("Failed to set up reverse stereo effect!\n");
+		printf("Reason: [%s].\n", Mix_GetError());
+	}
 
 	/* Play and then exit */
 	Mix_PlayChannel(0, wave, loops);
 
-#ifdef TEST_MIX_CHANNELFINISHED  /* rcg06072001 */
-	while (!channel_is_done) {
-		SDL_Delay(100);
-	}
-#else
-	while ( Mix_Playing(0) ) {
-		SDL_Delay(100);
-	}
+	while (still_playing()) {
+
+#if (defined TEST_MIX_PANNING)  /* rcg06132001 */
+		do_panning_update();
 #endif
+
+#if (defined TEST_MIX_DISTANCE) /* rcg06192001 */
+		do_distance_update();
+#endif
+
+#if (defined TEST_MIX_POSITION) /* rcg06202001 */
+		do_position_update();
+#endif
+
+		SDL_Delay(1);
+
+	} /* while still_playing() loop... */
 
 	return(0);
 }
+
+/* end of playwave.c ... */
+

@@ -21,7 +21,11 @@ libSDL_mixer_la_SOURCES =	\
 	music_ogg.c		\
 	music_ogg.h		\
 	wavestream.c		\
-	wavestream.h
+	wavestream.h		\
+	effect_position.c	\
+	effect_stereoreverse.c	\
+	effects_internal.c	\
+	effects_internal.h
 
 if USE_MIKMOD
 MIKMOD_LIB = mikmod/libmikmod.la

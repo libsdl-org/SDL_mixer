@@ -1,5 +1,11 @@
 
 1.2.1:
+Ryan C. Gordon - Tue Sep 11 12:05:54 PDT 2001
+ * Reworked playwave.c to make it more useful as a mixer testbed
+ * Added a realtime sound effect API to SDL_mixer.h
+ * Added the following standard sound effects:
+	panning, distance attenuation, basic positional audio, stereo reversal
+ * Added API for mixer versioning: Mix_Linked_Version() and MIX_VERSION()
 Sam Lantinga - Tue Sep 11 11:48:53 PDT 2001
  * Updated MikMod code to version 3.1.9a
 Torbjörn Andersson - Tue Sep 11 11:22:29 PDT 2001
