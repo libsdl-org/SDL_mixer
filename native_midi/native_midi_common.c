@@ -30,8 +30,8 @@
 #include <limits.h>
 
 
-/* The maximum number of midi tracks that we can handle */
-#define MIDI_TRACKS 32
+/* The maximum number of midi tracks that we can handle 
+#define MIDI_TRACKS 32 */
 
 
 /* A single midi track as read from the midi file */
@@ -45,7 +45,8 @@ typedef struct
 typedef struct
 {
 	int division;					/* number of pulses per quarter note (ppqn) */
-	MIDITrack track[MIDI_TRACKS];
+    int nTracks;                    /* number of tracks */
+	MIDITrack *track;               /* tracks */
 } MIDIFile;
 
 
@@ -221,16 +222,20 @@ static MIDIEvent *MIDITracktoStream(MIDITrack *track)
  */
 static MIDIEvent *MIDItoStream(MIDIFile *mididata)
 {
-	MIDIEvent *track[MIDI_TRACKS];
+	MIDIEvent **track;
 	MIDIEvent *head = CreateEvent(0,0,0,0);	/* dummy event to make handling the list easier */
 	MIDIEvent *currentEvent = head;
 	int trackID;
 
-	if (NULL == head)
+    if (NULL == head)
 		return NULL;
+        
+    track = (MIDIEvent**) calloc(1, sizeof(MIDIEvent*) * mididata->nTracks);
+	if (NULL == head)
+        return NULL;
 	
 	/* First, convert all tracks to MIDIEvent lists */
-	for (trackID = 0; trackID < MIDI_TRACKS; trackID++)
+	for (trackID = 0; trackID < mididata->nTracks; trackID++)
 		track[trackID] = MIDITracktoStream(&mididata->track[trackID]);
 
 	/* Now, merge the lists. */
@@ -241,7 +246,7 @@ static MIDIEvent *MIDItoStream(MIDIFile *mididata)
 		int currentTrackID = -1;
 		
 		/* Find the next event */
-		for (trackID = 0; trackID < MIDI_TRACKS; trackID++)
+		for (trackID = 0; trackID < mididata->nTracks; trackID++)
 		{
 			if (track[trackID] && (track[trackID]->time < lowestTime))
 			{
@@ -267,6 +272,7 @@ static MIDIEvent *MIDItoStream(MIDIFile *mididata)
 	currentEvent->next = 0;
 
 	currentEvent = head->next;
+    free(track);
 	free(head);	/* release the dummy head event */
 	return currentEvent;
 }
@@ -304,7 +310,16 @@ static int ReadMIDIFile(MIDIFile *mididata, FILE *fp)
 	
 	fread(&tracks, 1, 2, fp);
 	tracks = BE_SHORT(tracks);
-	
+	mididata->nTracks = tracks;
+    
+    /* Allocate tracks */
+    mididata->track = (MIDITrack*) calloc(1, sizeof(MIDITrack) * mididata->nTracks);
+    if (NULL == mididata->track)
+    {
+        Mix_SetError("Out of memory");
+        goto bail;
+    }
+    
 	/* Retrieve the PPQN value, needed for playback */
 	fread(&division, 1, 2, fp);
 	mididata->division = BE_SHORT(division);
@@ -371,12 +386,13 @@ MIDIEvent *CreateMIDIEventList(char *midifile, Uint16 *division)
 	
 	eventList = MIDItoStream(mididata);
 	
-	for(trackID = 0; trackID < MIDI_TRACKS; trackID++)
+	for(trackID = 0; trackID < mididata->nTracks; trackID++)
 	{
 		if (mididata->track[trackID].data)
 			free(mididata->track[trackID].data);
 	}
-	free(mididata);
+	free(mididata->track);
+    free(mididata);
 	
 	return eventList;
 }
