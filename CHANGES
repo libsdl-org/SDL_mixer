@@ -1,5 +1,8 @@
 
 1.2.3:
+Sam Lantinga - Sat Apr 13 07:49:47 PDT 2002
+ * Updated autogen.sh for new versions of automake
+ * Specify the SDL API calling convention (C by default)
 Ryan Gordon - Sat Apr 13 07:33:37 PDT 2002
  * Fixed recursive audio lock in the mixing function
 jean-julien Filatriau - Sat Mar 23 18:05:37 PST 2002
