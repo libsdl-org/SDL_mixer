@@ -660,8 +660,7 @@ static int music_internal_play(Mix_Music *music, double position)
 	    case MUS_MP3:
 		SMPEG_enableaudio(music->data.mp3,1);
 		SMPEG_enablevideo(music->data.mp3,0);
-		SMPEG_rewind(music_playing->data.mp3);
-		SMPEG_play(music->data.mp3);
+		SMPEG_play(music_playing->data.mp3);
 		break;
 #endif
 	    default:
@@ -751,6 +750,9 @@ int music_internal_position(double position)
 	    case MUS_MP3:
 		if ( position > 0.0 ) {
 			SMPEG_skip(music_playing->data.mp3, position);
+		} else {
+			SMPEG_rewind(music_playing->data.mp3);
+			SMPEG_play(music_playing->data.mp3);
 		}
 		break;
 #endif
