@@ -29,7 +29,9 @@
 #include <sys/types.h>
 #include <limits.h>
 #include <stdio.h>
-
+#if defined(__linux__) && defined(__arm__)
+# include <linux/limits.h>
+#endif
 typedef struct {
 	char file[PATH_MAX];
 	char cmd[PATH_MAX];
