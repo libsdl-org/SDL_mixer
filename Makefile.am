@@ -10,16 +10,18 @@ libSDL_mixerinclude_HEADERS =	\
 	SDL_mixer.h
 
 libSDL_mixer_la_SOURCES =	\
+	load_aiff.c		\
+	load_aiff.h		\
+	load_voc.c		\
+	load_voc.h		\
 	mixer.c			\
 	music.c			\
 	music_cmd.c		\
 	music_cmd.h		\
 	music_ogg.c		\
 	music_ogg.h		\
-	wave.h			\
 	wavestream.c		\
-	wavestream.h		\
-	voc.c
+	wavestream.h
 
 if USE_MIKMOD
 MIKMOD_LIB = mikmod/libmikmod.la

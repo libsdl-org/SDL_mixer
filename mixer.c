@@ -33,6 +33,12 @@
 #include "SDL_timer.h"
 
 #include "SDL_mixer.h"
+#include "load_aiff.h"
+#include "load_voc.h"
+
+/* Magic numbers for various audio file formats */
+#define WAVE		0x45564157		/* "WAVE" */
+#define FORM		0x4d524f46		/* "FORM" */
 
 static int audio_opened = 0;
 
@@ -284,22 +290,18 @@ int Mix_QuerySpec(int *frequency, Uint16 *format, int *channels)
  *             generic setup, then call the correct file format loader.
  */
 
-#ifdef VOC_SAMPLES
-SDL_AudioSpec *Mix_LoadVOC_RW (SDL_RWops *src, int freesrc,
-		SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len);
-#endif
-
 /* Load a wave file */
 Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
 {
+	Uint32 magic;
 	Mix_Chunk *chunk;
-	SDL_AudioSpec wavespec;
+	SDL_AudioSpec wavespec, *loaded;
 	SDL_AudioCVT wavecvt;
 	int samplesize;
 
 	/* rcg06012001 Make sure src is valid */
 	if ( ! src ) {
-		SDL_SetError("Mix_LoadWAV_RW with NULL SDL_RWops");
+		SDL_SetError("Mix_LoadWAV_RW with NULL src");
 		return(NULL);
 	}
 
@@ -322,21 +324,29 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
 		return(NULL);
 	}
 
-	/* rcg06012001 Handle Creative Labs .VOC format chunks. */
-#ifdef VOC_SAMPLES
-	if ( Mix_LoadVOC_RW(src, 0,
-		&wavespec, (Uint8 **)&chunk->abuf, &chunk->alen) == NULL ) {
-#endif
-	/* Load the WAV file into the chunk */
-	if ( SDL_LoadWAV_RW(src, freesrc,
-		&wavespec, (Uint8 **)&chunk->abuf, &chunk->alen) == NULL ) {
+	/* Find out what kind of audio file this is */
+	magic = SDL_ReadLE32(src);
+	/* Seek backwards for compatibility with older loaders */
+	SDL_RWseek(src, -sizeof(Uint32), SEEK_CUR);
+
+	switch (magic) {
+		case WAVE:
+			loaded = SDL_LoadWAV_RW(src, freesrc, &wavespec,
+					(Uint8 **)&chunk->abuf, &chunk->alen);
+			break;
+		case FORM:
+			loaded = Mix_LoadAIFF_RW(src, freesrc, &wavespec,
+					(Uint8 **)&chunk->abuf, &chunk->alen);
+			break;
+		default:
+			loaded = Mix_LoadVOC_RW(src, freesrc, &wavespec,
+					(Uint8 **)&chunk->abuf, &chunk->alen);
+			break;
+	}
+	if ( !loaded ) {
 		free(chunk);
 		return(NULL);
 	}
-
-#ifdef VOC_SAMPLES
-	}
-#endif
 
 #if 0
 	PrintFormat("Audio device", &mixer);

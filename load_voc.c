@@ -1,6 +1,6 @@
 /*
     SDL_mixer:  An audio mixer library based on the SDL library
-    Copyright (C) 1997-1999  Sam Lantinga
+    Copyright (C) 1997-2001  Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -38,6 +38,7 @@
 #include "SDL_timer.h"
 
 #include "SDL_mixer.h"
+#include "load_voc.h"
 
 #ifdef VOC_SAMPLES
 
@@ -457,7 +458,15 @@ done:
     return(spec);
 } /* Mix_LoadVOC_RW */
 
+#else
+
+SDL_AudioSpec *Mix_LoadVOC_RW (SDL_RWops *src, int freesrc,
+        SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
+{
+    SDL_SetError("VOC file loading not supported");
+    return(NULL);
+}
+
 #endif /* VOC_SAMPLES */
 
-/* end of voc.c ... */
-
+/* end of load_voc.c ... */

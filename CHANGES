@@ -1,5 +1,7 @@
 
 1.2.1:
+Torbjörn Andersson - Tue Sep 11 11:22:29 PDT 2001
+ * Added support for loading AIFF audio chunks
 Max Horn - Tue Sep  4 20:38:11 PDT 2001
  * Added native MIDI music support on MacOS and MacOS X
 Florian Schulze - Sun Aug 19 14:55:37 PDT 2001
