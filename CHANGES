@@ -1,5 +1,7 @@
 
 1.2.5:
+Martin Storsjö - Tue Jul 16 10:38:12 PDT 2002
+ * Fixed to start playing another sample immediately when one finishes
 Martin Storsjö - Tue May 28 13:08:29 PDT 2002
  * Fixed a volume bug when calling Mix_HaltChannel() on unused channel
 Xavier Wielemans - Wed Jun 12 14:28:14 EDT 2002

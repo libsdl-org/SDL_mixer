@@ -188,37 +188,49 @@ static void mix_channels(void *udata, Uint8 *stream, int len)
 				}
 			}
 			if ( mix_channel[i].playing > 0 ) {
-				volume = (mix_channel[i].volume*mix_channel[i].chunk->volume) / MIX_MAX_VOLUME;
-				mixable = mix_channel[i].playing;
-				if ( mixable > len ) {
-					mixable = len;
+				int index = 0;
+				int remaining = len;
+				while (mix_channel[i].playing > 0 && index < len) {
+					remaining = len - index;
+					volume = (mix_channel[i].volume*mix_channel[i].chunk->volume) / MIX_MAX_VOLUME;
+					mixable = mix_channel[i].playing;
+					if ( mixable > remaining ) {
+						mixable = remaining;
+					}
+
+					mix_input = Mix_DoEffects(i, mix_channel[i].samples, mixable);
+					SDL_MixAudio(stream+index,mix_input,mixable,volume);
+					if (mix_input != mix_channel[i].samples)
+						free(mix_input);
+
+					mix_channel[i].samples += mixable;
+					mix_channel[i].playing -= mixable;
+					index += mixable;
+
+					/* rcg06072001 Alert app if channel is done playing. */
+					if (!mix_channel[i].playing && !mix_channel[i].looping) {
+						_Mix_channel_done_playing(i);
+					}
 				}
 
-				mix_input = Mix_DoEffects(i, mix_channel[i].samples, mixable);
-				SDL_MixAudio(stream,mix_input,mixable,volume);
-				if (mix_input != mix_channel[i].samples)
-					free(mix_input);
-
-				mix_channel[i].samples += mixable;
-				mix_channel[i].playing -= mixable;
 				/* If looping the sample and we are at its end, make sure
 				   we will still return a full buffer */
-				while ( mix_channel[i].looping && mixable < len ) {
-				    	int remaining = len - mixable;
+				while ( mix_channel[i].looping && index < len ) {
 					int alen = mix_channel[i].chunk->alen;
+					remaining = len - index;
 				    	if (remaining > alen) {
 						remaining = alen;
 				    	}
 
 					mix_input = Mix_DoEffects(i, mix_channel[i].chunk->abuf, remaining);
-					SDL_MixAudio(stream+mixable, mix_input, remaining, volume);
+					SDL_MixAudio(stream+index, mix_input, remaining, volume);
 					if (mix_input != mix_channel[i].chunk->abuf)
 						free(mix_input);
 
 					--mix_channel[i].looping;
 					mix_channel[i].samples = mix_channel[i].chunk->abuf + remaining;
 					mix_channel[i].playing = mix_channel[i].chunk->alen - remaining;
-					mixable += remaining;
+					index += remaining;
 				}
 				if ( ! mix_channel[i].playing && mix_channel[i].looping ) {
 					if ( --mix_channel[i].looping ) {
@@ -227,10 +239,6 @@ static void mix_channels(void *udata, Uint8 *stream, int len)
 					}
 				}
 
-				/* rcg06072001 Alert app if channel is done playing. */
-				if (!mix_channel[i].playing) {
-					_Mix_channel_done_playing(i);
-				}
 			}
 		}
 	}
