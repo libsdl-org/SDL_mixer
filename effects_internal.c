@@ -67,8 +67,9 @@ void *_Eff_build_volume_table_u8(void)
         if (rc) {
             _Eff_volume_table = (void *) rc;
             for (volume = 0; volume < 256; volume++) {
-                for (sample = 0; sample < 256; sample ++) {
-                    *rc = (Uint8)(((float) sample) * ((float) volume / 255.0));
+                for (sample = -128; sample < 128; sample ++) {
+                    *rc = (Uint8)(((float) sample) * ((float) volume / 255.0)) 
+                        + 128;
                     rc++;
                 }
             }
@@ -83,7 +84,7 @@ void *_Eff_build_volume_table_u8(void)
  *
  * Each column of the table is a possible sample, while each row of the
  *  table is a volume. Volume is a Uint8, where 0 is silence and 255 is full
- *  volume. So _Eff_volume_table[128][mysample] would be the value of
+ *  volume. So _Eff_volume_table[128][mysample+128] would be the value of
  *  mysample, at half volume.
  */
 void *_Eff_build_volume_table_s8(void)
@@ -97,7 +98,7 @@ void *_Eff_build_volume_table_s8(void)
         if (rc) {
             _Eff_volume_table = (void *) rc;
             for (volume = 0; volume < 256; volume++) {
-                for (sample = 0; sample < 256; sample ++) {
+                for (sample = -128; sample < 128; sample ++) {
                     *rc = (Sint8)(((float) sample) * ((float) volume / 255.0));
                     rc++;
                 }
