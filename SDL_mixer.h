@@ -509,13 +509,13 @@ extern DECLSPEC Mix_Fading SDLCALL Mix_FadingChannel(int which);
 /* Pause/Resume a particular channel */
 extern DECLSPEC void SDLCALL Mix_Pause(int channel);
 extern DECLSPEC void SDLCALL Mix_Resume(int channel);
-extern DECLSPEC int SDLCALL  Mix_Paused(int channel);
+extern DECLSPEC int SDLCALL Mix_Paused(int channel);
 
 /* Pause/Resume the music stream */
 extern DECLSPEC void SDLCALL Mix_PauseMusic(void);
 extern DECLSPEC void SDLCALL Mix_ResumeMusic(void);
 extern DECLSPEC void SDLCALL Mix_RewindMusic(void);
-extern DECLSPEC int SDLCALL  Mix_PausedMusic(void);
+extern DECLSPEC int SDLCALL Mix_PausedMusic(void);
 
 /* Set the current position in the music stream.
    This returns 0 if successful, or -1 if it failed or isn't implemented.
