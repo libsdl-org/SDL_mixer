@@ -182,9 +182,9 @@ void music_mixer(void *udata, Uint8 *stream, int len)
 		if ( !music_internal_playing() ) {
 			/* Restart music if it has to loop at a high level */
 			if ( music_loops && --music_loops ) {
-                Mix_Fading current_fade = music_playing->fading;
+				Mix_Fading current_fade = music_playing->fading;
 				music_internal_play(music_playing, 0.0);
-                music_playing->fading = current_fade;
+				music_playing->fading = current_fade;
 			} else {
 				music_internal_halt();
 				if ( music_finished_hook ) {
