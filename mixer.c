@@ -98,7 +98,7 @@ static void *music_data = NULL;
 const SDL_version *Mix_Linked_Version(void)
 {
 	static SDL_version linked_version;
-	MIX_VERSION(&linked_version);
+	SDL_MIXER_VERSION(&linked_version);
 	return(&linked_version);
 }
 

@@ -103,7 +103,7 @@ static void test_versions(void)
 	linked = SDL_Linked_Version();
 	output_versions("SDL", &compiled, linked);
 
-	MIX_VERSION(&compiled);
+	SDL_MIXER_VERSION(&compiled);
 	linked = Mix_Linked_Version();
 	output_versions("SDL_mixer", &compiled, linked);
 }
