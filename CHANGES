@@ -1,4 +1,8 @@
 
+1.2.4:
+Ryan Gordon - Thu May  2 21:08:48 PDT 2002
+ * Fixed deadlock introduced in the last release
+
 1.2.3:
 Sam Lantinga - Sat Apr 13 07:49:47 PDT 2002
  * Updated autogen.sh for new versions of automake
