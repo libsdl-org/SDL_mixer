@@ -296,6 +296,8 @@ int Mix_OpenAudio(int frequency, Uint16 format, int nchannels, int chunksize)
 		mix_channel[i].playing = 0;
 		mix_channel[i].looping = 0;
 		mix_channel[i].volume = SDL_MIX_MAXVOLUME;
+		mix_channel[i].fade_volume = SDL_MIX_MAXVOLUME;
+		mix_channel[i].fading = MIX_NO_FADING;
 		mix_channel[i].tag = -1;
 		mix_channel[i].expire = 0;
 		mix_channel[i].effects = NULL;
@@ -335,6 +337,8 @@ int Mix_AllocateChannels(int numchans)
 			mix_channel[i].playing = 0;
 			mix_channel[i].looping = 0;
 			mix_channel[i].volume = SDL_MIX_MAXVOLUME;
+			mix_channel[i].fade_volume = SDL_MIX_MAXVOLUME;
+			mix_channel[i].fading = MIX_NO_FADING;
 			mix_channel[i].tag = -1;
 			mix_channel[i].expire = 0;
 			mix_channel[i].effects = NULL;
