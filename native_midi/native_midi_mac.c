@@ -582,7 +582,6 @@ Uint32 *BuildTuneHeader(int part_poly_max[32], int part_to_inst[32], int numPart
 		qtma_StuffGeneralEvent(*myPos1, *myPos2, part, kGeneralEventNoteRequest, kNoteRequestEventLength);
 		myNoteRequest = (NoteRequest *)(myPos1 + 1);
 		myNoteRequest->info.flags = 0;
-		myNoteRequest->info.reserved = 0;
 		myNoteRequest->info.polyphony = part_poly_max[part];
 		myNoteRequest->info.typicalPolyphony = 0x00010000;
 		myErr = NAStuffToneDescription(myNoteAllocator,part_to_inst[part],&myNoteRequest->tone);
