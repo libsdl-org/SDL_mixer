@@ -337,49 +337,58 @@ done:
 	return(wavefp);
 }
 
-static double SANE_to_double(Uint32 l1, Uint32 l2, Uint16 s1)
-{
-	double d;
-	struct almost_double {
-		Uint32 hi, lo;
-	} *dp = (struct almost_double *)&d;
+/* I couldn't get SANE_to_double() to work, so I stole this from libsndfile.
+ * I don't pretend to fully understand it.
+ */
 
-	dp->hi = ((l1 << 4) & 0x3ff00000) | (l1 & 0xc0000000);
-	dp->hi |= (l1 << 5) & 0xffff0;
-	dp->hi |= (l2 >> 27) & 0x1f;
-	dp->lo = (l2 << 5) & 0xffffffe0;
-	dp->lo |= ((s1 >> 11) & 0x1f);
-	return(d);
+static Uint32 SANE_to_Uint32 (Uint8 *sanebuf)
+{
+	/* Negative number? */
+	if (sanebuf[0] & 0x80)
+		return 0;
+
+	/* Less than 1? */
+	if (sanebuf[0] <= 0x3F)
+		return 1;
+
+	/* Way too big? */
+	if (sanebuf[0] > 0x40)
+		return 0x4000000;
+
+	/* Still too big? */
+	if (sanebuf[0] == 0x40 && sanebuf[1] > 0x1C)
+		return 800000000;
+
+	return ((sanebuf[2] << 23) | (sanebuf[3] << 15) | (sanebuf[4] << 7)
+		| (sanebuf[5] >> 1)) >> (29 - sanebuf[1]);
 }
 
 static FILE *LoadAIFFStream (const char *file, SDL_AudioSpec *spec,
 					long *start, long *stop)
 {
 	int was_error;
+	int found_SSND;
+	int found_COMM;
 	FILE *wavefp;
 	SDL_RWops *src;
 
+	Uint32 chunk_type;
+	Uint32 chunk_length;
+	long next_chunk;
+
 	/* AIFF magic header */
 	Uint32 FORMchunk;
-	Uint32 chunklen;
 	Uint32 AIFFmagic;
 	/* SSND chunk        */
 	Uint32 SSNDchunk;
-	Uint32 ssndlen;
 	Uint32 offset;
 	Uint32 blocksize;
 	/* COMM format chunk */
 	Uint32 COMMchunk;
-	Uint32 commlen;
 	Uint16 channels;
 	Uint32 numsamples;
 	Uint16 samplesize;
-	struct { /* plus a SANE format double precision number */
-		Uint32 l1;
-		Uint32 l2;
-		Uint16 s1;
-	} sane_freq;
-
+	Uint8 sane_freq[10];
 	Uint32 frequency;
 
 
@@ -397,7 +406,7 @@ static FILE *LoadAIFFStream (const char *file, SDL_AudioSpec *spec,
 
 	/* Check the magic header */
 	FORMchunk	= SDL_ReadLE32(src);
-	chunklen	= SDL_ReadLE32(src);
+	chunk_length	= SDL_ReadBE32(src);
 	AIFFmagic	= SDL_ReadLE32(src);
 	if ( (FORMchunk != FORM) || (AIFFmagic != AIFF) ) {
 		SDL_SetError("Unrecognized file type (not AIFF)");
@@ -405,39 +414,60 @@ static FILE *LoadAIFFStream (const char *file, SDL_AudioSpec *spec,
 		goto done;
 	}
 
-	/* Read the SSND data chunk */
-	SSNDchunk	= SDL_ReadLE32(src);
-	if ( SSNDchunk != SSND ) {
-		SDL_SetError("Unrecognized AIFF chunk (not SSND)");
-		was_error = 1;
-		goto done;
-	}
-	ssndlen		= SDL_ReadLE32(src);
-	offset		= SDL_ReadLE32(src);
-	blocksize	= SDL_ReadLE32(src);
+	/* From what I understand of the specification, chunks may appear in
+         * any order, and we should just ignore unknown ones.
+         */
 
-	/* Fill in start and stop pointers, then seek to format chunk */
-	ssndlen -= (2*sizeof(Uint32));
-	*start = SDL_RWtell(src) + offset;
-	*stop = SDL_RWtell(src) + ssndlen;
-	SDL_RWseek(src, *stop, SEEK_SET);
+	found_SSND = 0;
+	found_COMM = 0;
 
-	/* Read the audio data format chunk */
-	COMMchunk	= SDL_ReadLE32(src);
-	if ( COMMchunk != COMM ) {
-		SDL_SetError("Unrecognized AIFF chunk (not COMM)");
-		was_error = 1;
-		goto done;
+	do {
+	    chunk_type		= SDL_ReadLE32(src);
+	    chunk_length	= SDL_ReadBE32(src);
+	    next_chunk		= SDL_RWtell(src) + chunk_length;
+
+	    /* Paranoia to avoid infinite loops */
+	    if (chunk_length == 0)
+		break;
+
+            switch (chunk_type) {
+		case SSND:
+		    found_SSND		= 1;
+		    offset		= SDL_ReadBE32(src);
+		    blocksize		= SDL_ReadBE32(src);
+		    *start		= SDL_RWtell(src) + offset;
+		    break;
+
+		case COMM:
+		    found_COMM		= 1;
+
+		    /* Read the audio data format chunk */
+		    channels		= SDL_ReadBE16(src);
+		    numsamples		= SDL_ReadBE32(src);
+		    samplesize		= SDL_ReadBE16(src);
+		    SDL_RWread(src, sane_freq, sizeof(sane_freq), 1);
+		    frequency		= SANE_to_Uint32(sane_freq);
+		    break;
+
+		default:
+		    break;
+	    }
+	} while ((!found_SSND || !found_COMM)
+		 && SDL_RWseek(src, next_chunk, SEEK_SET) != -1);
+
+	if (!found_SSND) {
+	    SDL_SetError("Bad AIFF file (no SSND chunk)");
+	    was_error = 1;
+	    goto done;
 	}
-	commlen		= SDL_ReadLE32(src);
-	channels	= SDL_ReadLE16(src);
-	numsamples	= SDL_ReadLE32(src);
-	samplesize	= SDL_ReadLE16(src);
-	sane_freq.l1	= SDL_ReadLE32(src);
-	sane_freq.l2	= SDL_ReadLE32(src);
-	sane_freq.s1	= SDL_ReadLE16(src);
-	frequency	= (Uint32)SANE_to_double(sane_freq.l1, sane_freq.l2,
-								sane_freq.s1);
+		    
+	if (!found_COMM) {
+	    SDL_SetError("Bad AIFF file (no COMM chunk)");
+	    was_error = 1;
+	    goto done;
+	}
+
+	*stop = *start + channels * numsamples * (samplesize / 8) - 1;
 
 	/* Decode the audio data format */
 	memset(spec, 0, (sizeof *spec));
@@ -447,7 +477,7 @@ static FILE *LoadAIFFStream (const char *file, SDL_AudioSpec *spec,
 			spec->format = AUDIO_U8;
 			break;
 		case 16:
-			spec->format = AUDIO_S16;
+			spec->format = AUDIO_S16MSB;
 			break;
 		default:
 			SDL_SetError("Unknown samplesize in data format");

@@ -25,12 +25,7 @@
 
 #include <stdio.h>
 #include <string.h>
-
-#if defined(__FreeBSD__) || defined (__WIN32__)
 #include <stdlib.h>
-#else
-#include <malloc.h>
-#endif
 
 #include "config.h"
 #include "common.h"

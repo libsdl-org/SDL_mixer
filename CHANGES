@@ -1,5 +1,7 @@
 
 1.2.1:
+Torbjörn Andersson - Sun, 19 Aug 2001 16:03:30
+ * Fixed AIFF music playing support
 Sam Lantinga - Sat Aug 18 04:14:13 PDT 2001
  * Fixed building Ogg Vorbis support on Windows
 Ryan C. Gordon - Thu, 7 Jun 2001 13:15:51
