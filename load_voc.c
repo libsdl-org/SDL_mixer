@@ -88,7 +88,7 @@ typedef struct vocstuff {
 #define VOC_DATA_16	9
 
 
-static inline int voc_check_header(SDL_RWops *src)
+static int voc_check_header(SDL_RWops *src)
 {
     /* VOC magic header */
     Uint8  signature[20];  /* "Creative Voice File\032" */
@@ -127,7 +127,7 @@ static int voc_get_block(SDL_RWops *src, vs_t *v, SDL_AudioSpec *spec)
     Uint32 new_rate_long;
     Uint8 trash[6];
     Uint16 period;
-    int i;
+    unsigned int i;
 
     v->silent = 0;
     while (v->rest == 0)
@@ -167,7 +167,7 @@ static int voc_get_block(SDL_RWops *src, vs_t *v, SDL_AudioSpec *spec)
                     }
 
                     v->rate = uc;
-                    spec->freq = 1000000.0/(256 - v->rate);
+                    spec->freq = (Uint16)(1000000.0/(256 - v->rate));
                     v->channels = 1;
                 }
 

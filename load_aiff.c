@@ -24,9 +24,7 @@
     This file by Torbjörn Andersson (torbjorn.andersson@eurotime.se)
 */
 
-#include "SDL_mutex.h"
-#include "SDL_endian.h"
-#include "SDL_timer.h"
+#include <string.h>
 
 #include "SDL_mixer.h"
 #include "load_aiff.h"

@@ -26,8 +26,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/time.h>
-#include <unistd.h>
+#include <string.h>
+
 #include "SDL.h"
 #include "SDL_mixer.h"
 
@@ -438,8 +438,8 @@ int Mix_SetPanning(int channel, Uint8 left, Uint8 right)
 
     args->left_u8 = left;
     args->right_u8 = right;
-    args->left_f = ((float) left) / 255.0;
-    args->right_f = ((float) right) / 255.0;
+    args->left_f = ((float) left) / 255.0f;
+    args->right_f = ((float) right) / 255.0f;
     if (!args->in_use) {
         args->in_use = 1;
         return(Mix_RegisterEffect(channel, f, _Eff_PositionDone, (void *) args));
@@ -474,7 +474,7 @@ int Mix_SetDistance(int channel, Uint8 distance)
     }
 
     args->distance_u8 = distance;
-    args->distance_f = ((float) distance) / 255.0;
+    args->distance_f = ((float) distance) / 255.0f;
     if (!args->in_use) {
         args->in_use = 1;
         return(Mix_RegisterEffect(channel, f, _Eff_PositionDone, (void *) args));
@@ -491,8 +491,6 @@ int Mix_SetPosition(int channel, Sint16 angle, Uint8 distance)
     int channels;
     position_args *args = NULL;
     Uint8 left = 255, right = 255;
-    int flip;
-    float angle_f;
 
     Mix_QuerySpec(NULL, &format, &channels);
     f = get_position_effect_func(format);
@@ -537,11 +535,11 @@ int Mix_SetPosition(int channel, Sint16 angle, Uint8 distance)
     distance = 255 - distance;  /* flip it to scale Mix_SetDistance() uses. */
 
     args->left_u8 = left;
-    args->left_f = ((float) left) / 255.0;
+    args->left_f = ((float) left) / 255.0f;
     args->right_u8 = right;
-    args->right_f = ((float) right) / 255.0;
+    args->right_f = ((float) right) / 255.0f;
     args->distance_u8 = distance;
-    args->distance_f = ((float) distance) / 255.0;
+    args->distance_f = ((float) distance) / 255.0f;
     if (!args->in_use) {
         args->in_use = 1;
         return(Mix_RegisterEffect(channel, f, _Eff_PositionDone, (void *) args));
