@@ -32,6 +32,7 @@
 #include "SDL_rwops.h"
 #include "SDL_endian.h"
 
+#include "SDL_mixer.h"
 #include "wavestream.h"
 
 /*
@@ -142,6 +143,8 @@ extern WAVStream *WAVStream_LoadSong(const char *file, const char *magic)
 		if ( strcmp(magic, "FORM") == 0 ) {
 			wave->wavefp = LoadAIFFStream(file, &wavespec,
 					&wave->start, &wave->stop);
+		} else {
+			Mix_SetError("Unknown WAVE format");
 		}
 		if ( wave->wavefp == NULL ) {
 			free(wave);

@@ -434,20 +434,21 @@ Mix_Music *Mix_LoadMUS(const char *file)
 	/* WAVE files have the magic four bytes "RIFF"
 	   AIFF files have the magic 12 bytes "FORM" XXXX "AIFF"
 	 */
-	if ( (ext && (MIX_string_equals(ext, "WAV") == 0)) ||
+	if ( (ext && MIX_string_equals(ext, "WAV")) ||
 	     (strcmp((char *)magic, "RIFF") == 0) ||
 	     (strcmp((char *)magic, "FORM") == 0) ) {
 		music->type = MUS_WAV;
 		music->data.wave = WAVStream_LoadSong(file, (char *)magic);
 		if ( music->data.wave == NULL ) {
+		  	Mix_SetError("Unable to load WAV file");
 			music->error = 1;
 		}
 	} else
 #endif
 #ifdef MID_MUSIC
 	/* MIDI files have the magic four bytes "MThd" */
-	if ( (ext && (MIX_string_equals(ext, "MID") == 0)) ||
-	     (ext && (MIX_string_equals(ext, "MIDI") == 0)) ||
+	if ( (ext && MIX_string_equals(ext, "MID")) ||
+	     (ext && MIX_string_equals(ext, "MIDI")) ||
 	     strcmp((char *)magic, "MThd") == 0 ) {
 		music->type = MUS_MID;
 #ifdef USE_NATIVE_MIDI
@@ -475,7 +476,7 @@ Mix_Music *Mix_LoadMUS(const char *file)
 #endif
 #ifdef OGG_MUSIC
 	/* Ogg Vorbis files have the magic four bytes "OggS" */
-	if ( (ext && (MIX_string_equals(ext, "OGG") == 0)) ||
+	if ( (ext && MIX_string_equals(ext, "OGG")) ||
 	     strcmp((char *)magic, "OggS") == 0 ) {
 		music->type = MUS_OGG;
 		music->data.ogg = OGG_new(file);
@@ -485,8 +486,8 @@ Mix_Music *Mix_LoadMUS(const char *file)
 	} else
 #endif
 #ifdef MP3_MUSIC
-	if ( (ext && (MIX_string_equals(ext, "MPG") == 0)) ||
-	     (ext && (MIX_string_equals(ext, "MPEG") == 0)) ||
+	if ( (ext && MIX_string_equals(ext, "MPG")) ||
+	     (ext && MIX_string_equals(ext, "MPEG")) ||
 	     magic[0]==0xFF && (magic[1]&0xF0)==0xF0) {
 		SMPEG_Info info;
 		music->type = MUS_MP3;
