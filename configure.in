@@ -118,8 +118,14 @@ AC_ARG_ENABLE(music-midi,
 [  --enable-music-midi     enable MIDI music via timidity [default=yes]],
               , enable_music_midi=yes)
 if test x$enable_music_midi = xyes; then
-    CFLAGS="$CFLAGS -DMID_MUSIC -I\$(top_srcdir)/timidity"
-    MUSIC_SUBDIRS="$MUSIC_SUBDIRS timidity"
+    CFLAGS="$CFLAGS -DMID_MUSIC"
+    AC_ARG_ENABLE(music-timidity-midi,
+[  --enable-music-timidity-midi  enable timidity MIDI output [default=yes]],
+                  , enable_music_timidity_midi=yes)
+    if test x$enable_music_timidity_midi = xyes; then
+        CFLAGS="$CFLAGS -I\$(top_srcdir)/timidity"
+        MUSIC_SUBDIRS="$MUSIC_SUBDIRS timidity"
+    fi
     AC_ARG_ENABLE(music-native-midi,
 [  --enable-music-native-midi  enable native MIDI music output [default=yes]],
                   , enable_music_native_midi=yes)
@@ -170,7 +176,7 @@ fi
 dnl Add Makefile conditionals
 AC_SUBST(MUSIC_SUBDIRS)
 AM_CONDITIONAL(USE_MIKMOD, test x$enable_music_mod = xyes)
-AM_CONDITIONAL(USE_TIMIDITY, test x$enable_music_midi = xyes)
+AM_CONDITIONAL(USE_TIMIDITY, test x$enable_music_timidity_midi = xyes)
 AM_CONDITIONAL(USE_NATIVE_MIDI, test x$use_music_native_midi = xyes)
 
 # Finally create all the generated files

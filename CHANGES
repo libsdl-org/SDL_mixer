@@ -1,5 +1,7 @@
 
 1.2.1:
+Max Horn - Tue Sep  4 20:38:11 PDT 2001
+ * Added native MIDI music support on MacOS and MacOS X
 Florian Schulze - Sun Aug 19 14:55:37 PDT 2001
  * Added native MIDI music support on Windows
 Sam Lantinga - Sun Aug 19 02:20:55 PDT 2001
