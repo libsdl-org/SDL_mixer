@@ -40,6 +40,7 @@
 #define WAVE		0x45564157		/* "WAVE" */
 #define FORM		0x4d524f46		/* "FORM" */
 #define OGGS		0x5367674f		/* "OggS" */
+#define CREA	    	0x61657243		/* "Crea" */
 
 static int audio_opened = 0;
 static SDL_AudioSpec mixer;
@@ -437,10 +438,13 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
 					(Uint8 **)&chunk->abuf, &chunk->alen);
 			break;
 #endif
-		default:
+		case CREA:
 			loaded = Mix_LoadVOC_RW(src, freesrc, &wavespec,
 					(Uint8 **)&chunk->abuf, &chunk->alen);
 			break;
+		default:
+			SDL_SetError("Unrecognized sound file type");
+			return(0);			
 	}
 	if ( !loaded ) {
 		free(chunk);
