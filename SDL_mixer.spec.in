@@ -33,7 +33,7 @@ libraries.
 %setup 
 
 %build
-CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{prefix} --disable-music-ogg --disable-music-mp3
+CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{prefix} --disable-music-mp3
 make
 
 %install

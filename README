@@ -14,8 +14,9 @@ for documentation on this mixer library.
 
 The mixer can currently load Microsoft WAVE files and Creative Labs VOC
 files as audio samples, and can load MIDI files via Timidity and the
-following music formats via MikMod:  .MOD .S3M .IT .XM. It can also load
-MP3 music using the SMPEG library.
+following music formats via MikMod:  .MOD .S3M .IT .XM. It can load
+Ogg Vorbis streams as music if built with the Ogg Vorbis libraries,
+and finally it can load MP3 music using the SMPEG library.
 
 The process of mixing MIDI files to wave output is very CPU intensive,
 so if playing regular WAVE files sound great, but playing MIDI files
@@ -25,9 +26,6 @@ To play MIDI files, you'll need to get a complete set of GUS patches
 from:
 http://www.libsdl.org/projects/mixer/timidity/timidity.tar.gz
 and unpack them in /usr/local/lib under UNIX, and C:\ under Win32.
-
-You may add panning, reverb, echo, whatever, but if you do, please
-mail changes back to me, Sam Lantinga at slouken@libsdl.org
 
 This library is available under the GNU Library General Public License,
 see the file "COPYING" for details.
