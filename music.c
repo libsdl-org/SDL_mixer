@@ -506,6 +506,13 @@ Mix_Music *Mix_LoadMUS(const char *file)
 		if ( music->data.module == NULL ) {
 			Mix_SetError("%s", MikMod_strerror(MikMod_errno));
 			music->error = 1;
+		} else {
+			/* Stop implicit looping, fade out and other flags. */
+			music->data.module->extspd  = 1;
+			music->data.module->panflag = 1;
+			music->data.module->wrap    = 0;
+			music->data.module->loop    = 0;
+			music->data.module->fadeout = 1;
 		}
 	} else
 #endif

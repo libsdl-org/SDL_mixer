@@ -1,5 +1,7 @@
 
 1.2.1:
+David Hedbor - Thu Oct 18 10:01:41 PDT 2001
+ * Stop implicit looping, set fade out and other flags on MOD files
 Sam Lantinga - Tue Oct 16 11:17:12 PDT 2001
  * The music file type is now determined by extension as well as magic
 Ryan C. Gordon - Tue Sep 11 12:05:54 PDT 2001
