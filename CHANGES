@@ -2,6 +2,7 @@
 Sam Lantinga - Tue Dec 21 09:51:29 PST 2004
  * Fixed building mikmod support on UNIX
  * Always build SDL_RWops music support
+ * Added SDL_RWops support for reading MP3 files
 
 1.2.6:
 Jonathan Atkins - Wed, 15 Sep 2004 23:26:42 -0500

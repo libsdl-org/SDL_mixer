@@ -560,14 +560,14 @@ Mix_Music *Mix_LoadMUS(const char *file)
 	if ( (ext && MIX_string_equals(ext, "MPG")) ||
 	     (ext && MIX_string_equals(ext, "MP3")) ||
 	     (ext && MIX_string_equals(ext, "MPEG")) ||
-	     magic[0]==0xFF && (magic[1]&0xF0)==0xF0) {
+	     (magic[0] == 0xFF && (magic[1] & 0xF0) == 0xF0) ) {
 		SMPEG_Info info;
 		music->type = MUS_MP3;
 		music->data.mp3 = SMPEG_new(file, &info, 0);
-		if(!info.has_audio){
+		if ( !info.has_audio ) {
 			Mix_SetError("MPEG file does not have any audio stream.");
 			music->error = 1;
-		}else{
+		} else {
 			SMPEG_actualSpec(music->data.mp3, &used_mixer);
 		}
 	} else
@@ -1327,6 +1327,19 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw) {
 		music->data.ogg = OGG_new_RW(rw);
 		if ( music->data.ogg == NULL ) {
 			music->error = 1;
+		}
+	} else
+#endif
+#ifdef MP3_MUSIC
+	if ( magic[0] == 0xFF && (magic[1] & 0xF0) == 0xF0 ) {
+		SMPEG_Info info;
+		music->type = MUS_MP3;
+		music->data.mp3 = SMPEG_new_rwops(rw, &info, 0);
+		if ( !info.has_audio ) {
+			Mix_SetError("MPEG file does not have any audio stream.");
+			music->error = 1;
+		} else {
+			SMPEG_actualSpec(music->data.mp3, &used_mixer);
 		}
 	} else
 #endif
