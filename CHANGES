@@ -1,3 +1,7 @@
+current:
+Ryan C. Gordon - Wed Oct 30 07:12:06 EST 2002
+ * Small, looping music samples should now be able to fade out correctly.
+
 1.2.5:
 Sam Lantinga - Sun Oct 20 20:52:24 PDT 2002
  * Added shared library support for MacOS X
