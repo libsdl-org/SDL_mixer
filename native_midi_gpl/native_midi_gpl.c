@@ -274,6 +274,7 @@ void native_midi_start(NativeMidiSong *song)
 
 end:
 eend:
+	    return;
 }
 
 void native_midi_stop()
