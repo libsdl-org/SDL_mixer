@@ -135,6 +135,7 @@ static int native_midi_ok;
 static int ms_per_step;
 
 /* Local low-level functions prototypes */
+static void music_internal_initialize_volume(void);
 static void music_internal_volume(int volume);
 static int  music_internal_play(Mix_Music *music, double position);
 static int  music_internal_position(double position);
@@ -620,10 +621,8 @@ static int music_internal_play(Mix_Music *music, double position)
 	music_playing = music;
 
 	/* Set the initial volume */
-	if ( music->fading == MIX_FADING_IN ) {
-		music_internal_volume(0);
-	} else {
-		music_internal_volume(music_volume);
+	if ( music->type != MUS_MOD ) {
+		music_internal_initialize_volume();
 	}
 
 	/* Set up for playback */
@@ -641,6 +640,8 @@ static int music_internal_play(Mix_Music *music, double position)
 #ifdef MOD_MUSIC
 	    case MUS_MOD:
 		Player_Start(music->data.module);
+		/* Player_SetVolume() does nothing before Player_Start() */
+		music_internal_initialize_volume();
 		break;
 #endif
 #ifdef MID_MUSIC
@@ -786,6 +787,16 @@ int Mix_SetMusicPosition(double position)
 	SDL_UnlockAudio();
 
 	return(retval);
+}
+
+/* Set the music's initial volume */
+static void music_internal_initialize_volume(void)
+{
+	if ( music_playing->fading == MIX_FADING_IN ) {
+		music_internal_volume(0);
+	} else {
+		music_internal_volume(music_volume);
+	}
 }
 
 /* Set the music volume */
