@@ -472,6 +472,7 @@ Mix_Music *Mix_LoadMUS(const char *file)
 #endif
 #ifdef MP3_MUSIC
 	if ( (ext && MIX_string_equals(ext, "MPG")) ||
+	     (ext && MIX_string_equals(ext, "MP3")) ||
 	     (ext && MIX_string_equals(ext, "MPEG")) ||
 	     magic[0]==0xFF && (magic[1]&0xF0)==0xF0) {
 		SMPEG_Info info;
