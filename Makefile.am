@@ -64,7 +64,7 @@ libSDL_mixer_la_LDFLAGS = 		\
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 libSDL_mixer_la_LIBADD = $(MIKMOD_LIB) $(TIMIDITY_LIB) $(NATIVE_MIDI_LIB) @SYSTEM_LIBS@ @SDL_LIBS@
 
-bin_PROGRAMS = playwave playmus
+noinst_PROGRAMS = playwave playmus
 
 playwave_LDADD = libSDL_mixer.la @SDL_LIBS@
 playmus_LDADD = libSDL_mixer.la @SDL_LIBS@
