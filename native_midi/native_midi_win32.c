@@ -20,13 +20,46 @@
     florian.proff.schulze@gmx.net
 */
 
-#ifdef _WIN32
 /* everything below is currently one very big bad hack ;) Proff */
 
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <windowsx.h>
+#include <mmsystem.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
 #include "native_midi.h"
+
+
+#define MIDI_TRACKS 32
+
+typedef unsigned char byte;
+typedef struct MIDI                    /* a midi file */
+{
+   int divisions;                      /* number of ticks per quarter note */
+   struct {
+      unsigned char *data;             /* MIDI message stream */
+      int len;                         /* length of the track data */
+   } track[MIDI_TRACKS];
+   int loaded;
+} MIDI;
+
+struct _NativeMidiSong {
+  MIDI mididata;
+  int MusicLoaded;
+  int MusicPlaying;
+  MIDIEVENT *MidiEvents[MIDI_TRACKS];
+  MIDIHDR MidiStreamHdr;
+  MIDIEVENT *NewEvents;
+  int NewSize;
+  int NewPos;
+  int BytesRecorded[MIDI_TRACKS];
+  int BufferSize[MIDI_TRACKS];
+  int CurrentTrack;
+  int CurrentPos;
+};
 
 #define XCHG_SHORT(x) ((((x)&0xFF)<<8) | (((x)>>8)&0xFF))
 # define XCHG_LONG(x) ((((x)&0xFF)<<24) | \
@@ -308,7 +341,7 @@ void CALLBACK MidiProc( HMIDIIN hMidi, UINT uMsg, DWORD dwInstance,
     }
 }
 
-int native_midi_init()
+int native_midi_detect()
 {
   MMRESULT merr;
   HMIDISTRM MidiStream;

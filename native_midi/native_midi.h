@@ -23,44 +23,9 @@
 #ifndef _NATIVE_MIDI_H_
 #define _NATIVE_MIDI_H_
 
-#ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <windowsx.h>
-#include <mmsystem.h>
-
-#define MIDI_TRACKS 32
-
-typedef unsigned char byte;
-typedef struct MIDI                    /* a midi file */
-{
-   int divisions;                      /* number of ticks per quarter note */
-   struct {
-      unsigned char *data;             /* MIDI message stream */
-      int len;                         /* length of the track data */
-   } track[MIDI_TRACKS];
-   int loaded;
-} MIDI;
-
-struct _NativeMidiSong {
-  MIDI mididata;
-  int MusicLoaded;
-  int MusicPlaying;
-  MIDIEVENT *MidiEvents[MIDI_TRACKS];
-  MIDIHDR MidiStreamHdr;
-  MIDIEVENT *NewEvents;
-  int NewSize;
-  int NewPos;
-  int BytesRecorded[MIDI_TRACKS];
-  int BufferSize[MIDI_TRACKS];
-  int CurrentTrack;
-  int CurrentPos;
-};
-#endif /* WINDOWS */
-
 typedef struct _NativeMidiSong NativeMidiSong;
 
-int native_midi_init();
+int native_midi_detect();
 NativeMidiSong *native_midi_loadsong(char *midifile);
 void native_midi_freesong(NativeMidiSong *song);
 void native_midi_start(NativeMidiSong *song);

@@ -333,7 +333,7 @@ int open_music(SDL_AudioSpec *mixer)
 #ifdef USE_NATIVE_MIDI
 	native_midi_ok = !timidity_ok;
 	if ( native_midi_ok ) {
-		native_midi_ok = native_midi_init();
+		native_midi_ok = native_midi_detect();
 	}
 #endif
 #endif
@@ -925,8 +925,8 @@ void close_music(void)
 #endif
 #ifdef MOD_MUSIC
 	MikMod_Exit();
-    MikMod_UnregisterAllLoaders();
-    MikMod_UnregisterAllDrivers();
+	MikMod_UnregisterAllLoaders();
+	MikMod_UnregisterAllDrivers();
 #endif
 }
 
