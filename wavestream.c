@@ -380,11 +380,9 @@ static FILE *LoadAIFFStream (const char *file, SDL_AudioSpec *spec,
 	Uint32 FORMchunk;
 	Uint32 AIFFmagic;
 	/* SSND chunk        */
-	Uint32 SSNDchunk;
 	Uint32 offset;
 	Uint32 blocksize;
 	/* COMM format chunk */
-	Uint32 COMMchunk;
 	Uint16 channels;
 	Uint32 numsamples;
 	Uint16 samplesize;

@@ -35,6 +35,7 @@ endif
 EXTRA_DIST =			\
 	CHANGES			\
 	VisualC.zip		\
+	PBProjects.tar.gz	\
 	MPWmake.sea.bin		\
 	CWprojects.sea.hqx	\
 	SDL_mixer.spec		\

@@ -329,9 +329,6 @@ static int voc_get_block(SDL_RWops *src, vs_t *v, SDL_AudioSpec *spec)
 static int voc_read(SDL_RWops *src, vs_t *v, Uint8 *buf, SDL_AudioSpec *spec)
 {
     int done = 0;
-    int rc;
-    Uint16 us;
-    Uint8 uc;
     Uint8 silence = 0x80;
 
     if (v->rest == 0)
@@ -381,7 +378,6 @@ SDL_AudioSpec *Mix_LoadVOC_RW (SDL_RWops *src, int freesrc,
 {
     vs_t v;
     int was_error = 1;
-    int lenread;
     int samplesize;
     Uint8 *fillptr;
     void *ptr;

@@ -93,7 +93,7 @@ extern DECLSPEC Mix_Music *Mix_LoadMUS(const char *file);
 #if 0 /* This hasn't been hooked into music.c yet */
 /* Load a music file from an SDL_RWop object (MikMod-specific currently)
    Matt Campbell (matt@campbellhome.dhs.org) April 2000 */
-extern DECLSPEC Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw);
+extern no_parse_DECLSPEC Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw);
 #endif
 
 /* Load a wave file of the mixer format from a memory buffer */
