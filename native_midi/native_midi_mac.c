@@ -20,7 +20,7 @@
     max@quendi.de
 */
 
-#if 1 || defined(MACOS) || defined(MACOSX)
+#if defined(macintosh) || defined(__APPLE__)
 
 #include "native_midi.h"
 #include "native_midi_common.h"

@@ -123,7 +123,7 @@ if test x$enable_music_midi = xyes; then
 [  --enable-music-timidity-midi  enable timidity MIDI output [default=yes]],
                   , enable_music_timidity_midi=yes)
     if test x$enable_music_timidity_midi = xyes; then
-        CFLAGS="$CFLAGS -I\$(top_srcdir)/timidity"
+        CFLAGS="$CFLAGS -DUSE_TIMIDITY_MIDI -I\$(top_srcdir)/timidity"
         MUSIC_SUBDIRS="$MUSIC_SUBDIRS timidity"
     fi
     AC_ARG_ENABLE(music-native-midi,
@@ -135,6 +135,9 @@ if test x$enable_music_midi = xyes; then
             *-*-cygwin* | *-*-mingw32*)
                 use_music_native_midi=yes
                 LIBS="$LIBS -lwinmm"
+                ;;
+            *-*-darwin*)
+                use_music_native_midi=yes
                 ;;
         esac
         if test x$use_music_native_midi = xyes; then
