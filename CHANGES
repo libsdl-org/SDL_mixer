@@ -1,4 +1,6 @@
 1.2.6:
+Jonathan Atkins - Wed, 15 Sep 2004 23:26:42 -0500
+ * Added support for using the system version of libmikmod
 Martin_Storsjö -  Sun, 22 Aug 2004 02:21:14 +0300 (EEST)
  * Added SDL_RWops support for reading Ogg Vorbis files
 Greg Lee - Wed, 14 Jul 2004 05:13:14 -1000
