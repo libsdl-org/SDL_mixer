@@ -43,7 +43,7 @@ static BOOL SDRV_Reset(void)
 }
 
 
-MDRIVER drv_sdl =
+MIKMODAPI MDRIVER drv_sdl =
 {   NULL,
     "SDL",
     "MikMod Simple DirectMedia Layer driver v1.1",

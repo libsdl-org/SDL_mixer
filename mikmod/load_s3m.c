@@ -1,5 +1,5 @@
 /*	MikMod sound library
-	(c) 1998, 1999 Miodrag Vallat and others - see file AUTHORS for
+	(c) 1998, 1999, 2000 Miodrag Vallat and others - see file AUTHORS for
 	complete list.
 
 	This library is free software; you can redistribute it and/or modify
@@ -195,8 +195,10 @@ static BOOL S3M_ReadPattern(void)
 				n->note=_mm_read_UBYTE(modreader);
 				n->ins=_mm_read_UBYTE(modreader);
 			}
-			if(flag&64)
+			if(flag&64) {
 				n->vol=_mm_read_UBYTE(modreader);
+				if (n->vol>64) n->vol=64;
+			}
 			if(flag&128) {
 				n->cmd=_mm_read_UBYTE(modreader);
 				n->inf=_mm_read_UBYTE(modreader);
@@ -435,7 +437,7 @@ CHAR *S3M_LoadTitle(void)
 
 /*========== Loader information */
 
-MLOADER load_s3m={
+MIKMODAPI MLOADER load_s3m={
 	NULL,
 	"S3M",
 	"S3M (Scream Tracker 3)",

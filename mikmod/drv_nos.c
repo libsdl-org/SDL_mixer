@@ -1,5 +1,5 @@
 /*	MikMod sound library
-	(c) 1998, 1999 Miodrag Vallat and others - see file AUTHORS for
+	(c) 1998, 1999, 2000 Miodrag Vallat and others - see file AUTHORS for
 	complete list.
 
 	This library is free software; you can redistribute it and/or modify
@@ -69,7 +69,7 @@ static void NS_Update(void)
 		VC_WriteBytes(zerobuf,ZEROLEN);
 }
 
-MDRIVER drv_nos={
+MIKMODAPI MDRIVER drv_nos={
 	NULL,
 	"No Sound",
 	"Nosound Driver v3.0",

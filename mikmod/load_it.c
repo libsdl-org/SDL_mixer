@@ -1,5 +1,5 @@
 /*	MikMod sound library
-	(c) 1998, 1999 Miodrag Vallat and others - see file AUTHORS for
+	(c) 1998, 1999, 2000 Miodrag Vallat and others - see file AUTHORS for
 	complete list.
 
 	This library is free software; you can redistribute it and/or modify
@@ -753,7 +753,7 @@ BOOL IT_Load(BOOL curious)
 
 			d->volflg|=EF_VOLENV;
 			d->insname = DupStr(ih.name,26,0);
-			d->nnatype = ih.nna;
+			d->nnatype = ih.nna & NNA_MASK;
 
 			if(mh->cwt<0x200) {
 				d->volfade=ih.fadeout<< 6;
@@ -857,39 +857,6 @@ d->pitflg&=~EF_ON;
 						warn=1;
 					}
 #endif
-				}
-
-				d->volpts    = ih.volpts;
-				d->volbeg    = ih.volbeg;
-				d->volend    = ih.volend;
-				d->volsusbeg = ih.volsusbeg;
-				d->volsusend = ih.volsusend;
-
-				for(u=0;u<ih.volpts;u++) {
-					d->volenv[u].val=(ih.volnode[u]<<2);
-					d->volenv[u].pos=ih.voltick[u];
-				}
-
-				d->panpts    = ih.panpts;
-				d->panbeg    = ih.panbeg;
-				d->panend    = ih.panend;
-				d->pansusbeg = ih.pansusbeg;
-				d->pansusend = ih.pansusend;
-
-				for(u=0;u<ih.panpts;u++) {
-					d->panenv[u].val=ih.pannode[u]==32?255:(ih.pannode[u]+32)<<2;
-					d->panenv[u].pos=ih.pantick[u];
-				}
-
-				d->pitpts   =ih.pitpts;
-				d->pitbeg   =ih.pitbeg;
-				d->pitend   =ih.pitend;
-				d->pitsusbeg=ih.pitsusbeg;
-				d->pitsusend=ih.pitsusend;
-
-				for(u=0;u<ih.pitpts;u++) {
-					d->pitenv[u].val=ih.pitnode[u]+32;
-					d->pitenv[u].pos=ih.pittick[u];
 				}
 			}
 
@@ -996,7 +963,7 @@ CHAR *IT_LoadTitle(void)
 
 /*========== Loader information */
 
-MLOADER load_it={
+MIKMODAPI MLOADER load_it={
 	NULL,
 	"IT",
 	"IT (Impulse Tracker)",

@@ -1,5 +1,5 @@
 /*	MikMod sound library
-	(c) 1998, 1999 Miodrag Vallat and others - see file AUTHORS for
+	(c) 1998, 1999, 2000 Miodrag Vallat and others - see file AUTHORS for
 	complete list.
 
 	This library is free software; you can redistribute it and/or modify
@@ -248,9 +248,6 @@ extern void      SL_Exit(SAMPLOAD*);
 /* number of notes in an octave */
 #define OCTAVE 12
 
-/* The UniTrack stuff is generally for internal use only, but would be required
-   in making a tracker or a module player that scrolls pattern data. */
-
 extern void   UniSetRow(UBYTE*);
 extern UBYTE  UniGetByte(void);
 extern UWORD  UniGetWord(void);
@@ -451,7 +448,6 @@ typedef struct MP_CONTROL {
 	UWORD       fadevol;      /* fading volume rate */
 	SWORD       panning;      /* panning position */
 	UBYTE       kick;         /* if true = sample has to be restarted */
-	UBYTE       muted;        /* if set, channel not played */
 	UWORD       period;       /* period to play the sample at */
 	UBYTE       nna;          /* New note action type + master/slave flags */
 
@@ -464,10 +460,11 @@ typedef struct MP_CONTROL {
 	UBYTE       notedelay;    /* (used for note delay) */
 	SLONG       start;        /* The starting byte index in the sample */
 
-	UWORD		ultoffset;    /* fine sample offset memory */
-
 struct MP_VOICE*slave;        /* Audio Slave of current effects control channel */
+
 	UBYTE       slavechn;     /* Audio Slave of current effects control channel */
+	UBYTE       muted;        /* if set, channel not played */
+	UWORD		ultoffset;    /* fine sample offset memory */
 	UBYTE       anote;        /* the note that indexes the audible */
 	UBYTE		oldnote;
 	SWORD       ownper;
@@ -485,7 +482,7 @@ struct MP_VOICE*slave;        /* Audio Slave of current effects control channel 
 
 	UBYTE       arpmem;       /* arpeggio command memory */
 	UBYTE       pansspd;      /* panslide speed */
-	UWORD       slidespeed;   /* */
+	UWORD       slidespeed;
 	UWORD       portspeed;    /* noteslide speed (toneportamento) */
 
 	UBYTE       s3mtremor;    /* s3m tremor (effect I) counter */
@@ -540,20 +537,18 @@ typedef struct MP_VOICE {
 	SAMPLE*     s;
 	UBYTE       sample;       /* which instrument number */
 
+	UBYTE       note;         /* the audible note (as heard, direct rep of period) */
 	SWORD       volume;       /* output volume (vol + sampcol + instvol) */
-	SWORD       panning;      /* panning position */
 	SBYTE       chanvol;      /* channel's "global" volume */
 	UWORD       fadevol;      /* fading volume rate */
+	SWORD       panning;      /* panning position */
+	UBYTE       kick;         /* if true = sample has to be restarted */
 	UWORD       period;       /* period to play the sample at */
-
+	UBYTE       nna;          /* New note action type + master/slave flags */
 	UBYTE       volflg;       /* volume envelope settings */
 	UBYTE       panflg;       /* panning envelope settings */
 	UBYTE       pitflg;       /* pitch envelope settings */
-
 	UBYTE       keyoff;       /* if true = fade out and stuff */
-	UBYTE       kick;         /* if true = sample has to be restarted */
-	UBYTE       note;         /* the audible note (as heard, direct rep of period) */
-	UBYTE       nna;          /* New note action type + master/slave flags */
 	SWORD       handle;       /* which sample-handle */
 	SLONG       start;        /* The start byte index in the sample */
 
@@ -587,7 +582,7 @@ struct MLOADER* next;
 	CHAR*       (*LoadTitle)(void);
 } MLOADER;
 
-/* internal loader variables: */
+/* internal loader variables */
 extern MREADER* modreader;
 extern UWORD   finetune[16];
 extern MODULE  of;                  /* static unimod loading space */
@@ -627,6 +622,10 @@ extern void   S3MIT_CreateOrders(BOOL);
 /* used to convert c4spd to linear XM periods (IT and IMF loaders). */
 extern UWORD  getlinearperiod(UWORD,ULONG);
 extern ULONG  getfrequency(UBYTE,ULONG);
+
+/* loader shared data */
+#define STM_NTRACKERS 3
+extern CHAR *STM_Signatures[STM_NTRACKERS];
 
 /*========== Player interface */
 
@@ -676,6 +675,10 @@ extern BOOL VC2_Init(void);
 extern BOOL MD_Access(CHAR *);
 extern BOOL MD_DropPrivileges(void);
 #endif
+
+/* Macro to define a missing driver, yet allowing binaries to dynamically link
+   with the library without missing symbol errors */
+#define MISSING(a) MDRIVER a = { NULL, NULL, NULL, 0, 0 }
 
 /*========== Prototypes for non-MT safe versions of some public functions */
 

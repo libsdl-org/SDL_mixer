@@ -175,14 +175,18 @@ CHAR* MikMod_InfoDriver(void)
 
 	MUTEX_LOCK(lists);
 	/* compute size of buffer */
-	for(l=firstdriver;l;l=l->next) len+=4+(l->next?1:0)+strlen(l->Version);
+	for(l=firstdriver;l;l=l->next)
+		if(l->Version)
+			len+=4+(l->next?1:0)+strlen(l->Version);
 
 	if(len)
 		if((list=_mm_malloc(len*sizeof(CHAR)))) {
 			list[0]=0;
 			/* list all registered device drivers : */
 			for(t=1,l=firstdriver;l;l=l->next,t++)
-				sprintf(list,(l->next)?"%s%2d %s\n":"%s%2d %s",list,t,l->Version);
+				if(l->Version)
+					sprintf(list,(l->next)?"%s%2d %s\n":"%s%2d %s",
+					    list,t,l->Version);
 		}
 	MUTEX_UNLOCK(lists);
 	return list;
@@ -231,8 +235,11 @@ int MikMod_DriverFromAlias(CHAR *alias)
 	MUTEX_LOCK(lists);
 	cruise=firstdriver;
 	while(cruise) {
-		if (!(strcasecmp(alias,cruise->Alias))) break;
-		cruise=cruise->next;rank++;
+		if (cruise->Alias) {
+			if (!(strcasecmp(alias,cruise->Alias))) break;
+			rank++;
+		}
+		cruise=cruise->next;
 	}
 	if(!cruise) rank=0;
 	MUTEX_UNLOCK(lists);
@@ -477,7 +484,8 @@ static BOOL _mm_init(CHAR *cmdline)
 		cmdline=NULL;
 
 		for(t=1,md_driver=firstdriver;md_driver;md_driver=md_driver->next,t++)
-			if(md_driver->IsPresent()) break;
+			if(md_driver->Version)
+				if(md_driver->IsPresent()) break;
 
 		if(!md_driver) {
 			_mm_errno = MMERR_DETECTING_DEVICE;
@@ -489,7 +497,9 @@ static BOOL _mm_init(CHAR *cmdline)
 		md_device = t;
 	} else {
 		/* if n>0, use that driver */
-		for(t=1,md_driver=firstdriver;(md_driver)&&(t!=md_device);md_driver=md_driver->next,t++);
+		for(t=1,md_driver=firstdriver;(md_driver)&&(t!=md_device);md_driver=md_driver->next)
+			if(md_driver->Version)
+				t++;
 
 		if(!md_driver) {
 			_mm_errno = MMERR_INVALID_DEVICE;

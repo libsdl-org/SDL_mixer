@@ -1,5 +1,7 @@
 
 1.2.1:
+Sam Lantinga - Tue Sep 11 11:48:53 PDT 2001
+ * Updated MikMod code to version 3.1.9a
 Torbjörn Andersson - Tue Sep 11 11:22:29 PDT 2001
  * Added support for loading AIFF audio chunks
 Max Horn - Tue Sep  4 20:38:11 PDT 2001

@@ -16,14 +16,32 @@ Previous Unix maintainers
 
 * Steve McIntyre <steven@chiark.greenend.org.uk>
   maintained MikMod'Unix version 2.
-* Peter Amstutz <amstpi@freenet.tlh.fl.us>
+* Peter Amstutz <tetron@student.umass.edu>
   maintained MikMod'Unix version 3.0.
+  
+General contributors
+--------------------
+
+* Arne de Bruijn <arne@knoware.nl>
+  wrote the compressed IT sample support.
+* Claudio Matsuoka <claudio@helllabs.org>
+  wrote the STX loader and submitted bug fixes.
+* Sebastiaan A. Megens <samegens@xs4all.nl>
+  fixed various bugs (memory leaks, endianness issues, etc).
+* ``UFO'' <ufo303@poczta.onet.pl>
+  wrote the OKT loader.
+* Kev Vance <kvance@zeux.org>
+  wrote the GDM loader.
+
+* Paul Fisher made decisive contributions and improvements.
+* Alexander Kerkhove fixed an ULT panning effect bug.
+* ``Kodiak'' helped on the interfaces of libmikmod.
+* Sylvain Marchand make MikMod more portable and GCC compilable.
+
 
 Contributors on the Unix side
 -----------------------------
 
-* Arne de Bruijn <arne@knoware.nl>
-  wrote the compressed IT sample support.
 * Douglas Carmichael <dcarmich@mcs.com>
   made MikMod work under FreeBSD.
 * Chris Conn <cconn@tohs.abacom.com>
@@ -42,15 +60,13 @@ Contributors on the Unix side
   updated the Ultra driver to work with libmikmod 3.
 * ``MenTaLguY'' <mental@kludge.org>
   autoconfized the Unix libmikmod distribution.
-* Claudio Matsuoka <claudio@helllabs.org>
-  wrote the STX loader and submitted bug fixes.
 * Tobias Gloth <gloth@geomagic.com>
   created the new I/O interface, made the code MT-safe and submitted bug fixes.
-* Kev Vance <kvance@zeux.org>
-  wrote the GDM loader.
 * Simon Hosie <gumboot@clear.net.nz>
   wrote the piped output driver, and submitted speed optimizations and bugfixes
   for the software mixer.
+* Gerd Rausch <gerd@alf.gun.de>
+  wrote the sam9407 driver.
 
 Contributors on the Windows side
 --------------------------------
@@ -93,17 +109,6 @@ Contributors on the BeOS side
 
 * Thomas Neumann <tneumann@polycode.dk>
   integrated libmikmod into his BeOS APlayer, and contributed many bug fixes.
-
-Other contributors
-------------------
-
-* Sebastiaan A. Megens <samegens@xs4all.nl>
-  fixed various bugs (memory leaks, endianness issues, etc).
-
-* Paul Fisher made decisive contributions and improvements.
-* Alexander Kerkhove fixed an ULT panning effect bug.
-* ``Kodiak'' helped on the interfaces of libmikmod.
-* Sylvain Marchand make MikMod more portable and GCC compilable.
 
 --
 If your name is missing, don't hesitate to remind me at

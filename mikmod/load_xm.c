@@ -1,5 +1,5 @@
 /*	MikMod sound library
-	(c) 1998, 1999 Miodrag Vallat and others - see file AUTHORS for
+	(c) 1998, 1999, 2000 Miodrag Vallat and others - see file AUTHORS for
 	complete list.
 
 	This library is free software; you can redistribute it and/or modify
@@ -392,7 +392,7 @@ static BOOL LoadInstruments(void)
 {
 	int t,u;
 	INSTRUMENT *d;
-	long next=0;
+	ULONG next=0;
 	UWORD wavcnt=0;
 
 	if(!AllocInstruments()) return 0;
@@ -442,8 +442,11 @@ static BOOL LoadInstruments(void)
 				   (2 bytes for 1.03, 22 for 1.04) */
 				for(u=headend-_mm_ftell(modreader);u;u--) _mm_read_UBYTE(modreader);
 
-				/* #@!$&% fix for K_OSPACE.XM */
-				if(pth.volpts==32) pth.volpts=XMENVCNT/2;
+				/* we can't trust the envelope point count here, as some
+				   modules have incorrect values (K_OSPACE.XM reports 32 volume
+				   points, for example). */
+				if(pth.volpts>XMENVCNT/2) pth.volpts=XMENVCNT/2;
+				if(pth.panpts>XMENVCNT/2) pth.panpts=XMENVCNT/2;
 
 				if((_mm_eof(modreader))||(pth.volpts>XMENVCNT/2)||(pth.panpts>XMENVCNT/2)) {
 					if(nextwav) { free(nextwav);nextwav=NULL; }
@@ -623,7 +626,7 @@ BOOL XM_Load(BOOL curious)
 	of.numpos    = mh->songlength;               /* copy the songlength */
 	of.reppos    = mh->restart<mh->songlength?mh->restart:0;
 	of.numins    = mh->numins;
-	of.flags    |= UF_XMPERIODS|UF_INST|UF_BGSLIDES|UF_NOWRAP|UF_FT2QUIRKS;
+	of.flags    |= UF_XMPERIODS|UF_INST|UF_NOWRAP|UF_FT2QUIRKS;
 	if(mh->flags&1) of.flags |= UF_LINEAR;
 
 	memset(of.chanvol,64,of.numchn);             /* store channel volumes */
@@ -718,7 +721,7 @@ CHAR *XM_LoadTitle(void)
 
 /*========== Loader information */
 
-MLOADER load_xm={
+MIKMODAPI MLOADER load_xm={
 	NULL,
 	"XM",
 	"XM (FastTracker 2)",
