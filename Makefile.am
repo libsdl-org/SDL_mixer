@@ -59,7 +59,8 @@ EXTRA_DIST =			\
 	SDL_mixer.spec.in	\
 	autogen.sh
 
-libSDL_mixer_la_LDFLAGS = 		\
+libSDL_mixer_la_LDFLAGS = 	\
+	-no-undefined		\
 	-release $(LT_RELEASE)	\
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 libSDL_mixer_la_LIBADD = $(MIKMOD_LIB) $(TIMIDITY_LIB) $(NATIVE_MIDI_LIB) @SYSTEM_LIBS@ @SDL_LIBS@

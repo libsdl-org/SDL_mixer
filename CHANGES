@@ -1,8 +1,8 @@
-current:
+1.2.6:
+Sam Lantinga - Wed Nov 19 00:23:44 PST 2003
+ * Updated libtool support for new mingw32 DLL build process
 Ryan C. Gordon - Sun Nov  9 23:34:47 EST 2003
  * Patch from Steven Fuller to fix positioning effect on bigendian systems.
-
-1.2.6:
 Laurent Ganter - Mon, 6 Oct 2003 11:51:33 +0200
  * Fixed bug with MIDI volume in native Windows playback
 Andre Leiradella - Fri, 30 May 2003 16:12:03 -0300
