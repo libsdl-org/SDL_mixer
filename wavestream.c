@@ -129,7 +129,7 @@ extern WAVStream *WAVStream_LoadSong(const char *file, const char *magic)
 	SDL_AudioSpec wavespec;
 
 	if ( ! mixer.format ) {
-		SDL_SetError("WAV music output not started");
+		Mix_SetError("WAV music output not started");
 		return(NULL);
 	}
 	wave = (WAVStream *)malloc(sizeof *wave);
@@ -268,11 +268,11 @@ static int ReadChunk(SDL_RWops *src, Chunk *chunk, int read_data)
 	if ( read_data ) {
 		chunk->data = (Uint8 *)malloc(chunk->length);
 		if ( chunk->data == NULL ) {
-			SDL_SetError("Out of memory");
+			Mix_SetError("Out of memory");
 			return(-1);
 		}
 		if ( SDL_RWread(src, chunk->data, chunk->length, 1) != 1 ) {
-			SDL_SetError("Couldn't read chunk");
+			Mix_SetError("Couldn't read chunk");
 			free(chunk->data);
 			return(-1);
 		}
@@ -316,7 +316,7 @@ static FILE *LoadWAVStream (const char *file, SDL_AudioSpec *spec,
 	wavelen		= SDL_ReadLE32(src);
 	WAVEmagic	= SDL_ReadLE32(src);
 	if ( (RIFFchunk != RIFF) || (WAVEmagic != WAVE) ) {
-		SDL_SetError("Unrecognized file type (not WAVE)");
+		Mix_SetError("Unrecognized file type (not WAVE)");
 		was_error = 1;
 		goto done;
 	}
@@ -339,7 +339,7 @@ static FILE *LoadWAVStream (const char *file, SDL_AudioSpec *spec,
 	format = (WaveFMT *)chunk.data;
 	if ( chunk.magic != FMT ) {
 		free(chunk.data);
-		SDL_SetError("Complex WAVE files not supported");
+		Mix_SetError("Complex WAVE files not supported");
 		was_error = 1;
 		goto done;
 	}
@@ -348,7 +348,7 @@ static FILE *LoadWAVStream (const char *file, SDL_AudioSpec *spec,
 			/* We can understand this */
 			break;
 		default:
-			SDL_SetError("Unknown WAVE data format");
+			Mix_SetError("Unknown WAVE data format");
 			was_error = 1;
 			goto done;
 	}
@@ -362,7 +362,7 @@ static FILE *LoadWAVStream (const char *file, SDL_AudioSpec *spec,
 			spec->format = AUDIO_S16;
 			break;
 		default:
-			SDL_SetError("Unknown PCM data format");
+			Mix_SetError("Unknown PCM data format");
 			was_error = 1;
 			goto done;
 	}
@@ -467,7 +467,7 @@ static FILE *LoadAIFFStream (const char *file, SDL_AudioSpec *spec,
 	chunk_length	= SDL_ReadBE32(src);
 	AIFFmagic	= SDL_ReadLE32(src);
 	if ( (FORMchunk != FORM) || (AIFFmagic != AIFF) ) {
-		SDL_SetError("Unrecognized file type (not AIFF)");
+		Mix_SetError("Unrecognized file type (not AIFF)");
 		was_error = 1;
 		goto done;
 	}
@@ -517,13 +517,13 @@ static FILE *LoadAIFFStream (const char *file, SDL_AudioSpec *spec,
 		 && SDL_RWseek(src, next_chunk, SEEK_SET) != -1);
 
 	if (!found_SSND) {
-	    SDL_SetError("Bad AIFF file (no SSND chunk)");
+	    Mix_SetError("Bad AIFF file (no SSND chunk)");
 	    was_error = 1;
 	    goto done;
 	}
 		    
 	if (!found_COMM) {
-	    SDL_SetError("Bad AIFF file (no COMM chunk)");
+	    Mix_SetError("Bad AIFF file (no COMM chunk)");
 	    was_error = 1;
 	    goto done;
 	}
@@ -541,7 +541,7 @@ static FILE *LoadAIFFStream (const char *file, SDL_AudioSpec *spec,
 			spec->format = AUDIO_S16MSB;
 			break;
 		default:
-			SDL_SetError("Unknown samplesize in data format");
+			Mix_SetError("Unknown samplesize in data format");
 			was_error = 1;
 			goto done;
 	}
