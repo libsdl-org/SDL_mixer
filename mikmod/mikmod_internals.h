@@ -69,7 +69,7 @@ extern "C" {
 /*========== More type definitions */
 
 /* SLONGLONG: 64bit, signed */
-#if defined(__alpha)
+#if defined(__alpha) || defined(_LP64)
 typedef long		SLONGLONG;
 #define NATIVE_64BIT_INT
 #elif defined(__WATCOMC__)
