@@ -175,7 +175,7 @@ static void mix_channels(void *udata, Uint8 *stream, int len)
 					if( mix_channel[i].fading == MIX_FADING_OUT ) {
 						mix_channel[i].playing = 0;
 						mix_channel[i].expire = 0;
-						Mix_Volume(i, mix_channel[i].fading); /* Restore the volume */
+						Mix_Volume(i, mix_channel[i].fade_volume); /* Restore the volume */
 					}
 					mix_channel[i].fading = MIX_NO_FADING;
 				} else {
