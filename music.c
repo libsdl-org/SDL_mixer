@@ -512,7 +512,10 @@ Mix_Music *Mix_LoadMUS(const char *file)
 			music->data.module->panflag = 1;
 			music->data.module->wrap    = 0;
 			music->data.module->loop    = 0;
+#if 0 /* Don't set fade out by default - unfortunately there's no real way
+         to query the status of the song or set trigger actions.  Hum. */
 			music->data.module->fadeout = 1;
+#endif
 		}
 	} else
 #endif
