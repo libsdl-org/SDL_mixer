@@ -1939,6 +1939,8 @@ void pt_UpdateVoices(int max_volume)
 		tmpvol*=envvol;           /* * max 256 */
 		tmpvol*=pf->volume;       /* * max 128 */
 		tmpvol/=4194304UL;
+               tmpvol*=pf->initvolume;   /* * max 128 */
+               tmpvol/=128;
 
 		/* fade out */
 		if (pf->sngpos>=pf->numpos) tmpvol=0;
