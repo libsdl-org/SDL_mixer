@@ -1,9 +1,8 @@
-current:
-Ryan C. Gordon - Wed Oct 16 17:10:08 EDT 2002
- * Pete Shinners sent in a patch to correctly report an error when using an
-    unknown filetype.
-
 1.2.5:
+Sam Lantinga - Sun Oct 20 20:52:24 PDT 2002
+ * Added shared library support for MacOS X
+Pete Shinners - Wed Oct 16 17:10:08 EDT 2002
+ * Correctly report an error when using an unknown filetype
 Vaclav Slavik - Sun Sep  8 18:57:38 PDT 2002
  * Added support for loading Ogg Vorbis samples as an audio chunk
 Martin Storsjö - Tue Jul 16 10:38:12 PDT 2002
