@@ -114,6 +114,22 @@ AC_ARG_ENABLE(music-midi,
 if test x$enable_music_midi = xyes; then
     CFLAGS="$CFLAGS -DMID_MUSIC -I\$(top_srcdir)/timidity"
     MUSIC_SUBDIRS="$MUSIC_SUBDIRS timidity"
+    AC_ARG_ENABLE(music-native-midi,
+[  --enable-music-native-midi  enable native MIDI music output [default=yes]],
+                  , enable_music_native_midi=yes)
+    if test x$enable_music_native_midi = xyes; then
+        use_music_native_midi=no
+        case "$target" in
+            *-*-cygwin* | *-*-mingw32*)
+                use_music_native_midi=yes
+                LIBS="$LIBS -lwinmm"
+                ;;
+        esac
+        if test x$use_music_native_midi = xyes; then
+            CFLAGS="$CFLAGS -DUSE_NATIVE_MIDI -I\$(top_srcdir)/native_midi"
+            MUSIC_SUBDIRS="$MUSIC_SUBDIRS native_midi"
+        fi
+    fi
 fi
 AC_ARG_ENABLE(music-ogg,
 [  --enable-music-ogg      enable Ogg Vorbis music [default=yes]],
@@ -149,11 +165,13 @@ dnl Add Makefile conditionals
 AC_SUBST(MUSIC_SUBDIRS)
 AM_CONDITIONAL(USE_MIKMOD, test x$enable_music_mod = xyes)
 AM_CONDITIONAL(USE_TIMIDITY, test x$enable_music_midi = xyes)
+AM_CONDITIONAL(USE_NATIVE_MIDI, test x$use_music_native_midi = xyes)
 
 # Finally create all the generated files
 AC_OUTPUT([
 Makefile
 mikmod/Makefile
 timidity/Makefile
+native_midi/Makefile
 SDL_mixer.spec
 ])

@@ -3,7 +3,7 @@
 lib_LTLIBRARIES = libSDL_mixer.la
 
 SUBDIRS = @MUSIC_SUBDIRS@
-DIST_SUBIDRS = mikmod timidity
+DIST_SUBIDRS = mikmod timidity native_midi
 
 libSDL_mixerincludedir = $(includedir)/SDL
 libSDL_mixerinclude_HEADERS =	\
@@ -31,6 +31,11 @@ TIMIDITY_LIB = timidity/libtimidity.la
 else
 TIMIDITY_LIB =
 endif
+if USE_NATIVE_MIDI
+NATIVE_MIDI_LIB = native_midi/libnativemidi.la
+else
+NATIVE_MIDI_LIB =
+endif
 
 EXTRA_DIST =			\
 	CHANGES			\
@@ -45,7 +50,7 @@ EXTRA_DIST =			\
 libSDL_mixer_la_LDFLAGS = 		\
 	-release $(LT_RELEASE)	\
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
-libSDL_mixer_la_LIBADD = $(MIKMOD_LIB) $(TIMIDITY_LIB)
+libSDL_mixer_la_LIBADD = $(MIKMOD_LIB) $(TIMIDITY_LIB) $(NATIVE_MIDI_LIB)
 
 bin_PROGRAMS = playwave playmus
 

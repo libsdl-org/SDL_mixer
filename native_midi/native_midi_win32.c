@@ -20,6 +20,7 @@
     florian.proff.schulze@gmx.net
 */
 
+#ifdef _WIN32
 /* everything below is currently one very big bad hack ;) Proff */
 
 #include <stdio.h>
@@ -459,3 +460,4 @@ char *native_midi_error()
   return "";
 }
 
+#endif /* Windows native MIDI support */
