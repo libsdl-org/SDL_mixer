@@ -4,6 +4,9 @@ Martin Storsjö - Tue May 28 13:08:29 PDT 2002
  * Fixed a volume bug when calling Mix_HaltChannel() on unused channel
 Xavier Wielemans - Wed Jun 12 14:28:14 EDT 2002
  * Fixed volume reset bug at end of channel fade.
+Ryan C. Gordon - Wed Jun 26 16:30:59 EDT 2002
+ * Mix_LoadMUS() will now accept an MP3 by file extension, instead of relying
+    entirely on the magic number.
 
 1.2.4:
 Sam Lantinga - Mon May 20 09:11:22 PDT 2002
