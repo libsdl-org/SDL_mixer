@@ -21,7 +21,7 @@
 */
 
 #ifdef LOOKUP_SINE
-extern float sine(int x);
+extern FLOAT_T sine(int x);
 #else
 #include <math.h>
 #define sine(x) (sin((2*PI/1024.0) * (x)))
@@ -30,6 +30,7 @@ extern float sine(int x);
 #define SINE_CYCLE_LENGTH 1024
 extern int32 freq_table[];
 extern double vol_table[];
+extern double expr_table[];
 extern double bend_fine[];
 extern double bend_coarse[];
 extern uint8 *_l2u; /* 13-bit PCM to 8-bit u-law */
@@ -43,3 +44,7 @@ extern int8 *iplookup;
 #endif
 
 extern void init_tables(void);
+
+#define XMAPMAX 800
+extern int xmap[XMAPMAX][5];
+

@@ -77,41 +77,64 @@ int recompute_envelope(int v)
 
 void apply_envelope_to_amp(int v)
 {
-  float lamp=voice[v].left_amp, ramp;
-  int32 la,ra;
+  FLOAT_T lamp=voice[v].left_amp, ramp, lramp, rramp, ceamp, lfeamp;
+  int32 la,ra, lra, rra, cea, lfea;
   if (voice[v].panned == PANNED_MYSTERY)
     {
+      lramp=voice[v].lr_amp;
       ramp=voice[v].right_amp;
+      ceamp=voice[v].ce_amp;
+      rramp=voice[v].rr_amp;
+      lfeamp=voice[v].lfe_amp;
+
       if (voice[v].tremolo_phase_increment)
 	{
-	  lamp *= voice[v].tremolo_volume;
-	  ramp *= voice[v].tremolo_volume;
+	  FLOAT_T tv = voice[v].tremolo_volume;
+	  lramp *= tv;
+	  lamp *= tv;
+	  ceamp *= tv;
+	  ramp *= tv;
+	  rramp *= tv;
+	  lfeamp *= tv;
 	}
       if (voice[v].sample->modes & MODES_ENVELOPE)
 	{
-	  lamp *= (float)vol_table[voice[v].envelope_volume>>23];
-	  ramp *= (float)vol_table[voice[v].envelope_volume>>23];
+	  FLOAT_T ev = (FLOAT_T)vol_table[voice[v].envelope_volume>>23];
+	  lramp *= ev;
+	  lamp *= ev;
+	  ceamp *= ev;
+	  ramp *= ev;
+	  rramp *= ev;
+	  lfeamp *= ev;
 	}
 
       la = (int32)FSCALE(lamp,AMP_BITS);
-      
-      if (la>MAX_AMP_VALUE)
-	la=MAX_AMP_VALUE;
-
       ra = (int32)FSCALE(ramp,AMP_BITS);
-      if (ra>MAX_AMP_VALUE)
-	ra=MAX_AMP_VALUE;
-
+      lra = (int32)FSCALE(lramp,AMP_BITS);
+      rra = (int32)FSCALE(rramp,AMP_BITS);
+      cea = (int32)FSCALE(ceamp,AMP_BITS);
+      lfea = (int32)FSCALE(lfeamp,AMP_BITS);
       
+      if (la>MAX_AMP_VALUE) la=MAX_AMP_VALUE;
+      if (ra>MAX_AMP_VALUE) ra=MAX_AMP_VALUE;
+      if (lra>MAX_AMP_VALUE) lra=MAX_AMP_VALUE;
+      if (rra>MAX_AMP_VALUE) rra=MAX_AMP_VALUE;
+      if (cea>MAX_AMP_VALUE) cea=MAX_AMP_VALUE;
+      if (lfea>MAX_AMP_VALUE) lfea=MAX_AMP_VALUE;
+
+      voice[v].lr_mix=FINAL_VOLUME(lra);
       voice[v].left_mix=FINAL_VOLUME(la);
+      voice[v].ce_mix=FINAL_VOLUME(cea);
       voice[v].right_mix=FINAL_VOLUME(ra);
+      voice[v].rr_mix=FINAL_VOLUME(rra);
+      voice[v].lfe_mix=FINAL_VOLUME(lfea);
     }
   else
     {
       if (voice[v].tremolo_phase_increment)
 	lamp *= voice[v].tremolo_volume;
       if (voice[v].sample->modes & MODES_ENVELOPE)
-	lamp *= (float)vol_table[voice[v].envelope_volume>>23];
+	lamp *= (FLOAT_T)vol_table[voice[v].envelope_volume>>23];
 
       la = (int32)FSCALE(lamp,AMP_BITS);
 
@@ -162,7 +185,7 @@ static void update_tremolo(int v)
   /* if (voice[v].tremolo_phase >= (SINE_CYCLE_LENGTH<<RATE_SHIFT))
      voice[v].tremolo_phase -= SINE_CYCLE_LENGTH<<RATE_SHIFT;  */
 
-  voice[v].tremolo_volume = (float) 
+  voice[v].tremolo_volume = (FLOAT_T) 
     (1.0 - FSCALENEG((sine(voice[v].tremolo_phase >> RATE_SHIFT) + 1.0)
 		    * depth * TREMOLO_AMPLITUDE_TUNING,
 		    17));
@@ -190,39 +213,65 @@ static int update_signal(int v)
 #  define MIXATION(a)	*lp++ += (a)*s;
 #endif
 
-static void mix_mystery_signal(sample_t *sp, int32 *lp, int v, int count)
+#define MIXSKIP lp++
+#define MIXMAX(a,b) *lp++ += ((a>b)?a:b) * s
+#define MIXCENT(a,b) *lp++ += (a/2+b/2) * s
+#define MIXHALF(a)	*lp++ += (a>>1)*s;
+
+static void mix_mystery_signal(resample_t *sp, int32 *lp, int v, int count)
 {
   Voice *vp = voice + v;
   final_volume_t 
+    left_rear=vp->lr_mix, 
     left=vp->left_mix, 
-    right=vp->right_mix;
+    center=vp->ce_mix, 
+    right=vp->right_mix, 
+    right_rear=vp->rr_mix, 
+    lfe=vp->lfe_mix;
   int cc;
-  sample_t s;
+  resample_t s;
 
   if (!(cc = vp->control_counter))
     {
       cc = control_ratio;
       if (update_signal(v))
 	return;	/* Envelope ran out */
-      left = vp->left_mix;
-      right = vp->right_mix;
-    }
-  
-  while (count)
-    if (cc < count)
-      {
-	count -= cc;
-	while (cc--)
-	  {
-	    s = *sp++;
-	    MIXATION(left);
-	    MIXATION(right);
-	  }
-	cc = control_ratio;
-	if (update_signal(v))
-	  return;	/* Envelope ran out */
+
+	left_rear = vp->lr_mix;
 	left = vp->left_mix;
+	center = vp->ce_mix;
 	right = vp->right_mix;
+	right_rear = vp->rr_mix;
+	lfe = vp->lfe_mix;
+    }
+  
+  while (count)
+    if (cc < count)
+      {
+	count -= cc;
+	while (cc--)
+	  {
+	    s = *sp++;
+	      	MIXATION(left);
+	      	MIXATION(right);
+		if (num_ochannels >= 4) {
+			MIXATION(left_rear);
+			MIXATION(right_rear);
+		}
+		if (num_ochannels == 6) {
+			MIXATION(center);
+			MIXATION(lfe);
+		}
+	  }
+	cc = control_ratio;
+	if (update_signal(v))
+	  return;	/* Envelope ran out */
+	left_rear = vp->lr_mix;
+	left = vp->left_mix;
+	center = vp->ce_mix;
+	right = vp->right_mix;
+	right_rear = vp->rr_mix;
+	lfe = vp->lfe_mix;
       }
     else
       {
@@ -230,20 +279,28 @@ static void mix_mystery_signal(sample_t *sp, int32 *lp, int v, int count)
 	while (count--)
 	  {
 	    s = *sp++;
-	    MIXATION(left);
-	    MIXATION(right);
+	      	MIXATION(left);
+	      	MIXATION(right);
+		if (num_ochannels >= 4) {
+			MIXATION(left_rear);
+			MIXATION(right_rear);
+		}
+		if (num_ochannels == 6) {
+			MIXATION(center);
+			MIXATION(lfe);
+		}
 	  }
 	return;
       }
 }
 
-static void mix_center_signal(sample_t *sp, int32 *lp, int v, int count)
+static void mix_center_signal(resample_t *sp, int32 *lp, int v, int count)
 {
   Voice *vp = voice + v;
   final_volume_t 
     left=vp->left_mix;
   int cc;
-  sample_t s;
+  resample_t s;
 
   if (!(cc = vp->control_counter))
     {
@@ -260,8 +317,24 @@ static void mix_center_signal(sample_t *sp, int32 *lp, int v, int count)
 	while (cc--)
 	  {
 	    s = *sp++;
-	    MIXATION(left);
-	    MIXATION(left);
+		if (num_ochannels == 2) {
+	    		MIXATION(left);
+	    		MIXATION(left);
+		}
+		else if (num_ochannels == 4) {
+			MIXATION(left);
+			MIXSKIP;
+			MIXATION(left);
+			MIXSKIP;
+		}
+		else if (num_ochannels == 6) {
+			MIXSKIP;
+			MIXSKIP;
+			MIXSKIP;
+			MIXSKIP;
+			MIXATION(left);
+			MIXATION(left);
+		}
 	  }
 	cc = control_ratio;
 	if (update_signal(v))
@@ -274,20 +347,170 @@ static void mix_center_signal(sample_t *sp, int32 *lp, int v, int count)
 	while (count--)
 	  {
 	    s = *sp++;
-	    MIXATION(left);
-	    MIXATION(left);
+		if (num_ochannels == 2) {
+	    		MIXATION(left);
+	    		MIXATION(left);
+		}
+		else if (num_ochannels == 4) {
+			MIXATION(left);
+			MIXSKIP;
+			MIXATION(left);
+			MIXSKIP;
+		}
+		else if (num_ochannels == 6) {
+			MIXSKIP;
+			MIXSKIP;
+			MIXSKIP;
+			MIXSKIP;
+			MIXATION(left);
+			MIXATION(left);
+		}
 	  }
 	return;
       }
 }
 
-static void mix_single_signal(sample_t *sp, int32 *lp, int v, int count)
+static void mix_single_left_signal(resample_t *sp, int32 *lp, int v, int count)
 {
   Voice *vp = voice + v;
   final_volume_t 
     left=vp->left_mix;
   int cc;
-  sample_t s;
+  resample_t s;
+  
+  if (!(cc = vp->control_counter))
+    {
+      cc = control_ratio;
+      if (update_signal(v))
+	return;	/* Envelope ran out */
+      left = vp->left_mix;
+    }
+  
+  while (count)
+    if (cc < count)
+      {
+	count -= cc;
+	while (cc--)
+	  {
+	    s = *sp++;
+		if (num_ochannels == 2) {
+			MIXATION(left);
+	    		MIXSKIP;
+		}
+		if (num_ochannels >= 4) {
+			MIXHALF(left);
+	    		MIXSKIP;
+			MIXATION(left);
+	    		MIXSKIP;
+		}
+		if (num_ochannels == 6) {
+	    		MIXSKIP;
+			MIXATION(left);
+		}
+	  }
+	cc = control_ratio;
+	if (update_signal(v))
+	  return;	/* Envelope ran out */
+	left = vp->left_mix;
+      }
+    else
+      {
+	vp->control_counter = cc - count;
+	while (count--)
+	  {
+	    s = *sp++;
+		if (num_ochannels == 2) {
+			MIXATION(left);
+	    		MIXSKIP;
+		}
+		if (num_ochannels >= 4) {
+			MIXHALF(left);
+	    		MIXSKIP;
+			MIXATION(left);
+	    		MIXSKIP;
+		}
+		if (num_ochannels == 6) {
+	    		MIXSKIP;
+			MIXATION(left);
+		}
+	  }
+	return;
+      }
+}
+
+static void mix_single_right_signal(resample_t *sp, int32 *lp, int v, int count)
+{
+  Voice *vp = voice + v;
+  final_volume_t 
+    left=vp->left_mix;
+  int cc;
+  resample_t s;
+  
+  if (!(cc = vp->control_counter))
+    {
+      cc = control_ratio;
+      if (update_signal(v))
+	return;	/* Envelope ran out */
+      left = vp->left_mix;
+    }
+  
+  while (count)
+    if (cc < count)
+      {
+	count -= cc;
+	while (cc--)
+	  {
+	    s = *sp++;
+		if (num_ochannels == 2) {
+	    		MIXSKIP;
+			MIXATION(left);
+		}
+		if (num_ochannels >= 4) {
+	    		MIXSKIP;
+			MIXHALF(left);
+	    		MIXSKIP;
+			MIXATION(left);
+		} if (num_ochannels == 6) {
+	    		MIXSKIP;
+			MIXATION(left);
+		}
+	  }
+	cc = control_ratio;
+	if (update_signal(v))
+	  return;	/* Envelope ran out */
+	left = vp->left_mix;
+      }
+    else
+      {
+	vp->control_counter = cc - count;
+	while (count--)
+	  {
+	    s = *sp++;
+		if (num_ochannels == 2) {
+	    		MIXSKIP;
+			MIXATION(left);
+		}
+		if (num_ochannels >= 4) {
+	    		MIXSKIP;
+			MIXHALF(left);
+	    		MIXSKIP;
+			MIXATION(left);
+		} if (num_ochannels == 6) {
+	    		MIXSKIP;
+			MIXATION(left);
+		}
+	  }
+	return;
+      }
+}
+
+static void mix_mono_signal(resample_t *sp, int32 *lp, int v, int count)
+{
+  Voice *vp = voice + v;
+  final_volume_t 
+    left=vp->left_mix;
+  int cc;
+  resample_t s;
   
   if (!(cc = vp->control_counter))
     {
@@ -305,50 +528,6 @@ static void mix_single_signal(sample_t *sp, int32 *lp, int v, int count)
 	  {
 	    s = *sp++;
 	    MIXATION(left);
-	    lp++;
-	  }
-	cc = control_ratio;
-	if (update_signal(v))
-	  return;	/* Envelope ran out */
-	left = vp->left_mix;
-      }
-    else
-      {
-	vp->control_counter = cc - count;
-	while (count--)
-	  {
-	    s = *sp++;
-	    MIXATION(left);
-	    lp++;
-	  }
-	return;
-      }
-}
-
-static void mix_mono_signal(sample_t *sp, int32 *lp, int v, int count)
-{
-  Voice *vp = voice + v;
-  final_volume_t 
-    left=vp->left_mix;
-  int cc;
-  sample_t s;
-  
-  if (!(cc = vp->control_counter))
-    {
-      cc = control_ratio;
-      if (update_signal(v))
-	return;	/* Envelope ran out */
-      left = vp->left_mix;
-    }
-  
-  while (count)
-    if (cc < count)
-      {
-	count -= cc;
-	while (cc--)
-	  {
-	    s = *sp++;
-	    MIXATION(left);
 	  }
 	cc = control_ratio;
 	if (update_signal(v))
@@ -367,54 +546,119 @@ static void mix_mono_signal(sample_t *sp, int32 *lp, int v, int count)
       }
 }
 
-static void mix_mystery(sample_t *sp, int32 *lp, int v, int count)
+static void mix_mystery(resample_t *sp, int32 *lp, int v, int count)
 {
   final_volume_t 
+    left_rear=voice[v].lr_mix, 
     left=voice[v].left_mix, 
-    right=voice[v].right_mix;
-  sample_t s;
+    center=voice[v].ce_mix, 
+    right=voice[v].right_mix, 
+    right_rear=voice[v].rr_mix, 
+    lfe=voice[v].lfe_mix;
+  resample_t s;
   
   while (count--)
     {
       s = *sp++;
-      MIXATION(left);
-      MIXATION(right);
+	      	MIXATION(left);
+	      	MIXATION(right);
+		if (num_ochannels >= 4) {
+			MIXATION(left_rear);
+			MIXATION(right_rear);
+		}
+		if (num_ochannels == 6) {
+			MIXATION(center);
+			MIXATION(lfe);
+		}
     }
 }
 
-static void mix_center(sample_t *sp, int32 *lp, int v, int count)
+static void mix_center(resample_t *sp, int32 *lp, int v, int count)
 {
   final_volume_t 
     left=voice[v].left_mix;
-  sample_t s;
+  resample_t s;
   
   while (count--)
     {
       s = *sp++;
-      MIXATION(left);
-      MIXATION(left);
+		if (num_ochannels == 2) {
+      			MIXATION(left);
+      			MIXATION(left);
+		}
+		else if (num_ochannels == 4) {
+      			MIXATION(left);
+      			MIXATION(left);
+			MIXSKIP;
+			MIXSKIP;
+		}
+		else if (num_ochannels == 6) {
+			MIXSKIP;
+			MIXSKIP;
+			MIXSKIP;
+			MIXSKIP;
+			MIXATION(left);
+			MIXATION(left);
+		}
     }
 }
 
-static void mix_single(sample_t *sp, int32 *lp, int v, int count)
+static void mix_single_left(resample_t *sp, int32 *lp, int v, int count)
 {
   final_volume_t 
     left=voice[v].left_mix;
-  sample_t s;
+  resample_t s;
   
   while (count--)
     {
       s = *sp++;
-      MIXATION(left);
-      lp++;
+		if (num_ochannels == 2) {
+			MIXATION(left);
+      			MIXSKIP;
+		}
+		if (num_ochannels >= 4) {
+			MIXHALF(left);
+      			MIXSKIP;
+			MIXATION(left);
+      			MIXSKIP;
+		}
+	       	if (num_ochannels == 6) {
+      			MIXSKIP;
+			MIXATION(left);
+		}
     }
 }
-
-static void mix_mono(sample_t *sp, int32 *lp, int v, int count)
+static void mix_single_right(resample_t *sp, int32 *lp, int v, int count)
 {
   final_volume_t 
     left=voice[v].left_mix;
-  sample_t s;
+  resample_t s;
+  
+  while (count--)
+    {
+      s = *sp++;
+		if (num_ochannels == 2) {
+      			MIXSKIP;
+			MIXATION(left);
+		}
+		if (num_ochannels >= 4) {
+      			MIXSKIP;
+			MIXHALF(left);
+      			MIXSKIP;
+			MIXATION(left);
+		}
+	       	if (num_ochannels == 6) {
+      			MIXSKIP;
+			MIXATION(left);
+		}
+    }
+}
+
+static void mix_mono(resample_t *sp, int32 *lp, int v, int count)
+{
+  final_volume_t 
+    left=voice[v].left_mix;
+  resample_t s;
   
   while (count--)
     {
@@ -424,20 +668,20 @@ static void mix_mono(sample_t *sp, int32 *lp, int v, int count)
 }
 
 /* Ramp a note out in c samples */
-static void ramp_out(sample_t *sp, int32 *lp, int v, int32 c)
+static void ramp_out(resample_t *sp, int32 *lp, int v, int32 c)
 {
 
   /* should be final_volume_t, but uint8 gives trouble. */
-  int32 left, right, li, ri;
+  int32 left_rear, left, center, right, right_rear, lfe, li, ri;
 
-  sample_t s=0; /* silly warning about uninitialized s */
+  resample_t s = 0; /* silly warning about uninitialized s */
 
   /* Fix by James Caldwell */
   if ( c == 0 ) c = 1;
 
-  left=voice[v].left_mix;
-  li=-(left/c);
-  if (!li) li=-1;
+  left = voice[v].left_mix;
+  li = -(left/c);
+  if (!li) li = -1;
 
   /* printf("Ramping out: left=%d, c=%d, li=%d\n", left, c, li); */
 
@@ -445,19 +689,32 @@ static void ramp_out(sample_t *sp, int32 *lp, int v, int32 c)
     {
       if (voice[v].panned==PANNED_MYSTERY)
 	{
+	  left_rear = voice[v].lr_mix;
+	  center=voice[v].ce_mix;
 	  right=voice[v].right_mix;
+	  right_rear = voice[v].rr_mix;
+	  lfe = voice[v].lfe_mix;
+
 	  ri=-(right/c);
 	  while (c--)
 	    {
-	      left += li;
-	      if (left<0)
-		left=0;
-	      right += ri;
-	      if (right<0)
-		right=0;
+	      left_rear += li; if (left_rear<0) left_rear=0;
+	      left += li; if (left<0) left=0;
+	      center += li; if (center<0) center=0;
+	      right += ri; if (right<0) right=0;
+	      right_rear += ri; if (right_rear<0) right_rear=0;
+	      lfe += li; if (lfe<0) lfe=0;
 	      s=*sp++;
-	      MIXATION(left);
-	      MIXATION(right);
+	      	MIXATION(left);
+	      	MIXATION(right);
+		if (num_ochannels >= 4) {
+			MIXATION(left_rear);
+			MIXATION(right_rear);
+		}
+		if (num_ochannels == 6) {
+			MIXATION(center);
+			MIXATION(lfe);
+		}
 	    }
 	}
       else if (voice[v].panned==PANNED_CENTER)
@@ -468,8 +725,24 @@ static void ramp_out(sample_t *sp, int32 *lp, int v, int32 c)
 	      if (left<0)
 		return;
 	      s=*sp++;	
-	      MIXATION(left);
-	      MIXATION(left);
+		if (num_ochannels == 2) {
+	      		MIXATION(left);
+	      		MIXATION(left);
+		}
+		else if (num_ochannels == 4) {
+			MIXATION(left);
+	      		MIXATION(left);
+			MIXSKIP;
+			MIXSKIP;
+		}
+		else if (num_ochannels == 6) {
+			MIXSKIP;
+			MIXSKIP;
+			MIXSKIP;
+			MIXSKIP;
+	      		MIXATION(left);
+	      		MIXATION(left);
+		}
 	    }
 	}
       else if (voice[v].panned==PANNED_LEFT)
@@ -481,7 +754,14 @@ static void ramp_out(sample_t *sp, int32 *lp, int v, int32 c)
 		return;
 	      s=*sp++;
 	      MIXATION(left);
-	      lp++;
+	      MIXSKIP;
+		if (num_ochannels >= 4) {
+			MIXATION(left);
+	      		MIXSKIP;
+		} if (num_ochannels == 6) {
+			MIXATION(left);
+			MIXATION(left);
+		}
 	    }
 	}
       else if (voice[v].panned==PANNED_RIGHT)
@@ -492,8 +772,15 @@ static void ramp_out(sample_t *sp, int32 *lp, int v, int32 c)
 	      if (left<0)
 		return;
 	      s=*sp++;
-	      lp++;
+	      MIXSKIP;
 	      MIXATION(left);
+		if (num_ochannels >= 4) {
+	      		MIXSKIP;
+			MIXATION(left);
+		} if (num_ochannels == 6) {
+			MIXATION(left);
+			MIXATION(left);
+		}
 	    }
 	}
     }
@@ -517,52 +804,62 @@ static void ramp_out(sample_t *sp, int32 *lp, int v, int32 c)
 void mix_voice(int32 *buf, int v, int32 c)
 {
   Voice *vp=voice+v;
-  sample_t *sp;
+  int32 count=c;
+  resample_t *sp;
+  if (c<0) return;
   if (vp->status==VOICE_DIE)
     {
-      if (c>=MAX_DIE_TIME)
-	c=MAX_DIE_TIME;
-      sp=resample_voice(v, &c);
-      ramp_out(sp, buf, v, c);
+      if (count>=MAX_DIE_TIME)
+	count=MAX_DIE_TIME;
+      sp=resample_voice(v, &count);
+      ramp_out(sp, buf, v, count);
       vp->status=VOICE_FREE;
     }
   else
     {
-      sp=resample_voice(v, &c);
+      sp=resample_voice(v, &count);
+      if (count<0) return;
       if (play_mode->encoding & PE_MONO)
 	{
 	  /* Mono output. */
 	  if (vp->envelope_increment || vp->tremolo_phase_increment)
-	    mix_mono_signal(sp, buf, v, c);
+	    mix_mono_signal(sp, buf, v, count);
 	  else
-	    mix_mono(sp, buf, v, c);
+	    mix_mono(sp, buf, v, count);
 	}
       else
 	{
 	  if (vp->panned == PANNED_MYSTERY)
 	    {
 	      if (vp->envelope_increment || vp->tremolo_phase_increment)
-		mix_mystery_signal(sp, buf, v, c);
+		mix_mystery_signal(sp, buf, v, count);
 	      else
-		mix_mystery(sp, buf, v, c);
+		mix_mystery(sp, buf, v, count);
 	    }
 	  else if (vp->panned == PANNED_CENTER)
 	    {
 	      if (vp->envelope_increment || vp->tremolo_phase_increment)
-		mix_center_signal(sp, buf, v, c);
+		mix_center_signal(sp, buf, v, count);
 	      else
-		mix_center(sp, buf, v, c);
+		mix_center(sp, buf, v, count);
 	    }
 	  else
 	    { 
 	      /* It's either full left or full right. In either case,
 		 every other sample is 0. Just get the offset right: */
-	      if (vp->panned == PANNED_RIGHT) buf++;
 	      
 	      if (vp->envelope_increment || vp->tremolo_phase_increment)
-		mix_single_signal(sp, buf, v, c);
+	      {
+	        if (vp->panned == PANNED_RIGHT)
+			mix_single_right_signal(sp, buf, v, count);
+		else mix_single_left_signal(sp, buf, v, count);
+	      }
 	      else 
-		mix_single(sp, buf, v, c);
+	      {
+	        if (vp->panned == PANNED_RIGHT)
+			mix_single_right(sp, buf, v, count);
+		else mix_single_left(sp, buf, v, count);
+	      }
 	    }
 	}
     }

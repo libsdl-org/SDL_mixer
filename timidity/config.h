@@ -45,13 +45,20 @@
 #define MAX_OUTPUT_RATE 	65000
 
 /* In percent. */
-#define DEFAULT_AMPLIFICATION 	70
+/* #define DEFAULT_AMPLIFICATION 	70 */
+/* #define DEFAULT_AMPLIFICATION 	50 */
+#define DEFAULT_AMPLIFICATION 	30
 
 /* Default sampling rate, default polyphony, and maximum polyphony.
    All but the last can be overridden from the command line. */
 #define DEFAULT_RATE	32000
-#define DEFAULT_VOICES	32
-#define MAX_VOICES	48
+/* #define DEFAULT_VOICES	32 */
+/* #define MAX_VOICES	48 */
+#define DEFAULT_VOICES	256
+#define MAX_VOICES	256
+#define MAXCHAN		16
+/* #define MAXCHAN		64 */
+#define MAXNOTE		128
 
 /* 1000 here will give a control ratio of 22:1 with 22 kHz output.
    Higher CONTROLS_PER_SECOND values allow more accurate rendering
@@ -79,7 +86,7 @@
 /* Make envelopes twice as fast. Saves ~20% CPU time (notes decay
    faster) and sounds more like a GUS. There is now a command line
    option to toggle this as well. */
-#define FAST_DECAY
+/* #define FAST_DECAY */
 
 /* How many bits to use for the fractional part of sample positions.
    This affects tonal accuracy. The entire position counter must fit
@@ -88,6 +95,10 @@
    by with just 9 bits and a little help from its friends...
    "The GUS does not SUCK!!!" -- a happy user :) */
 #define FRACTION_BITS 12
+
+#define MAX_SAMPLE_SIZE (1 << (32-FRACTION_BITS))
+
+typedef double FLOAT_T;
 
 /* For some reason the sample volume is always set to maximum in all
    patch files. Define this for a crude adjustment that may help
@@ -235,6 +246,8 @@ typedef char int8;
 #  define FINAL_VOLUME(v) (v)
 #  define MAX_AMP_VALUE ((1<<(AMP_BITS+1))-1)
 #endif
+
+typedef int16 resample_t;
 
 #ifdef USE_LDEXP
 #  define FSCALE(a,b) ldexp((a),(b))

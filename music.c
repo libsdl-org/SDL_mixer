@@ -31,6 +31,14 @@
 
 #include "SDL_mixer.h"
 
+#define SDL_SURROUND
+
+#ifdef SDL_SURROUND
+#define MAX_OUTPUT_CHANNELS 6
+#else
+#define MAX_OUTPUT_CHANNELS 2
+#endif
+
 /* The music command hack is UNIX specific */
 #ifndef unix
 #undef CMD_MUSIC
@@ -131,6 +139,10 @@ static int native_midi_ok;
 #endif
 #endif
 
+/* Reference for converting mikmod output to 4/6 channels */
+static int current_output_channels;
+static Uint16 current_output_format;
+
 /* Used to calculate fading steps */
 static int ms_per_step;
 
@@ -210,7 +222,57 @@ void music_mixer(void *udata, Uint8 *stream, int len)
 #endif
 #ifdef MOD_MUSIC
 			case MUS_MOD:
-				VC_WriteBytes((SBYTE *)stream, len);
+				if (current_output_channels > 2) {
+					int small_len = 2 * len / current_output_channels;
+					int i;
+					Uint8 *src, *dst;
+
+					VC_WriteBytes((SBYTE *)stream, small_len);
+					/* and extend to len by copying channels */
+					src = stream + small_len;
+					dst = stream + len;
+
+					switch (current_output_format & 0xFF) {
+						case 8:
+							for ( i=small_len/2; i; --i ) {
+								src -= 2;
+								dst -= current_output_channels;
+								dst[0] = src[0];
+								dst[1] = src[1];
+								dst[2] = src[0];
+								dst[3] = src[1];
+								if (current_output_channels == 6) {
+									dst[4] = src[0];
+									dst[5] = src[1];
+								}
+							}
+							break;
+						case 16:
+							for ( i=small_len/4; i; --i ) {
+								src -= 4;
+								dst -= 2 * current_output_channels;
+								dst[0] = src[0];
+								dst[1] = src[1];
+								dst[2] = src[2];
+								dst[3] = src[3];
+								dst[4] = src[0];
+								dst[5] = src[1];
+								dst[6] = src[2];
+								dst[7] = src[3];
+								if (current_output_channels == 6) {
+									dst[8] = src[0];
+									dst[9] = src[1];
+									dst[10] = src[2];
+									dst[11] = src[3];
+								}
+							}
+							break;
+					}
+
+
+
+				}
+				else VC_WriteBytes((SBYTE *)stream, len);
 				if ( music_swap8 ) {
 					Uint8 *dst;
 					int i;
@@ -306,8 +368,10 @@ int open_music(SDL_AudioSpec *mixer)
 			++music_error;
 		}
 	}
+	current_output_channels = mixer->channels;
+	current_output_format = mixer->format;
 	if ( mixer->channels > 1 ) {
-		if ( mixer->channels > 2 ) {
+		if ( mixer->channels > MAX_OUTPUT_CHANNELS ) {
 			Mix_SetError("Hardware uses more channels than mixer");
 			++music_error;
 		}
@@ -385,7 +449,7 @@ Mix_Music *Mix_LoadMUS(const char *file)
 {
 	FILE *fp;
 	char *ext;
-	Uint8 magic[5];
+	Uint8 magic[5], moremagic[9];
 	Mix_Music *music;
 
 	/* Figure out what kind of file this is */
@@ -397,7 +461,12 @@ Mix_Music *Mix_LoadMUS(const char *file)
 		Mix_SetError("Couldn't read from '%s'", file);
 		return(NULL);
 	}
+	if (!fread(moremagic, 8, 1, fp)) {
+		Mix_SetError("Couldn't read from '%s'", file);
+		return(NULL);
+	}
 	magic[4] = '\0';
+	moremagic[8] = '\0';
 	fclose(fp);
 
 	/* Figure out the file extension, so we can determine the type */
@@ -426,7 +495,7 @@ Mix_Music *Mix_LoadMUS(const char *file)
 	   AIFF files have the magic 12 bytes "FORM" XXXX "AIFF"
 	 */
 	if ( (ext && MIX_string_equals(ext, "WAV")) ||
-	     (strcmp((char *)magic, "RIFF") == 0) ||
+	     ((strcmp((char *)magic, "RIFF") == 0) && (strcmp((char *)(moremagic+4), "WAVE") == 0)) ||
 	     (strcmp((char *)magic, "FORM") == 0) ) {
 		music->type = MUS_WAV;
 		music->data.wave = WAVStream_LoadSong(file, (char *)magic);
@@ -440,7 +509,9 @@ Mix_Music *Mix_LoadMUS(const char *file)
 	/* MIDI files have the magic four bytes "MThd" */
 	if ( (ext && MIX_string_equals(ext, "MID")) ||
 	     (ext && MIX_string_equals(ext, "MIDI")) ||
-	     strcmp((char *)magic, "MThd") == 0 ) {
+	     strcmp((char *)magic, "MThd") == 0  ||
+	     ( strcmp((char *)magic, "RIFF") == 0  &&
+	  	strcmp((char *)(moremagic+4), "RMID") == 0 ) ) {
 		music->type = MUS_MID;
 #ifdef USE_NATIVE_MIDI
   		if ( native_midi_ok ) {

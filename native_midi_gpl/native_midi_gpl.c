@@ -223,7 +223,6 @@ void native_midi_start(NativeMidiSong *song)
 
     int i, error = 0, j;
 
-
     for (i = 0; i < 16; i++)
     {
 	useprog[i] = 0;	/* reset options */
@@ -380,7 +379,7 @@ int synth_setup()
 	{
     	    if( gus_dev >= 0 )
 	    {
-    		play_gus = 1;
+    		play_gus = -1;
 	        awe_dev = -1;
 		sb_dev  = -1;
 	        ext_dev = -1;
@@ -394,7 +393,7 @@ int synth_setup()
 	{
     	    if( awe_dev >= 0 )
 	    {
-    		play_awe = 1;
+    		play_awe = -1;
 	        gus_dev = -1;
 		sb_dev  = -1;
 	        ext_dev = -1;
@@ -408,7 +407,7 @@ int synth_setup()
 	{
     	    if( sb_dev >= 0 && fm_patch_aviable )
 	    {
-    		play_fm = 1;
+    		play_fm = -1;
 		gus_dev = -1;
 	        awe_dev = -1;
 	        ext_dev = -1;
@@ -423,7 +422,7 @@ int synth_setup()
 	{
     	    if( sb_dev >= 0 && opl3_patch_aviable )
 	    {
-    		play_fm = 1;
+    		play_fm = -1;
 		gus_dev = -1;
 	        awe_dev = -1;
 	        ext_dev = -1;
@@ -438,7 +437,7 @@ int synth_setup()
 	{
     	    if( ext_dev >= 0 )
 	    {
-    		play_ext = 1;
+    		play_ext = -1;
 	        gus_dev = -1;
 	        awe_dev = -1;
 		sb_dev  = -1;
@@ -453,7 +452,7 @@ int synth_setup()
     /* autoselect best device */
     if( gus_dev >= 0 )
     {
-        play_gus = 1;
+        play_gus = -1;
         awe_dev = -1;
         sb_dev  = -1;
         ext_dev = -1;
@@ -461,7 +460,7 @@ int synth_setup()
         }
     if( awe_dev >= 0 )
     {
-        play_awe = 1;
+        play_awe = -1;
 	gus_dev = -1;
         sb_dev  = -1;
         ext_dev = -1;
@@ -469,7 +468,7 @@ int synth_setup()
     }
     if( sb_dev >= 0 && fm_patch_aviable )
     {
-        play_fm = 1;
+        play_fm = -1;
 	gus_dev = -1;
         awe_dev = -1;
         ext_dev = -1;
@@ -477,7 +476,7 @@ int synth_setup()
     }
     if( ext_dev >= 0 )
     {
-        play_ext = 1;
+        play_ext = -1;
 	gus_dev = -1;
         awe_dev = -1;
         sb_dev  = -1;

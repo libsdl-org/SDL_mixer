@@ -260,6 +260,7 @@ static void PrintFormat(char *title, SDL_AudioSpec *fmt)
 {
 	printf("%s: %d bit %s audio (%s) at %u Hz\n", title, (fmt->format&0xFF),
 			(fmt->format&0x8000) ? "signed" : "unsigned",
+			(fmt->channels > 2) ? "surround" :
 			(fmt->channels > 1) ? "stereo" : "mono", fmt->freq);
 }
 
@@ -635,6 +636,16 @@ int Mix_ReserveChannels(int num)
 	return num;
 }
 
+static int checkchunkintegral(Mix_Chunk *chunk)
+{
+	int frame_width = 1;
+
+	if ((mixer.format & 0xFF) == 16) frame_width = 2;
+	frame_width *= mixer.channels;
+	while (chunk->alen % frame_width) chunk->alen--;
+	return chunk->alen;
+}
+
 /* Play an audio chunk on a specific channel.
    If the specified channel is -1, play on the first free channel.
    'ticks' is the number of milliseconds at most to play the sample, or -1
@@ -648,6 +659,10 @@ int Mix_PlayChannelTimed(int which, Mix_Chunk *chunk, int loops, int ticks)
 	/* Don't play null pointers :-) */
 	if ( chunk == NULL ) {
 		Mix_SetError("Tried to play a NULL chunk");
+		return(-1);
+	}
+	if ( !checkchunkintegral(chunk)) {
+		Mix_SetError("Tried to play a chunk with a bad frame");
 		return(-1);
 	}
 
@@ -715,6 +730,10 @@ int Mix_FadeInChannelTimed(int which, Mix_Chunk *chunk, int loops, int ms, int t
 
 	/* Don't play null pointers :-) */
 	if ( chunk == NULL ) {
+		return(-1);
+	}
+	if ( !checkchunkintegral(chunk)) {
+		Mix_SetError("Tried to play a chunk with a bad frame");
 		return(-1);
 	}
 

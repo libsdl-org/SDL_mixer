@@ -56,11 +56,11 @@
 #define FINALINTERP if (ofs == le) *dest++=src[ofs>>FRACTION_BITS];
 /* So it isn't interpolation. At least it's final. */
 
-extern sample_t *resample_buffer;
+extern resample_t *resample_buffer;
 
 /*************** resampling with fixed increment *****************/
 
-static sample_t *rs_plain(int v, int32 *countptr)
+static resample_t *rs_plain(int v, int32 *countptr)
 {
 
   /* Play sample until end, then free the voice. */
@@ -68,8 +68,9 @@ static sample_t *rs_plain(int v, int32 *countptr)
   INTERPVARS;
   Voice 
     *vp=&voice[v];
+  resample_t 
+    *dest=resample_buffer;
   sample_t 
-    *dest=resample_buffer,
     *src=vp->sample->data;
   int32 
     ofs=vp->sample_offset,
@@ -78,7 +79,7 @@ static sample_t *rs_plain(int v, int32 *countptr)
     count=*countptr;
 
 #ifdef PRECALC_LOOPS
-  int32 i;
+  int32 i, j;
 
   if (incr<0) incr = -incr; /* In case we're coming out of a bidir loop */
 
@@ -93,7 +94,7 @@ static sample_t *rs_plain(int v, int32 *countptr)
     } 
   else count -= i;
 
-  while (i--) 
+  for(j = 0; j < i; j++)
     {
       RESAMPLATION;
       ofs += incr;
@@ -127,7 +128,7 @@ static sample_t *rs_plain(int v, int32 *countptr)
   return resample_buffer;
 }
 
-static sample_t *rs_loop(Voice *vp, int32 count)
+static resample_t *rs_loop(Voice *vp, int32 count)
 {
 
   /* Play sample until end-of-loop, skip back and continue. */
@@ -138,13 +139,16 @@ static sample_t *rs_loop(Voice *vp, int32 count)
     incr=vp->sample_increment,
     le=vp->sample->loop_end, 
     ll=le - vp->sample->loop_start;
+  resample_t
+    *dest=resample_buffer;
   sample_t
-    *dest=resample_buffer,
     *src=vp->sample->data;
 
 #ifdef PRECALC_LOOPS
   int32 i;
-  
+ 
+  if (ofs < 0 || le < 0) return resample_buffer;
+
   while (count) 
     {
       if (ofs >= le)
@@ -158,6 +162,7 @@ static sample_t *rs_loop(Voice *vp, int32 count)
 	  count = 0;
 	} 
       else count -= i;
+      if (i > 0)
       while (i--) 
 	{
 	  RESAMPLATION;
@@ -178,7 +183,7 @@ static sample_t *rs_loop(Voice *vp, int32 count)
   return resample_buffer;
 }
 
-static sample_t *rs_bidir(Voice *vp, int32 count)
+static resample_t *rs_bidir(Voice *vp, int32 count)
 {
   INTERPVARS;
   int32 
@@ -186,8 +191,9 @@ static sample_t *rs_bidir(Voice *vp, int32 count)
     incr=vp->sample_increment,
     le=vp->sample->loop_end,
     ls=vp->sample->loop_start;
+  resample_t 
+    *dest=resample_buffer; 
   sample_t 
-    *dest=resample_buffer, 
     *src=vp->sample->data;
 
 #ifdef PRECALC_LOOPS
@@ -362,15 +368,16 @@ static int32 update_vibrato(Voice *vp, int sign)
   return (int32) a;
 }
 
-static sample_t *rs_vib_plain(int v, int32 *countptr)
+static resample_t *rs_vib_plain(int v, int32 *countptr)
 {
 
   /* Play sample until end, then free the voice. */
 
   INTERPVARS;
   Voice *vp=&voice[v];
+  resample_t 
+    *dest=resample_buffer; 
   sample_t 
-    *dest=resample_buffer, 
     *src=vp->sample->data;
   int32 
     le=vp->sample->data_length,
@@ -409,7 +416,7 @@ static sample_t *rs_vib_plain(int v, int32 *countptr)
   return resample_buffer;
 }
 
-static sample_t *rs_vib_loop(Voice *vp, int32 count)
+static resample_t *rs_vib_loop(Voice *vp, int32 count)
 {
 
   /* Play sample until end-of-loop, skip back and continue. */
@@ -420,8 +427,9 @@ static sample_t *rs_vib_loop(Voice *vp, int32 count)
     incr=vp->sample_increment, 
     le=vp->sample->loop_end,
     ll=le - vp->sample->loop_start;
+  resample_t 
+    *dest=resample_buffer; 
   sample_t 
-    *dest=resample_buffer, 
     *src=vp->sample->data;
   int 
     cc=vp->vibrato_control_counter;
@@ -481,7 +489,7 @@ static sample_t *rs_vib_loop(Voice *vp, int32 count)
   return resample_buffer;
 }
 
-static sample_t *rs_vib_bidir(Voice *vp, int32 count)
+static resample_t *rs_vib_bidir(Voice *vp, int32 count)
 {
   INTERPVARS;
   int32 
@@ -489,8 +497,9 @@ static sample_t *rs_vib_bidir(Voice *vp, int32 count)
     incr=vp->sample_increment,
     le=vp->sample->loop_end, 
     ls=vp->sample->loop_start;
+  resample_t 
+    *dest=resample_buffer; 
   sample_t 
-    *dest=resample_buffer, 
     *src=vp->sample->data;
   int 
     cc=vp->vibrato_control_counter;
@@ -617,7 +626,7 @@ static sample_t *rs_vib_bidir(Voice *vp, int32 count)
   return resample_buffer;
 }
 
-sample_t *resample_voice(int v, int32 *countptr)
+resample_t *resample_voice(int v, int32 *countptr)
 {
   int32 ofs;
   uint8 modes;
@@ -641,7 +650,7 @@ sample_t *resample_voice(int v, int32 *countptr)
       else
 	vp->sample_offset += *countptr << FRACTION_BITS;
       
-      return vp->sample->data+ofs;
+      return (resample_t *)vp->sample->data+ofs;
     }
 
   /* Need to resample. Use the proper function. */
@@ -681,7 +690,8 @@ void pre_resample(Sample * sp)
 {
   double a, xdiff;
   int32 incr, ofs, newlen, count;
-  int16 *newdata, *dest, *src = (int16 *) sp->data;
+  int16 *src = (int16 *) sp->data;
+  resample_t *newdata, *dest;
   int16 v1, v2, v3, v4, *vptr;
   static const char note_name[12][3] =
   {
@@ -694,7 +704,9 @@ void pre_resample(Sample * sp)
 
   a = ((double) (sp->sample_rate) * freq_table[(int) (sp->note_to_use)]) /
     ((double) (sp->root_freq) * play_mode->rate);
+  if (a <= 0) return;
   newlen = (int32)(sp->data_length / a);
+  if (newlen < 0 || (newlen >> FRACTION_BITS) > MAX_SAMPLE_SIZE) return;
   dest = newdata = safe_malloc(newlen >> (FRACTION_BITS - 1));
 
   count = (newlen >> FRACTION_BITS) - 1;

@@ -266,7 +266,7 @@ static void CleanUp(void)
 
 static void Usage(char *argv0)
 {
-	fprintf(stderr, "Usage: %s [-8] [-r rate] [-f] [-F] [-l] [-m] <wavefile>\n", argv0);
+	fprintf(stderr, "Usage: %s [-8] [-r rate] [-c channels] [-f] [-F] [-l] [-m] <wavefile>\n", argv0);
 }
 
 
@@ -360,6 +360,10 @@ int main(int argc, char *argv[])
 		if ( strcmp(argv[i], "-m") == 0 ) {
 			audio_channels = 1;
 		} else
+		if ( (strcmp(argv[i], "-c") == 0) && argv[i+1] ) {
+			++i;
+			audio_channels = atoi(argv[i]);
+		} else
 		if ( strcmp(argv[i], "-l") == 0 ) {
 			loops = -1;
 		} else
@@ -398,6 +402,7 @@ int main(int argc, char *argv[])
 		Mix_QuerySpec(&audio_rate, &audio_format, &audio_channels);
 		printf("Opened audio at %d Hz %d bit %s", audio_rate,
 			(audio_format&0xFF),
+			(audio_channels > 2) ? "surround" :
 			(audio_channels > 1) ? "stereo" : "mono");
 		if ( loops ) {
 		  printf(" (looping)\n");

@@ -29,3 +29,5 @@ typedef struct {
 extern int32 quietchannels;
 
 extern MidiEvent *read_midi_file(FILE *mfp, int32 *count, int32 *sp);
+
+extern char midi_name[FILENAME_MAX+1];

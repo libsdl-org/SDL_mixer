@@ -84,6 +84,32 @@ static int ctl_read(int32 *valp)
 
 static int cmsg(int type, int verbosity_level, char *fmt, ...)
 {
+#ifdef GREGS_DEBUG
+  va_list ap;
+  int flag_newline = 1;
+  if ((type==CMSG_TEXT || type==CMSG_INFO || type==CMSG_WARNING) &&
+      ctl.verbosity<verbosity_level-1)
+    return 0;
+  if (*fmt == '~')
+    {
+      flag_newline = 0;
+      fmt++;
+    }
+  va_start(ap, fmt);
+  if (!ctl.opened)
+    {
+      vfprintf(stderr, fmt, ap);
+      if (flag_newline) fprintf(stderr, "\n");
+    }
+  else
+    {
+      vfprintf(stderr, fmt, ap);
+      if (flag_newline) fprintf(stderr, "\n");
+    }
+  va_end(ap);
+  if (!flag_newline) fflush(stderr);
+  return 0;
+#else
   va_list ap;
   if ((type==CMSG_TEXT || type==CMSG_INFO || type==CMSG_WARNING) &&
       ctl.verbosity<verbosity_level)
@@ -92,6 +118,7 @@ static int cmsg(int type, int verbosity_level, char *fmt, ...)
   vsprintf(timidity_error, fmt, ap);
   va_end(ap);
   return 0;
+#endif
 }
 
 static void ctl_refresh(void) { }

@@ -57,7 +57,7 @@ void CleanUp(void)
 
 void Usage(char *argv0)
 {
-	fprintf(stderr, "Usage: %s [-i] [-l] [-8] [-r rate] [-b buffers] [-v N] <musicfile>\n", argv0);
+	fprintf(stderr, "Usage: %s [-i] [-l] [-8] [-r rate] [-c channels] [-b buffers] [-v N] <musicfile>\n", argv0);
 }
 
 void Menu(void)
@@ -114,6 +114,13 @@ int main(int argc, char *argv[])
 			++i;
 			audio_rate = atoi(argv[i]);
 		} else
+		if ( strcmp(argv[i], "-m") == 0 ) {
+			audio_channels = 1;
+		} else
+		if ( (strcmp(argv[i], "-c") == 0) && argv[i+1] ) {
+			++i;
+			audio_channels = atoi(argv[i]);
+		} else
 		if ( (strcmp(argv[i], "-b") == 0) && argv[i+1] ) {
 			++i;
 			audio_buffers = atoi(argv[i]);
@@ -121,9 +128,6 @@ int main(int argc, char *argv[])
 		if ( (strcmp(argv[i], "-v") == 0) && argv[i+1] ) {
 			++i;
 			audio_volume = atoi(argv[i]);
-		} else
-		if ( strcmp(argv[i], "-m") == 0 ) {
-			audio_channels = 1;
 		} else
 		if ( strcmp(argv[i], "-l") == 0 ) {
 			looping = -1;
@@ -148,6 +152,7 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "Couldn't initialize SDL: %s\n",SDL_GetError());
 		return(255);
 	}
+
 	atexit(CleanUp);
 	signal(SIGINT, IntHandler);
 	signal(SIGTERM, exit);
@@ -160,7 +165,7 @@ int main(int argc, char *argv[])
 		Mix_QuerySpec(&audio_rate, &audio_format, &audio_channels);
 		printf("Opened audio at %d Hz %d bit %s, %d bytes audio buffer\n", audio_rate,
 			(audio_format&0xFF),
-			(audio_channels > 1) ? "stereo" : "mono", 
+			(audio_channels > 2) ? "surround" : (audio_channels > 1) ? "stereo" : "mono", 
 			audio_buffers );
 	}
 	audio_open = 1;

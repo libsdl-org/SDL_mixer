@@ -25,6 +25,11 @@ extern char *program_name, current_filename[];
 
 extern FILE *msgfp;
 
+extern int num_ochannels;
+
+#define MULTICHANNEL_OUT
+#define MAX_OUT_CHANNELS 6
+
 typedef struct {
   char *path;
   void *next;
