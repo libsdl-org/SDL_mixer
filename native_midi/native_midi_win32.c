@@ -278,7 +278,7 @@ void native_midi_setvolume(int volume)
   {
     calcVolume = 255;
   }
-  else if calcVolume < 0)
+  else if (calcVolume < 0)
   {
     calcVolume = 0;
   }
