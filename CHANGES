@@ -1,3 +1,7 @@
+current:
+Ryan C. Gordon - Sun Nov  9 23:34:47 EST 2003
+ * Patch from Steven Fuller to fix positioning effect on bigendian systems.
+
 1.2.6:
 Laurent Ganter - Mon, 6 Oct 2003 11:51:33 +0200
  * Fixed bug with MIDI volume in native Windows playback
