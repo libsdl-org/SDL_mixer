@@ -40,7 +40,6 @@
 #define FORM		0x4d524f46		/* "FORM" */
 
 static int audio_opened = 0;
-
 static SDL_AudioSpec mixer;
 static SDL_mutex *mixer_lock;
 
@@ -101,15 +100,28 @@ const SDL_version *Mix_Linked_Version(void)
 	return(&linked_mixver);
 }
 
+static int _Mix_remove_all_effects(int channel, effect_info **e);
 
 /* rcg06122001 Cleanup effect callbacks. */
-static void Mix_ChannelDonePlaying(int channel)
+static void _Mix_channel_done_playing(int channel, int lockaudio)
 {
+	if (lockaudio) {
+		SDL_LockAudio();
+	}
+
 	if (channel_done_callback) {
 	    channel_done_callback(channel);
 	}
 
-	Mix_UnregisterAllEffects(channel);
+	/*
+         * Call internal function directly, to avoid locking audio from
+         *   inside audio callback.
+         */
+	_Mix_remove_all_effects(channel, &mix_channel[channel].effects);
+
+	if (lockaudio) {
+		SDL_UnlockAudio();
+	}
 }
 
 
@@ -223,7 +235,7 @@ static void mix_channels(void *udata, Uint8 *stream, int len)
 
 				/* rcg06072001 Alert app if channel is done playing. */
 				if (!mix_channel[i].playing) {
-					Mix_ChannelDonePlaying(i);
+					_Mix_channel_done_playing(i, 0);
 				}
 			}
 		}
@@ -622,7 +634,7 @@ int Mix_PlayChannelTimed(int which, Mix_Chunk *chunk, int loops, int ticks)
 		if ( which >= 0 ) {
 			Uint32 sdl_ticks = SDL_GetTicks();
 			if (Mix_Playing(which))
-				Mix_ChannelDonePlaying(which);
+				_Mix_channel_done_playing(which, 1);
 			mix_channel[which].samples = chunk->abuf;
 			mix_channel[which].playing = chunk->alen;
 			mix_channel[which].looping = loops;
@@ -688,7 +700,7 @@ int Mix_FadeInChannelTimed(int which, Mix_Chunk *chunk, int loops, int ms, int t
 		if ( which >= 0 ) {
 			Uint32 sdl_ticks = SDL_GetTicks();
 			if (Mix_Playing(which))
-				Mix_ChannelDonePlaying(which);
+				_Mix_channel_done_playing(which, 1);
 			mix_channel[which].samples = chunk->abuf;
 			mix_channel[which].playing = chunk->alen;
 			mix_channel[which].looping = loops;
@@ -758,7 +770,7 @@ int Mix_HaltChannel(int which)
 	} else {
 		SDL_mutexP(mixer_lock);
 		if (mix_channel[which].playing) {
-			Mix_ChannelDonePlaying(which);
+			_Mix_channel_done_playing(which, 1);
 		mix_channel[which].playing = 0;
 		}
 		mix_channel[which].expire = 0;
@@ -1043,8 +1055,9 @@ int Mix_GroupNewer(int tag)
  *  as Mix_SetPanning().
  */
 
+/* MAKE SURE you hold the audio lock (SDL_LockAudio()) before calling this! */
 static int _Mix_register_effect(effect_info **e, Mix_EffectFunc_t f,
-											Mix_EffectDone_t d, void *arg)
+				Mix_EffectDone_t d, void *arg)
 {
 	effect_info *new_e = malloc(sizeof (effect_info));
 
@@ -1068,8 +1081,6 @@ static int _Mix_register_effect(effect_info **e, Mix_EffectFunc_t f,
 	new_e->udata = arg;
 	new_e->next = NULL;
 
-	SDL_LockAudio();
-
 	/* add new effect to end of linked list... */
 	if (*e == NULL) {
 		*e = new_e;
@@ -1084,11 +1095,11 @@ static int _Mix_register_effect(effect_info **e, Mix_EffectFunc_t f,
 		}
 	}
 
-	SDL_UnlockAudio();
 	return(1);
 }
 
 
+/* MAKE SURE you hold the audio lock (SDL_LockAudio()) before calling this! */
 static int _Mix_remove_effect(int channel, effect_info **e, Mix_EffectFunc_t f)
 {
 	effect_info *cur;
@@ -1100,7 +1111,6 @@ static int _Mix_remove_effect(int channel, effect_info **e, Mix_EffectFunc_t f)
 		return(0);
 	}
 
-	SDL_LockAudio();
 	for (cur = *e; cur != NULL; cur = cur->next) {
 		if (cur->callback == f) {
 			next = cur->next;
@@ -1114,18 +1124,17 @@ static int _Mix_remove_effect(int channel, effect_info **e, Mix_EffectFunc_t f)
 			} else {
 				prev->next = next;
 			}
-			SDL_UnlockAudio();
 			return(1);
 		}
 		prev = cur;
 	}
 
-	SDL_UnlockAudio();
 	Mix_SetError("No such effect registered");
 	return(0);
 }
 
 
+/* MAKE SURE you hold the audio lock (SDL_LockAudio()) before calling this! */
 static int _Mix_remove_all_effects(int channel, effect_info **e)
 {
 	effect_info *cur;
@@ -1136,7 +1145,6 @@ static int _Mix_remove_all_effects(int channel, effect_info **e)
 		return(0);
 	}
 
-	SDL_LockAudio();
 	for (cur = *e; cur != NULL; cur = next) {
 		next = cur->next;
 		if (cur->done_callback != NULL) {
@@ -1145,16 +1153,16 @@ static int _Mix_remove_all_effects(int channel, effect_info **e)
 		free(cur);
 	}
 	*e = NULL;
-	SDL_UnlockAudio();
 
 	return(1);
 }
 
 
 int Mix_RegisterEffect(int channel, Mix_EffectFunc_t f,
-						Mix_EffectDone_t d, void *arg)
+			Mix_EffectDone_t d, void *arg)
 {
 	effect_info **e = NULL;
+	int retval;
 
 	if (channel == MIX_CHANNEL_POST) {
 		e = &posteffects;
@@ -1166,13 +1174,17 @@ int Mix_RegisterEffect(int channel, Mix_EffectFunc_t f,
 		e = &mix_channel[channel].effects;
 	}
 
-	return(_Mix_register_effect(e, f, d, arg));
+	SDL_LockAudio();
+	retval = _Mix_register_effect(e, f, d, arg);
+	SDL_UnlockAudio();
+	return(retval);
 }
 
 
 int Mix_UnregisterEffect(int channel, Mix_EffectFunc_t f)
 {
 	effect_info **e = NULL;
+	int retval;
 
 	if (channel == MIX_CHANNEL_POST) {
 		e = &posteffects;
@@ -1183,13 +1195,18 @@ int Mix_UnregisterEffect(int channel, Mix_EffectFunc_t f)
 		}
 		e = &mix_channel[channel].effects;
 	}
-	return(_Mix_remove_effect(channel, e, f));
+
+	SDL_LockAudio();
+	retval = _Mix_remove_effect(channel, e, f);
+	SDL_UnlockAudio();
+	return(retval);
 }
 
 
 int Mix_UnregisterAllEffects(int channel)
 {
 	effect_info **e = NULL;
+	int retval;
 
 	if (channel == MIX_CHANNEL_POST) {
 		e = &posteffects;
@@ -1201,7 +1218,10 @@ int Mix_UnregisterAllEffects(int channel)
 		e = &mix_channel[channel].effects;
 	}
 
-	return(_Mix_remove_all_effects(channel, e));
+	SDL_LockAudio();
+	retval = _Mix_remove_all_effects(channel, e);
+	SDL_UnlockAudio();
+	return(retval);
 }
 
 /* end of mixer.c ... */

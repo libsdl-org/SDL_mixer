@@ -141,15 +141,19 @@ extern DECLSPEC void Mix_SetPostMix(void (*mix_func)
 extern DECLSPEC void Mix_HookMusic(void (*mix_func)
                           (void *udata, Uint8 *stream, int len), void *arg);
 
-/* Add your own callback when the music has finished playing.
- */
+/* Add your own callback when the music has finished playing. */
 extern DECLSPEC void Mix_HookMusicFinished(void (*music_finished)(void));
 
 /* Get a pointer to the user data for the current music hook */
 extern DECLSPEC void *Mix_GetMusicHookData(void);
 
-/* Add your own callback when a channel has finished playing. NULL
- * to disable callback.
+/*
+ * Add your own callback when a channel has finished playing. NULL
+ *  to disable callback. The callback may be called from the mixer's audio 
+ *  callback or it could be called as a result of Mix_HaltChannel(), etc.
+ *  do not call SDL_LockAudio() from this callback; you will either be 
+ *  inside the audio callback, or SDL_mixer will explicitly lock the audio
+ *  before calling your callback.
  */
 extern DECLSPEC void Mix_ChannelFinished(void (*channel_finished)(int channel));
 
@@ -172,6 +176,8 @@ extern DECLSPEC void Mix_ChannelFinished(void (*channel_finished)(int channel));
  *  down the mixing pipeline, through any other effect functions, then finally
  *  to be mixed with the rest of the channels and music for the final output
  *  stream.
+ *
+ * DO NOT EVER call SDL_LockAudio() from your callback function!
  */
 typedef void (*Mix_EffectFunc_t)(int chan, void *stream, int len, void *udata);
 
@@ -181,6 +187,8 @@ typedef void (*Mix_EffectFunc_t)(int chan, void *stream, int len, void *udata);
  *  plays out normally, or if you call Mix_HaltChannel(), implicitly stop
  *  a channel via Mix_AllocateChannels(), or unregister a callback while
  *  it's still playing.
+ *
+ * DO NOT EVER call SDL_LockAudio() from your callback function!
  */
 typedef void (*Mix_EffectDone_t)(int chan, void *udata);
 
@@ -226,11 +234,13 @@ typedef void (*Mix_EffectDone_t)(int chan, void *udata);
  *  through Mix_SetPostMix() runs, and then the stream goes to the audio
  *  device. 
  *
+ * DO NOT EVER call SDL_LockAudio() from your callback function!
+ *
  * returns zero if error (no such channel), nonzero if added.
  *  Error messages can be retrieved from Mix_GetError().
  */
 extern DECLSPEC int Mix_RegisterEffect(int chan, Mix_EffectFunc_t f,
-										Mix_EffectDone_t d, void *arg);
+					Mix_EffectDone_t d, void *arg);
 
 
 /* You may not need to call this explicitly, unless you need to stop an
