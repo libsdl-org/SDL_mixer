@@ -124,7 +124,7 @@ NativeMidiSong *native_midi_loadsong(char *midifile)
 	
 	/* Increment the instance count */
 	gInstaceCount++;
-	if (NULL == gTunePlayer)
+	if (gTunePlayer == NULL)
 		gTunePlayer = OpenDefaultComponent(kTunePlayerComponentType, 0);
 
 	/* Finally, free the event list */
@@ -166,7 +166,7 @@ void native_midi_freesong(NativeMidiSong *song)
 
 	/* Increment the instance count */
 	gInstaceCount--;
-	if (gTunePlayer && (gInstaceCount == 0))
+	if ((gTunePlayer != NULL) && (gInstaceCount == 0))
 	{
 		CloseComponent(gTunePlayer);
 		gTunePlayer = NULL;
@@ -177,6 +177,8 @@ void native_midi_start(NativeMidiSong *song)
 {
 	UInt32		queueFlags = 0;
 	ComponentResult tpError;
+	
+	assert (gTunePlayer != NULL);
 	
 	/* First, stop the currently playing music */
 	native_midi_stop();
@@ -228,7 +230,7 @@ void native_midi_start(NativeMidiSong *song)
 
 void native_midi_stop()
 {
-	if (gTunePlayer)
+	if (gTunePlayer == NULL)
 		return;
 
 	/* Stop music */
@@ -240,7 +242,7 @@ void native_midi_stop()
 
 int native_midi_active()
 {
-	if (gTunePlayer)
+	if (gTunePlayer != NULL)
 	{
 		TuneStatus	ts;
 
@@ -253,7 +255,7 @@ int native_midi_active()
 
 void native_midi_setvolume(int volume)
 {
-	if (gTunePlayer)
+	if (gTunePlayer == NULL)
 		return;
 
 	/* QTMA olume may range from 0.0 to 1.0 (in 16.16 fixed point encoding) */
