@@ -2552,7 +2552,7 @@ void Player_SetVolume(SWORD volume)
 {
 	MUTEX_LOCK(vars);
 	if (pf)
-		pf->volume=(volume<0)?0:(volume>128)?128:volume;
+		pf->volume=pf->initvolume=(volume<0)?0:(volume>128)?128:volume;
 	MUTEX_UNLOCK(vars);
 }
 
