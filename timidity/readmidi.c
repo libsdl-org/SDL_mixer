@@ -22,16 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-
-#if defined(SOLARIS) | defined(WIN32)
-# include <string.h>
-#else
-#include <strings.h>
-#endif
-
-#ifndef WIN32
-#include <unistd.h>
-#endif
+#include <string.h>
 
 #include "config.h"
 #include "common.h"

@@ -188,7 +188,7 @@ static Instrument *load_instrument(char *name, int percussion,
   if (!name) return 0;
   
   /* Open patch file */
-  if (!(fp=open_file(name, 1, OF_NORMAL)))
+  if ((fp=open_file(name, 1, OF_NORMAL)) == NULL)
     {
       noluck=1;
 #ifdef PATCH_EXT_LIST
@@ -197,9 +197,10 @@ static Instrument *load_instrument(char *name, int percussion,
 	{
 	  if (strlen(name)+strlen(patch_ext[i])<1024)
 	    {
-	      strcpy(tmp, name);
-	      strcat(tmp, patch_ext[i]);
-	      if ((fp=open_file(tmp, 1, OF_NORMAL)))
+              char path[1024];
+	      strcpy(path, name);
+	      strcat(path, patch_ext[i]);
+	      if ((fp=open_file(path, 1, OF_NORMAL)) != NULL)
 		{
 		  noluck=0;
 		  break;

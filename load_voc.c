@@ -50,7 +50,7 @@ typedef struct vocstuff {
 	Uint32	samples;		/* number of samples output */
 	Uint32	size;		/* word length of data */
 	Uint8 	channels;	/* number of sound channels */
-	int     extended;       /* Has an extended block been read? */
+	int     has_extended;       /* Has an extended block been read? */
 } vs_t;
 
 /* Size field */ 
@@ -150,7 +150,7 @@ static int voc_get_block(SDL_RWops *src, vs_t *v, SDL_AudioSpec *spec)
 
                 /* When DATA block preceeded by an EXTENDED     */
                 /* block, the DATA blocks rate value is invalid */
-                if (!v->extended)
+                if (!v->has_extended)
                 {
                     if (uc == 0)
                     {
@@ -178,7 +178,7 @@ static int voc_get_block(SDL_RWops *src, vs_t *v, SDL_AudioSpec *spec)
                     return 0;
                 }
 
-                v->extended = 0;
+                v->has_extended = 0;
                 v->rest = sblen - 2;
                 v->size = ST_SIZE_BYTE;
                 return 1;
@@ -265,7 +265,7 @@ static int voc_get_block(SDL_RWops *src, vs_t *v, SDL_AudioSpec *spec)
                 /* Set this byte so we know to use the rate      */
                 /* value from the extended block and not the     */
                 /* data block.                     */
-                v->extended = 1;
+                v->has_extended = 1;
                 if (SDL_RWread(src, &new_rate_short, sizeof (new_rate_short), 1) != 1)
                     return 0;
                 new_rate_short = SDL_SwapLE16(new_rate_short);
@@ -389,7 +389,7 @@ SDL_AudioSpec *Mix_LoadVOC_RW (SDL_RWops *src, int freesrc,
 
     v.rate = -1;
     v.rest = 0;
-    v.extended = 0;
+    v.has_extended = 0;
     *audio_buf = NULL;
     *audio_len = 0;
     memset(spec, '\0', sizeof (SDL_AudioSpec));
