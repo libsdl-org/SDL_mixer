@@ -180,6 +180,9 @@ void native_midi_start(NativeMidiSong *song)
 	
 	assert (gTunePlayer != NULL);
 	
+	SDL_PauseAudio(1);
+	SDL_UnlockAudio();
+    
 	/* First, stop the currently playing music */
 	native_midi_stop();
 	
@@ -191,7 +194,7 @@ void native_midi_start(NativeMidiSong *song)
 	if (tpError != noErr)
 	{
 		strncpy (gErrorBuffer, "MIDI error during TuneSetTimeScale", ERROR_BUF_SIZE);
-		return;
+		goto done;
 	}
 
 	/* Set the header, to tell what instruments are used */
@@ -199,7 +202,7 @@ void native_midi_start(NativeMidiSong *song)
 	if (tpError != noErr)
 	{
 		strncpy (gErrorBuffer, "MIDI error during TuneSetHeader", ERROR_BUF_SIZE);
-		return;
+		goto done;
 	}
 	
 	/* Have it allocate whatever resources are needed */
@@ -207,7 +210,7 @@ void native_midi_start(NativeMidiSong *song)
 	if (tpError != noErr)
 	{
 		strncpy (gErrorBuffer, "MIDI error during TunePreroll", ERROR_BUF_SIZE);
-		return;
+		goto done;
 	}
 
 	/* We want to play at normal volume */
@@ -215,7 +218,7 @@ void native_midi_start(NativeMidiSong *song)
 	if (tpError != noErr)
 	{
 		strncpy (gErrorBuffer, "MIDI error during TuneSetVolume", ERROR_BUF_SIZE);
-		return;
+		goto done;
 	}
 	
 	/* Finally, start playing the full song */
@@ -224,8 +227,12 @@ void native_midi_start(NativeMidiSong *song)
 	if (tpError != noErr)
 	{
 		strncpy (gErrorBuffer, "MIDI error during TuneQueue", ERROR_BUF_SIZE);
-		return;
+		goto done;
 	}
+    
+done:
+	SDL_LockAudio();
+	SDL_PauseAudio(0);
 }
 
 void native_midi_stop()

@@ -1,4 +1,6 @@
 1.2.5:
+Darrell Walisser - Tue Mar  4 09:24:01 PST 2003
+ * Worked around MacOS X deadlock between CoreAudio and QuickTime
 Darrell Walisser - Fri, 14 Feb 2003 20:56:08 -0500
  * Fixed crash in native midi code with files with more than 32 tracks
 Marc Le Douarain - Sat, 15 Feb 2003 14:46:41 +0100
