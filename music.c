@@ -695,6 +695,12 @@ int Mix_SetMusicPosition(double position)
 			return(0);
 			break;
 #endif
+#ifdef MP3_MUSIC
+		case MUS_MP3:
+			SMPEG_skip(music_playing->data.mp3, position);
+			return(0);
+			break;
+#endif
 		default:
 			/* TODO: Implement this for other music backends */
 			break;

@@ -620,9 +620,9 @@ int Mix_PlayChannelTimed(int which, Mix_Chunk *chunk, int loops, int ticks)
 
 		/* Queue up the audio data for this channel */
 		if ( which >= 0 ) {
+			Uint32 sdl_ticks = SDL_GetTicks();
 			if (Mix_Playing(which))
 				Mix_ChannelDonePlaying(which);
-			Uint32 sdl_ticks = SDL_GetTicks();
 			mix_channel[which].samples = chunk->abuf;
 			mix_channel[which].playing = chunk->alen;
 			mix_channel[which].looping = loops;
@@ -686,9 +686,9 @@ int Mix_FadeInChannelTimed(int which, Mix_Chunk *chunk, int loops, int ms, int t
 
 		/* Queue up the audio data for this channel */
 		if ( which >= 0 ) {
+			Uint32 sdl_ticks = SDL_GetTicks();
 			if (Mix_Playing(which))
 				Mix_ChannelDonePlaying(which);
-			Uint32 sdl_ticks = SDL_GetTicks();
 			mix_channel[which].samples = chunk->abuf;
 			mix_channel[which].playing = chunk->alen;
 			mix_channel[which].looping = loops;

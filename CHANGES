@@ -1,4 +1,10 @@
 
+1.2.3:
+Pete Shinners - Mon Jan 14 11:31:26 PST 2002
+ * Added seek support for MP3 files
+Ryan Gordon - Mon Jan 14 11:30:44 PST 2002
+ * Sample "finished" callbacks are now always called when a sample is stopped.
+
 1.2.2:
 Guillaume Cottenceau - Wed Dec 19 08:59:05 PST 2001
  * Added an API for seeking in music files (implemented for MOD and Ogg music)
