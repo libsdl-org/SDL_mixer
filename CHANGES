@@ -1,5 +1,7 @@
 
 1.2.4:
+Sam Lantinga - Thu May 16 11:26:46 PDT 2002
+ * Cleaned up threading issues in the music playback code
 Ryan Gordon - Thu May  2 21:08:48 PDT 2002
  * Fixed deadlock introduced in the last release
 

@@ -121,7 +121,6 @@ struct _Mix_Music {
 #endif
 	} data;
 	Mix_Fading fading;
-	int fade_volume;
 	int fade_step;
 	int fade_steps;
 	int error;
@@ -140,8 +139,11 @@ static int native_midi_ok;
 static int ms_per_step;
 
 /* Local low-level functions prototypes */
-static void lowlevel_halt(void);
-static int  lowlevel_play(Mix_Music *music);
+static void music_internal_volume(int volume);
+static int  music_internal_play(Mix_Music *music, double position);
+static int  music_internal_position(double position);
+static int  music_internal_playing();
+static void music_internal_halt(void);
 
 
 /* Support for hooking when the music has finished */
@@ -158,53 +160,43 @@ void Mix_HookMusicFinished(void (*music_finished)(void))
 /* Mixing function */
 void music_mixer(void *udata, Uint8 *stream, int len)
 {
-	if ( music_playing ) {
-		if ( music_stopped ) {
-			/* To avoid concurrency problems and the use of mutexes,
-			   the music is always stopped from the sound thread */
-			lowlevel_halt(); /* This function sets music_playing to NULL */
-			return;
-		}
+	if ( music_playing && music_active ) {
 		/* Handle fading */
 		if ( music_playing->fading != MIX_NO_FADING ) {
 			if ( music_playing->fade_step++ < music_playing->fade_steps ) {
-				int fade_volume = music_playing->fade_volume;
+				int volume;
 				int fade_step = music_playing->fade_step;
 				int fade_steps = music_playing->fade_steps;
 
 				if ( music_playing->fading == MIX_FADING_OUT ) {
-					Mix_VolumeMusic((fade_volume * (fade_steps-fade_step))
-									/ fade_steps);
+					volume = (music_volume * (fade_steps-fade_step)) / fade_steps;
 				} else { /* Fading in */
-					Mix_VolumeMusic((fade_volume * fade_step) / fade_steps);
+					volume = (music_volume * fade_step) / fade_steps;
 				}
+				music_internal_volume(volume);
 			} else {
 				if ( music_playing->fading == MIX_FADING_OUT ) {
-					lowlevel_halt();
+					music_internal_halt();
+					if ( music_finished_hook ) {
+						music_finished_hook();
+					}
 					return;
 				}
 				music_playing->fading = MIX_NO_FADING;
 			}
 		}
 		/* Restart music if it has to loop */
-		if ( !Mix_PlayingMusic() ) {
-			/* Restart music if it has to loop */
+		if ( !music_internal_playing() ) {
+			/* Restart music if it has to loop at a high level */
 			if ( music_loops && --music_loops ) {
-				Mix_RewindMusic();
-				if ( lowlevel_play(music_playing) < 0 ) {
-					fprintf(stderr,"Warning: Music restart failed.\n");
-					music_stopped = 1; /* Something went wrong */
-					music_playing->fading = MIX_NO_FADING;
+				music_internal_play(music_playing, 0.0);
+			} else {
+				music_internal_halt();
+				if ( music_finished_hook ) {
+					music_finished_hook();
 				}
+				return;
 			}
-			else if (music_finished_hook) {
-			    lowlevel_halt();
-			    music_finished_hook();
-			    return;
-			}
-		}
-		if ( music_volume <= 0 ) { /* Don't mix if volume is null */
-			return;
 		}
 		switch (music_playing->type) {
 #ifdef CMD_MUSIC
@@ -535,16 +527,20 @@ Mix_Music *Mix_LoadMUS(const char *file)
 void Mix_FreeMusic(Mix_Music *music)
 {
 	if ( music ) {
-		/* Caution: If music is playing, mixer will crash */
-		if ( music == music_playing && !music_stopped ) {
-			if ( music->fading == MIX_FADING_OUT ) {
-				/* Wait for the fade out to finish */
-				while ( music_playing && !music_stopped && (music_playing->fading == MIX_FADING_OUT) )
-					SDL_Delay(100);
-			} else {
-				Mix_HaltMusic(); /* Stop it immediately */
+		/* Stop the music if it's currently playing */
+		SDL_LockAudio();
+		if ( music == music_playing ) {
+			/* Wait for any fade out to finish */
+			while ( music->fading == MIX_FADING_OUT ) {
+				SDL_UnlockAudio();
+				SDL_Delay(100);
+				SDL_LockAudio();
+			}
+			if ( music == music_playing ) {
+				music_internal_halt();
 			}
 		}
+		SDL_UnlockAudio();
 		switch (music->type) {
 #ifdef CMD_MUSIC
 			case MUS_CMD:
@@ -593,150 +589,234 @@ void Mix_FreeMusic(Mix_Music *music)
 	}
 }
 
-static int lowlevel_play(Mix_Music *music)
+/* Play a music chunk.  Returns 0, or -1 if there was an error.
+ */
+static int music_internal_play(Mix_Music *music, double position)
 {
-	if(!music)
-		return(-1);
+	int retval = 0;
 
+	/* Note the music we're playing */
+	if ( music_playing ) {
+		music_internal_halt();
+	}
+	music_playing = music;
+
+	/* Set the initial volume */
+	if ( music->fading == MIX_FADING_IN ) {
+		music_internal_volume(0);
+	} else {
+		music_internal_volume(music_volume);
+	}
+
+	/* Set up for playback */
 	switch (music->type) {
 #ifdef CMD_MUSIC
-		case MUS_CMD:
-			MusicCMD_SetVolume(music_volume);
-			MusicCMD_Start(music->data.cmd);
-			break;
+	    case MUS_CMD:
+		MusicCMD_Start(music->data.cmd);
+		break;
 #endif
 #ifdef WAV_MUSIC
-		case MUS_WAV:
-			WAVStream_SetVolume(music_volume);
-			WAVStream_Start(music->data.wave);
-			break;
+	    case MUS_WAV:
+		WAVStream_Start(music->data.wave);
+		break;
 #endif
 #ifdef MOD_MUSIC
-		case MUS_MOD:
-			Player_SetVolume((SWORD)music_volume);
-			Player_Start(music->data.module);
-			Player_SetPosition(0);
-			break;
+	    case MUS_MOD:
+		Player_Start(music->data.module);
+		break;
 #endif
 #ifdef MID_MUSIC
-		case MUS_MID:
+	    case MUS_MID:
 #ifdef USE_NATIVE_MIDI
-  			if ( native_midi_ok ) {
-				native_midi_setvolume(music_volume);
-				native_midi_start(music->data.nativemidi);
-			} MIDI_ELSE
+		if ( native_midi_ok ) {
+			native_midi_start(music->data.nativemidi);
+		} MIDI_ELSE
 #endif
 #ifdef USE_TIMIDITY_MIDI
-			if ( timidity_ok ) {
-				Timidity_SetVolume(music_volume);
-				Timidity_Start(music->data.midi);
+		if ( timidity_ok ) {
+			Timidity_Start(music->data.midi);
+		}
+#endif
+		break;
+#endif
+#ifdef OGG_MUSIC
+	    case MUS_OGG:
+		OGG_play(music->data.ogg);
+		break;
+#endif
+#ifdef MP3_MUSIC
+	    case MUS_MP3:
+		SMPEG_enableaudio(music->data.mp3,1);
+		SMPEG_enablevideo(music->data.mp3,0);
+		SMPEG_play(music->data.mp3);
+		break;
+#endif
+	    default:
+		Mix_SetError("Can't play unknown music type");
+		retval = -1;
+		break;
+	}
+
+	/* Set the playback position, note any errors if an offset is used */
+	if ( retval == 0 ) {
+		if ( position > 0.0 ) {
+			if ( music_internal_position(position) < 0 ) {
+				Mix_SetError("Position not implemented for music type");
+				retval = -1;
 			}
-#endif
-			break;
-#endif
-#ifdef OGG_MUSIC
-		case MUS_OGG:
-			OGG_setvolume(music->data.ogg, music_volume);
-			OGG_play(music->data.ogg);
-			break;
-#endif
-#ifdef MP3_MUSIC
-		case MUS_MP3:
-			SMPEG_enableaudio(music->data.mp3,1);
-			SMPEG_enablevideo(music->data.mp3,0);
-			SMPEG_setvolume(music->data.mp3,(int)(((float)music_volume/(float)MIX_MAX_VOLUME)*100.0));
-			SMPEG_play(music->data.mp3);
-			break;
-#endif
-		default:
-			/* Unknown music type?? */
-			return(-1);
-	}
-	return(0);
-}
-
-/* Play a music chunk.  Returns 0, or -1 if there was an error.
-*/
-int Mix_PlayMusic(Mix_Music *music, int loops)
-{
-	/* Don't play null pointers :-) */
-	if ( music == NULL ) {
-		return(-1);
-	}
-	/* If the current music is fading out, wait for the fade to complete */
-	while ( music_playing && !music_stopped && music_playing->fading==MIX_FADING_OUT ) {
-		SDL_Delay(100);
-	}
-
-	if ( lowlevel_play(music) < 0 ) {
-		return(-1);
-	}
-	music_active = 1;
-	music_stopped = 0;
-	music_loops = loops;
-	music_playing = music;
-	music_playing->fading = MIX_NO_FADING;
-	return(0);
-}
-
-int Mix_SetMusicPosition(double position)
-{
-	if ( music_playing && !music_stopped ) {
-		switch ( music_playing->type ) {
-#ifdef MOD_MUSIC
-		case MUS_MOD:
-			Player_SetPosition((UWORD)position);
-			return(0);
-			break;
-#endif
-#ifdef OGG_MUSIC
-		case MUS_OGG:
-			OGG_jump_to_time(music_playing->data.ogg, position);
-			return(0);
-			break;
-#endif
-#ifdef MP3_MUSIC
-		case MUS_MP3:
-			SMPEG_skip(music_playing->data.mp3, position);
-			return(0);
-			break;
-#endif
-		default:
-			/* TODO: Implement this for other music backends */
-			break;
+		} else {
+			music_internal_position(0.0);
 		}
 	}
-	return(-1);
-}
 
-/* Fade in a music over "ms" milliseconds */
+	/* If the setup failed, we're not playing any music anymore */
+	if ( retval < 0 ) {
+		music_playing = NULL;
+	}
+	return(retval);
+}
 int Mix_FadeInMusicPos(Mix_Music *music, int loops, int ms, double position)
 {
-	if ( music && music_volume > 0 ) { /* No need to fade if we can't hear it */
-		music->fade_volume = music_volume;
-		music_volume = 0;
-		if ( Mix_PlayMusic(music, loops) < 0 ) {
-			return(-1);
-		}
-		if ( position ) {
-			if ( Mix_SetMusicPosition(position) < 0 ) {
-				Mix_HaltMusic();
-				return(-1);
-			}
-		}
-		music_playing->fade_step = 0;
-		music_playing->fade_steps = ms/ms_per_step;
-		music_playing->fading = MIX_FADING_IN;
-	}
-	return(0);
-}
+	int retval;
 
+	/* Don't play null pointers :-) */
+	if ( music == NULL ) {
+		Mix_SetError("music parameter was NULL");
+		return(-1);
+	}
+
+	/* Setup the data */
+	if ( ms ) {
+		music->fading = MIX_FADING_IN;
+	} else {
+		music->fading = MIX_NO_FADING;
+	}
+	music->fade_step = 0;
+	music->fade_steps = ms/ms_per_step;
+
+	/* Play the puppy */
+	SDL_LockAudio();
+	/* If the current music is fading out, wait for the fade to complete */
+	while ( music_playing && (music_playing->fading == MIX_FADING_OUT) ) {
+		SDL_UnlockAudio();
+		SDL_Delay(100);
+		SDL_LockAudio();
+	}
+	music_active = 1;
+	music_loops = loops;
+	retval = music_internal_play(music, position);
+	SDL_UnlockAudio();
+
+	return(retval);
+}
 int Mix_FadeInMusic(Mix_Music *music, int loops, int ms)
 {
-	return Mix_FadeInMusicPos(music, loops, ms, 0);
+	return Mix_FadeInMusicPos(music, loops, ms, 0.0);
+}
+int Mix_PlayMusic(Mix_Music *music, int loops)
+{
+	return Mix_FadeInMusicPos(music, loops, 0, 0.0);
+}
+
+/* Set the playing music position */
+int music_internal_position(double position)
+{
+	int retval = 0;
+
+	switch (music_playing->type) {
+#ifdef MOD_MUSIC
+	    case MUS_MOD:
+		Player_SetPosition((UWORD)position);
+		break;
+#endif
+#ifdef OGG_MUSIC
+	    case MUS_OGG:
+		OGG_jump_to_time(music_playing->data.ogg, position);
+		break;
+#endif
+#ifdef MP3_MUSIC
+	    case MUS_MP3:
+		if ( position == 0.0 ) {
+			SMPEG_rewind(music_playing->data.mp3);
+		} else {
+			SMPEG_skip(music_playing->data.mp3, position);
+		}
+		break;
+#endif
+	    default:
+		/* TODO: Implement this for other music backends */
+		retval = -1;
+		break;
+	}
+	return(retval);
+}
+int Mix_SetMusicPosition(double position)
+{
+	int retval;
+
+	SDL_LockAudio();
+	if ( music_playing ) {
+		retval = music_internal_position(position);
+		if ( retval < 0 ) {
+			Mix_SetError("Position not implemented for music type");
+		}
+	} else {
+		Mix_SetError("Music isn't playing");
+		retval = -1;
+	}
+	SDL_UnlockAudio();
+
+	return(retval);
 }
 
 /* Set the music volume */
+static void music_internal_volume(int volume)
+{
+	switch (music_playing->type) {
+#ifdef CMD_MUSIC
+	    case MUS_CMD:
+		MusicCMD_SetVolume(volume);
+		break;
+#endif
+#ifdef WAV_MUSIC
+	    case MUS_WAV:
+		WAVStream_SetVolume(volume);
+		break;
+#endif
+#ifdef MOD_MUSIC
+	    case MUS_MOD:
+		Player_SetVolume((SWORD)volume);
+		break;
+#endif
+#ifdef MID_MUSIC
+	    case MUS_MID:
+#ifdef USE_NATIVE_MIDI
+		if ( native_midi_ok ) {
+			native_midi_setvolume(volume);
+		} MIDI_ELSE
+#endif
+#ifdef USE_TIMIDITY_MIDI
+		if ( timidity_ok ) {
+			Timidity_SetVolume(volume);
+		}
+#endif
+		break;
+#endif
+#ifdef OGG_MUSIC
+	    case MUS_OGG:
+		OGG_setvolume(music_playing->data.ogg, volume);
+		break;
+#endif
+#ifdef MP3_MUSIC
+	    case MUS_MP3:
+		SMPEG_setvolume(music_playing->data.mp3,(int)(((float)volume/(float)MIX_MAX_VOLUME)*100.0));
+		break;
+#endif
+	    default:
+		/* Unknown music type?? */
+		break;
+	}
+}
 int Mix_VolumeMusic(int volume)
 {
 	int prev_volume;
@@ -749,75 +829,35 @@ int Mix_VolumeMusic(int volume)
 		volume = SDL_MIX_MAXVOLUME;
 	}
 	music_volume = volume;
-	if ( music_playing && !music_stopped ) {
-		switch (music_playing->type) {
-#ifdef CMD_MUSIC
-		case MUS_CMD:
-			MusicCMD_SetVolume(music_volume);
-			break;
-#endif
-#ifdef WAV_MUSIC
-		case MUS_WAV:
-			WAVStream_SetVolume(music_volume);
-			break;
-#endif
-#ifdef MOD_MUSIC
-		case MUS_MOD:
-			Player_SetVolume((SWORD)music_volume);
-			break;
-#endif
-#ifdef MID_MUSIC
-		case MUS_MID:
-#ifdef USE_NATIVE_MIDI
-			if ( native_midi_ok ) {
-				native_midi_setvolume(music_volume);
-			} MIDI_ELSE
-#endif
-#ifdef USE_TIMIDITY_MIDI
-			if ( timidity_ok ) {
-				Timidity_SetVolume(music_volume);
-			}
-#endif
-			break;
-#endif
-#ifdef OGG_MUSIC
-		case MUS_OGG:
-			OGG_setvolume(music_playing->data.ogg, music_volume);
-			break;
-#endif
-#ifdef MP3_MUSIC
-		case MUS_MP3:
-			SMPEG_setvolume(music_playing->data.mp3,(int)(((float)music_volume/(float)MIX_MAX_VOLUME)*100.0));
-			break;
-#endif
-		default:
-			/* Unknown music type?? */
-			break;
-		}
+	SDL_LockAudio();
+	if ( music_playing ) {
+		music_internal_volume(music_volume);
 	}
+	SDL_UnlockAudio();
 	return(prev_volume);
 }
 
-static void lowlevel_halt(void)
+/* Halt playing of music */
+static void music_internal_halt(void)
 {
 	switch (music_playing->type) {
 #ifdef CMD_MUSIC
-	case MUS_CMD:
+	    case MUS_CMD:
 		MusicCMD_Stop(music_playing->data.cmd);
 		break;
 #endif
 #ifdef WAV_MUSIC
-	case MUS_WAV:
+	    case MUS_WAV:
 		WAVStream_Stop();
 		break;
 #endif
 #ifdef MOD_MUSIC
-	case MUS_MOD:
+	    case MUS_MOD:
 		Player_Stop();
 		break;
 #endif
 #ifdef MID_MUSIC
-	case MUS_MID:
+	    case MUS_MID:
 #ifdef USE_NATIVE_MIDI
 		if ( native_midi_ok ) {
 			native_midi_stop();
@@ -831,113 +871,77 @@ static void lowlevel_halt(void)
 		break;
 #endif
 #ifdef OGG_MUSIC
-	case MUS_OGG:
+	    case MUS_OGG:
 		OGG_stop(music_playing->data.ogg);
 		break;
 #endif
 #ifdef MP3_MUSIC
-	case MUS_MP3:
+	    case MUS_MP3:
 		SMPEG_stop(music_playing->data.mp3);
 		break;
 #endif
-	default:
+	    default:
 		/* Unknown music type?? */
 		return;
 	}
-	if ( music_playing->fading != MIX_NO_FADING ) /* Restore volume */
-		music_volume = music_playing->fade_volume;
 	music_playing->fading = MIX_NO_FADING;
 	music_playing = NULL;
-	music_active = 0;
-	music_loops = 0;
-	music_stopped = 0;
 }
-
-/* Halt playing of music */
 int Mix_HaltMusic(void)
 {
-	if ( music_playing && !music_stopped ) {
-		/* Mark the music to be stopped from the sound thread */
-		music_stopped = 1;
-		/* Wait for it to be actually stopped */
-		while ( music_playing && music_active )
-			SDL_Delay(10);
+	SDL_LockAudio();
+	if ( music_playing ) {
+		music_internal_halt();
 	}
+	SDL_UnlockAudio();
+
 	return(0);
 }
 
 /* Progressively stop the music */
 int Mix_FadeOutMusic(int ms)
 {
-	if ( music_playing && !music_stopped &&
-	     (music_playing->fading == MIX_NO_FADING) ) {
-		if ( music_volume > 0 ) {
-			music_playing->fading = MIX_FADING_OUT;
-			music_playing->fade_volume = music_volume;
-			music_playing->fade_step = 0;
-			music_playing->fade_steps = ms/ms_per_step;
-			return(1);
-		}
+	int retval = 0;
+
+	SDL_LockAudio();
+	if ( music_playing && (music_playing->fading == MIX_NO_FADING) ) {
+		music_playing->fading = MIX_FADING_OUT;
+		music_playing->fade_step = 0;
+		music_playing->fade_steps = ms/ms_per_step;
+		retval = 1;
 	}
-	return(0);
+	SDL_UnlockAudio();
+
+	return(retval);
 }
 
 Mix_Fading Mix_FadingMusic(void)
 {
-	if( music_playing && !music_stopped )
-		return music_playing->fading;
-	return MIX_NO_FADING;
+	Mix_Fading fading = MIX_NO_FADING;
+
+	SDL_LockAudio();
+	if ( music_playing ) {
+		fading = music_playing->fading;
+	}
+	SDL_UnlockAudio();
+
+	return(fading);
 }
 
 /* Pause/Resume the music stream */
 void Mix_PauseMusic(void)
 {
-	if ( music_playing && !music_stopped ) {
-		music_active = 0;
-	}
+	music_active = 0;
 }
 
 void Mix_ResumeMusic(void)
 {
-	if ( music_playing && !music_stopped ) {
-		music_active = 1;
-	}
+	music_active = 1;
 }
 
 void Mix_RewindMusic(void)
 {
-	if ( music_playing && !music_stopped ) {
-		switch ( music_playing->type ) {
-#ifdef MOD_MUSIC
-		case MUS_MOD:
-			Player_Start(music_playing->data.module);
-			Player_SetPosition(0);
-			break;
-#endif
-#ifdef MP3_MUSIC
-		case MUS_MP3:
-			SMPEG_rewind(music_playing->data.mp3);
-			break;
-#endif
-#ifdef OGG_MUSIC
-		case MUS_OGG:
-			OGG_jump_to_time(music_playing->data.ogg, 0);
-			break;
-#endif
-#ifdef MID_MUSIC
-		case MUS_MID:
-#ifdef USE_NATIVE_MIDI
-			if ( native_midi_ok ) {
-				native_midi_stop();
-			}
-#endif
-			break;
-#endif
-		default:
-			/* TODO: Implement this for other music backends */
-			break;
-		}
-	}
+	Mix_SetMusicPosition(0.0);
 }
 
 int Mix_PausedMusic(void)
@@ -946,66 +950,77 @@ int Mix_PausedMusic(void)
 }
 
 /* Check the status of the music */
-int Mix_PlayingMusic(void)
+static int music_internal_playing()
 {
-	if ( music_playing && ! music_stopped ) {
-		switch (music_playing->type) {
+	int playing = 1;
+	switch (music_playing->type) {
 #ifdef CMD_MUSIC
-			case MUS_CMD:
-				if (!MusicCMD_Active(music_playing->data.cmd)) {
-					return(0);
-				}
-				break;
+	    case MUS_CMD:
+		if (!MusicCMD_Active(music_playing->data.cmd)) {
+			playing = 0;
+		}
+		break;
 #endif
 #ifdef WAV_MUSIC
-			case MUS_WAV:
-				if ( ! WAVStream_Active() ) {
-					return(0);
-				}
-				break;
+	    case MUS_WAV:
+		if ( ! WAVStream_Active() ) {
+			playing = 0;
+		}
+		break;
 #endif
 #ifdef MOD_MUSIC
-			case MUS_MOD:
-				if ( ! Player_Active() ) {
-					return(0);
-				}
-				break;
+	    case MUS_MOD:
+		if ( ! Player_Active() ) {
+			playing = 0;
+		}
+		break;
 #endif
 #ifdef MID_MUSIC
-			case MUS_MID:
+	    case MUS_MID:
 #ifdef USE_NATIVE_MIDI
-				if ( native_midi_ok ) {
-					if ( ! native_midi_active() )
-						return(0);
-				} MIDI_ELSE
+		if ( native_midi_ok ) {
+			if ( ! native_midi_active() )
+				playing = 0;
+		} MIDI_ELSE
 #endif
 #ifdef USE_TIMIDITY_MIDI
-				if ( timidity_ok ) {
-					if ( ! Timidity_Active() )
-						return(0);
-				}
+		if ( timidity_ok ) {
+			if ( ! Timidity_Active() )
+				playing = 0;
+		}
 #endif
-				break;
+		break;
 #endif
 #ifdef OGG_MUSIC
-			case MUS_OGG:
-				if ( ! OGG_playing(music_playing->data.ogg) ) {
-					return(0);
-				}
-				break;
+	    case MUS_OGG:
+		if ( ! OGG_playing(music_playing->data.ogg) ) {
+			playing = 0;
+		}
+		break;
 #endif
 #ifdef MP3_MUSIC
-			case MUS_MP3:
-				if ( SMPEG_status(music_playing->data.mp3) != SMPEG_PLAYING )
-					return(0);
-				break;
+	    case MUS_MP3:
+		if ( SMPEG_status(music_playing->data.mp3) != SMPEG_PLAYING )
+			playing = 0;
+		break;
 #endif
-			default:
-				break;
-		}
-		return(1);
+	    default:
+		playing = 0;
+		break;
 	}
-	return(0);
+	return(playing);
+}
+int Mix_PlayingMusic(void)
+{
+	int playing = 0;
+
+	SDL_LockAudio();
+	if ( music_playing ) {
+		playing = music_internal_playing();
+	}
+	SDL_UnlockAudio();
+
+	return(playing);
 }
 
 /* Set the external music playback command */
@@ -1031,17 +1046,17 @@ int Mix_SetSynchroValue(int i)
 	if ( music_playing && ! music_stopped ) {
 		switch (music_playing->type) {
 #ifdef MOD_MUSIC
-			case MUS_MOD:
-				if ( ! Player_Active() ) {
-					return(-1);
-				}
-				Player_SetSynchroValue(i);
-				return 0;
-				break;
-#endif
-			default:
+		    case MUS_MOD:
+			if ( ! Player_Active() ) {
 				return(-1);
-				break;
+			}
+			Player_SetSynchroValue(i);
+			return 0;
+			break;
+#endif
+		    default:
+			return(-1);
+			break;
 		}
 		return(-1);
 	}
@@ -1053,16 +1068,16 @@ int Mix_GetSynchroValue(void)
 	if ( music_playing && ! music_stopped ) {
 		switch (music_playing->type) {
 #ifdef MOD_MUSIC
-			case MUS_MOD:
-				if ( ! Player_Active() ) {
-					return(-1);
-				}
-				return Player_GetSynchroValue();
-				break;
-#endif
-			default:
+		    case MUS_MOD:
+			if ( ! Player_Active() ) {
 				return(-1);
-				break;
+			}
+			return Player_GetSynchroValue();
+			break;
+#endif
+		    default:
+			return(-1);
+			break;
 		}
 		return(-1);
 	}

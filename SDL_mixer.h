@@ -141,7 +141,9 @@ extern DECLSPEC void SDLCALL Mix_SetPostMix(void (*mix_func)
 extern DECLSPEC void SDLCALL Mix_HookMusic(void (*mix_func)
                           (void *udata, Uint8 *stream, int len), void *arg);
 
-/* Add your own callback when the music has finished playing. */
+/* Add your own callback when the music has finished playing.
+   This callback is only called if the music finishes naturally.
+ */
 extern DECLSPEC void SDLCALL Mix_HookMusicFinished(void (*music_finished)(void));
 
 /* Get a pointer to the user data for the current music hook */
