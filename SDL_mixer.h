@@ -22,8 +22,8 @@
 
 /* $Id$ */
 
-#ifndef _SDL_mixer_h
-#define _SDL_mixer_h
+#ifndef _SDL_MIXER_H
+#define _SDL_MIXER_H
 
 #include "SDL_types.h"
 #include "SDL_rwops.h"
@@ -581,4 +581,4 @@ extern DECLSPEC void SDLCALL Mix_CloseAudio(void);
 #endif
 #include "close_code.h"
 
-#endif /* _SDL_mixer_h */
+#endif /* _SDL_MIXER_H */
