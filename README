@@ -29,5 +29,6 @@ and unpack them in /usr/local/lib under UNIX, and C:\ under Win32.
 You may add panning, reverb, echo, whatever, but if you do, please
 mail changes back to me, Sam Lantinga at slouken@libsdl.org
 
-This library is available under the GNU Library General Public License.
+This library is available under the GNU Library General Public License,
+see the file "COPYING" for details.
 

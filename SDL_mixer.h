@@ -1,6 +1,7 @@
 /*
-    MIXERLIB:  An audio mixer library based on the SDL library
-    Copyright (C) 1997-1999  Sam Lantinga
+    SDL - Simple DirectMedia Layer
+    SDL_mixer:  An audio mixer library based on the SDL library
+    Copyright (C) 1997, 1998, 1999, 2000, 2001  Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -17,10 +18,13 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
     Sam Lantinga
-    5635-34 Springhouse Dr.
-    Pleasanton, CA 94588 (USA)
-    slouken@devolution.com
+    slouken@libsdl.org
 */
+
+#ifdef SAVE_RCSID
+static char rcsid =
+ "@(#) $Id$";
+#endif
 
 #ifndef _MIXER_H_
 #define _MIXER_H_
