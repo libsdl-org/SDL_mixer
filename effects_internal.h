@@ -20,7 +20,7 @@
     slouken@libsdl.org
 */
 
-/* $id:$ */
+/* $Id$ */
 
 #ifndef _INCLUDE_EFFECTS_INTERNAL_H_
 #define _INCLUDE_EFFECTS_INTERNAL_H_

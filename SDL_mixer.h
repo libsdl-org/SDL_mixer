@@ -20,7 +20,7 @@
     slouken@libsdl.org
 */
 
-/* $id:$ */
+/* $Id$ */
 
 #ifndef _MIXER_H_
 #define _MIXER_H_

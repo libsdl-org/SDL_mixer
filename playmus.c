@@ -20,7 +20,7 @@
     slouken@libsdl.org
 */
 
-/* $id:$ */
+/* $Id$ */
 
 #include <stdlib.h>
 #include <stdio.h>

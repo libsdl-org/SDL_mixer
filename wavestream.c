@@ -20,7 +20,7 @@
     slouken@libsdl.org
 */
 
-/* $id:$ */
+/* $Id$ */
 
 /* This file supports streaming WAV files, without volume adjustment */
 

@@ -20,7 +20,7 @@
     slouken@libsdl.org
 */
 
-/* $id:$ */
+/* $Id$ */
 
 #ifdef OGG_MUSIC
 

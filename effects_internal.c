@@ -21,7 +21,7 @@
     These are some helper functions for the internal mixer special effects.
 */
 
-/* $id: $ */
+/* $Id$ */
 
 
      /* ------ These are used internally only. Don't touch. ------ */

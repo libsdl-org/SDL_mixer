@@ -24,7 +24,7 @@
     This file by Torbjörn Andersson (torbjorn.andersson@eurotime.se)
 */
 
-/* $id:$ */
+/* $Id$ */
 
 #include <string.h>
 
