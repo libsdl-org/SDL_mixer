@@ -1,8 +1,6 @@
 
 noinst_LTLIBRARIES = libnativemidi.la
 
-CFLAGS += -I..
-
 libnativemidi_la_SOURCES =	\
 	native_midi.h		\
 	native_midi_common.c	\
