@@ -52,6 +52,7 @@ endif
 EXTRA_DIST =			\
 	CHANGES			\
 	VisualC.zip		\
+	Xcode.tar.gz		\
 	PBProjects.tar.gz	\
 	MPWmake.sea.bin		\
 	CWProjects.sea.bin	\
