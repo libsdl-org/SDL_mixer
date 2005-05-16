@@ -389,8 +389,11 @@ int open_music(SDL_AudioSpec *mixer)
 #endif
 #ifdef LIBMIKMOD_MUSIC
 	if(!MikMod_InfoDriver())
-#endif
+          MikMod_RegisterDriver(&drv_nos);
+#else
 	MikMod_RegisterAllDrivers();
+#endif
+
 #ifdef LIBMIKMOD_MUSIC
 	if(!MikMod_InfoLoader())
 #endif
