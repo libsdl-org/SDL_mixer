@@ -591,8 +591,22 @@ Uint32 *BuildTuneHeader(int part_poly_max[32], int part_to_inst[32], int numPart
 		qtma_StuffGeneralEvent(*myPos1, *myPos2, part, kGeneralEventNoteRequest, kNoteRequestEventLength);
 		myNoteRequest = (NoteRequest *)(myPos1 + 1);
 		myNoteRequest->info.flags = 0;
+		/* I'm told by the Apple people that the Quicktime types were poorly designed and it was 
+		 * too late to change them. On little endian, the BigEndian(Short|Fixed) types are structs
+		 * while on big endian they are primitive types. Furthermore, Quicktime failed to 
+		 * provide setter and getter functions. To get this to work, we need to case the 
+		 * code for the two possible situations.
+		 * My assumption is that the right-side value was always expected to be BigEndian
+		 * as it was written way before the Universal Binary transition. So in the little endian
+		 * case, OSSwap is used.
+		 */
+#if __LITTLE_ENDIAN__
+		myNoteRequest->info.polyphony.bigEndianValue = OSSwapHostToBigInt16(part_poly_max[part]);
+		myNoteRequest->info.typicalPolyphony.bigEndianValue = OSSwapHostToBigInt32(0x00010000);
+#else
 		myNoteRequest->info.polyphony = part_poly_max[part];
 		myNoteRequest->info.typicalPolyphony = 0x00010000;
+#endif
 		myErr = NAStuffToneDescription(myNoteAllocator,part_to_inst[part],&myNoteRequest->tone);
 		if (myErr != noErr)
 			goto bail;
