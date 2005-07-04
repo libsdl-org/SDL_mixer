@@ -295,7 +295,9 @@ static int read_config_file(char *name)
 int Timidity_Init(int rate, int format, int channels, int samples)
 {
   if (read_config_file(CONFIG_FILE)<0) {
-    return(-1);
+    if (read_config_file(CONFIG_FILE_ETC)<0) {
+      return(-1);
+    }
   }
 
   if (channels < 1 || channels == 3 || channels == 5 || channels > 6) return(-1);
