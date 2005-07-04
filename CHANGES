@@ -1,4 +1,8 @@
 1.2.7:
+Patrice Mandin - Mon Jul 4 19:45:40 UTC 2005
+ * Search timidity.cfg also in /etc
+ * Fix memory leaks in timidity player
+ * Use also SDL_RWops to read midifiles for timidity
 Ryan C. Gordon - Mon Jun 13 18:18:12 EDT 2005
  * Patch from Eric Wing to fix native midi compiling on MacOS/x86.
 Sam Lantinga - Wed Dec 22 17:14:32 PST 2004
