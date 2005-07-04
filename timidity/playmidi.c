@@ -81,6 +81,7 @@ static int32 lost_notes, cut_notes;
 static int32 *buffer_pointer;
 static int32 buffered_count;
 extern int32 *common_buffer;
+extern resample_t *resample_buffer; /* to free it on Timidity_Close */
 
 static MidiEvent *event_list, *current_event;
 static int32 sample_count, current_sample;
@@ -1749,9 +1750,23 @@ void Timidity_Stop(void)
 void Timidity_FreeSong(MidiSong *song)
 {
   if (free_instruments_afterwards)
-      free_instruments();
+    free_instruments();
   
   free(song->events);
   free(song);
+}
+
+void Timidity_Close(void)
+{
+  if (resample_buffer) {
+    free(resample_buffer);
+    resample_buffer=NULL;
+  }
+  if (common_buffer) {
+    free(common_buffer);
+    common_buffer=NULL;
+  }
+  free_instruments();
+  free_pathlist();
 }
 

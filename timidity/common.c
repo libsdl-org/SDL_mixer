@@ -36,13 +36,7 @@
 
 char current_filename[1024];
 
-#ifdef DEFAULT_PATH
-    /* The paths in this list will be tried whenever we're reading a file */
-    static PathList defaultpathlist={DEFAULT_PATH,0};
-    static PathList *pathlist=&defaultpathlist; /* This is a linked list */
-#else
-    static PathList *pathlist=0;
-#endif
+static PathList *pathlist=NULL;
 
 /* Try to open a file for reading. If the filename ends in one of the 
    defined compressor extensions, pipe the file through the decompressor */
@@ -110,12 +104,21 @@ FILE *open_file(char *name, int decompress, int noise_mode)
   FILE *fp;
   PathList *plp=pathlist;
   int l;
+  static int firsttime=1;
 
   if (!name || !(*name))
     {
       ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "Attempted to open nameless file.");
       return 0;
     }
+
+#ifdef DEFAULT_PATH
+  if (firsttime && (pathlist==NULL)) {
+    /* Generate path list */
+    add_to_pathlist(DEFAULT_PATH);
+    firsttime=0;
+  }
+#endif
 
   /* First try the given name */
 
@@ -223,4 +226,21 @@ void add_to_pathlist(char *s)
   strcpy((plp->path=safe_malloc(strlen(s)+1)),s);
   plp->next=pathlist;
   pathlist=plp;
+}
+
+/* Free memory associated to path list */
+void free_pathlist(void)
+{
+  PathList *plp, *next_plp;
+
+  plp = pathlist;
+  while (plp) {
+    if (plp->path) {
+      free(plp->path);
+      plp->path=NULL;
+    }
+    next_plp = plp->next;
+    free(plp);
+    plp = next_plp;
+  }
 }

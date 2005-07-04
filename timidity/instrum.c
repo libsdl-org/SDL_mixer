@@ -110,16 +110,23 @@ static void free_bank(int dr, int b)
   int i;
   ToneBank *bank=((dr) ? drumset[b] : tonebank[b]);
   for (i=0; i<MAXPROG; i++)
+  {
     if (bank->tone[i].layer)
-      {
-	/* Not that this could ever happen, of course */
-	if (bank->tone[i].layer != MAGIC_LOAD_INSTRUMENT)
+    {
+	  /* Not that this could ever happen, of course */
+	  if (bank->tone[i].layer != MAGIC_LOAD_INSTRUMENT)
 	  {
 	    free_layer(bank->tone[i].layer);
-	    bank->tone[i].layer=0;
+	    bank->tone[i].layer=NULL;
 	    bank->tone[i].last_used=-1;
 	  }
-      }
+    }
+    if (bank->tone[i].name)
+    {
+      free(bank->tone[i].name);
+      bank->tone[i].name = NULL;
+    }
+  }
 }
 
 
@@ -137,7 +144,7 @@ static void free_old_bank(int dr, int b, int how_old)
 		(dr)? "drum" : "inst", bank->tone[i].name,
 		i, b, bank->tone[i].last_used);
 	    free_layer(bank->tone[i].layer);
-	    bank->tone[i].layer=0;
+	    bank->tone[i].layer=NULL;
 	    bank->tone[i].last_used=-1;
 	  }
       }

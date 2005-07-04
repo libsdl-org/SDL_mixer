@@ -30,4 +30,4 @@ extern void Timidity_Start(MidiSong *song);
 extern int Timidity_Active(void);
 extern void Timidity_Stop(void);
 extern void Timidity_FreeSong(MidiSong *song);
-
+extern void Timidity_Close(void);

@@ -1227,6 +1227,11 @@ void close_music(void)
 	MikMod_UnregisterAllDrivers();
 # endif
 #endif
+#ifdef MID_MUSIC
+# ifdef USE_TIMIDITY_MIDI
+	Timidity_Close();
+# endif
+#endif
 }
 
 # ifdef LIBMIKMOD_MUSIC

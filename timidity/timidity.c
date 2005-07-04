@@ -39,8 +39,8 @@ int free_instruments_afterwards=0;
 static char def_instr_name[256]="";
 
 int AUDIO_BUFFER_SIZE;
-resample_t *resample_buffer;
-int32 *common_buffer;
+resample_t *resample_buffer=NULL;
+int32 *common_buffer=NULL;
 int num_ochannels;
 
 #define MAXWORDS 10
