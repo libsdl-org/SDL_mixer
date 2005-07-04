@@ -24,6 +24,8 @@
 #include <errno.h>
 #include <string.h>
 
+#include <SDL_rwops.h>
+
 #include "config.h"
 #include "common.h"
 #include "instrum.h"
@@ -49,7 +51,7 @@ static char title[128];
 /* to avoid some unnecessary parameter passing */
 static MidiEventList *evlist;
 static int32 event_count;
-static FILE *fp;
+static SDL_RWops *rw;
 static int32 at;
 
 /* These would both fit into 32 bits, but they are often added in
@@ -77,7 +79,7 @@ static int32 getvl(void)
   uint8 c;
   for (;;)
     {
-      fread(&c,1,1,fp);
+      SDL_RWread(rw,&c,1,1);
       l += (c & 0x7f);
       if (!(c & 0x80)) return l;
       l<<=7;
@@ -85,11 +87,11 @@ static int32 getvl(void)
 }
 
 
-static int sysex(uint32 len, uint8 *syschan, uint8 *sysa, uint8 *sysb, FILE *fp)
+static int sysex(uint32 len, uint8 *syschan, uint8 *sysa, uint8 *sysb, SDL_RWops *rw)
 {
   unsigned char *s=(unsigned char *)safe_malloc(len);
   int id, model, ch, port, adhi, adlo, cd, dta, dtb, dtc;
-  if (len != fread(s, 1, len, fp))
+  if (len != SDL_RWread(rw, s, 1, len))
     {
       free(s);
       return 0;
@@ -259,7 +261,7 @@ static int sysex(uint32 len, uint8 *syschan, uint8 *sysa, uint8 *sysb, FILE *fp)
 static int dumpstring(int32 len, char *label)
 {
   signed char *s=safe_malloc(len+1);
-  if (len != (int32)fread(s, 1, len, fp))
+  if (len != (int32)SDL_RWread(rw, s, 1, len))
     {
       free(s);
       return -1;
@@ -296,7 +298,7 @@ static MidiEventList *read_midi_event(void)
   for (;;)
     {
       at+=getvl();
-      if (fread(&me,1,1,fp)!=1)
+      if (SDL_RWread(rw,&me,1,1)!=1)
 	{
 	  ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "%s: read_midi_event: %s", 
 	       current_filename, strerror(errno));
@@ -309,7 +311,7 @@ static MidiEventList *read_midi_event(void)
 	  uint8 sysa=0, sysb=0, syschan=0;
 
 	  len=getvl();
-	  sret=sysex(len, &syschan, &sysa, &sysb, fp);
+	  sret=sysex(len, &syschan, &sysa, &sysb, rw);
 	  if (sret)
 	   {
 	     MIDIEVENT(at, sret, syschan, sysa, sysb);
@@ -317,7 +319,7 @@ static MidiEventList *read_midi_event(void)
 	}
       else if(me==0xFF) /* Meta event */
 	{
-	  fread(&type,1,1,fp);
+	  SDL_RWread(rw,&type,1,1);
 	  len=getvl();
 	  if (type>0 && type<16)
 	    {
@@ -333,7 +335,7 @@ static MidiEventList *read_midi_event(void)
 	      case 0x21: /* MIDI port number */
 		if(len == 1)
 		{
-	  	    fread(&midi_port_number,1,1,fp);
+	  	    SDL_RWread(rw,&midi_port_number,1,1);
 		    if(midi_port_number == EOF)
 		    {
 			    ctl->cmsg(CMSG_ERROR, VERB_NORMAL,
@@ -347,20 +349,20 @@ static MidiEventList *read_midi_event(void)
 			  "(MIDI port number %d)", midi_port_number);
 		    midi_port_number &= 0x03;
 		}
-		else skip(fp, len);
+		else SDL_RWseek(rw, len, SEEK_CUR);
 		break;
 
 	      case 0x2F: /* End of Track */
 		return MAGIC_EOT;
 
 	      case 0x51: /* Tempo */
-		fread(&a,1,1,fp); fread(&b,1,1,fp); fread(&c,1,1,fp);
+		SDL_RWread(rw,&a,1,1); SDL_RWread(rw,&b,1,1); SDL_RWread(rw,&c,1,1);
 		MIDIEVENT(at, ME_TEMPO, c, a, b);
 		
 	      default:
 		ctl->cmsg(CMSG_INFO, VERB_DEBUG, 
 		     "(Meta event type 0x%02x, length %ld)", type, len);
-		skip(fp, len);
+		SDL_RWseek(rw, len, SEEK_CUR);
 		break;
 	      }
 	}
@@ -371,30 +373,30 @@ static MidiEventList *read_midi_event(void)
 	    {
 	      lastchan=a & 0x0F;
 	      laststatus=(a>>4) & 0x07;
-	      fread(&a, 1,1, fp);
+	      SDL_RWread(rw,&a, 1,1);
 	      a &= 0x7F;
 	    }
 	  switch(laststatus)
 	    {
 	    case 0: /* Note off */
-	      fread(&b, 1,1, fp);
+	      SDL_RWread(rw,&b, 1,1);
 	      b &= 0x7F;
 	      MIDIEVENT(at, ME_NOTEOFF, lastchan, a,b);
 
 	    case 1: /* Note on */
-	      fread(&b, 1,1, fp);
+	      SDL_RWread(rw,&b, 1,1);
 	      b &= 0x7F;
 	      if (curr_track == curr_title_track && track_info > 1) title[0] = '\0';
 	      MIDIEVENT(at, ME_NOTEON, lastchan, a,b);
 
 
 	    case 2: /* Key Pressure */
-	      fread(&b, 1,1, fp);
+	      SDL_RWread(rw,&b, 1,1);
 	      b &= 0x7F;
 	      MIDIEVENT(at, ME_KEYPRESSURE, lastchan, a, b);
 
 	    case 3: /* Control change */
-	      fread(&b, 1,1, fp);
+	      SDL_RWread(rw,&b, 1,1);
 	      b &= 0x7F;
 	      {
 		int control=255;
@@ -517,7 +519,7 @@ static MidiEventList *read_midi_event(void)
 	      break;
 
 	    case 6: /* Pitch wheel */
-	      fread(&b, 1,1, fp);
+	      SDL_RWread(rw,&b, 1,1);
 	      b &= 0x7F;
 	      MIDIEVENT(at, ME_PITCHWHEEL, lastchan, a, b);
 
@@ -556,7 +558,7 @@ static int read_track(int append)
     at=0;
 
   /* Check the formalities */
-  if ((fread(tmp,1,4,fp) != 4) || (fread(&len,4,1,fp) != 1))
+  if ((SDL_RWread(rw,tmp,1,4) != 4) || (SDL_RWread(rw,&len,4,1) != 1))
     {
       ctl->cmsg(CMSG_ERROR, VERB_NORMAL,
 	   "%s: Can't read track header.", current_filename);
@@ -943,14 +945,14 @@ static MidiEvent *groom_list(int32 divisions,int32 *eventsp,int32 *samplesp)
   return groomed_list;
 }
 
-MidiEvent *read_midi_file(FILE *mfp, int32 *count, int32 *sp)
+MidiEvent *read_midi_file(SDL_RWops *mrw, int32 *count, int32 *sp)
 {
   int32 len, divisions;
   int16 format, tracks, divisions_tmp;
   int i;
   char tmp[4];
 
-  fp=mfp;
+  rw = mrw;
   event_count=0;
   at=0;
   evlist=0;
@@ -977,14 +979,14 @@ MidiEvent *read_midi_file(FILE *mfp, int32 *count, int32 *sp)
 
 past_riff:
 
-  if ((fread(tmp,1,4,fp) != 4) || (fread(&len,4,1,fp) != 1))
+  if ((SDL_RWread(rw,tmp,1,4) != 4) || (SDL_RWread(rw,&len,4,1) != 1))
     {
-      if (ferror(fp))
+     /* if (ferror(fp))
 	{
 	  ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "%s: %s", current_filename, 
 	       strerror(errno));
 	}
-      else
+      else*/
 	ctl->cmsg(CMSG_ERROR, VERB_NORMAL, 
 	     "%s: Not a MIDI file!", current_filename);
       return 0;
@@ -993,7 +995,7 @@ past_riff:
 
   if (!memcmp(tmp, "RIFF", 4))
     {
-      fread(tmp,1,12,fp);
+      SDL_RWread(rw,tmp,1,12);
       goto past_riff;
     }
   if (memcmp(tmp, "MThd", 4) || len < 6)
@@ -1003,9 +1005,9 @@ past_riff:
       return 0;
     }
 
-  fread(&format, 2, 1, fp);
-  fread(&tracks, 2, 1, fp);
-  fread(&divisions_tmp, 2, 1, fp);
+  SDL_RWread(rw,&format, 2, 1);
+  SDL_RWread(rw,&tracks, 2, 1);
+  SDL_RWread(rw,&divisions_tmp, 2, 1);
   format=BE_SHORT(format);
   tracks=BE_SHORT(tracks);
   track_info = tracks;
@@ -1026,7 +1028,7 @@ past_riff:
       ctl->cmsg(CMSG_WARNING, VERB_NORMAL, 
 	   "%s: MIDI file header size %ld bytes", 
 	   current_filename, len);
-      skip(fp, len-6); /* skip the excess */
+      SDL_RWseek(rw, len-6, SEEK_CUR); /* skip the excess */
     }
   if (format<0 || format >2)
     {

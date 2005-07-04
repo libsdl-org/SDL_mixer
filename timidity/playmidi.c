@@ -25,6 +25,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <SDL_rwops.h>
+
 #include "config.h"
 #include "common.h"
 #include "instrum.h"
@@ -1703,19 +1705,41 @@ MidiSong *Timidity_LoadSong(char *midifile)
 {
   MidiSong *song;
   int32 events;
-  FILE *fp;
+  SDL_RWops *rw;
 
   /* Allocate memory for the song */
   song = (MidiSong *)safe_malloc(sizeof(*song));
   memset(song, 0, sizeof(*song));
 
   /* Open the file */
-  fp = open_file(midifile, 1, OF_VERBOSE);
   strcpy(midi_name, midifile);
-  if ( fp != NULL ) {
-    song->events=read_midi_file(fp, &events, &song->samples);
-    close_file(fp);
+
+  rw = SDL_RWFromFile(midifile, "rb");
+  if ( rw != NULL ) {
+    song->events=read_midi_file(rw, &events, &song->samples);
+    SDL_RWclose(rw);
   }
+
+  /* Make sure everything is okay */
+  if (!song->events) {
+    free(song);
+    song = NULL;
+  }
+  return(song);
+}
+
+MidiSong *Timidity_LoadSong_RW(SDL_RWops *rw)
+{
+  MidiSong *song;
+  int32 events;
+
+  /* Allocate memory for the song */
+  song = (MidiSong *)safe_malloc(sizeof(*song));
+  memset(song, 0, sizeof(*song));
+
+  strcpy(midi_name, "SDLrwops source");
+
+  song->events=read_midi_file(rw, &events, &song->samples);
 
   /* Make sure everything is okay */
   if (!song->events) {

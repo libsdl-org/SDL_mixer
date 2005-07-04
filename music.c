@@ -1351,6 +1351,18 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw) {
 		}
 	} else
 #endif
+#ifdef MID_MUSIC
+	/* MIDI files have the magic four bytes "MThd" */
+	if ( strcmp((char *)magic, "MThd") == 0 ) {
+		music->type = MUS_MID;
+#ifdef USE_TIMIDITY_MIDI
+		music->data.midi = Timidity_LoadSong_RW(rw);
+		if ( music->data.midi == NULL ) {
+			music->error = 1;
+		}
+#endif
+	} else
+#endif
 #if defined(MOD_MUSIC) || defined(LIBMIKMOD_MUSIC)
 	if (1) {
 		music->type=MUS_MOD;
