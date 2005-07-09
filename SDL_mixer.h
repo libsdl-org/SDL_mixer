@@ -82,7 +82,7 @@ extern DECLSPEC const SDL_version * SDLCALL Mix_Linked_Version(void);
 #define MIX_MAX_VOLUME		128	/* Volume of a chunk */
 
 /* The internal format for an audio chunk */
-typedef struct {
+typedef struct Mix_Chunk {
 	int allocated;
 	Uint8 *abuf;
 	Uint32 alen;
