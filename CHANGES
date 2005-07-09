@@ -1,4 +1,6 @@
 1.2.7:
+Ryan C. Gordon - Sat Jul  9 01:54:03 EDT 2005
+ * Tweaked Mix_Chunk's definition to make predeclaration easier.
 Patrice Mandin - Mon Jul 4 19:45:40 UTC 2005
  * Search timidity.cfg also in /etc
  * Fix memory leaks in timidity player
