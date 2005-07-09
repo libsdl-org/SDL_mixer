@@ -23,10 +23,13 @@
 #ifndef _NATIVE_MIDI_H_
 #define _NATIVE_MIDI_H_
 
+#include <SDL_rwops.h>
+
 typedef struct _NativeMidiSong NativeMidiSong;
 
 int native_midi_detect();
 NativeMidiSong *native_midi_loadsong(char *midifile);
+NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw);
 void native_midi_freesong(NativeMidiSong *song);
 void native_midi_start(NativeMidiSong *song);
 void native_midi_stop();

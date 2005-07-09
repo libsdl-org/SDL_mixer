@@ -150,6 +150,11 @@ bail:
 	return NULL;
 }
 
+NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw)
+{
+	return NULL;
+}
+
 void native_midi_freesong(NativeMidiSong *song)
 {
 	if(!song || !song->tuneSequence)

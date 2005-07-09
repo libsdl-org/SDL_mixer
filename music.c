@@ -1355,10 +1355,21 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw) {
 	/* MIDI files have the magic four bytes "MThd" */
 	if ( strcmp((char *)magic, "MThd") == 0 ) {
 		music->type = MUS_MID;
+		music->error = 1;
+#ifdef USE_NATIVE_MIDI
+		if ( native_midi_ok ) {
+			music->data.nativemidi = native_midi_loadsong_RW(rw);
+			if ( music->data.nativemidi ) {
+				music->error = 0;
+			}
+		} MIDI_ELSE
+#endif
 #ifdef USE_TIMIDITY_MIDI
-		music->data.midi = Timidity_LoadSong_RW(rw);
-		if ( music->data.midi == NULL ) {
-			music->error = 1;
+		if ( timidity_ok ) {
+			music->data.midi = Timidity_LoadSong_RW(rw);
+			if ( music->data.midi ) {
+				music->error = 0;
+			}
 		}
 #endif
 	} else

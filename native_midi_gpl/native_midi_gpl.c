@@ -212,6 +212,30 @@ end:
     return NULL;
 }
 
+NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw)
+{
+	NativeMidiSong	*song = NULL;
+	char 		*extra;
+
+	song = malloc(sizeof(NativeMidiSong));
+	if (!song) {
+		return NULL;
+	};
+
+	SDL_RWseek(rw, 0, SEEK_END);
+	song->file_size = SDL_RWtell(rw, 0, SEEK_CUR);
+	SDL_RWseek(rw, 0, SEEK_SET);
+
+	song->filebuf = malloc(song->file_size);
+	if (!song->filebuf) {
+		free(song);
+		return NULL;
+	}
+
+	SDL_RWread(rw, song->filebuf, song->file_size, 1);
+	return song;
+}
+
 void native_midi_freesong(NativeMidiSong *song)
 {
     free(song->filebuf);
