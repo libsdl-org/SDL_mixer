@@ -296,7 +296,9 @@ int Timidity_Init(int rate, int format, int channels, int samples)
 {
   if (read_config_file(CONFIG_FILE)<0) {
     if (read_config_file(CONFIG_FILE_ETC)<0) {
-      return(-1);
+      if (read_config_file(CONFIG_FILE_ETC_TIMIDITY)<0) {
+        return(-1);
+      }
     }
   }
 
