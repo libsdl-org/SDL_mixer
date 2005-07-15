@@ -223,7 +223,7 @@ NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw)
 	};
 
 	SDL_RWseek(rw, 0, SEEK_END);
-	song->file_size = SDL_RWtell(rw, 0, SEEK_CUR);
+	song->file_size = SDL_RWtell(rw);
 	SDL_RWseek(rw, 0, SEEK_SET);
 
 	song->filebuf = malloc(song->file_size);
