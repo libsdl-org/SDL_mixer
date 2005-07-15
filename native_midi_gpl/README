@@ -5,7 +5,8 @@ Therefore, it's not built by default.
 
 Native Midi support for Linux should work on FreeBSD too ( I can not test it ).
 
-Midi device can be selected with enviroment variable SDL_NATIVE_MUSIC, there can have one of flowing vlues: 
+Midi device can be selected with enviroment variable SDL_NATIVE_MUSIC, it can be
+one of following values: 
 GUS  - GravisUltrasound
 AWE  - SoundBlaster AWE32
 FM   - FreqentionModulation SoundBlaster Compatible
@@ -21,6 +22,9 @@ Autoselect priority:
 4. FM
 5. EXT
 
-Also if you want use FM befor Timidity set variable SDL_NATIVE_MUSIC="FM" or edit source code native_midi_lnx.c( return value in function synth_setup, by autoselect FM should return 1).
-For using FM: files drums.sb drums.o3 std.sb std.o3 should be moved to /etc/ dir ( or symlink created ).
+Also if you want use FM befor Timidity set variable SDL_NATIVE_MUSIC="FM" or edit
+source code native_midi_lnx.c( return value in function synth_setup, by autoselect
+FM should return 1).
+For using FM: files drums.sb drums.o3 std.sb std.o3 should be moved to /etc/ dir
+( or symlink created ).
 
