@@ -95,15 +95,20 @@ NativeMidiSong *native_midi_loadsong(char *midifile)
 	int				part_poly_max[32];
 	int				numParts = 0;
 	Uint16			ppqn;
+	SDL_RWops		*rw;
 
 	/* Init the arrays */
 	memset(part_poly_max,0,sizeof(part_poly_max));
 	memset(part_to_inst,-1,sizeof(part_to_inst));
 	
 	/* Attempt to load the midi file */
-	evntlist = CreateMIDIEventList(midifile, &ppqn);
-	if (!evntlist)
-		goto bail;
+	rw = SDL_RWFromFile(midifile, "rb");
+	if (rw) {
+		evntlist = CreateMIDIEventList(rw, &ppqn);
+		SDL_RWclose(rw);
+		if (!evntlist)
+			goto bail;
+	}
 
 	/* Allocate memory for the song struct */
 	song = malloc(sizeof(NativeMidiSong));
@@ -152,6 +157,64 @@ bail:
 
 NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw)
 {
+	NativeMidiSong	*song = NULL;
+	MIDIEvent		*evntlist = NULL;
+	int				part_to_inst[32];
+	int				part_poly_max[32];
+	int				numParts = 0;
+	Uint16			ppqn;
+
+	/* Init the arrays */
+	memset(part_poly_max,0,sizeof(part_poly_max));
+	memset(part_to_inst,-1,sizeof(part_to_inst));
+	
+	/* Attempt to load the midi file */
+	evntlist = CreateMIDIEventList(rw, &ppqn);
+	if (!evntlist)
+		goto bail;
+
+	/* Allocate memory for the song struct */
+	song = malloc(sizeof(NativeMidiSong));
+	if (!song)
+		goto bail;
+
+	/* Build a tune sequence from the event list */
+	song->tuneSequence = BuildTuneSequence(evntlist, ppqn, part_poly_max, part_to_inst, &numParts);
+	if(!song->tuneSequence)
+		goto bail;
+
+	/* Now build a tune header from the data we collect above, create
+	   all parts as needed and assign them the correct instrument.
+	*/
+	song->tuneHeader = BuildTuneHeader(part_poly_max, part_to_inst, numParts);
+	if(!song->tuneHeader)
+		goto bail;
+	
+	/* Increment the instance count */
+	gInstaceCount++;
+	if (gTunePlayer == NULL)
+		gTunePlayer = OpenDefaultComponent(kTunePlayerComponentType, 0);
+
+	/* Finally, free the event list */
+	FreeMIDIEventList(evntlist);
+	
+	return song;
+	
+bail:
+	if (evntlist)
+		FreeMIDIEventList(evntlist);
+	
+	if (song)
+	{
+		if(song->tuneSequence)
+			free(song->tuneSequence);
+		
+		if(song->tuneHeader)
+			DisposePtr((Ptr)song->tuneHeader);
+
+		free(song);
+	}
+	
 	return NULL;
 }
 

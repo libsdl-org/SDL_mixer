@@ -277,7 +277,7 @@ static MIDIEvent *MIDItoStream(MIDIFile *mididata)
 	return currentEvent;
 }
 
-static int ReadMIDIFile(MIDIFile *mididata, FILE *fp)
+static int ReadMIDIFile(MIDIFile *mididata, SDL_RWops *rw)
 {
 	int i = 0;
 	Uint32	ID;
@@ -288,27 +288,27 @@ static int ReadMIDIFile(MIDIFile *mididata, FILE *fp)
 
 	if (!mididata)
 		return 0;
-	if (!fp)
+	if (!rw)
 		return 0;
 
 	/* Make sure this is really a MIDI file */
-	fread(&ID, 1, 4, fp);
+	SDL_RWread(rw, &ID, 1, 4);
 	if (BE_LONG(ID) != 'MThd')
 		return 0;
 	
 	/* Header size must be 6 */
-	fread(&size, 1, 4, fp);
+	SDL_RWread(rw, &size, 1, 4);
 	size = BE_LONG(size);
 	if (size != 6)
 		return 0;
 	
 	/* We only support format 0 and 1, but not 2 */
-	fread(&format, 1, 2, fp);
+	SDL_RWread(rw, &format, 1, 2);
 	format = BE_SHORT(format);
 	if (format != 0 && format != 1)
 		return 0;
 	
-	fread(&tracks, 1, 2, fp);
+	SDL_RWread(rw, &tracks, 1, 2);
 	tracks = BE_SHORT(tracks);
 	mididata->nTracks = tracks;
     
@@ -321,14 +321,14 @@ static int ReadMIDIFile(MIDIFile *mididata, FILE *fp)
     }
     
 	/* Retrieve the PPQN value, needed for playback */
-	fread(&division, 1, 2, fp);
+	SDL_RWread(rw, &division, 1, 2);
 	mididata->division = BE_SHORT(division);
 	
 	
 	for (i=0; i<tracks; i++)
 	{
-		fread(&ID, 1, 4, fp);	/* We might want to verify this is MTrk... */
-		fread(&size, 1, 4, fp);
+		SDL_RWread(rw, &ID, 1, 4);	/* We might want to verify this is MTrk... */
+		SDL_RWread(rw, &size, 1, 4);
 		size = BE_LONG(size);
 		mididata->track[i].len = size;
 		mididata->track[i].data = malloc(size);
@@ -337,7 +337,7 @@ static int ReadMIDIFile(MIDIFile *mididata, FILE *fp)
 			Mix_SetError("Out of memory");
 			goto bail;
 		}
-		fread(mididata->track[i].data, 1, size, fp);
+		SDL_RWread(rw, mididata->track[i].data, 1, size);
 	}
 	return 1;
 
@@ -351,9 +351,8 @@ bail:
 	return 0;
 }
 
-MIDIEvent *CreateMIDIEventList(char *midifile, Uint16 *division)
+MIDIEvent *CreateMIDIEventList(SDL_RWops *rw, Uint16 *division)
 {
-	FILE *fp = NULL;
 	MIDIFile *mididata = NULL;
 	MIDIEvent *eventList;
 	int trackID;
@@ -363,17 +362,14 @@ MIDIEvent *CreateMIDIEventList(char *midifile, Uint16 *division)
 		return NULL;
 
 	/* Open the file */
-	fp = fopen(midifile, "rb");
-	if ( fp != NULL )
+	if ( rw != NULL )
 	{
 		/* Read in the data */
-		if ( ! ReadMIDIFile(mididata, fp))
+		if ( ! ReadMIDIFile(mididata, rw))
 		{
 			free(mididata);
-			fclose(fp);
 			return NULL;
 		}
-		fclose(fp);
 	}
 	else
 	{

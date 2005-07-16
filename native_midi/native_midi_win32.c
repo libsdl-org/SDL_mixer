@@ -192,32 +192,57 @@ int native_midi_detect()
 
 NativeMidiSong *native_midi_loadsong(char *midifile)
 {
-  NativeMidiSong *newsong;
+	NativeMidiSong *newsong;
 	MIDIEvent		*evntlist = NULL;
+	SDL_RWops	*rw;
 
-  newsong=malloc(sizeof(NativeMidiSong));
-  if (!newsong)
-    return NULL;
-  memset(newsong,0,sizeof(NativeMidiSong));
+	newsong=malloc(sizeof(NativeMidiSong));
+	if (!newsong)
+		return NULL;
+	memset(newsong,0,sizeof(NativeMidiSong));
 
-  /* Attempt to load the midi file */
-	evntlist = CreateMIDIEventList(midifile, &newsong->ppqn);
-	if (!evntlist)
-  {
-    free(newsong);
-    return NULL;
-  }
+	/* Attempt to load the midi file */
+	rw = SDL_RWFromFile(midifile, "rb");
+	if (rw) {
+		evntlist = CreateMIDIEventList(rw, &newsong->ppqn);
+		SDL_RWclose(rw);
+		if (!evntlist)
+		{
+			free(newsong);
+			return NULL;
+		}
+	}
 
-  MIDItoStream(newsong, evntlist);
+	MIDItoStream(newsong, evntlist);
 
 	FreeMIDIEventList(evntlist);
 
-  return newsong;
+	return newsong;
 }
 
 NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw)
 {
-	return NULL;
+	NativeMidiSong *newsong;
+	MIDIEvent		*evntlist = NULL;
+
+	newsong=malloc(sizeof(NativeMidiSong));
+	if (!newsong)
+		return NULL;
+	memset(newsong,0,sizeof(NativeMidiSong));
+
+	/* Attempt to load the midi file */
+	evntlist = CreateMIDIEventList(rw, &newsong->ppqn);
+	if (!evntlist)
+	{
+		free(newsong);
+		return NULL;
+	}
+
+	MIDItoStream(newsong, evntlist);
+
+	FreeMIDIEventList(evntlist);
+
+	return newsong;
 }
 
 void native_midi_freesong(NativeMidiSong *song)
