@@ -1,4 +1,6 @@
 1.2.7:
+Patrice Mandin - Sat Jul 16 16:43:24 UTC 2005
+ * Use SDL_RWops also for native midi mac and win32
 Patrice Mandin - Sat Jul 9 14:40:09 UTC 2005
  * Use SDL_RWops also for native midi gpl (todo: mac and win32)
 Ryan C. Gordon - Sat Jul  9 01:54:03 EDT 2005
