@@ -327,6 +327,9 @@ void music_mixer(void *udata, Uint8 *stream, int len)
 int open_music(SDL_AudioSpec *mixer)
 {
 	int music_error;
+#ifdef LIBMIKMOD_MUSIC
+	CHAR *list;
+#endif
 
 	music_error = 0;
 #ifdef WAV_MUSIC
@@ -388,14 +391,17 @@ int open_music(SDL_AudioSpec *mixer)
 	md_mode |= DMODE_HQMIXER|DMODE_SOFT_MUSIC|DMODE_SURROUND;
 #endif
 #ifdef LIBMIKMOD_MUSIC
-	if(!MikMod_InfoDriver())
-          MikMod_RegisterDriver(&drv_nos);
-#else
-	MikMod_RegisterAllDrivers();
+	list = MikMod_InfoDriver();
+	if ( list )
+	  free(list);
+	else
 #endif
-
+	MikMod_RegisterDriver(&drv_nos);
 #ifdef LIBMIKMOD_MUSIC
-	if(!MikMod_InfoLoader())
+	list = MikMod_InfoLoader();
+	if ( list )
+	  free(list);
+	else
 #endif
 	MikMod_RegisterAllLoaders();
 	if ( MikMod_Init() ) {

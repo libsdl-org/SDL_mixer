@@ -650,6 +650,8 @@ MIKMODAPI extern struct MDRIVER drv_raw;    /* raw file disk writer [music.raw] 
 MIKMODAPI extern struct MDRIVER drv_stdout; /* output to stdout */
 MIKMODAPI extern struct MDRIVER drv_wav;    /* RIFF WAVE file disk writer [music.wav] */
 
+MIKMODAPI extern struct MDRIVER drv_sdl;    /* SDL_mixer driver */
+
 MIKMODAPI extern struct MDRIVER drv_ultra;  /* Linux Ultrasound driver */
 
 MIKMODAPI extern struct MDRIVER drv_AF;     /* Dec Alpha AudioFile */
