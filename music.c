@@ -380,23 +380,22 @@ int open_music(SDL_AudioSpec *mixer)
 		}
 		md_mode |= DMODE_STEREO;
 	}
-	md_mixfreq	 = mixer->freq;
-	md_device	  = 0;
-	md_volume	  = 96;
+	md_mixfreq = mixer->freq;
+	md_device  = 0;
+	md_volume  = 96;
 	md_musicvolume = 128;
 	md_sndfxvolume = 128;
-	md_pansep	  = 128;
-	md_reverb	  = 0;
-#ifdef LIBMIKMOD_MUSIC
-	md_mode |= DMODE_HQMIXER|DMODE_SOFT_MUSIC|DMODE_SURROUND;
-#endif
+	md_pansep  = 128;
+	md_reverb  = 0;
+	md_mode    |= DMODE_HQMIXER|DMODE_SOFT_MUSIC|DMODE_SURROUND;
 #ifdef LIBMIKMOD_MUSIC
 	list = MikMod_InfoDriver();
 	if ( list )
 	  free(list);
 	else
-#endif
+#else
 	MikMod_RegisterDriver(&drv_nos);
+#endif
 #ifdef LIBMIKMOD_MUSIC
 	list = MikMod_InfoLoader();
 	if ( list )

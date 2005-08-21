@@ -3,7 +3,6 @@ noinst_LTLIBRARIES = libmikmod.la
 
 libmikmod_la_SOURCES =		\
 	drv_nos.c		\
-	drv_sdl.c		\
 	load_it.c		\
 	load_mod.c		\
 	load_s3m.c		\

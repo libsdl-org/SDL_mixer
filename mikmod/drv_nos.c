@@ -35,6 +35,7 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+#define SDL_MIXER_ONLY
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -44,7 +45,9 @@
 
 #define ZEROLEN 32768
 
+#ifndef SDL_MIXER_ONLY
 static	SBYTE *zerobuf=NULL;
+#endif
 
 static BOOL NS_IsThere(void)
 {
@@ -53,20 +56,26 @@ static BOOL NS_IsThere(void)
 
 static BOOL NS_Init(void)
 {
+#ifndef SDL_MIXER_ONLY
 	zerobuf=(SBYTE*)_mm_malloc(ZEROLEN);
+#endif
 	return VC_Init();
 }
 
 static void NS_Exit(void)
 {
 	VC_Exit();
+#ifndef SDL_MIXER_ONLY
 	_mm_free(zerobuf);
+#endif
 }
 
 static void NS_Update(void)
 {
+#ifndef SDL_MIXER_ONLY
 	if (zerobuf)
 		VC_WriteBytes(zerobuf,ZEROLEN);
+#endif
 }
 
 MIKMODAPI MDRIVER drv_nos={

@@ -32,11 +32,8 @@
 
 #include "mikmod_internals.h"
 
-MIKMODAPI extern struct MDRIVER drv_sdl;    /* Simple Direct Media */
-
 void _mm_registeralldrivers(void)
 {
-	_mm_registerdriver(&drv_sdl);
 	_mm_registerdriver(&drv_nos);
 }
 
