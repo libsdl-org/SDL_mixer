@@ -393,9 +393,8 @@ int open_music(SDL_AudioSpec *mixer)
 	if ( list )
 	  free(list);
 	else
-#else
-	MikMod_RegisterDriver(&drv_nos);
 #endif
+	MikMod_RegisterDriver(&drv_nos);
 #ifdef LIBMIKMOD_MUSIC
 	list = MikMod_InfoLoader();
 	if ( list )
