@@ -167,6 +167,36 @@ void Mix_HookMusicFinished(void (*music_finished)(void))
 }
 
 
+/* If music isn't playing, halt it if no looping is required, restart it */
+/* otherwhise. NOP if the music is playing */
+static int music_halt_or_loop (void)
+{
+	/* Restart music if it has to loop */
+	
+	if (!music_internal_playing()) 
+	{
+		/* Restart music if it has to loop at a high level */
+		if (music_loops && --music_loops)
+		{
+			Mix_Fading current_fade = music_playing->fading;
+			music_internal_play(music_playing, 0.0);
+			music_playing->fading = current_fade;
+		} 
+		else 
+		{
+			music_internal_halt();
+			if (music_finished_hook)
+				music_finished_hook();
+			
+			return 0;
+		}
+	}
+	
+	return 1;
+}
+
+
+
 /* Mixing function */
 void music_mixer(void *udata, Uint8 *stream, int len)
 {
@@ -195,21 +225,11 @@ void music_mixer(void *udata, Uint8 *stream, int len)
 				music_playing->fading = MIX_NO_FADING;
 			}
 		}
-		/* Restart music if it has to loop */
-		if ( !music_internal_playing() ) {
-			/* Restart music if it has to loop at a high level */
-			if ( music_loops && --music_loops ) {
-				Mix_Fading current_fade = music_playing->fading;
-				music_internal_play(music_playing, 0.0);
-				music_playing->fading = current_fade;
-			} else {
-				music_internal_halt();
-				if ( music_finished_hook ) {
-					music_finished_hook();
-				}
-				return;
-			}
-		}
+		
+		if (music_halt_or_loop() == 0)
+			return;
+		
+		
 		switch (music_playing->type) {
 #ifdef CMD_MUSIC
 			case MUS_CMD:
@@ -309,7 +329,11 @@ void music_mixer(void *udata, Uint8 *stream, int len)
 #endif
 #ifdef OGG_MUSIC
 			case MUS_OGG:
-				OGG_playAudio(music_playing->data.ogg, stream, len);
+				
+				len = OGG_playAudio(music_playing->data.ogg, stream, len);
+				if (len > 0 && music_halt_or_loop())
+					OGG_playAudio(music_playing->data.ogg, stream, len);
+			
 				break;
 #endif
 #ifdef MP3_MUSIC

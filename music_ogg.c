@@ -192,7 +192,7 @@ static void OGG_getsome(OGG_music *music)
 }
 
 /* Play some of a stream previously started with OGG_play() */
-void OGG_playAudio(OGG_music *music, Uint8 *snd, int len)
+int OGG_playAudio(OGG_music *music, Uint8 *snd, int len)
 {
 	int mixable;
 
@@ -215,6 +215,8 @@ void OGG_playAudio(OGG_music *music, Uint8 *snd, int len)
 		len -= mixable;
 		snd += mixable;
 	}
+	
+	return len;
 }
 
 /* Stop playback of a stream previously started with OGG_play() */

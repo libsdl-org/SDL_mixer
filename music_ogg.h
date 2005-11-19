@@ -59,7 +59,7 @@ extern void OGG_play(OGG_music *music);
 extern int OGG_playing(OGG_music *music);
 
 /* Play some of a stream previously started with OGG_play() */
-extern void OGG_playAudio(OGG_music *music, Uint8 *stream, int len);
+extern int OGG_playAudio(OGG_music *music, Uint8 *stream, int len);
 
 /* Stop playback of a stream previously started with OGG_play() */
 extern void OGG_stop(OGG_music *music);
