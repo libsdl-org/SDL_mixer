@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <assert.h>
 #include "SDL_endian.h"
 #include "SDL_audio.h"
 #include "SDL_timer.h"
@@ -1020,11 +1021,30 @@ int Mix_FadeOutMusic(int ms)
 {
 	int retval = 0;
 
+	if (ms <= 0) {  /* just halt immediately. */
+		Mix_HaltMusic();
+		return 1;
+	}
+
 	SDL_LockAudio();
-	if ( music_playing && (music_playing->fading == MIX_NO_FADING) ) {
+	if ( music_playing) {
+                int fade_steps = (ms + ms_per_step - 1)/ms_per_step;
+                if ( music_playing->fading == MIX_NO_FADING ) {
+	        	music_playing->fade_step = 0;
+                } else {
+                        int step;
+                        int old_fade_steps = music_playing->fade_steps;
+                        if ( music_playing->fading == MIX_FADING_OUT ) {
+                                step = music_playing->fade_step;
+                        } else {
+                                step = old_fade_steps
+                                        - music_playing->fade_step + 1;
+                        }
+                        music_playing->fade_step = (step * fade_steps)
+                                / old_fade_steps;
+                }
 		music_playing->fading = MIX_FADING_OUT;
-		music_playing->fade_step = 0;
-		music_playing->fade_steps = ms/ms_per_step;
+		music_playing->fade_steps = fade_steps;
 		retval = 1;
 	}
 	SDL_UnlockAudio();
