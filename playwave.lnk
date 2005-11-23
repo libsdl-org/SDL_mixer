@@ -1,0 +1,21 @@
+#=============================================================================
+#      This is a linker file to build SDLMIXER test app for OS/2
+#
+#
+#=============================================================================
+
+system os2v2
+
+file playwave
+
+OPTION MAP=playwave
+OPTION DESCRIPTION 'Test Application'
+OPTION ELIMINATE
+OPTION MANYAUTODATA
+OPTION OSNAME='OS/2 and eComStation'
+OPTION SHOWDEAD
+LIBPATH %os2tk%\lib
+LIBPATH %sdlhome%\src
+LIBPATH .
+lib sdl
+lib sdlmixer

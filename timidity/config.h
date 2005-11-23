@@ -181,6 +181,10 @@ typedef double FLOAT_T;
 #  define LITTLE_ENDIAN
 #endif
 
+#ifdef __OS2__
+#  define LITTLE_ENDIAN
+#endif
+
 #ifdef i386
 #define LITTLE_ENDIAN
 #endif
@@ -221,7 +225,7 @@ typedef char int8;
 #define CONFIG_FILE_ETC "/etc/timidity.cfg"
 #define CONFIG_FILE_ETC_TIMIDITY "/etc/timidity/timidity.cfg"
 
-#ifdef __WIN32__
+#if defined(__WIN32__) || defined(__OS2__)
 #define DEFAULT_PATH	"\\TIMIDITY"
 #else
 #define DEFAULT_PATH	"/usr/local/lib/timidity"
@@ -271,7 +275,7 @@ typedef int16 resample_t;
 #endif
 
 /* The path separator (D.M.) */
-#ifdef __WIN32__
+#if defined(__WIN32__) || defined(__OS2__)
 #  define PATH_SEP '\\'
 #  define PATH_STRING "\\"
 #else

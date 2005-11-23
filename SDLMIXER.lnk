@@ -1,0 +1,91 @@
+#=============================================================================
+#           This is a linker file to build SDLMIXER.DLL for OS/2
+#
+#
+#=============================================================================
+
+system 386 LX DLL INITINSTANCE TERMINSTANCE
+name SDLMIXER
+
+# Object files from \.
+
+file effects_internal
+file effect_position
+file effect_stereoreverse
+file load_aiff
+file load_ogg
+file load_voc
+file mixer
+file music
+file music_cmd
+file music_ogg
+file wavestream
+
+# Object files from \mikmod
+
+file mikmod\drv_nos 
+file mikmod\drv_sdl
+file mikmod\load_it
+file mikmod\load_mod
+file mikmod\load_s3m
+file mikmod\load_xm
+file mikmod\mdreg
+file mikmod\mdriver
+file mikmod\mloader
+file mikmod\mlreg
+file mikmod\mlutil
+file mikmod\mmalloc
+file mikmod\mmerror
+file mikmod\mmio
+file mikmod\mplayer
+file mikmod\munitrk
+file mikmod\mwav
+file mikmod\npertab
+file mikmod\sloader
+file mikmod\virtch
+file mikmod\virtch2
+file mikmod\virtch_common
+
+# Object files from \timidity
+
+file timidity\common
+file timidity\controls
+file timidity\filter
+file timidity\instrum
+file timidity\mix
+file timidity\output
+file timidity\playmidi
+file timidity\readmidi
+file timidity\resample
+file timidity\sdl_a
+file timidity\sdl_c
+file timidity\tables
+file timidity\timidity
+
+# Object files from \oggidec
+
+file oggidec\bitwise.obj
+file oggidec\block.obj
+file oggidec\codebook.obj
+file oggidec\floor0.obj
+file oggidec\floor1.obj
+file oggidec\framing.obj
+file oggidec\info.obj
+file oggidec\mapping0.obj
+file oggidec\mdct.obj
+file oggidec\registry.obj
+file oggidec\res012.obj
+file oggidec\sharedbook.obj
+file oggidec\synthesis.obj
+file oggidec\vorbisfile.obj
+file oggidec\window.obj
+
+OPTION MAP=SDLMIXER
+OPTION DESCRIPTION 'Simple DirectMedia Layer Mixer v1.2.5'
+OPTION ELIMINATE
+OPTION MANYAUTODATA
+OPTION OSNAME='OS/2 and eComStation'
+OPTION SHOWDEAD
+LIBPATH %os2tk%\lib
+LIBPATH %sdlhome%\src
+lib sdl

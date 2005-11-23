@@ -1,0 +1,34 @@
+#=============================================================================
+#             This file contains the common includes for the
+#             Watcom makefiles to build SDLMIXER.DLL for OS/2
+#
+#
+#=============================================================================
+
+# Create debug build or not?
+#debug_build=defined
+
+SDLMixerFlags=-DBUILD_SDL -DWAV_MUSIC -DMOD_MUSIC -DMID_MUSIC -DUSE_TIMIDITY_MIDI -DOGG_MUSIC
+# ToDO:
+# -DOGG_MUSIC -DMP3_MUSIC
+
+#
+#==============================================================================
+#
+
+!ifdef debug_build
+debugflags = -d2 -dDEBUG_BUILD
+!else
+debugflags =
+!endif
+
+cflags = -zq $(debugflags) -bd -bm -bt=OS2 -5s -fpi -sg -otexan -wx -ei $(SDLMixerFlags) $(ExtraCFlags)
+
+.extensions:
+.extensions: .lib .dll .obj .c .cpp
+
+.c.obj : .AUTODEPEND
+    wcc386 $[* $(cflags)
+
+.cpp.obj : .AUTODEPEND
+    wpp386 $[* $(cflags)
