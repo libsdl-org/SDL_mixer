@@ -82,7 +82,7 @@ typedef struct MRWOPSREADER {
 
 static BOOL _mm_RWopsReader_Eof(MREADER* reader)
 {
-	if ( ((MRWOPSREADER*)reader)->end ==
+	if ( ((MRWOPSREADER*)reader)->end <
 			SDL_RWtell(((MRWOPSREADER*)reader)->rw) ) return 1;
 	else return 0;
 }
