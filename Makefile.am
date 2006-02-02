@@ -53,6 +53,7 @@ EXTRA_DIST =			\
 	CHANGES			\
 	VisualC.zip		\
 	Xcode.tar.gz		\
+	XcodeUniversal.tar.gz	\
 	PBProjects.tar.gz	\
 	MPWmake.sea.bin		\
 	CWProjects.sea.bin	\
