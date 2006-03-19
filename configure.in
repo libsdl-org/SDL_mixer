@@ -36,8 +36,8 @@ AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)
 AC_SUBST(LT_AGE)
 
-dnl Detect the canonical host and target build environment
-AC_CANONICAL_SYSTEM
+dnl Detect the canonical build and host environments
+AC_CANONICAL_HOST
 
 dnl Setup for automake
 AM_INIT_AUTOMAKE(SDL_mixer, $VERSION)
@@ -51,7 +51,7 @@ AM_PROG_LIBTOOL
 AC_PROG_INSTALL
 
 dnl The alpha architecture needs special flags for binary portability
-case "$target" in
+case "$host" in
     alpha*-*-linux*)
         CFLAGS="$CFLAGS -mcpu=ev4 -Wa,-mall"
         ;;
@@ -59,7 +59,7 @@ case "$target" in
         ac_default_prefix=/boot/develop/tools/gnupro
         ;;
     *-*-cygwin* | *-*-mingw32*)
-        if test "$build" != "$target"; then # cross-compiling
+        if test "$build" != "$host"; then # cross-compiling
             # Default cross-compile location
             ac_default_prefix=/usr/local/cross-tools/i386-mingw32msvc
         else
@@ -160,7 +160,7 @@ if test x$enable_music_midi = xyes; then
                   , enable_music_native_midi=yes)
     if test x$enable_music_native_midi = xyes; then
         use_music_native_midi=no
-        case "$target" in
+        case "$host" in
             *-*-cygwin* | *-*-mingw32*)
                 use_music_native_midi=yes
                 SYSTEM_LIBS="$SYSTEM_LIBS -lwinmm"
@@ -180,7 +180,7 @@ if test x$enable_music_midi = xyes; then
                   , enable_music_native_midi_gpl=no)
     if test x$enable_music_native_midi_gpl = xyes; then
         use_music_native_midi_gpl=no
-        case "$target" in
+        case "$host" in
             *-*-linux* | *-*-freebsd*)
                 use_music_native_midi_gpl=yes
                 ;;
