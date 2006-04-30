@@ -1,4 +1,7 @@
 1.2.7:
+Sam Lantinga - Sun Apr 30 09:01:44 PDT 2006
+ * Removed automake dependency, to allow Universal binaries on Mac OS X
+ * Added gcc-fat.sh for generating Universal binaries on Mac OS X
 Sam Lantinga - Sun Apr 30 01:48:40 PDT 2006
  * Updated libtool support to version 1.5.22
 Patrice Mandin - Sat Jul 16 16:43:24 UTC 2005

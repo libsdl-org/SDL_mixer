@@ -19,13 +19,15 @@
     Max Horn
     max@quendi.de
 */
+#include "SDL_config.h"
+#include "SDL_endian.h"
 
-#if defined(macintosh) || defined(MACOSX)
+#if __MACOS__ || __MACOSX__
 
 #include "native_midi.h"
 #include "native_midi_common.h"
 
-#ifdef MACOSX
+#if __MACOSX__
 #include <QuickTime/QuickTimeMusic.h>
 #else
 #include <QuickTimeMusic.h>
@@ -668,7 +670,7 @@ Uint32 *BuildTuneHeader(int part_poly_max[32], int part_to_inst[32], int numPart
 		 * as it was written way before the Universal Binary transition. So in the little endian
 		 * case, OSSwap is used.
 		 */
-#if __LITTLE_ENDIAN__
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
 		myNoteRequest->info.polyphony.bigEndianValue = OSSwapHostToBigInt16(part_poly_max[part]);
 		myNoteRequest->info.typicalPolyphony.bigEndianValue = OSSwapHostToBigInt32(0x00010000);
 #else

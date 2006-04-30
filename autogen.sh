@@ -1,8 +1,18 @@
 #!/bin/sh
 #
-aclocal
-automake --foreign --include-deps --add-missing --copy
-autoconf
+echo "Generating build information using autoconf"
+echo "This may take a while ..."
 
-#./configure $*
+# Regenerate configuration files
+cp acinclude.m4 aclocal.m4
+found=false
+for autoconf in autoconf autoconf259
+do if which $autoconf >/dev/null 2>&1; then $autoconf && found=true; break; fi
+done
+if test x$found = xfalse; then
+    echo "Couldn't find autoconf, aborting"
+    exit 1
+fi
+
+# Run configure for this platform
 echo "Now you are ready to run ./configure"

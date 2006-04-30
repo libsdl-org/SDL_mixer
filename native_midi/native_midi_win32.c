@@ -19,10 +19,11 @@
     Florian 'Proff' Schulze
     florian.proff.schulze@gmx.net
 */
+#include "SDL_config.h"
 
 /* everything below is currently one very big bad hack ;) Proff */
 
-#ifdef WIN32
+#if __WIN32__
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <windowsx.h>

@@ -19,12 +19,11 @@
     Sam Lantinga
     slouken@libsdl.org
 */
-
-/* $Id$ */
+#include "SDL_config.h"
 
 /* This file supports an external command for playing music */
 
-#ifdef unix		/* This is a UNIX-specific hack */
+#if defined(unix) || defined(__MACOSX__) /* This is a UNIX-specific hack */
 
 #include <sys/types.h>
 #include <sys/wait.h>
