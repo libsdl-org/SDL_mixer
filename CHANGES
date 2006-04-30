@@ -1,4 +1,6 @@
 1.2.7:
+Sam Lantinga - Sun Apr 30 01:48:40 PDT 2006
+ * Updated libtool support to version 1.5.22
 Patrice Mandin - Sat Jul 16 16:43:24 UTC 2005
  * Use SDL_RWops also for native midi mac and win32
 Patrice Mandin - Sat Jul 9 14:40:09 UTC 2005
