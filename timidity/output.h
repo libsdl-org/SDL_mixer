@@ -62,7 +62,7 @@ extern void s32tou16x(void *dp, int32 *lp, int32 c);
 extern void s32toulaw(void *dp, int32 *lp, int32 c);
 
 /* little-endian and big-endian specific */
-#ifdef LITTLE_ENDIAN
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
 #define s32tou16l s32tou16
 #define s32tou16b s32tou16x
 #define s32tos16l s32tos16

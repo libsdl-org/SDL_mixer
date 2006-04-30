@@ -707,7 +707,7 @@ static InstrumentLayer *load_instrument(char *name, int font_type, int percussio
 	  sp->loop_start *= 2;
 	  sp->loop_end *= 2;
 	}
-#ifndef LITTLE_ENDIAN
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
       else
 	/* convert to machine byte order */
 	{

@@ -19,9 +19,8 @@
 
 /* This is for use with the SDL library */
 #define SDL
-#if (defined(WIN32) || defined(_WIN32)) && !defined(__WIN32__)
-#define __WIN32__
-#endif
+#include "SDL_config.h"
+#include "SDL_endian.h"
 
 /* When a patch file can't be opened, one of these extensions is
    appended to the filename and the open is tried again.
@@ -138,57 +137,6 @@ typedef double FLOAT_T;
 /* This is enforced by some computations that must fit in an int */
 #define MAX_CONTROL_RATIO 255
 
-#if MACOSX
-#undef LITTLE_ENDIAN
-#undef BIG_ENDIAN
-#define BIG_ENDIAN 1
-#endif
-
-/* Byte order, defined in <machine/endian.h> for FreeBSD and DEC OSF/1 */
-#ifdef DEC
-#include <machine/endian.h>
-#endif
-
-#ifdef linux
-/*
- * Byte order is defined in <bytesex.h> as __BYTE_ORDER, that need to
- * be checked against __LITTLE_ENDIAN and __BIG_ENDIAN defined in <endian.h>
- * <endian.h> includes automagically <bytesex.h>
- * for Linux.
- */
-#include <endian.h>
-
-/*
- * We undef the two things to start with a clean situation
- * (oddly enough, <endian.h> defines under certain conditions
- * the two things below, as __LITTLE_ENDIAN and __BIG_ENDIAN, that
- * are useless for our plans)
- */
-#undef LITTLE_ENDIAN
-#undef BIG_ENDIAN
-
-# if __BYTE_ORDER == __LITTLE_ENDIAN
-#  define LITTLE_ENDIAN
-# elif __BYTE_ORDER == __BIG_ENDIAN
-#  define BIG_ENDIAN
-# else
-# error No byte sex defined
-# endif
-#endif /* linux */
-
-/* Win32 on Intel machines */
-#ifdef __WIN32__
-#  define LITTLE_ENDIAN
-#endif
-
-#ifdef __OS2__
-#  define LITTLE_ENDIAN
-#endif
-
-#ifdef i386
-#define LITTLE_ENDIAN
-#endif
-
 typedef unsigned int uint32;
 typedef int int32; 
 typedef unsigned short uint16;
@@ -205,7 +153,7 @@ typedef char int8;
 		      (((x)&0xFF0000)>>8) | \
 		      (((x)>>24)&0xFF))
 
-#ifdef LITTLE_ENDIAN
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
 #define LE_SHORT(x) x
 #define LE_LONG(x) x
 #define BE_SHORT(x) XCHG_SHORT(x)
