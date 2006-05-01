@@ -102,7 +102,7 @@ static FILE *try_to_open(char *name, int decompress, int noise_mode)
 FILE *open_file(char *name, int decompress, int noise_mode)
 {
   FILE *fp;
-  PathList *plp=pathlist;
+  PathList *plp;
   int l;
   static int firsttime=1;
 
@@ -137,7 +137,8 @@ FILE *open_file(char *name, int decompress, int noise_mode)
       return 0;
     }
 #endif
-  
+
+  plp=pathlist;
   if (name[0] != PATH_SEP)
     while (plp)  /* Try along the path then */
       {
