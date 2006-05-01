@@ -275,8 +275,13 @@ int Mix_OpenAudio(int frequency, Uint16 format, int nchannels, int chunksize)
 
 	/* If the mixer is already opened, increment open count */
 	if ( audio_opened ) {
-	    ++audio_opened;
-	    return(0);
+		if ( format == mixer.format && nchannels == mixer.channels ) {
+	    	++audio_opened;
+	    	return(0);
+		}
+		while ( audio_opened ) {
+			Mix_CloseAudio();
+		}
 	}
 
 	/* Set the desired format and frequency */
