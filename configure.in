@@ -229,7 +229,7 @@ if test x$enable_music_ogg = xyes; then
     ])
     AC_MSG_RESULT($have_vorbis)
     if test x$have_vorbis = xyes; then
-        SOURCES="$SOURCE $srcdir/load_ogg.c $srcdir/music_ogg.c"
+        SOURCES="$SOURCES $srcdir/load_ogg.c $srcdir/music_ogg.c"
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_MUSIC"
         EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lvorbisfile -lvorbis -logg"
     fi
