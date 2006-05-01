@@ -1,0 +1,137 @@
+# Makefile to build and install the SDL_mixer library
+
+top_builddir = .
+srcdir  = @srcdir@
+objects = build
+depend	= build-deps
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir	= $(DESTDIR)@bindir@
+libdir  = $(DESTDIR)@libdir@
+includedir = $(DESTDIR)@includedir@
+datadir	= $(DESTDIR)@datadir@
+mandir	= $(DESTDIR)@mandir@
+auxdir	= @ac_aux_dir@
+distpath = $(srcdir)/..
+distdir = SDL_mixer-@VERSION@
+distfile = $(distdir).tar.gz
+
+@SET_MAKE@
+EXE	= @EXE@
+SHELL	= @SHELL@
+CC      = @CC@
+CFLAGS  = @BUILD_CFLAGS@
+EXTRA_CFLAGS = @EXTRA_CFLAGS@
+LDFLAGS = @BUILD_LDFLAGS@
+EXTRA_LDFLAGS = @EXTRA_LDFLAGS@
+LIBTOOL = @LIBTOOL@
+INSTALL = @INSTALL@
+AR	= @AR@
+RANLIB	= @RANLIB@
+SDL_CFLAGS = @SDL_CFLAGS@
+SDL_LIBS = @SDL_LIBS@
+
+TARGET  = libSDL_mixer.la
+SOURCES = @SOURCES@
+OBJECTS = @OBJECTS@
+
+DIST = CHANGES COPYING CWProjects.sea.bin MPWmake.sea.bin Makefile.in README SDL_mixer.h SDL_mixer.qpg.in SDL_mixer.spec SDL_mixer.spec.in VisualC.zip Watcom-OS2.zip Xcode.tar.gz acinclude.m4 autogen.sh build-scripts configure.in effect_position.c effect_stereoreverse.c effects_internal.c effects_internal.h gcc-fat.sh load_aiff.c load_aiff.h load_ogg.c load_ogg.h load_voc.c load_voc.h mikmod mixer.c music.c music_cmd.c music_cmd.h music_ogg.c music_ogg.h native_midi native_midi_gpl playmus.c playwave.c timidity wavestream.c wavestream.h
+
+LT_AGE      = @LT_AGE@
+LT_CURRENT  = @LT_CURRENT@
+LT_RELEASE  = @LT_RELEASE@
+LT_REVISION = @LT_REVISION@
+LT_LDFLAGS  = -no-undefined -rpath $(libdir) -release $(LT_RELEASE) -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
+
+all: $(srcdir)/configure Makefile $(objects) $(objects)/$(TARGET) $(objects)/playwave$(EXE) $(objects)/playmus$(EXE)
+
+$(srcdir)/configure: $(srcdir)/configure.in
+	@echo "Warning, configure.in is out of date"
+	#(cd $(srcdir) && sh autogen.sh && sh configure)
+	@sleep 3
+
+Makefile: $(srcdir)/Makefile.in
+	$(SHELL) config.status $@
+
+$(objects):
+	$(SHELL) $(auxdir)/mkinstalldirs $@
+
+$(objects)/playwave$(EXE): $(objects)/playwave.lo $(objects)/$(TARGET)
+	$(LIBTOOL) --mode=link $(CC) -o $@ $(objects)/playwave.lo $(SDL_CFLAGS) $(SDL_LIBS) $(objects)/$(TARGET)
+
+$(objects)/playmus$(EXE): $(objects)/playmus.lo $(objects)/$(TARGET)
+	$(LIBTOOL) --mode=link $(CC) -o $@ $(objects)/playmus.lo $(SDL_CFLAGS) $(SDL_LIBS) $(objects)/$(TARGET)
+
+.PHONY: all depend install install-hdrs install-lib install-bin uninstall uninstall-hdrs uninstall-lib uninstall-bin clean distclean dist
+depend:
+	@SOURCES="$(SOURCES)" INCLUDE="$(INCLUDE)" output="$(depend)" \
+	$(SHELL) $(auxdir)/makedep.sh
+	echo "\$$(objects)/playwave.lo: \$$(srcdir)/playwave.c" >>$(depend)
+	echo "	\$$(LIBTOOL) --mode=compile \$$(CC) \$$(CFLAGS) \$$(SDL_CFLAGS) -c \$$(srcdir)/playwave.c  -o \$$@" >>$(depend)
+	echo "" >>$(depend)
+	echo "\$$(objects)/playmus.lo: \$$(srcdir)/playmus.c" >>$(depend)
+	echo "	\$$(LIBTOOL) --mode=compile \$$(CC) \$$(CFLAGS) \$$(SDL_CFLAGS) -c \$$(srcdir)/playmus.c  -o \$$@" >>$(depend)
+	echo "" >>$(depend)
+
+include $(depend)
+
+$(objects)/$(TARGET): $(OBJECTS)
+	$(LIBTOOL) --mode=link $(CC) -o $@ $(OBJECTS) $(LDFLAGS) $(EXTRA_LDFLAGS) $(LT_LDFLAGS)
+
+install: install-hdrs install-lib #install-bin
+install-hdrs:
+	$(SHELL) $(auxdir)/mkinstalldirs $(includedir)/SDL
+	for src in $(srcdir)/SDL_mixer.h; do \
+	    file=`echo $$src | sed -e 's|^.*/||'`; \
+	    $(INSTALL) -m 644 $$src $(includedir)/SDL/$$file; \
+	done
+install-lib:
+	$(SHELL) $(auxdir)/mkinstalldirs $(libdir)
+	$(LIBTOOL) --mode=install $(INSTALL) $(objects)/$(TARGET) $(libdir)/$(TARGET)
+install-bin:
+	$(SHELL) $(auxdir)/mkinstalldirs $(bindir)
+	$(LIBTOOL) --mode=install $(INSTALL) -m 755 $(objects)/playwave$(EXE) $(bindir)/playwave$(EXE)
+	$(LIBTOOL) --mode=install $(INSTALL) -m 755 $(objects)/playmus$(EXE) $(bindir)/playmus$(EXE)
+
+uninstall: uninstall-hdrs uninstall-lib uninstall-bin
+uninstall-hdrs:
+	for src in $(srcdir)/SDL_mixer.h; do \
+	    file=`echo $$src | sed -e 's|^.*/||'`; \
+	    rm -f $(includedir)/SDL/$$file; \
+	done
+	-rmdir $(includedir)/SDL
+uninstall-lib:
+	$(LIBTOOL) --mode=uninstall rm -f $(libdir)/$(TARGET)
+uninstall-bin:
+	rm -f $(bindir)/playwave$(EXE)
+	rm -f $(bindir)/playmus$(EXE)
+
+clean:
+	rm -rf $(objects)
+	if test -f test/Makefile; then (cd test; $(MAKE) $@); fi
+
+distclean: clean
+	rm -f Makefile
+	rm -f SDL_mixer.qpg
+	rm -f config.status config.cache config.log libtool $(depend)
+	rm -rf $(srcdir)/autom4te*
+	find $(srcdir) \( \
+	    -name '*~' -o \
+	    -name '*.bak' -o \
+	    -name '*.old' -o \
+	    -name '*.rej' -o \
+	    -name '*.orig' -o \
+	    -name '.#*' \) \
+	    -exec rm -f {} \;
+
+dist $(distfile):
+	$(SHELL) $(auxdir)/mkinstalldirs $(distdir)
+	tar cf - $(DIST) | (cd $(distdir); tar xf -)
+	rm -rf `find $(distdir) -name .svn`
+	rm -f `find $(distdir) -name '.#*'`
+	rmdir `find $(distdir) -type d -empty`
+	tar cvf - $(distdir) | gzip --best >$(distfile)
+	rm -rf $(distdir)
+
+rpm: $(distfile)
+	rpmbuild -ta $?
