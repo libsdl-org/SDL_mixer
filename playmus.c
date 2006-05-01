@@ -168,9 +168,10 @@ int main(int argc, char *argv[])
 		return(2);
 	} else {
 		Mix_QuerySpec(&audio_rate, &audio_format, &audio_channels);
-		printf("Opened audio at %d Hz %d bit %s, %d bytes audio buffer\n", audio_rate,
+		printf("Opened audio at %d Hz %d bit %s (%s), %d bytes audio buffer\n", audio_rate,
 			(audio_format&0xFF),
 			(audio_channels > 2) ? "surround" : (audio_channels > 1) ? "stereo" : "mono", 
+			(audio_format&0x1000) ? "BE" : "LE",
 			audio_buffers );
 	}
 	audio_open = 1;
