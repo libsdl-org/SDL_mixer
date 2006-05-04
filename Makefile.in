@@ -78,7 +78,7 @@ include $(depend)
 $(objects)/$(TARGET): $(OBJECTS)
 	$(LIBTOOL) --mode=link $(CC) -o $@ $(OBJECTS) $(LDFLAGS) $(EXTRA_LDFLAGS) $(LT_LDFLAGS)
 
-install: install-hdrs install-lib #install-bin
+install: all install-hdrs install-lib #install-bin
 install-hdrs:
 	$(SHELL) $(auxdir)/mkinstalldirs $(includedir)/SDL
 	for src in $(srcdir)/SDL_mixer.h; do \
