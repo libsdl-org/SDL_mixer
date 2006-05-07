@@ -129,7 +129,6 @@ dist $(distfile):
 	tar cf - $(DIST) | (cd $(distdir); tar xf -)
 	rm -rf `find $(distdir) -name .svn`
 	rm -f `find $(distdir) -name '.#*'`
-	rmdir `find $(distdir) -type d -empty`
 	tar cvf - $(distdir) | gzip --best >$(distfile)
 	rm -rf $(distdir)
 
