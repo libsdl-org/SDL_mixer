@@ -195,10 +195,17 @@ void WAVStream_PlaySome(Uint8 *stream, int len)
 			SDL_ConvertAudio(&music->cvt);
 			SDL_MixAudio(stream, music->cvt.buf, music->cvt.len_cvt, wavestream_volume);
 		} else {
+			Uint8 *data;
 			if ( (music->stop - pos) < len ) {
 				len = (music->stop - pos);
 			}
-			fread(stream, len, 1, music->wavefp);
+			data = SDL_stack_alloc(Uint8, len);
+			if (data)
+			{		
+				fread(data, len, 1, music->wavefp);
+				SDL_MixAudio(stream, data, len, wavestream_volume);
+				SDL_stack_free(data);
+			}	
 		}
 	}
 }
@@ -535,3 +542,4 @@ done:
 	}
 	return(wavefp);
 }
+
