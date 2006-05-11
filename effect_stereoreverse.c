@@ -74,7 +74,7 @@ static void _Eff_reversestereo8(int chan, void *stream, int len, void *udata)
     /* get the last two bytes if len is not divisible by four... */
     if (len % sizeof (Uint32) != 0) {
         Uint16 *p = (Uint16 *) (((Uint8 *) stream) + (len - 2));
-        *p = (((*p) & 0xFF00) >> 8) | (((*ptr) & 0x00FF) << 8);
+        *p = (Uint16)((((*p) & 0xFF00) >> 8) | (((*ptr) & 0x00FF) << 8));
         len -= 2;
     }
 

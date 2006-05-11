@@ -868,7 +868,7 @@ int music_internal_position(double position)
 #ifdef MP3_MUSIC
 	    case MUS_MP3:
 		if ( position > 0.0 ) {
-			SMPEG_skip(music_playing->data.mp3, position);
+			SMPEG_skip(music_playing->data.mp3, (float)position);
 		} else {
 			SMPEG_rewind(music_playing->data.mp3);
 			SMPEG_play(music_playing->data.mp3);

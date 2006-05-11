@@ -91,7 +91,7 @@ static int sysex(uint32 len, uint8 *syschan, uint8 *sysa, uint8 *sysb, SDL_RWops
 {
   unsigned char *s=(unsigned char *)safe_malloc(len);
   int id, model, ch, port, adhi, adlo, cd, dta, dtb, dtc;
-  if (len != SDL_RWread(rw, s, 1, len))
+  if (len != (uint32)SDL_RWread(rw, s, 1, len))
     {
       free(s);
       return 0;

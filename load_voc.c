@@ -244,7 +244,7 @@ static int voc_get_block(SDL_RWops *src, vs_t *v, SDL_AudioSpec *spec)
                  * Adjust period.
                  */
                 if ((v->rate != -1) && (uc != v->rate))
-                    period = (period * (256 - uc))/(256 - v->rate);
+                    period = (Uint16)((period * (256 - uc))/(256 - v->rate));
                 else
                     v->rate = uc;
                 v->rest = period;
@@ -434,7 +434,7 @@ SDL_AudioSpec *Mix_LoadVOC_RW (SDL_RWops *src, int freesrc,
         fillptr = ((Uint8 *) ptr) + (*audio_len - v.rest);
     }
 
-    spec->samples = (*audio_len / v.size);
+    spec->samples = (Uint16)(*audio_len / v.size);
 
     was_error = 0;  /* success, baby! */
 
