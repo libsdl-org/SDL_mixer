@@ -88,6 +88,13 @@ extern MikMod_handler_t _mm_errorhandler;
 
 /*========== Memory allocation */
 
+/* _mm_malloc and _mm_free are defined in malloc.h in Visual C++ 6 */
+#ifdef _mm_malloc
+#undef _mm_malloc
+#endif
+#ifdef _mm_free
+#undef _mm_free
+#endif
 extern void* _mm_malloc(size_t);
 extern void* _mm_calloc(size_t,size_t);
 #define _mm_free(p) { if (p) free(p); p = NULL; }
