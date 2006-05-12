@@ -115,6 +115,8 @@ int Mix_InitOgg()
 		vorbis.ov_time_seek = ov_time_seek;
 	}
 	++vorbis.loaded;
+
+	return 0;
 }
 void Mix_QuitOgg()
 {

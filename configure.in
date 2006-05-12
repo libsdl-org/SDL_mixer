@@ -265,8 +265,8 @@ if test x$enable_music_mp3 = xyes; then
     AM_PATH_SMPEG($SMPEG_VERSION, have_smpeg=yes, have_smpeg=no)
     if test x$have_smpeg = xyes; then
         AC_ARG_ENABLE([music-mp3-shared],
-AC_HELP_STRING([--enable-music-mp3-shared], [dynamically load MP3 support [[default=no]]]),
-                      [], [enable_music_mp3_shared=no])
+AC_HELP_STRING([--enable-music-mp3-shared], [dynamically load MP3 support [[default=yes]]]),
+                      [], [enable_music_mp3_shared=yes])
         case "$host" in
             *-*-darwin*)
                 smpeg_lib=''
@@ -282,6 +282,7 @@ AC_HELP_STRING([--enable-music-mp3-shared], [dynamically load MP3 support [[defa
                 done
                 ;;
         esac
+        SOURCES="$SOURCES $srcdir/*_mp3.c"
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMP3_MUSIC $SMPEG_CFLAGS"
         if test x$enable_music_mp3_shared = xyes && test x$smpeg_lib != x; then
             echo "-- dynamic libsmpeg -> $smpeg_lib"

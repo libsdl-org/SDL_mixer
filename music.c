@@ -84,7 +84,7 @@
 #include "music_ogg.h"
 #endif
 #ifdef MP3_MUSIC
-#include "smpeg.h"
+#include "dynamic_mp3.h"
 
 static SDL_AudioSpec used_mixer;
 #endif
@@ -338,7 +338,7 @@ void music_mixer(void *udata, Uint8 *stream, int len)
 #endif
 #ifdef MP3_MUSIC
 			case MUS_MP3:
-				SMPEG_playAudio(music_playing->data.mp3, stream, len);
+				smpeg.SMPEG_playAudio(music_playing->data.mp3, stream, len);
 				break;
 #endif
 			default:
@@ -593,14 +593,18 @@ Mix_Music *Mix_LoadMUS(const char *file)
 	     (ext && MIX_string_equals(ext, "MP3")) ||
 	     (ext && MIX_string_equals(ext, "MPEG")) ||
 	     (magic[0] == 0xFF && (magic[1] & 0xF0) == 0xF0) ) {
-		SMPEG_Info info;
-		music->type = MUS_MP3;
-		music->data.mp3 = SMPEG_new(file, &info, 0);
-		if ( !info.has_audio ) {
-			Mix_SetError("MPEG file does not have any audio stream.");
-			music->error = 1;
+		if ( Mix_InitMP3() == 0 ) {
+			SMPEG_Info info;
+			music->type = MUS_MP3;
+			music->data.mp3 = smpeg.SMPEG_new(file, &info, 0);
+			if ( !info.has_audio ) {
+				Mix_SetError("MPEG file does not have any audio stream.");
+				music->error = 1;
+			} else {
+				smpeg.SMPEG_actualSpec(music->data.mp3, &used_mixer);
+			}
 		} else {
-			SMPEG_actualSpec(music->data.mp3, &used_mixer);
+			music->error = 1;
 		}
 	} else
 #endif
@@ -690,7 +694,8 @@ void Mix_FreeMusic(Mix_Music *music)
 #endif
 #ifdef MP3_MUSIC
 			case MUS_MP3:
-				SMPEG_delete(music->data.mp3);
+				smpeg.SMPEG_delete(music->data.mp3);
+				Mix_QuitMP3();
 				break;
 #endif
 			default:
@@ -777,9 +782,9 @@ static int music_internal_play(Mix_Music *music, double position)
 #endif
 #ifdef MP3_MUSIC
 	    case MUS_MP3:
-		SMPEG_enableaudio(music->data.mp3,1);
-		SMPEG_enablevideo(music->data.mp3,0);
-		SMPEG_play(music_playing->data.mp3);
+		smpeg.SMPEG_enableaudio(music->data.mp3,1);
+		smpeg.SMPEG_enablevideo(music->data.mp3,0);
+		smpeg.SMPEG_play(music_playing->data.mp3);
 		break;
 #endif
 	    default:
@@ -868,10 +873,10 @@ int music_internal_position(double position)
 #ifdef MP3_MUSIC
 	    case MUS_MP3:
 		if ( position > 0.0 ) {
-			SMPEG_skip(music_playing->data.mp3, (float)position);
+			smpeg.SMPEG_skip(music_playing->data.mp3, (float)position);
 		} else {
-			SMPEG_rewind(music_playing->data.mp3);
-			SMPEG_play(music_playing->data.mp3);
+			smpeg.SMPEG_rewind(music_playing->data.mp3);
+			smpeg.SMPEG_play(music_playing->data.mp3);
 		}
 		break;
 #endif
@@ -951,7 +956,7 @@ static void music_internal_volume(int volume)
 #endif
 #ifdef MP3_MUSIC
 	    case MUS_MP3:
-		SMPEG_setvolume(music_playing->data.mp3,(int)(((float)volume/(float)MIX_MAX_VOLUME)*100.0));
+		smpeg.SMPEG_setvolume(music_playing->data.mp3,(int)(((float)volume/(float)MIX_MAX_VOLUME)*100.0));
 		break;
 #endif
 	    default:
@@ -1019,7 +1024,7 @@ static void music_internal_halt(void)
 #endif
 #ifdef MP3_MUSIC
 	    case MUS_MP3:
-		SMPEG_stop(music_playing->data.mp3);
+		smpeg.SMPEG_stop(music_playing->data.mp3);
 		break;
 #endif
 	    default:
@@ -1161,7 +1166,7 @@ static int music_internal_playing()
 #endif
 #ifdef MP3_MUSIC
 	    case MUS_MP3:
-		if ( SMPEG_status(music_playing->data.mp3) != SMPEG_PLAYING )
+		if ( smpeg.SMPEG_status(music_playing->data.mp3) != SMPEG_PLAYING )
 			playing = 0;
 		break;
 #endif
@@ -1388,14 +1393,18 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw) {
 #endif
 #ifdef MP3_MUSIC
 	if ( magic[0] == 0xFF && (magic[1] & 0xF0) == 0xF0 ) {
-		SMPEG_Info info;
-		music->type = MUS_MP3;
-		music->data.mp3 = SMPEG_new_rwops(rw, &info, 0);
-		if ( !info.has_audio ) {
-			Mix_SetError("MPEG file does not have any audio stream.");
-			music->error = 1;
+		if ( Mix_InitMP3() == 0 ) {
+			SMPEG_Info info;
+			music->type = MUS_MP3;
+			music->data.mp3 = smpeg.SMPEG_new_rwops(rw, &info, 0);
+			if ( !info.has_audio ) {
+				Mix_SetError("MPEG file does not have any audio stream.");
+				music->error = 1;
+			} else {
+				smpeg.SMPEG_actualSpec(music->data.mp3, &used_mixer);
+			}
 		} else {
-			SMPEG_actualSpec(music->data.mp3, &used_mixer);
+			music->error = 1;
 		}
 	} else
 #endif
