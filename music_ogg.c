@@ -31,6 +31,7 @@
 #include <string.h>
 
 #include "SDL_mixer.h"
+#include "dynamic_ogg.h"
 #include "music_ogg.h"
 
 /* This is the format of the audio mixer data */
@@ -65,20 +66,25 @@ OGG_music *OGG_new(const char *file)
 		OGG_setvolume(music, MIX_MAX_VOLUME);
 		music->section = -1;
 
-		fp = fopen(file, "rb");
-		if ( fp == NULL ) {
-			SDL_SetError("Couldn't open %s", file);
-			free(music);
+		if ( Mix_InitOgg() < 0 ) {
 			return(NULL);
 		}
-		if ( ov_open(fp, &music->vf, NULL, 0) < 0 ) {
-			SDL_SetError("Not an Ogg Vorbis audio stream");
+		fp = fopen(file, "rb");
+		if ( fp == NULL ) {
 			free(music);
+			Mix_QuitOgg();
+			SDL_SetError("Couldn't open %s", file);
+			return(NULL);
+		}
+		if ( vorbis.ov_open(fp, &music->vf, NULL, 0) < 0 ) {
 			fclose(fp);
+			free(music);
+			Mix_QuitOgg();
+			SDL_SetError("Not an Ogg Vorbis audio stream");
 			return(NULL);
 		}
 	} else {
-		SDL_SetError("Out of memory");
+		SDL_OutOfMemory();
 	}
 	return(music);
 }
@@ -123,14 +129,18 @@ OGG_music *OGG_new_RW(SDL_RWops *rw)
 		OGG_setvolume(music, MIX_MAX_VOLUME);
 		music->section = -1;
 
-		if ( ov_open_callbacks(rw, &music->vf, NULL, 0, callbacks) < 0 ) {
-			SDL_SetError("Not an Ogg Vorbis audio stream");
+		if ( Mix_InitOgg() < 0 ) {
+			return(NULL);
+		}
+		if ( vorbis.ov_open_callbacks(rw, &music->vf, NULL, 0, callbacks) < 0 ) {
 			free(music);
 			SDL_RWclose(rw);
+			Mix_QuitOgg();
+			SDL_SetError("Not an Ogg Vorbis audio stream");
 			return(NULL);
 		}
 	} else {
-		SDL_SetError("Out of memory");
+		SDL_OutOfMemory();
 	}
 	return(music);
 }
@@ -155,7 +165,7 @@ static void OGG_getsome(OGG_music *music)
 	char data[4096];
 	SDL_AudioCVT *cvt;
 
-	len = ov_read(&music->vf, data, sizeof(data), 0, 2, 1, &section);
+	len = vorbis.ov_read(&music->vf, data, sizeof(data), 0, 2, 1, &section);
 	if ( len <= 0 ) {
 		if ( len == 0 ) {
 			music->playing = 0;
@@ -166,7 +176,7 @@ static void OGG_getsome(OGG_music *music)
 	if ( section != music->section ) {
 		vorbis_info *vi;
 
-		vi = ov_info(&music->vf, -1);
+		vi = vorbis.ov_info(&music->vf, -1);
 		SDL_BuildAudioCVT(cvt, AUDIO_S16, vi->channels, vi->rate,
 		                       mixer.format,mixer.channels,mixer.freq);
 		if ( cvt->buf ) {
@@ -232,15 +242,16 @@ void OGG_delete(OGG_music *music)
 		if ( music->cvt.buf ) {
 			free(music->cvt.buf);
 		}
-		ov_clear(&music->vf);
+		vorbis.ov_clear(&music->vf);
 		free(music);
+		Mix_QuitOgg();
 	}
 }
 
 /* Jump (seek) to a given position (time is in seconds) */
 void OGG_jump_to_time(OGG_music *music, double time)
 {
-       ov_time_seek( &music->vf, time );
+       vorbis.ov_time_seek( &music->vf, time );
 }
 
 #endif /* OGG_MUSIC */

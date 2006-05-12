@@ -27,13 +27,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <vorbis/vorbisfile.h>
 
 #include "SDL_mutex.h"
 #include "SDL_endian.h"
 #include "SDL_timer.h"
 
 #include "SDL_mixer.h"
+#include "dynamic_ogg.h"
 #include "load_ogg.h"
 
 static size_t sdl_read_func(void *ptr, size_t size, size_t nmemb, void *datasource)
@@ -80,13 +80,16 @@ SDL_AudioSpec *Mix_LoadOGG_RW (SDL_RWops *src, int freesrc,
     if ( (!src) || (!audio_buf) || (!audio_len) )   /* sanity checks. */
         goto done;
 
+    if ( Mix_InitOgg() < 0 )
+        goto done;
+
     callbacks.read_func = sdl_read_func;
     callbacks.seek_func = sdl_seek_func;
     callbacks.tell_func = sdl_tell_func;
     callbacks.close_func = freesrc ? 
                            sdl_close_func_freesrc : sdl_close_func_nofreesrc;
 
-    if (ov_open_callbacks(src, &vf, NULL, 0, callbacks) != 0)
+    if (vorbis.ov_open_callbacks(src, &vf, NULL, 0, callbacks) != 0)
     {
         SDL_SetError("OGG bitstream is not valid Vorbis stream!");
         goto done;
@@ -94,7 +97,7 @@ SDL_AudioSpec *Mix_LoadOGG_RW (SDL_RWops *src, int freesrc,
 
     must_close = 0;
     
-    info = ov_info(&vf, -1);
+    info = vorbis.ov_info(&vf, -1);
     
     *audio_buf = NULL;
     *audio_len = 0;
@@ -105,7 +108,7 @@ SDL_AudioSpec *Mix_LoadOGG_RW (SDL_RWops *src, int freesrc,
     spec->freq = info->rate;
     spec->samples = 4096; /* buffer size */
     
-    samples = (long)ov_pcm_total(&vf, -1);
+    samples = (long)vorbis.ov_pcm_total(&vf, -1);
 
     *audio_len = spec->size = samples * spec->channels * 2;
     *audio_buf = malloc(*audio_len);
@@ -114,9 +117,9 @@ SDL_AudioSpec *Mix_LoadOGG_RW (SDL_RWops *src, int freesrc,
 
     buf = *audio_buf;
     to_read = *audio_len;
-    for (read = ov_read(&vf, buf, to_read, 0/*LE*/, 2/*16bit*/, 1/*signed*/, &bitstream);
+    for (read = vorbis.ov_read(&vf, (char *)buf, to_read, 0/*LE*/, 2/*16bit*/, 1/*signed*/, &bitstream);
          read > 0;
-         read = ov_read(&vf, buf, to_read, 0, 2, 1, &bitstream))
+         read = vorbis.ov_read(&vf, (char *)buf, to_read, 0, 2, 1, &bitstream))
     {
         if (read == OV_HOLE || read == OV_EBADLINK)
             break; /* error */
@@ -125,7 +128,7 @@ SDL_AudioSpec *Mix_LoadOGG_RW (SDL_RWops *src, int freesrc,
         buf += read;
     }
 
-    ov_clear(&vf);
+    vorbis.ov_clear(&vf);
     was_error = 0;
 
     /* Don't return a buffer that isn't a multiple of samplesize */
@@ -143,6 +146,8 @@ done:
 
     if ( was_error )
         spec = NULL;
+
+    Mix_QuitOgg();
 
     return(spec);
 } /* Mix_LoadOGG_RW */
