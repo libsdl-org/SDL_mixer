@@ -1,4 +1,6 @@
 1.2.7:
+Sam Lantinga - Fri May 12 00:04:32 PDT 2006
+ * Added support for dynamically loading SMPEG library
 Sam Lantinga - Thu May 11 22:22:43 PDT 2006
  * Added support for dynamically loading Ogg Vorbis library
 Sam Lantinga - Sun Apr 30 09:01:44 PDT 2006
