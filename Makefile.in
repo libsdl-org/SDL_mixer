@@ -108,7 +108,6 @@ uninstall-bin:
 
 clean:
 	rm -rf $(objects)
-	if test -f test/Makefile; then (cd test; $(MAKE) $@); fi
 
 distclean: clean
 	rm -f Makefile
