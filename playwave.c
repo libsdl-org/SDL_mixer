@@ -250,7 +250,7 @@ static void do_position_update(void)
 #endif
 
 
-static void CleanUp(void)
+static void CleanUp(int exitcode)
 {
 	if ( wave ) {
 		Mix_FreeChunk(wave);
@@ -261,6 +261,8 @@ static void CleanUp(void)
 		audio_open = 0;
 	}
 	SDL_Quit();
+
+	exit(exitcode);
 }
 
 
@@ -390,14 +392,13 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "Couldn't initialize SDL: %s\n",SDL_GetError());
 		return(255);
 	}
-	atexit(CleanUp);
-	signal(SIGINT, exit);
-	signal(SIGTERM, exit);
+	signal(SIGINT, CleanUp);
+	signal(SIGTERM, CleanUp);
 
 	/* Open the audio device */
 	if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, 4096) < 0) {
 		fprintf(stderr, "Couldn't open audio: %s\n", SDL_GetError());
-		return(2);
+		CleanUp(2);
 	} else {
 		Mix_QuerySpec(&audio_rate, &audio_format, &audio_channels);
 		printf("Opened audio at %d Hz %d bit %s", audio_rate,
@@ -421,7 +422,7 @@ int main(int argc, char *argv[])
 	if ( wave == NULL ) {
 		fprintf(stderr, "Couldn't load %s: %s\n",
 						argv[i], SDL_GetError());
-		return(2);
+		CleanUp(2);
 	}
 
 	if (reverse_sample) {
@@ -460,7 +461,10 @@ int main(int argc, char *argv[])
 
 	} /* while still_playing() loop... */
 
-	return(0);
+	CleanUp(0);
+
+	/* Not reached, but fixes compiler warnings */
+	return 0;
 }
 
 /* end of playwave.c ... */

@@ -38,7 +38,7 @@ static int audio_open = 0;
 static Mix_Music *music = NULL;
 static int next_track = 0;
 
-void CleanUp(void)
+void CleanUp(int exitcode)
 {
 	if( Mix_PlayingMusic() ) {
 		Mix_FadeOutMusic(1500);
@@ -53,6 +53,7 @@ void CleanUp(void)
 		audio_open = 0;
 	}
 	SDL_Quit();
+	exit(exitcode);
 }
 
 void Usage(char *argv0)
@@ -158,9 +159,8 @@ int main(int argc, char *argv[])
 		return(255);
 	}
 
-	atexit(CleanUp);
 	signal(SIGINT, IntHandler);
-	signal(SIGTERM, exit);
+	signal(SIGTERM, CleanUp);
 
 	/* Open the audio device */
 	if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) < 0) {
@@ -195,7 +195,7 @@ int main(int argc, char *argv[])
 		if ( music == NULL ) {
 			fprintf(stderr, "Couldn't load %s: %s\n",
 				argv[i], SDL_GetError());
-			return(2);
+			CleanUp(2);
 		}
 		
 		/* Play and then exit */
@@ -219,5 +219,8 @@ int main(int argc, char *argv[])
 		
 		i++;
 	}
-	return(0);
+	CleanUp(0);
+
+	/* Not reached, but fixes compiler warnings */
+	return 0;
 }
