@@ -29,7 +29,7 @@
 #include "config.h"
 #include "common.h"
 #include "output.h"
-#include "controls.h"
+#include "ctrlmode.h"
 
 /* I guess "rb" should be right for any libc */
 #define OPEN_MODE "rb"

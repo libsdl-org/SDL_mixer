@@ -35,7 +35,7 @@
 #include <stdlib.h>
 #include "config.h"
 #include "common.h"
-#include "controls.h"
+#include "ctrlmode.h"
 #include "instrum.h"
 #include "filter.h"
 

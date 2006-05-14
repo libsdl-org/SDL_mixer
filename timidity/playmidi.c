@@ -34,7 +34,7 @@
 #include "readmidi.h"
 #include "output.h"
 #include "mix.h"
-#include "controls.h"
+#include "ctrlmode.h"
 #include "timidity.h"
 
 #include "tables.h"
