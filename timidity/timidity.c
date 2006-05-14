@@ -29,7 +29,7 @@
 #include "playmidi.h"
 #include "readmidi.h"
 #include "output.h"
-#include "controls.h"
+#include "ctrlmode.h"
 #include "timidity.h"
 
 #include "tables.h"

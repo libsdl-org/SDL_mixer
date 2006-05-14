@@ -29,7 +29,7 @@
 #include "instrum.h"
 #include "playmidi.h"
 #include "output.h"
-#include "controls.h"
+#include "ctrlmode.h"
 #include "tables.h"
 #include "resample.h"
 
