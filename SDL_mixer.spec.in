@@ -1,4 +1,4 @@
-%define name @PACKAGE@
+%define name SDL_mixer
 %define version @VERSION@
 %define release 1
 
