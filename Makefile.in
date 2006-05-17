@@ -35,7 +35,7 @@ TARGET  = libSDL_mixer.la
 SOURCES = @SOURCES@
 OBJECTS = @OBJECTS@
 
-DIST = CHANGES COPYING CWProjects.sea.bin MPWmake.sea.bin Makefile.in README SDL_mixer.h SDL_mixer.qpg.in SDL_mixer.spec SDL_mixer.spec.in VisualC.zip Watcom-OS2.zip Xcode.tar.gz acinclude.m4 autogen.sh build-scripts configure configure.in effect_position.c effect_stereoreverse.c effects_internal.c effects_internal.h gcc-fat.sh load_aiff.c load_aiff.h load_ogg.c load_ogg.h load_voc.c load_voc.h mikmod mixer.c music.c music_cmd.c music_cmd.h music_ogg.c music_ogg.h native_midi native_midi_gpl playmus.c playwave.c timidity wavestream.c wavestream.h
+DIST = CHANGES COPYING CWProjects.sea.bin MPWmake.sea.bin Makefile.in README SDL_mixer.h SDL_mixer.qpg.in SDL_mixer.spec SDL_mixer.spec.in VisualC.zip Watcom-OS2.zip Xcode.tar.gz acinclude.m4 autogen.sh build-scripts configure configure.in dynamic_mp3.c dynamic_mp3.h dynamic_ogg.c dynamic_ogg.h effect_position.c effect_stereoreverse.c effects_internal.c effects_internal.h gcc-fat.sh load_aiff.c load_aiff.h load_ogg.c load_ogg.h load_voc.c load_voc.h mikmod mixer.c music.c music_cmd.c music_cmd.h music_ogg.c music_ogg.h native_midi native_midi_gpl playmus.c playwave.c timidity wavestream.c wavestream.h
 
 LT_AGE      = @LT_AGE@
 LT_CURRENT  = @LT_CURRENT@
