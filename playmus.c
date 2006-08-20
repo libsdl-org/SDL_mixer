@@ -65,7 +65,7 @@ void Menu(void)
 {
 	char buf[10];
 
-	printf("Available commands: (p)ause (r)esume (h)alt > ");
+	printf("Available commands: (p)ause (r)esume (h)alt volume(v#) > ");
 	fflush(stdin);
 	scanf("%s",buf);
 	switch(buf[0]){
@@ -77,6 +77,9 @@ void Menu(void)
 		break;
 	case 'h': case 'H':
 		Mix_HaltMusic();
+		break;
+	case 'v': case 'V':
+		Mix_VolumeMusic(atoi(buf+1));
 		break;
 	}
 	printf("Music playing: %s Paused: %s\n", Mix_PlayingMusic() ? "yes" : "no", 
