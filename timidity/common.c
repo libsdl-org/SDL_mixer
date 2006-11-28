@@ -104,7 +104,6 @@ FILE *open_file(char *name, int decompress, int noise_mode)
   FILE *fp;
   PathList *plp;
   int l;
-  static int firsttime=1;
 
   if (!name || !(*name))
     {
@@ -113,10 +112,9 @@ FILE *open_file(char *name, int decompress, int noise_mode)
     }
 
 #ifdef DEFAULT_PATH
-  if (firsttime && (pathlist==NULL)) {
+  if (pathlist==NULL) {
     /* Generate path list */
     add_to_pathlist(DEFAULT_PATH);
-    firsttime=0;
   }
 #endif
 
@@ -244,4 +242,5 @@ void free_pathlist(void)
     free(plp);
     plp = next_plp;
   }
+  pathlist = NULL;
 }
