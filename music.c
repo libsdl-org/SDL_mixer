@@ -1364,6 +1364,11 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw) {
 	Mix_Music *music;
 	int start;
 
+	if (!rw) {
+		Mix_SetError("RWops pointer is NULL");
+		return NULL;
+	}
+
 	/* Figure out what kind of file this is */
 	start = SDL_RWtell(rw);
 	if (SDL_RWread(rw,magic,1,4)!=4) {
