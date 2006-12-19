@@ -512,7 +512,7 @@ Mix_Chunk *Mix_QuickLoad_WAV(Uint8 *mem)
 	}
 
 	/* Allocate the chunk memory */
-	chunk = (Mix_Chunk *)malloc(sizeof(Mix_Chunk));
+	chunk = (Mix_Chunk *)calloc(sizeof(Mix_Chunk));
 	if ( chunk == NULL ) {
 		SDL_SetError("Out of memory");
 		return(NULL);
