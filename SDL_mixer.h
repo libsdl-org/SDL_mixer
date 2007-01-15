@@ -181,7 +181,7 @@ extern DECLSPEC void * SDLCALL Mix_GetMusicHookData(void);
 extern DECLSPEC void SDLCALL Mix_ChannelFinished(void (*channel_finished)(int channel));
 
 
-/* Special Effects API by ryan c. gordon. (icculus@linuxgames.com) */
+/* Special Effects API by ryan c. gordon. (icculus@icculus.org) */
 
 #define MIX_CHANNEL_POST  -2
 
