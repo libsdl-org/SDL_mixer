@@ -233,8 +233,12 @@ if test x$enable_music_ogg = xyes; then
 AC_HELP_STRING([--enable-music-ogg-shared], [dynamically load Ogg Vorbis support [[default=yes]]]),
                       [], [enable_music_ogg_shared=yes])
         case "$host" in
-            *-*-darwin*) # FIXME when Mac OS X ships with Ogg Vorbis
-                ogg_lib=''
+            *-*-darwin*)
+                for path in /usr/lib /usr/local/lib; do
+                    if test x$ogg_lib = x; then
+                        ogg_lib=[`ls -- $path/libvorbisfile.[0-9].dylib 2>/dev/null | sort -r | sed 's/.*\/\(.*\)/\1/; q'`]
+                    fi
+                done
                 ;;
             *-*-cygwin* | *-*-mingw32*)
                 ogg_lib='vorbisfile.dll'
@@ -269,7 +273,11 @@ AC_HELP_STRING([--enable-music-mp3-shared], [dynamically load MP3 support [[defa
                       [], [enable_music_mp3_shared=yes])
         case "$host" in
             *-*-darwin*)
-                smpeg_lib=''
+                for path in /usr/lib /usr/local/lib; do
+                    if test x$smpeg_lib = x; then
+                        smpeg_lib=[`ls -- $path/libsmpeg*.[0-9].dylib 2>/dev/null | sort -r | sed 's/.*\/\(.*\)/\1/; q'`]
+                    fi
+                done
                 ;;
             *-*-cygwin* | *-*-mingw32*)
                 smpeg_lib='smpeg.dll'
