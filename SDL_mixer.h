@@ -28,7 +28,7 @@
 #include "SDL_types.h"
 #include "SDL_rwops.h"
 #include "SDL_audio.h"
-#include "SDL_byteorder.h"
+#include "SDL_endian.h"
 #include "SDL_version.h"
 #include "begin_code.h"
 
