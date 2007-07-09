@@ -158,7 +158,7 @@ static void mix_channels(void *udata, Uint8 *stream, int len)
 	int i, mixable, volume;
 	Uint32 sdl_ticks;
 
-	/* Initialize the audio stream (needed for 1.2.12 and later)
+	/* Initialize the audio stream (needed for 1.3 and later)
 	memset(stream, 0, len);
 
 	/* Mix the music (must be done before the channels are added) */
