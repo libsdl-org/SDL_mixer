@@ -85,7 +85,7 @@ install-hdrs:
 	    file=`echo $$src | sed -e 's|^.*/||'`; \
 	    $(INSTALL) -m 644 $$src $(includedir)/SDL/$$file; \
 	done
-install-lib:
+install-lib: $(objects) $(objects)/$(TARGET)
 	$(SHELL) $(auxdir)/mkinstalldirs $(libdir)
 	$(LIBTOOL) --mode=install $(INSTALL) $(objects)/$(TARGET) $(libdir)/$(TARGET)
 install-bin:
