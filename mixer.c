@@ -35,6 +35,9 @@
 #include "load_voc.h"
 #include "load_ogg.h"
 
+#define __MIX_INTERNAL_EFFECT__
+#include "effects_internal.h"
+
 /* Magic numbers for various audio file formats */
 #define RIFF		0x46464952		/* "RIFF" */
 #define WAVE		0x45564157		/* "WAVE" */
@@ -265,8 +268,6 @@ static void PrintFormat(char *title, SDL_AudioSpec *fmt)
 			(fmt->channels > 1) ? "stereo" : "mono", fmt->freq);
 }
 
-
-void _Mix_InitEffects(void);
 
 /* Open the mixer with a certain desired audio format */
 int Mix_OpenAudio(int frequency, Uint16 format, int nchannels, int chunksize)
@@ -960,6 +961,7 @@ void Mix_CloseAudio(void)
 			Mix_UnregisterAllEffects(MIX_CHANNEL_POST);
 			close_music();
 			Mix_HaltChannel(-1);
+			_Eff_PositionDeinit();
 			SDL_CloseAudio();
 			free(mix_channel);
 			mix_channel = NULL;
