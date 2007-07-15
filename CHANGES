@@ -1,4 +1,6 @@
 1.2.8:
+Sam Lantinga - Sat Jul 14 21:39:30 PDT 2007
+ * Fixed the final loop of audio samples of a certain size
 Sam Lantinga - Sat Jul 14 21:05:09 PDT 2007
  * Fixed opening Ogg Vorbis files using different C runtimes on Windows
 Philippe Simons - Sat Jul 14 20:33:17 PDT 2007
