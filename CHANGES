@@ -9,9 +9,9 @@ Philippe Simons - Sat Jul 14 20:33:17 PDT 2007
  * Added support for Ogg Vorbis playback with Tremor (an integer decoder)
 Sam Lantinga - Sat Jul 14 07:02:09 PDT 2007
  * Fixed memory corruption in timidity resampling code
-Ryan Gordan - Tue Jul 3 10:44:29 2007 UTC
+Ryan Gordon - Tue Jul 3 10:44:29 2007 UTC
  * Fixed building SDL_mixer with SDL 1.3 pre-release
-Ryan Gordan - Tue Feb 13 08:11:54 2007 UTC
+Ryan Gordon - Tue Feb 13 08:11:54 2007 UTC
  * Fixed compiling both timidity and native midi in the same build
 Hans de Goede - Sun Aug 20 23:25:46 2006 UTC
  * Added volume control to playmus
