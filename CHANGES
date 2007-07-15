@@ -1,4 +1,6 @@
 1.2.8:
+Sam Lantinga - Sat Jul 14 21:05:09 PDT 2007
+ * Fixed opening Ogg Vorbis files using different C runtimes on Windows
 Philippe Simons - Sat Jul 14 20:33:17 PDT 2007
  * Added support for Ogg Vorbis playback with Tremor (an integer decoder)
 Sam Lantinga - Sat Jul 14 07:02:09 PDT 2007
