@@ -161,8 +161,10 @@ static void mix_channels(void *udata, Uint8 *stream, int len)
 	int i, mixable, volume;
 	Uint32 sdl_ticks;
 
-	/* Initialize the audio stream (needed for 1.3 and later)
+#if SDL_VERSION_ATLEAST(1, 3, 0)
+	/* Need to initialize the stream in SDL 1.3+ */
 	memset(stream, mixer.silence, len);
+#endif
 
 	/* Mix the music (must be done before the channels are added) */
 	if ( music_active || (mix_music != music_mixer) ) {
