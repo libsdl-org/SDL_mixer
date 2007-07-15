@@ -1,4 +1,6 @@
 1.2.8:
+Ryan Gordon - Sun Jul 15 12:03:54 EDT 2007
+ * Fixed memory leaks in Effects API.
 David Rose - Sat Jul 14 22:16:09 PDT 2007
  * Added support for MP3 playback with libmad (for GPL projects only!)
 Sam Lantinga - Sat Jul 14 21:39:30 PDT 2007
