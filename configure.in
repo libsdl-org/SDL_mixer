@@ -320,6 +320,25 @@ AC_HELP_STRING([--enable-music-mp3-shared], [dynamically load MP3 support [[defa
         fi
     fi
 fi
+AC_ARG_ENABLE(music-mp3-mad-gpl,
+AC_HELP_STRING([--enable-music-mp3-mad-gpl], [enable MP3 music via libmad GPL code [[default=no]]]),
+                  [], [enable_music_mp3_mad_gpl=no])
+if test x$enable_music_mp3_mad_gpl = xyes; then
+    AC_MSG_CHECKING(for libmad headers)
+    have_libmad=no
+    AC_TRY_COMPILE([
+     #include "mad.h"
+    ],[
+    ],[
+    have_libmad=yes
+    ])
+    AC_MSG_RESULT($have_libmad)
+    if test x$have_libmad = xyes; then
+        SOURCES="$SOURCES $srcdir/music_mad.c"
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMP3_MAD_MUSIC"
+        EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lmad"
+    fi
+fi
 
 OBJECTS=`echo $SOURCES | sed 's,[[^ ]]*/\([[^ ]]*\)\.c,$(objects)/\1.lo,g'`
 
