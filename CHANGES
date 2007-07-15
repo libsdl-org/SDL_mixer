@@ -1,4 +1,6 @@
 1.2.8:
+David Rose - Sat Jul 14 22:16:09 PDT 2007
+ * Added support for MP3 playback with libmad (for GPL projects only!)
 Sam Lantinga - Sat Jul 14 21:39:30 PDT 2007
  * Fixed the final loop of audio samples of a certain size
 Sam Lantinga - Sat Jul 14 21:05:09 PDT 2007

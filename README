@@ -16,11 +16,19 @@ The mixer can currently load Microsoft WAVE files and Creative Labs VOC
 files as audio samples, and can load MIDI files via Timidity and the
 following music formats via MikMod:  .MOD .S3M .IT .XM. It can load
 Ogg Vorbis streams as music if built with Ogg Vorbis or Tremor libraries,
-and finally it can load MP3 music using the SMPEG library.
+and finally it can load MP3 music using the SMPEG or libmad libraries.
 
-Tremor decoding is disabled by default, you can enable it by passing
+Tremor decoding is disabled by default; you can enable it by passing
 	--enable-music-ogg-tremor
 to configure, or by defining OGG_MUSIC and OGG_USE_TREMOR.
+
+libmad decoding is disabled by default; you can enable it by passing
+	--enable-music-mp3-mad
+to configure, or by defining MP3_MAD_MUSIC
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+WARNING: The license for libmad is GPL, which means that in order to
+         use it your application must also be GPL!
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The process of mixing MIDI files to wave output is very CPU intensive,
 so if playing regular WAVE files sound great, but playing MIDI files

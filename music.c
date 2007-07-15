@@ -85,9 +85,15 @@
 #endif
 #ifdef MP3_MUSIC
 #include "dynamic_mp3.h"
+#endif
+#ifdef MP3_MAD_MUSIC
+#include "music_mad.h"
+#endif
 
+#if defined(MP3_MUSIC) || defined(MP3_MAD_MUSIC)
 static SDL_AudioSpec used_mixer;
 #endif
+
 
 int volatile music_active = 1;
 static int volatile music_stopped = 0;
@@ -123,6 +129,9 @@ struct _Mix_Music {
 #endif
 #ifdef MP3_MUSIC
 		SMPEG *mp3;
+#endif
+#ifdef MP3_MAD_MUSIC
+		mad_data *mp3_mad;
 #endif
 	} data;
 	Mix_Fading fading;
@@ -341,6 +350,11 @@ void music_mixer(void *udata, Uint8 *stream, int len)
 				smpeg.SMPEG_playAudio(music_playing->data.mp3, stream, len);
 				break;
 #endif
+#ifdef MP3_MAD_MUSIC
+			case MUS_MP3_MAD:
+				mad_getSamples(music_playing->data.mp3_mad, stream, len);
+				break;
+#endif
 			default:
 				/* Unknown music type?? */
 				break;
@@ -455,7 +469,7 @@ int open_music(SDL_AudioSpec *mixer)
 		++music_error;
 	}
 #endif
-#ifdef MP3_MUSIC
+#if defined(MP3_MUSIC) || defined(MP3_MAD_MUSIC)
 	/* Keep a copy of the mixer */
 	used_mixer = *mixer;
 #endif
@@ -608,6 +622,20 @@ Mix_Music *Mix_LoadMUS(const char *file)
 		}
 	} else
 #endif
+#ifdef MP3_MAD_MUSIC
+	if ( (ext && MIX_string_equals(ext, "MPG")) ||
+	     (ext && MIX_string_equals(ext, "MP3")) ||
+	     (ext && MIX_string_equals(ext, "MPEG")) ||
+	     (ext && MIX_string_equals(ext, "MAD")) ||
+	     (magic[0] == 0xFF && (magic[1] & 0xF0) == 0xF0) ) {
+		music->type = MUS_MP3_MAD;
+		music->data.mp3_mad = mad_openFile(file, &used_mixer);
+		if (music->data.mp3_mad == 0) {
+		    Mix_SetError("Could not initialize MPEG stream.");
+			music->error = 1;
+		}
+	} else
+#endif
 #if defined(MOD_MUSIC) || defined(LIBMIKMOD_MUSIC)
 	if ( 1 ) {
 		music->type = MUS_MOD;
@@ -698,6 +726,11 @@ void Mix_FreeMusic(Mix_Music *music)
 				Mix_QuitMP3();
 				break;
 #endif
+#ifdef MP3_MAD_MUSIC
+			case MUS_MP3_MAD:
+				mad_closeFile(music->data.mp3_mad);
+				break;
+#endif
 			default:
 				/* Unknown music type?? */
 				break;
@@ -785,6 +818,11 @@ static int music_internal_play(Mix_Music *music, double position)
 		smpeg.SMPEG_enableaudio(music->data.mp3,1);
 		smpeg.SMPEG_enablevideo(music->data.mp3,0);
 		smpeg.SMPEG_play(music_playing->data.mp3);
+		break;
+#endif
+#ifdef MP3_MAD_MUSIC
+	    case MUS_MP3_MAD:
+		mad_start(music->data.mp3_mad);
 		break;
 #endif
 	    default:
@@ -880,6 +918,11 @@ int music_internal_position(double position)
 		}
 		break;
 #endif
+#ifdef MP3_MAD_MUSIC
+	    case MUS_MP3_MAD:
+		mad_seek(music_playing->data.mp3_mad, position);
+		break;
+#endif
 	    default:
 		/* TODO: Implement this for other music backends */
 		retval = -1;
@@ -959,6 +1002,11 @@ static void music_internal_volume(int volume)
 		smpeg.SMPEG_setvolume(music_playing->data.mp3,(int)(((float)volume/(float)MIX_MAX_VOLUME)*100.0));
 		break;
 #endif
+#ifdef MP3_MAD_MUSIC
+	    case MUS_MP3_MAD:
+		mad_setVolume(music_playing->data.mp3_mad, volume);
+		break;
+#endif
 	    default:
 		/* Unknown music type?? */
 		break;
@@ -1025,6 +1073,11 @@ static void music_internal_halt(void)
 #ifdef MP3_MUSIC
 	    case MUS_MP3:
 		smpeg.SMPEG_stop(music_playing->data.mp3);
+		break;
+#endif
+#ifdef MP3_MAD_MUSIC
+	    case MUS_MP3_MAD:
+		mad_stop(music_playing->data.mp3_mad);
 		break;
 #endif
 	    default:
@@ -1168,6 +1221,13 @@ static int music_internal_playing()
 	    case MUS_MP3:
 		if ( smpeg.SMPEG_status(music_playing->data.mp3) != SMPEG_PLAYING )
 			playing = 0;
+		break;
+#endif
+#ifdef MP3_MAD_MUSIC
+	    case MUS_MP3_MAD:
+		if (!mad_isPlaying(music_playing->data.mp3_mad)) {
+			playing = 0;
+		}
 		break;
 #endif
 	    default:
@@ -1409,6 +1469,16 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw) {
 				smpeg.SMPEG_actualSpec(music->data.mp3, &used_mixer);
 			}
 		} else {
+			music->error = 1;
+		}
+	} else
+#endif
+#ifdef MP3_MAD_MUSIC
+	if ( magic[0] == 0xFF && (magic[1] & 0xF0) == 0xF0 ) {
+		music->type = MUS_MP3_MAD;
+		music->data.mp3_mad = mad_openFileRW(rw, &used_mixer);
+		if (music->data.mp3_mad == 0) {
+			Mix_SetError("Could not initialize MPEG stream.");
 			music->error = 1;
 		}
 	} else
