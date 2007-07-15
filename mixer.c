@@ -226,9 +226,9 @@ static void mix_channels(void *udata, Uint8 *stream, int len)
 				while ( mix_channel[i].looping && index < len ) {
 					int alen = mix_channel[i].chunk->alen;
 					remaining = len - index;
-				    	if (remaining > alen) {
+					if (remaining > alen) {
 						remaining = alen;
-				    	}
+					}
 
 					mix_input = Mix_DoEffects(i, mix_channel[i].chunk->abuf, remaining);
 					SDL_MixAudio(stream+index, mix_input, remaining, volume);
@@ -241,12 +241,10 @@ static void mix_channels(void *udata, Uint8 *stream, int len)
 					index += remaining;
 				}
 				if ( ! mix_channel[i].playing && mix_channel[i].looping ) {
-					if ( --mix_channel[i].looping ) {
-						mix_channel[i].samples = mix_channel[i].chunk->abuf;
-						mix_channel[i].playing = mix_channel[i].chunk->alen;
-					}
+					--mix_channel[i].looping;
+					mix_channel[i].samples = mix_channel[i].chunk->abuf;
+					mix_channel[i].playing = mix_channel[i].chunk->alen;
 				}
-
 			}
 		}
 	}
