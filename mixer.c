@@ -346,6 +346,7 @@ int Mix_AllocateChannels(int numchans)
 		/* Stop the affected channels */
 		int i;
 		for(i=numchans; i < num_channels; i++) {
+			Mix_UnregisterAllEffects(i);
 			Mix_HaltChannel(i);
 		}
 	}
