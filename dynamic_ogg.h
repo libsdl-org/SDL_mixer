@@ -21,7 +21,11 @@
 */
 
 #ifdef OGG_MUSIC
+#ifdef OGG_USE_TREMOR
+#include <tremor/ivorbisfile.h>
+#else
 #include <vorbis/vorbisfile.h>
+#endif
 
 typedef struct {
 	int loaded;
@@ -31,7 +35,11 @@ typedef struct {
 	int (*ov_open)(FILE *f,OggVorbis_File *vf,char *initial,long ibytes);
 	int (*ov_open_callbacks)(void *datasource, OggVorbis_File *vf, char *initial, long ibytes, ov_callbacks callbacks);
 	ogg_int64_t (*ov_pcm_total)(OggVorbis_File *vf,int i);
+#ifdef OGG_USE_TREMOR
+	long (*ov_read)(OggVorbis_File *vf,char *buffer,int length, int *bitstream);
+#else
 	long (*ov_read)(OggVorbis_File *vf,char *buffer,int length, int bigendianp,int word,int sgned,int *bitstream);
+#endif
 	int (*ov_time_seek)(OggVorbis_File *vf,double pos);
 } vorbis_loader;
 

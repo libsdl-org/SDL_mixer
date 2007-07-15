@@ -1,4 +1,6 @@
 1.2.8:
+Philippe Simons - Sat Jul 14 20:33:17 PDT 2007
+ * Added support for Ogg Vorbis playback with Tremor (an integer decoder)
 Sam Lantinga - Sat Jul 14 07:02:09 PDT 2007
  * Fixed memory corruption in timidity resampling code
 Ryan Gordan - Tue Jul 3 10:44:29 2007 UTC
