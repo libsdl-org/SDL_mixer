@@ -961,7 +961,7 @@ void Mix_CloseAudio(void)
 			Mix_UnregisterAllEffects(MIX_CHANNEL_POST);
 			close_music();
 			Mix_HaltChannel(-1);
-			_Eff_PositionDeinit();
+			_Mix_DeinitEffects();
 			SDL_CloseAudio();
 			free(mix_channel);
 			mix_channel = NULL;
