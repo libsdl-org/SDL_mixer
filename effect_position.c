@@ -79,6 +79,20 @@ static position_args **pos_args_array = NULL;
 static position_args *pos_args_global = NULL;
 static int position_channels = 0;
 
+void _Eff_PositionDeinit(void)
+{
+    int i;
+    for (i = 0; i < position_channels; i++) {
+        free(pos_args_array[i]);
+    }
+
+    free(pos_args_global);
+    pos_args_global = NULL;
+    free(pos_args_array);
+    pos_args_array = NULL;
+}
+
+
 /* This just frees up the callback-specific data. */
 static void _Eff_PositionDone(int channel, void *udata)
 {

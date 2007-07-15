@@ -32,6 +32,9 @@
 #include <stdlib.h>
 #include "SDL_mixer.h"
 
+#define __MIX_INTERNAL_EFFECT__
+#include "effects_internal.h"
+
 /* Should we favor speed over memory usage and/or quality of output? */
 int _Mix_effects_max_speed = 0;
 
@@ -39,6 +42,11 @@ int _Mix_effects_max_speed = 0;
 void _Mix_InitEffects(void)
 {
     _Mix_effects_max_speed = (getenv(MIX_EFFECTSMAXSPEED) != NULL);
+}
+
+void _Mix_DeinitEffects(void)
+{
+    _Eff_PositionDeinit();
 }
 
 
