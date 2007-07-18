@@ -67,7 +67,11 @@ int Mix_InitOgg()
 			return -1;
 		}
 		vorbis.ov_read =
-			(long (*)(OggVorbis_File *,char *,int, int,int,int,int *))
+#ifdef OGG_USE_TREMOR
+			(long (*)(OggVorbis_File *,char *,int,int *))
+#else
+			(long (*)(OggVorbis_File *,char *,int,int,int,int,int *))
+#endif
 			SDL_LoadFunction(vorbis.handle, "ov_read");
 		if ( vorbis.ov_read == NULL ) {
 			SDL_UnloadObject(vorbis.handle);
