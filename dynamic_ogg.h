@@ -32,7 +32,6 @@ typedef struct {
 	void *handle;
 	int (*ov_clear)(OggVorbis_File *vf);
 	vorbis_info *(*ov_info)(OggVorbis_File *vf,int link);
-	int (*ov_open)(FILE *f,OggVorbis_File *vf,char *initial,long ibytes);
 	int (*ov_open_callbacks)(void *datasource, OggVorbis_File *vf, char *initial, long ibytes, ov_callbacks callbacks);
 	ogg_int64_t (*ov_pcm_total)(OggVorbis_File *vf,int i);
 #ifdef OGG_USE_TREMOR

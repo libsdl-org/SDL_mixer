@@ -52,13 +52,6 @@ int Mix_InitOgg()
 			SDL_UnloadObject(vorbis.handle);
 			return -1;
 		}
-		vorbis.ov_open =
-			(int (*)(FILE *,OggVorbis_File *,char *,long))
-			SDL_LoadFunction(vorbis.handle, "ov_open");
-		if ( vorbis.ov_open == NULL ) {
-			SDL_UnloadObject(vorbis.handle);
-			return -1;
-		}
 		vorbis.ov_open_callbacks =
 			(int (*)(void *, OggVorbis_File *, char *, long, ov_callbacks))
 			SDL_LoadFunction(vorbis.handle, "ov_open_callbacks");
@@ -108,7 +101,6 @@ int Mix_InitOgg()
 	if ( vorbis.loaded == 0 ) {
 		vorbis.ov_clear = ov_clear;
 		vorbis.ov_info = ov_info;
-		vorbis.ov_open = ov_open;
 		vorbis.ov_open_callbacks = ov_open_callbacks;
 		vorbis.ov_pcm_total = ov_pcm_total;
 		vorbis.ov_read = ov_read;
