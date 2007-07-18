@@ -41,7 +41,11 @@ search_deps()
 for src in $SOURCES
 do  echo "Generating dependencies for $src"
     ext=`echo $src | sed 's|.*\.\(.*\)|\1|'`
-    obj=`echo $src | sed "s|^.*/\([^ ]*\)\..*|\1.lo|g"`
+    if test x"$ext" = x"rc"; then
+        obj=`echo $src | sed "s|^.*/\([^ ]*\)\..*|\1.o|g"`
+    else
+        obj=`echo $src | sed "s|^.*/\([^ ]*\)\..*|\1.lo|g"`
+    fi
     echo "\$(objects)/$obj: $src \\" >>${output}.new
     search_deps $src | sort | uniq >>${output}.new
     case $ext in
@@ -72,6 +76,12 @@ __EOF__
         S) cat >>${output}.new <<__EOF__
 
 	\$(LIBTOOL)  --mode=compile \$(CC) \$(CFLAGS) \$(EXTRA_CFLAGS) -c $src  -o \$@
+
+__EOF__
+        ;;
+        rc) cat >>${output}.new <<__EOF__
+
+	\$(WINDRES) $src \$@
 
 __EOF__
         ;;

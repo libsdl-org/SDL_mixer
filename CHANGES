@@ -1,4 +1,6 @@
 1.2.8:
+Sam Lantinga - Wed Jul 18 09:45:54 PDT 2007
+ * Improved detection of Ogg Vorbis and Tremor libraries
 Ryan Gordon - Sun Jul 15 12:03:54 EDT 2007
  * Fixed memory leaks in Effects API.
 David Rose - Sat Jul 14 22:16:09 PDT 2007
