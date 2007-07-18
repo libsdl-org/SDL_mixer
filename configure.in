@@ -56,14 +56,15 @@ BUILD_CFLAGS="$CFLAGS $CPPFLAGS"
 EXTRA_CFLAGS="$INCLUDE $BASE_CFLAGS"
 BUILD_LDFLAGS="$LDFLAGS"
 EXTRA_LDFLAGS="$BASE_LDFLAGS"
-for path in /usr/local; do
-    if test -d $path/include; then
-        EXTRA_CFLAGS="$EXTRA_CFLAGS -I$path/include"
-    fi
-    if test -d $path/lib; then
-        EXTRA_LDFLAGS="$EXTRA_LDFLAGS -L$path/lib"
-    fi
-done
+## These are common directories to find software packages
+#for path in /usr/freeware /usr/pkg /usr/local; do
+#    if test -d $path/include; then
+#        EXTRA_CFLAGS="$EXTRA_CFLAGS -I$path/include"
+#    fi
+#    if test -d $path/lib; then
+#        EXTRA_LDFLAGS="$EXTRA_LDFLAGS -L$path/lib"
+#    fi
+#done
 CPPFLAGS="$CPPFLAGS $EXTRA_CFLAGS"
 CFLAGS="$CFLAGS $EXTRA_CFLAGS"
 LDFLAGS="$LDFLAGS $EXTRA_LDFLAGS"
@@ -72,18 +73,34 @@ dnl Check for tools
 AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
 AC_PROG_CC
-AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
+if test -z "$host_alias"; then
+    hostaliaswindres=
+else
+    hostaliaswindres="$host_alias-windres"
+fi
+AC_CHECK_PROGS(WINDRES, [windres $hostaliaswindres $host_os-windres])
 
 dnl Check for compiler characteristics
 AC_C_CONST
 
 case "$host" in
     *-*-cygwin* | *-*-mingw32*)
+        SOURCES="$srcdir/version.rc"
         EXE=".exe"
+        if test "$build" != "$host"; then # cross-compiling
+            # Default cross-compile location
+            ac_default_prefix=/usr/local/cross-tools/i386-mingw32
+        else
+            # Look for the location of the tools and install there
+            if test "$BUILD_PREFIX" != ""; then
+                ac_default_prefix=$BUILD_PREFIX
+            fi
+        fi
         ;;
     *)
+        SOURCES=""
         EXE=""
         ;;
 esac
@@ -98,11 +115,24 @@ $srcdir/load_voc.c \
 $srcdir/mixer.c \
 $srcdir/music.c"
 
+find_lib()
+{
+    gcc_lib_path=[`$CC -print-search-dirs 2>/dev/null | fgrep libraries | sed 's/[^=]*=\(.*\)/\1/' | sed 's/:/ /g'`]
+    env_lib_path=[`echo $LIBS $LDFLAGS | sed 's/-L[ ]*//g'`]
+    for path in $gcc_lib_path $env_lib_path /usr/lib /usr/local/lib; do
+        lib=[`ls -- $path/$1 2>/dev/null | sort -r | sed 's/.*\/\(.*\)/\1/; q'`]
+        if test x$lib != x; then
+            echo $lib
+            return
+        fi
+    done
+}
+
 dnl Check for SDL
 SDL_VERSION=1.2.10
 AM_PATH_SDL($SDL_VERSION,
             :,
-	    AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])
+            AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])
 )
 EXTRA_CFLAGS="$EXTRA_CFLAGS $SDL_CFLAGS"
 EXTRA_LDFLAGS="$EXTRA_LDFLAGS $SDL_LIBS"
@@ -132,32 +162,32 @@ AC_ARG_ENABLE([music-libmikmod],
 AC_HELP_STRING([--enable-music-libmikmod], [enable MOD music via external libmikmod [[default=no]]]),
               [], [enable_music_libmikmod=no])
 if test x$enable_music_libmikmod = xyes; then
-	AC_PATH_PROG(LIBMIKMOD_CONFIG, libmikmod-config, no, [$PATH])
-	if test "$LIBMIKMOD_CONFIG" != "no" ; then
-		no_libmikmod=no
-		CFLAGS_SAVED="$CFLAGS"
-		LIBS_SAVED="$LIBS"
-		CFLAGS="$CFLAGS -DLIBMIKMOD_MUSIC `$LIBMIKMOD_CONFIG --cflags`"
-		LIBS="$LIBS `$LIBMIKMOD_CONFIG --libs`"
-		AC_MSG_CHECKING([for libmikmod - version >= $libmikmod_ver])
-		AC_TRY_RUN([
+    AC_PATH_PROG(LIBMIKMOD_CONFIG, libmikmod-config, no, [$PATH])
+    if test "$LIBMIKMOD_CONFIG" != "no" ; then
+        no_libmikmod=no
+        CFLAGS_SAVED="$CFLAGS"
+        LIBS_SAVED="$LIBS"
+        CFLAGS="$CFLAGS -DLIBMIKMOD_MUSIC `$LIBMIKMOD_CONFIG --cflags`"
+        LIBS="$LIBS `$LIBMIKMOD_CONFIG --libs`"
+        AC_MSG_CHECKING([for libmikmod - version >= $libmikmod_ver])
+        AC_TRY_RUN([
 #include "mikmod.h"
 #include "stdio.h"
 
 int main(int argc, char **argv)
 {
-	long maj=$libmikmod_maj,min=$libmikmod_min,rev=$libmikmod_rev,ver=MikMod_GetVersion();
-	/*printf("(%d.%d.%d) ",ver>>16,(ver>>8)&0xff,ver&0xff);*/
-	if(ver>=((maj<<16)|(min<<8)|(rev))) {
-		printf("yes\n");
-		return 0;
-	}
-	printf("no\n*** libmikmod is older than %d.%d.%d, not using.\n",maj,min,rev);
-	return 1;
+    long maj=$libmikmod_maj,min=$libmikmod_min,rev=$libmikmod_rev,ver=MikMod_GetVersion();
+    /*printf("(%d.%d.%d) ",ver>>16,(ver>>8)&0xff,ver&0xff);*/
+    if(ver>=((maj<<16)|(min<<8)|(rev))) {
+        printf("yes\n");
+        return 0;
+    }
+    printf("no\n*** libmikmod is older than %d.%d.%d, not using.\n",maj,min,rev);
+    return 1;
 }
 ], EXTRA_CFLAGS="$EXTRA_CFLAGS -DLIBMIKMOD_MUSIC `$LIBMIKMOD_CONFIG --cflags`";EXTRA_LDFLAGS="$EXTRA_LDFLAGS `$LIBMIKMOD_CONFIG --libs`", CFLAGS="$CFLAGS_SAVED";LIBS="$LIBS_SAVED",
 [echo $ac_n "cross compiling; assumed OK... $ac_c"])
-	fi
+    fi
 fi
 
 AC_ARG_ENABLE([music-mod],
@@ -218,67 +248,73 @@ fi
 AC_ARG_ENABLE([music-ogg],
 AC_HELP_STRING([--enable-music-ogg], [enable Ogg Vorbis music [[default=yes]]]),
               [], [enable_music_ogg=yes])
-if test x$enable_music_ogg = xyes; then
-    AC_MSG_CHECKING(for Ogg Vorbis headers and libraries)
-    have_vorbis=no
-    AC_TRY_COMPILE([
-     #include <vorbis/vorbisfile.h>
-    ],[
-    ],[
-    have_vorbis=yes
-    ])
-    AC_MSG_RESULT($have_vorbis)
-    if test x$have_vorbis = xyes; then
-        AC_ARG_ENABLE([music-ogg-shared],
-AC_HELP_STRING([--enable-music-ogg-shared], [dynamically load Ogg Vorbis support [[default=yes]]]),
-                      [], [enable_music_ogg_shared=yes])
-        case "$host" in
-            *-*-darwin*)
-                for path in /usr/lib /usr/local/lib; do
-                    if test x$ogg_lib = x; then
-                        ogg_lib=[`ls -- $path/libvorbisfile.[0-9].dylib 2>/dev/null | sort -r | sed 's/.*\/\(.*\)/\1/; q'`]
-                    fi
-                done
-                ;;
-            *-*-cygwin* | *-*-mingw32*)
-                ogg_lib='vorbisfile.dll'
-                ;;
-            *)
-                for path in /usr/lib /usr/local/lib; do
-                    if test x$ogg_lib = x; then
-                        ogg_lib=[`ls -- $path/libvorbisfile.so.[0-9] 2>/dev/null | sort -r | sed 's/.*\/\(.*\)/\1/; q'`]
-                    fi
-                done
-                ;;
-        esac
-        SOURCES="$SOURCES $srcdir/*_ogg.c"
-        EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_MUSIC"
-        if test x$enable_music_ogg_shared = xyes && test x$ogg_lib != x; then
-            echo "-- dynamic libvorbisfile -> $ogg_lib"
-            EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_DYNAMIC=\\\"$ogg_lib\\\""
-        else
-            EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lvorbisfile -lvorbis -logg"
-        fi
-    fi
-fi
 AC_ARG_ENABLE(music-ogg-tremor,
 [  --enable-music-ogg-tremor   enable OGG music via libtremor [[default=no]]],
-	      , enable_music_ogg_tremor=no)
-if test x$enable_music_ogg_tremor = xyes; then
-    AC_MSG_CHECKING(for libtremor headers)
-    have_tremor=no
-    AC_TRY_COMPILE([
-     #include <tremor/ivorbiscodec.h>
-     #include <tremor/ivorbisfile.h>
-    ],[
-    ],[
-    have_tremor=yes
-    ])
-    AC_MSG_RESULT($have_tremor)
-    if test x$have_tremor = xyes; then
-        SOURCES="$SOURCES $srcdir/*_ogg.c"
-        EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_MUSIC -DOGG_USE_TREMOR"
-	EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lvorbisidec"
+              [], enable_music_ogg_tremor=no)
+AC_ARG_ENABLE([music-ogg-shared],
+AC_HELP_STRING([--enable-music-ogg-shared], [dynamically load Ogg Vorbis support [[default=yes]]]),
+              [], [enable_music_ogg_shared=yes])
+if test x$enable_music_ogg = xyes; then
+    if test x$enable_music_ogg_tremor = xyes; then
+        AC_CHECK_HEADER([tremor/ivorbisfile.h], [have_tremor_hdr=yes])
+        AC_CHECK_LIB([vorbisidec], [ov_open_callbacks], [have_tremor_lib=yes])
+        if test x$have_tremor_hdr = xyes -a x$have_tremor_lib = xyes; then
+            case "$host" in
+                *-*-darwin*)
+                    ogg_lib=[`find_lib libvorbisidec*.dylib`]
+                    if test x$ogg_lib = x; then
+                        ogg_lib=[`find_lib libvorbisidec.[0-9]`]
+                    fi
+                    if test x$ogg_lib = x; then
+                        ogg_lib=[`find_lib libvorbisidec.[0-9]*`]
+                    fi
+                    ;;
+                *-*-cygwin* | *-*-mingw32*)
+                    ogg_lib=[`find_lib "vorbisidec*dll"`]
+                    ;;
+                *)
+                    ogg_lib=[`find_lib "libvorbisidec.so.[0-9]"`]
+                    if test x$ogg_lib = x; then
+                        ogg_lib=[`find_lib "libvorbisidec.so.[0-9]*"`]
+                    fi
+                    ;;
+            esac
+            SOURCES="$SOURCES $srcdir/*_ogg.c"
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_MUSIC -DOGG_USE_TREMOR"
+            if test x$enable_music_ogg_shared = xyes && test x$ogg_lib != x; then
+                echo "-- dynamic libvorbisidec -> $ogg_lib"
+                EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_DYNAMIC=\\\"$ogg_lib\\\""
+            else
+                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lvorbisidec"
+            fi
+        fi
+    else
+        AC_CHECK_HEADER([vorbis/vorbisfile.h], [have_ogg_hdr=yes])
+        AC_CHECK_LIB([vorbisfile], [ov_open_callbacks], [have_ogg_lib=yes])
+        if test x$have_ogg_hdr = xyes -a x$have_ogg_lib = xyes; then
+            case "$host" in
+                *-*-darwin*)
+                    ogg_lib=[`find_lib libvorbisfile*.dylib`]
+                    ;;
+                *-*-cygwin* | *-*-mingw32*)
+                    ogg_lib=[`find_lib "vorbisfile*dll"`]
+                    ;;
+                *)
+                    ogg_lib=[`find_lib "libvorbisfile.so.[0-9]"`]
+                    if test x$ogg_lib = x; then
+                        ogg_lib=[`find_lib "libvorbisfile.so.[0-9]*"`]
+                    fi
+                    ;;
+            esac
+            SOURCES="$SOURCES $srcdir/*_ogg.c"
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_MUSIC"
+            if test x$enable_music_ogg_shared = xyes && test x$ogg_lib != x; then
+                echo "-- dynamic libvorbisfile -> $ogg_lib"
+                EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_DYNAMIC=\\\"$ogg_lib\\\""
+            else
+                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lvorbisfile -lvorbis -logg"
+            fi
+        fi
     fi
 fi
 AC_ARG_ENABLE(music-mp3,
@@ -293,21 +329,16 @@ AC_HELP_STRING([--enable-music-mp3-shared], [dynamically load MP3 support [[defa
                       [], [enable_music_mp3_shared=yes])
         case "$host" in
             *-*-darwin*)
-                for path in /usr/lib /usr/local/lib; do
-                    if test x$smpeg_lib = x; then
-                        smpeg_lib=[`ls -- $path/libsmpeg*.[0-9].dylib 2>/dev/null | sort -r | sed 's/.*\/\(.*\)/\1/; q'`]
-                    fi
-                done
+                smpeg_lib=[`find_lib libsmpeg*.dylib`]
                 ;;
             *-*-cygwin* | *-*-mingw32*)
-                smpeg_lib='smpeg.dll'
+                smpeg_lib=[`find_lib "smpeg*dll"`]
                 ;;
             *)
-                for path in /usr/lib /usr/local/lib; do
-                    if test x$smpeg_lib = x; then
-                        smpeg_lib=[`ls -- $path/libsmpeg*.so.[0-9] 2>/dev/null | sort -r | sed 's/.*\/\(.*\)/\1/; q'`]
-                    fi
-                done
+                smpeg_lib=[`find_lib "libsmpeg.so.[0-9]"`]
+                if test x$smpeg_lib = x; then
+                    smpeg_lib=[`find_lib "libsmpeg.so.[0-9]*"`]
+                fi
                 ;;
         esac
         SOURCES="$SOURCES $srcdir/*_mp3.c"
@@ -341,6 +372,7 @@ if test x$enable_music_mp3_mad_gpl = xyes; then
 fi
 
 OBJECTS=`echo $SOURCES | sed 's,[[^ ]]*/\([[^ ]]*\)\.c,$(objects)/\1.lo,g'`
+OBJECTS=`echo $OBJECTS | sed 's,[[^ ]]*/\([[^ ]]*\)\.rc,$(objects)/\1.o,g'`
 
 dnl Expand the sources and objects needed to build the library
 AC_SUBST(ac_aux_dir)
@@ -351,6 +383,7 @@ AC_SUBST(EXTRA_CFLAGS)
 AC_SUBST(BUILD_LDFLAGS)
 AC_SUBST(EXTRA_LDFLAGS)
 AC_SUBST(EXE)
+AC_SUBST(WINDRES)
 AC_SUBST(SDL_CFLAGS)
 AC_SUBST(SDL_LIBS)
 
