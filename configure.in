@@ -73,7 +73,6 @@ dnl Check for tools
 AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
 AC_PROG_CC
-AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 if test -z "$host_alias"; then
