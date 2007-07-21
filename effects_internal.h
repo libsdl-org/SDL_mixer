@@ -41,6 +41,8 @@ extern void *_Eff_volume_table;
 void *_Eff_build_volume_table_u8(void);
 void *_Eff_build_volume_table_s8(void);
 
+void _Mix_InitEffects(void);
+void _Mix_DeinitEffects(void);
 void _Eff_PositionDeinit(void);
 
 /* Set up for C function definitions, even when using C++ */

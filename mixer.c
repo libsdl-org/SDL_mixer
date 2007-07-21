@@ -158,7 +158,7 @@ static void *Mix_DoEffects(int chan, void *snd, int len)
 static void mix_channels(void *udata, Uint8 *stream, int len)
 {
 	Uint8 *mix_input;
-	int i, mixable, volume;
+	int i, mixable, volume = SDL_MIX_MAXVOLUME;
 	Uint32 sdl_ticks;
 
 #if SDL_VERSION_ATLEAST(1, 3, 0)
@@ -262,6 +262,7 @@ static void mix_channels(void *udata, Uint8 *stream, int len)
 	}
 }
 
+#if 0
 static void PrintFormat(char *title, SDL_AudioSpec *fmt)
 {
 	printf("%s: %d bit %s audio (%s) at %u Hz\n", title, (fmt->format&0xFF),
@@ -269,6 +270,7 @@ static void PrintFormat(char *title, SDL_AudioSpec *fmt)
 			(fmt->channels > 2) ? "surround" :
 			(fmt->channels > 1) ? "stereo" : "mono", fmt->freq);
 }
+#endif
 
 
 /* Open the mixer with a certain desired audio format */
