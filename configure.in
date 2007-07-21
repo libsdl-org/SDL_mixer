@@ -336,9 +336,9 @@ AC_HELP_STRING([--enable-music-mp3-shared], [dynamically load MP3 support [[defa
                 smpeg_lib=[`find_lib "smpeg*.dll"`]
                 ;;
             *)
-                smpeg_lib=[`find_lib "libsmpeg.so.[0-9]"`]
+                smpeg_lib=[`find_lib "libsmpeg*.so.[0-9]"`]
                 if test x$smpeg_lib = x; then
-                    smpeg_lib=[`find_lib "libsmpeg.so.[0-9]*"`]
+                    smpeg_lib=[`find_lib "libsmpeg*.so.[0-9]*"`]
                 fi
                 ;;
         esac
