@@ -117,9 +117,10 @@ $srcdir/music.c"
 
 find_lib()
 {
-    gcc_lib_path=[`$CC -print-search-dirs 2>/dev/null | fgrep libraries | sed 's/[^=]*=\(.*\)/\1/' | sed 's/:/ /g'`]
+    gcc_bin_path=[`$CC -print-search-dirs 2>/dev/null | fgrep programs: | sed 's/[^=]*=\(.*\)/\1/' | sed 's/:/ /g'`]
+    gcc_lib_path=[`$CC -print-search-dirs 2>/dev/null | fgrep libraries: | sed 's/[^=]*=\(.*\)/\1/' | sed 's/:/ /g'`]
     env_lib_path=[`echo $LIBS $LDFLAGS | sed 's/-L[ ]*//g'`]
-    for path in $gcc_lib_path $env_lib_path /usr/lib /usr/local/lib; do
+    for path in $gcc_bin_path $gcc_lib_path $env_lib_path /usr/lib /usr/local/lib; do
         lib=[`ls -- $path/$1 2>/dev/null | sort -r | sed 's/.*\/\(.*\)/\1/; q'`]
         if test x$lib != x; then
             echo $lib
@@ -270,7 +271,7 @@ if test x$enable_music_ogg = xyes; then
                     fi
                     ;;
                 *-*-cygwin* | *-*-mingw32*)
-                    ogg_lib=[`find_lib "vorbisidec*dll"`]
+                    ogg_lib=[`find_lib "vorbisidec*.dll"`]
                     ;;
                 *)
                     ogg_lib=[`find_lib "libvorbisidec.so.[0-9]"`]
@@ -297,7 +298,7 @@ if test x$enable_music_ogg = xyes; then
                     ogg_lib=[`find_lib libvorbisfile*.dylib`]
                     ;;
                 *-*-cygwin* | *-*-mingw32*)
-                    ogg_lib=[`find_lib "vorbisfile*dll"`]
+                    ogg_lib=[`find_lib "libvorbisfile*.dll"`]
                     ;;
                 *)
                     ogg_lib=[`find_lib "libvorbisfile.so.[0-9]"`]
@@ -332,7 +333,7 @@ AC_HELP_STRING([--enable-music-mp3-shared], [dynamically load MP3 support [[defa
                 smpeg_lib=[`find_lib libsmpeg*.dylib`]
                 ;;
             *-*-cygwin* | *-*-mingw32*)
-                smpeg_lib=[`find_lib "smpeg*dll"`]
+                smpeg_lib=[`find_lib "smpeg*.dll"`]
                 ;;
             *)
                 smpeg_lib=[`find_lib "libsmpeg.so.[0-9]"`]
