@@ -1896,7 +1896,7 @@ void pt_UpdateVoices(int max_volume)
 	SAMPLE *s;
 
 	pf->totalchn=pf->realchn=0;
-	for (mp_channel=0;mp_channel<md_sngchn;mp_channel++) {
+	for (mp_channel=0;mp_channel<pf->numchn;mp_channel++) {
 		aout=&pf->voice[mp_channel];
 		i=aout->i;
 		s=aout->s;
@@ -2630,7 +2630,7 @@ void Player_NextPosition(void)
 		pf->patbrk=0;
 		pf->vbtick=pf->sngspd;
 
-		for (t=0;t<md_sngchn;t++) {
+		for (t=0;t<pf->numchn;t++) {
 			Voice_Stop_internal(t);
 			pf->voice[t].i=NULL;
 			pf->voice[t].s=NULL;
@@ -2655,7 +2655,7 @@ void Player_PrevPosition(void)
 		pf->patbrk=0;
 		pf->vbtick=pf->sngspd;
 
-		for (t=0;t<md_sngchn;t++) {
+		for (t=0;t<pf->numchn;t++) {
 			Voice_Stop_internal(t);
 			pf->voice[t].i=NULL;
 			pf->voice[t].s=NULL;
@@ -2682,7 +2682,7 @@ void Player_SetPosition(UWORD pos)
 		pf->sngpos=pos;
 		pf->vbtick=pf->sngspd;
 
-		for (t=0;t<md_sngchn;t++) {
+		for (t=0;t<pf->numchn;t++) {
 			Voice_Stop_internal(t);
 			pf->voice[t].i=NULL;
 			pf->voice[t].s=NULL;
