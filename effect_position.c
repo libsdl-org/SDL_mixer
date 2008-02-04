@@ -86,6 +86,8 @@ void _Eff_PositionDeinit(void)
         free(pos_args_array[i]);
     }
 
+    position_channels = 0;
+
     free(pos_args_global);
     pos_args_global = NULL;
     free(pos_args_array);
