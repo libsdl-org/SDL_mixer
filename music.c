@@ -1416,11 +1416,13 @@ MODULE *MikMod_LoadSongRW(SDL_RWops *rw, int maxchan)
 }
 # endif
 
-Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw) {
+Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw)
+{
 	Uint8 magic[5];	  /*Apparently there is no way to check if the file is really a MOD,*/
 	/*		    or there are too many formats supported by MikMod or MikMod does */
 	/*		    this check by itself. If someone implements other formats (e.g. MP3) */
 	/*		    the check can be uncommented */
+	Uint8 moremagic[9];
 	Mix_Music *music;
 	int start;
 
@@ -1431,12 +1433,14 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw) {
 
 	/* Figure out what kind of file this is */
 	start = SDL_RWtell(rw);
-	if (SDL_RWread(rw,magic,1,4)!=4) {
+	if ( SDL_RWread(rw,magic,1,4) != 4 ||
+	     SDL_RWread(rw,moremagic,1,8) != 8 ) {
 		Mix_SetError("Couldn't read from RWops");
 		return NULL;
 	}
 	SDL_RWseek(rw, start, SEEK_SET);
 	magic[4]='\0';
+	moremagic[8] = '\0';
 
 	/* Allocate memory for the music structure */
 	music=(Mix_Music *)malloc(sizeof(Mix_Music));
@@ -1446,6 +1450,20 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw) {
 	}
 	music->error = 0;
 
+#ifdef WAV_MUSIC
+	/* WAVE files have the magic four bytes "RIFF"
+	   AIFF files have the magic 12 bytes "FORM" XXXX "AIFF"
+	 */
+	if ( ((strcmp((char *)magic, "RIFF") == 0) && (strcmp((char *)(moremagic+4), "WAVE") == 0)) ||
+	     (strcmp((char *)magic, "FORM") == 0) ) {
+		music->type = MUS_WAV;
+		music->data.wave = WAVStream_LoadSong_RW(rw, (char *)magic);
+		if ( music->data.wave == NULL ) {
+			music->error = 1;
+		}
+
+	} else
+#endif
 #ifdef OGG_MUSIC
 	/* Ogg Vorbis files have the magic four bytes "OggS" */
 	if ( strcmp((char *)magic, "OggS") == 0 ) {

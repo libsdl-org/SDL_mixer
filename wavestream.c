@@ -95,9 +95,9 @@ static SDL_AudioSpec mixer;
 static int wavestream_volume = MIX_MAX_VOLUME;
 
 /* Function to load the WAV/AIFF stream */
-static FILE *LoadWAVStream (const char *file, SDL_AudioSpec *spec,
+static SDL_RWops *LoadWAVStream (SDL_RWops *rw, SDL_AudioSpec *spec,
 					long *start, long *stop);
-static FILE *LoadAIFFStream (const char *file, SDL_AudioSpec *spec,
+static SDL_RWops *LoadAIFFStream (SDL_RWops *rw, SDL_AudioSpec *spec,
 					long *start, long *stop);
 
 /* Initialize the WAVStream player, with the given mixer settings
@@ -114,8 +114,26 @@ void WAVStream_SetVolume(int volume)
 	wavestream_volume = volume;
 }
 
-/* Load a WAV stream from the given file */
 WAVStream *WAVStream_LoadSong(const char *file, const char *magic)
+{
+	SDL_RWops *rw;
+	WAVStream *wave;
+
+	rw = SDL_RWFromFile(file, "rb");
+	if ( rw == NULL ) {
+		SDL_SetError("Couldn't open %s", file);
+		return NULL;
+	}
+	wave = WAVStream_LoadSong_RW(rw, magic);
+	if ( wave == NULL ) {
+		SDL_FreeRW(rw);
+		return NULL;
+	}
+	return wave;
+}
+
+/* Load a WAV stream from the given file */
+WAVStream *WAVStream_LoadSong_RW(SDL_RWops *rw, const char *magic)
 {
 	WAVStream *wave;
 	SDL_AudioSpec wavespec;
@@ -128,16 +146,16 @@ WAVStream *WAVStream_LoadSong(const char *file, const char *magic)
 	if ( wave ) {
 		memset(wave, 0, (sizeof *wave));
 		if ( strcmp(magic, "RIFF") == 0 ) {
-			wave->wavefp = LoadWAVStream(file, &wavespec,
+			wave->rw = LoadWAVStream(rw, &wavespec,
 					&wave->start, &wave->stop);
 		} else
 		if ( strcmp(magic, "FORM") == 0 ) {
-			wave->wavefp = LoadAIFFStream(file, &wavespec,
+			wave->rw = LoadAIFFStream(rw, &wavespec,
 					&wave->start, &wave->stop);
 		} else {
 			Mix_SetError("Unknown WAVE format");
 		}
-		if ( wave->wavefp == NULL ) {
+		if ( wave->rw == NULL ) {
 			free(wave);
 			return(NULL);
 		}
@@ -151,8 +169,7 @@ WAVStream *WAVStream_LoadSong(const char *file, const char *magic)
 /* Start playback of a given WAV stream */
 void WAVStream_Start(WAVStream *wave)
 {
-	clearerr(wave->wavefp);
-	fseek(wave->wavefp, wave->start, SEEK_SET);
+	SDL_RWseek (wave->rw, wave->start, SEEK_SET);
 	music = wave;
 }
 
@@ -161,7 +178,7 @@ void WAVStream_PlaySome(Uint8 *stream, int len)
 {
 	long pos;
 
-	if ( music && ((pos=ftell(music->wavefp)) < music->stop) ) {
+	if ( music && ((pos=SDL_RWtell(music->rw)) < music->stop) ) {
 		if ( music->cvt.needed ) {
 			int original_len;
 
@@ -181,7 +198,7 @@ void WAVStream_PlaySome(Uint8 *stream, int len)
 			if ( (music->stop - pos) < original_len ) {
 				original_len = (music->stop - pos);
 			}
-			original_len = fread(music->cvt.buf,1,original_len,music->wavefp);
+			original_len = SDL_RWread(music->rw, music->cvt.buf,1,original_len);
 			/* At least at the time of writing, SDL_ConvertAudio()
 			   does byte-order swapping starting at the end of the
 			   buffer. Thus, if we are reading 16-bit samples, we
@@ -202,7 +219,7 @@ void WAVStream_PlaySome(Uint8 *stream, int len)
 			data = SDL_stack_alloc(Uint8, len);
 			if (data)
 			{		
-				fread(data, len, 1, music->wavefp);
+				SDL_RWread(music->rw, data, len, 1);
 				SDL_MixAudio(stream, data, len, wavestream_volume);
 				SDL_stack_free(data);
 			}	
@@ -221,8 +238,8 @@ void WAVStream_FreeSong(WAVStream *wave)
 {
 	if ( wave ) {
 		/* Clean up associated data */
-		if ( wave->wavefp ) {
-			fclose(wave->wavefp);
+		if ( wave->freerw ) {
+			SDL_FreeRW(wave->rw);
 		}
 		if ( wave->cvt.buf ) {
 			free(wave->cvt.buf);
@@ -237,7 +254,7 @@ int WAVStream_Active(void)
 	int active;
 
 	active = 0;
-	if ( music && (ftell(music->wavefp) < music->stop) ) {
+	if ( music && (SDL_RWtell(music->rw) < music->stop) ) {
 		active = 1;
 	}
 	return(active);
@@ -264,12 +281,10 @@ static int ReadChunk(SDL_RWops *src, Chunk *chunk, int read_data)
 	return(chunk->length);
 }
 
-static FILE *LoadWAVStream (const char *file, SDL_AudioSpec *spec,
+static SDL_RWops *LoadWAVStream (SDL_RWops *src, SDL_AudioSpec *spec,
 					long *start, long *stop)
 {
 	int was_error;
-	FILE *wavefp;
-	SDL_RWops *src;
 	Chunk chunk;
 	int lenread;
 
@@ -281,17 +296,7 @@ static FILE *LoadWAVStream (const char *file, SDL_AudioSpec *spec,
 	/* FMT chunk */
 	WaveFMT *format = NULL;
 
-	/* Make sure we are passed a valid data source */
 	was_error = 0;
-	wavefp = fopen(file, "rb");
-	src = NULL;
-	if ( wavefp ) {
-		src = SDL_RWFromFP(wavefp, 0);
-	}
-	if ( src == NULL ) {
-		was_error = 1;
-		goto done;
-	}
 
 	/* Check the magic header */
 	RIFFchunk	= SDL_ReadLE32(src);
@@ -367,16 +372,10 @@ done:
 	if ( format != NULL ) {
 		free(format);
 	}
-	if ( src ) {
-		SDL_RWclose(src);
-	}
 	if ( was_error ) {
-		if ( wavefp ) {
-			fclose(wavefp);
-			wavefp = NULL;
-		}
+		return NULL;
 	}
-	return(wavefp);
+	return(src);
 }
 
 /* I couldn't get SANE_to_double() to work, so I stole this from libsndfile.
@@ -405,14 +404,12 @@ static Uint32 SANE_to_Uint32 (Uint8 *sanebuf)
 		| (sanebuf[5] >> 1)) >> (29 - sanebuf[1]);
 }
 
-static FILE *LoadAIFFStream (const char *file, SDL_AudioSpec *spec,
+static SDL_RWops *LoadAIFFStream (SDL_RWops *src, SDL_AudioSpec *spec,
 					long *start, long *stop)
 {
 	int was_error;
 	int found_SSND;
 	int found_COMM;
-	FILE *wavefp;
-	SDL_RWops *src;
 
 	Uint32 chunk_type;
 	Uint32 chunk_length;
@@ -431,18 +428,7 @@ static FILE *LoadAIFFStream (const char *file, SDL_AudioSpec *spec,
 	Uint8 sane_freq[10];
 	Uint32 frequency = 0;
 
-
-	/* Make sure we are passed a valid data source */
 	was_error = 0;
-	wavefp = fopen(file, "rb");
-	src = NULL;
-	if ( wavefp ) {
-		src = SDL_RWFromFP(wavefp, 0);
-	}
-	if ( src == NULL ) {
-		was_error = 1;
-		goto done;
-	}
 
 	/* Check the magic header */
 	FORMchunk	= SDL_ReadLE32(src);
@@ -531,15 +517,9 @@ static FILE *LoadAIFFStream (const char *file, SDL_AudioSpec *spec,
 	spec->samples = 4096;		/* Good default buffer size */
 
 done:
-	if ( src ) {
-		SDL_RWclose(src);
-	}
 	if ( was_error ) {
-		if ( wavefp ) {
-			fclose(wavefp);
-			wavefp = NULL;
-		}
+		return NULL;
 	}
-	return(wavefp);
+	return(src);
 }
 

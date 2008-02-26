@@ -1,3 +1,7 @@
+1.2.9:
+Tilman Sauerbeck - Tue Feb 26 03:44:47 PST 2008
+ * Added support for streaming WAV files with Mix_LoadMUS_RW()
+
 1.2.8:
 Sam Lantinga - Wed Jul 18 09:45:54 PDT 2007
  * Improved detection of Ogg Vorbis and Tremor libraries
