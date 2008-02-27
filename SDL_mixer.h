@@ -103,6 +103,7 @@ typedef enum {
 	MUS_MOD,
 	MUS_MID,
 	MUS_OGG,
+	MUS_FLAC,
 	MUS_MP3,
 	MUS_MP3_MAD
 } Mix_MusicType;

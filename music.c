@@ -89,6 +89,9 @@
 #ifdef MP3_MAD_MUSIC
 #include "music_mad.h"
 #endif
+#ifdef FLAC_MUSIC
+#include "music_flac.h"
+#endif
 
 #if defined(MP3_MUSIC) || defined(MP3_MAD_MUSIC)
 static SDL_AudioSpec used_mixer;
@@ -132,6 +135,9 @@ struct _Mix_Music {
 #endif
 #ifdef MP3_MAD_MUSIC
 		mad_data *mp3_mad;
+#endif
+#ifdef FLAC_MUSIC
+		FLAC_music *flac;
 #endif
 	} data;
 	Mix_Fading fading;
@@ -345,6 +351,13 @@ void music_mixer(void *udata, Uint8 *stream, int len)
 			
 				break;
 #endif
+#ifdef FLAC_MUSIC
+			case MUS_FLAC:
+				len = FLAC_playAudio(music_playing->data.flac, stream, len);
+				if (len > 0 && music_halt_or_loop())
+					FLAC_playAudio(music_playing->data.flac, stream, len);
+				break;
+#endif
 #ifdef MP3_MUSIC
 			case MUS_MP3:
 				smpeg.SMPEG_playAudio(music_playing->data.mp3, stream, len);
@@ -466,6 +479,11 @@ int open_music(SDL_AudioSpec *mixer)
 #endif
 #ifdef OGG_MUSIC
 	if ( OGG_init(mixer) < 0 ) {
+		++music_error;
+	}
+#endif
+#ifdef FLAC_MUSIC
+	if ( FLAC_init(mixer) < 0 ) {
 		++music_error;
 	}
 #endif
@@ -602,6 +620,17 @@ Mix_Music *Mix_LoadMUS(const char *file)
 		}
 	} else
 #endif
+#ifdef FLAC_MUSIC
+	/* FLAC files have the magic four bytes "fLaC" */
+	if ( (ext && MIX_string_equals(ext, "FLAC")) ||
+		 strcmp((char *)magic, "fLaC") == 0 ) {
+		music->type = MUS_FLAC;
+		music->data.flac = FLAC_new(file);
+		if ( music->data.flac == NULL ) {
+			music->error = 1;
+		}
+	} else
+#endif
 #ifdef MP3_MUSIC
 	if ( (ext && MIX_string_equals(ext, "MPG")) ||
 	     (ext && MIX_string_equals(ext, "MP3")) ||
@@ -720,6 +749,11 @@ void Mix_FreeMusic(Mix_Music *music)
 				OGG_delete(music->data.ogg);
 				break;
 #endif
+#ifdef FLAC_MUSIC
+			case MUS_FLAC:
+				FLAC_delete(music->data.flac);
+				break;
+#endif
 #ifdef MP3_MUSIC
 			case MUS_MP3:
 				smpeg.SMPEG_delete(music->data.mp3);
@@ -811,6 +845,11 @@ static int music_internal_play(Mix_Music *music, double position)
 #ifdef OGG_MUSIC
 	    case MUS_OGG:
 		OGG_play(music->data.ogg);
+		break;
+#endif
+#ifdef FLAC_MUSIC
+	    case MUS_FLAC:
+		FLAC_play(music->data.flac);
 		break;
 #endif
 #ifdef MP3_MUSIC
@@ -908,6 +947,11 @@ int music_internal_position(double position)
 		OGG_jump_to_time(music_playing->data.ogg, position);
 		break;
 #endif
+#ifdef FLAC_MUSIC
+	    case MUS_FLAC:
+		FLAC_jump_to_time(music_playing->data.flac, position);
+		break;
+#endif
 #ifdef MP3_MUSIC
 	    case MUS_MP3:
 		if ( position > 0.0 ) {
@@ -997,6 +1041,11 @@ static void music_internal_volume(int volume)
 		OGG_setvolume(music_playing->data.ogg, volume);
 		break;
 #endif
+#ifdef FLAC_MUSIC
+	    case MUS_FLAC:
+		FLAC_setvolume(music_playing->data.flac, volume);
+		break;
+#endif
 #ifdef MP3_MUSIC
 	    case MUS_MP3:
 		smpeg.SMPEG_setvolume(music_playing->data.mp3,(int)(((float)volume/(float)MIX_MAX_VOLUME)*100.0));
@@ -1068,6 +1117,11 @@ static void music_internal_halt(void)
 #ifdef OGG_MUSIC
 	    case MUS_OGG:
 		OGG_stop(music_playing->data.ogg);
+		break;
+#endif
+#ifdef FLAC_MUSIC
+	    case MUS_FLAC:
+		FLAC_stop(music_playing->data.flac);
 		break;
 #endif
 #ifdef MP3_MUSIC
@@ -1213,6 +1267,13 @@ static int music_internal_playing()
 #ifdef OGG_MUSIC
 	    case MUS_OGG:
 		if ( ! OGG_playing(music_playing->data.ogg) ) {
+			playing = 0;
+		}
+		break;
+#endif
+#ifdef FLAC_MUSIC
+	    case MUS_FLAC:
+		if ( ! FLAC_playing(music_playing->data.flac) ) {
 			playing = 0;
 		}
 		break;
@@ -1470,6 +1531,16 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw)
 		music->type = MUS_OGG;
 		music->data.ogg = OGG_new_RW(rw);
 		if ( music->data.ogg == NULL ) {
+			music->error = 1;
+		}
+	} else
+#endif
+#ifdef FLAC_MUSIC
+	/* FLAC files have the magic four bytes "fLaC" */
+	if ( strcmp((char *)magic, "fLaC") == 0 ) {
+		music->type = MUS_FLAC;
+		music->data.flac = FLAC_new_RW(rw);
+		if ( music->data.flac == NULL ) {
 			music->error = 1;
 		}
 	} else

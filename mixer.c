@@ -34,6 +34,7 @@
 #include "load_aiff.h"
 #include "load_voc.h"
 #include "load_ogg.h"
+#include "load_flac.h"
 
 #define __MIX_INTERNAL_EFFECT__
 #include "effects_internal.h"
@@ -43,7 +44,8 @@
 #define WAVE		0x45564157		/* "WAVE" */
 #define FORM		0x4d524f46		/* "FORM" */
 #define OGGS		0x5367674f		/* "OggS" */
-#define CREA	    	0x61657243		/* "Crea" */
+#define CREA		0x61657243		/* "Crea" */
+#define FLAC		0x43614C66		/* "fLaC" */
 
 static int audio_opened = 0;
 static SDL_AudioSpec mixer;
@@ -452,6 +454,12 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
 #ifdef OGG_MUSIC
 		case OGGS:
 			loaded = Mix_LoadOGG_RW(src, freesrc, &wavespec,
+					(Uint8 **)&chunk->abuf, &chunk->alen);
+			break;
+#endif
+#ifdef FLAC_MUSIC
+		case FLAC:
+			loaded = Mix_LoadFLAC_RW(src, freesrc, &wavespec,
 					(Uint8 **)&chunk->abuf, &chunk->alen);
 			break;
 #endif
