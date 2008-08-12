@@ -42,7 +42,7 @@ mad_openFile(const char *filename, SDL_AudioSpec *mixer) {
 	return NULL;
   }
   mp3_mad->freerw = SDL_TRUE;
-  return data;
+  return mp3_mad;
 }
 
 mad_data *
