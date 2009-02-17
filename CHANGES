@@ -3,6 +3,8 @@ Austen Dicken - Tue Feb 26 23:28:27 PST 2008
  * Added support for FLAC audio both as chunks and streaming
 Tilman Sauerbeck - Tue Feb 26 03:44:47 PST 2008
  * Added support for streaming WAV files with Mix_LoadMUS_RW()
+Ryan Gordon - Mon Feb 4 17:10:08 UTC 2008
+ * Fixed crash caused by not resetting position_channels
 
 1.2.8:
 Sam Lantinga - Wed Jul 18 09:45:54 PDT 2007
