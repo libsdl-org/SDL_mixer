@@ -414,7 +414,7 @@ int main(int argc, char *argv[])
 	audio_open = 1;
 
 #if (defined TEST_MIX_VERSIONS)
-    test_versions();
+	test_versions();
 #endif
 
 	/* Load the requested wave file */
