@@ -37,6 +37,7 @@
 /*
  * rcg06132001 various mixer tests. Define the ones you want.
  */
+#define TEST_MIX_DECODERS
 /*#define TEST_MIX_VERSIONS*/
 /*#define TEST_MIX_CHANNELFINISHED*/
 /*#define TEST_MIX_PANNING*/
@@ -81,6 +82,24 @@ static void output_test_warnings(void)
 static int audio_open = 0;
 static Mix_Chunk *wave = NULL;
 
+/* rcg06042009 Report available decoders. */
+#if (defined TEST_MIX_DECODERS)
+static void report_decoders(void)
+{
+	int i, total;
+
+    printf("Supported decoders...\n");
+	total = Mix_NumChunkDecoders();
+	for (i = 0; i < total; i++) {
+		fprintf(stderr, " - chunk decoder: %s\n", Mix_GetChunkDecoder(i));
+	}
+
+	total = Mix_NumMusicDecoders();
+	for (i = 0; i < total; i++) {
+		fprintf(stderr, " - music decoder: %s\n", Mix_GetMusicDecoder(i));
+	}
+}
+#endif
 
 /* rcg06192001 Check new Mixer version API. */
 #if (defined TEST_MIX_VERSIONS)
@@ -415,6 +434,10 @@ int main(int argc, char *argv[])
 
 #if (defined TEST_MIX_VERSIONS)
 	test_versions();
+#endif
+
+#if (defined TEST_MIX_DECODERS)
+	report_decoders();
 #endif
 
 	/* Load the requested wave file */
