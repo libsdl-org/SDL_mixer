@@ -37,7 +37,7 @@
 /*
  * rcg06132001 various mixer tests. Define the ones you want.
  */
-#define TEST_MIX_DECODERS
+/*#define TEST_MIX_DECODERS*/
 /*#define TEST_MIX_VERSIONS*/
 /*#define TEST_MIX_CHANNELFINISHED*/
 /*#define TEST_MIX_PANNING*/
