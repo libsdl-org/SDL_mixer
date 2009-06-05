@@ -41,7 +41,7 @@ extern "C" {
 */
 #define SDL_MIXER_MAJOR_VERSION	1
 #define SDL_MIXER_MINOR_VERSION	2
-#define SDL_MIXER_PATCHLEVEL	8
+#define SDL_MIXER_PATCHLEVEL    9
 
 /* This macro can be used to fill a version structure with the compile-time
  * version of the SDL_mixer library.
@@ -145,6 +145,30 @@ extern DECLSPEC Mix_Chunk * SDLCALL Mix_QuickLoad_RAW(Uint8 *mem, Uint32 len);
 /* Free an audio chunk previously loaded */
 extern DECLSPEC void SDLCALL Mix_FreeChunk(Mix_Chunk *chunk);
 extern DECLSPEC void SDLCALL Mix_FreeMusic(Mix_Music *music);
+
+/* Get a list of chunk/music decoders that this build of SDL_mixer provides.
+   This list can change between builds AND runs of the program, if external
+   libraries that add functionality become available.
+   You must successfully call Mix_OpenAudio() before calling these functions.
+   This API is only available in SDL_mixer 1.2.9 and later.
+
+   // usage...
+   int i;
+   const int total = Mix_GetNumChunkDecoders();
+   for (i = 0; i < total; i++)
+       printf("Supported chunk decoder: [%s]\n", Mix_GetChunkDecoder(i));
+
+   Appearing in this list doesn't promise your specific audio file will
+   decode...but it's handy to know if you have, say, a functioning Timidity
+   install.
+
+   These return values are static, read-only data; do not modify or free it.
+   The pointers remain valid until you call Mix_CloseAudio().
+*/
+extern DECLSPEC int SDLCALL Mix_GetNumChunkDecoders(void);
+extern DECLSPEC const char * SDLCALL Mix_GetChunkDecoder(int index);
+extern DECLSPEC int SDLCALL Mix_GetNumMusicDecoders(void);
+extern DECLSPEC const char * SDLCALL Mix_GetMusicDecoder(int index);
 
 /* Find out the music format of a mixer music, or the currently playing
    music, if 'music' is NULL.

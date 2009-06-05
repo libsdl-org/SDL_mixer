@@ -162,6 +162,33 @@ static Uint16 current_output_format;
 /* Used to calculate fading steps */
 static int ms_per_step;
 
+/* rcg06042009 report available decoders at runtime. */
+static const char **music_decoders = NULL;
+static int num_decoders = 0;
+
+int Mix_NumMusicDecoders(void)
+{
+	return(num_decoders);
+}
+
+const char *Mix_GetMusicDecoder(int index)
+{
+	if ((index < 0) || (index >= num_decoders)) {
+		return NULL;
+	}
+	return(music_decoders[index]);
+}
+
+static void add_music_decoder(const char *decoder)
+{
+	void *ptr = realloc(music_decoders, num_decoders * sizeof (const char **));
+	if (ptr == NULL) {
+		return;  /* oh well, go on without it. */
+	}
+    music_decoders = (const char **) ptr;
+	music_decoders[num_decoders++] = decoder;
+}
+
 /* Local low-level functions prototypes */
 static void music_internal_initialize_volume(void);
 static void music_internal_volume(int volume);
@@ -387,6 +414,8 @@ int open_music(SDL_AudioSpec *mixer)
 #ifdef WAV_MUSIC
 	if ( WAVStream_Init(mixer) < 0 ) {
 		++music_error;
+	} else {
+		add_music_decoder("WAVE");
 	}
 #endif
 #if defined(MOD_MUSIC) || defined(LIBMIKMOD_MUSIC)
@@ -458,6 +487,7 @@ int open_music(SDL_AudioSpec *mixer)
 		Mix_SetError("%s", MikMod_strerror(MikMod_errno));
 		++music_error;
 	}
+	add_music_decoder("MIKMOD");
 #endif
 #ifdef MID_MUSIC
 #ifdef USE_TIMIDITY_MIDI
@@ -465,6 +495,7 @@ int open_music(SDL_AudioSpec *mixer)
 	if ( Timidity_Init(mixer->freq, mixer->format,
 	                    mixer->channels, mixer->samples) == 0 ) {
 		timidity_ok = 1;
+		add_music_decoder("TIMIDITY");
 	} else {
 		timidity_ok = 0;
 	}
@@ -475,22 +506,30 @@ int open_music(SDL_AudioSpec *mixer)
 	if ( native_midi_ok )
 #endif
 		native_midi_ok = native_midi_detect();
+	if ( native_midi_ok )
+		add_music_decoder("NATIVEMIDI");
 #endif
 #endif
 #ifdef OGG_MUSIC
 	if ( OGG_init(mixer) < 0 ) {
 		++music_error;
+	} else {
+		add_music_decoder("OGG");
 	}
 #endif
 #ifdef FLAC_MUSIC
 	if ( FLAC_init(mixer) < 0 ) {
 		++music_error;
+	} else {
+		add_music_decoder("FLAC");
 	}
 #endif
 #if defined(MP3_MUSIC) || defined(MP3_MAD_MUSIC)
 	/* Keep a copy of the mixer */
 	used_mixer = *mixer;
+	add_music_decoder("MP3");
 #endif
+
 	music_playing = NULL;
 	music_stopped = 0;
 	if ( music_error ) {
@@ -1406,6 +1445,11 @@ void close_music(void)
 	Timidity_Close();
 # endif
 #endif
+
+	/* rcg06042009 report available decoders at runtime. */
+	free(music_decoders);
+	music_decoders = NULL;
+	num_decoders = 0;
 }
 
 # ifdef LIBMIKMOD_MUSIC

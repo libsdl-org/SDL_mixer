@@ -98,6 +98,32 @@ extern void music_mixer(void *udata, Uint8 *stream, int len);
 static void (*mix_music)(void *udata, Uint8 *stream, int len) = music_mixer;
 static void *music_data = NULL;
 
+/* rcg06042009 report available decoders at runtime. */
+static const char **chunk_decoders = NULL;
+static int num_decoders = 0;
+
+int Mix_NumChunkDecoders(void)
+{
+	return(num_decoders);
+}
+
+const char *Mix_GetChunkDecoder(int index)
+{
+	if ((index < 0) || (index >= num_decoders)) {
+		return NULL;
+	}
+	return(chunk_decoders[index]);
+}
+
+static void add_chunk_decoder(const char *decoder)
+{
+	void *ptr = realloc(chunk_decoders, num_decoders * sizeof (const char **));
+	if (ptr == NULL) {
+		return;  /* oh well, go on without it. */
+	}
+	chunk_decoders = (const char **) ptr;
+	chunk_decoders[num_decoders++] = decoder;
+}
 
 /* rcg06192001 get linked library's version. */
 const SDL_version *Mix_Linked_Version(void)
@@ -333,6 +359,17 @@ int Mix_OpenAudio(int frequency, Uint16 format, int nchannels, int chunksize)
 	Mix_VolumeMusic(SDL_MIX_MAXVOLUME);
 
 	_Mix_InitEffects();
+
+	/* This list is (currently) decided at build time. */
+	add_chunk_decoder("WAVE");
+	add_chunk_decoder("AIFF");
+	add_chunk_decoder("VOC");
+#ifdef OGG_MUSIC
+	add_chunk_decoder("OGG");
+#endif
+#ifdef FLAC_MUSIC
+	add_chunk_decoder("FLAC");
+#endif
 
 	audio_opened = 1;
 	SDL_PauseAudio(0);
@@ -978,6 +1015,11 @@ void Mix_CloseAudio(void)
 			SDL_CloseAudio();
 			free(mix_channel);
 			mix_channel = NULL;
+
+			/* rcg06042009 report available decoders at runtime. */
+			free(chunk_decoders);
+			chunk_decoders = NULL;
+			num_decoders = 0;
 		}
 		--audio_opened;
 	}
