@@ -36,7 +36,7 @@ TARGET  = libSDL_mixer.la
 SOURCES = @SOURCES@
 OBJECTS = @OBJECTS@
 
-DIST = CHANGES COPYING CWProjects.sea.bin MPWmake.sea.bin Makefile.in README SDL_mixer.h SDL_mixer.qpg.in SDL_mixer.spec SDL_mixer.spec.in VisualC.zip Watcom-OS2.zip Xcode.tar.gz acinclude autogen.sh build-scripts configure configure.in dynamic_mp3.c dynamic_mp3.h dynamic_ogg.c dynamic_ogg.h effect_position.c effect_stereoreverse.c effects_internal.c effects_internal.h gcc-fat.sh load_aiff.c load_aiff.h load_ogg.c load_ogg.h load_voc.c load_voc.h mikmod mixer.c music.c music_cmd.c music_cmd.h music_mad.c music_mad.h music_ogg.c music_ogg.h native_midi native_midi_gpl playmus.c playwave.c timidity wavestream.c wavestream.h version.rc
+DIST = CHANGES COPYING CWProjects.sea.bin MPWmake.sea.bin Makefile.in SDL_mixer.pc.in README SDL_mixer.h SDL_mixer.qpg.in SDL_mixer.spec SDL_mixer.spec.in VisualC.zip Watcom-OS2.zip Xcode.tar.gz acinclude autogen.sh build-scripts configure configure.in dynamic_mp3.c dynamic_mp3.h dynamic_ogg.c dynamic_ogg.h effect_position.c effect_stereoreverse.c effects_internal.c effects_internal.h gcc-fat.sh load_aiff.c load_aiff.h load_ogg.c load_ogg.h load_voc.c load_voc.h mikmod mixer.c music.c music_cmd.c music_cmd.h music_mad.c music_mad.h music_ogg.c music_ogg.h native_midi native_midi_gpl playmus.c playwave.c timidity wavestream.c wavestream.h version.rc
 
 LT_AGE      = @LT_AGE@
 LT_CURRENT  = @LT_CURRENT@
@@ -86,6 +86,8 @@ install-hdrs:
 	    file=`echo $$src | sed -e 's|^.*/||'`; \
 	    $(INSTALL) -m 644 $$src $(includedir)/SDL/$$file; \
 	done
+	$(SHELL) $(auxdir)/mkinstalldirs $(libdir)/pkgconfig
+	$(INSTALL) -m 644 SDL_mixer.pc $(libdir)/pkgconfig/
 install-lib: $(objects) $(objects)/$(TARGET)
 	$(SHELL) $(auxdir)/mkinstalldirs $(libdir)
 	$(LIBTOOL) --mode=install $(INSTALL) $(objects)/$(TARGET) $(libdir)/$(TARGET)
@@ -101,6 +103,8 @@ uninstall-hdrs:
 	    rm -f $(includedir)/SDL/$$file; \
 	done
 	-rmdir $(includedir)/SDL
+	rm -f $(libdir)/pkgconfig/SDL_mixer.pc
+	-rmdir $(libdir)/pkgconfig
 uninstall-lib:
 	$(LIBTOOL) --mode=uninstall rm -f $(libdir)/$(TARGET)
 uninstall-bin:
@@ -114,6 +118,7 @@ distclean: clean
 	rm -f Makefile
 	rm -f SDL_mixer.qpg
 	rm -f config.status config.cache config.log libtool $(depend)
+	rm -f SDL_mixer.pc
 	rm -rf $(srcdir)/autom4te*
 	find $(srcdir) \( \
 	    -name '*~' -o \

@@ -420,11 +420,12 @@ AC_SUBST(BUILD_LDFLAGS)
 AC_SUBST(EXTRA_LDFLAGS)
 AC_SUBST(EXE)
 AC_SUBST(WINDRES)
+AC_SUBST(SDL_VERSION)
 AC_SUBST(SDL_CFLAGS)
 AC_SUBST(SDL_LIBS)
 
 AC_OUTPUT([
-    Makefile SDL_mixer.spec SDL_mixer.qpg
+    Makefile SDL_mixer.spec SDL_mixer.qpg SDL_mixer.pc
 ], [
     : >build-deps
     if test x"$MAKE" = x; then MAKE=make; fi; $MAKE depend
