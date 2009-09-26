@@ -188,7 +188,7 @@ int native_midi_detect()
   return 1;
 }
 
-NativeMidiSong *native_midi_loadsong(char *midifile)
+NativeMidiSong *native_midi_loadsong(const char *midifile)
 {
 	NativeMidiSong *newsong;
 	MIDIEvent		*evntlist = NULL;

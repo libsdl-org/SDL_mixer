@@ -627,7 +627,7 @@ Mix_Music *Mix_LoadMUS(const char *file)
 		music->type = MUS_MID;
 #ifdef USE_NATIVE_MIDI
   		if ( native_midi_ok ) {
-  			music->data.nativemidi = native_midi_loadsong((char *)file);
+  			music->data.nativemidi = native_midi_loadsong(file);
 	  		if ( music->data.nativemidi == NULL ) {
 		  		Mix_SetError("%s", native_midi_error());
 			  	music->error = 1;
