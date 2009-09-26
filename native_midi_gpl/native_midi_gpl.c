@@ -315,7 +315,7 @@ void native_midi_setvolume(int volume)
 {
 }
 
-char *native_midi_error()
+const char *native_midi_error(void)
 {
   return "stala sa chyba";
 }

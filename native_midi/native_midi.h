@@ -35,6 +35,6 @@ void native_midi_start(NativeMidiSong *song);
 void native_midi_stop();
 int native_midi_active();
 void native_midi_setvolume(int volume);
-char *native_midi_error();
+const char *native_midi_error(void);
 
 #endif /* _NATIVE_MIDI_H_ */
