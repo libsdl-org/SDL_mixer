@@ -183,12 +183,9 @@ int native_midi_detect()
 
   merr=midiStreamOpen(&MidiStream,&MidiDevice,(DWORD)1,(DWORD_PTR)MidiProc,(DWORD_PTR)0,CALLBACK_FUNCTION);
   if (merr!=MMSYSERR_NOERROR)
-    MidiStream=0;
-  midiStreamClose(MidiStream);
-  if (!MidiStream)
     return 0;
-  else
-    return 1;
+  midiStreamClose(MidiStream);
+  return 1;
 }
 
 NativeMidiSong *native_midi_loadsong(char *midifile)
