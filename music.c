@@ -674,7 +674,8 @@ Mix_Music *Mix_LoadMUS(const char *file)
 	if ( (ext && MIX_string_equals(ext, "MPG")) ||
 	     (ext && MIX_string_equals(ext, "MP3")) ||
 	     (ext && MIX_string_equals(ext, "MPEG")) ||
-	     (magic[0] == 0xFF && (magic[1] & 0xF0) == 0xF0) ) {
+	     (magic[0] == 0xFF && (magic[1] & 0xF0) == 0xF0) ||
+	     (strncmp((char *)magic, "ID3", 3) == 0) ) {
 		if ( Mix_InitMP3() == 0 ) {
 			SMPEG_Info info;
 			music->type = MUS_MP3;
@@ -695,7 +696,8 @@ Mix_Music *Mix_LoadMUS(const char *file)
 	     (ext && MIX_string_equals(ext, "MP3")) ||
 	     (ext && MIX_string_equals(ext, "MPEG")) ||
 	     (ext && MIX_string_equals(ext, "MAD")) ||
-	     (magic[0] == 0xFF && (magic[1] & 0xF0) == 0xF0) ) {
+	     (magic[0] == 0xFF && (magic[1] & 0xF0) == 0xF0) ||
+	     (strncmp((char *)magic, "ID3", 3) == 0) ) {
 		music->type = MUS_MP3_MAD;
 		music->data.mp3_mad = mad_openFile(file, &used_mixer);
 		if (music->data.mp3_mad == 0) {
@@ -1590,7 +1592,7 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw)
 	} else
 #endif
 #ifdef MP3_MUSIC
-	if ( magic[0] == 0xFF && (magic[1] & 0xF0) == 0xF0 ) {
+	if ( ( magic[0] == 0xFF && (magic[1] & 0xF0) == 0xF0) || ( strncmp((char *)magic, "ID3", 3) == 0 ) ) {
 		if ( Mix_InitMP3() == 0 ) {
 			SMPEG_Info info;
 			music->type = MUS_MP3;
@@ -1607,7 +1609,7 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw)
 	} else
 #endif
 #ifdef MP3_MAD_MUSIC
-	if ( magic[0] == 0xFF && (magic[1] & 0xF0) == 0xF0 ) {
+	if ( ( magic[0] == 0xFF && (magic[1] & 0xF0) == 0xF0) || ( strncmp((char *)magic, "ID3", 3) == 0 ) ) {
 		music->type = MUS_MP3_MAD;
 		music->data.mp3_mad = mad_openFileRW(rw, &used_mixer);
 		if (music->data.mp3_mad == 0) {

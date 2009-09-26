@@ -1,4 +1,6 @@
 1.2.9:
+Forrest Voight - 2009-06-13 20:31:38 PDT
+ * ID3 files are now recognized as MP3 format
 Austen Dicken - Tue Feb 26 23:28:27 PST 2008
  * Added support for FLAC audio both as chunks and streaming
 Tilman Sauerbeck - Tue Feb 26 03:44:47 PST 2008
