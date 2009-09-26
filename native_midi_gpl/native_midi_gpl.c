@@ -127,7 +127,7 @@ int native_midi_detect()
     return ret;
 }
 
-NativeMidiSong *native_midi_loadsong(char *midifile)
+NativeMidiSong *native_midi_loadsong(const char *midifile)
 {
     NativeMidiSong	*song = NULL;
     char 		*extra;
