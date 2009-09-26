@@ -339,7 +339,7 @@ void native_midi_setvolume(int volume)
 	TuneSetVolume(gTunePlayer, (0x00010000 * volume)/SDL_MIX_MAXVOLUME);
 }
 
-char *native_midi_error()
+const char *native_midi_error(void)
 {
 	return gErrorBuffer;
 }

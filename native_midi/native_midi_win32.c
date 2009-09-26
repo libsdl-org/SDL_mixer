@@ -311,7 +311,7 @@ void native_midi_setvolume(int volume)
   midiOutSetVolume((HMIDIOUT)hMidiStream, MAKELONG(calcVolume , calcVolume));
 }
 
-char *native_midi_error()
+const char *native_midi_error(void)
 {
   return "";
 }
