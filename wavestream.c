@@ -174,9 +174,10 @@ void WAVStream_Start(WAVStream *wave)
 }
 
 /* Play some of a stream previously started with WAVStream_Start() */
-void WAVStream_PlaySome(Uint8 *stream, int len)
+int WAVStream_PlaySome(Uint8 *stream, int len)
 {
 	long pos;
+	int left = 0;
 
 	if ( music && ((pos=SDL_RWtell(music->rw)) < music->stop) ) {
 		if ( music->cvt.needed ) {
@@ -196,7 +197,9 @@ void WAVStream_PlaySome(Uint8 *stream, int len)
 				music->cvt.len = original_len;
 			}
 			if ( (music->stop - pos) < original_len ) {
-				original_len = (music->stop - pos);
+				left = (original_len - (music->stop - pos));
+				original_len -= left;
+				left = (int)((double)left*music->cvt.len_ratio);
 			}
 			original_len = SDL_RWread(music->rw, music->cvt.buf,1,original_len);
 			/* At least at the time of writing, SDL_ConvertAudio()
@@ -214,7 +217,8 @@ void WAVStream_PlaySome(Uint8 *stream, int len)
 		} else {
 			Uint8 *data;
 			if ( (music->stop - pos) < len ) {
-				len = (music->stop - pos);
+				left = (len - (music->stop - pos));
+				len -= left;
 			}
 			data = SDL_stack_alloc(Uint8, len);
 			if (data)
@@ -225,6 +229,7 @@ void WAVStream_PlaySome(Uint8 *stream, int len)
 			}	
 		}
 	}
+	return left;
 }
 
 /* Stop playback of a stream previously started with WAVStream_Start() */
