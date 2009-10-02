@@ -242,6 +242,8 @@ static int music_halt_or_loop (void)
 /* Mixing function */
 void music_mixer(void *udata, Uint8 *stream, int len)
 {
+	int left = 0;
+
 	if ( music_playing && music_active ) {
 		/* Handle fading */
 		if ( music_playing->fading != MIX_NO_FADING ) {
@@ -280,7 +282,7 @@ void music_mixer(void *udata, Uint8 *stream, int len)
 #endif
 #ifdef WAV_MUSIC
 			case MUS_WAV:
-				WAVStream_PlaySome(stream, len);
+				left = WAVStream_PlaySome(stream, len);
 				break;
 #endif
 #if defined(MOD_MUSIC) || defined(LIBMIKMOD_MUSIC)
@@ -372,33 +374,33 @@ void music_mixer(void *udata, Uint8 *stream, int len)
 #ifdef OGG_MUSIC
 			case MUS_OGG:
 				
-				len = OGG_playAudio(music_playing->data.ogg, stream, len);
-				if (len > 0 && music_halt_or_loop())
-					OGG_playAudio(music_playing->data.ogg, stream, len);
-			
+				left = OGG_playAudio(music_playing->data.ogg, stream, len);
 				break;
 #endif
 #ifdef FLAC_MUSIC
 			case MUS_FLAC:
-				len = FLAC_playAudio(music_playing->data.flac, stream, len);
-				if (len > 0 && music_halt_or_loop())
-					FLAC_playAudio(music_playing->data.flac, stream, len);
+				left = FLAC_playAudio(music_playing->data.flac, stream, len);
 				break;
 #endif
 #ifdef MP3_MUSIC
 			case MUS_MP3:
-				smpeg.SMPEG_playAudio(music_playing->data.mp3, stream, len);
+				left = (len - smpeg.SMPEG_playAudio(music_playing->data.mp3, stream, len));
 				break;
 #endif
 #ifdef MP3_MAD_MUSIC
 			case MUS_MP3_MAD:
-				mad_getSamples(music_playing->data.mp3_mad, stream, len);
+				left = mad_getSamples(music_playing->data.mp3_mad, stream, len);
 				break;
 #endif
 			default:
 				/* Unknown music type?? */
 				break;
 		}
+	}
+
+	/* Handle seamless music looping */
+	if (left > 0 && left < len && music_halt_or_loop()) {
+		music_mixer(udata, stream+(len-left), left);
 	}
 }
 

@@ -52,7 +52,7 @@ extern WAVStream *WAVStream_LoadSong_RW(SDL_RWops *rw, const char *magic);
 extern void WAVStream_Start(WAVStream *wave);
 
 /* Play some of a stream previously started with WAVStream_Start() */
-extern void WAVStream_PlaySome(Uint8 *stream, int len);
+extern int WAVStream_PlaySome(Uint8 *stream, int len);
 
 /* Stop playback of a stream previously started with WAVStream_Start() */
 extern void WAVStream_Stop(void);

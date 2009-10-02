@@ -233,7 +233,7 @@ decode_frame(mad_data *mp3_mad) {
   /*assert(mp3_mad->output_end <= MAD_OUTPUT_BUFFER_SIZE);*/
 }
 
-void
+int
 mad_getSamples(mad_data *mp3_mad, Uint8 *stream, int len) {
   int bytes_remaining;
   int num_bytes;
@@ -258,7 +258,7 @@ mad_getSamples(mad_data *mp3_mad, Uint8 *stream, int len) {
 			 end-of-file.  Stop. */
 		  memset(out, 0, bytes_remaining);
 		  mp3_mad->status &= ~MS_playing;
-		  return;
+		  return bytes_remaining;
 		}
 	  } else {
 		decode_frame(mp3_mad);
@@ -289,6 +289,7 @@ mad_getSamples(mad_data *mp3_mad, Uint8 *stream, int len) {
 	mp3_mad->output_begin += num_bytes;
 	bytes_remaining -= num_bytes;
   }
+  return 0;
 }
 
 void

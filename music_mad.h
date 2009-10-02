@@ -67,7 +67,7 @@ void mad_start(mad_data *mp3_mad);
 void mad_stop(mad_data *mp3_mad);
 int mad_isPlaying(mad_data *mp3_mad);
 
-void mad_getSamples(mad_data *mp3_mad, Uint8 *stream, int len);
+int mad_getSamples(mad_data *mp3_mad, Uint8 *stream, int len);
 void mad_seek(mad_data *mp3_mad, double position);
 void mad_setVolume(mad_data *mp3_mad, int volume);
 
