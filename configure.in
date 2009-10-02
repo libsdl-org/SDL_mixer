@@ -40,6 +40,19 @@ dnl Detect the canonical build and host environments
 AC_CONFIG_AUX_DIRS($srcdir/build-scripts)
 AC_CANONICAL_HOST
 
+dnl Check for tools
+AC_LIBTOOL_WIN32_DLL
+AC_PROG_LIBTOOL
+AC_PROG_CC
+AC_PROG_INSTALL
+AC_PROG_MAKE_SET
+if test -z "$host_alias"; then
+    hostaliaswindres=
+else
+    hostaliaswindres="$host_alias-windres"
+fi
+AC_CHECK_PROGS(WINDRES, [windres $hostaliaswindres $host_os-windres])
+
 dnl Set up the compiler and linker flags
 case "$host" in
     *-*-cygwin*)
@@ -68,19 +81,6 @@ EXTRA_LDFLAGS="$BASE_LDFLAGS"
 CPPFLAGS="$CPPFLAGS $EXTRA_CFLAGS"
 CFLAGS="$CFLAGS $EXTRA_CFLAGS"
 LDFLAGS="$LDFLAGS $EXTRA_LDFLAGS"
-
-dnl Check for tools
-AC_LIBTOOL_WIN32_DLL
-AC_PROG_LIBTOOL
-AC_PROG_CC
-AC_PROG_INSTALL
-AC_PROG_MAKE_SET
-if test -z "$host_alias"; then
-    hostaliaswindres=
-else
-    hostaliaswindres="$host_alias-windres"
-fi
-AC_CHECK_PROGS(WINDRES, [windres $hostaliaswindres $host_os-windres])
 
 dnl Check for compiler characteristics
 AC_C_CONST
