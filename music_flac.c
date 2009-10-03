@@ -40,18 +40,21 @@ static SDL_AudioSpec mixer;
 /* Initialize the FLAC player, with the given mixer settings
    This function returns 0, or -1 if there was an error.
  */
-int FLAC_init(SDL_AudioSpec *mixerfmt) {
+int FLAC_init(SDL_AudioSpec *mixerfmt)
+{
 	mixer = *mixerfmt;
 	return(0);
 }
 
 /* Set the volume for an FLAC stream */
-void FLAC_setvolume(FLAC_music *music, int volume) {
+void FLAC_setvolume(FLAC_music *music, int volume)
+{
 	music->volume = volume;
 }
 
 /* Load an FLAC stream from the given file */
-FLAC_music *FLAC_new(const char *file) {
+FLAC_music *FLAC_new(const char *file)
+{
 	SDL_RWops *rw;
 
 	rw = SDL_RWFromFile (file, "rb");
@@ -66,7 +69,8 @@ static FLAC__StreamDecoderReadStatus flac_read_music_cb(
 									const FLAC__StreamDecoder *decoder,
 									FLAC__byte buffer[],
 									size_t *bytes,
-									void *client_data) {
+									void *client_data)
+{
 	FLAC_music *data = (FLAC_music*)client_data;
 
 	// make sure there is something to be reading
@@ -91,7 +95,8 @@ static FLAC__StreamDecoderReadStatus flac_read_music_cb(
 static FLAC__StreamDecoderSeekStatus flac_seek_music_cb(
 									const FLAC__StreamDecoder *decoder,
 									FLAC__uint64 absolute_byte_offset,
-									void *client_data) {
+									void *client_data)
+{
 	FLAC_music *data = (FLAC_music*)client_data;
 
 	if (SDL_RWseek (data->rwops, absolute_byte_offset, SEEK_SET) < 0) {
@@ -105,7 +110,8 @@ static FLAC__StreamDecoderSeekStatus flac_seek_music_cb(
 static FLAC__StreamDecoderTellStatus flac_tell_music_cb(
 									const FLAC__StreamDecoder *decoder,
 									FLAC__uint64 *absolute_byte_offset,
-									void *client_data ) {
+									void *client_data )
+{
 	FLAC_music *data = (FLAC_music*)client_data;
 
 	int pos = SDL_RWtell (data->rwops);
@@ -122,7 +128,8 @@ static FLAC__StreamDecoderTellStatus flac_tell_music_cb(
 static FLAC__StreamDecoderLengthStatus flac_length_music_cb (
 									const FLAC__StreamDecoder *decoder,
 									FLAC__uint64 *stream_length,
-									void *client_data) {
+									void *client_data)
+{
 	FLAC_music *data = (FLAC_music*)client_data;
 
 	int pos = SDL_RWtell (data->rwops);
@@ -141,7 +148,8 @@ static FLAC__StreamDecoderLengthStatus flac_length_music_cb (
 
 static FLAC__bool flac_eof_music_cb(
 								const FLAC__StreamDecoder *decoder,
-								void *client_data ) {
+								void *client_data )
+{
 	FLAC_music *data = (FLAC_music*)client_data;
 
 	int pos = SDL_RWtell (data->rwops);
@@ -164,7 +172,8 @@ static FLAC__StreamDecoderWriteStatus flac_write_music_cb(
 									const FLAC__StreamDecoder *decoder,
 									const FLAC__Frame *frame,
 									const FLAC__int32 *const buffer[],
-									void *client_data) {
+									void *client_data)
+{
 	FLAC_music *data = (FLAC_music *)client_data;
 	size_t i;
 
@@ -267,7 +276,8 @@ static FLAC__StreamDecoderWriteStatus flac_write_music_cb(
 static void flac_metadata_music_cb(
 					const FLAC__StreamDecoder *decoder,
 					const FLAC__StreamMetadata *metadata,
-					void *client_data) {
+					void *client_data)
+{
 	FLAC_music *data = (FLAC_music *)client_data;
 
 	if (metadata->type == FLAC__METADATA_TYPE_STREAMINFO) {
@@ -285,7 +295,8 @@ static void flac_metadata_music_cb(
 static void flac_error_music_cb(
 				const FLAC__StreamDecoder *decoder,
 				FLAC__StreamDecoderErrorStatus status,
-				void *client_data) {
+				void *client_data)
+{
 	// print an SDL error based on the error status
 	switch (status) {
 		case FLAC__STREAM_DECODER_ERROR_STATUS_LOST_SYNC:
@@ -307,7 +318,8 @@ static void flac_error_music_cb(
 }
 
 /* Load an FLAC stream from an SDL_RWops object */
-FLAC_music *FLAC_new_RW(SDL_RWops *rw) {
+FLAC_music *FLAC_new_RW(SDL_RWops *rw)
+{
 	FLAC_music *music;
 	int init_stage = 0;
 	int was_error = 1;
@@ -381,17 +393,20 @@ FLAC_music *FLAC_new_RW(SDL_RWops *rw) {
 }
 
 /* Start playback of a given FLAC stream */
-void FLAC_play(FLAC_music *music) {
+void FLAC_play(FLAC_music *music)
+{
 	music->playing = 1;
 }
 
 /* Return non-zero if a stream is currently playing */
-int FLAC_playing(FLAC_music *music) {
+int FLAC_playing(FLAC_music *music)
+{
 	return(music->playing);
 }
 
 /* Read some FLAC stream data and convert it for output */
-static void FLAC_getsome(FLAC_music *music) {
+static void FLAC_getsome(FLAC_music *music)
+{
 	int section;
 	SDL_AudioCVT *cvt;
 
@@ -492,7 +507,8 @@ static void FLAC_getsome(FLAC_music *music) {
 }
 
 /* Play some of a stream previously started with FLAC_play() */
-int FLAC_playAudio(FLAC_music *music, Uint8 *snd, int len) {
+int FLAC_playAudio(FLAC_music *music, Uint8 *snd, int len)
+{
 	int mixable;
 
 	while ((len > 0) && music->playing) {
@@ -519,12 +535,14 @@ int FLAC_playAudio(FLAC_music *music, Uint8 *snd, int len) {
 }
 
 /* Stop playback of a stream previously started with FLAC_play() */
-void FLAC_stop(FLAC_music *music) {
+void FLAC_stop(FLAC_music *music)
+{
 	music->playing = 0;
 }
 
 /* Close the given FLAC_music object */
-void FLAC_delete(FLAC_music *music) {
+void FLAC_delete(FLAC_music *music)
+{
 	if (music) {
 		if (music->flac_decoder) {
 			flac.FLAC__stream_decoder_finish (music->flac_decoder);
@@ -550,7 +568,8 @@ void FLAC_delete(FLAC_music *music) {
 }
 
 /* Jump (seek) to a given position (time is in seconds) */
-void FLAC_jump_to_time(FLAC_music *music, double time) {
+void FLAC_jump_to_time(FLAC_music *music, double time)
+{
 	if (music) {
 		if (music->flac_decoder) {
 			double seek_sample = music->flac_data.sample_rate * time;
