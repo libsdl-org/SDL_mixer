@@ -339,6 +339,9 @@ int open_music(SDL_AudioSpec *mixer)
 #ifdef USE_NATIVE_MIDI
 #ifdef USE_TIMIDITY_MIDI
 	native_midi_ok = !timidity_ok;
+	if ( !native_midi_ok ) {
+		native_midi_ok = (getenv("SDL_NATIVE_MUSIC") != NULL);
+	}
 	if ( native_midi_ok )
 #endif
 		native_midi_ok = native_midi_detect();
