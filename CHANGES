@@ -1,4 +1,6 @@
 1.2.9:
+Sam Lantinga - Sat Oct  3 02:49:41 PDT 2009
+ * Added TIMIDITY_CFG environment variable to fully locate timidity.cfg
 O.Sezer - 2009-10-02 08:41:50 PDT 
  * Fixed memory corruption in music initialization
 Sam Lantinga - Sat Oct 3 07:53:24 2009 UTC
