@@ -1,4 +1,8 @@
 1.2.9:
+O.Sezer - 2009-10-02 08:41:50 PDT 
+ * Fixed memory corruption in music initialization
+Sam Lantinga - Sat Oct 3 07:53:24 2009 UTC
+ * Upgraded mikmod to libmikmod version 3.1.12
 Sam Lantinga - Fri Oct  2 07:15:35 PDT 2009
  * Implemented seamless looping for music playback
 Forrest Voight - 2009-06-13 20:31:38 PDT
