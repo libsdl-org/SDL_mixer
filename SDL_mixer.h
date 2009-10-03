@@ -105,7 +105,7 @@ typedef enum {
 	MUS_OGG,
 	MUS_MP3,
 	MUS_MP3_MAD,
-	MUS_FLAC,
+	MUS_FLAC
 } Mix_MusicType;
 
 /* The internal format for a music chunk interpreted via mikmod */

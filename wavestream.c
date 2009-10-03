@@ -192,7 +192,7 @@ int WAVStream_PlaySome(Uint8 *stream, int len)
 				worksize = original_len*music->cvt.len_mult;
 				music->cvt.buf=(Uint8 *)malloc(worksize);
 				if ( music->cvt.buf == NULL ) {
-					return;
+					return 0;
 				}
 				music->cvt.len = original_len;
 			}
