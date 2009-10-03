@@ -191,17 +191,26 @@ int main(int argc, char **argv)
     printf("no\n*** libmikmod is older than %d.%d.%d, not using.\n",maj,min,rev);
     return 1;
 }
-], EXTRA_CFLAGS="$EXTRA_CFLAGS -DLIBMIKMOD_MUSIC `$LIBMIKMOD_CONFIG --cflags`";EXTRA_LDFLAGS="$EXTRA_LDFLAGS `$LIBMIKMOD_CONFIG --libs`", CFLAGS="$CFLAGS_SAVED";LIBS="$LIBS_SAVED",
-[echo $ac_n "cross compiling; assumed OK... $ac_c"])
+], , , [echo $ac_n "cross compiling; assumed OK... $ac_c"])
     fi
+    CFLAGS="$CFLAGS_SAVED"
+    LIBS="$LIBS_SAVED"
 fi
 
 AC_ARG_ENABLE([music-mod],
 AC_HELP_STRING([--enable-music-mod], [enable MOD music via mikmod [[default=yes]]]),
-              [], [enable_music_mod=$no_libmikmod])
-if test x$enable_music_mod = xyes -a x$enable_music_libmikmod = xno; then
-    EXTRA_CFLAGS="$EXTRA_CFLAGS -DMOD_MUSIC -I\$(srcdir)/mikmod"
-    SOURCES="$SOURCES $srcdir/mikmod/*.c"
+              [], [enable_music_mod=yes])
+if test x$enable_music_mod = xyes; then
+    EXTRA_CFLAGS="$EXTRA_CFLAGS -DMOD_MUSIC"
+    SOURCES="$SOURCES $srcdir/music_mod.c"
+
+    if test x$enable_music_libmikmod = xyes; then
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -DLIBMIKMOD_MUSIC `$LIBMIKMOD_CONFIG --cflags`"
+        EXTRA_LDFLAGS="$EXTRA_LDFLAGS `$LIBMIKMOD_CONFIG --libs`"
+    else
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -I\$(srcdir)/mikmod"
+        SOURCES="$SOURCES $srcdir/mikmod/*.c"
+    fi
 fi
 AC_ARG_ENABLE([music-midi],
 AC_HELP_STRING([--enable-music-midi], [enable MIDI music via timidity [[default=yes]]]),
