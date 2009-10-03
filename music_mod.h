@@ -63,10 +63,4 @@ extern void MOD_delete(struct MODULE *music);
 /* Jump (seek) to a given position (time is in seconds) */
 extern void MOD_jump_to_time(struct MODULE *music, double time);
 
-/* Set the MOD synchronization value */
-extern int MOD_SetSynchroValue(int i);
-
-/* Get the MOD synchronization value */
-extern int MOD_GetSynchroValue(void);
-
 #endif /* MOD_MUSIC */
