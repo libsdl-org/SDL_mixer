@@ -1,17 +1,17 @@
 /*	MikMod sound library
-	(c) 1998, 1999 Miodrag Vallat and others - see file AUTHORS for
+	(c) 1998, 1999, 2000 Miodrag Vallat and others - see file AUTHORS for
 	complete list.
 
 	This library is free software; you can redistribute it and/or modify
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
-
+ 
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
-
+ 
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -56,15 +56,27 @@
 #include "config.h"
 #endif
 
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
 #include <stdio.h>
 #include <string.h>
 
 #include "mikmod_internals.h"
 
+#ifdef SUNOS
+extern int fclose(FILE *);
+extern int fgetc(FILE *);
+extern int fputc(int, FILE *);
+extern size_t fread(void *, size_t, size_t, FILE *);
+extern int fseek(FILE *, long, int);
+extern size_t fwrite(const void *, size_t, size_t, FILE *);
+#endif
+
 #define COPY_BUFSIZE  1024
 
 static long _mm_iobase=0,temp_iobase=0;
-
 
 /*
 
@@ -161,6 +173,11 @@ BOOL _mm_FileExists(CHAR* fname)
 	fclose(fp);
 
 	return 1;
+}
+
+int _mm_fclose(FILE *fp)
+{
+	return fclose(fp);
 }
 
 /* Sets the current file-position as the new _mm_iobase */
@@ -325,7 +342,7 @@ void _mm_write_I_SLONG(SLONG data,MWRITER* writer)
 	_mm_write_I_ULONG((ULONG)data,writer);
 }
 
-#ifdef __STDC__
+#if defined __STDC__ || defined _MSC_VER
 #define DEFINE_MULTIPLE_WRITE_FUNCTION(type_name,type)						\
 void _mm_write_##type_name##S (type *buffer,int number,MWRITER* writer)		\
 {																			\
@@ -406,7 +423,7 @@ SLONG _mm_read_I_SLONG(MREADER* reader)
 	return((SLONG)_mm_read_I_ULONG(reader));
 }
 
-#ifdef __STDC__
+#if defined __STDC__ || defined _MSC_VER
 #define DEFINE_MULTIPLE_READ_FUNCTION(type_name,type)						\
 int _mm_read_##type_name##S (type *buffer,int number,MREADER* reader)		\
 {																			\

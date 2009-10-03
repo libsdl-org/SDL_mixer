@@ -1,17 +1,17 @@
 /*	MikMod sound library
-	(c) 1998, 1999 Miodrag Vallat and others - see file AUTHORS for
-	complete list.
+	(c) 1998, 1999, 2000, 2001 Miodrag Vallat and others - see file AUTHORS
+	for complete list.
 
 	This library is free software; you can redistribute it and/or modify
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
-
+ 
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
-
+ 
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -103,45 +103,45 @@ extern ULONG VC1_VoiceRealVolume(UBYTE);
 extern ULONG VC2_VoiceRealVolume(UBYTE);
 static ULONG (*VC_VoiceRealVolume_ptr)(UBYTE);
 
-#ifdef __STDC__
+#if defined __STDC__ || defined _MSC_VER
 #define VC_PROC0(suffix) \
-void VC_##suffix (void) { VC_##suffix##_ptr(); }
+MIKMODAPI void VC_##suffix (void) { VC_##suffix##_ptr(); }
 
 #define VC_FUNC0(suffix,ret) \
-ret VC_##suffix (void) { return VC_##suffix##_ptr(); }
+MIKMODAPI ret VC_##suffix (void) { return VC_##suffix##_ptr(); }
 
 #define VC_PROC1(suffix,typ1) \
-void VC_##suffix (typ1 a) { VC_##suffix##_ptr(a); }
+MIKMODAPI void VC_##suffix (typ1 a) { VC_##suffix##_ptr(a); }
 
 #define VC_FUNC1(suffix,ret,typ1) \
-ret VC_##suffix (typ1 a) { return VC_##suffix##_ptr(a); }
+MIKMODAPI ret VC_##suffix (typ1 a) { return VC_##suffix##_ptr(a); }
 
 #define VC_PROC2(suffix,typ1,typ2) \
-void VC_##suffix (typ1 a,typ2 b) { VC_##suffix##_ptr(a,b); }
+MIKMODAPI void VC_##suffix (typ1 a,typ2 b) { VC_##suffix##_ptr(a,b); }
 
 #define VC_FUNC2(suffix,ret,typ1,typ2) \
-ret VC_##suffix (typ1 a,typ2 b) { return VC_##suffix##_ptr(a,b); }
+MIKMODAPI ret VC_##suffix (typ1 a,typ2 b) { return VC_##suffix##_ptr(a,b); }
 #else
 #define VC_PROC0(suffix) \
-void VC_/**/suffix/**/(void) { VC_/**/suffix/**/_ptr(); }
+MIKMODAPI void VC_/**/suffix (void) { VC_/**/suffix/**/_ptr(); }
 
 #define VC_FUNC0(suffix,ret) \
-ret VC_/**/suffix/**/(void) { return VC_/**/suffix/**/_ptr(); }
+MIKMODAPI ret VC_/**/suffix (void) { return VC_/**/suffix/**/_ptr(); }
 
 #define VC_PROC1(suffix,typ1) \
-void VC_/**/suffix/**/(typ1 a) { VC_/**/suffix/**/_ptr(a); }
+MIKMODAPI void VC_/**/suffix (typ1 a) { VC_/**/suffix/**/_ptr(a); }
 
 #define VC_FUNC1(suffix,ret,typ1) \
-ret VC_/**/suffix/**/(typ1 a) { return VC_/**/suffix/**/_ptr(a); }
+MIKMODAPI ret VC_/**/suffix (typ1 a) { return VC_/**/suffix/**/_ptr(a); }
 
 #define VC_PROC2(suffix,typ1,typ2) \
-void VC_/**/suffix/**/(typ1 a,typ2 b) { VC_/**/suffix/**/_ptr(a,b); }
+MIKMODAPI void VC_/**/suffix (typ1 a,typ2 b) { VC_/**/suffix/**/_ptr(a,b); }
 
 #define VC_FUNC2(suffix,ret,typ1,typ2) \
-ret VC_/**/suffix/**/(typ1 a,typ2 b) { return VC_/**/suffix/**/_ptr(a,b); }
+MIKMODAPI ret VC_/**/suffix (typ1 a,typ2 b) { return VC_/**/suffix/**/_ptr(a,b); }
 #endif
 
-VC_FUNC0(Init,BOOL);
+VC_FUNC0(Init,BOOL)
 VC_PROC0(Exit)
 VC_FUNC0(SetNumVoices,BOOL)
 VC_FUNC1(SampleSpace,ULONG,int)
@@ -158,7 +158,7 @@ VC_PROC2(VoiceSetFrequency,UBYTE,ULONG)
 VC_FUNC1(VoiceGetFrequency,ULONG,UBYTE)
 VC_PROC2(VoiceSetPanning,UBYTE,ULONG)
 VC_FUNC1(VoiceGetPanning,ULONG,UBYTE)
-
+		
 void  VC_VoicePlay(UBYTE a,SWORD b,ULONG c,ULONG d,ULONG e,ULONG f,UWORD g)
 { VC_VoicePlay_ptr(a,b,c,d,e,f,g); }
 
@@ -166,7 +166,7 @@ VC_PROC1(VoiceStop,UBYTE)
 VC_FUNC1(VoiceStopped,BOOL,UBYTE)
 VC_FUNC1(VoiceGetPosition,SLONG,UBYTE)
 VC_FUNC1(VoiceRealVolume,ULONG,UBYTE)
-
+		
 void VC_SetupPointers(void)
 {
 	if (md_mode&DMODE_HQMIXER) {
@@ -277,7 +277,7 @@ void VC1_Exit(void)
 	vc_tickbuf = NULL;
 	vinf = NULL;
 	Samples = NULL;
-
+	
 	VC_SetupPointers();
 }
 
@@ -315,7 +315,7 @@ void VC1_VoicePlay(UBYTE voice,SWORD handle,ULONG start,ULONG size,ULONG reppos,
 void VC1_VoiceStop(UBYTE voice)
 {
 	vinf[voice].active = 0;
-}
+}  
 
 BOOL VC1_VoiceStopped(UBYTE voice)
 {
@@ -328,7 +328,7 @@ SLONG VC1_VoiceGetPosition(UBYTE voice)
 }
 
 void VC1_VoiceSetVolume(UBYTE voice,UWORD vol)
-{
+{    
 	/* protect against clicks if volume variation is too high */
 	if(abs((int)vinf[voice].vol-(int)vol)>32)
 		vinf[voice].rampvol=CLICK_BUFFER;
@@ -370,6 +370,12 @@ SWORD VC1_SampleLoad(struct SAMPLOAD* sload,int type)
 		_mm_errno = MMERR_OUT_OF_HANDLES;
 		return -1;
 	}
+	
+	/* Reality check for loop settings */
+	if (s->loopend > s->length)
+		s->loopend = s->length;
+	if (s->loopstart >= s->loopend)
+		s->flags &= ~SF_LOOP;
 
 	length    = s->length;
 	loopstart = s->loopstart;

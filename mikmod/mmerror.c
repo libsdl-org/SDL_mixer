@@ -1,17 +1,17 @@
 /*	MikMod sound library
-	(c) 1998, 1999 Miodrag Vallat and others - see file AUTHORS for
+	(c) 1998, 1999, 2000 Miodrag Vallat and others - see file AUTHORS for
 	complete list.
 
 	This library is free software; you can redistribute it and/or modify
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
-
+ 
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
-
+ 
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -164,7 +164,7 @@ CHAR *_mm_errmsg[MMERR_MAX+1] =
 	"Invalid error code"
 };
 
-char *MikMod_strerror(int code)
+MIKMODAPI char *MikMod_strerror(int code)
 {
 	if ((code<0)||(code>MMERR_MAX)) code=MMERR_MAX+1;
 	return _mm_errmsg[code];
@@ -172,8 +172,8 @@ char *MikMod_strerror(int code)
 
 /* User installed error callback */
 MikMod_handler_t _mm_errorhandler = NULL;
-int  _mm_errno = 0;
-BOOL _mm_critical = 0;
+MIKMODAPI int  _mm_errno = 0;
+MIKMODAPI BOOL _mm_critical = 0;
 
 MikMod_handler_t _mm_registererrorhandler(MikMod_handler_t proc)
 {
@@ -183,7 +183,7 @@ MikMod_handler_t _mm_registererrorhandler(MikMod_handler_t proc)
 	return oldproc;
 }
 
-MikMod_handler_t MikMod_RegisterErrorHandler(MikMod_handler_t proc)
+MIKMODAPI MikMod_handler_t MikMod_RegisterErrorHandler(MikMod_handler_t proc)
 {
 	MikMod_handler_t result;
 

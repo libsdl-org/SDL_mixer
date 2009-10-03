@@ -69,7 +69,7 @@ extern "C" {
 /*========== More type definitions */
 
 /* SLONGLONG: 64bit, signed */
-#if defined(__alpha) || defined(_LP64)
+#if defined (__arch64__) || defined(__alpha)
 typedef long		SLONGLONG;
 #define NATIVE_64BIT_INT
 #elif defined(__WATCOMC__)
@@ -97,24 +97,21 @@ extern MikMod_handler_t _mm_errorhandler;
 #endif
 extern void* _mm_malloc(size_t);
 extern void* _mm_calloc(size_t,size_t);
-#define _mm_free(p) { if (p) free(p); p = NULL; }
+#define _mm_free(p) do { if (p) free(p); p = NULL; } while(0)
 
 /*========== MT stuff */
 
 #ifdef HAVE_PTHREAD
-#if defined(__OpenBSD__) && !defined(_POSIX_THREADS)
-#define _POSIX_THREADS
-#endif
 #include <pthread.h>
 #define DECLARE_MUTEX(name) \
-	extern pthread_mutex_t _mm_mutex_##name
+	extern pthread_mutex_t _mm_mutex_##name;
 #define MUTEX_LOCK(name)	\
  	pthread_mutex_lock(&_mm_mutex_##name)
 #define MUTEX_UNLOCK(name)	\
 	pthread_mutex_unlock(&_mm_mutex_##name)
 #elif defined(__OS2__)||defined(__EMX__)
 #define DECLARE_MUTEX(name)	\
-	extern HMTX _mm_mutex_##name
+	extern HMTX _mm_mutex_##name;
 #define MUTEX_LOCK(name)	\
 	if(_mm_mutex_##name)	\
 		DosRequestMutexSem(_mm_mutex_##name,SEM_INDEFINITE_WAIT)
@@ -124,7 +121,7 @@ extern void* _mm_calloc(size_t,size_t);
 #elif defined(WIN32)
 #include <windows.h>
 #define DECLARE_MUTEX(name)	\
-	extern HANDLE _mm_mutex_##name
+	extern HANDLE _mm_mutex_##name;
 #define MUTEX_LOCK(name)	\
 	if(_mm_mutex_##name)	\
 		WaitForSingleObject(_mm_mutex_##name,INFINITE)
@@ -137,12 +134,13 @@ extern void* _mm_calloc(size_t,size_t);
 #define MUTEX_UNLOCK(name)
 #endif
 
-DECLARE_MUTEX(lists);
-DECLARE_MUTEX(vars);
+DECLARE_MUTEX(lists)
+DECLARE_MUTEX(vars)
 
 /*========== Portable file I/O */
 
 /* SDL_RWops compatability */
+#include "SDL_rwops.h"
 extern MREADER *_mm_new_rwops_reader(SDL_RWops * rw);
 extern void _mm_delete_rwops_reader (MREADER*);
 /* End SDL_RWops compatability */
@@ -175,6 +173,7 @@ extern BOOL _mm_FileExists(CHAR *fname);
 extern void _mm_iobase_setcur(MREADER*);
 extern void _mm_iobase_revert(void);
 extern FILE *_mm_fopen(CHAR*,CHAR*);
+extern int	_mm_fclose(FILE *);
 extern void _mm_write_string(CHAR*,MWRITER*);
 extern int  _mm_read_string (CHAR*,int,MREADER*);
 
@@ -257,7 +256,7 @@ extern void   UniSetRow(UBYTE*);
 extern UBYTE  UniGetByte(void);
 extern UWORD  UniGetWord(void);
 extern UBYTE* UniFindRow(UBYTE*,UWORD);
-extern void   UniSkipOpcode(UBYTE);
+extern void   UniSkipOpcode(void);
 extern void   UniReset(void);
 extern void   UniWriteByte(UBYTE);
 extern void   UniWriteWord(UWORD);
@@ -310,6 +309,7 @@ enum {
 	UNI_KEYFADE,       /* note fade */
 	UNI_VOLEFFECTS,    /* volume column effects */
 	UNI_XMEFFECT4,     /* vibrato */
+	UNI_XMEFFECT6,     /* dual effect 4+A */
 	UNI_XMEFFECTA,     /* volume slide */
 	UNI_XMEFFECTE1,    /* fine porta up */
 	UNI_XMEFFECTE2,    /* fine porta down */
@@ -341,6 +341,8 @@ enum {
 	UNI_MEDEFFECTF1,   /* play note twice */
 	UNI_MEDEFFECTF2,   /* delay note */
 	UNI_MEDEFFECTF3,   /* play note three times */
+	/* Oktalyzer effects */
+	UNI_OKTARP,		   /* arpeggio */
 	UNI_XMEFFECTZ,     /* XM Z synchro */
 
 	UNI_LAST
@@ -379,8 +381,11 @@ enum {
 
 /* IT resonant filter information */
 
-#define FILT_CUT      0x80
-#define FILT_RESONANT 0x81
+#define	UF_MAXMACRO		0x10
+#define	UF_MAXFILTER	0x100
+
+#define FILT_CUT		0x80
+#define FILT_RESONANT	0x81
 
 typedef struct FILTER {
     UBYTE filter,inf;
@@ -429,7 +434,9 @@ typedef struct FILTER {
 
 /*========== Playing */
 
-#define POS_NONE        (-2) /* no loop position defined */
+#define POS_NONE        (-2)	/* no loop position defined */
+
+#define	LAST_PATTERN	(UWORD)(-1)	/* special ``end of song'' pattern */
 
 typedef struct ENVPR {
 	UBYTE  flg;          /* envelope flag */
@@ -444,7 +451,7 @@ typedef struct ENVPR {
 	ENVPT* env;          /* envelope points */
 } ENVPR;
 
-typedef struct MP_CONTROL {
+typedef struct MP_CHANNEL {
 	INSTRUMENT* i;
 	SAMPLE*     s;
 	UBYTE       sample;       /* which sample number */
@@ -465,8 +472,12 @@ typedef struct MP_CONTROL {
 	SWORD       handle;       /* which sample-handle */
 	UBYTE       notedelay;    /* (used for note delay) */
 	SLONG       start;        /* The starting byte index in the sample */
+} MP_CHANNEL;
 
-struct MP_VOICE*slave;        /* Audio Slave of current effects control channel */
+typedef struct MP_CONTROL {
+	struct MP_CHANNEL	main;
+
+	struct MP_VOICE	*slave;	  /* Audio Slave of current effects control channel */
 
 	UBYTE       slavechn;     /* Audio Slave of current effects control channel */
 	UBYTE       muted;        /* if set, channel not played */
@@ -539,26 +550,8 @@ struct MP_VOICE*slave;        /* Audio Slave of current effects control channel 
 /* Used by NNA only player (audio control.  AUDTMP is used for full effects
    control). */
 typedef struct MP_VOICE {
-	INSTRUMENT* i;
-	SAMPLE*     s;
-	UBYTE       sample;       /* which instrument number */
+	struct MP_CHANNEL	main;
 
-	UBYTE       note;         /* the audible note (as heard, direct rep of period) */
-	SWORD       volume;       /* output volume (vol + sampcol + instvol) */
-	SBYTE       chanvol;      /* channel's "global" volume */
-	UWORD       fadevol;      /* fading volume rate */
-	SWORD       panning;      /* panning position */
-	UBYTE       kick;         /* if true = sample has to be restarted */
-	UWORD       period;       /* period to play the sample at */
-	UBYTE       nna;          /* New note action type + master/slave flags */
-	UBYTE       volflg;       /* volume envelope settings */
-	UBYTE       panflg;       /* panning envelope settings */
-	UBYTE       pitflg;       /* pitch envelope settings */
-	UBYTE       keyoff;       /* if true = fade out and stuff */
-	SWORD       handle;       /* which sample-handle */
-	SLONG       start;        /* The start byte index in the sample */
-
-/* Below here is info NOT in MP_CONTROL!! */
 	ENVPR       venv;
 	ENVPR       penv;
 	ENVPR       cenv;
@@ -594,16 +587,16 @@ extern UWORD   finetune[16];
 extern MODULE  of;                  /* static unimod loading space */
 extern UWORD   npertab[7*OCTAVE];   /* used by the original MOD loaders */
 
-extern SBYTE   remap[64];           /* for removing empty channels */
+extern SBYTE   remap[UF_MAXCHAN];   /* for removing empty channels */
 extern UBYTE*  poslookup;           /* lookup table for pattern jumps after
                                       blank pattern removal */
-extern UBYTE   poslookupcnt;
+extern UWORD   poslookupcnt;
 extern UWORD*  origpositions;
 
 extern BOOL    filters;             /* resonant filters in use */
 extern UBYTE   activemacro;         /* active midi macro number for Sxx */
-extern UBYTE   filtermacros[16];    /* midi macros settings */
-extern FILTER  filtersettings[256]; /* computed filter settings */
+extern UBYTE   filtermacros[UF_MAXMACRO];    /* midi macro settings */
+extern FILTER  filtersettings[UF_MAXFILTER]; /* computed filter settings */
 
 extern int*    noteindex;
 
@@ -622,12 +615,17 @@ extern CHAR*  DupStr(CHAR*,UWORD,BOOL);
 extern int*   AllocLinear(void);
 extern void   FreeLinear(void);
 extern int    speed_to_finetune(ULONG,int);
-extern void   S3MIT_ProcessCmd(UBYTE,UBYTE,BOOL);
+extern void   S3MIT_ProcessCmd(UBYTE,UBYTE,unsigned int);
 extern void   S3MIT_CreateOrders(BOOL);
+
+/* flags for S3MIT_ProcessCmd */
+#define	S3MIT_OLDSTYLE	1	/* behave as old scream tracker */
+#define	S3MIT_IT		2	/* behave as impulse tracker */
+#define	S3MIT_SCREAM	4	/* enforce scream tracker specific limits */
 
 /* used to convert c4spd to linear XM periods (IT and IMF loaders). */
 extern UWORD  getlinearperiod(UWORD,ULONG);
-extern ULONG  getfrequency(UBYTE,ULONG);
+extern ULONG  getfrequency(UWORD,ULONG);
 
 /* loader shared data */
 #define STM_NTRACKERS 3
@@ -676,7 +674,7 @@ extern void VC_SetupPointers(void);
 extern BOOL VC1_Init(void);
 extern BOOL VC2_Init(void);
 
-#ifdef unix
+#if defined(unix) || defined(__APPLE__) && defined(__MACH__)
 /* POSIX helper functions */
 extern BOOL MD_Access(CHAR *);
 extern BOOL MD_DropPrivileges(void);
