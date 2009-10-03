@@ -117,7 +117,7 @@ const char *Mix_GetChunkDecoder(int index)
 
 static void add_chunk_decoder(const char *decoder)
 {
-	void *ptr = realloc(chunk_decoders, num_decoders * sizeof (const char **));
+	void *ptr = realloc(chunk_decoders, (num_decoders + 1) * sizeof (const char **));
 	if (ptr == NULL) {
 		return;  /* oh well, go on without it. */
 	}
