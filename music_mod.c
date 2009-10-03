@@ -27,24 +27,10 @@
 /* This file supports MOD tracker music streams */
 
 #include "SDL_mixer.h"
-/*#include "dynamic_mod.h"*/
+#include "dynamic_mod.h"
 #include "music_mod.h"
 
 #include "mikmod.h"
-
-#if defined(LIBMIKMOD_VERSION)                /* libmikmod 3.1.8 */
-#define UNIMOD			MODULE
-#define MikMod_Init()		MikMod_Init(NULL)
-#define MikMod_LoadSong(a,b)	Player_Load(a,b,0)
-#ifndef LIBMIKMOD_MUSIC
-#define MikMod_LoadSongRW(a,b)	Player_LoadRW(a,b,0)
-#endif
-#define MikMod_FreeSong		Player_Free
-   extern int MikMod_errno;
-#else                                        /* old MikMod 3.0.3 */
-#define MikMod_strerror(x)	_mm_errmsg[x])
-#define MikMod_errno		_mm_errno
-#endif
 
 #define SDL_SURROUND
 #ifdef SDL_SURROUND
@@ -60,14 +46,16 @@ static Uint16 current_output_format;
 static int music_swap8;
 static int music_swap16;
 
-/* Initialize the Ogg Vorbis player, with the given mixer settings
+/* Initialize the MOD player, with the given mixer settings
    This function returns 0, or -1 if there was an error.
  */
 int MOD_init(SDL_AudioSpec *mixerfmt)
 {
-#ifdef LIBMIKMOD_MUSIC
 	CHAR *list;
-#endif
+
+	if ( Mix_InitMOD() < 0 ) {
+		return NULL;
+	}
 
 	/* Set the MikMod music format */
 	music_swap8 = 0;
@@ -79,7 +67,7 @@ int MOD_init(SDL_AudioSpec *mixerfmt)
 			if ( mixerfmt->format == AUDIO_S8 ) {
 				music_swap8 = 1;
 			}
-			md_mode = 0;
+			*mikmod.md_mode = 0;
 		}
 		break;
 
@@ -93,7 +81,7 @@ int MOD_init(SDL_AudioSpec *mixerfmt)
 #endif
 				music_swap16 = 1;
 			}
-			md_mode = DMODE_16BITS;
+			*mikmod.md_mode = DMODE_16BITS;
 		}
 		break;
 
@@ -109,32 +97,31 @@ int MOD_init(SDL_AudioSpec *mixerfmt)
 			Mix_SetError("Hardware uses more channels than mixerfmt");
 			return -1;
 		}
-		md_mode |= DMODE_STEREO;
+		*mikmod.md_mode |= DMODE_STEREO;
 	}
-	md_mixfreq = mixerfmt->freq;
-	md_device  = 0;
-	md_volume  = 96;
-	md_musicvolume = 128;
-	md_sndfxvolume = 128;
-	md_pansep  = 128;
-	md_reverb  = 0;
-	md_mode    |= DMODE_HQMIXER|DMODE_SOFT_MUSIC|DMODE_SURROUND;
-#ifdef LIBMIKMOD_MUSIC
-	list = MikMod_InfoDriver();
+	*mikmod.md_mixfreq = mixerfmt->freq;
+	*mikmod.md_device  = 0;
+	*mikmod.md_volume  = 96;
+	*mikmod.md_musicvolume = 128;
+	*mikmod.md_sndfxvolume = 128;
+	*mikmod.md_pansep  = 128;
+	*mikmod.md_reverb  = 0;
+	*mikmod.md_mode    |= DMODE_HQMIXER|DMODE_SOFT_MUSIC|DMODE_SURROUND;
+
+	list = mikmod.MikMod_InfoDriver();
 	if ( list )
 	  free(list);
 	else
-#endif
-	MikMod_RegisterDriver(&drv_nos);
-#ifdef LIBMIKMOD_MUSIC
-	list = MikMod_InfoLoader();
+	  mikmod.MikMod_RegisterDriver(mikmod.drv_nos);
+
+	list = mikmod.MikMod_InfoLoader();
 	if ( list )
 	  free(list);
 	else
-#endif
-	MikMod_RegisterAllLoaders();
-	if ( MikMod_Init() ) {
-		Mix_SetError("%s", MikMod_strerror(MikMod_errno));
+	  mikmod.MikMod_RegisterAllLoaders();
+
+	if ( mikmod.MikMod_Init(NULL) ) {
+		Mix_SetError("%s", mikmod.MikMod_strerror(*mikmod.MikMod_errno));
 		return -1;
 	}
 
@@ -144,17 +131,14 @@ int MOD_init(SDL_AudioSpec *mixerfmt)
 /* Uninitialize the music players */
 void MOD_exit(void)
 {
-	MikMod_Exit();
-#ifndef LIBMIKMOD_MUSIC
-	MikMod_UnregisterAllLoaders();
-	MikMod_UnregisterAllDrivers();
-#endif
+	mikmod.MikMod_Exit();
+	Mix_QuitMOD();
 }
 
 /* Set the volume for a MOD stream */
 void MOD_setvolume(MODULE *music, int volume)
 {
-	Player_SetVolume((SWORD)volume);
+	mikmod.Player_SetVolume((SWORD)volume);
 }
 
 /* Load a MOD stream from the given file */
@@ -172,7 +156,6 @@ MODULE *MOD_new(const char *file)
 }
 
 
-#ifdef LIBMIKMOD_MUSIC
 typedef struct
 {
 	MREADER mr;
@@ -183,42 +166,37 @@ typedef struct
 
 BOOL LMM_Seek(struct MREADER *mr,long to,int dir)
 {
-	int at;
-	LMM_MREADER* lmmmr=(LMM_MREADER*)mr;
-	if(dir==SEEK_SET)
-		to+=lmmmr->offset;
-	at=SDL_RWseek(lmmmr->rw, to, dir);
-	return at<lmmmr->offset;
+	LMM_MREADER* lmmmr = (LMM_MREADER*)mr;
+	if ( dir == SEEK_SET ) {
+		to += lmmmr->offset;
+	}
+	return (SDL_RWseek(lmmmr->rw, to, dir) < lmmmr->offset);
 }
 long LMM_Tell(struct MREADER *mr)
 {
-	int at;
-	LMM_MREADER* lmmmr=(LMM_MREADER*)mr;
-	at=SDL_RWtell(lmmmr->rw)-lmmmr->offset;
-	return at;
+	LMM_MREADER* lmmmr = (LMM_MREADER*)mr;
+	return SDL_RWtell(lmmmr->rw) - lmmmr->offset;
 }
 BOOL LMM_Read(struct MREADER *mr,void *buf,size_t sz)
 {
-	int got;
-	LMM_MREADER* lmmmr=(LMM_MREADER*)mr;
-	got=SDL_RWread(lmmmr->rw, buf, sz, 1);
-	return got;
+	LMM_MREADER* lmmmr = (LMM_MREADER*)mr;
+	return SDL_RWread(lmmmr->rw, buf, sz, 1);
 }
 int LMM_Get(struct MREADER *mr)
 {
 	unsigned char c;
-	int i=EOF;
-	LMM_MREADER* lmmmr=(LMM_MREADER*)mr;
-	if(SDL_RWread(lmmmr->rw,&c,1,1))
-		i=c;
-	return i;
+	LMM_MREADER* lmmmr = (LMM_MREADER*)mr;
+	if ( SDL_RWread(lmmmr->rw, &c, 1, 1) ) {
+		return c;
+	}
+	return EOF;
 }
 BOOL LMM_Eof(struct MREADER *mr)
 {
 	int offset;
-	LMM_MREADER* lmmmr=(LMM_MREADER*)mr;
-	offset=LMM_Tell(mr);
-	return offset>=lmmmr->eof;
+	LMM_MREADER* lmmmr = (LMM_MREADER*)mr;
+	offset = LMM_Tell(mr);
+	return offset >= lmmmr->eof;
 }
 MODULE *MikMod_LoadSongRW(SDL_RWops *rw, int maxchan)
 {
@@ -228,23 +206,22 @@ MODULE *MikMod_LoadSongRW(SDL_RWops *rw, int maxchan)
 		0,
 		0
 	};
-	MODULE *m;
+	lmmmr.offset = SDL_RWtell(rw);
+	SDL_RWseek(rw, 0, SEEK_END);
+	lmmmr.eof = SDL_RWtell(rw);
+	SDL_RWseek(rw, lmmmr.offset, SEEK_SET);
         lmmmr.rw = rw;
-	lmmmr.offset=SDL_RWtell(rw);
-	SDL_RWseek(rw,0,SEEK_END);
-	lmmmr.eof=SDL_RWtell(rw);
-	SDL_RWseek(rw,lmmmr.offset,SEEK_SET);
-	m=Player_LoadGeneric((MREADER*)&lmmmr,maxchan,0);
-	return m;
+	return mikmod.Player_LoadGeneric((MREADER*)&lmmmr, maxchan, 0);
 }
-#endif
 
 /* Load a MOD stream from an SDL_RWops object */
 MODULE *MOD_new_RW(SDL_RWops *rw)
 {
-	MODULE *module = MikMod_LoadSongRW(rw,64);
+	MODULE *module;
+
+	module = MikMod_LoadSongRW(rw,64);
 	if (!module) {
-		Mix_SetError("%s", MikMod_strerror(MikMod_errno));
+		Mix_SetError("%s", mikmod.MikMod_strerror(*mikmod.MikMod_errno));
 		return NULL;
 	}
 
@@ -263,13 +240,13 @@ to query the status of the song or set trigger actions.  Hum. */
 /* Start playback of a given MOD stream */
 void MOD_play(MODULE *music)
 {
-	Player_Start(music);
+	mikmod.Player_Start(music);
 }
 
 /* Return non-zero if a stream is currently playing */
 int MOD_playing(MODULE *music)
 {
-	return Player_Active();
+	return mikmod.Player_Active();
 }
 
 /* Play some of a stream previously started with MOD_play() */
@@ -280,7 +257,7 @@ int MOD_playAudio(MODULE *music, Uint8 *stream, int len)
 		int i;
 		Uint8 *src, *dst;
 
-		VC_WriteBytes((SBYTE *)stream, small_len);
+		mikmod.VC_WriteBytes((SBYTE *)stream, small_len);
 		/* and extend to len by copying channels */
 		src = stream + small_len;
 		dst = stream + len;
@@ -322,7 +299,7 @@ int MOD_playAudio(MODULE *music, Uint8 *stream, int len)
 				break;
 		}
 	} else {
-		VC_WriteBytes((SBYTE *)stream, len);
+		mikmod.VC_WriteBytes((SBYTE *)stream, len);
 	}
 	if ( music_swap8 ) {
 		Uint8 *dst;
@@ -351,53 +328,19 @@ int MOD_playAudio(MODULE *music, Uint8 *stream, int len)
 /* Stop playback of a stream previously started with MOD_play() */
 void MOD_stop(MODULE *music)
 {
-	Player_Stop();
+	mikmod.Player_Stop();
 }
 
 /* Close the given MOD stream */
 void MOD_delete(MODULE *music)
 {
-	MikMod_FreeSong(music);
+	mikmod.Player_Free(music);
 }
 
 /* Jump (seek) to a given position (time is in seconds) */
 void MOD_jump_to_time(MODULE *music, double time)
 {
-	Player_SetPosition((UWORD)time);
-}
-
-#ifdef LIBMIKMOD_MUSIC
-static int _pl_synchro_value;
-void Player_SetSynchroValue(int i)
-{
-	fprintf(stderr,"SDL_mixer: Player_SetSynchroValue is not supported.\n");
-	_pl_synchro_value = i;
-}
-
-int Player_GetSynchroValue(void)
-{
-	fprintf(stderr,"SDL_mixer: Player_GetSynchroValue is not supported.\n");
-	return _pl_synchro_value;
-}
-#endif
-
-/* Set the MOD synchronization value */
-int MOD_SetSynchroValue(int i)
-{
-	if ( ! Player_Active() ) {
-		return(-1);
-	}
-	Player_SetSynchroValue(i);
-	return 0;
-}
-
-/* Get the MOD synchronization value */
-int MOD_GetSynchroValue(void)
-{
-	if ( ! Player_Active() ) {
-		return(-1);
-	}
-	return Player_GetSynchroValue();
+	mikmod.Player_SetPosition((UWORD)time);
 }
 
 #endif /* MOD_MUSIC */

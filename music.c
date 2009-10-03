@@ -1199,37 +1199,13 @@ int Mix_SetMusicCMD(const char *command)
 
 int Mix_SetSynchroValue(int i)
 {
-	if ( music_playing && ! music_stopped ) {
-		switch (music_playing->type) {
-#ifdef MOD_MUSIC
-		    case MUS_MOD:
-			return MOD_SetSynchroValue(i);
-			break;
-#endif
-		    default:
-			return(-1);
-			break;
-		}
-		return(-1);
-	}
+	/* Not supported by any players at this time */
 	return(-1);
 }
 
 int Mix_GetSynchroValue(void)
 {
-	if ( music_playing && ! music_stopped ) {
-		switch (music_playing->type) {
-#ifdef MOD_MUSIC
-		    case MUS_MOD:
-			return MOD_GetSynchroValue();
-			break;
-#endif
-		    default:
-			return(-1);
-			break;
-		}
-		return(-1);
-	}
+	/* Not supported by any players at this time */
 	return(-1);
 }
 
