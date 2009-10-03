@@ -1505,17 +1505,14 @@ BOOL LMM_Eof(struct MREADER *mr)
 }
 MODULE *MikMod_LoadSongRW(SDL_RWops *rw, int maxchan)
 {
-	LMM_MREADER lmmmr={
-		LMM_Seek,
-		LMM_Tell,
-		LMM_Read,
-		LMM_Get,
-		LMM_Eof,
+	LMM_MREADER lmmmr = {
+		{ LMM_Seek, LMM_Tell, LMM_Read, LMM_Get, LMM_Eof },
 		0,
 		0,
-		rw
+		0
 	};
 	MODULE *m;
+        lmmmr.rw = rw;
 	lmmmr.offset=SDL_RWtell(rw);
 	SDL_RWseek(rw,0,SEEK_END);
 	lmmmr.eof=SDL_RWtell(rw);

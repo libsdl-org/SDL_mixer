@@ -255,7 +255,7 @@ static InstrumentLayer *load_instrument(char *name, int font_type, int percussio
 				   int strip_loop, int strip_envelope,
 				   int strip_tail, int bank, int gm_num, int sf_ix)
 {
-  InstrumentLayer *lp, *lastlp, *headlp;
+  InstrumentLayer *lp, *lastlp, *headlp = 0;
   Instrument *ip;
   FILE *fp;
   uint8 tmp[1024];
@@ -266,7 +266,7 @@ static InstrumentLayer *load_instrument(char *name, int font_type, int percussio
   int sf2flag = 0;
   int right_samples = 0;
   int stereo_channels = 1, stereo_layer;
-  int vlayer_list[19][4], vlayer, vlayer_count;
+  int vlayer_list[19][4], vlayer, vlayer_count = 0;
 
   if (!name) return 0;
   
@@ -427,7 +427,7 @@ static InstrumentLayer *load_instrument(char *name, int font_type, int percussio
 
  for (stereo_layer = 0; stereo_layer < stereo_channels; stereo_layer++)
  {
-  int sample_count;
+  int sample_count = 0;
 
   if (stereo_layer == 0) sample_count = ip->left_samples;
   else if (stereo_layer == 1) sample_count = ip->right_samples;
@@ -437,10 +437,10 @@ static InstrumentLayer *load_instrument(char *name, int font_type, int percussio
       uint8 fractions;
       int32 tmplong;
       uint16 tmpshort;
-      uint16 sample_volume;
+      uint16 sample_volume = 0;
       uint8 tmpchar;
-      Sample *sp;
-      uint8 sf2delay;
+      Sample *sp = 0;
+      uint8 sf2delay = 0;
 
 #define READ_CHAR(thing) \
       if (1 != fread(&tmpchar, 1, 1, fp)) goto fail; \
