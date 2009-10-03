@@ -87,7 +87,7 @@ typedef char CHAR;
 
 
 
-#if defined(__arch64__) || defined(__alpha) || defined(__x86_64)
+#if defined(__arch64__) || defined(__alpha) || defined(__x86_64) || defined(_LP64)
 /* 64 bit architectures */
 
 typedef signed char     SBYTE;      /* 1 byte, signed */
@@ -106,7 +106,7 @@ typedef unsigned char   UBYTE;      /* 1 byte, unsigned */
 typedef signed short    SWORD;      /* 2 bytes, signed */
 typedef unsigned short  UWORD;      /* 2 bytes, unsigned */
 typedef signed long     SLONG;      /* 4 bytes, signed */
-#if !defined(__OS2__)&&!defined(__EMX__)&&!defined(WIN32)
+#if !defined(__OS2__) && !defined(__EMX__) && !defined(_WIN32)
 typedef unsigned long   ULONG;      /* 4 bytes, unsigned */
 typedef int             BOOL;       /* 0=false, <>0 true */
 #endif
