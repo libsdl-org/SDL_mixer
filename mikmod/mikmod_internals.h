@@ -69,6 +69,10 @@ extern "C" {
 /*========== More type definitions */
 
 /* SLONGLONG: 64bit, signed */
+#if 1
+#include "SDL_types.h"
+typedef Sint64          SLONGLONG;
+#else
 #if defined (__arch64__) || defined(__alpha) || defined(_LP64)
 typedef long		SLONGLONG;
 #define NATIVE_64BIT_INT
@@ -79,6 +83,7 @@ typedef LONGLONG	SLONGLONG;
 #else
 typedef long long	SLONGLONG;
 #endif
+#endif /* 1 */
 
 /*========== Error handling */
 

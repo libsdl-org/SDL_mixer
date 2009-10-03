@@ -69,6 +69,19 @@ MIKMODAPI extern long MikMod_GetVersion(void);
  *	========== Platform independent-type definitions
  */
 
+#if 1
+#include "SDL_types.h"
+
+typedef Sint8           SBYTE;      /* 1 byte, signed */
+typedef Uint8           UBYTE;      /* 1 byte, unsigned */
+typedef Sint16          SWORD;      /* 2 bytes, signed */
+typedef Uint16          UWORD;      /* 2 bytes, unsigned */
+typedef Sint32          SLONG;      /* 4 bytes, signed */
+typedef Uint32          ULONG;      /* 4 bytes, unsigned */
+typedef int             BOOL;       /* 0=false, <>0 true */
+typedef char            CHAR;
+
+#else
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -111,6 +124,7 @@ typedef unsigned long   ULONG;      /* 4 bytes, unsigned */
 typedef int             BOOL;       /* 0=false, <>0 true */
 #endif
 #endif
+#endif /* 1 */
 
 /*
  *	========== Error codes
