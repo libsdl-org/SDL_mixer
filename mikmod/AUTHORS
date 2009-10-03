@@ -3,27 +3,33 @@ libmikmod main authors
 
 * Jean-Paul Mikkers (MikMak) <mikmak@via.nl>
   wrote MikMod and maintained it until version 3.
-* Jake Stine (Air Richter) <dracoirs@epix.net> [email doesn't work anymore...]
-  made decisive contributions to the code (esp. IT support) and maintained
-  MikMod version 3 until it was discontinued. He still works on the WinAmp
-  module plugin, roughly based on MikMod.
-* Miodrag Vallat <miodrag@mikmod.darkorb.net>
-  current libmikmod maintainer (since version 3.0.4), made an audit of the
-  code resulting in many bugs fixed.
+* Jake Stine (Air Richter) <dracoirs@epix.net>
+  [email doesn't work anymore...]
+  made decisive contributions to the code (esp. IT support) and
+  maintained MikMod version 3 until it was discontinued. He still works
+  on the WinAmp module plugin, roughly based on MikMod.
+* Miod Vallat <miod@mikmod.org>
+  current overbooked libmikmod maintainer (since version 3.0.4), made
+  an audit of the code resulting in many bugs fixed.
 
 Previous Unix maintainers
 -------------------------
 
 * Steve McIntyre <steven@chiark.greenend.org.uk>
-  maintained MikMod'Unix version 2.
+  maintained MikMod'Unix version 2. Used to maintain the Debian package
+  for MikMod.
 * Peter Amstutz <tetron@student.umass.edu>
-  maintained MikMod'Unix version 3.0.
+  maintained MikMod'Unix version 3 up to version 3.0.3.
   
 General contributors
 --------------------
 
 * Arne de Bruijn <arne@knoware.nl>
   wrote the compressed IT sample support.
+* Shlomi Fish <shlomif@vipe.technion.ac.il>
+  wrote the Java port, bug fixes.
+* Juan Linietsky <coding@reduz.com.ar>
+  overall bug fixes.
 * Claudio Matsuoka <claudio@helllabs.org>
   wrote the STX loader and submitted bug fixes.
 * Sebastiaan A. Megens <samegens@xs4all.nl>
@@ -43,7 +49,7 @@ Contributors on the Unix side
 -----------------------------
 
 * Douglas Carmichael <dcarmich@mcs.com>
-  made MikMod work under FreeBSD.
+  ported MikMod to FreeBSD.
 * Chris Conn <cconn@tohs.abacom.com>
   wrote the OSS driver.
 * Roine Gustaffson <e93_rog@e.kth.se>
@@ -67,6 +73,9 @@ Contributors on the Unix side
   for the software mixer.
 * Gerd Rausch <gerd@alf.gun.de>
   wrote the sam9407 driver.
+* Joseph Carter <knghtbrd@debian.org>
+  maintains the Debian package for MikMod and libmikmod, submitted
+  bugfixes.
 
 Contributors on the Windows side
 --------------------------------
@@ -110,6 +119,6 @@ Contributors on the BeOS side
 * Thomas Neumann <tneumann@polycode.dk>
   integrated libmikmod into his BeOS APlayer, and contributed many bug fixes.
 
---
+-- 
 If your name is missing, don't hesitate to remind me at
-<miodrag@mikmod.darkorb.net>
+<miod@mikmod.org>

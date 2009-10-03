@@ -1,17 +1,17 @@
 /*	MikMod sound library
-	(c) 1998, 1999, 2000 Miodrag Vallat and others - see file AUTHORS for
-	complete list.
+	(c) 1998, 1999, 2000, 2001, 2002 Miodrag Vallat and others - see file
+	AUTHORS for complete list.
 
 	This library is free software; you can redistribute it and/or modify
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
-
+ 
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
-
+ 
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -35,9 +35,17 @@
 #endif
 
 #include <ctype.h>
+#include <stdio.h>
+#ifdef HAVE_MEMORY_H
+#include <memory.h>
+#endif
 #include <string.h>
 
 #include "mikmod_internals.h"
+
+#ifdef SUNOS
+extern int fprintf(FILE *, const char *, ...);
+#endif
 
 /*========== Module structure */
 
@@ -83,7 +91,7 @@ static CHAR orpheus[] = "Imago Orpheus (MOD format)";
 
 static MODULEHEADER *mh = NULL;
 static MODNOTE *patbuf = NULL;
-static int modtype = 0;
+static int modtype, trekker;
 
 /*========== Loader code */
 
@@ -91,6 +99,8 @@ static int modtype = 0;
    description ; also alters modtype */
 static BOOL MOD_CheckType(UBYTE *id, UBYTE *numchn, CHAR **descr)
 {
+	modtype = trekker = 0;
+
 	/* Protracker and variants */
 	if ((!memcmp(id, "M.K.", 4)) || (!memcmp(id, "M!K!", 4))) {
 		*descr = protracker;
@@ -103,13 +113,11 @@ static BOOL MOD_CheckType(UBYTE *id, UBYTE *numchn, CHAR **descr)
 	if (((!memcmp(id, "FLT", 3)) || (!memcmp(id, "EXO", 3))) &&
 		(isdigit(id[3]))) {
 		*descr = startrekker;
-		modtype = 1;
+		modtype = trekker = 1;
 		*numchn = id[3] - '0';
-		if (*numchn == 4)
+		if (*numchn == 4 || *numchn == 8)
 			return 1;
 #ifdef MIKMOD_DEBUG
-		if (*numchn == 8)
-			fprintf(stderr, "\rFLT8 modules not supported yet\n");
 		else
 			fprintf(stderr, "\rUnknown FLT%d module type\n", *numchn);
 #endif
@@ -197,7 +205,7 @@ ple number.                  ple number.
 
 */
 
-static void ConvertNote(MODNOTE *n)
+static UBYTE ConvertNote(MODNOTE *n, UBYTE lasteffect)
 {
 	UBYTE instrument, effect, effdat, note;
 	UWORD period;
@@ -270,22 +278,30 @@ static void ConvertNote(MODNOTE *n)
 	if ((effect == 0xc) && (effdat > 0x40))
 		effdat = 0x40;
 	
-	/* Ignore 100, 200 and 300 (there is no porta memory in mod files) */
-	if ((!effdat) && ((effect == 1)||(effect == 2)||(effect ==3)))
+	/* An isolated 100, 200 or 300 effect should be ignored (no
+	   "standalone" porta memory in mod files). However, a sequence such
+	   as 1XX, 100, 100, 100 is fine. */
+	if ((!effdat) && ((effect == 1)||(effect == 2)||(effect ==3)) &&
+		(lasteffect < 0x10) && (effect != lasteffect))
 		effect = 0;
 
 	UniPTEffect(effect, effdat);
+	if (effect == 8)
+		of.flags |= UF_PANNING;
+	
+	return effect;
 }
 
-static UBYTE *ConvertTrack(MODNOTE *n)
+static UBYTE *ConvertTrack(MODNOTE *n, int numchn)
 {
 	int t;
+	UBYTE lasteffect = 0x10;	/* non existant effect */
 
 	UniReset();
 	for (t = 0; t < 64; t++) {
-		ConvertNote(n);
+		lasteffect = ConvertNote(n,lasteffect);
 		UniNewline();
-		n += of.numchn;
+		n += numchn;
 	}
 	return UniDup();
 }
@@ -299,22 +315,47 @@ static BOOL ML_LoadPatterns(void)
 		return 0;
 	if (!AllocTracks())
 		return 0;
-
+	
 	/* Allocate temporary buffer for loading and converting the patterns */
 	if (!(patbuf = (MODNOTE *)_mm_calloc(64U * of.numchn, sizeof(MODNOTE))))
 		return 0;
 
-	for (t = 0; t < of.numpat; t++) {
-		/* Load the pattern into the temp buffer and convert it */
-		for (s = 0; s < (64U * of.numchn); s++) {
-			patbuf[s].a = _mm_read_UBYTE(modreader);
-			patbuf[s].b = _mm_read_UBYTE(modreader);
-			patbuf[s].c = _mm_read_UBYTE(modreader);
-			patbuf[s].d = _mm_read_UBYTE(modreader);
+	if (trekker && of.numchn == 8) {
+		/* Startrekker module dual pattern */
+		for (t = 0; t < of.numpat; t++) {
+			for (s = 0; s < (64U * 4); s++) {
+				patbuf[s].a = _mm_read_UBYTE(modreader);
+				patbuf[s].b = _mm_read_UBYTE(modreader);
+				patbuf[s].c = _mm_read_UBYTE(modreader);
+				patbuf[s].d = _mm_read_UBYTE(modreader);
+			}
+			for (s = 0; s < 4; s++)
+				if (!(of.tracks[tracks++] = ConvertTrack(patbuf + s, 4)))
+					return 0;
+			for (s = 0; s < (64U * 4); s++) {
+				patbuf[s].a = _mm_read_UBYTE(modreader);
+				patbuf[s].b = _mm_read_UBYTE(modreader);
+				patbuf[s].c = _mm_read_UBYTE(modreader);
+				patbuf[s].d = _mm_read_UBYTE(modreader);
+			}
+			for (s = 0; s < 4; s++)
+				if (!(of.tracks[tracks++] = ConvertTrack(patbuf + s, 4)))
+					return 0;
 		}
-		for (s = 0; s < of.numchn; s++)
-			if (!(of.tracks[tracks++] = ConvertTrack(patbuf + s)))
-				return 0;
+	} else {
+		/* Generic module pattern */
+		for (t = 0; t < of.numpat; t++) {
+			/* Load the pattern into the temp buffer and convert it */
+			for (s = 0; s < (64U * of.numchn); s++) {
+				patbuf[s].a = _mm_read_UBYTE(modreader);
+				patbuf[s].b = _mm_read_UBYTE(modreader);
+				patbuf[s].c = _mm_read_UBYTE(modreader);
+				patbuf[s].d = _mm_read_UBYTE(modreader);
+			}
+			for (s = 0; s < of.numchn; s++)
+				if (!(of.tracks[tracks++] = ConvertTrack(patbuf + s, of.numchn)))
+					return 0;
+		}
 	}
 	return 1;
 }
@@ -342,6 +383,11 @@ static BOOL MOD_Load(BOOL curious)
 	}
 
 	mh->songlength = _mm_read_UBYTE(modreader);
+
+	/* this fixes mods which declare more than 128 positions. 
+	 * eg: beatwave.mod */
+	if (mh->songlength > 128) { mh->songlength = 128; }
+	
 	mh->magic1 = _mm_read_UBYTE(modreader);
 	_mm_read_UBYTES(mh->positions, 128, modreader);
 	_mm_read_UBYTES(mh->magic2, 4, modreader);
@@ -358,6 +404,18 @@ static BOOL MOD_Load(BOOL curious)
 		_mm_errno = MMERR_NOT_A_MODULE;
 		return 0;
 	}
+	if (trekker && of.numchn == 8)
+		for (t = 0; t < 128; t++)
+			/* if module pretends to be FLT8, yet the order table
+			   contains odd numbers, chances are it's a lying FLT4... */
+			if (mh->positions[t] & 1) {
+				of.numchn = 4;
+				break;
+			}
+	if (trekker && of.numchn == 8)
+		for (t = 0; t < 128; t++)
+			mh->positions[t] >>= 1;
+
 	of.songname = DupStr(mh->songname, 21, 1);
 	of.numpos = mh->songlength;
 	of.reppos = 0;
@@ -367,6 +425,7 @@ static BOOL MOD_Load(BOOL curious)
 	for (t = 0; t < of.numpos; t++)
 		if (mh->positions[t] > of.numpat)
 			of.numpat = mh->positions[t];
+
 	/* since some old modules embed extra patterns, we have to check the
 	   whole list to get the samples' file offsets right - however we can find
 	   garbage here, so check carefully */
@@ -410,12 +469,8 @@ static BOOL MOD_Load(BOOL curious)
 			q->flags |= SF_16BITS;
 			descr = orpheus;
 		}
-
 		if (s->replen > 2)
 			q->flags |= SF_LOOP;
-		/* fix replen if repend > length */
-		if (q->loopend > q->length)
-			q->loopend = q->length;
 
 		s++;
 		q++;
@@ -425,6 +480,7 @@ static BOOL MOD_Load(BOOL curious)
 
 	if (!ML_LoadPatterns())
 		return 0;
+	
 	return 1;
 }
 

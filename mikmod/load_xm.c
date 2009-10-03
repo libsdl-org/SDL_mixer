@@ -1,17 +1,17 @@
 /*	MikMod sound library
-	(c) 1998, 1999, 2000 Miodrag Vallat and others - see file AUTHORS for
-	complete list.
+	(c) 1998, 1999, 2000, 2001, 2002 Miodrag Vallat and others - see file
+	AUTHORS for complete list.
 
 	This library is free software; you can redistribute it and/or modify
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
-
+ 
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
-
+ 
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -30,9 +30,21 @@
 #include "config.h"
 #endif
 
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
+#include <stdio.h>
+#ifdef HAVE_MEMORY_H
+#include <memory.h>
+#endif
 #include <string.h>
 
 #include "mikmod_internals.h"
+
+#ifdef SUNOS
+extern int fprintf(FILE *, const char *, ...);
+#endif
 
 /*========== Module structure */
 
@@ -47,7 +59,7 @@ typedef struct XMHEADER {
 	UWORD numchn;          /* Number of channels (2,4,6,8,10,...,32) */
 	UWORD numpat;          /* Number of patterns (max 256) */
 	UWORD numins;          /* Number of instruments (max 128) */
-	UWORD flags;
+	UWORD flags;       
 	UWORD tempo;           /* Default tempo */
 	UWORD bpm;             /* Default BPM */
 	UBYTE orders[256];     /* Pattern order table  */
@@ -208,10 +220,10 @@ static UBYTE* XM_Convert(XMNOTE* xmtrack,UWORD rows)
 				UniPTEffect(0xe,0xa0|(vol&0xf));
 				break;
 			case 0xa: /* set vibrato speed */
-				UniPTEffect(0x4,vol<<4);
+				UniEffect(UNI_XMEFFECT4,vol<<4);
 				break;
 			case 0xb: /* vibrato */
-				UniPTEffect(0x4,vol&0xf);
+				UniEffect(UNI_XMEFFECT4,vol&0xf);
 				break;
 			case 0xc: /* set panning */
 				UniPTEffect(0x8,vol<<4);
@@ -233,6 +245,9 @@ static UBYTE* XM_Convert(XMNOTE* xmtrack,UWORD rows)
 		switch(eff) {
 			case 0x4:
 				UniEffect(UNI_XMEFFECT4,dat);
+				break;
+			case 0x6:
+				UniEffect(UNI_XMEFFECT6,dat);
 				break;
 			case 0xa:
 				UniEffect(UNI_XMEFFECTA,dat);
@@ -256,7 +271,7 @@ static UBYTE* XM_Convert(XMNOTE* xmtrack,UWORD rows)
 				}
 				break;
 			case 'G'-55: /* G - set global volume */
-				UniEffect(UNI_XMEFFECTG,dat>64?64:dat);
+				UniEffect(UNI_XMEFFECTG,dat>64?128:dat<<1);
 				break;
 			case 'H'-55: /* H - global volume slide */
 				UniEffect(UNI_XMEFFECTH,dat);
@@ -347,8 +362,8 @@ static BOOL LoadPatterns(BOOL dummypat)
 				return 0;
 
 			/* when packsize is 0, don't try to load a pattern.. it's empty. */
-			if(ph.packsize)
-				for(u=0;u<ph.numrows;u++)
+			if(ph.packsize) 
+				for(u=0;u<ph.numrows;u++) 
 					for(v=0;v<of.numchn;v++) {
 						if(!ph.packsize) break;
 
@@ -391,9 +406,47 @@ static BOOL LoadPatterns(BOOL dummypat)
 	return 1;
 }
 
+static void FixEnvelope(ENVPT *cur, int pts)
+{
+		int u, old, tmp;
+		ENVPT *prev;
+
+		/* Some broken XM editing program will only save the low byte
+		   of the position value. Try to compensate by adding the
+		   missing high byte. */
+
+		prev = cur++;
+		old = prev->pos;
+
+		for (u = 1; u < pts; u++, prev++, cur++) {
+			if (cur->pos < prev->pos) {
+				if (cur->pos < 0x100) {
+					if (cur->pos > old)	/* same hex century */
+							tmp = cur->pos + (prev->pos - old);
+					else
+							tmp = cur->pos | ((prev->pos + 0x100) & 0xff00);
+					old = cur->pos;
+					cur->pos = tmp;
+#ifdef MIKMOD_DEBUG
+					fprintf(stderr, "\rbroken envelope position(%d/%d), %d %d -> %d\n",
+					    u, pts, prev->pos, old, cur->pos);
+#endif
+				} else {
+#ifdef MIKMOD_DEBUG
+					/* different brokenness style... fix unknown */
+					fprintf(stderr, "\rbroken envelope position(%d/%d), %d %d\n",
+					    u, pts, old, cur->pos);
+#endif
+					old = cur->pos;
+				}
+			} else
+				old = cur->pos;
+		}
+}
+
 static BOOL LoadInstruments(void)
 {
-	int t,u;
+	int t,u, ck;
 	INSTRUMENT *d;
 	ULONG next=0;
 	UWORD wavcnt=0;
@@ -410,6 +463,13 @@ static BOOL LoadInstruments(void)
 		headend     = _mm_ftell(modreader);
 		ih.size     = _mm_read_I_ULONG(modreader);
 		headend    += ih.size;
+		ck = _mm_ftell(modreader);
+		_mm_fseek(modreader,0,SEEK_END);
+		if ((headend<0) || (_mm_ftell(modreader)<headend) || (headend<ck)) {
+		_mm_fseek(modreader,ck,SEEK_SET);
+		break;
+		}
+		_mm_fseek(modreader,ck,SEEK_SET);
 		_mm_read_string(ih.name, 22, modreader);
 		ih.type     = _mm_read_UBYTE(modreader);
 		ih.numsmp   = _mm_read_I_UWORD(modreader);
@@ -443,7 +503,7 @@ static BOOL LoadInstruments(void)
 
 				/* read the remainder of the header
 				   (2 bytes for 1.03, 22 for 1.04) */
-				for(u=headend-_mm_ftell(modreader);u;u--) _mm_read_UBYTE(modreader);
+				if (headend>=_mm_ftell(modreader)) for(u=headend-_mm_ftell(modreader);u;u--) _mm_read_UBYTE(modreader);
 
 				/* we can't trust the envelope point count here, as some
 				   modules have incorrect values (K_OSPACE.XM reports 32 volume
@@ -462,32 +522,58 @@ static BOOL LoadInstruments(void)
 					d->samplenumber[u]=pth.what[u]+of.numsmp;
 				d->volfade = pth.volfade;
 
-memcpy(d->volenv,pth.volenv,XMENVCNT);
-if (pth.volflg&1) d->volflg|=EF_ON;
-if (pth.volflg&2) d->volflg|=EF_SUSTAIN;
-if (pth.volflg&4) d->volflg|=EF_LOOP;
-d->volsusbeg=d->volsusend=pth.volsus;                                      
-d->volbeg=pth.volbeg;
-d->volend=pth.volend;
-d->volpts=pth.volpts;
-/* scale envelope */
-for (p=0;p<XMENVCNT/2;p++)                                                       
- d->volenv[p].val<<=2;
-if ((d->volflg&EF_ON)&&(d->volpts<2))
- d->volflg&=~EF_ON;
-memcpy(d->panenv,pth.panenv,XMENVCNT);
-if (pth.panflg&1) d->panflg|=EF_ON;
-if (pth.panflg&2) d->panflg|=EF_SUSTAIN;
-if (pth.panflg&4) d->panflg|=EF_LOOP;
-d->pansusbeg=d->pansusend=pth.pansus;                                      
-d->panbeg=pth.panbeg;
-d->panend=pth.panend;
-d->panpts=pth.panpts;
-/* scale envelope */
-for (p=0;p<XMENVCNT/2;p++)                                                       
- d->panenv[p].val<<=2;
-if ((d->panflg&EF_ON)&&(d->panpts<2))
- d->panflg&=~EF_ON;
+#if defined __STDC__ || defined _MSC_VER
+#define XM_ProcessEnvelope(name) 										\
+				for (u = 0; u < (XMENVCNT >> 1); u++) {					\
+					d-> name##env[u].pos = pth. name##env[u << 1];		\
+					d-> name##env[u].val = pth. name##env[(u << 1)+ 1];	\
+				}														\
+				if (pth. name##flg&1) d-> name##flg|=EF_ON;				\
+				if (pth. name##flg&2) d-> name##flg|=EF_SUSTAIN;		\
+				if (pth. name##flg&4) d-> name##flg|=EF_LOOP;			\
+				d-> name##susbeg=d-> name##susend=pth. name##sus;		\
+				d-> name##beg=pth. name##beg;							\
+				d-> name##end=pth. name##end;							\
+				d-> name##pts=pth. name##pts;							\
+																		\
+				/* scale envelope */									\
+				for (p=0;p<XMENVCNT/2;p++)								\
+					d-> name##env[p].val<<=2;							\
+																		\
+				if ((d-> name##flg&EF_ON)&&(d-> name##pts<2))			\
+					d-> name##flg&=~EF_ON
+#else
+#define XM_ProcessEnvelope(name) 											\
+				for (u = 0; u < (XMENVCNT >> 1); u++) {						\
+					d-> name/**/env[u].pos = pth. name/**/env[u << 1];		\
+					d-> name/**/env[u].val = pth. name/**/env[(u << 1)+ 1];	\
+				}															\
+				if (pth. name/**/flg&1) d-> name/**/flg|=EF_ON;				\
+				if (pth. name/**/flg&2) d-> name/**/flg|=EF_SUSTAIN;		\
+				if (pth. name/**/flg&4) d-> name/**/flg|=EF_LOOP;			\
+				d-> name/**/susbeg=d-> name/**/susend=						\
+				                      pth. name/**/sus;						\
+				d-> name/**/beg=pth. name/**/beg;							\
+				d-> name/**/end=pth. name/**/end;							\
+				d-> name/**/pts=pth. name/**/pts;							\
+																			\
+				/* scale envelope */										\
+				for (p=0;p<XMENVCNT/2;p++)									\
+					d-> name/**/env[p].val<<=2;								\
+																			\
+				if ((d-> name/**/flg&EF_ON)&&(d-> name/**/pts<2))			\
+					d-> name/**/flg&=~EF_ON
+#endif			
+
+				XM_ProcessEnvelope(vol);
+				XM_ProcessEnvelope(pan);
+#undef XM_ProcessEnvelope
+
+				if (d->volflg & EF_ON)
+					FixEnvelope(d->volenv, d->volpts);
+				if (d->panflg & EF_ON)
+					FixEnvelope(d->panenv, d->panpts);
+
 				/* Samples are stored outside the instrument struct now, so we
 				   have to load them all into a temp area, count the of.numsmp
 				   along the way and then do an AllocSamples() and move
@@ -544,6 +630,13 @@ if ((d->panflg&EF_ON)&&(d->panpts<2))
 					of.numsmp+=ih.numsmp;
 			} else {
 				/* read the remainder of the header */
+				ck = _mm_ftell(modreader);
+				_mm_fseek(modreader,0,SEEK_END);
+				if ((headend<0) || (_mm_ftell(modreader)<headend) || (headend<ck)) {
+				_mm_fseek(modreader,ck,SEEK_SET);
+				break;
+				}
+				_mm_fseek(modreader,ck,SEEK_SET);
 				for(u=headend-_mm_ftell(modreader);u;u--) _mm_read_UBYTE(modreader);
 
 				if(_mm_eof(modreader)) {
@@ -609,7 +702,7 @@ BOOL XM_Load(BOOL curious)
 	of.inittempo = (UBYTE)mh->bpm;
 	strncpy(tracker,mh->trackername,20);tracker[20]=0;
 	for(t=20;(tracker[t]<=' ')&&(t>=0);t--) tracker[t]=0;
-
+	
 	/* some modules have the tracker name empty */
 	if (!tracker[0])
 		strcpy(tracker,"Unknown tracker");
@@ -629,8 +722,10 @@ BOOL XM_Load(BOOL curious)
 	of.numpos    = mh->songlength;               /* copy the songlength */
 	of.reppos    = mh->restart<mh->songlength?mh->restart:0;
 	of.numins    = mh->numins;
-	of.flags    |= UF_XMPERIODS|UF_INST|UF_NOWRAP|UF_FT2QUIRKS;
+	of.flags    |= UF_XMPERIODS | UF_INST | UF_NOWRAP | UF_FT2QUIRKS |
+				   UF_PANNING;
 	if(mh->flags&1) of.flags |= UF_LINEAR;
+	of.bpmlimit  = 32;
 
 	memset(of.chanvol,64,of.numchn);             /* store channel volumes */
 
@@ -688,11 +783,10 @@ BOOL XM_Load(BOOL curious)
 			q->loopend   >>= 1;
 		}
 
-		q->flags|=SF_OWNPAN;
+		q->flags|=SF_OWNPAN|SF_DELTA|SF_SIGNED;
 		if(s->type&0x3) q->flags|=SF_LOOP;
 		if(s->type&0x2) q->flags|=SF_BIDI;
 		if(s->type&0x10) q->flags|=SF_16BITS;
-		q->flags|=SF_DELTA|SF_SIGNED;
 	}
 
 	d=of.instruments;

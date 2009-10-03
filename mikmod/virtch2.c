@@ -1,17 +1,17 @@
 /*	MikMod sound library
-	(c) 1998, 1999 Miodrag Vallat and others - see file AUTHORS for
+	(c) 1998, 1999, 2000 Miodrag Vallat and others - see file AUTHORS for
 	complete list.
 
 	This library is free software; you can redistribute it and/or modify
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
-
+ 
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
-
+ 
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -39,7 +39,9 @@
 #include "config.h"
 #endif
 
-#include <stddef.h>
+#ifdef HAVE_MEMORY_H
+#include <memory.h>
+#endif
 #include <string.h>
 
 #include "mikmod_internals.h"
@@ -458,7 +460,7 @@ static void MixReverb_Stereo(SLONG *srce,NATIVE count)
 		COMPUTE_LOC(5); COMPUTE_LOC(6); COMPUTE_LOC(7); COMPUTE_LOC(8);
 
 		/* left channel */
-		*srce++ +=RVbufL1[loc1]-RVbufL2[loc2]+RVbufL3[loc3]-RVbufL4[loc4]+
+		*srce++ +=RVbufL1[loc1]-RVbufL2[loc2]+RVbufL3[loc3]-RVbufL4[loc4]+ 
 		          RVbufL5[loc5]-RVbufL6[loc6]+RVbufL7[loc7]-RVbufL8[loc8];
 
 		/* right channel */
@@ -550,8 +552,8 @@ static void Mix32To8_Stereo(SBYTE* dste,SLONG* srce,NATIVE count)
 			tmpx+=x1+x3;
 			tmpy+=x2+x4;
 		}
-		*dste++ =(tmpx/SAMPLING_FACTOR)+128;
-		*dste++ =(tmpy/SAMPLING_FACTOR)+128;
+		*dste++ =(tmpx/SAMPLING_FACTOR)+128;        
+		*dste++ =(tmpy/SAMPLING_FACTOR)+128;        
 	}
 }
 
@@ -595,7 +597,8 @@ static void AddChannel(SLONG* ptr,NATIVE todo)
 			}
 		} else {
 			/* The sample is playing forward */
-			if((vnf->flags & SF_LOOP) && (vnf->current >= idxlend)) {
+			if((vnf->flags & SF_LOOP) &&
+			   (vnf->current >= idxlend)) {
 				/* the sample is looping, check the loopend index */
 				if(vnf->flags & SF_BIDI) {
 					/* sample is doing bidirectional loops, so 'bounce' the
@@ -791,10 +794,10 @@ void VC2_WriteSamples(SBYTE* buf,ULONG todo)
 BOOL VC2_Init(void)
 {
 	VC_SetupPointers();
-
+	
 	if (!(md_mode&DMODE_HQMIXER))
 		return VC1_Init();
-
+	
 	if(!(Samples=(SWORD**)_mm_calloc(MAXSAMPLEHANDLES,sizeof(SWORD*)))) {
 		_mm_errno = MMERR_INITIALIZING_MIXER;
 		return 1;

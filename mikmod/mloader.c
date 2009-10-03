@@ -1,17 +1,17 @@
 /*	MikMod sound library
-	(c) 1998, 1999 Miodrag Vallat and others - see file AUTHORS for
-	complete list.
+	(c) 1998, 1999, 2000, 2001, 2002 Miodrag Vallat and others - see file
+	AUTHORS for complete list.
 
 	This library is free software; you can redistribute it and/or modify
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
-
+ 
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
-
+ 
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -30,6 +30,10 @@
 #include "config.h"
 #endif
 
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
 #ifdef HAVE_MEMORY_H
 #include <memory.h>
 #endif
@@ -37,6 +41,9 @@
 
 #include "mikmod_internals.h"
 
+#ifdef SUNOS
+extern int fprintf(FILE *, const char *, ...);
+#endif
 
 		MREADER *modreader;
 		MODULE of;
@@ -48,7 +55,7 @@ UWORD finetune[16]={
 	7895,7941,7985,8046,8107,8169,8232,8280
 };
 
-CHAR* MikMod_InfoLoader(void)
+MIKMODAPI CHAR* MikMod_InfoLoader(void)
 {
 	int len=0;
 	MLOADER *l;
@@ -77,7 +84,7 @@ void _mm_registerloader(MLOADER* ldr)
 		while(cruise->next) cruise = cruise->next;
 		cruise->next=ldr;
 	} else
-		firstloader=ldr;
+		firstloader=ldr; 
 }
 
 void _mm_unregisterloaders(void)
@@ -92,7 +99,7 @@ void _mm_unregisterloaders(void)
     firstloader = NULL;
 }
 
-void MikMod_RegisterLoader(struct MLOADER* ldr)
+MIKMODAPI void MikMod_RegisterLoader(struct MLOADER* ldr)
 {
 	/* if we try to register an invalid loader, or an already registered loader,
 	   ignore this attempt */
@@ -111,7 +118,7 @@ BOOL ReadComment(UWORD len)
 
 		if(!(of.comment=(CHAR*)_mm_malloc(len+1))) return 0;
 		_mm_read_UBYTES(of.comment,len,modreader);
-
+		
 		/* translate IT linefeeds */
 		for(i=0;i<len;i++)
 			if(of.comment[i]=='\r') of.comment[i]='\n';
@@ -125,18 +132,20 @@ BOOL ReadComment(UWORD len)
 	return 1;
 }
 
-BOOL ReadLinedComment(UWORD lines,UWORD linelen)
+BOOL ReadLinedComment(UWORD len,UWORD linelen)
 {
 	CHAR *tempcomment,*line,*storage;
-	UWORD total=0,t,len=lines*linelen;
+	UWORD total=0,t,lines;
 	int i;
 
-	if (lines) {
+	lines = (len + linelen - 1) / linelen;
+	if (len) {
 		if(!(tempcomment=(CHAR*)_mm_malloc(len+1))) return 0;
 		if(!(storage=(CHAR*)_mm_malloc(linelen+1))) {
 			free(tempcomment);
 			return 0;
 		}
+		memset(tempcomment, ' ', len);
 		_mm_read_UBYTES(tempcomment,len,modreader);
 
 		/* compute message length */
@@ -210,7 +219,7 @@ BOOL AllocTracks(void)
 BOOL AllocInstruments(void)
 {
 	int t,n;
-
+	
 	if(!of.numins) {
 		_mm_errno=MMERR_NOT_A_MODULE;
 		return 0;
@@ -219,11 +228,11 @@ BOOL AllocInstruments(void)
 		return 0;
 
 	for(t=0;t<of.numins;t++) {
-		for(n=0;n<INSTNOTES;n++) {
+		for(n=0;n<INSTNOTES;n++) { 
 			/* Init note / sample lookup table */
 			of.instruments[t].samplenote[n]   = n;
 			of.instruments[t].samplenumber[n] = t;
-		}
+		}   
 		of.instruments[t].globvol = 64;
 	}
 	return 1;
@@ -345,7 +354,7 @@ void Player_Free_internal(MODULE *mf)
 	}
 }
 
-void Player_Free(MODULE *mf)
+MIKMODAPI void Player_Free(MODULE *mf)
 {
 	MUTEX_LOCK(vars);
 	Player_Free_internal(mf);
@@ -376,7 +385,21 @@ static CHAR* Player_LoadTitle_internal(MREADER *reader)
 	return l->LoadTitle();
 }
 
-CHAR* Player_LoadTitle(CHAR* filename)
+MIKMODAPI CHAR* Player_LoadTitleFP(FILE *fp)
+{
+	CHAR* result=NULL;
+	MREADER* reader;
+
+	if(fp && (reader=_mm_new_file_reader(fp))) {
+		MUTEX_LOCK(lists);
+		result=Player_LoadTitle_internal(reader);
+		MUTEX_UNLOCK(lists);
+		_mm_delete_file_reader(reader);
+	}
+	return result;
+}
+
+MIKMODAPI CHAR* Player_LoadTitle(CHAR* filename)
 {
 	CHAR* result=NULL;
 	FILE* fp;
@@ -389,7 +412,7 @@ CHAR* Player_LoadTitle(CHAR* filename)
 			MUTEX_UNLOCK(lists);
 			_mm_delete_file_reader(reader);
 		}
-		fclose(fp);
+		_mm_fclose(fp);
 	}
 	return result;
 }
@@ -427,23 +450,27 @@ MODULE* Player_LoadGeneric_internal(MREADER *reader,int maxchan,BOOL curious)
 		return NULL;
 	}
 
-	/* load the song using the song's loader variable */
+	/* init the module structure with vanilla settings */
 	memset(&of,0,sizeof(MODULE));
+	of.bpmlimit = 33;
 	of.initvolume = 128;
-
-	/* init panning array */
-	for(t=0; t<64; t++) of.panning[t] = ((t+1)&2) ? 255 : 0;
-	for(t=0; t<64; t++) of.chanvol[t] = 64;
+	for (t = 0; t < UF_MAXCHAN; t++) of.chanvol[t] = 64;
+	for (t = 0; t < UF_MAXCHAN; t++)
+		of.panning[t] = ((t + 1) & 2) ? PAN_RIGHT : PAN_LEFT;
 
 	/* init module loader and load the header / patterns */
-	if(l->Init()) {
+	if (!l->Init || l->Init()) {
 		_mm_rewind(modreader);
 		ok = l->Load(curious);
+		/* propagate inflags=flags for in-module samples */
+		for (t = 0; t < of.numsmp; t++)
+			if (of.samples[t].inflags == 0)
+				of.samples[t].inflags = of.samples[t].flags;
 	} else
 		ok = 0;
 
 	/* free loader and unitrk allocations */
-	l->Cleanup();
+	if (l->Cleanup) l->Cleanup();
 	UniCleanup();
 
 	if(!ok) {
@@ -466,10 +493,15 @@ MODULE* Player_LoadGeneric_internal(MREADER *reader,int maxchan,BOOL curious)
 		if(_mm_errorhandler) _mm_errorhandler();
 		return NULL;
 	}
+	
+	/* If the module doesn't have any specific panning, create a
+	   MOD-like panning, with the channels half-separated. */
+	if (!(of.flags & UF_PANNING))
+		for (t = 0; t < of.numchn; t++)
+			of.panning[t] = ((t + 1) & 2) ? PAN_HALFRIGHT : PAN_HALFLEFT;
 
 	/* Copy the static MODULE contents into the dynamic MODULE struct. */
 	memcpy(mf,&of,sizeof(MODULE));
-	_mm_iobase_revert();
 
 	if(maxchan>0) {
 		if(!(mf->flags&UF_NNA)&&(mf->numchn<maxchan))
@@ -481,22 +513,26 @@ MODULE* Player_LoadGeneric_internal(MREADER *reader,int maxchan,BOOL curious)
 		if(maxchan<mf->numchn) mf->flags |= UF_NNA;
 
 		if(MikMod_SetNumVoices_internal(maxchan,-1)) {
+			_mm_iobase_revert();
 			Player_Free(mf);
 			return NULL;
 		}
 	}
 	if(SL_LoadSamples()) {
+		_mm_iobase_revert();
 		Player_Free_internal(mf);
 		return NULL;
 	}
 	if(Player_Init(mf)) {
+		_mm_iobase_revert();
 		Player_Free_internal(mf);
 		mf=NULL;
 	}
+	_mm_iobase_revert();
 	return mf;
 }
 
-MODULE* Player_LoadGeneric(MREADER *reader,int maxchan,BOOL curious)
+MIKMODAPI MODULE* Player_LoadGeneric(MREADER *reader,int maxchan,BOOL curious)
 {
 	MODULE* result;
 
@@ -511,7 +547,7 @@ MODULE* Player_LoadGeneric(MREADER *reader,int maxchan,BOOL curious)
 
 /* Loads a module given a file pointer.
    File is loaded from the current file seek position. */
-MODULE* Player_LoadFP(FILE* fp,int maxchan,BOOL curious)
+MIKMODAPI MODULE* Player_LoadFP(FILE* fp,int maxchan,BOOL curious)
 {
 	MODULE* result=NULL;
 	struct MREADER* reader=_mm_new_file_reader (fp);
@@ -525,14 +561,14 @@ MODULE* Player_LoadFP(FILE* fp,int maxchan,BOOL curious)
 
 /* Open a module via its filename.  The loader will initialize the specified
    song-player 'player'. */
-MODULE* Player_Load(CHAR* filename,int maxchan,BOOL curious)
+MIKMODAPI MODULE* Player_Load(CHAR* filename,int maxchan,BOOL curious)
 {
 	FILE *fp;
 	MODULE *mf=NULL;
 
 	if((fp=_mm_fopen(filename,"rb"))) {
 		mf=Player_LoadFP(fp,maxchan,curious);
-		fclose(fp);
+		_mm_fclose(fp);
 	}
 	return mf;
 }

@@ -1,17 +1,17 @@
 /*	MikMod sound library
-	(c) 1998, 1999, 2000 Miodrag Vallat and others - see file AUTHORS for
-	complete list.
+	(c) 1998, 1999, 2000, 2001, 2002 Miodrag Vallat and others - see file
+	AUTHORS for complete list.
 
 	This library is free software; you can redistribute it and/or modify
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
-
+ 
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
-
+ 
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -30,10 +30,23 @@
 #include "config.h"
 #endif
 
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
 #include <ctype.h>
+#include <stdio.h>
+#ifdef HAVE_MEMORY_H
+#include <memory.h>
+#endif
 #include <string.h>
 
 #include "mikmod_internals.h"
+
+#ifdef SUNOS
+extern int fprintf(FILE *, const char *, ...);
+extern int toupper(int);
+#endif
 
 /*========== Module structure */
 
@@ -54,7 +67,7 @@ typedef struct ITHEADER {
 	UBYTE	initspeed;
 	UBYTE	inittempo;
 	UBYTE	pansep;		/* panning separation between channels */
-	UBYTE	zerobyte;
+	UBYTE	zerobyte;       
 	UWORD	msglength;
 	ULONG	msgoffset;
 	UBYTE	blank02[4];
@@ -94,19 +107,19 @@ typedef struct ITINSTHEADER {
 	CHAR	filename[12];	/* (char) Instrument filename */
 	UBYTE	zerobyte;		/* (byte) Instrument type (always 0) */
 	UBYTE	volflg;
-	UBYTE	volpts;
+	UBYTE	volpts;   
 	UBYTE	volbeg;			/* (byte) Volume loop start (node) */
 	UBYTE	volend;			/* (byte) Volume loop end (node) */
 	UBYTE	volsusbeg;		/* (byte) Volume sustain begin (node) */
 	UBYTE	volsusend;		/* (byte) Volume Sustain end (node) */
 	UBYTE	panflg;
-	UBYTE	panpts;
+	UBYTE	panpts;  
 	UBYTE	panbeg;			/* (byte) channel loop start (node) */
 	UBYTE	panend;			/* (byte) channel loop end (node) */
 	UBYTE	pansusbeg;		/* (byte) channel sustain begin (node) */
 	UBYTE	pansusend;		/* (byte) channel Sustain end (node) */
 	UBYTE	pitflg;
-	UBYTE	pitpts;
+	UBYTE	pitpts;   
 	UBYTE	pitbeg;			/* (byte) pitch loop start (node) */
 	UBYTE	pitend;			/* (byte) pitch loop end (node) */
 	UBYTE	pitsusbeg;		/* (byte) pitch sustain begin (node) */
@@ -136,7 +149,7 @@ typedef struct ITINSTHEADER {
 	UWORD	pantick[ITENVCNT];   /* tick value of panning nodes */
 	SBYTE	pitnode[ITENVCNT];   /* pitchenv - node points */
 	UWORD	pittick[ITENVCNT];   /* tick value of pitch nodes */
-} ITINSTHEADER;
+} ITINSTHEADER;                       
 
 /* unpacked note */
 
@@ -152,8 +165,8 @@ static ITNOTE *itpat=NULL;	/* allocate to space for one full pattern */
 static UBYTE *mask=NULL;	/* arrays allocated to 64 elements and used for */
 static ITNOTE *last=NULL;	/* uncompressing IT's pattern information */
 static int numtrk=0;
-static int old_effect;		/* if set, use S3M old-effects stuffs */
-
+static unsigned int old_effect;		/* if set, use S3M old-effects stuffs */
+   
 static CHAR* IT_Version[]={
 	"ImpulseTracker  .  ",
 	"Compressed ImpulseTracker  .  ",
@@ -204,7 +217,7 @@ void IT_Cleanup(void)
 /* Because so many IT files have 64 channels as the set number used, but really
    only use far less (usually from 8 to 24 still), I had to make this function,
    which determines the number of channels that are actually USED by a pattern.
-
+ 
    NOTE: You must first seek to the file location of the pattern before calling
          this procedure.
 
@@ -269,13 +282,17 @@ static UBYTE* IT_ConvertTrack(ITNOTE* tr,UWORD numrows)
 		/* process volume / panning column
 		   volume / panning effects do NOT all share the same memory address
 		   yet. */
-		if(volpan<=64)
+		if(volpan<=64) 
 			UniVolEffect(VOL_VOLUME,volpan);
-		else if(volpan<=74)	/* fine volume slide up (65-74) */
+		else if(volpan==65) /* fine volume slide up (65-74) - A0 case */
+			UniVolEffect(VOL_VOLSLIDE,0);
+		else if(volpan<=74)	{ /* fine volume slide up (65-74) - general case */
 			UniVolEffect(VOL_VOLSLIDE,0x0f+((volpan-65)<<4));
-		else if(volpan<=84)	/* fine volume slide down (75-84) */
+		} else if(volpan==75)	/* fine volume slide down (75-84) - B0 case */
+			UniVolEffect(VOL_VOLSLIDE,0);
+		else if(volpan<=84) {	/* fine volume slide down (75-84) - general case*/
 			UniVolEffect(VOL_VOLSLIDE,0xf0+(volpan-75));
-		else if(volpan<=94)	/* volume slide up (85-94) */
+		} else if(volpan<=94)	/* volume slide up (85-94) */
 			UniVolEffect(VOL_VOLSLIDE,((volpan-85)<<4));
 		else if(volpan<=104)/* volume slide down (95-104) */
 			UniVolEffect(VOL_VOLSLIDE,(volpan-95));
@@ -297,7 +314,8 @@ static UBYTE* IT_ConvertTrack(ITNOTE* tr,UWORD numrows)
 			return NULL;
 		}
 
-		S3MIT_ProcessCmd(tr[t*of.numchn].cmd,tr[t*of.numchn].inf,old_effect|2);
+		S3MIT_ProcessCmd(tr[t*of.numchn].cmd,tr[t*of.numchn].inf,
+		    old_effect|S3MIT_IT);
 
 		UniNewline();
 	}
@@ -324,13 +342,13 @@ static BOOL IT_ReadPattern(UWORD patrows)
 			if(ch!=-1) {
 				n=&itt[ch];
 				l=&last[ch];
-			} else
+			} else 
 				n=l=&dummy;
 
 			if(flag&128) mask[ch]=_mm_read_UBYTE(modreader);
 			if(mask[ch]&1)
 				/* convert IT note off to internal note off */
-				if((l->note=n->note=_mm_read_UBYTE(modreader))==255)
+				if((l->note=n->note=_mm_read_UBYTE(modreader))==255) 
 					l->note=n->note=253;
 			if(mask[ch]&2)
 				l->ins=n->ins=_mm_read_UBYTE(modreader);
@@ -391,7 +409,7 @@ static void IT_LoadMidiConfiguration(MREADER* modreader)
 		_mm_fseek(modreader,8*dat+0x120,SEEK_CUR);
 
 		/* read midi macros */
-		for(i=0;i<16;i++) {
+		for(i=0;i<UF_MAXMACRO;i++) {
 			LoadMidiString(modreader,midiline);
 			if((!strncmp(midiline,"F0F00",5))&&
 			   ((midiline[5]=='0')||(midiline[5]=='1')))
@@ -406,7 +424,7 @@ static void IT_LoadMidiConfiguration(MREADER* modreader)
 				filtersettings[i].filter=(midiline[5]-'0')|0x80;
 				dat=(midiline[6])?(midiline[6]-'0'):0;
 				if(midiline[7])dat=(dat<<4)|(midiline[7]-'0');
-				filtersettings[i].inf=(UBYTE)dat;
+				filtersettings[i].inf=dat;
 			}
 		}
 	} else { /* use default information */
@@ -471,7 +489,10 @@ BOOL IT_Load(BOOL curious)
 	of.initspeed   = mh->initspeed;
 	of.inittempo   = mh->inittempo;
 	of.initvolume  = mh->globvol;
-	of.flags      |= UF_BGSLIDES|UF_ARPMEM;
+	of.flags      |= UF_BGSLIDES | UF_ARPMEM;
+	if (!(mh->flags & 1))
+			of.flags |= UF_PANNING;
+	of.bpmlimit=32;
 
 	if(mh->songname[25]) {
 		of.numvoices=1+mh->songname[25];
@@ -496,29 +517,33 @@ BOOL IT_Load(BOOL curious)
 	}
 
 	if(mh->flags&8)
-		of.flags|=(UF_XMPERIODS | UF_LINEAR);
+		of.flags |= UF_XMPERIODS | UF_LINEAR;
 
 	if((mh->cwt>=0x106)&&(mh->flags&16))
-		old_effect=1;
+		old_effect=S3MIT_OLDSTYLE;
 	else
 		old_effect=0;
 
 	/* set panning positions */
-	for(t=0;t<64;t++) {
-		mh->pantable[t]&=0x7f;
-		if(mh->pantable[t]<64)
-			of.panning[t]=mh->pantable[t]<<2;
-		else if(mh->pantable[t]==64)
-			of.panning[t]=255;
-		else if(mh->pantable[t]==100)
-			of.panning[t]=PAN_SURROUND;
-		else if(mh->pantable[t]==127)
-			of.panning[t]=PAN_CENTER;
-		else {
-			_mm_errno=MMERR_LOADING_HEADER;
-			return 0;
+	if (mh->flags & 1)
+		for(t=0;t<64;t++) {
+			mh->pantable[t]&=0x7f;
+			if(mh->pantable[t]<64)
+				of.panning[t]=mh->pantable[t]<<2;
+			else if(mh->pantable[t]==64)
+				of.panning[t]=255;
+			else if(mh->pantable[t]==100)
+				of.panning[t]=PAN_SURROUND;
+			else if(mh->pantable[t]==127)
+				of.panning[t]=PAN_CENTER;
+			else {
+				_mm_errno=MMERR_LOADING_HEADER;
+				return 0;
+			}
 		}
-	}
+	else
+		for(t=0;t<64;t++)
+			of.panning[t]=PAN_CENTER;
 
 	/* set channel volumes */
 	memcpy(of.chanvol,mh->voltable,64);
@@ -538,7 +563,7 @@ BOOL IT_Load(BOOL curious)
 		return 0;
 	}
 
-	poslookupcnt=(UBYTE)mh->ordnum;
+	poslookupcnt=mh->ordnum;
 	S3MIT_CreateOrders(curious);
 
 	if(!(paraptr=(ULONG*)_mm_malloc((mh->insnum+mh->smpnum+of.numpat)*
@@ -608,8 +633,14 @@ BOOL IT_Load(BOOL curious)
 		/* Generate an error if c5spd is > 512k, or samplelength > 256 megs
 		   (nothing would EVER be that high) */
 
-		if(_mm_eof(modreader)||(s.c5spd>0x7ffffL)||(s.length>0xfffffffUL)||
-		   (s.loopbeg>0xfffffffUL)||(s.loopend>0xfffffffUL)) {
+		if(_mm_eof(modreader)||(s.c5spd>0x7ffffL)||(s.length>0xfffffffUL)) {
+			_mm_errno = MMERR_LOADING_SAMPLEINFO;
+			return 0;
+		}
+
+		/* Reality check for sample loop information */
+		if((s.flag&16)&&
+		   ((s.loopbeg>0xfffffffUL)||(s.loopend>0xfffffffUL))) {
 			_mm_errno = MMERR_LOADING_SAMPLEINFO;
 			return 0;
 		}
@@ -648,9 +679,8 @@ BOOL IT_Load(BOOL curious)
 
 		if(mh->cwt>=0x200) {
 			if(s.convert&1) q->flags|=SF_SIGNED;
-			if(s.convert&4) q->flags|=SF_DELTA;
+			if(s.convert&4) q->flags|=SF_DELTA;   
 		}
-
 		q++;
 	}
 
@@ -706,46 +736,43 @@ BOOL IT_Load(BOOL curious)
 				for(lp=0;lp<ITENVCNT;lp++) {
 					ih.oldvoltick[lp] = _mm_read_UBYTE(modreader);
 					ih.volnode[lp]    = _mm_read_UBYTE(modreader);
-				}
+				} 
 			} else {
 				/* load IT 2xx volume, pan and pitch envelopes */
+#if defined __STDC__ || defined _MSC_VER
+#define IT_LoadEnvelope(name,type) 										\
+				ih. name##flg   =_mm_read_UBYTE(modreader);				\
+				ih. name##pts   =_mm_read_UBYTE(modreader);				\
+				ih. name##beg   =_mm_read_UBYTE(modreader);				\
+				ih. name##end   =_mm_read_UBYTE(modreader);				\
+				ih. name##susbeg=_mm_read_UBYTE(modreader);				\
+				ih. name##susend=_mm_read_UBYTE(modreader);				\
+				for(lp=0;lp<ITENVCNT;lp++) {							\
+					ih. name##node[lp]=_mm_read_##type (modreader);		\
+					ih. name##tick[lp]=_mm_read_I_UWORD(modreader);		\
+				}														\
+				_mm_read_UBYTE(modreader)
+#else
+#define IT_LoadEnvelope(name,type) 										\
+				ih. name/**/flg   =_mm_read_UBYTE(modreader);			\
+				ih. name/**/pts   =_mm_read_UBYTE(modreader);			\
+				ih. name/**/beg   =_mm_read_UBYTE(modreader);			\
+				ih. name/**/end   =_mm_read_UBYTE(modreader);			\
+				ih. name/**/susbeg=_mm_read_UBYTE(modreader);			\
+				ih. name/**/susend=_mm_read_UBYTE(modreader);			\
+				for(lp=0;lp<ITENVCNT;lp++) {							\
+					ih. name/**/node[lp]=_mm_read_/**/type (modreader);	\
+					ih. name/**/tick[lp]=_mm_read_I_UWORD(modreader);	\
+				}														\
+				_mm_read_UBYTE(modreader)
+#endif
 
- ih.volflg   =_mm_read_UBYTE(modreader);             
- ih.volpts   =_mm_read_UBYTE(modreader);             
- ih.volbeg   =_mm_read_UBYTE(modreader);             
- ih.volend   =_mm_read_UBYTE(modreader);             
- ih.volsusbeg=_mm_read_UBYTE(modreader);             
- ih.volsusend=_mm_read_UBYTE(modreader);             
- for(lp=0;lp<ITENVCNT;lp++) {
- ih.volnode[lp]=_mm_read_UBYTE(modreader);
- ih.voltick[lp]=_mm_read_I_UWORD(modreader); 
- }                                                            
- _mm_read_UBYTE(modreader);
- ih.panflg   =_mm_read_UBYTE(modreader);             
- ih.panpts   =_mm_read_UBYTE(modreader);             
- ih.panbeg   =_mm_read_UBYTE(modreader);             
- ih.panend   =_mm_read_UBYTE(modreader);             
- ih.pansusbeg=_mm_read_UBYTE(modreader);             
- ih.pansusend=_mm_read_UBYTE(modreader);             
- for(lp=0;lp<ITENVCNT;lp++) {
- ih.pannode[lp]=_mm_read_SBYTE(modreader);
- ih.pantick[lp]=_mm_read_I_UWORD(modreader); 
- }                                                            
- _mm_read_UBYTE(modreader);
- ih.pitflg   =_mm_read_UBYTE(modreader);             
- ih.pitpts   =_mm_read_UBYTE(modreader);             
- ih.pitbeg   =_mm_read_UBYTE(modreader);             
- ih.pitend   =_mm_read_UBYTE(modreader);             
- ih.pitsusbeg=_mm_read_UBYTE(modreader);             
- ih.pitsusend=_mm_read_UBYTE(modreader);             
- for(lp=0;lp < ITENVCNT; lp++) {
- ih.pitnode[lp]=_mm_read_SBYTE(modreader);
- ih.pittick[lp]=_mm_read_I_UWORD(modreader); 
- }                                                            
- _mm_read_UBYTE(modreader);
-
+				IT_LoadEnvelope(vol,UBYTE);
+				IT_LoadEnvelope(pan,SBYTE);
+				IT_LoadEnvelope(pit,SBYTE);
+#undef IT_LoadEnvelope
 			}
-
+ 
 			if(_mm_eof(modreader)) {
 				_mm_errno = MMERR_LOADING_SAMPLEINFO;
 				return 0;
@@ -764,10 +791,10 @@ BOOL IT_Load(BOOL curious)
 
 				if(ih.volflg&1) d->volflg|=EF_ON;
 				if(ih.volflg&2) d->volflg|=EF_LOOP;
-				if(ih.volflg&4) d->volflg|=EF_SUSTAIN;
+				if(ih.volflg&4) d->volflg|=EF_SUSTAIN;      
 
 				/* XM conversion of IT envelope Array */
-				d->volbeg    = ih.volbeg;
+				d->volbeg    = ih.volbeg;   
 				d->volend    = ih.volend;
 				d->volsusbeg = ih.volsusbeg;
 				d->volsusend = ih.volsusend;
@@ -780,7 +807,7 @@ BOOL IT_Load(BOOL curious)
 							d->volpts++;
 						} else
 							break;
-				}
+				}  
 			} else {
 				d->panning=((ih.chanpan&127)==64)?255:(ih.chanpan&127)<<2;
 				if(!(ih.chanpan&128)) d->flags|=IF_OWNPAN;
@@ -800,49 +827,53 @@ BOOL IT_Load(BOOL curious)
 					d->rpanvar = ih.rpanvar;
 				}
 
-if(ih.volflg&1) d->volflg|=EF_ON;
-if(ih.volflg&2) d->volflg|=EF_LOOP;
-if(ih.volflg&4) d->volflg|=EF_SUSTAIN;
-d->volpts=ih.volpts;
-d->volbeg=ih.volbeg;
-d->volend=ih.volend;
-d->volsusbeg=ih.volsusbeg;
-d->volsusend=ih.volsusend;
-for(u=0;u<ih.volpts;u++)
- d->volenv[u].pos=ih.voltick[u];                               if((d->volflg&EF_ON)&&(d->volpts<2))                          
- d->volflg&=~EF_ON;
-for(u=0;u<ih.volpts;u++)
- d->volenv[u].val=(ih.volnode[u]<<2);
-                               
-if(ih.panflg&1) d->panflg|=EF_ON;
-if(ih.panflg&2) d->panflg|=EF_LOOP;
-if(ih.panflg&4) d->panflg|=EF_SUSTAIN;
-d->panpts=ih.panpts;
-d->panbeg=ih.panbeg;
-d->panend=ih.panend;                                                   
-d->pansusbeg=ih.pansusbeg;
-d->pansusend=ih.pansusend;
-for(u=0;u<ih.panpts;u++)
- d->panenv[u].pos=ih.pantick[u];                               
-if((d->panflg&EF_ON)&&(d->panpts<2))         
-d->panflg&=~EF_ON;                 
- for(u=0;u<ih.panpts;u++)
-  d->panenv[u].val=ih.pannode[u]==32?255:(ih.pannode[u]+32)<<2;
+#if defined __STDC__ || defined _MSC_VER
+#define IT_ProcessEnvelope(name) 										\
+				if(ih. name##flg&1) d-> name##flg|=EF_ON;				\
+				if(ih. name##flg&2) d-> name##flg|=EF_LOOP;				\
+				if(ih. name##flg&4) d-> name##flg|=EF_SUSTAIN;			\
+				d-> name##pts=ih. name##pts;							\
+				d-> name##beg=ih. name##beg;							\
+				d-> name##end=ih. name##end;							\
+				d-> name##susbeg=ih. name##susbeg;						\
+				d-> name##susend=ih. name##susend;						\
+																		\
+				for(u=0;u<ih. name##pts;u++)							\
+					d-> name##env[u].pos=ih. name##tick[u];				\
+																		\
+				if((d-> name##flg&EF_ON)&&(d-> name##pts<2))			\
+					d-> name##flg&=~EF_ON
+#else
+#define IT_ProcessEnvelope(name) 									\
+				if(ih. name/**/flg&1) d-> name/**/flg|=EF_ON;		\
+				if(ih. name/**/flg&2) d-> name/**/flg|=EF_LOOP;		\
+				if(ih. name/**/flg&4) d-> name/**/flg|=EF_SUSTAIN;	\
+				d-> name/**/pts=ih. name/**/pts;					\
+				d-> name/**/beg=ih. name/**/beg;					\
+				d-> name/**/end=ih. name/**/end;					\
+				d-> name/**/susbeg=ih. name/**/susbeg;				\
+				d-> name/**/susend=ih. name/**/susend;				\
+																	\
+				for(u=0;u<ih. name/**/pts;u++)						\
+					d-> name/**/env[u].pos=ih. name/**/tick[u];		\
+																	\
+				if((d-> name/**/flg&EF_ON)&&(d-> name/**/pts<2))	\
+					d-> name/**/flg&=~EF_ON
+#endif
 
-if(ih.pitflg&1) d->pitflg|=EF_ON;
-if(ih.pitflg&2) d->pitflg|=EF_LOOP;
-if(ih.pitflg&4) d->pitflg|=EF_SUSTAIN;
-d->pitpts=ih.pitpts;
-d->pitbeg=ih.pitbeg;
-d->pitend=ih.pitend;                                                   
-d->pitsusbeg=ih.pitsusbeg;                                            
-d->pitsusend=ih.pitsusend;                                            
-for(u=0;u<ih.pitpts;u++)                                                    
-d->pitenv[u].pos=ih.pittick[u];                               
-if((d->pitflg&EF_ON)&&(d->pitpts<2))
-d->pitflg&=~EF_ON;
- for(u=0;u<ih.pitpts;u++)
-  d->pitenv[u].val=ih.pitnode[u]+32;
+				IT_ProcessEnvelope(vol);
+				for(u=0;u<ih.volpts;u++)
+					d->volenv[u].val=(ih.volnode[u]<<2);
+
+				IT_ProcessEnvelope(pan);
+				for(u=0;u<ih.panpts;u++)
+					d->panenv[u].val=
+					  ih.pannode[u]==32?255:(ih.pannode[u]+32)<<2;
+
+				IT_ProcessEnvelope(pit);
+				for(u=0;u<ih.pitpts;u++)
+					d->pitenv[u].val=ih.pitnode[u]+32;
+#undef IT_ProcessEnvelope
 
 				if(ih.pitflg&0x80) {
 					/* filter envelopes not supported yet */
@@ -851,9 +882,9 @@ d->pitflg&=~EF_ON;
 #ifdef MIKMOD_DEBUG
 					{
 						static int warn=0;
-
+						
 						if(!warn)
-							fputs("\rFilter envelopes not supported yet\n",stderr);
+							fprintf(stderr, "\rFilter envelopes not supported yet\n");
 						warn=1;
 					}
 #endif
@@ -872,7 +903,7 @@ d->pitflg&=~EF_ON;
 				}
 			}
 
-			d++;
+			d++;                  
 		}
 	} else if(of.flags & UF_LINEAR) {
 		if(!AllocInstruments()) return 0;
@@ -892,7 +923,7 @@ d->pitflg&=~EF_ON;
 
 	/* Figure out how many channels this song actually uses */
 	of.numchn=0;
-	memset(remap,-1,64*sizeof(UBYTE));
+	memset(remap,-1,UF_MAXCHAN*sizeof(UBYTE));
 	for(t=0;t<of.numpat;t++) {
 		UWORD packlen;
 
@@ -915,7 +946,7 @@ d->pitflg&=~EF_ON;
 	}
 
 	/* give each of them a different number */
-	for(t=0;t<64;t++)
+	for(t=0;t<UF_MAXCHAN;t++) 
 		if(!remap[t])
 			remap[t]=of.numchn++;
 
@@ -957,7 +988,7 @@ CHAR *IT_LoadTitle(void)
 
 	_mm_fseek(modreader,4,SEEK_SET);
 	if(!_mm_read_UBYTES(s,26,modreader)) return NULL;
-
+   
 	return(DupStr(s,26,0));
 }
 

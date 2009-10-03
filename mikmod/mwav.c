@@ -1,17 +1,17 @@
 /*	MikMod sound library
-	(c) 1998, 1999 Miodrag Vallat and others - see file AUTHORS for
-	complete list.
+	(c) 1998, 1999, 2000, 2001 Miodrag Vallat and others - see file AUTHORS
+	for complete list.
 
 	This library is free software; you can redistribute it and/or modify
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
-
+ 
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
-
+ 
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -34,9 +34,17 @@
 #include "config.h"
 #endif
 
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
 #include <string.h>
 
 #include "mikmod_internals.h"
+
+#ifdef SUNOS
+extern int fprintf(FILE *, const char *, ...);
+#endif
 
 typedef struct WAV {
 	CHAR  rID[4];
@@ -122,7 +130,7 @@ SAMPLE* Sample_LoadGeneric_internal(MREADER* reader)
 			si->inflags = si->flags;
 			SL_RegisterSample(si,MD_SNDFX,reader);
 			SL_LoadSamples();
-
+			
 			/* skip any other remaining blocks - so in case of repeated sample
 			   fragments, we'll return the first anyway instead of an error */
 			break;
@@ -136,7 +144,7 @@ SAMPLE* Sample_LoadGeneric_internal(MREADER* reader)
 	return si;
 }
 
-SAMPLE* Sample_LoadGeneric(MREADER* reader)
+MIKMODAPI SAMPLE* Sample_LoadGeneric(MREADER* reader)
 {
 	SAMPLE* result;
 
@@ -147,7 +155,7 @@ SAMPLE* Sample_LoadGeneric(MREADER* reader)
 	return result;
 }
 
-SAMPLE* Sample_LoadFP(FILE *fp)
+MIKMODAPI SAMPLE* Sample_LoadFP(FILE *fp)
 {
 	SAMPLE* result=NULL;
 	MREADER* reader;
@@ -159,7 +167,7 @@ SAMPLE* Sample_LoadFP(FILE *fp)
 	return result;
 }
 
-SAMPLE* Sample_Load(CHAR* filename)
+MIKMODAPI SAMPLE* Sample_Load(CHAR* filename)
 {
 	FILE *fp;
 	SAMPLE *si=NULL;
@@ -167,12 +175,12 @@ SAMPLE* Sample_Load(CHAR* filename)
 	if(!(md_mode & DMODE_SOFT_SNDFX)) return NULL;
 	if((fp=_mm_fopen(filename,"rb"))) {
 		si = Sample_LoadFP(fp);
-		fclose(fp);
+		_mm_fclose(fp);
 	}
 	return si;
 }
 
-void Sample_Free(SAMPLE* si)
+MIKMODAPI void Sample_Free(SAMPLE* si)
 {
 	if(si) {
 		MD_SampleUnload(si->handle);

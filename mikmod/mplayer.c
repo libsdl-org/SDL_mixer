@@ -1,17 +1,17 @@
 /*	MikMod sound library
-	(c) 1998, 1999 Miodrag Vallat and others - see file AUTHORS for
-	complete list.
+	(c) 1998, 1999, 2000, 2001 Miodrag Vallat and others - see file AUTHORS
+	for complete list.
 
 	This library is free software; you can redistribute it and/or modify
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
-
+ 
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
-
+ 
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -34,9 +34,6 @@
 
 #include <string.h>
 #include <stdarg.h>
-#ifdef SUNOS
-extern long int random(void);
-#endif
 #ifdef SRANDOM_IN_MATH_H
 #include <math.h>
 #else
@@ -45,20 +42,23 @@ extern long int random(void);
 
 #include "mikmod_internals.h"
 
-/* Set forbid to 1 when you want to modify any of the pf->sngpos, pf->patpos etc
-   variables and clear it when you're done. This prevents getting strange
-   results due to intermediate interrupts. */
+#ifdef SUNOS
+extern int fprintf(FILE *, const char *, ...);
+extern long int random(void);
+#endif
 
-		MODULE *pf=NULL; /* modfile being played */
-static	SWORD mp_channel; /* channel we're working on */
-static	MP_CONTROL *a;    /* current AUDTMP we're working on */
-static  int explicitslides;
+/* The currently playing module */
+/* This variable should better be static, but it would break the ABI, so this
+   will wait */
+/*static*/ MODULE *pf = NULL;
+
+#define	HIGH_OCTAVE		2	/* number of above-range octaves */
 
 static	UWORD oldperiods[OCTAVE*2]={
-	1712*16,1664*16,1616*16,1570*16,1524*16,1480*16,
-	1438*16,1396*16,1356*16,1318*16,1280*16,1244*16,
-	1208*16,1174*16,1140*16,1108*16,1076*16,1046*16,
-	1016*16, 988*16, 960*16, 932*16, 906*16, 880*16
+	0x6b00, 0x6800, 0x6500, 0x6220, 0x5f50, 0x5c80,
+	0x5a00, 0x5740, 0x54d0, 0x5260, 0x5010, 0x4dc0,
+	0x4b90, 0x4960, 0x4750, 0x4540, 0x4350, 0x4160,
+	0x3f90, 0x3dc0, 0x3c10, 0x3a40, 0x38b0, 0x3700
 };
 
 static	UBYTE VibratoTable[32]={
@@ -226,6 +226,17 @@ static	SBYTE PanbrelloTable[256]={
 	-24,-23,-22,-20,-19,-17,-16,-14,-12,-11,- 9,- 8,- 6,- 5,- 3,- 2
 };
 
+static int _pl_synchro_value;
+void Player_SetSynchroValue(int i)
+{
+	_pl_synchro_value = i;
+}
+
+int Player_GetSynchroValue(void)
+{
+	return _pl_synchro_value;
+}
+
 /* returns a random value between 0 and ceil-1, ceil must be a power of two */
 static int getrandom(int ceil)
 {
@@ -238,24 +249,30 @@ static int getrandom(int ceil)
 
 /*	New Note Action Scoring System :
 	--------------------------------
-1)	total-volume (fadevol, chanvol, volume) is the main scorer.
-2)	a looping sample is a bonus x2
-3)	a foreground channel is a bonus x4
-4)	an active envelope with keyoff is a handicap -x2                          */
-static int MP_FindEmptyChannel(void)
+	1)	total-volume (fadevol, chanvol, volume) is the main scorer.
+	2)	a looping sample is a bonus x2
+	3)	a foreground channel is a bonus x4
+	4)	an active envelope with keyoff is a handicap -x2
+*/
+static int MP_FindEmptyChannel(MODULE *mod)
 {
 	MP_VOICE *a;
 	ULONG t,k,tvol,pp;
 
 	for (t=0;t<md_sngchn;t++)
-		if (((pf->voice[t].kick==KICK_ABSENT)||(pf->voice[t].kick==KICK_ENV))&&
+		if (((mod->voice[t].main.kick==KICK_ABSENT)||
+			 (mod->voice[t].main.kick==KICK_ENV))&&
 		   Voice_Stopped_internal(t))
 			return t;
 
-	tvol=0xffffffUL;t=0;a=pf->voice;
-	for (k=0;k<md_sngchn;k++,a++)
-		if ((a->kick==KICK_ABSENT)||(a->kick==KICK_ENV)) {
-			pp=a->totalvol<<((a->s->flags&SF_LOOP)?1:0);
+	tvol=0xffffffUL;t=-1;a=mod->voice;
+	for (k=0;k<md_sngchn;k++,a++) {
+		/* allow us to take over a nonexisting sample */
+		if (!a->main.s)
+			return k;
+
+		if ((a->main.kick==KICK_ABSENT)||(a->main.kick==KICK_ENV)) {
+			pp=a->totalvol<<((a->main.s->flags&SF_LOOP)?1:0);
 			if ((a->master)&&(a==a->master->slave))
 				pp<<=2;
 
@@ -264,6 +281,7 @@ static int MP_FindEmptyChannel(void)
 				t=k;
 			}
 		}
+	}
 
 	if (tvol>8000*7) return -1;
 	return t;
@@ -279,7 +297,7 @@ UWORD getlinearperiod(UWORD note,ULONG fine)
 {
 	UWORD t;
 
-	t=(20L*OCTAVE+2-note)*32L-(fine>>1);
+	t=((20L+2*HIGH_OCTAVE)*OCTAVE+2-note)*32L-(fine>>1);
 	return t;
 }
 
@@ -303,6 +321,7 @@ static UWORD getoldperiod(UWORD note,ULONG speed)
 {
 	UWORD n,o;
 
+	/* This happens sometimes on badly converted AMF, and old MOD */
 	if (!speed) {
 #ifdef MIKMOD_DEBUG
 		fprintf(stderr,"\rmplayer: getoldperiod() called with note=%d, speed=0 !\n",note);
@@ -315,12 +334,15 @@ static UWORD getoldperiod(UWORD note,ULONG speed)
 	return ((8363L*(ULONG)oldperiods[n])>>o)/speed;
 }
 
-static UWORD GetPeriod(UWORD note,ULONG speed)
+static UWORD GetPeriod(UWORD flags, UWORD note, ULONG speed)
 {
-	if (pf->flags & UF_XMPERIODS)
-		return (pf->flags&UF_LINEAR)?getlinearperiod(note,speed):getlogperiod(note,speed);
-
-	return getoldperiod(note,speed);
+	if (flags & UF_XMPERIODS) {
+		if (flags & UF_LINEAR)
+				return getlinearperiod(note, speed);
+		else
+				return getlogperiod(note, speed);
+	} else
+		return getoldperiod(note, speed);
 }
 
 static SWORD InterpolateEnv(SWORD p,ENVPT *a,ENVPT *b)
@@ -337,7 +359,7 @@ static SWORD DoPan(SWORD envpan,SWORD pan)
 	return (newpan<PAN_LEFT)?PAN_LEFT:(newpan>PAN_RIGHT?PAN_RIGHT:newpan);
 }
 
-static void StartEnvelope(ENVPR *t,UBYTE flg,UBYTE pts,UBYTE susbeg,UBYTE susend,UBYTE beg,UBYTE end,ENVPT *p,UBYTE keyoff)
+static SWORD StartEnvelope(ENVPR *t,UBYTE flg,UBYTE pts,UBYTE susbeg,UBYTE susend,UBYTE beg,UBYTE end,ENVPT *p,UBYTE keyoff)
 {
 	t->flg=flg;
 	t->pts=pts;
@@ -355,7 +377,13 @@ static void StartEnvelope(ENVPR *t,UBYTE flg,UBYTE pts,UBYTE susbeg,UBYTE susend
 		t->a++;t->b++;
 	}
 
-	if (t->b>=t->pts) t->b=t->pts-1;
+	/* Fit in the envelope, still */
+	if (t->a >= t->pts)
+		t->a = t->pts - 1;
+	if (t->b >= t->pts)
+		t->b = t->pts-1;
+
+	return t->env[t->a].val;
 }
 
 /* This procedure processes all envelope types, include volume, pitch, and
@@ -375,232 +403,345 @@ static void StartEnvelope(ENVPR *t,UBYTE flg,UBYTE pts,UBYTE susbeg,UBYTE susend
 
    Misc:
      Sustain loops are loops that are only active as long as the keyoff flag is
-     clear.  When a volume envelope terminates, so does the current fadeout.  */
-static SWORD ProcessEnvelope(ENVPR *t,SWORD v,UBYTE keyoff)
+     clear.  When a volume envelope terminates, so does the current fadeout.
+*/
+static SWORD ProcessEnvelope(MP_VOICE *aout, ENVPR *t, SWORD v)
 {
 	if (t->flg & EF_ON) {
-		UBYTE a,b; /* actual points in the envelope */
-		UWORD p; /* the 'tick counter' - real point being played */
+		UBYTE a, b;		/* actual points in the envelope */
+		UWORD p;		/* the 'tick counter' - real point being played */
 
-		a=t->a;
-		b=t->b;
-		p=t->p;
+		a = t->a;
+		b = t->b;
+		p = t->p;
 
-		/* if sustain loop on one point (XM type), don't move and don't
-		   interpolate when the point is reached */
-		if ((t->flg & EF_SUSTAIN)&&(t->susbeg==t->susend)&&
-		   (!(keyoff&KEY_OFF))&&(p==t->env[t->susbeg].pos))
-			v=t->env[t->susbeg].val;
-		else {
-			/* compute the current envelope value between points a and b */
-			if (a==b)
-				v=t->env[a].val;
+		/*
+		 * Sustain loop on one point (XM type).
+		 * Not processed if KEYOFF.
+		 * Don't move and don't interpolate when the point is reached
+		 */
+		if ((t->flg & EF_SUSTAIN) && t->susbeg == t->susend &&
+		   (!(aout->main.keyoff & KEY_OFF) && p == t->env[t->susbeg].pos)) {
+			v = t->env[t->susbeg].val;
+		} else {
+			/*
+			 * All following situations will require interpolation between
+			 * two envelope points.
+			 */
+
+			/*
+			 * Sustain loop between two points (IT type).
+			 * Not processed if KEYOFF.
+			 */
+			/* if we were on a loop point, loop now */
+			if ((t->flg & EF_SUSTAIN) && !(aout->main.keyoff & KEY_OFF) &&
+			   a >= t->susend) {
+				a = t->susbeg;
+				b = (t->susbeg==t->susend)?a:a+1;
+				p = t->env[a].pos;
+				v = t->env[a].val;
+			} else
+			/*
+			 * Regular loop.
+			 * Be sure to correctly handle single point loops.
+			 */
+			if ((t->flg & EF_LOOP) && a >= t->end) {
+				a = t->beg;
+				b = t->beg == t->end ? a : a + 1;
+				p = t->env[a].pos;
+				v = t->env[a].val;
+			} else
+			/*
+			 * Non looping situations.
+			 */
+			if (a != b)
+				v = InterpolateEnv(p, &t->env[a], &t->env[b]);
 			else
-				v=InterpolateEnv(p,&t->env[a],&t->env[b]);
+				v = t->env[a].val;
 
-			p++;
-			/* pointer reached point b? */
-			if (p>=t->env[b].pos) {
-				a=b++; /* shift points a and b */
-
-				/* Check for loops, sustain loops, or end of envelope. */
-				if ((t->flg&EF_SUSTAIN)&&(!(keyoff&KEY_OFF))&&(b>t->susend)) {
-					a=t->susbeg;
-					b=(t->susbeg==t->susend)?a:a+1;
-					p=t->env[a].pos;
-				} else
-				  if ((t->flg & EF_LOOP)&&(b>t->end)) {
-					a=t->beg;
-					b=(t->beg==t->end)?a:a+1;
-					p=t->env[a].pos;
-				} else {
-					if (b>=t->pts) {
-						if ((t->flg & EF_VOLENV)&&(mp_channel!=-1)) {
-							pf->voice[mp_channel].keyoff|=KEY_FADE;
-							if (!v)
-								pf->voice[mp_channel].fadevol=0;
-						}
-						b--;p--;
-					}
+			/*
+			 * Start to fade if the volume envelope is finished.
+			 */
+			if (p >= t->env[t->pts - 1].pos) {
+				if (t->flg & EF_VOLENV) {
+					aout->main.keyoff |= KEY_FADE;
+					if (!v)
+						aout->main.fadevol = 0;
 				}
+			} else {
+				p++;
+				/* did pointer reach point b? */
+				if (p >= t->env[b].pos)
+					a = b++; /* shift points a and b */
 			}
-			t->a=a;
-			t->b=b;
-			t->p=p;
+			t->a = a;
+			t->b = b;
+			t->p = p;
 		}
 	}
 	return v;
 }
 
 /* XM linear period to frequency conversion */
-ULONG getfrequency(UBYTE flags,ULONG period)
+ULONG getfrequency(UWORD flags,ULONG period)
 {
-	if (flags & UF_LINEAR)
-		return lintab[period%768]>>(period/768);
-	else
+	if (flags & UF_LINEAR) {
+		SLONG shift = ((SLONG)period / 768) - HIGH_OCTAVE;
+
+		if (shift >= 0)
+			return lintab[period % 768] >> shift;
+		else
+			return lintab[period % 768] << (-shift);
+	} else
 		return (8363L*1712L)/(period?period:1);
 }
 
 /*========== Protracker effects */
 
-static void DoEEffects(UBYTE dat)
+static void DoArpeggio(UWORD tick, UWORD flags, MP_CONTROL *a, UBYTE style)
 {
-	UBYTE nib=dat&0xf;
+	UBYTE note=a->main.note;
 
-	switch (dat>>4) {
-		case 0x0: /* hardware filter toggle, not supported */
-			break;
-		case 0x1: /* fineslide up */
-			if (a->period)
-				if (!pf->vbtick) a->tmpperiod-=(nib<<2);
-			break;
-		case 0x2: /* fineslide dn */
-			if (a->period)
-				if (!pf->vbtick) a->tmpperiod+=(nib<<2);
-			break;
-		case 0x3: /* glissando ctrl */
-			a->glissando=nib;
-			break;
-		case 0x4: /* set vibrato waveform */
-			a->wavecontrol&=0xf0;
-			a->wavecontrol|=nib;
-			break;
-		case 0x5: /* set finetune */
-			if (a->period) {
-				if (pf->flags&UF_XMPERIODS)
-					a->speed=nib+128;
-				else
-					a->speed=finetune[nib];
-				a->tmpperiod=GetPeriod((UWORD)a->note<<1,a->speed);
+	if (a->arpmem) {
+		switch (style) {
+		case 0:		/* mod style: N, N+x, N+y */
+			switch (tick % 3) {
+			/* case 0: unchanged */
+			case 1:
+				note += (a->arpmem >> 4);
+				break;
+			case 2:
+				note += (a->arpmem & 0xf);
+				break;
 			}
 			break;
-		case 0x6: /* set patternloop */
-			if (pf->vbtick) break;
-			if (nib) { /* set reppos or repcnt ? */
-				/* set repcnt, so check if repcnt already is set, which means we
-				   are already looping */
-				if (a->pat_repcnt)
-					a->pat_repcnt--; /* already looping, decrease counter */
-				else {
-#if 0
-					/* this would make walker.xm, shipped with Xsoundtracker,
-					   play correctly, but it's better to remain compatible
-					   with FT2 */
-					if ((!(pf->flags&UF_NOWRAP))||(a->pat_reppos!=POS_NONE))
-#endif
-						a->pat_repcnt=nib; /* not yet looping, so set repcnt */
-				}
-
-				if (a->pat_repcnt) { /* jump to reppos if repcnt>0 */
-					if (a->pat_reppos==POS_NONE)
-						a->pat_reppos=pf->patpos-1;
-					if (a->pat_reppos==-1) {
-						pf->pat_repcrazy=1;
-						pf->patpos=0;
-					} else
-						pf->patpos=a->pat_reppos;
-				} else a->pat_reppos=POS_NONE;
-			} else
-				a->pat_reppos=pf->patpos-1; /* set reppos - can be (-1) */
-			break;
-		case 0x7: /* set tremolo waveform */
-			a->wavecontrol&=0x0f;
-			a->wavecontrol|=nib<<4;
-			break;
-		case 0x8: /* set panning */
-			if (pf->panflag) {
-				if (nib<=8) nib<<=4;
-				else nib*=17;
-				a->panning=pf->panning[mp_channel]=nib;
+		case 3:		/* okt arpeggio 3: N-x, N, N+y */
+			switch (tick % 3) {
+			case 0:
+				note -= (a->arpmem >> 4);
+				break;
+			/* case 1: unchanged */
+			case 2:
+				note += (a->arpmem & 0xf);
+				break;
 			}
 			break;
-		case 0x9: /* retrig note */
-			/* only retrigger if data nibble > 0 */
-			if (nib) {
-				if (!a->retrig) {
-					/* when retrig counter reaches 0, reset counter and restart
-					   the sample */
-					if (a->period) a->kick=KICK_NOTE;
-					a->retrig=nib;
-				}
-				a->retrig--; /* countdown */
+		case 4:		/* okt arpeggio 4: N, N+y, N, N-x */
+			switch (tick % 4) {
+			/* case 0, case 2: unchanged */
+			case 1:
+				note += (a->arpmem & 0xf);
+				break;
+			case 3:
+				note -= (a->arpmem >> 4);
+				break;
 			}
 			break;
-		case 0xa: /* fine volume slide up */
-			if (pf->vbtick) break;
-			a->tmpvolume+=nib;
-			if (a->tmpvolume>64) a->tmpvolume=64;
+		case 5:		/* okt arpeggio 5: N-x, N+y, N, and nothing at tick 0 */
+			if (!tick)
+				break;
+			switch (tick % 3) {
+			/* case 0: unchanged */
+			case 1:
+				note -= (a->arpmem >> 4);
+				break;
+			case 2:
+				note += (a->arpmem & 0xf);
+				break;
+			}
 			break;
-		case 0xb: /* fine volume slide dn  */
-			if (pf->vbtick) break;
-			a->tmpvolume-=nib;
-			if (a->tmpvolume<0) a->tmpvolume=0;
-			break;
-		case 0xc: /* cut note */
-			/* When pf->vbtick reaches the cut-note value, turn the volume to
-			   zero ( Just like on the amiga) */
-			if (pf->vbtick>=nib)
-				a->tmpvolume=0; /* just turn the volume down */
-			break;
-		case 0xd: /* note delay */
-			/* delay the start of the sample until pf->vbtick==nib */
-			if (!pf->vbtick)
-				a->notedelay=nib;
-			else if (a->notedelay)
-				a->notedelay--;
-			break;
-		case 0xe: /* pattern delay */
-			if (pf->vbtick) break;
-			if (!pf->patdly2) pf->patdly=nib+1; /* only once, when vbtick=0 */
-			break;
-		case 0xf: /* invert loop, not supported  */
-			break;
+		}
+		a->main.period = GetPeriod(flags, (UWORD)note << 1, a->speed);
+		a->ownper = 1;
 	}
 }
 
-static void DoVibrato(void)
+static int DoPTEffect0(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	UBYTE dat;
+
+	dat = UniGetByte();
+	if (!tick) {
+		if (!dat && (flags & UF_ARPMEM))
+			dat=a->arpmem;
+		else
+			a->arpmem=dat;
+	}
+	if (a->main.period)
+		DoArpeggio(tick, flags, a, 0);
+
+	return 0;
+}
+
+static int DoPTEffect1(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	UBYTE dat;
+
+	dat = UniGetByte();
+	if (!tick && dat)
+		a->slidespeed = (UWORD)dat << 2;
+	if (a->main.period)
+		if (tick)
+			a->tmpperiod -= a->slidespeed;
+
+	return 0;
+}
+
+static int DoPTEffect2(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	UBYTE dat;
+
+	dat = UniGetByte();
+	if (!tick && dat)
+		a->slidespeed = (UWORD)dat << 2;
+	if (a->main.period)
+		if (tick)
+			a->tmpperiod += a->slidespeed;
+
+	return 0;
+}
+
+static void DoToneSlide(UWORD tick, MP_CONTROL *a)
+{
+	if (!a->main.fadevol)
+		a->main.kick = (a->main.kick == KICK_NOTE)? KICK_NOTE : KICK_KEYOFF;
+	else
+		a->main.kick = (a->main.kick == KICK_NOTE)? KICK_ENV : KICK_ABSENT;
+
+	if (tick != 0) {
+		int dist;
+
+		/* We have to slide a->main.period towards a->wantedperiod, so compute
+		   the difference between those two values */
+		dist=a->main.period-a->wantedperiod;
+
+		/* if they are equal or if portamentospeed is too big ...*/
+		if (dist == 0 || a->portspeed > abs(dist))
+			/* ...make tmpperiod equal tperiod */
+			a->tmpperiod=a->main.period=a->wantedperiod;
+		else if (dist>0) {
+			a->tmpperiod-=a->portspeed;	
+			a->main.period-=a->portspeed; /* dist>0, slide up */
+		} else {
+			a->tmpperiod+=a->portspeed;	
+			a->main.period+=a->portspeed; /* dist<0, slide down */
+		}
+	} else
+		a->tmpperiod=a->main.period;
+	a->ownper = 1;
+}
+
+static int DoPTEffect3(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	UBYTE dat;
+
+	dat=UniGetByte();
+	if ((!tick)&&(dat)) a->portspeed=(UWORD)dat<<2;
+	if (a->main.period)
+		DoToneSlide(tick, a);
+
+	return 0;
+}
+
+static void DoVibrato(UWORD tick, MP_CONTROL *a)
 {
 	UBYTE q;
-	UWORD temp=0;
+	UWORD temp = 0;	/* silence warning */
+
+	if (!tick)
+		return;
 
 	q=(a->vibpos>>2)&0x1f;
 
 	switch (a->wavecontrol&3) {
-		case 0: /* sine */
-			temp=VibratoTable[q];
-			break;
-		case 1: /* ramp down */
-			q<<=3;
-			if (a->vibpos<0) q=255-q;
-			temp=q;
-			break;
-		case 2: /* square wave */
-			temp=255;
-			break;
-		case 3: /* random wave */
-			temp=getrandom(256);
-			break;
+	case 0: /* sine */
+		temp=VibratoTable[q];
+		break;
+	case 1: /* ramp down */
+		q<<=3;
+		if (a->vibpos<0) q=255-q;
+		temp=q;
+		break;
+	case 2: /* square wave */
+		temp=255;
+		break;
+	case 3: /* random wave */
+		temp=getrandom(256);
+		break;
 	}
 
 	temp*=a->vibdepth;
 	temp>>=7;temp<<=2;
 
 	if (a->vibpos>=0)
-		a->period=a->tmpperiod+temp;
+		a->main.period=a->tmpperiod+temp;
 	else
-		a->period=a->tmpperiod-temp;
+		a->main.period=a->tmpperiod-temp;
+	a->ownper = 1;
 
-	if (pf->vbtick) a->vibpos+=a->vibspd;
+	if (tick != 0)
+		a->vibpos+=a->vibspd;
 }
 
-static void DoTremolo(void)
+static int DoPTEffect4(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
+	UBYTE dat;
+
+	dat=UniGetByte();
+	if (!tick) {
+		if (dat&0x0f) a->vibdepth=dat&0xf;
+		if (dat&0xf0) a->vibspd=(dat&0xf0)>>2;
+	}
+	if (a->main.period)
+		DoVibrato(tick, a);
+
+	return 0;
+}
+
+static void DoVolSlide(MP_CONTROL *a, UBYTE dat)
+{
+	if (dat&0xf) {
+		a->tmpvolume-=(dat&0x0f);
+		if (a->tmpvolume<0)
+			a->tmpvolume=0;
+	} else {
+		a->tmpvolume+=(dat>>4);
+		if (a->tmpvolume>64)
+			a->tmpvolume=64;
+	}
+}
+
+static int DoPTEffect5(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	UBYTE dat;
+
+	dat=UniGetByte();
+	if (a->main.period)
+		DoToneSlide(tick, a);
+
+	if (tick)
+		DoVolSlide(a, dat);
+
+	return 0;
+}
+
+/* DoPTEffect6 after DoPTEffectA */
+
+static int DoPTEffect7(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	UBYTE dat;
 	UBYTE q;
-	UWORD temp=0;
+	UWORD temp = 0;	/* silence warning */
 
-	q=(a->trmpos>>2)&0x1f;
+	dat=UniGetByte();
+	if (!tick) {
+		if (dat&0x0f) a->trmdepth=dat&0xf;
+		if (dat&0xf0) a->trmspd=(dat&0xf0)>>2;
+	}
+	if (a->main.period) {
+		q=(a->trmpos>>2)&0x1f;
 
-	switch ((a->wavecontrol>>4)&3) {
+		switch ((a->wavecontrol>>4)&3) {
 		case 0: /* sine */
 			temp=VibratoTable[q];
 			break;
@@ -615,183 +756,470 @@ static void DoTremolo(void)
 		case 3: /* random wave */
 			temp=getrandom(256);
 			break;
-	}
-	temp*=a->trmdepth;
-	temp>>=6;
+		}
+		temp*=a->trmdepth;
+		temp>>=6;
 
-	if (a->trmpos>=0) {
-		a->volume=a->tmpvolume+temp;
-		if (a->volume>64) a->volume=64;
-	} else {
-		a->volume=a->tmpvolume-temp;
-		if (a->volume<0) a->volume=0;
-	}
-
-	if (pf->vbtick) a->trmpos+=a->trmspd;
-}
-
-static void DoVolSlide(UBYTE dat)
-{
-	if (!pf->vbtick) return;
-
-	if (dat&0xf) {
-		a->tmpvolume-=(dat&0x0f);
-		if (a->tmpvolume<0) a->tmpvolume=0;
-	} else {
-		a->tmpvolume+=(dat>>4);
-		if (a->tmpvolume>64) a->tmpvolume=64;
-	}
-}
-
-static void DoToneSlide(void)
-{
-	if (pf->vbtick) {
-		int dist;
-
-		/* We have to slide a->period towards a->wantedperiod, so compute the
-		   difference between those two values */
-		dist=a->period-a->wantedperiod;
-
-		/* if they are equal or if portamentospeed is too big ...*/
-		if ((!dist)||a->portspeed>abs(dist))
-			/* ...make tmpperiod equal tperiod */
-			a->tmpperiod=a->period=a->wantedperiod;
-		else if (dist>0) {
-			a->tmpperiod-=a->portspeed;
-			a->period-=a->portspeed; /* dist>0, slide up */
+		if (a->trmpos>=0) {
+			a->volume=a->tmpvolume+temp;
+			if (a->volume>64) a->volume=64;
 		} else {
-			a->tmpperiod+=a->portspeed;
-			a->period+=a->portspeed; /* dist<0, slide down */
+			a->volume=a->tmpvolume-temp;
+			if (a->volume<0) a->volume=0;
 		}
-	} else
-		a->tmpperiod=a->period;
+		a->ownvol = 1;
+
+		if (tick)
+			a->trmpos+=a->trmspd;
+	}
+
+	return 0;
 }
 
-static void DoArpeggio(UBYTE dat)
+static int DoPTEffect8(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
-	UBYTE note=a->note;
+	UBYTE dat;
 
-	if (dat) {
-		switch (pf->vbtick%3) {
-			case 1:
-				note+=(dat>>4);  break;
-			case 2:
-				note+=(dat&0xf); break;
-		}
-		a->period=GetPeriod((UWORD)note<<1,a->speed);
-		a->ownper=1;
+	dat = UniGetByte();
+	if (mod->panflag)
+		a->main.panning = mod->panning[channel] = dat;
+
+	return 0;
+}
+
+static int DoPTEffect9(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	UBYTE dat;
+
+	dat=UniGetByte();
+	if (!tick) {
+		if (dat) a->soffset=(UWORD)dat<<8;
+		a->main.start=a->hioffset|a->soffset;
+
+		if ((a->main.s)&&(a->main.start>a->main.s->length))
+			a->main.start=a->main.s->flags&(SF_LOOP|SF_BIDI)?
+			    a->main.s->loopstart:a->main.s->length;
 	}
+
+	return 0;
+}
+
+static int DoPTEffectA(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	UBYTE dat;
+
+	dat=UniGetByte();
+	if (tick)
+		DoVolSlide(a, dat);
+
+	return 0;
+}
+
+static int DoPTEffect6(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	if (a->main.period)
+		DoVibrato(tick, a);
+	DoPTEffectA(tick, flags, a, mod, channel);
+
+	return 0;
+}
+
+static int DoPTEffectB(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	UBYTE dat;
+
+	dat=UniGetByte();
+
+	if (tick || mod->patdly2)
+		return 0;
+
+	/* Vincent Voois uses a nasty trick in "Universal Bolero" */
+	if (dat == mod->sngpos && mod->patbrk == mod->patpos)
+		return 0;
+
+	if (!mod->loop && !mod->patbrk &&
+	    (dat < mod->sngpos ||
+		 (mod->sngpos == (mod->numpos - 1) && !mod->patbrk) ||
+	     (dat == mod->sngpos && (flags & UF_NOWRAP))
+		)) {
+		/* if we don't loop, better not to skip the end of the
+		   pattern, after all... so:
+		mod->patbrk=0; */
+		mod->posjmp=3;
+	} else {
+		/* if we were fading, adjust... */
+		if (mod->sngpos == (mod->numpos-1))
+			mod->volume=mod->initvolume>128?128:mod->initvolume;
+		mod->sngpos=dat;
+		mod->posjmp=2;
+		mod->patpos=0;
+	}
+
+	return 0;
+}
+
+static int DoPTEffectC(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	UBYTE dat;
+
+			dat=UniGetByte();
+			if (tick) return 0;
+			if (dat==(UBYTE)-1) a->anote=dat=0; /* note cut */
+			else if (dat>64) dat=64;
+			a->tmpvolume=dat;
+
+	return 0;
+}
+
+static int DoPTEffectD(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	UBYTE dat;
+
+			dat=UniGetByte();
+			if ((tick)||(mod->patdly2)) return 0;
+			if ((mod->positions[mod->sngpos]!=LAST_PATTERN)&&
+			   (dat>mod->pattrows[mod->positions[mod->sngpos]]))
+				dat=mod->pattrows[mod->positions[mod->sngpos]];
+			mod->patbrk=dat;
+			if (!mod->posjmp) {
+				/* don't ask me to explain this code - it makes
+				   backwards.s3m and children.xm (heretic's version) play
+				   correctly, among others. Take that for granted, or write
+				   the page of comments yourself... you might need some
+				   aspirin - Miod */
+				if ((mod->sngpos==mod->numpos-1)&&(dat)&&((mod->loop)||
+				               (mod->positions[mod->sngpos]==(mod->numpat-1)
+								&& !(flags&UF_NOWRAP)))) {
+					mod->sngpos=0;
+					mod->posjmp=2;
+				} else
+					mod->posjmp=3;
+			}
+
+	return 0;
+}
+
+static void DoEEffects(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod,
+	SWORD channel, UBYTE dat)
+{
+	UBYTE nib = dat & 0xf;
+
+	switch (dat>>4) {
+	case 0x0: /* hardware filter toggle, not supported */
+		break;
+	case 0x1: /* fineslide up */
+		if (a->main.period)
+			if (!tick)
+				a->tmpperiod-=(nib<<2);
+		break;
+	case 0x2: /* fineslide dn */
+		if (a->main.period)
+			if (!tick)
+				a->tmpperiod+=(nib<<2);
+		break;
+	case 0x3: /* glissando ctrl */
+		a->glissando=nib;
+		break;
+	case 0x4: /* set vibrato waveform */
+		a->wavecontrol&=0xf0;
+		a->wavecontrol|=nib;
+		break;
+	case 0x5: /* set finetune */
+		if (a->main.period) {
+			if (flags&UF_XMPERIODS)
+				a->speed=nib+128;
+			else
+				a->speed=finetune[nib];
+			a->tmpperiod=GetPeriod(flags, (UWORD)a->main.note<<1,a->speed);
+		}
+		break;
+	case 0x6: /* set patternloop */
+		if (tick)
+			break;
+		if (nib) { /* set reppos or repcnt ? */
+			/* set repcnt, so check if repcnt already is set, which means we
+			   are already looping */
+			if (a->pat_repcnt)
+				a->pat_repcnt--; /* already looping, decrease counter */
+			else {
+#if 0
+				/* this would make walker.xm, shipped with Xsoundtracker,
+				   play correctly, but it's better to remain compatible
+				   with FT2 */
+				if ((!(flags&UF_NOWRAP))||(a->pat_reppos!=POS_NONE))
+#endif
+					a->pat_repcnt=nib; /* not yet looping, so set repcnt */
+			}
+
+			if (a->pat_repcnt) { /* jump to reppos if repcnt>0 */
+				if (a->pat_reppos==POS_NONE)
+					a->pat_reppos=mod->patpos-1;
+				if (a->pat_reppos==-1) {
+					mod->pat_repcrazy=1;
+					mod->patpos=0;
+				} else
+					mod->patpos=a->pat_reppos;
+			} else a->pat_reppos=POS_NONE;
+		} else
+			a->pat_reppos=mod->patpos-1; /* set reppos - can be (-1) */
+		break;
+	case 0x7: /* set tremolo waveform */
+		a->wavecontrol&=0x0f;
+		a->wavecontrol|=nib<<4;
+		break;
+	case 0x8: /* set panning */
+		if (mod->panflag) {
+			if (nib<=8) nib<<=4;
+			else nib*=17;
+			a->main.panning=mod->panning[channel]=nib;
+		}
+		break;
+	case 0x9: /* retrig note */
+		/* do not retrigger on tick 0, until we are emulating FT2 and effect
+		   data is zero */
+		if (!tick && !((flags & UF_FT2QUIRKS) && (!nib)))
+			break;
+		/* only retrigger if data nibble > 0, or if tick 0 (FT2 compat) */
+		if (nib || !tick) {
+			if (!a->retrig) {
+				/* when retrig counter reaches 0, reset counter and restart
+				   the sample */
+				if (a->main.period) a->main.kick=KICK_NOTE;
+				a->retrig=nib;
+			}
+			a->retrig--; /* countdown */
+		}
+		break;
+	case 0xa: /* fine volume slide up */
+		if (tick)
+			break;
+		a->tmpvolume+=nib;
+		if (a->tmpvolume>64) a->tmpvolume=64;
+		break;
+	case 0xb: /* fine volume slide dn  */
+		if (tick)
+			break;
+		a->tmpvolume-=nib;
+		if (a->tmpvolume<0)a->tmpvolume=0;
+		break;
+	case 0xc: /* cut note */
+		/* When tick reaches the cut-note value, turn the volume to
+		   zero (just like on the amiga) */
+		if (tick>=nib)
+			a->tmpvolume=0; /* just turn the volume down */
+		break;
+	case 0xd: /* note delay */
+		/* delay the start of the sample until tick==nib */
+		if (!tick)
+			a->main.notedelay=nib;
+		else if (a->main.notedelay)
+			a->main.notedelay--;
+		break;
+	case 0xe: /* pattern delay */
+		if (!tick)
+			if (!mod->patdly2)
+				mod->patdly=nib+1; /* only once, when tick=0 */
+		break;
+	case 0xf: /* invert loop, not supported  */
+		break;
+	}
+}
+
+static int DoPTEffectE(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	DoEEffects(tick, flags, a, mod, channel, UniGetByte());
+
+	return 0;
+}
+
+static int DoPTEffectF(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	UBYTE dat;
+
+	dat=UniGetByte();
+	if (tick||mod->patdly2) return 0;
+	if (mod->extspd&&(dat>=mod->bpmlimit))
+		mod->bpm=dat;
+	else 
+	  if (dat) {
+		mod->sngspd=(dat>=mod->bpmlimit)?mod->bpmlimit-1:dat;
+		mod->vbtick=0;
+	}
+
+	return 0;
 }
 
 /*========== Scream Tracker effects */
 
-static void DoS3MVolSlide(UBYTE inf)
+static int DoS3MEffectA(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	UBYTE speed;
+
+	speed = UniGetByte();
+
+	if (tick || mod->patdly2)
+		return 0;
+
+	if (speed > 128)
+		speed -= 128;
+	if (speed) {
+		mod->sngspd = speed;
+		mod->vbtick = 0;
+	}
+
+	return 0;
+}
+
+static void DoS3MVolSlide(UWORD tick, UWORD flags, MP_CONTROL *a, UBYTE inf)
 {
 	UBYTE lo, hi;
 
-	explicitslides=1;
-
-	if (inf) a->s3mvolslide=inf;
-	else inf=a->s3mvolslide;
+	if (inf)
+		a->s3mvolslide=inf;
+	else
+		inf=a->s3mvolslide;
 
 	lo=inf&0xf;
 	hi=inf>>4;
 
 	if (!lo) {
-		if ((pf->vbtick)||(pf->flags&UF_S3MSLIDES)) a->tmpvolume+=hi;
+		if ((tick)||(flags&UF_S3MSLIDES)) a->tmpvolume+=hi;
 	} else
 	  if (!hi) {
-		if ((pf->vbtick)||(pf->flags&UF_S3MSLIDES)) a->tmpvolume-=lo;
+		if ((tick)||(flags&UF_S3MSLIDES)) a->tmpvolume-=lo;
 	} else
 	  if (lo==0xf) {
-		if (!pf->vbtick) a->tmpvolume+=(hi?hi:0xf);
+		if (!tick) a->tmpvolume+=(hi?hi:0xf);
 	} else
 	  if (hi==0xf) {
-		if (!pf->vbtick) a->tmpvolume-=(lo?lo:0xf);
+		if (!tick) a->tmpvolume-=(lo?lo:0xf);
 	} else
 	  return;
 
-	if (a->tmpvolume<0) a->tmpvolume=0;
-	else if (a->tmpvolume>64) a->tmpvolume=64;
+	if (a->tmpvolume<0)
+		a->tmpvolume=0;
+	else if (a->tmpvolume>64)
+		a->tmpvolume=64;
 }
 
-static void DoS3MSlideDn(UBYTE inf)
+static int DoS3MEffectD(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	DoS3MVolSlide(tick, flags, a, UniGetByte());
+
+	return 1;
+}
+
+static void DoS3MSlideDn(UWORD tick, MP_CONTROL *a, UBYTE inf)
 {
 	UBYTE hi,lo;
-
-	if (inf) a->slidespeed=inf;
-	else inf=a->slidespeed;
-
-	hi=inf>>4;
-	lo=inf&0xf;
-
-	if (hi==0xf) {
-		if (!pf->vbtick) a->tmpperiod+=(UWORD)lo<<2;
-	} else
-	  if (hi==0xe) {
-		if (!pf->vbtick) a->tmpperiod+=lo;
-	} else {
-		if (pf->vbtick) a->tmpperiod+=(UWORD)inf<<2;
-	}
-}
-
-static void DoS3MSlideUp(UBYTE inf)
-{
-	UBYTE hi,lo;
-
-	if (inf) a->slidespeed=inf;
-	else inf=a->slidespeed;
-
-	hi=inf>>4;
-	lo=inf&0xf;
-
-	if (hi==0xf) {
-		if (!pf->vbtick) a->tmpperiod-=(UWORD)lo<<2;
-	} else
-	  if (hi==0xe) {
-		if (!pf->vbtick) a->tmpperiod-=lo;
-	} else {
-		if (pf->vbtick) a->tmpperiod-=(UWORD)inf<<2;
-	}
-}
-
-static void DoS3MTremor(UBYTE inf)
-{
-	UBYTE on,off;
 
 	if (inf)
-		a->s3mtronof=inf;
+		a->slidespeed=inf;
+	else
+		inf=a->slidespeed;
+
+	hi=inf>>4;
+	lo=inf&0xf;
+
+	if (hi==0xf) {
+		if (!tick) a->tmpperiod+=(UWORD)lo<<2;
+	} else
+	  if (hi==0xe) {
+		if (!tick) a->tmpperiod+=lo;
+	} else {
+		if (tick) a->tmpperiod+=(UWORD)inf<<2;
+	}
+}
+
+static int DoS3MEffectE(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	UBYTE dat;
+
+	dat=UniGetByte();
+	if (a->main.period)
+		DoS3MSlideDn(tick, a,dat);
+
+	return 0;
+}
+
+static void DoS3MSlideUp(UWORD tick, MP_CONTROL *a, UBYTE inf)
+{
+	UBYTE hi,lo;
+
+	if (inf) a->slidespeed=inf;
+	else inf=a->slidespeed;
+
+	hi=inf>>4;
+	lo=inf&0xf;
+
+	if (hi==0xf) {
+		if (!tick) a->tmpperiod-=(UWORD)lo<<2;
+	} else
+	  if (hi==0xe) {
+		if (!tick) a->tmpperiod-=lo;
+	} else {
+		if (tick) a->tmpperiod-=(UWORD)inf<<2;
+	}
+}
+
+static int DoS3MEffectF(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	UBYTE dat;
+
+	dat=UniGetByte();
+	if (a->main.period)
+		DoS3MSlideUp(tick, a,dat);
+
+	return 0;
+}
+
+static int DoS3MEffectI(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	UBYTE inf, on, off;
+
+	inf = UniGetByte();
+	if (inf)
+		a->s3mtronof = inf;
 	else {
-		inf=a->s3mtronof;
-		if (!inf) return;
+		inf = a->s3mtronof;
+		if (!inf)
+			return 0;
 	}
 
-	if (!pf->vbtick) return;
+	if (!tick)
+		return 0;
 
 	on=(inf>>4)+1;
 	off=(inf&0xf)+1;
 	a->s3mtremor%=(on+off);
 	a->volume=(a->s3mtremor<on)?a->tmpvolume:0;
+	a->ownvol=1;
 	a->s3mtremor++;
+
+	return 0;
 }
 
-static void DoS3MRetrig(UBYTE inf)
+static int DoS3MEffectQ(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
-	if (inf) {
-		a->s3mrtgslide=inf>>4;
-		a->s3mrtgspeed=inf&0xf;
-	}
+	UBYTE inf;
 
-	/* only retrigger if low nibble > 0 */
-	if ( a->s3mrtgspeed>0) {
-		if (!a->retrig) {
-			/* when retrig counter reaches 0, reset counter and restart the
-			   sample */
-			if (a->kick!=KICK_NOTE) a->kick=KICK_KEYOFF;
-			a->retrig=a->s3mrtgspeed;
+	inf = UniGetByte();
+	if (a->main.period) {
+		if (inf) {
+			a->s3mrtgslide=inf>>4;
+			a->s3mrtgspeed=inf&0xf;
+		}
 
-			if ((pf->vbtick)||(pf->flags&UF_S3MSLIDES)) {
-				switch (a->s3mrtgslide) {
+		/* only retrigger if low nibble > 0 */
+		if (a->s3mrtgspeed>0) {
+			if (!a->retrig) {
+				/* when retrig counter reaches 0, reset counter and restart the
+				   sample */
+				if (a->main.kick!=KICK_NOTE) a->main.kick=KICK_KEYOFF;
+				a->retrig=a->s3mrtgspeed;
+
+				if ((tick)||(flags&UF_S3MSLIDES)) {
+					switch (a->s3mrtgslide) {
 					case 1:
 					case 2:
 					case 3:
@@ -818,90 +1246,48 @@ static void DoS3MRetrig(UBYTE inf)
 					case 0xf:
 						a->tmpvolume=a->tmpvolume<<1;
 						break;
+					}
+					if (a->tmpvolume<0)
+						a->tmpvolume=0;
+					else if (a->tmpvolume>64)
+						a->tmpvolume=64;
 				}
-				if (a->tmpvolume<0) a->tmpvolume=0;
-				else if (a->tmpvolume>64) a->tmpvolume=64;
 			}
+			a->retrig--; /* countdown  */
 		}
-		a->retrig--; /* countdown  */
-	}
-}
-
-static void DoS3MSpeed(UBYTE speed)
-{
-	if (pf->vbtick||pf->patdly2) return;
-
-	if (speed>128) speed-=128;
-	if (speed) {
-		pf->sngspd=speed;
-		pf->vbtick=0;
-	}
-}
-
-static void DoS3MTempo(UBYTE tempo)
-{
-	if (pf->vbtick||pf->patdly2) return;
-
-	pf->bpm=(tempo<32)?32:tempo;
-}
-
-static void DoS3MFineVibrato(void)
-{
-	UBYTE q;
-	UWORD temp=0;
-
-	q=(a->vibpos>>2)&0x1f;
-
-	switch (a->wavecontrol&3) {
-		case 0: /* sine */
-			temp=VibratoTable[q];
-			break;
-		case 1: /* ramp down */
-			q<<=3;
-			if (a->vibpos<0) q=255-q;
-			temp=q;
-			break;
-		case 2: /* square wave */
-			temp=255;
-			break;
-		case 3: /* random */
-			temp=getrandom(256);
-			break;
 	}
 
-	temp*=a->vibdepth;
-	temp>>=8;
-
-	if (a->vibpos>=0)
-		a->period=a->tmpperiod+temp;
-	else
-		a->period=a->tmpperiod-temp;
-
-	a->vibpos+=a->vibspd;
+	return 0;
 }
 
-static void DoS3MTremolo(void)
+static int DoS3MEffectR(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
-	UBYTE q;
-	UWORD temp=0;
+	UBYTE dat, q;
+	UWORD temp=0;	/* silence warning */
+
+	dat = UniGetByte();
+	if (!tick) {
+		if (dat&0x0f) a->trmdepth=dat&0xf;
+		if (dat&0xf0) a->trmspd=(dat&0xf0)>>2;
+	}
 
 	q=(a->trmpos>>2)&0x1f;
 
 	switch ((a->wavecontrol>>4)&3) {
-		case 0: /* sine */
-			temp=VibratoTable[q];
-			break;
-		case 1: /* ramp down */
-			q<<=3;
-			if (a->trmpos<0) q=255-q;
-			temp=q;
-			break;
-		case 2: /* square wave */
-			temp=255;
-			break;
-		case 3: /* random */
-			temp=getrandom(256);
-			break;
+	case 0: /* sine */
+		temp=VibratoTable[q];
+		break;
+	case 1: /* ramp down */
+		q<<=3;
+		if (a->trmpos<0) q=255-q;
+		temp=q;
+		break;
+	case 2: /* square wave */
+		temp=255;
+		break;
+	case 3: /* random */
+		temp=getrandom(256);
+		break;
 	}
 
 	temp*=a->trmdepth;
@@ -914,153 +1300,501 @@ static void DoS3MTremolo(void)
 		a->volume=a->tmpvolume-temp;
 		if (a->volume<0) a->volume=0;
 	}
+	a->ownvol = 1;
 
-	if (pf->vbtick) a->trmpos+=a->trmspd;
+	if (tick)
+		a->trmpos+=a->trmspd;
+
+	return 0;
+}
+
+static int DoS3MEffectT(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	UBYTE tempo;
+
+	tempo = UniGetByte();
+
+	if (tick || mod->patdly2)
+		return 0;
+
+	mod->bpm = (tempo < 32) ? 32 : tempo;
+
+	return 0;
+}
+
+static int DoS3MEffectU(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	UBYTE dat, q;
+	UWORD temp = 0;	/* silence warning */
+
+	dat = UniGetByte();
+	if (!tick) {
+		if (dat&0x0f) a->vibdepth=dat&0xf;
+		if (dat&0xf0) a->vibspd=(dat&0xf0)>>2;
+	} else
+		if (a->main.period) {
+			q=(a->vibpos>>2)&0x1f;
+
+			switch (a->wavecontrol&3) {
+			case 0: /* sine */
+				temp=VibratoTable[q];
+				break;
+			case 1: /* ramp down */
+				q<<=3;
+				if (a->vibpos<0) q=255-q;
+				temp=q;
+				break;
+			case 2: /* square wave */
+				temp=255;
+				break;
+			case 3: /* random */
+				temp=getrandom(256);
+				break;
+			}
+
+			temp*=a->vibdepth;
+			temp>>=8;
+
+			if (a->vibpos>=0)
+				a->main.period=a->tmpperiod+temp;
+			else
+				a->main.period=a->tmpperiod-temp;
+			a->ownper = 1;
+
+			a->vibpos+=a->vibspd;
+	}
+
+	return 0;
+}
+
+/*========== Envelope helpers */
+
+static int DoKeyOff(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	a->main.keyoff|=KEY_OFF;
+	if ((!(a->main.volflg&EF_ON))||(a->main.volflg&EF_LOOP))
+		a->main.keyoff=KEY_KILL;
+
+	return 0;
+}
+
+static int DoKeyFade(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	UBYTE dat;
+
+	dat=UniGetByte();
+	if ((tick>=dat)||(tick==mod->sngspd-1)) {
+		a->main.keyoff=KEY_KILL;
+		if (!(a->main.volflg&EF_ON))
+			a->main.fadevol=0;
+	}
+
+	return 0;
 }
 
 /*========== Fast Tracker effects */
 
-static void DoXMVolSlide(UBYTE inf)
+/* DoXMEffect6 after DoXMEffectA */
+
+static int DoXMEffectA(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
-	UBYTE lo,hi;
+	UBYTE inf, lo, hi;
 
-	explicitslides=2;
+	inf = UniGetByte();
+	if (inf)
+		a->s3mvolslide = inf;
+	else
+		inf = a->s3mvolslide;
+	
+	if (tick) {
+		lo=inf&0xf;
+		hi=inf>>4;
 
-	if (inf) a->s3mvolslide=inf;
-	else inf=a->s3mvolslide;
-
-	if (!pf->vbtick) return;
-
-	lo=inf&0xf;
-	hi=inf>>4;
-
-	if (!hi) {
-		a->tmpvolume-=lo;
-		if (a->tmpvolume<0) a->tmpvolume=0;
-	} else {
-		a->tmpvolume+=hi;
-		if (a->tmpvolume>64) a->tmpvolume=64;
+		if (!hi) {
+			a->tmpvolume-=lo;
+			if (a->tmpvolume<0) a->tmpvolume=0;
+		} else {
+			a->tmpvolume+=hi;
+			if (a->tmpvolume>64) a->tmpvolume=64;
+		}
 	}
+
+	return 0;
 }
 
-static void DoXMGlobalSlide(UBYTE inf)
+static int DoXMEffect6(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
-	if (pf->vbtick) {
-		if (inf) pf->globalslide=inf;
-		else inf=pf->globalslide;
+	if (a->main.period)
+		DoVibrato(tick, a);
+
+	return DoXMEffectA(tick, flags, a, mod, channel);
+}
+
+static int DoXMEffectE1(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	UBYTE dat;
+
+	dat=UniGetByte();
+	if (!tick) {
+		if (dat) a->fportupspd=dat;
+		if (a->main.period)
+			a->tmpperiod-=(a->fportupspd<<2);
+	}
+
+	return 0;
+}
+
+static int DoXMEffectE2(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	UBYTE dat;
+
+	dat=UniGetByte();
+	if (!tick) {
+		if (dat) a->fportdnspd=dat;
+		if (a->main.period)
+			a->tmpperiod+=(a->fportdnspd<<2);
+	}
+
+	return 0;
+}
+
+static int DoXMEffectEA(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	UBYTE dat;
+
+	dat=UniGetByte();
+	if (!tick)
+		if (dat) a->fslideupspd=dat;
+	a->tmpvolume+=a->fslideupspd;
+	if (a->tmpvolume>64) a->tmpvolume=64;
+
+	return 0;
+}
+
+static int DoXMEffectEB(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	UBYTE dat;
+
+	dat=UniGetByte();
+	if (!tick)
+		if (dat) a->fslidednspd=dat;
+	a->tmpvolume-=a->fslidednspd;
+	if (a->tmpvolume<0) a->tmpvolume=0;
+
+	return 0;
+}
+
+static int DoXMEffectG(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	mod->volume=UniGetByte()<<1;
+	if (mod->volume>128) mod->volume=128;
+
+	return 0;
+}
+
+static int DoXMEffectH(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	UBYTE inf;
+
+	inf = UniGetByte();
+
+	if (tick) {
+		if (inf) mod->globalslide=inf;
+		else inf=mod->globalslide;
 		if (inf & 0xf0) inf&=0xf0;
-		pf->volume=pf->volume+((inf>>4)-(inf&0xf))*2;
+		mod->volume=mod->volume+((inf>>4)-(inf&0xf))*2;
 
-		if (pf->volume<0) pf->volume=0;
-		else if (pf->volume>128) pf->volume=128;
+		if (mod->volume<0)
+			mod->volume=0;
+		else if (mod->volume>128)
+			mod->volume=128;
 	}
+
+	return 0;
 }
 
-static void DoXMPanSlide(UBYTE inf)
+static int DoXMEffectL(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
-	UBYTE lo,hi;
+	UBYTE dat;
+
+	dat=UniGetByte();
+	if ((!tick)&&(a->main.i)) {
+		UWORD points;
+		INSTRUMENT *i=a->main.i;
+		MP_VOICE *aout;
+
+		if ((aout=a->slave)) {
+			if (aout->venv.env) {
+				points=i->volenv[i->volpts-1].pos;
+				aout->venv.p=aout->venv.env[(dat>points)?points:dat].pos;
+			}
+			if (aout->penv.env) {
+				points=i->panenv[i->panpts-1].pos;
+				aout->penv.p=aout->penv.env[(dat>points)?points:dat].pos;
+			}
+		}
+	}
+
+	return 0;
+}
+
+static int DoXMEffectP(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	UBYTE inf, lo, hi;
 	SWORD pan;
 
-	if (inf) a->pansspd=inf;
-	else inf=a->pansspd;
+	inf = UniGetByte();
+	if (!mod->panflag)
+		return 0;
 
-	if (!pf->vbtick) return;
+	if (inf)
+		a->pansspd = inf;
+	else
+		inf =a->pansspd;
 
-	lo=inf&0xf;
-	hi=inf>>4;
+	if (tick) {
+		lo=inf&0xf;
+		hi=inf>>4;
 
-	/* slide right has absolute priority */
-	if (hi) lo=0;
+		/* slide right has absolute priority */
+		if (hi)
+			lo = 0;
 
-	pan=((a->panning==PAN_SURROUND)?PAN_CENTER:a->panning)+hi-lo;
+		pan=((a->main.panning==PAN_SURROUND)?PAN_CENTER:a->main.panning)+hi-lo;
+		a->main.panning=(pan<PAN_LEFT)?PAN_LEFT:(pan>PAN_RIGHT?PAN_RIGHT:pan);
+	}
 
-	a->panning=(pan<PAN_LEFT)?PAN_LEFT:(pan>PAN_RIGHT?PAN_RIGHT:pan);
+	return 0;
 }
 
-static void DoXMExtraFineSlideUp(UBYTE inf)
+static int DoXMEffectX1(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
-	if (!pf->vbtick) {
-		a->period-=inf;
-		a->tmpperiod-=inf;
-	}
+	UBYTE dat;
+
+	dat = UniGetByte();
+	if (dat)
+		a->ffportupspd = dat;
+	else
+		dat = a->ffportupspd;
+
+	if (a->main.period)
+		if (!tick) {
+			a->main.period-=dat;
+			a->tmpperiod-=dat;
+			a->ownper = 1;
+		}
+
+	return 0;
 }
 
-static void DoXMExtraFineSlideDown(UBYTE inf)
+static int DoXMEffectX2(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
-	if (!pf->vbtick) {
-		a->period+=inf;
-		a->tmpperiod+=inf;
-	}
+	UBYTE dat;
+
+	dat = UniGetByte();
+	if (dat)
+		a->ffportdnspd=dat;
+	else
+		dat = a->ffportdnspd;
+
+	if (a->main.period)
+		if (!tick) {
+			a->main.period+=dat;
+			a->tmpperiod+=dat;
+			a->ownper = 1;
+		}
+
+	return 0;
 }
 
 /*========== Impulse Tracker effects */
 
-static void DoITChanVolSlide(UBYTE inf)
+static void DoITToneSlide(UWORD tick, MP_CONTROL *a, UBYTE dat)
 {
-	UBYTE lo, hi;
+	if (dat)
+		a->portspeed = dat;
 
-	if (inf) a->chanvolslide=inf;
-	inf=a->chanvolslide;
+	/* if we don't come from another note, ignore the slide and play the note
+	   as is */
+	if (!a->oldnote || !a->main.period)
+			return;
+
+	if ((!tick)&&(a->newsamp)){
+		a->main.kick=KICK_NOTE;
+		a->main.start=-1;
+	} else
+		a->main.kick=(a->main.kick==KICK_NOTE)?KICK_ENV:KICK_ABSENT;
+
+	if (tick) {
+		int dist;
+
+		/* We have to slide a->main.period towards a->wantedperiod, compute the
+		   difference between those two values */
+		dist=a->main.period-a->wantedperiod;
+
+	    /* if they are equal or if portamentospeed is too big... */
+		if ((!dist)||((a->portspeed<<2)>abs(dist)))
+			/* ... make tmpperiod equal tperiod */
+			a->tmpperiod=a->main.period=a->wantedperiod;
+		else
+		  if (dist>0) {	
+			a->tmpperiod-=a->portspeed<<2;
+			a->main.period-=a->portspeed<<2; /* dist>0 slide up */
+		} else {				
+			a->tmpperiod+=a->portspeed<<2;
+			a->main.period+=a->portspeed<<2; /* dist<0 slide down */
+		}
+	} else
+		a->tmpperiod=a->main.period;
+	a->ownper=1;
+}
+
+static int DoITEffectG(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	DoITToneSlide(tick, a, UniGetByte());
+
+	return 0;
+}
+
+static void DoITVibrato(UWORD tick, MP_CONTROL *a, UBYTE dat)
+{
+	UBYTE q;
+	UWORD temp=0;
+
+	if (!tick) {
+		if (dat&0x0f) a->vibdepth=dat&0xf;
+		if (dat&0xf0) a->vibspd=(dat&0xf0)>>2;
+	}
+	if (!a->main.period)
+			return;
+
+	q=(a->vibpos>>2)&0x1f;
+
+	switch (a->wavecontrol&3) {
+	case 0: /* sine */
+		temp=VibratoTable[q];
+		break;
+	case 1: /* square wave */
+		temp=255;
+		break;
+	case 2: /* ramp down */
+		q<<=3;
+		if (a->vibpos<0) q=255-q;
+		temp=q;
+		break;
+	case 3: /* random */
+		temp=getrandom(256);
+		break;
+	}
+
+	temp*=a->vibdepth;
+	temp>>=8;
+	temp<<=2;
+
+	if (a->vibpos>=0)
+		a->main.period=a->tmpperiod+temp;
+	else
+		a->main.period=a->tmpperiod-temp;
+	a->ownper=1;
+
+	a->vibpos+=a->vibspd;
+}
+
+static int DoITEffectH(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	DoITVibrato(tick, a, UniGetByte());
+
+	return 0;
+}
+
+static int DoITEffectI(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	UBYTE inf, on, off;
+
+	inf = UniGetByte();
+	if (inf)
+		a->s3mtronof = inf;
+	else {
+		inf = a->s3mtronof;
+		if (!inf)
+			return 0;
+	}
+
+	on=(inf>>4);
+	off=(inf&0xf);
+
+	a->s3mtremor%=(on+off);
+	a->volume=(a->s3mtremor<on)?a->tmpvolume:0;
+	a->ownvol = 1;
+	a->s3mtremor++;
+
+	return 0;
+}
+
+static int DoITEffectM(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	a->main.chanvol=UniGetByte();
+	if (a->main.chanvol>64)
+		a->main.chanvol=64;
+	else if (a->main.chanvol<0)
+		a->main.chanvol=0;
+
+	return 0;
+}
+
+static int DoITEffectN(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	UBYTE inf, lo, hi;
+
+	inf = UniGetByte();
+
+	if (inf)
+		a->chanvolslide = inf;
+	else
+		inf = a->chanvolslide;
 
 	lo=inf&0xf;
 	hi=inf>>4;
 
-	if (!hi)
-		a->chanvol-=lo;
+	if (!hi) 
+		a->main.chanvol-=lo;
 	else
 	  if (!lo) {
-		a->chanvol+=hi;
+		a->main.chanvol+=hi;
 	} else
 	  if (hi==0xf) {
-		if (!pf->vbtick) a->chanvol-=lo;
+		if (!tick) a->main.chanvol-=lo;
 	} else
 	  if (lo==0xf) {
-		if (!pf->vbtick) a->chanvol+=hi;
+		if (!tick) a->main.chanvol+=hi;
 	}
 
-	if (a->chanvol<0) a->chanvol=0;
-	if (a->chanvol>64) a->chanvol=64;
+	if (a->main.chanvol<0)
+		a->main.chanvol=0;
+	else if (a->main.chanvol>64)
+		a->main.chanvol=64;
+
+	return 0;
 }
 
-static void DoITGlobalSlide(UBYTE inf)
+static int DoITEffectP(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
-	UBYTE lo,hi;
-
-	if (inf) pf->globalslide=inf;
-	inf=pf->globalslide;
-
-	lo=inf&0xf;
-	hi=inf>>4;
-
-	if (!lo) {
-		if (pf->vbtick) pf->volume+=hi;
-	} else
-	  if (!hi) {
-		if (pf->vbtick) pf->volume-=lo;
-	} else
-	  if (lo==0xf) {
-		if (!pf->vbtick) pf->volume+=hi;
-	} else
-	  if (hi==0xf) {
-		if (!pf->vbtick) pf->volume-=lo;
-	}
-
-	if (pf->volume<0)   pf->volume=0;
-	if (pf->volume>128) pf->volume=128;
-}
-
-static void DoITPanSlide(UBYTE inf)
-{
-	UBYTE lo,hi;
+	UBYTE inf, lo, hi;
 	SWORD pan;
 
-	if (inf) a->pansspd=inf;
-	else inf=a->pansspd;
+	inf = UniGetByte();
+	if (inf)
+		a->pansspd = inf;
+	else
+		inf = a->pansspd;
+
+	if (!mod->panflag)
+		return 0;
 
 	lo=inf&0xf;
 	hi=inf>>4;
 
-	pan=(a->panning==PAN_SURROUND)?PAN_CENTER:a->panning;
+	pan=(a->main.panning==PAN_SURROUND)?PAN_CENTER:a->main.panning;
 
 	if (!hi)
 		pan+=lo<<2;
@@ -1069,37 +1803,52 @@ static void DoITPanSlide(UBYTE inf)
 		pan-=hi<<2;
 	} else
 	  if (hi==0xf) {
-		if (!pf->vbtick) pan+=lo<<2;
+		if (!tick) pan+=lo<<2;
 	} else
 	  if (lo==0xf) {
-		if (!pf->vbtick) pan-=hi<<2;
+		if (!tick) pan-=hi<<2;
 	}
-	a->panning=/*pf->panning[mp_channel]=*/
+	a->main.panning=
 	  (pan<PAN_LEFT)?PAN_LEFT:(pan>PAN_RIGHT?PAN_RIGHT:pan);
+
+	return 0;
 }
 
-static void DoITTempo(UBYTE tempo)
+static int DoITEffectT(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
-	SWORD temp=pf->bpm;
+	UBYTE tempo;
+	SWORD temp;
 
-	if (pf->vbtick||pf->patdly2) return;
+   	tempo = UniGetByte();
 
-	if (tempo&0x10)
-		temp+=(tempo&0x0f);
+	if (mod->patdly2)
+		return 0;
+
+	temp = mod->bpm;
+	if (tempo & 0x10)
+		temp += (tempo & 0x0f);
 	else
-		temp-=tempo;
+		temp -= tempo;
 
-	pf->bpm=(temp>255)?255:(temp<1?1:temp);
+	mod->bpm=(temp>255)?255:(temp<1?1:temp);
+
+	return 0;
 }
 
-static void DoITVibrato(void)
+static int DoITEffectU(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
-	UBYTE q;
-	UWORD temp=0;
+	UBYTE dat, q;
+	UWORD temp = 0;	/* silence warning */
 
-	q=(a->vibpos>>2)&0x1f;
+	dat = UniGetByte();
+	if (!tick) {
+		if (dat&0x0f) a->vibdepth=dat&0xf;
+		if (dat&0xf0) a->vibspd=(dat&0xf0)>>2;
+	}
+	if (a->main.period) {
+		q=(a->vibpos>>2)&0x1f;
 
-	switch (a->wavecontrol&3) {
+		switch (a->wavecontrol&3) {
 		case 0: /* sine */
 			temp=VibratoTable[q];
 			break;
@@ -1114,84 +1863,73 @@ static void DoITVibrato(void)
 		case 3: /* random */
 			temp=getrandom(256);
 			break;
+		}
+
+		temp*=a->vibdepth;
+		temp>>=8;
+
+		if (a->vibpos>=0)
+			a->main.period=a->tmpperiod+temp;
+		else
+			a->main.period=a->tmpperiod-temp;
+		a->ownper = 1;
+
+		a->vibpos+=a->vibspd;
 	}
 
-	temp*=a->vibdepth;
-	temp>>=8;
-	temp<<=2;
-
-	if (a->vibpos>=0)
-		a->period=a->tmpperiod+temp;
-	else
-		a->period=a->tmpperiod-temp;
-
-	a->vibpos+=a->vibspd;
+	return 0;
 }
 
-static void DoITFineVibrato(void)
+static int DoITEffectW(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
-	UBYTE q;
-	UWORD temp=0;
+	UBYTE inf, lo, hi;
 
-	q=(a->vibpos>>2)&0x1f;
-
-	switch (a->wavecontrol&3) {
-		case 0: /* sine */
-			temp=VibratoTable[q];
-			break;
-		case 1: /* square wave */
-			temp=255;
-			break;
-		case 2: /* ramp down */
-			q<<=3;
-			if (a->vibpos<0) q=255-q;
-			temp=q;
-			break;
-		case 3: /* random */
-			temp=getrandom(256);
-			break;
-	}
-
-	temp*=a->vibdepth;
-	temp>>=8;
-
-	if (a->vibpos>=0)
-		a->period=a->tmpperiod+temp;
-	else
-		a->period=a->tmpperiod-temp;
-
-	a->vibpos+=a->vibspd;
-}
-
-static void DoITTremor(UBYTE inf)
-{
-	UBYTE on,off;
+	inf = UniGetByte();
 
 	if (inf)
-		a->s3mtronof=inf;
-	else {
-		inf=a->s3mtronof;
-		if (!inf) return;
+		mod->globalslide = inf;
+	else
+		inf = mod->globalslide;
+
+	lo=inf&0xf;
+	hi=inf>>4;
+
+	if (!lo) {
+		if (tick) mod->volume+=hi;
+	} else
+	  if (!hi) {
+		if (tick) mod->volume-=lo;
+	} else
+	  if (lo==0xf) {
+		if (!tick) mod->volume+=hi;
+	} else
+	  if (hi==0xf) {
+		if (!tick) mod->volume-=lo;
 	}
 
-	if (!pf->vbtick) return;
+	if (mod->volume<0)
+		mod->volume=0;
+	else if (mod->volume>128)
+		mod->volume=128;
 
-	on=(inf>>4);
-	off=(inf&0xf);
-
-	a->s3mtremor%=(on+off);
-	a->volume=(a->s3mtremor<on)?a->tmpvolume:0;
-	a->s3mtremor++;
+	return 0;
 }
 
-static void DoITPanbrello(void)
+static int DoITEffectY(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
-	UBYTE q;
-	SLONG temp=0;
+	UBYTE dat, q;
+	SLONG temp = 0;	/* silence warning */
 
-	q=a->panbpos;
 
-	switch (a->panbwave) {
+	dat=UniGetByte();
+	if (!tick) {
+		if (dat&0x0f) a->panbdepth=(dat&0xf);
+		if (dat&0xf0) a->panbspd=(dat&0xf0)>>4;
+	}
+	if (mod->panflag) {
+		q=a->panbpos;
+
+		switch (a->panbwave) {
 		case 0: /* sine */
 			temp=PanbrelloTable[q];
 			break;
@@ -1203,55 +1941,31 @@ static void DoITPanbrello(void)
 			temp=q;
 			break;
 		case 3: /* random */
-			if (a->panbpos>=a->panbspd) {
-				a->panbpos=0;
-				temp=getrandom(256);
-			}
+			temp=getrandom(256);
+			break;
+		}
+
+		temp*=a->panbdepth;
+		temp=(temp/8)+mod->panning[channel];
+
+		a->main.panning=
+			(temp<PAN_LEFT)?PAN_LEFT:(temp>PAN_RIGHT?PAN_RIGHT:temp);
+		a->panbpos+=a->panbspd;
+
 	}
 
-	temp*=a->panbdepth;
-	temp=(temp/8)+pf->panning[mp_channel];
-
-	a->panning=(temp<PAN_LEFT)?PAN_LEFT:(temp>PAN_RIGHT?PAN_RIGHT:temp);
-	a->panbpos+=a->panbspd;
+	return 0;
 }
 
-static void DoITToneSlide(void)
-{
-	/* if we don't come from another note, ignore the slide and play the note
-	   as is */
-	if (!a->oldnote) return;
+static void DoNNAEffects(MODULE *, MP_CONTROL *, UBYTE);
 
-	if (pf->vbtick) {
-		int dist;
-
-		/* We have to slide a->period towards a->wantedperiod, compute the
-		   difference between those two values */
-		dist=a->period-a->wantedperiod;
-
-	    /* if they are equal or if portamentospeed is too big... */
-		if ((!dist)||((a->portspeed<<2)>abs(dist)))
-			/* ... make tmpperiod equal tperiod */
-			a->tmpperiod=a->period=a->wantedperiod;
-		else
-		  if (dist>0) {
-			a->tmpperiod-=a->portspeed<<2;
-			a->period-=a->portspeed<<2; /* dist>0 slide up */
-		} else {
-			a->tmpperiod+=a->portspeed<<2;
-			a->period+=a->portspeed<<2; /* dist<0 slide down */
-		}
-	} else
-		a->tmpperiod=a->period;
-}
-
-static void DoNNAEffects(UBYTE dat);
 /* Impulse/Scream Tracker Sxx effects.
    All Sxx effects share the same memory space. */
-static void DoSSEffects(UBYTE dat)
+static int DoITEffectS0(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
-	UBYTE inf,c;
+	UBYTE dat, inf, c;
 
+	dat = UniGetByte();
 	inf=dat&0xf;
 	c=dat>>4;
 
@@ -1264,63 +1978,74 @@ static void DoSSEffects(UBYTE dat)
 	}
 
 	switch (c) {
-		case SS_GLISSANDO: /* S1x set glissando voice */
-			DoEEffects(0x30|inf);
-			break;
-		case SS_FINETUNE: /* S2x set finetune */
-			DoEEffects(0x50|inf);
-			break;
-		case SS_VIBWAVE: /* S3x set vibrato waveform */
-			DoEEffects(0x40|inf);
-			break;
-		case SS_TREMWAVE: /* S4x set tremolo waveform */
-			DoEEffects(0x70|inf);
-			break;
-		case SS_PANWAVE: /* S5x panbrello */
-			a->panbwave=inf;
-			break;
-		case SS_FRAMEDELAY: /* S6x delay x number of frames (patdly) */
-			DoEEffects(0xe0|inf);
-			break;
-		case SS_S7EFFECTS: /* S7x instrument / NNA commands */
-			DoNNAEffects(inf);
-			break;
-		case SS_PANNING: /* S8x set panning position */
-			DoEEffects(0x80 | inf);
-			break;
-		case SS_SURROUND: /* S9x set surround Sound */
-			if (pf->panflag)
-				a->panning=pf->panning[mp_channel]=PAN_SURROUND;
-			break;
-		case SS_HIOFFSET: /* SAy set high order sample offset yxx00h */
-			if (!pf->vbtick) {
-				a->hioffset=inf<<16;
-				a->start=a->hioffset|a->soffset;
+	case SS_GLISSANDO: /* S1x set glissando voice */
+		DoEEffects(tick, flags, a, mod, channel, 0x30|inf);
+		break;              
+	case SS_FINETUNE: /* S2x set finetune */
+		DoEEffects(tick, flags, a, mod, channel, 0x50|inf);
+		break;
+	case SS_VIBWAVE: /* S3x set vibrato waveform */
+		DoEEffects(tick, flags, a, mod, channel, 0x40|inf);
+		break;   
+	case SS_TREMWAVE: /* S4x set tremolo waveform */
+		DoEEffects(tick, flags, a, mod, channel, 0x70|inf);
+		break;
+	case SS_PANWAVE: /* S5x panbrello */
+		a->panbwave=inf;
+		break;
+	case SS_FRAMEDELAY: /* S6x delay x number of frames (patdly) */
+		DoEEffects(tick, flags, a, mod, channel, 0xe0|inf);
+		break;
+	case SS_S7EFFECTS: /* S7x instrument / NNA commands */
+		DoNNAEffects(mod, a, inf);
+		break;
+	case SS_PANNING: /* S8x set panning position */
+		DoEEffects(tick, flags, a, mod, channel, 0x80 | inf);
+		break;
+	case SS_SURROUND: /* S9x set surround sound */
+		if (mod->panflag)
+			a->main.panning = mod->panning[channel] = PAN_SURROUND;
+		break;    
+	case SS_HIOFFSET: /* SAy set high order sample offset yxx00h */
+		if (!tick) {
+			a->hioffset=inf<<16;
+			a->main.start=a->hioffset|a->soffset;
 
-				if ((a->s)&&(a->start>a->s->length))
-					a->start=a->s->flags&(SF_LOOP|SF_BIDI)?a->s->loopstart:a->s->length;
-			}
-			break;
-		case SS_PATLOOP: /* SBx pattern loop */
-			DoEEffects(0x60|inf);
-			break;
-		case SS_NOTECUT: /* SCx notecut */
-			DoEEffects(0xC0|inf);
-			break;
-		case SS_NOTEDELAY: /* SDx notedelay */
-			DoEEffects(0xD0|inf);
-			break;
-		case SS_PATDELAY: /* SEx patterndelay */
-			DoEEffects(0xE0|inf);
-			break;
+			if ((a->main.s)&&(a->main.start>a->main.s->length))
+				a->main.start=a->main.s->flags&(SF_LOOP|SF_BIDI)?
+				    a->main.s->loopstart:a->main.s->length;
+		}
+		break;
+	case SS_PATLOOP: /* SBx pattern loop */
+		DoEEffects(tick, flags, a, mod, channel, 0x60|inf);
+		break;
+	case SS_NOTECUT: /* SCx notecut */
+		if (!inf) inf = 1;
+		DoEEffects(tick, flags, a, mod, channel, 0xC0|inf);
+		break;
+	case SS_NOTEDELAY: /* SDx notedelay */
+		DoEEffects(tick, flags, a, mod, channel, 0xD0|inf);
+		break;
+	case SS_PATDELAY: /* SEx patterndelay */
+		DoEEffects(tick, flags, a, mod, channel, 0xE0|inf);
+		break;
 	}
+
+	return 0;
 }
 
-/* Impulse Tracker Volume/Pan Column effects.
-   All volume/pan column effects share the same memory space. */
-static void DoVolEffects(UBYTE c)
+/*========== Impulse Tracker Volume/Pan Column effects */
+
+/*
+ * All volume/pan column effects share the same memory space.
+ */
+
+static int DoVolEffects(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
-	UBYTE inf=UniGetByte();
+	UBYTE c, inf;
+	
+	c = UniGetByte(); 
+	inf = UniGetByte(); 
 
 	if ((!c)&&(!inf)) {
 		c=a->voleffect;
@@ -1331,562 +2056,277 @@ static void DoVolEffects(UBYTE c)
 	}
 
 	if (c)
-	  switch (c) {
+		switch (c) {
 		case VOL_VOLUME:
-			if (pf->vbtick) break;
+			if (tick) break;
 			if (inf>64) inf=64;
 			a->tmpvolume=inf;
 			break;
 		case VOL_PANNING:
-			if (pf->panflag)
-				a->panning=/*pf->panning[mp_channel]=*/inf;
+			if (mod->panflag)
+				a->main.panning=inf;
 			break;
 		case VOL_VOLSLIDE:
-			DoS3MVolSlide(inf);
-			break;
+			DoS3MVolSlide(tick, flags, a, inf);
+			return 1;
 		case VOL_PITCHSLIDEDN:
-			if (a->period)
-				DoS3MSlideDn(inf);
+			if (a->main.period)
+				DoS3MSlideDn(tick, a, inf);
 			break;
 		case VOL_PITCHSLIDEUP:
-			if (a->period)
-				DoS3MSlideUp(inf);
+			if (a->main.period)
+				DoS3MSlideUp(tick, a, inf);
 			break;
 		case VOL_PORTAMENTO:
-			if (inf) a->slidespeed=inf;
-			if (a->period) {
-				if ((!pf->vbtick)||(a->newsamp)){
-					a->kick=KICK_NOTE;
-					a->start=-1;
-				} else
-					a->kick=(a->kick==KICK_NOTE)?KICK_ENV:KICK_ABSENT;
-				DoITToneSlide();
-				a->ownper=1;
-			}
+			DoITToneSlide(tick, a, inf);
 			break;
 		case VOL_VIBRATO:
-			if (!pf->vbtick) {
-				if (inf&0x0f) a->vibdepth=inf&0xf;
-				if (inf&0xf0) a->vibspd=(inf&0xf0)>>2;
-			}
-			if (a->period) {
-				DoITVibrato();
-				a->ownper=1;
-			}
+			DoITVibrato(tick, a, inf);
 			break;
 	}
+
+	return 0;
 }
 
 /*========== UltraTracker effects */
 
-static void DoULTSampleOffset(void)
+static int DoULTEffect9(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
 	UWORD offset=UniGetWord();
 
 	if (offset)
 		a->ultoffset=offset;
 
-	a->start=a->ultoffset<<2;
-	if ((a->s)&&(a->start>a->s->length))
-		a->start=a->s->flags&(SF_LOOP|SF_BIDI)?a->s->loopstart:a->s->length;
+	a->main.start=a->ultoffset<<2;
+	if ((a->main.s)&&(a->main.start>a->main.s->length))
+		a->main.start=a->main.s->flags&(SF_LOOP|SF_BIDI)?
+		    a->main.s->loopstart:a->main.s->length;
+
+	return 0;
 }
 
 /*========== OctaMED effects */
 
-static void DoMEDSpeed(void)
+static int DoMEDSpeed(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
 	UWORD speed=UniGetWord();
 
-	pf->bpm=speed;
+	mod->bpm=speed;
+
+	return 0;
+}
+
+static int DoMEDEffectF1(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	DoEEffects(tick, flags, a, mod, channel, 0x90|(mod->sngspd/2));
+
+	return 0;
+}
+
+static int DoMEDEffectF2(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	DoEEffects(tick, flags, a, mod, channel, 0xd0|(mod->sngspd/2));
+
+	return 0;
+}
+
+static int DoMEDEffectF3(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	DoEEffects(tick, flags, a, mod, channel, 0x90|(mod->sngspd/3));
+
+	return 0;
+}
+
+/*========== Oktalyzer effects */
+
+static int DoOktArp(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	UBYTE dat, dat2;
+
+	dat2 = UniGetByte();	/* arpeggio style */
+	dat = UniGetByte();
+	if (!tick) {
+		if (!dat && (flags & UF_ARPMEM))
+			dat=a->arpmem;
+		else
+			a->arpmem=dat;
+	}
+	if (a->main.period)
+		DoArpeggio(tick, flags, a, dat2);
+
+	return 0;
+}
+
+static int DoXMEffectZ(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
+{
+	Player_SetSynchroValue(UniGetByte());
+	return 0;
 }
 
 /*========== General player functions */
 
-static void pt_playeffects(void)
+static int DoNothing(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWORD channel)
 {
-	UBYTE dat,c;
+	UniSkipOpcode();
 
-	while((c=UniGetByte())) {
-		int oldsliding=a->sliding;
-
-		a->sliding=0;
-		switch (c) {
-			case UNI_NOTE:
-			case UNI_INSTRUMENT:
-				a->sliding=oldsliding;
-				UniSkipOpcode(c);
-				break;
-			case UNI_PTEFFECT0:
-				dat=UniGetByte();
-				if (!pf->vbtick) {
-					if ((!dat)&&(pf->flags&UF_ARPMEM)) dat=a->arpmem;
-					a->arpmem=dat;
-				}
-				if (a->period)
-					DoArpeggio(a->arpmem);
-				break;
-			case UNI_PTEFFECT1:
-				dat=UniGetByte();
-				if ((!pf->vbtick)&&(dat)) a->slidespeed=(UWORD)dat<<2;
-				if (a->period)
-					if (pf->vbtick) a->tmpperiod-=a->slidespeed;
-				break;
-			case UNI_PTEFFECT2:
-				dat=UniGetByte();
-				if ((!pf->vbtick)&&(dat)) a->slidespeed=(UWORD)dat<<2;
-				if (a->period)
-					if (pf->vbtick) a->tmpperiod+=a->slidespeed;
-				break;
-			case UNI_PTEFFECT3:
-				dat=UniGetByte();
-				if ((!pf->vbtick)&&(dat)) a->portspeed=(UWORD)dat<<2;
-				if (a->period) {
-					if (!a->fadevol)
-						a->kick=(a->kick==KICK_NOTE)?KICK_NOTE:KICK_KEYOFF;
-					else
-						a->kick=(a->kick==KICK_NOTE)?KICK_ENV:KICK_ABSENT;
-					DoToneSlide();
-					a->ownper=1;
-				}
-				break;
-			case UNI_PTEFFECT4:
-			case UNI_XMEFFECT4:
-				dat=UniGetByte();
-				if (!pf->vbtick) {
-					if (dat&0x0f) a->vibdepth=dat&0xf;
-					if (dat&0xf0) a->vibspd=(dat&0xf0)>>2;
-				} else
-				if (a->period) {
-					DoVibrato();
-					a->ownper=1;
-				}
-				break;
-			case UNI_PTEFFECT5:
-				dat=UniGetByte();
-				if (a->period) {
-					if (!a->fadevol)
-						a->kick=(a->kick==KICK_NOTE)?KICK_NOTE:KICK_KEYOFF;
-					else
-						a->kick=(a->kick==KICK_NOTE)?KICK_ENV:KICK_ABSENT;
-					DoToneSlide();
-					a->ownper=1;
-				}
-				DoVolSlide(dat);
-				break;
-			case UNI_PTEFFECT6:
-				dat=UniGetByte();
-				if ((a->period)&&(pf->vbtick)) {
-					DoVibrato();
-					a->ownper=1;
-				}
-				DoVolSlide(dat);
-				break;
-			case UNI_PTEFFECT7:
-				dat=UniGetByte();
-				if (!pf->vbtick) {
-					if (dat&0x0f) a->trmdepth=dat&0xf;
-					if (dat&0xf0) a->trmspd=(dat&0xf0)>>2;
-				}
-				if (a->period) {
-					DoTremolo();
-					a->ownvol=1;
-				}
-				break;
-			case UNI_PTEFFECT8:
-				dat=UniGetByte();
-				if (pf->panflag)
-					a->panning=pf->panning[mp_channel]=dat;
-				break;
-			case UNI_PTEFFECT9:
-				dat=UniGetByte();
-				if (!pf->vbtick) {
-					if (dat) a->soffset=(UWORD)dat<<8;
-					a->start=a->hioffset|a->soffset;
-
-					if ((a->s)&&(a->start>a->s->length))
-						a->start=a->s->flags&(SF_LOOP|SF_BIDI)?a->s->loopstart:a->s->length;
-				}
-				break;
-			case UNI_PTEFFECTA:
-				DoVolSlide(UniGetByte());
-				break;
-			case UNI_PTEFFECTB:
-				dat=UniGetByte();
-				if ((pf->vbtick)||(pf->patdly2)) break;
-				/* Vincent Voois uses a nasty trick in "Universal Bolero" */
-				if (dat==pf->sngpos && pf->patbrk==pf->patpos) break;
-				if ((!pf->loop)&&(!pf->patbrk)&&((dat<pf->sngpos)||
-				   ((pf->sngpos==pf->numpos-1)&&(!pf->patbrk))||
-				   ((dat==pf->sngpos)&&(pf->flags&UF_NOWRAP)))) {
-					/* if we don't loop, better not to skip the end of the
-					   pattern, after all... so:
-					pf->patbrk=0; */
-					pf->posjmp=3;
-				} else {
-					/* if we were fading, adjust... */
-					if (pf->sngpos==(pf->numpos-1))
-						pf->volume=pf->initvolume>128?128:pf->initvolume;
-					pf->sngpos=dat;
-					pf->posjmp=2;
-					pf->patpos=0;
-				}
-				break;
-			case UNI_PTEFFECTC:
-				dat=UniGetByte();
-				if (pf->vbtick) break;
-				if (dat==(UBYTE)-1) a->anote=dat=0; /* note cut */
-				else if (dat>64) dat=64;
-				a->tmpvolume=dat;
-				break;
-			case UNI_PTEFFECTD:
-				dat=UniGetByte();
-				if ((pf->vbtick)||(pf->patdly2)) break;
-				if ((pf->positions[pf->sngpos]!=255)&&
-				   (dat>pf->pattrows[pf->positions[pf->sngpos]]))
-					dat=pf->pattrows[pf->positions[pf->sngpos]];
-				pf->patbrk=dat;
-				if (!pf->posjmp) {
-					/* don't ask me to explain this code - it makes
-					   backwards.s3m and children.xm (heretic's version) play
-					   correctly, among others. Take that for granted, or write
-					   the page of comments yourself... you might need some
-					   aspirin - Miod */
-					if ((pf->sngpos==pf->numpos-1)&&(dat)&&((pf->loop)||
-					               (pf->positions[pf->sngpos]==(pf->numpat-1)
-									&& !(pf->flags&UF_NOWRAP)))) {
-						pf->sngpos=0;
-						pf->posjmp=2;
-					} else
-						pf->posjmp=3;
-				}
-				break;
-			case UNI_PTEFFECTE:
-				DoEEffects(UniGetByte());
-				break;
-			case UNI_PTEFFECTF:
-				dat=UniGetByte();
-				if (pf->vbtick||pf->patdly2) break;
-				if (pf->extspd&&(dat>=0x20))
-					pf->bpm=dat;
-				else
-				  if (dat) {
-					pf->sngspd=(dat>32)?32:dat;
-					pf->vbtick=0;
-				}
-				break;
-			case UNI_S3MEFFECTA:
-				DoS3MSpeed(UniGetByte());
-				break;
-			case UNI_S3MEFFECTD:
-				DoS3MVolSlide(UniGetByte());
-				break;
-			case UNI_S3MEFFECTE:
-				dat=UniGetByte();
-				if (a->period)
-					DoS3MSlideDn(dat);
-				break;
-			case UNI_S3MEFFECTF:
-				dat=UniGetByte();
-				if (a->period)
-					DoS3MSlideUp(dat);
-				break;
-			case UNI_S3MEFFECTI:
-				DoS3MTremor(UniGetByte());
-				a->ownvol=1;
-				break;
-			case UNI_S3MEFFECTQ:
-				dat=UniGetByte();
-				if (a->period)
-					DoS3MRetrig(dat);
-				break;
-			case UNI_S3MEFFECTR:
-				dat=UniGetByte();
-				if (!pf->vbtick) {
-					if (dat&0x0f) a->trmdepth=dat&0xf;
-					if (dat&0xf0) a->trmspd=(dat&0xf0)>>2;
-				}
-				DoS3MTremolo();
-				a->ownvol=1;
-				break;
-			case UNI_S3MEFFECTT:
-				DoS3MTempo(UniGetByte());
-				break;
-			case UNI_S3MEFFECTU:
-				dat=UniGetByte();
-				if (!pf->vbtick) {
-					if (dat&0x0f) a->vibdepth=dat&0xf;
-					if (dat&0xf0) a->vibspd=(dat&0xf0)>>2;
-				} else
-				if (a->period) {
-					DoS3MFineVibrato();
-					a->ownper=1;
-				}
-				break;
-			case UNI_KEYOFF:
-				a->keyoff|=KEY_OFF;
-				if ((!(a->volflg&EF_ON))||(a->volflg&EF_LOOP))
-					a->keyoff=KEY_KILL;
-				break;
-			case UNI_KEYFADE:
-				dat=UniGetByte();
-				if ((pf->vbtick>=dat)||(pf->vbtick==pf->sngspd-1)) {
-					a->keyoff=KEY_KILL;
-					if (!(a->volflg&EF_ON))
-						a->fadevol=0;
-				}
-				break;
-			case UNI_VOLEFFECTS:
-				DoVolEffects(UniGetByte());
-				break;
-			case UNI_XMEFFECTA:
-				DoXMVolSlide(UniGetByte());
-				break;
-			case UNI_XMEFFECTE1: /* XM fineslide up */
-				dat=UniGetByte();
-				if (!pf->vbtick) {
-					if (dat) a->fportupspd=dat;
-					if (a->period)
-						a->tmpperiod-=(a->fportupspd<<2);
-				}
-				break;
-			case UNI_XMEFFECTE2: /* XM fineslide dn */
-				dat=UniGetByte();
-				if (!pf->vbtick) {
-					if (dat) a->fportdnspd=dat;
-					if (a->period)
-						a->tmpperiod+=(a->fportdnspd<<2);
-				}
-				break;
-			case UNI_XMEFFECTEA: /* fine volume slide up */
-				dat=UniGetByte();
-				if (!pf->vbtick)
-					if (dat) a->fslideupspd=dat;
-				a->tmpvolume+=a->fslideupspd;
-				if (a->tmpvolume>64) a->tmpvolume=64;
-				break;
-			case UNI_XMEFFECTEB: /* fine volume slide dn */
-				dat=UniGetByte();
-				if (!pf->vbtick)
-					if (dat) a->fslidednspd=dat;
-				a->tmpvolume-=a->fslidednspd;
-				if (a->tmpvolume<0) a->tmpvolume=0;
-				break;
-			case UNI_XMEFFECTG:
-				pf->volume=UniGetByte()<<1;
-				if (pf->volume>128) pf->volume=128;
-				break;
-			case UNI_XMEFFECTH:
-				DoXMGlobalSlide(UniGetByte());
-				break;
-			case UNI_XMEFFECTL:
-				dat=UniGetByte();
-				if ((!pf->vbtick)&&(a->i)) {
-					UWORD points;
-					INSTRUMENT *i=a->i;
-					MP_VOICE *aout;
-
-					if ((aout=a->slave)) {
-						points=i->volenv[i->volpts-1].pos;
-						aout->venv.p=aout->venv.env[(dat>points)?points:dat].pos;
-						points=i->panenv[i->panpts-1].pos;
-						aout->penv.p=aout->penv.env[(dat>points)?points:dat].pos;
-					}
-				}
-				break;
-			case UNI_XMEFFECTP:
-				dat=UniGetByte();
-				if (pf->panflag)
-					DoXMPanSlide(dat);
-				break;
-			case UNI_XMEFFECTX1:
-				dat=UniGetByte();
-				if (dat) a->ffportupspd=dat;
-				else dat=a->ffportupspd;
-				if (a->period) {
-					DoXMExtraFineSlideUp(dat);
-					a->ownper=1;
-				}
-				break;
-			case UNI_XMEFFECTX2:
-				dat=UniGetByte();
-				if (dat) a->ffportdnspd=dat;
-				else dat=a->ffportdnspd;
-				if (a->period) {
-					DoXMExtraFineSlideDown(dat);
-					a->ownper=1;
-				}
-				break;
-			case UNI_ITEFFECTG:
-				dat=UniGetByte();
-				if (dat) {
-					a->portspeed=dat;
-				}
-				if (a->period) {
-					if ((!pf->vbtick)&&(a->newsamp)){
-						a->kick=KICK_NOTE;
-						a->start=-1;
-					} else
-						a->kick=(a->kick==KICK_NOTE)?KICK_ENV:KICK_ABSENT;
-					DoITToneSlide();
-					a->ownper=1;
-				}
-				break;
-			case UNI_ITEFFECTH: /* IT vibrato */
-				dat=UniGetByte();
-				if (!pf->vbtick) {
-					if (dat&0x0f) a->vibdepth=dat&0xf;
-					if (dat&0xf0) a->vibspd=(dat&0xf0)>>2;
-				}
-				if (a->period) {
-					DoITVibrato();
-					a->ownper=1;
-				}
-				break;
-			case UNI_ITEFFECTI: /* IT tremor */
-				DoITTremor(UniGetByte());
-				a->ownvol=1;
-				break;
-			case UNI_ITEFFECTM:
-				a->chanvol=UniGetByte();
-				if (a->chanvol>64) a->chanvol=64;
-				else if (a->chanvol<0) a->chanvol=0;
-				break;
-			case UNI_ITEFFECTN: /* slide / fineslide channel volume */
-				DoITChanVolSlide(UniGetByte());
-				break;
-			case UNI_ITEFFECTP:  /* slide / fineslide channel panning */
-				dat=UniGetByte();
-				if (pf->panflag)
-					DoITPanSlide(dat);
-				break;
-			case UNI_ITEFFECTT: /* slide / fineslide tempo */
-				DoITTempo(UniGetByte());
-				break;
-			case UNI_ITEFFECTU: /* fine vibrato */
-				dat=UniGetByte();
-				if (!pf->vbtick) {
-					if (dat&0x0f) a->vibdepth=dat&0xf;
-					if (dat&0xf0) a->vibspd=(dat&0xf0)>>2;
-				}
-				if (a->period) {
-					DoITFineVibrato();
-					a->ownper=1;
-				}
-				break;
-			case UNI_ITEFFECTW: /* slide / fineslide global volume */
-				DoITGlobalSlide(UniGetByte());
-				break;
-			case UNI_ITEFFECTY: /* panbrello */
-				dat=UniGetByte();
-				if (!pf->vbtick) {
-					if (dat&0x0f) a->panbdepth=(dat&0xf);
-					if (dat&0xf0) a->panbspd=(dat&0xf0)>>4;
-				}
-				if (pf->panflag) DoITPanbrello();
-				break;
-			case UNI_ITEFFECTS0:
-				DoSSEffects(UniGetByte());
-				break;
-			case UNI_ITEFFECTZ:
-				/* FIXME not yet implemented */
-				UniSkipOpcode(UNI_ITEFFECTZ);
-				break;
-			case UNI_ULTEFFECT9:
-				DoULTSampleOffset();
-				break;
-			case UNI_MEDSPEED:
-				DoMEDSpeed();
-				break;
-			case UNI_MEDEFFECTF1:
-				DoEEffects(0x90|(pf->sngspd/2));
-				break;
-			case UNI_MEDEFFECTF2:
-				DoEEffects(0xd0|(pf->sngspd/2));
-				break;
-			case UNI_MEDEFFECTF3:
-				DoEEffects(0x90|(pf->sngspd/3));
-				break;
-			case UNI_XMEFFECTZ:
-				Player_SetSynchroValue(UniGetByte());
-				break;
-			default:
-				a->sliding=oldsliding;
-				UniSkipOpcode(c);
-				break;
-		}
-	}
+	return 0;
 }
 
-static void DoNNAEffects(UBYTE dat)
+typedef int (*effect_func) (UWORD, UWORD, MP_CONTROL *, MODULE *, SWORD);
+
+static effect_func effects[UNI_LAST] = {
+		DoNothing,		/* 0 */
+		DoNothing,		/* UNI_NOTE */
+		DoNothing,		/* UNI_INSTRUMENT */
+		DoPTEffect0,	/* UNI_PTEFFECT0 */
+		DoPTEffect1,	/* UNI_PTEFFECT1 */
+		DoPTEffect2,	/* UNI_PTEFFECT2 */
+		DoPTEffect3,	/* UNI_PTEFFECT3 */
+		DoPTEffect4,	/* UNI_PTEFFECT4 */
+		DoPTEffect5,	/* UNI_PTEFFECT5 */
+		DoPTEffect6,	/* UNI_PTEFFECT6 */
+		DoPTEffect7,	/* UNI_PTEFFECT7 */
+		DoPTEffect8,	/* UNI_PTEFFECT8 */
+		DoPTEffect9,	/* UNI_PTEFFECT9 */
+		DoPTEffectA,	/* UNI_PTEFFECTA */
+		DoPTEffectB,	/* UNI_PTEFFECTB */
+		DoPTEffectC,	/* UNI_PTEFFECTC */
+		DoPTEffectD,	/* UNI_PTEFFECTD */
+		DoPTEffectE,	/* UNI_PTEFFECTE */
+		DoPTEffectF,	/* UNI_PTEFFECTF */
+		DoS3MEffectA,	/* UNI_S3MEFFECTA */
+		DoS3MEffectD,	/* UNI_S3MEFFECTD */
+		DoS3MEffectE,	/* UNI_S3MEFFECTE */
+		DoS3MEffectF,	/* UNI_S3MEFFECTF */
+		DoS3MEffectI,	/* UNI_S3MEFFECTI */
+		DoS3MEffectQ,	/* UNI_S3MEFFECTQ */
+		DoS3MEffectR,	/* UNI_S3MEFFECTR */
+		DoS3MEffectT,	/* UNI_S3MEFFECTT */
+		DoS3MEffectU,	/* UNI_S3MEFFECTU */
+		DoKeyOff,		/* UNI_KEYOFF */
+		DoKeyFade,		/* UNI_KEYFADE */
+		DoVolEffects,	/* UNI_VOLEFFECTS */
+		DoPTEffect4,	/* UNI_XMEFFECT4 */
+		DoXMEffect6,	/* UNI_XMEFFECT6 */
+		DoXMEffectA,	/* UNI_XMEFFECTA */
+		DoXMEffectE1,	/* UNI_XMEFFECTE1 */
+		DoXMEffectE2,	/* UNI_XMEFFECTE2 */
+		DoXMEffectEA,	/* UNI_XMEFFECTEA */
+		DoXMEffectEB,	/* UNI_XMEFFECTEB */
+		DoXMEffectG,	/* UNI_XMEFFECTG */
+		DoXMEffectH,	/* UNI_XMEFFECTH */
+		DoXMEffectL,	/* UNI_XMEFFECTL */
+		DoXMEffectP,	/* UNI_XMEFFECTP */
+		DoXMEffectX1,	/* UNI_XMEFFECTX1 */
+		DoXMEffectX2,	/* UNI_XMEFFECTX2 */
+		DoITEffectG,	/* UNI_ITEFFECTG */
+		DoITEffectH,	/* UNI_ITEFFECTH */
+		DoITEffectI,	/* UNI_ITEFFECTI */
+		DoITEffectM,	/* UNI_ITEFFECTM */
+		DoITEffectN,	/* UNI_ITEFFECTN */
+		DoITEffectP,	/* UNI_ITEFFECTP */
+		DoITEffectT,	/* UNI_ITEFFECTT */
+		DoITEffectU,	/* UNI_ITEFFECTU */
+		DoITEffectW,	/* UNI_ITEFFECTW */
+		DoITEffectY,	/* UNI_ITEFFECTY */
+		DoNothing,		/* UNI_ITEFFECTZ */
+		DoITEffectS0,	/* UNI_ITEFFECTS0 */
+		DoULTEffect9,	/* UNI_ULTEFFECT9 */
+		DoMEDSpeed,		/* UNI_MEDSPEED */
+		DoMEDEffectF1,	/* UNI_MEDEFFECTF1 */
+		DoMEDEffectF2,	/* UNI_MEDEFFECTF2 */
+		DoMEDEffectF3,	/* UNI_MEDEFFECTF3 */
+		DoOktArp,		/* UNI_OKTARP */
+		DoXMEffectZ,	/* UNI_XMEFFECTZ */
+};
+
+static int pt_playeffects(MODULE *mod, SWORD channel, MP_CONTROL *a)
+{
+	UWORD tick = mod->vbtick;
+	UWORD flags = mod->flags;
+	UBYTE c;
+	int explicitslides = 0;
+	effect_func f;
+
+	while((c=UniGetByte())) {
+		f = effects[c];
+		if (f != DoNothing)
+				a->sliding = 0;
+		explicitslides |= f(tick, flags, a, mod, channel);
+	}
+	return explicitslides;
+}
+
+static void DoNNAEffects(MODULE *mod, MP_CONTROL *a, UBYTE dat)
 {
 	int t;
 	MP_VOICE *aout;
 
-	dat&=0xf;
+	dat&=0xf; 
 	aout=(a->slave)?a->slave:NULL;
 
 	switch (dat) {
-		case 0x0: /* past note cut */
-			for (t=0;t<md_sngchn;t++)
-				if (pf->voice[t].master==a)
-					pf->voice[t].fadevol=0;
-			break;
-		case 0x1: /* past note off */
-			for (t=0;t<md_sngchn;t++)
-				if (pf->voice[t].master==a) {
-					pf->voice[t].keyoff|=KEY_OFF;
-					if ((!(pf->voice[t].venv.flg & EF_ON))||
-					   (pf->voice[t].venv.flg & EF_LOOP))
-						pf->voice[t].keyoff=KEY_KILL;
-				}
-			break;
-		case 0x2: /* past note fade */
-			for (t=0;t<md_sngchn;t++)
-				if (pf->voice[t].master==a)
-					pf->voice[t].keyoff|=KEY_FADE;
-			break;
-		case 0x3: /* set NNA note cut */
-			a->nna=(a->nna&~NNA_MASK)|NNA_CUT;
-			break;
-		case 0x4: /* set NNA note continue */
-			a->nna=(a->nna&~NNA_MASK)|NNA_CONTINUE;
-			break;
-		case 0x5: /* set NNA note off */
-			a->nna=(a->nna&~NNA_MASK)|NNA_OFF;
-			break;
-		case 0x6: /* set NNA note fade */
-			a->nna=(a->nna&~NNA_MASK)|NNA_FADE;
-			break;
-		case 0x7: /* disable volume envelope */
-			if (aout)
-				aout->volflg&=~EF_ON;
-			break;
-		case 0x8: /* enable volume envelope  */
-			if (aout)
-				aout->volflg|=EF_ON;
-			break;
-		case 0x9: /* disable panning envelope */
-			if (aout)
-				aout->panflg&=~EF_ON;
-			break;
-		case 0xa: /* enable panning envelope */
-			if (aout)
-				aout->panflg|=EF_ON;
-			break;
-		case 0xb: /* disable pitch envelope */
-			if (aout)
-				aout->pitflg&=~EF_ON;
-			break;
-		case 0xc: /* enable pitch envelope */
-			if (aout)
-				aout->pitflg|=EF_ON;
-			break;
+	case 0x0: /* past note cut */
+		for (t=0;t<md_sngchn;t++)
+			if (mod->voice[t].master==a)
+				mod->voice[t].main.fadevol=0;
+		break;
+	case 0x1: /* past note off */
+		for (t=0;t<md_sngchn;t++)
+			if (mod->voice[t].master==a) {
+				mod->voice[t].main.keyoff|=KEY_OFF;
+				if ((!(mod->voice[t].venv.flg & EF_ON))||
+				   (mod->voice[t].venv.flg & EF_LOOP))
+					mod->voice[t].main.keyoff=KEY_KILL;
+			}
+		break;
+	case 0x2: /* past note fade */
+		for (t=0;t<md_sngchn;t++)
+			if (mod->voice[t].master==a)
+				mod->voice[t].main.keyoff|=KEY_FADE;
+		break;
+	case 0x3: /* set NNA note cut */
+		a->main.nna=(a->main.nna&~NNA_MASK)|NNA_CUT;
+		break;
+	case 0x4: /* set NNA note continue */
+		a->main.nna=(a->main.nna&~NNA_MASK)|NNA_CONTINUE;
+		break;
+	case 0x5: /* set NNA note off */
+		a->main.nna=(a->main.nna&~NNA_MASK)|NNA_OFF;
+		break;   
+	case 0x6: /* set NNA note fade */
+		a->main.nna=(a->main.nna&~NNA_MASK)|NNA_FADE;
+		break;
+	case 0x7: /* disable volume envelope */
+		if (aout)
+			aout->main.volflg&=~EF_ON;
+		break;
+	case 0x8: /* enable volume envelope  */
+		if (aout)
+			aout->main.volflg|=EF_ON;
+		break;
+	case 0x9: /* disable panning envelope */
+		if (aout)
+			aout->main.panflg&=~EF_ON;
+		break;    
+	case 0xa: /* enable panning envelope */
+		if (aout)
+			aout->main.panflg|=EF_ON;
+		break;
+	case 0xb: /* disable pitch envelope */
+		if (aout)
+			aout->main.pitflg&=~EF_ON;
+		break;
+	case 0xc: /* enable pitch envelope */
+		if (aout)
+			aout->main.pitflg|=EF_ON;
+		break;
 	}
 }
 
-void pt_UpdateVoices(int max_volume)
+void pt_UpdateVoices(MODULE *mod, int max_volume)
 {
-	SWORD envpan,envvol,envpit;
+	SWORD envpan,envvol,envpit,channel;
 	UWORD playperiod;
 	SLONG vibval,vibdpt;
 	ULONG tmpvol;
@@ -1895,91 +2335,109 @@ void pt_UpdateVoices(int max_volume)
 	INSTRUMENT *i;
 	SAMPLE *s;
 
-	pf->totalchn=pf->realchn=0;
-	for (mp_channel=0;mp_channel<pf->numchn;mp_channel++) {
-		aout=&pf->voice[mp_channel];
-		i=aout->i;
-		s=aout->s;
+	mod->totalchn=mod->realchn=0;
+	for (channel=0;channel<md_sngchn;channel++) {
+		aout=&mod->voice[channel];
+		i=aout->main.i;
+		s=aout->main.s;
 
-		if ((!s)||(!s->length)) continue;
+		if (!s || !s->length) continue;
 
-		if (aout->period<40) aout->period=40;
-		else if (aout->period>50000) aout->period=50000;
+		if (aout->main.period<40)
+			aout->main.period=40;
+		else if (aout->main.period>50000)
+			aout->main.period=50000;
 
-		if ((aout->kick==KICK_NOTE)||(aout->kick==KICK_KEYOFF)) {
-			Voice_Play_internal(mp_channel,s,(aout->start==-1)?((s->flags&SF_UST_LOOP)?s->loopstart:0):aout->start);
-			aout->fadevol=32768;
+		if ((aout->main.kick==KICK_NOTE)||(aout->main.kick==KICK_KEYOFF)) {
+			Voice_Play_internal(channel,s,(aout->main.start==-1)?
+			    ((s->flags&SF_UST_LOOP)?s->loopstart:0):aout->main.start);
+			aout->main.fadevol=32768;
 			aout->aswppos=0;
 		}
 
-		if (i && ((aout->kick==KICK_NOTE)||(aout->kick==KICK_ENV))) {
-			StartEnvelope(&aout->venv,aout->volflg,i->volpts,i->volsusbeg,
-			  i->volsusend,i->volbeg,i->volend,i->volenv,aout->keyoff);
-			StartEnvelope(&aout->penv,aout->panflg,i->panpts,i->pansusbeg,
-			  i->pansusend,i->panbeg,i->panend,i->panenv,aout->keyoff);
-			StartEnvelope(&aout->cenv,aout->pitflg,i->pitpts,i->pitsusbeg,
-			  i->pitsusend,i->pitbeg,i->pitend,i->pitenv,aout->keyoff);
-			if (aout->cenv.flg&EF_ON)
-				aout->masterperiod=GetPeriod((UWORD)aout->note<<1,aout->master->speed);
+		envvol = 256;
+		envpan = PAN_CENTER;
+		envpit = 32;
+		if (i && ((aout->main.kick==KICK_NOTE)||(aout->main.kick==KICK_ENV))) {
+			if (aout->main.volflg & EF_ON)
+				envvol = StartEnvelope(&aout->venv,aout->main.volflg,
+				  i->volpts,i->volsusbeg,i->volsusend,
+				  i->volbeg,i->volend,i->volenv,aout->main.keyoff);
+			if (aout->main.panflg & EF_ON)
+				envpan = StartEnvelope(&aout->penv,aout->main.panflg,
+				  i->panpts,i->pansusbeg,i->pansusend,
+				  i->panbeg,i->panend,i->panenv,aout->main.keyoff);
+			if (aout->main.pitflg & EF_ON)
+				envpit = StartEnvelope(&aout->cenv,aout->main.pitflg,
+				  i->pitpts,i->pitsusbeg,i->pitsusend,
+				  i->pitbeg,i->pitend,i->pitenv,aout->main.keyoff);
+
+			if (aout->cenv.flg & EF_ON)
+				aout->masterperiod=GetPeriod(mod->flags,
+				  (UWORD)aout->main.note<<1, aout->master->speed);
+		} else {
+			if (aout->main.volflg & EF_ON)
+				envvol = ProcessEnvelope(aout,&aout->venv,256);
+			if (aout->main.panflg & EF_ON)
+				envpan = ProcessEnvelope(aout,&aout->penv,PAN_CENTER);
+			if (aout->main.pitflg & EF_ON)
+				envpit = ProcessEnvelope(aout,&aout->cenv,32);
 		}
-		aout->kick=KICK_ABSENT;
+		aout->main.kick=KICK_ABSENT;
 
-		envvol=(!(aout->volflg & EF_ON))?256:
-		        ProcessEnvelope(&aout->venv,256,aout->keyoff);
-		envpan=(!(aout->panflg & EF_ON))?PAN_CENTER:
-		        ProcessEnvelope(&aout->penv,PAN_CENTER,aout->keyoff);
-		envpit=(!(aout->pitflg & EF_ON))?32:
-		        ProcessEnvelope(&aout->cenv,32,aout->keyoff);
-
-		tmpvol=aout->fadevol;    /* max 32768 */
-		tmpvol*=aout->chanvol;    /* * max 64 */
-		tmpvol*=aout->volume;     /* * max 256 */
-		tmpvol/=16384L;           /* tmpvol is max 32768 */
-		aout->totalvol=tmpvol>>2; /* totalvolume used to determine samplevolume */
-		tmpvol*=envvol;           /* * max 256 */
-		tmpvol*=pf->volume;       /* * max 128 */
-		tmpvol/=4194304UL;
-               tmpvol*=pf->initvolume;   /* * max 128 */
-               tmpvol/=128;
+		tmpvol = aout->main.fadevol;	/* max 32768 */
+		tmpvol *= aout->main.chanvol;	/* * max 64 */
+		tmpvol *= aout->main.outvolume;	/* * max 256 */
+		tmpvol /= (256 * 64);			/* tmpvol is max 32768 again */
+		aout->totalvol = tmpvol >> 2;	/* used to determine samplevolume */
+		tmpvol *= envvol;				/* * max 256 */
+		tmpvol *= mod->volume;			/* * max 128 */
+		tmpvol /= (128 * 256 * 128);
+#if 0 /* FIXME: Is this still needed?  If so, where is initvolume? */
+		tmpvol *= aout->main.initvolume;   /* * max 128 */
+		tmpvol /= 128;
+#endif
 
 		/* fade out */
-		if (pf->sngpos>=pf->numpos) tmpvol=0;
+		if (mod->sngpos>=mod->numpos)
+			tmpvol=0;
 		else
 			tmpvol=(tmpvol*max_volume)/128;
 
-		if ((aout->masterchn!=-1)&& pf->control[aout->masterchn].muted)
-			Voice_SetVolume_internal(mp_channel,0);
+		if ((aout->masterchn!=-1)&& mod->control[aout->masterchn].muted)
+			Voice_SetVolume_internal(channel,0);
 		else {
-			Voice_SetVolume_internal(mp_channel,tmpvol);
+			Voice_SetVolume_internal(channel,tmpvol);
 			if ((tmpvol)&&(aout->master)&&(aout->master->slave==aout))
-				pf->realchn++;
-			pf->totalchn++;
+				mod->realchn++;
+			mod->totalchn++;
 		}
 
-		if (aout->panning==PAN_SURROUND)
-			Voice_SetPanning_internal(mp_channel,PAN_SURROUND);
+		if (aout->main.panning==PAN_SURROUND)
+			Voice_SetPanning_internal(channel,PAN_SURROUND);
 		else
-			if ((pf->panflag)&&(aout->penv.flg & EF_ON))
-				Voice_SetPanning_internal(mp_channel,DoPan(envpan,aout->panning));
+			if ((mod->panflag)&&(aout->penv.flg & EF_ON))
+				Voice_SetPanning_internal(channel,
+				    DoPan(envpan,aout->main.panning));
 			else
-				Voice_SetPanning_internal(mp_channel,aout->panning);
+				Voice_SetPanning_internal(channel,aout->main.panning);
 
-		if (aout->period && s->vibdepth)
+		if (aout->main.period && s->vibdepth)
 			switch (s->vibtype) {
-				case 0:
-					vibval=avibtab[s->avibpos&127];
-					if (s->avibpos & 0x80) vibval=-vibval;
-					break;
-				case 1:
-					vibval=64;
-					if (s->avibpos & 0x80) vibval=-vibval;
-					break;
-				case 2:
-					vibval=63-(((s->avibpos+128)&255)>>1);
-					break;
-				default:
-					vibval=(((s->avibpos+128)&255)>>1)-64;
-					break;
+			case 0:
+				vibval=avibtab[s->avibpos&127];
+				if (aout->avibpos & 0x80) vibval=-vibval;
+				break;
+			case 1:
+				vibval=64;
+				if (aout->avibpos & 0x80) vibval=-vibval;
+				break;
+			case 2:
+				vibval=63-(((aout->avibpos+128)&255)>>1);
+				break;
+			default:
+				vibval=(((aout->avibpos+128)&255)>>1)-64;
+				break;
 			}
 		else
 			vibval=0;
@@ -1992,12 +2450,12 @@ void pt_UpdateVoices(int max_volume)
 				vibdpt=s->vibdepth<<8;
 			vibval=(vibval*vibdpt)>>16;
 			if (aout->mflag) {
-				if (!(pf->flags&UF_LINEAR)) vibval>>=1;
-				aout->period-=vibval;
+				if (!(mod->flags&UF_LINEAR)) vibval>>=1;
+				aout->main.period-=vibval;
 			}
 		} else {
 			/* do XM style auto-vibrato */
-			if (!(aout->keyoff & KEY_OFF)) {
+			if (!(aout->main.keyoff & KEY_OFF)) {
 				if (aout->aswppos<s->vibsweep) {
 					vibdpt=(aout->aswppos*s->vibdepth)/s->vibsweep;
 					aout->aswppos++;
@@ -2012,80 +2470,85 @@ void pt_UpdateVoices(int max_volume)
 					vibdpt=0;
 			}
 			vibval=(vibval*vibdpt)>>8;
-			aout->period-=vibval;
+			aout->main.period-=vibval;
 		}
 
 		/* update vibrato position */
-		s->avibpos=(s->avibpos+s->vibrate)&0xff;
+		aout->avibpos=(aout->avibpos+s->vibrate)&0xff;
 
 		/* process pitch envelope */
-		playperiod=aout->period;
+		playperiod=aout->main.period;
 
-		if ((aout->pitflg&EF_ON)&&(envpit!=32)) {
+		if ((aout->main.pitflg&EF_ON)&&(envpit!=32)) {
 			long p1;
 
 			envpit-=32;
-			if ((aout->note<<1)+envpit<=0) envpit=-(aout->note<<1);
+			if ((aout->main.note<<1)+envpit<=0) envpit=-(aout->main.note<<1);
 
-			p1=GetPeriod(((UWORD)aout->note<<1)+envpit,aout->master->speed)-aout->masterperiod;
+			p1=GetPeriod(mod->flags, ((UWORD)aout->main.note<<1)+envpit,
+			    aout->master->speed)-aout->masterperiod;
 			if (p1>0) {
 				if ((UWORD)(playperiod+p1)<=playperiod) {
 					p1=0;
-					aout->keyoff|=KEY_OFF;
+					aout->main.keyoff|=KEY_OFF;
 				}
 			} else if (p1<0) {
 				if ((UWORD)(playperiod+p1)>=playperiod) {
 					p1=0;
-					aout->keyoff|=KEY_OFF;
+					aout->main.keyoff|=KEY_OFF;
 				}
 			}
 			playperiod+=p1;
 		}
 
-		if (!aout->fadevol) { /* check for a dead note (fadevol=0) */
-			Voice_Stop_internal(mp_channel);
-			pf->totalchn--;
+		if (!aout->main.fadevol) { /* check for a dead note (fadevol=0) */
+			Voice_Stop_internal(channel);
+			mod->totalchn--;
 			if ((tmpvol)&&(aout->master)&&(aout->master->slave==aout))
-				pf->realchn--;
+				mod->realchn--;
 		} else {
-			Voice_SetFrequency_internal(mp_channel,
-			                            getfrequency(pf->flags,playperiod));
+			Voice_SetFrequency_internal(channel,
+			                            getfrequency(mod->flags,playperiod));
 
 			/* if keyfade, start substracting fadeoutspeed from fadevol: */
-			if ((i)&&(aout->keyoff&KEY_FADE)) {
-				if (aout->fadevol>=i->volfade)
-					aout->fadevol-=i->volfade;
+			if ((i)&&(aout->main.keyoff&KEY_FADE)) {
+				if (aout->main.fadevol>=i->volfade)
+					aout->main.fadevol-=i->volfade;
 				else
-					aout->fadevol=0;
+					aout->main.fadevol=0;
 			}
 		}
 
-		md_bpm=pf->bpm+pf->relspd;
-		if (md_bpm<32) md_bpm=32;
-		else if (md_bpm>255) md_bpm=255;
+		md_bpm=mod->bpm+mod->relspd;
+		if (md_bpm<32)
+			md_bpm=32;
+		else if ((!(mod->flags&UF_HIGHBPM)) && md_bpm>255)
+			md_bpm=255;
 	}
 }
 
 /* Handles new notes or instruments */
-void pt_Notes(void)
+void pt_Notes(MODULE *mod)
 {
+	SWORD channel;
+	MP_CONTROL *a;
 	UBYTE c,inst;
 	int tr,funky; /* funky is set to indicate note or instrument change */
 
-	for (mp_channel=0;mp_channel<pf->numchn;mp_channel++) {
-		a=&pf->control[mp_channel];
+	for (channel=0;channel<mod->numchn;channel++) {
+		a=&mod->control[channel];
 
-		if (pf->sngpos>=pf->numpos) {
-			tr=pf->numtrk;
-			pf->numrow=0;
+		if (mod->sngpos>=mod->numpos) {
+			tr=mod->numtrk;
+			mod->numrow=0;
 		} else {
-			tr=pf->patterns[(pf->positions[pf->sngpos]*pf->numchn)+mp_channel];
-			pf->numrow=pf->pattrows[pf->positions[pf->sngpos]];
+			tr=mod->patterns[(mod->positions[mod->sngpos]*mod->numchn)+channel];
+			mod->numrow=mod->pattrows[mod->positions[mod->sngpos]];
 		}
 
-		a->row=(tr<pf->numtrk)?UniFindRow(pf->tracks[tr],pf->patpos):NULL;
+		a->row=(tr<mod->numtrk)?UniFindRow(mod->tracks[tr],mod->patpos):NULL;
 		a->newsamp=0;
-		if (!pf->vbtick) a->notedelay=0;
+		if (!mod->vbtick) a->main.notedelay=0;
 
 		if (!a->row) continue;
 		UniSetRow(a->row);
@@ -2093,81 +2556,81 @@ void pt_Notes(void)
 
 		while((c=UniGetByte()))
 			switch (c) {
-				case UNI_NOTE:
-					funky|=1;
-					a->oldnote=a->anote,a->anote=UniGetByte();
-					a->kick =KICK_NOTE;
-					a->start=-1;
-					a->sliding=0;
+			case UNI_NOTE:
+				funky|=1;
+				a->oldnote=a->anote,a->anote=UniGetByte();
+				a->main.kick =KICK_NOTE;
+				a->main.start=-1;
+				a->sliding=0;
 
-					/* retrig tremolo and vibrato waves ? */
-					if (!(a->wavecontrol & 0x80)) a->trmpos=0;
-					if (!(a->wavecontrol & 0x08)) a->vibpos=0;
-					if (!a->panbwave) a->panbpos=0;
-					break;
-				case UNI_INSTRUMENT:
-					inst=UniGetByte();
-					if (inst>=pf->numins) break; /* safety valve */
-					funky|=2;
-					a->i=(pf->flags & UF_INST)?&pf->instruments[inst]:NULL;
-					a->retrig=0;
-					a->s3mtremor=0;
-					a->sample=inst;
-					break;
-				default:
-					UniSkipOpcode(c);
-					break;
+				/* retrig tremolo and vibrato waves ? */
+				if (!(a->wavecontrol & 0x80)) a->trmpos=0;
+				if (!(a->wavecontrol & 0x08)) a->vibpos=0;
+				if (!a->panbwave) a->panbpos=0;
+				break;
+			case UNI_INSTRUMENT:
+				inst=UniGetByte();
+				if (inst>=mod->numins) break; /* safety valve */
+				funky|=2;
+				a->main.i=(mod->flags & UF_INST)?&mod->instruments[inst]:NULL;
+				a->retrig=0;
+				a->s3mtremor=0;
+				a->ultoffset=0;
+				a->main.sample=inst;
+				break;
+			default:
+				UniSkipOpcode();
+				break;
 			}
 
 		if (funky) {
 			INSTRUMENT *i;
 			SAMPLE *s;
 
-			i=a->i;
-			if (i) {
-				if (i->samplenumber[a->anote] >= pf->numsmp) continue;
-				s=&pf->samples[i->samplenumber[a->anote]];
-				a->note=i->samplenote[a->anote];
+			if ((i=a->main.i)) {
+				if (i->samplenumber[a->anote] >= mod->numsmp) continue;
+				s=&mod->samples[i->samplenumber[a->anote]];
+				a->main.note=i->samplenote[a->anote];
 			} else {
-				a->note=a->anote;
-				s=&pf->samples[a->sample];
+				a->main.note=a->anote;
+				s=&mod->samples[a->main.sample];
 			}
 
-			if (a->s!=s) {
-				a->s=s;
-				a->newsamp=a->period;
+			if (a->main.s!=s) {
+				a->main.s=s;
+				a->newsamp=a->main.period;
 			}
 
 			/* channel or instrument determined panning ? */
-			a->panning=pf->panning[mp_channel];
+			a->main.panning=mod->panning[channel];
 			if (s->flags & SF_OWNPAN)
-				a->panning=s->panning;
+				a->main.panning=s->panning;
 			else if ((i)&&(i->flags & IF_OWNPAN))
-				a->panning=i->panning;
+				a->main.panning=i->panning;
 
-			a->handle=s->handle;
+			a->main.handle=s->handle;
 			a->speed=s->speed;
 
 			if (i) {
-				if ((pf->panflag)&&(i->flags & IF_PITCHPAN)
-				   &&(a->panning!=PAN_SURROUND)){
-					a->panning+=((a->anote-i->pitpancenter)*i->pitpansep)/8;
-					if (a->panning<PAN_LEFT) a->panning=PAN_LEFT;
-					else if (a->panning>PAN_RIGHT) a->panning=PAN_RIGHT;
+				if ((mod->panflag)&&(i->flags & IF_PITCHPAN)
+				   &&(a->main.panning!=PAN_SURROUND)){
+					a->main.panning+=
+					    ((a->anote-i->pitpancenter)*i->pitpansep)/8;
+					if (a->main.panning<PAN_LEFT)
+						a->main.panning=PAN_LEFT;
+					else if (a->main.panning>PAN_RIGHT)
+						a->main.panning=PAN_RIGHT;
 				}
-				a->pitflg=i->pitflg;
-				a->volflg=i->volflg;
-				a->panflg=i->panflg;
-				a->nna=i->nnatype;
+				a->main.pitflg=i->pitflg;
+				a->main.volflg=i->volflg;
+				a->main.panflg=i->panflg;
+				a->main.nna=i->nnatype;
 				a->dca=i->dca;
 				a->dct=i->dct;
 			} else {
-				a->pitflg=0;
-				a->volflg=0;
-				a->panflg=0;
-				a->nna=0;
-				a->dca=0;
-				a->dct=0;
+				a->main.pitflg=a->main.volflg=a->main.panflg=0;
+				a->main.nna=a->dca=0;
+				a->dct=DCT_OFF;
 			}
 
 			if (funky&2) /* instrument change */ {
@@ -2179,104 +2642,115 @@ void pt_Notes(void)
 						a->volume=a->tmpvolume=s->volume+
 						  ((s->volume*((SLONG)i->rvolvar*(SLONG)getrandom(512)
 						  ))/25600);
-						if (a->volume<0) a->volume=a->tmpvolume=0;
-						else if (a->volume>64) a->volume=a->tmpvolume=64;
+						if (a->volume<0)
+							a->volume=a->tmpvolume=0;
+						else if (a->volume>64)
+							a->volume=a->tmpvolume=64;
 					}
-					if ((pf->panflag)&&(a->panning!=PAN_SURROUND)) {
-						a->panning+=((a->panning*((SLONG)i->rpanvar*
+					if ((mod->panflag)&&(a->main.panning!=PAN_SURROUND)) {
+						a->main.panning+=((a->main.panning*((SLONG)i->rpanvar*
 						  (SLONG)getrandom(512)))/25600);
-						if (a->panning<PAN_LEFT) a->panning=PAN_LEFT;
-						else if (a->panning>PAN_RIGHT) a->panning=PAN_RIGHT;
+						if (a->main.panning<PAN_LEFT)
+							a->main.panning=PAN_LEFT;
+						else if (a->main.panning>PAN_RIGHT)
+							a->main.panning=PAN_RIGHT;
 					}
 				}
 			}
 
-			a->wantedperiod=a->tmpperiod=GetPeriod((UWORD)a->note<<1,a->speed);
-			a->keyoff=KEY_KICK;
+			a->wantedperiod=a->tmpperiod=
+			    GetPeriod(mod->flags, (UWORD)a->main.note<<1,a->speed);
+			a->main.keyoff=KEY_KICK;
 		}
 	}
 }
 
 /* Handles effects */
-void pt_EffectsPass1(void)
+void pt_EffectsPass1(MODULE *mod)
 {
+	SWORD channel;
+	MP_CONTROL *a;
 	MP_VOICE *aout;
+	int explicitslides;
 
-	for (mp_channel=0;mp_channel<pf->numchn;mp_channel++) {
-		a=&pf->control[mp_channel];
+	for (channel=0;channel<mod->numchn;channel++) {
+		a=&mod->control[channel];
 
 		if ((aout=a->slave)) {
-			a->fadevol=aout->fadevol;
-			a->period=aout->period;
-			if (a->kick==KICK_KEYOFF) a->keyoff=aout->keyoff;
+			a->main.fadevol=aout->main.fadevol;
+			a->main.period=aout->main.period;
+			if (a->main.kick==KICK_KEYOFF)
+				a->main.keyoff=aout->main.keyoff;
 		}
 
 		if (!a->row) continue;
 		UniSetRow(a->row);
 
 		a->ownper=a->ownvol=0;
-		explicitslides=0;
-		pt_playeffects();
+		explicitslides = pt_playeffects(mod, channel, a);
 
 		/* continue volume slide if necessary for XM and IT */
-		if (pf->flags&UF_BGSLIDES) {
-			if (!explicitslides)
-				switch (a->sliding) {
-					case 1:
-						DoS3MVolSlide(0);
-						break;
-					case 2:
-						DoXMVolSlide(0);
-						break;
-				}
-			else if (a->tmpvolume) a->sliding=explicitslides;
+		if (mod->flags&UF_BGSLIDES) {
+			if (!explicitslides && a->sliding)
+				DoS3MVolSlide(mod->vbtick, mod->flags, a, 0);
+			else if (a->tmpvolume)
+				a->sliding = explicitslides;
 		}
 
-		if (!a->ownper) a->period=a->tmpperiod;
-		if (!a->ownvol) a->volume=a->tmpvolume;
+		if (!a->ownper)
+			a->main.period=a->tmpperiod;
+		if (!a->ownvol)
+			a->volume=a->tmpvolume;
 
-		if (a->s) {
-			if (a->i)
-				a->outvolume=(a->volume*a->s->globvol*a->i->globvol)>>10;
+		if (a->main.s) {
+			if (a->main.i)
+				a->main.outvolume=
+				    (a->volume*a->main.s->globvol*a->main.i->globvol)>>10;
 			else
-				a->outvolume=(a->volume*a->s->globvol)>>4;
-			if (a->outvolume>256)a->volume=256;
-			else if (a->outvolume<0) a->outvolume=0;
+				a->main.outvolume=(a->volume*a->main.s->globvol)>>4;
+			if (a->main.outvolume>256)
+				a->main.outvolume=256;
+			else if (a->main.outvolume<0)
+				a->main.outvolume=0;
 		}
 	}
 }
 
 /* NNA management */
-void pt_NNA(void)
+void pt_NNA(MODULE *mod)
 {
-	for (mp_channel=0;mp_channel<pf->numchn;mp_channel++) {
-		a=&pf->control[mp_channel];
+	SWORD channel;
+	MP_CONTROL *a;
 
-		if (a->kick==KICK_NOTE) {
-			BOOL k=0;
+	for (channel=0;channel<mod->numchn;channel++) {
+		a=&mod->control[channel];
+
+		if (a->main.kick==KICK_NOTE) {
+			BOOL kill=0;
 
 			if (a->slave) {
 				MP_VOICE *aout;
 
 				aout=a->slave;
-				if (aout->nna & NNA_MASK) {
+				if (aout->main.nna & NNA_MASK) {
 					/* Make sure the old MP_VOICE channel knows it has no
 					   master now ! */
 					a->slave=NULL;
 					/* assume the channel is taken by NNA */
 					aout->mflag=0;
 
-					switch (aout->nna) {
-						case NNA_CONTINUE: /* continue note, do nothing */
-							break;
-						case NNA_OFF: /* note off */
-							aout->keyoff|=KEY_OFF;
-							if ((!(aout->volflg & EF_ON))||(aout->volflg & EF_LOOP))
-								aout->keyoff=KEY_KILL;
-							break;
-						case NNA_FADE:
-							aout->keyoff |= KEY_FADE;
-							break;
+					switch (aout->main.nna) {
+					case NNA_CONTINUE: /* continue note, do nothing */
+						break;
+					case NNA_OFF: /* note off */
+						aout->main.keyoff|=KEY_OFF;
+						if ((!(aout->main.volflg & EF_ON))||
+							  (aout->main.volflg & EF_LOOP))
+							aout->main.keyoff=KEY_KILL;
+						break;
+					case NNA_FADE:
+						aout->main.keyoff |= KEY_FADE;
+						break;
 					}
 				}
 			}
@@ -2286,106 +2760,93 @@ void pt_NNA(void)
 
 				for (t=0;t<md_sngchn;t++)
 					if ((!Voice_Stopped_internal(t))&&
-					   (pf->voice[t].masterchn==mp_channel)&&
-					   (a->sample==pf->voice[t].sample)) {
-						k=0;
+					   (mod->voice[t].masterchn==channel)&&
+					   (a->main.sample==mod->voice[t].main.sample)) {
+						kill=0;
 						switch (a->dct) {
-							case DCT_NOTE:
-								if (a->note==pf->voice[t].note)
-									k=1;
-								break;
-							case DCT_SAMPLE:
-								if (a->handle==pf->voice[t].handle)
-									k=1;
-								break;
-							case DCT_INST:
-								k=1;
-								break;
+						case DCT_NOTE:
+							if (a->main.note==mod->voice[t].main.note)
+								kill=1;
+							break;
+						case DCT_SAMPLE:
+							if (a->main.handle==mod->voice[t].main.handle)
+								kill=1;
+							break;
+						case DCT_INST:
+							kill=1;
+							break;
 						}
-						if (k)
+						if (kill)
 							switch (a->dca) {
-								case DCA_CUT:
-									pf->voice[t].fadevol=0;
-									break;
-								case DCA_OFF:
-									pf->voice[t].keyoff|=KEY_OFF;
-									if ((!(pf->voice[t].volflg&EF_ON))||
-									    (pf->voice[t].volflg&EF_LOOP))
-										pf->voice[t].keyoff=KEY_KILL;
-									break;
-								case DCA_FADE:
-									pf->voice[t].keyoff|=KEY_FADE;
-									break;
+							case DCA_CUT:
+								mod->voice[t].main.fadevol=0;
+								break;
+							case DCA_OFF:
+								mod->voice[t].main.keyoff|=KEY_OFF;
+								if ((!(mod->voice[t].main.volflg&EF_ON))||
+								    (mod->voice[t].main.volflg&EF_LOOP))
+									mod->voice[t].main.keyoff=KEY_KILL;
+								break;
+							case DCA_FADE:
+								mod->voice[t].main.keyoff|=KEY_FADE;
+								break;
 							}
 					}
 			}
-		} /* if (a->kick==KICK_NOTE) */
+		} /* if (a->main.kick==KICK_NOTE) */
 	}
 }
 
 /* Setup module and NNA voices */
-void pt_SetupVoices(void)
+void pt_SetupVoices(MODULE *mod)
 {
+	SWORD channel;
+	MP_CONTROL *a;
 	MP_VOICE *aout;
 
-	for (mp_channel=0;mp_channel<pf->numchn;mp_channel++) {
-		a=&pf->control[mp_channel];
+	for (channel=0;channel<mod->numchn;channel++) {
+		a=&mod->control[channel];
 
-		if (a->notedelay) continue;
-		if (a->kick==KICK_NOTE) {
+		if (a->main.notedelay) continue;
+		if (a->main.kick==KICK_NOTE) {
 			/* if no channel was cut above, find an empty or quiet channel
 			   here */
-			if (pf->flags&UF_NNA) {
+			if (mod->flags&UF_NNA) {
 				if (!a->slave) {
 					int newchn;
 
-					if ((newchn=MP_FindEmptyChannel())!=-1)
-						a->slave=&pf->voice[a->slavechn=newchn];
+					if ((newchn=MP_FindEmptyChannel(mod))!=-1)
+						a->slave=&mod->voice[a->slavechn=newchn];
 				}
-			} else
-				a->slave=&pf->voice[a->slavechn=mp_channel];
+			} else 
+				a->slave=&mod->voice[a->slavechn=channel];
 
-			/* assign parts of MP_VOICE only done for a KICK ! */
+			/* assign parts of MP_VOICE only done for a KICK_NOTE */
 			if ((aout=a->slave)) {
 				if (aout->mflag && aout->master) aout->master->slave=NULL;
-				a->slave=aout;
 				aout->master=a;
-				aout->masterchn=mp_channel;
+				a->slave=aout;
+				aout->masterchn=channel;
 				aout->mflag=1;
 			}
 		} else
 			aout=a->slave;
 
-		if (aout) {
-			aout->kick=a->kick;
-			aout->i=a->i;
-			aout->s=a->s;
-			aout->sample=a->sample;
-			aout->handle=a->handle;
-			aout->period=a->period;
-			aout->panning=a->panning;
-			aout->chanvol=a->chanvol;
-			aout->fadevol=a->fadevol;
-			aout->start=a->start;
-			aout->volflg=a->volflg;
-			aout->panflg=a->panflg;
-			aout->pitflg=a->pitflg;
-			aout->volume=a->outvolume;
-			aout->keyoff=a->keyoff;
-			aout->note=a->note;
-			aout->nna=a->nna;
-		}
-		a->kick=KICK_ABSENT;
+		if (aout)
+			aout->main=a->main;
+		a->main.kick=KICK_ABSENT;
 	}
 }
 
 /* second effect pass */
-void pt_EffectsPass2(void)
+void pt_EffectsPass2(MODULE *mod)
 {
+	SWORD channel;
+	MP_CONTROL *a;
 	UBYTE c;
 
-	for (mp_channel=0;mp_channel<pf->numchn;mp_channel++) {
-		a=&pf->control[mp_channel];
+	for (channel=0;channel<mod->numchn;channel++) {
+		a=&mod->control[channel];
 
 		if (!a->row) continue;
 		UniSetRow(a->row);
@@ -2394,14 +2855,15 @@ void pt_EffectsPass2(void)
 			if (c==UNI_ITEFFECTS0) {
 				c=UniGetByte();
 				if ((c>>4)==SS_S7EFFECTS)
-					DoNNAEffects(c&0xf);
+					DoNNAEffects(mod, a, c&0xf);
 			} else
-				UniSkipOpcode(c);
+				UniSkipOpcode();
 	}
 }
 
 void Player_HandleTick(void)
 {
+	SWORD channel;
 	int max_volume;
 
 #if 0
@@ -2421,7 +2883,7 @@ void Player_HandleTick(void)
 	pf->sngremainder%=pf->bpm;
 
 	if (++pf->vbtick>=pf->sngspd) {
-		if (pf->pat_repcrazy)
+		if (pf->pat_repcrazy) 
 			pf->pat_repcrazy=0; /* play 2 times row 0 */
 		else
 			pf->patpos++;
@@ -2447,17 +2909,21 @@ void Player_HandleTick(void)
 			pf->patpos=pf->numrow?(pf->patbrk%pf->numrow):0;
 			pf->pat_repcrazy=0;
 			pf->sngpos+=(pf->posjmp-2);
-			for (mp_channel=0;mp_channel<pf->numchn;mp_channel++)
-				pf->control[mp_channel].pat_reppos=-1;
+			for (channel=0;channel<pf->numchn;channel++)
+				pf->control[channel].pat_reppos=-1;
 
 			pf->patbrk=pf->posjmp=0;
 			/* handle the "---" (end of song) pattern since it can occur
-			   *inside* the module in .IT and .S3M */
-			if ((pf->sngpos>=pf->numpos)||(pf->positions[pf->sngpos]==255)) {
+			   *inside* the module in some formats */
+			if ((pf->sngpos>=pf->numpos)||
+				(pf->positions[pf->sngpos]==LAST_PATTERN)) {
 				if (!pf->wrap) return;
 				if (!(pf->sngpos=pf->reppos)) {
 				    pf->volume=pf->initvolume>128?128:pf->initvolume;
-					pf->sngspd=pf->initspeed?(pf->initspeed<32?pf->initspeed:32):6;
+					if(pf->initspeed!=0)
+						pf->sngspd=pf->initspeed<32?pf->initspeed:32;
+					else
+						pf->sngspd=6;
 					pf->bpm=pf->inittempo<32?32:pf->inittempo;
 				}
 			}
@@ -2465,95 +2931,106 @@ void Player_HandleTick(void)
 		}
 
 		if (!pf->patdly2)
-			pt_Notes();
+			pt_Notes(pf);
 	}
 
-	if (((pf->sngpos==pf->numpos-1)||(pf->positions[pf->sngpos+1]==255))&&
+	/* Fade global volume if enabled and we're playing the last pattern */
+	if (((pf->sngpos==pf->numpos-1)||
+		 (pf->positions[pf->sngpos+1]==LAST_PATTERN))&&
 	    (pf->fadeout))
 		max_volume=pf->numrow?((pf->numrow-pf->patpos)*128)/pf->numrow:0;
 	else
 		max_volume=128;
 
-	pt_EffectsPass1();
+	pt_EffectsPass1(pf);
 	if (pf->flags&UF_NNA)
-		pt_NNA();
-	pt_SetupVoices();
-	pt_EffectsPass2();
+		pt_NNA(pf);
+	pt_SetupVoices(pf);
+	pt_EffectsPass2(pf);
 
 	/* now set up the actual hardware channel playback information */
-	pt_UpdateVoices(max_volume);
+	pt_UpdateVoices(pf, max_volume);
 }
 
-static void Player_Init_internal(MODULE* mf)
+static void Player_Init_internal(MODULE* mod)
 {
 	int t;
 
-	for (t=0;t<mf->numchn;t++) {
-		mf->control[t].chanvol=mf->chanvol[t];
-		mf->control[t].panning=mf->panning[t];
+	for (t=0;t<mod->numchn;t++) {
+		mod->control[t].main.chanvol=mod->chanvol[t];
+		mod->control[t].main.panning=mod->panning[t];
 	}
+	
+	mod->sngtime=0;
+	mod->sngremainder=0;
 
-	mf->sngtime=0;
-	mf->sngremainder=0;
+	mod->pat_repcrazy=0;
+	mod->sngpos=0;
+	if(mod->initspeed!=0)
+		mod->sngspd=mod->initspeed<32?mod->initspeed:32;
+	else
+		mod->sngspd=6;
+	mod->volume=mod->initvolume>128?128:mod->initvolume;
 
-	mf->pat_repcrazy=0;
-	mf->sngpos=0;
-	mf->sngspd=mf->initspeed?(mf->initspeed<32?mf->initspeed:32):6;
-	mf->volume=mf->initvolume>128?128:mf->initvolume;
+	mod->vbtick=mod->sngspd;
+	mod->patdly=0;
+	mod->patdly2=0;
+	mod->bpm=mod->inittempo<32?32:mod->inittempo;
+	mod->realchn=0;
 
-	mf->vbtick=mf->sngspd;
-	mf->patdly=0;
-	mf->patdly2=0;
-	mf->bpm=mf->inittempo<32?32:mf->inittempo;
-	mf->realchn=0;
-
-	mf->patpos=0;
-	mf->posjmp=2; /* make sure the player fetches the first note */
-	mf->numrow=-1;
-	mf->patbrk=0;
+	mod->patpos=0;
+	mod->posjmp=2; /* make sure the player fetches the first note */
+	mod->numrow=-1;
+	mod->patbrk=0;
 }
 
-BOOL Player_Init(MODULE* mf)
+BOOL Player_Init(MODULE* mod)
 {
-	mf->extspd=1;
-	mf->panflag=1;
-	mf->wrap=0;
-	mf->loop=1;
-	mf->fadeout=0;
+	mod->extspd=1;
+	mod->panflag=1;
+	mod->wrap=0;
+	mod->loop=1;
+	mod->fadeout=0;
 
-	mf->relspd=0;
+	mod->relspd=0;
 
 	/* make sure the player doesn't start with garbage */
-	if (!(mf->control=(MP_CONTROL*)_mm_calloc(mf->numchn,sizeof(MP_CONTROL))))
+	if (!(mod->control=(MP_CONTROL*)_mm_calloc(mod->numchn,sizeof(MP_CONTROL))))
 		return 1;
-	if (!(mf->voice=(MP_VOICE*)_mm_calloc(md_sngchn,sizeof(MP_VOICE))))
+	if (!(mod->voice=(MP_VOICE*)_mm_calloc(md_sngchn,sizeof(MP_VOICE))))
 		return 1;
 
-	Player_Init_internal(mf);
+	Player_Init_internal(mod);
 	return 0;
 }
 
-void Player_Exit_internal(MODULE* mf)
+void Player_Exit_internal(MODULE* mod)
 {
-	if (!mf) return;
-	if (mf==pf) {
+	if (!mod)
+		return;
+
+	/* Stop playback if necessary */
+	if (mod==pf) {
 		Player_Stop_internal();
 		pf=NULL;
 	}
-	if (mf->control) free(mf->control);
-	if (mf->voice) free(mf->voice);
-	mf->control=NULL;
-	mf->voice=NULL;
+
+	if (mod->control)
+		free(mod->control);
+	if (mod->voice)
+		free(mod->voice);
+	mod->control=NULL;
+	mod->voice=NULL;
 }
 
-void Player_Exit(MODULE* mf)
+void Player_Exit(MODULE* mod)
 {
 	MUTEX_LOCK(vars);
-	Player_Exit_internal(mf);
+	Player_Exit_internal(mod);
 	MUTEX_UNLOCK(vars);
 }
 
-void Player_SetVolume(SWORD volume)
+MIKMODAPI void Player_SetVolume(SWORD volume)
 {
 	MUTEX_LOCK(vars);
 	if (pf)
@@ -2561,7 +3038,7 @@ void Player_SetVolume(SWORD volume)
 	MUTEX_UNLOCK(vars);
 }
 
-MODULE* Player_GetModule(void)
+MIKMODAPI MODULE* Player_GetModule(void)
 {
 	MODULE* result;
 
@@ -2572,24 +3049,25 @@ MODULE* Player_GetModule(void)
 	return result;
 }
 
-void Player_Start(MODULE *mf)
+MIKMODAPI void Player_Start(MODULE *mod)
 {
 	int t;
 
-	if (!mf) return;
+	if (!mod)
+		return;
 
 	if (!MikMod_Active())
 		MikMod_EnableOutput();
 
-	mf->forbid=0;
+	mod->forbid=0;
 
 	MUTEX_LOCK(vars);
-	if (pf!=mf) {
+	if (pf!=mod) {
 		/* new song is being started, so completely stop out the old one. */
 		if (pf) pf->forbid=1;
 		for (t=0;t<md_sngchn;t++) Voice_Stop_internal(t);
 	}
-	pf=mf;
+	pf=mod;
 	MUTEX_UNLOCK(vars);
 }
 
@@ -2600,14 +3078,14 @@ void Player_Stop_internal(void)
 	pf=NULL;
 }
 
-void Player_Stop(void)
+MIKMODAPI void Player_Stop(void)
 {
 	MUTEX_LOCK(vars);
 		Player_Stop_internal();
 	MUTEX_UNLOCK(vars);
 }
 
-BOOL Player_Active(void)
+MIKMODAPI BOOL Player_Active(void)
 {
 	BOOL result=0;
 
@@ -2619,7 +3097,7 @@ BOOL Player_Active(void)
 	return result;
 }
 
-void Player_NextPosition(void)
+MIKMODAPI void Player_NextPosition(void)
 {
 	MUTEX_LOCK(vars);
 	if (pf) {
@@ -2630,21 +3108,21 @@ void Player_NextPosition(void)
 		pf->patbrk=0;
 		pf->vbtick=pf->sngspd;
 
-		for (t=0;t<pf->numchn;t++) {
+		for (t=0;t<md_sngchn;t++) {
 			Voice_Stop_internal(t);
-			pf->voice[t].i=NULL;
-			pf->voice[t].s=NULL;
+			pf->voice[t].main.i=NULL;
+			pf->voice[t].main.s=NULL;
 		}
 		for (t=0;t<pf->numchn;t++) {
-			pf->control[t].i=NULL;
-			pf->control[t].s=NULL;
+			pf->control[t].main.i=NULL;
+			pf->control[t].main.s=NULL;
 		}
 		pf->forbid=0;
 	}
 	MUTEX_UNLOCK(vars);
 }
 
-void Player_PrevPosition(void)
+MIKMODAPI void Player_PrevPosition(void)
 {
 	MUTEX_LOCK(vars);
 	if (pf) {
@@ -2655,21 +3133,21 @@ void Player_PrevPosition(void)
 		pf->patbrk=0;
 		pf->vbtick=pf->sngspd;
 
-		for (t=0;t<pf->numchn;t++) {
+		for (t=0;t<md_sngchn;t++) {
 			Voice_Stop_internal(t);
-			pf->voice[t].i=NULL;
-			pf->voice[t].s=NULL;
+			pf->voice[t].main.i=NULL;
+			pf->voice[t].main.s=NULL;
 		}
 		for (t=0;t<pf->numchn;t++) {
-			pf->control[t].i=NULL;
-			pf->control[t].s=NULL;
+			pf->control[t].main.i=NULL;
+			pf->control[t].main.s=NULL;
 		}
 		pf->forbid=0;
 	}
 	MUTEX_UNLOCK(vars);
 }
 
-void Player_SetPosition(UWORD pos)
+MIKMODAPI void Player_SetPosition(UWORD pos)
 {
 	MUTEX_LOCK(vars);
 	if (pf) {
@@ -2682,22 +3160,22 @@ void Player_SetPosition(UWORD pos)
 		pf->sngpos=pos;
 		pf->vbtick=pf->sngspd;
 
-		for (t=0;t<pf->numchn;t++) {
+		for (t=0;t<md_sngchn;t++) {
 			Voice_Stop_internal(t);
-			pf->voice[t].i=NULL;
-			pf->voice[t].s=NULL;
+			pf->voice[t].main.i=NULL;
+			pf->voice[t].main.s=NULL;
 		}
 		for (t=0;t<pf->numchn;t++) {
-			pf->control[t].i=NULL;
-			pf->control[t].s=NULL;
+			pf->control[t].main.i=NULL;
+			pf->control[t].main.s=NULL;
 		}
 		pf->forbid=0;
-
+		
 		if (!pos)
 			Player_Init_internal(pf);
 	}
 	MUTEX_UNLOCK(vars);
-}
+}    
 
 static void Player_Unmute_internal(SLONG arg1,va_list ap)
 {
@@ -2705,30 +3183,31 @@ static void Player_Unmute_internal(SLONG arg1,va_list ap)
 
 	if (pf) {
 		switch (arg1) {
-			case MUTE_INCLUSIVE:
-				if (((!(arg2=va_arg(ap,SLONG)))&&(!(arg3=va_arg(ap,SLONG))))||
-				   (arg2>arg3)||(arg3>=pf->numchn))
-					return;
-				for (;arg2<pf->numchn && arg2<=arg3;arg2++)
-					pf->control[arg2].muted=0;
-				break;
-			case MUTE_EXCLUSIVE:
-				if (((!(arg2=va_arg(ap,SLONG)))&&(!(arg3=va_arg(ap,SLONG))))||
-				   (arg2>arg3)||(arg3>=pf->numchn))
-					return;
-				for (t=0;t<pf->numchn;t++) {
-					if ((t>=arg2) && (t<=arg3)) continue;
-					pf->control[t].muted=0;
-				}
-				break;
-			default:
-				if (arg1<pf->numchn) pf->control[arg1].muted=0;
-				break;
+		case MUTE_INCLUSIVE:
+			if (((!(arg2=va_arg(ap,SLONG)))&&(!(arg3=va_arg(ap,SLONG))))||
+			   (arg2>arg3)||(arg3>=pf->numchn))
+				return;
+			for (;arg2<pf->numchn && arg2<=arg3;arg2++)
+				pf->control[arg2].muted=0;
+			break;
+		case MUTE_EXCLUSIVE:
+			if (((!(arg2=va_arg(ap,SLONG)))&&(!(arg3=va_arg(ap,SLONG))))||
+			   (arg2>arg3)||(arg3>=pf->numchn))
+				return;
+			for (t=0;t<pf->numchn;t++) {
+				if ((t>=arg2) && (t<=arg3))
+					continue;
+				pf->control[t].muted=0;
+			}
+			break;
+		default:
+			if (arg1<pf->numchn) pf->control[arg1].muted=0;
+			break;
 		}
 	}
 }
 
-void Player_Unmute(SLONG arg1, ...)
+MIKMODAPI void Player_Unmute(SLONG arg1, ...)
 {
 	va_list args;
 
@@ -2745,31 +3224,32 @@ static void Player_Mute_internal(SLONG arg1,va_list ap)
 
 	if (pf) {
 		switch (arg1) {
-			case MUTE_INCLUSIVE:
-				if (((!(arg2=va_arg(ap,SLONG)))&&(!(arg3=va_arg(ap,SLONG))))||
-				    (arg2>arg3)||(arg3>=pf->numchn))
-					return;
-				for (;arg2<pf->numchn && arg2<=arg3;arg2++)
-					pf->control[arg2].muted=1;
-				break;
-			case MUTE_EXCLUSIVE:
-				if (((!(arg2=va_arg(ap,SLONG)))&&(!(arg3=va_arg(ap,SLONG))))||
-				    (arg2>arg3)||(arg3>=pf->numchn))
-					return;
-				for (t=0;t<pf->numchn;t++) {
-					if ((t>=arg2) && (t<=arg3)) continue;
-					pf->control[t].muted=1;
-				}
-				break;
-			default:
-				if (arg1<pf->numchn)
-					pf->control[arg1].muted=1;
-				break;
+		case MUTE_INCLUSIVE:
+			if (((!(arg2=va_arg(ap,SLONG)))&&(!(arg3=va_arg(ap,SLONG))))||
+			    (arg2>arg3)||(arg3>=pf->numchn))
+				return;
+			for (;arg2<pf->numchn && arg2<=arg3;arg2++)
+				pf->control[arg2].muted=1;
+			break;
+		case MUTE_EXCLUSIVE:
+			if (((!(arg2=va_arg(ap,SLONG)))&&(!(arg3=va_arg(ap,SLONG))))||
+			    (arg2>arg3)||(arg3>=pf->numchn))
+				return;
+			for (t=0;t<pf->numchn;t++) {
+				if ((t>=arg2) && (t<=arg3))
+					continue;
+				pf->control[t].muted=1;
+			}
+			break;
+		default:
+			if (arg1<pf->numchn)
+				pf->control[arg1].muted=1;
+			break;
 		}
 	}
 }
 
-void Player_Mute(SLONG arg1,...)
+MIKMODAPI void Player_Mute(SLONG arg1,...)
 {
 	va_list args;
 
@@ -2787,31 +3267,32 @@ static void Player_ToggleMute_internal(SLONG arg1,va_list ap)
 
 	if (pf) {
 		switch (arg1) {
-			case MUTE_INCLUSIVE:
-				if (((!(arg2=va_arg(ap,SLONG)))&&(!(arg3=va_arg(ap,SLONG))))||
-				    (arg2>arg3)||(arg3>=pf->numchn))
-					return;
-				for (;arg2<pf->numchn && arg2<=arg3;arg2++)
-					pf->control[arg2].muted=1-pf->control[arg2].muted;
-				break;
-			case MUTE_EXCLUSIVE:
-				if (((!(arg2=va_arg(ap,SLONG)))&&(!(arg3=va_arg(ap,SLONG))))||
-				    (arg2>arg3)||(arg3>=pf->numchn))
-					return;
-				for (t=0;t<pf->numchn;t++) {
-					if ((t>=arg2) && (t<=arg3)) continue;
-					pf->control[t].muted=1-pf->control[t].muted;
-				}
-				break;
-			default:
-				if (arg1<pf->numchn)
-					pf->control[arg1].muted=1-pf->control[arg1].muted;
-				break;
+		case MUTE_INCLUSIVE:
+			if (((!(arg2=va_arg(ap,SLONG)))&&(!(arg3=va_arg(ap,SLONG))))||
+			    (arg2>arg3)||(arg3>=pf->numchn))
+				return;
+			for (;arg2<pf->numchn && arg2<=arg3;arg2++)
+				pf->control[arg2].muted=1-pf->control[arg2].muted;
+			break;
+		case MUTE_EXCLUSIVE:
+			if (((!(arg2=va_arg(ap,SLONG)))&&(!(arg3=va_arg(ap,SLONG))))||
+			    (arg2>arg3)||(arg3>=pf->numchn))
+				return;
+			for (t=0;t<pf->numchn;t++) {
+				if ((t>=arg2) && (t<=arg3))
+					continue;
+				pf->control[t].muted=1-pf->control[t].muted;
+			}
+			break;
+		default:
+			if (arg1<pf->numchn) 
+				pf->control[arg1].muted=1-pf->control[arg1].muted;
+			break;
 		}
 	}
 }
 
-void Player_ToggleMute(SLONG arg1,...)
+MIKMODAPI void Player_ToggleMute(SLONG arg1,...)
 {
 	va_list args;
 
@@ -2822,7 +3303,7 @@ void Player_ToggleMute(SLONG arg1,...)
 	va_end(args);
 }
 
-BOOL Player_Muted(UBYTE chan)
+MIKMODAPI BOOL Player_Muted(UBYTE chan)
 {
 	BOOL result=1;
 
@@ -2834,7 +3315,7 @@ BOOL Player_Muted(UBYTE chan)
 	return result;
 }
 
-int Player_GetChannelVoice(UBYTE chan)
+MIKMODAPI int Player_GetChannelVoice(UBYTE chan)
 {
 	int result=0;
 
@@ -2846,13 +3327,13 @@ int Player_GetChannelVoice(UBYTE chan)
 	return result;
 }
 
-UWORD Player_GetChannelPeriod(UBYTE chan)
+MIKMODAPI UWORD Player_GetChannelPeriod(UBYTE chan)
 {
 	UWORD result=0;
 
 	MUTEX_LOCK(vars);
     if (pf)
-	    result=(chan<pf->numchn)?pf->control[chan].period:0;
+	    result=(chan<pf->numchn)?pf->control[chan].main.period:0;
 	MUTEX_UNLOCK(vars);
 
 	return result;
@@ -2863,7 +3344,7 @@ BOOL Player_Paused_internal(void)
 	return pf?pf->forbid:1;
 }
 
-BOOL Player_Paused(void)
+MIKMODAPI BOOL Player_Paused(void)
 {
 	BOOL result;
 
@@ -2874,7 +3355,7 @@ BOOL Player_Paused(void)
 	return result;
 }
 
-void Player_TogglePause(void)
+MIKMODAPI void Player_TogglePause(void)
 {
 	MUTEX_LOCK(vars);
 	if (pf)
@@ -2882,35 +3363,23 @@ void Player_TogglePause(void)
 	MUTEX_UNLOCK(vars);
 }
 
-void Player_SetSpeed(UWORD speed)
+MIKMODAPI void Player_SetSpeed(UWORD speed)
 {
 	MUTEX_LOCK(vars);
-	if (pf)
+	if (pf) 
 		pf->sngspd=speed?(speed<32?speed:32):1;
 	MUTEX_UNLOCK(vars);
 }
 
-void Player_SetTempo(UWORD tempo)
+MIKMODAPI void Player_SetTempo(UWORD tempo)
 {
 	if (tempo<32) tempo=32;
-
 	MUTEX_LOCK(vars);
 	if (pf) {
 		if ((!(pf->flags&UF_HIGHBPM))&&(tempo>255)) tempo=255;
 		pf->bpm=tempo;
 	}
 	MUTEX_UNLOCK(vars);
-}
-
-static int _pl_synchro_value;
-void Player_SetSynchroValue(int i)
-{
-	_pl_synchro_value = i;
-}
-
-int Player_GetSynchroValue(void)
-{
-	return _pl_synchro_value;
 }
 	
 

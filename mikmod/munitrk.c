@@ -1,17 +1,17 @@
 /*	MikMod sound library
-	(c) 1998, 1999 Miodrag Vallat and others - see file AUTHORS for
-	complete list.
+	(c) 1998, 1999, 2000, 2001 Miodrag Vallat and others - see file AUTHORS
+	for complete list.
 
 	This library is free software; you can redistribute it and/or modify
 	it under the terms of the GNU Library General Public License as
 	published by the Free Software Foundation; either version 2 of
 	the License, or (at your option) any later version.
-
+ 
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Library General Public License for more details.
-
+ 
 	You should have received a copy of the GNU Library General Public
 	License along with this library; if not, write to the Free Software
 	Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -71,6 +71,7 @@ UWORD unioperands[UNI_LAST]={
 	1, /* UNI_KEYFADE */
 	2, /* UNI_VOLEFFECTS */
 	1, /* UNI_XMEFFECT4 */
+	1, /* UNI_XMEFFECT6 */
 	1, /* UNI_XMEFFECTA */
 	1, /* UNI_XMEFFECTE1 */
 	1, /* UNI_XMEFFECTE2 */
@@ -99,6 +100,7 @@ UWORD unioperands[UNI_LAST]={
 	0, /* UNI_MEDEFFECTF1 */
 	0, /* UNI_MEDEFFECTF2 */
 	0, /* UNI_MEDEFFECTF3 */
+	2, /* UNI_OKTARP */
 	1  /* UNI_XMEFFECTZ */
 };
 
@@ -122,7 +124,7 @@ particular row. A track is concluded by a 0-value length byte.
   The upper 3 bits of the rep/len byte contain the number of times -1 this row
 is repeated for this track. (so a value of 7 means this row is repeated 8 times)
 
-  Opcodes can range from 1 to 255 but currently only opcodes 1 to 52 are being
+  Opcodes can range from 1 to 255 but currently only opcodes 1 to 62 are being
 used. Each opcode can have a different number of operands. You can find the
 number of operands to a particular opcode by using the opcode as an index into
 the 'unioperands' table.
@@ -135,6 +137,7 @@ static	UBYTE *rowstart; /* startadress of a row */
 static	UBYTE *rowend;   /* endaddress of a row (exclusive) */
 static	UBYTE *rowpc;    /* current unimod(tm) programcounter */
 
+static	UBYTE lastbyte;  /* for UniSkipOpcode() */
 
 void UniSetRow(UBYTE* t)
 {
@@ -145,7 +148,7 @@ void UniSetRow(UBYTE* t)
 
 UBYTE UniGetByte(void)
 {
-	return (rowpc<rowend)?*(rowpc++):0;
+	return lastbyte = (rowpc<rowend)?*(rowpc++):0;
 }
 
 UWORD UniGetWord(void)
@@ -153,12 +156,13 @@ UWORD UniGetWord(void)
 	return ((UWORD)UniGetByte()<<8)|UniGetByte();
 }
 
-void UniSkipOpcode(UBYTE op)
+void UniSkipOpcode(void)
 {
-	if(op<UNI_LAST) {
-		UWORD t=unioperands[op];
+	if (lastbyte < UNI_LAST) {
+		UWORD t = unioperands[lastbyte];
 
-		while(t--) UniGetByte();
+		while (t--)
+			UniGetByte();
 	}
 }
 
@@ -212,7 +216,7 @@ static BOOL UniExpand(int wanted)
 			unibuf = newbuf;
 			unimax+=BUFPAGE;
 			return 1;
-		} else
+		} else 
 			return 0;
 	}
 	return 1;
