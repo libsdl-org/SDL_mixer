@@ -174,7 +174,7 @@ typedef char int8;
 #define CONFIG_FILE_ETC_TIMIDITY "/etc/timidity/timidity.cfg"
 
 #if defined(__WIN32__) || defined(__OS2__)
-#define DEFAULT_PATH	"\\TIMIDITY"
+#define DEFAULT_PATH	"C:\\TIMIDITY"
 #else
 #define DEFAULT_PATH	"/usr/local/lib/timidity"
 #endif
