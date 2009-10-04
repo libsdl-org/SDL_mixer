@@ -3,14 +3,14 @@
 top_builddir = .
 srcdir  = @srcdir@
 objects = build
-depend	= build-deps
 prefix = @prefix@
 exec_prefix = @exec_prefix@
 bindir	= $(DESTDIR)@bindir@
 libdir  = $(DESTDIR)@libdir@
 includedir = $(DESTDIR)@includedir@
-datadir	= $(DESTDIR)@datadir@
-mandir	= $(DESTDIR)@mandir@
+datarootdir = $(DESTDIR)@datarootdir@
+datadir	= @datadir@
+mandir	= @mandir@
 auxdir	= @ac_aux_dir@
 distpath = $(srcdir)/..
 distdir = SDL_mixer-@VERSION@
@@ -33,8 +33,10 @@ SDL_CFLAGS = @SDL_CFLAGS@
 SDL_LIBS = @SDL_LIBS@
 
 TARGET  = libSDL_mixer.la
-SOURCES = @SOURCES@
 OBJECTS = @OBJECTS@
+VERSION_OBJECTS = @VERSION_OBJECTS@
+PLAYWAVE_OBJECTS = @PLAYWAVE_OBJECTS@
+PLAYMUS_OBJECTS = @PLAYMUS_OBJECTS@
 
 DIST = CHANGES COPYING CWProjects.sea.bin MPWmake.sea.bin Makefile.in SDL_mixer.pc.in README SDL_mixer.h SDL_mixer.qpg.in SDL_mixer.spec SDL_mixer.spec.in VisualC.zip Watcom-OS2.zip Xcode.tar.gz acinclude autogen.sh build-scripts configure configure.in dynamic_mp3.c dynamic_mp3.h dynamic_ogg.c dynamic_ogg.h effect_position.c effect_stereoreverse.c effects_internal.c effects_internal.h gcc-fat.sh load_aiff.c load_aiff.h load_ogg.c load_ogg.h load_voc.c load_voc.h mikmod mixer.c music.c music_cmd.c music_cmd.h music_mad.c music_mad.h music_ogg.c music_ogg.h native_midi native_midi_gpl playmus.c playwave.c timidity wavestream.c wavestream.h version.rc
 
@@ -57,27 +59,26 @@ Makefile: $(srcdir)/Makefile.in
 $(objects):
 	$(SHELL) $(auxdir)/mkinstalldirs $@
 
+.PHONY: all install install-hdrs install-lib install-bin uninstall uninstall-hdrs uninstall-lib uninstall-bin clean distclean dist
+
+-include $(OBJECTS:.lo=.d)
+@DEPENDS@
+@VERSION_DEPENDS@
+
+-include $(PLAYWAVE_OBJECTS:.lo=.d)
+@PLAYWAVE_DEPENDS@
+
+-include $(PLAYMUS_OBJECTS:.lo=.d)
+@PLAYMUS_DEPENDS@
+
+$(objects)/$(TARGET): $(OBJECTS) $(VERSION_OBJECTS)
+	$(LIBTOOL) --mode=link $(CC) -o $@ $(OBJECTS) $(VERSION_OBJECTS) $(LDFLAGS) $(EXTRA_LDFLAGS) $(LT_LDFLAGS)
+
 $(objects)/playwave$(EXE): $(objects)/playwave.lo $(objects)/$(TARGET)
 	$(LIBTOOL) --mode=link $(CC) -o $@ $(objects)/playwave.lo $(SDL_CFLAGS) $(SDL_LIBS) $(objects)/$(TARGET)
 
 $(objects)/playmus$(EXE): $(objects)/playmus.lo $(objects)/$(TARGET)
 	$(LIBTOOL) --mode=link $(CC) -o $@ $(objects)/playmus.lo $(SDL_CFLAGS) $(SDL_LIBS) $(objects)/$(TARGET)
-
-.PHONY: all depend install install-hdrs install-lib install-bin uninstall uninstall-hdrs uninstall-lib uninstall-bin clean distclean dist
-depend:
-	@SOURCES="$(SOURCES)" INCLUDE="$(INCLUDE)" output="$(depend)" \
-	$(SHELL) $(auxdir)/makedep.sh
-	echo "\$$(objects)/playwave.lo: \$$(srcdir)/playwave.c" >>$(depend)
-	echo "	\$$(LIBTOOL) --mode=compile \$$(CC) \$$(CFLAGS) \$$(SDL_CFLAGS) -c \$$(srcdir)/playwave.c  -o \$$@" >>$(depend)
-	echo "" >>$(depend)
-	echo "\$$(objects)/playmus.lo: \$$(srcdir)/playmus.c" >>$(depend)
-	echo "	\$$(LIBTOOL) --mode=compile \$$(CC) \$$(CFLAGS) \$$(SDL_CFLAGS) -c \$$(srcdir)/playmus.c  -o \$$@" >>$(depend)
-	echo "" >>$(depend)
-
-include $(depend)
-
-$(objects)/$(TARGET): $(OBJECTS)
-	$(LIBTOOL) --mode=link $(CC) -o $@ $(OBJECTS) $(LDFLAGS) $(EXTRA_LDFLAGS) $(LT_LDFLAGS)
 
 install: all install-hdrs install-lib #install-bin
 install-hdrs:
@@ -117,7 +118,7 @@ clean:
 distclean: clean
 	rm -f Makefile
 	rm -f SDL_mixer.qpg
-	rm -f config.status config.cache config.log libtool $(depend)
+	rm -f config.status config.cache config.log libtool
 	rm -f SDL_mixer.pc
 	rm -rf $(srcdir)/autom4te*
 	find $(srcdir) \( \
