@@ -1,5 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(README)
+AC_CONFIG_AUX_DIRS($srcdir/build-scripts)
 
 dnl Set various version strings - taken gratefully from the GTk sources
 
@@ -26,6 +27,8 @@ AC_SUBST(BINARY_AGE)
 AC_SUBST(VERSION)
 
 # libtool versioning
+LT_INIT([win32-dll])
+
 LT_RELEASE=$MAJOR_VERSION.$MINOR_VERSION
 LT_CURRENT=`expr $MICRO_VERSION - $INTERFACE_AGE`
 LT_REVISION=$INTERFACE_AGE
@@ -41,7 +44,6 @@ AC_CONFIG_AUX_DIRS($srcdir/build-scripts)
 AC_CANONICAL_HOST
 
 dnl Check for tools
-AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
 AC_PROG_CC
 AC_PROG_INSTALL
