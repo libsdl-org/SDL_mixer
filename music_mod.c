@@ -54,7 +54,7 @@ int MOD_init(SDL_AudioSpec *mixerfmt)
 	CHAR *list;
 
 	if ( Mix_InitMOD() < 0 ) {
-		return NULL;
+		return -1;
 	}
 
 	/* Set the MikMod music format */
