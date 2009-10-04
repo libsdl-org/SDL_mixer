@@ -87,7 +87,7 @@ AC_C_CONST
 
 case "$host" in
     *-*-cygwin* | *-*-mingw32*)
-        SOURCES="$srcdir/version.rc"
+        VERSION_SOURCES="$srcdir/version.rc"
         EXE=".exe"
         if test "$build" != "$host"; then # cross-compiling
             # Default cross-compile location
@@ -485,13 +485,47 @@ if test x$have_smpeg != xyes -a x$have_libmad != xyes; then
     AC_MSG_WARN([MP3 support disabled])
 fi
 
-OBJECTS=`echo $SOURCES | sed 's,[[^ ]]*/\([[^ ]]*\)\.c,$(objects)/\1.lo,g'`
-OBJECTS=`echo $OBJECTS | sed 's,[[^ ]]*/\([[^ ]]*\)\.rc,$(objects)/\1.o,g'`
+
+OBJECTS=`echo $SOURCES`
+DEPENDS=`echo $SOURCES`
+OBJECTS=`echo "$OBJECTS" | sed 's,[[^ ]]*/\([[^ ]]*\)\.c,$(objects)/\1.lo,g'`
+DEPENDS=`echo "$DEPENDS" | sed 's,\([[^ ]]*\)/\([[^ ]]*\)\.c,\\
+$(objects)/\2.lo: \1/\2.c\\
+	\$(LIBTOOL) --mode=compile \$(CC) \$(CFLAGS) \$(EXTRA_CFLAGS) -MMD -MT \$@ -c \$< -o \$@,g'`
+
+VERSION_OBJECTS=`echo $VERSION_SOURCES`
+VERSION_DEPENDS=`echo $VERSION_SOURCES`
+VERSION_OBJECTS=`echo "$VERSION_OBJECTS" | sed 's,[[^ ]]*/\([[^ ]]*\)\.rc,$(objects)/\1.o,g'`
+VERSION_DEPENDS=`echo "$VERSION_DEPENDS" | sed 's,\([[^ ]]*\)/\([[^ ]]*\)\.rc,\\
+$(objects)/\2.o: \1/\2.rc\\
+	\$(WINDRES) \$< \$@,g'`
+
+PLAYWAVE_SOURCES="$srcdir/playwave.c"
+PLAYWAVE_OBJECTS=`echo $PLAYWAVE_SOURCES`
+PLAYWAVE_DEPENDS=`echo $PLAYWAVE_SOURCES`
+PLAYWAVE_OBJECTS=`echo "$PLAYWAVE_OBJECTS" | sed 's,[[^ ]]*/\([[^ ]]*\)\.c,$(objects)/\1.lo,g'`
+PLAYWAVE_DEPENDS=`echo "$PLAYWAVE_DEPENDS" | sed 's,\([[^ ]]*\)/\([[^ ]]*\)\.c,\\
+$(objects)/\2.lo: \1/\2.c\\
+	\$(LIBTOOL) --mode=compile \$(CC) \$(CFLAGS) \$(EXTRA_CFLAGS) -MMD -MT \$@ -c \$< -o \$@,g'`
+
+PLAYMUS_SOURCES="$srcdir/playmus.c"
+PLAYMUS_OBJECTS=`echo $PLAYMUS_SOURCES`
+PLAYMUS_DEPENDS=`echo $PLAYMUS_SOURCES`
+PLAYMUS_OBJECTS=`echo "$PLAYMUS_OBJECTS" | sed 's,[[^ ]]*/\([[^ ]]*\)\.c,$(objects)/\1.lo,g'`
+PLAYMUS_DEPENDS=`echo "$PLAYMUS_DEPENDS" | sed 's,\([[^ ]]*\)/\([[^ ]]*\)\.c,\\
+$(objects)/\2.lo: \1/\2.c\\
+	\$(LIBTOOL) --mode=compile \$(CC) \$(CFLAGS) \$(EXTRA_CFLAGS) -MMD -MT \$@ -c \$< -o \$@,g'`
 
 dnl Expand the sources and objects needed to build the library
 AC_SUBST(ac_aux_dir)
-AC_SUBST(SOURCES)
 AC_SUBST(OBJECTS)
+AC_SUBST(DEPENDS)
+AC_SUBST(VERSION_OBJECTS)
+AC_SUBST(VERSION_DEPENDS)
+AC_SUBST(PLAYWAVE_OBJECTS)
+AC_SUBST(PLAYWAVE_DEPENDS)
+AC_SUBST(PLAYMUS_OBJECTS)
+AC_SUBST(PLAYMUS_DEPENDS)
 AC_SUBST(BUILD_CFLAGS)
 AC_SUBST(EXTRA_CFLAGS)
 AC_SUBST(BUILD_LDFLAGS)
@@ -504,7 +538,4 @@ AC_SUBST(SDL_LIBS)
 
 AC_OUTPUT([
     Makefile SDL_mixer.spec SDL_mixer.qpg SDL_mixer.pc
-], [
-    : >build-deps
-    if test x"$MAKE" = x; then MAKE=make; fi; $MAKE depend
 ])
