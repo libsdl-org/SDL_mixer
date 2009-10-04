@@ -99,7 +99,7 @@ static FILE *try_to_open(char *name, int decompress, int noise_mode)
 
 /* This is meant to find and open files for reading, possibly piping
    them through a decompressor. */
-FILE *open_file(char *name, int decompress, int noise_mode)
+FILE *open_file(const char *name, int decompress, int noise_mode)
 {
   FILE *fp;
   PathList *plp;
@@ -219,7 +219,7 @@ void *safe_malloc(size_t count)
 }
 
 /* This adds a directory to the path list */
-void add_to_pathlist(char *s)
+void add_to_pathlist(const char *s)
 {
   PathList *plp=safe_malloc(sizeof(PathList));
   strcpy((plp->path=safe_malloc(strlen(s)+1)),s);
