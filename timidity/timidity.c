@@ -45,7 +45,7 @@ int num_ochannels;
 
 #define MAXWORDS 10
 
-static int read_config_file(char *name)
+static int read_config_file(const char *name)
 {
   FILE *fp;
   char tmp[1024], *w[MAXWORDS], *cp;
@@ -370,7 +370,7 @@ int Timidity_Init(int rate, int format, int channels, int samples)
 }
 
 char timidity_error[1024] = "";
-char *Timidity_Error(void)
+const char *Timidity_Error(void)
 {
   return(timidity_error);
 }
