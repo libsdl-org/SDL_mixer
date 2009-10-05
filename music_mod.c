@@ -159,8 +159,8 @@ MODULE *MOD_new(const char *file)
 typedef struct
 {
 	MREADER mr;
-	int offset;
-	int eof;
+	long offset;
+	long eof;
 	SDL_RWops *rw;
 } LMM_MREADER;
 
@@ -193,7 +193,7 @@ int LMM_Get(struct MREADER *mr)
 }
 BOOL LMM_Eof(struct MREADER *mr)
 {
-	int offset;
+	long offset;
 	LMM_MREADER* lmmmr = (LMM_MREADER*)mr;
 	offset = LMM_Tell(mr);
 	return offset >= lmmmr->eof;
