@@ -1,6 +1,7 @@
 1.2.9:
 Sam Lantinga - Sat Oct  3 13:33:36 PDT 2009
  * MOD support uses libmikmod and is dynamically loaded by default
+ * A patched version of libmikmod is included in libmikmod-3.1.12.zip
 Sam Lantinga - Sat Oct  3 02:49:41 PDT 2009
  * Added TIMIDITY_CFG environment variable to fully locate timidity.cfg
 Sam Lantinga - Fri Oct  2 07:15:35 PDT 2009
