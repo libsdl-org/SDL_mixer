@@ -6,8 +6,16 @@ Sam Lantinga - Sat Oct  3 02:49:41 PDT 2009
  * Added TIMIDITY_CFG environment variable to fully locate timidity.cfg
 Sam Lantinga - Fri Oct  2 07:15:35 PDT 2009
  * Implemented seamless looping for music playback
+Max Horn - 2009-09-27 11:58:18 PDT
+ * Disabled native MIDI on Mac OS X since the APIs are not available on 10.6.
 Forrest Voight - 2009-06-13 20:31:38 PDT
  * ID3 files are now recognized as MP3 format
+Steven Noonan - 2008-05-13 13:31:36 PDT
+ * Fixed native MIDI crash on 64-bit Windows
+Ryan Gordon - Fri Jun 5 16:07:08 2009 UTC
+ * Added decoder enumeration API:
+	Mix_GetNumChunkDecoders(), Mix_GetChunkDecoder(),
+	Mix_GetNumMusicDecoders(), Mix_GetMusicDecoder()
 Austen Dicken - Tue Feb 26 23:28:27 PST 2008
  * Added support for FLAC audio both as chunks and streaming
 Tilman Sauerbeck - Tue Feb 26 03:44:47 PST 2008
