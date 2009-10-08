@@ -87,6 +87,29 @@ LDFLAGS="$LDFLAGS $EXTRA_LDFLAGS"
 dnl Check for compiler characteristics
 AC_C_CONST
 
+dnl See whether we can use gcc style dependency tracking
+AC_ARG_ENABLE(dependency-tracking,
+AC_HELP_STRING([--enable-dependency-tracking],
+               [Use gcc -MMD -MT dependency tracking [[default=yes]]]),
+              , enable_dependency_tracking=yes)
+if test x$enable_dependency_tracking = xyes; then
+    have_gcc_mmd_mt=no
+    AC_MSG_CHECKING(for GCC -MMD -MT option)
+    AC_TRY_COMPILE([
+    #if !defined(__GNUC__) || __GNUC__ < 3
+    #error Dependency tracking requires GCC 3.0 or newer
+    #endif
+    ],[
+    ],[
+    have_gcc_mmd_mt=yes
+    ])
+    AC_MSG_RESULT($have_gcc_mmd_mt)
+
+    if test x$have_gcc_mmd_mt = xyes; then
+        DEPENDENCY_TRACKING_OPTIONS="-MMD -MT \$@"
+    fi
+fi
+    
 case "$host" in
     *-*-cygwin* | *-*-mingw32*)
         VERSION_SOURCES="$srcdir/version.rc"
@@ -493,7 +516,7 @@ DEPENDS=`echo $SOURCES`
 OBJECTS=`echo "$OBJECTS" | sed 's,[[^ ]]*/\([[^ ]]*\)\.c,$(objects)/\1.lo,g'`
 DEPENDS=`echo "$DEPENDS" | sed 's,\([[^ ]]*\)/\([[^ ]]*\)\.c,\\
 $(objects)/\2.lo: \1/\2.c\\
-	\$(LIBTOOL) --mode=compile \$(CC) \$(CFLAGS) \$(EXTRA_CFLAGS) -MMD -MT \$@ -c \$< -o \$@,g'`
+	\$(LIBTOOL) --mode=compile \$(CC) \$(CFLAGS) \$(EXTRA_CFLAGS) '"$DEPENDENCY_TRACKING_OPTIONS"' -c \$< -o \$@,g'`
 
 VERSION_OBJECTS=`echo $VERSION_SOURCES`
 VERSION_DEPENDS=`echo $VERSION_SOURCES`
@@ -508,7 +531,7 @@ PLAYWAVE_DEPENDS=`echo $PLAYWAVE_SOURCES`
 PLAYWAVE_OBJECTS=`echo "$PLAYWAVE_OBJECTS" | sed 's,[[^ ]]*/\([[^ ]]*\)\.c,$(objects)/\1.lo,g'`
 PLAYWAVE_DEPENDS=`echo "$PLAYWAVE_DEPENDS" | sed 's,\([[^ ]]*\)/\([[^ ]]*\)\.c,\\
 $(objects)/\2.lo: \1/\2.c\\
-	\$(LIBTOOL) --mode=compile \$(CC) \$(CFLAGS) \$(EXTRA_CFLAGS) -MMD -MT \$@ -c \$< -o \$@,g'`
+	\$(LIBTOOL) --mode=compile \$(CC) \$(CFLAGS) \$(EXTRA_CFLAGS) '"$DEPENDENCY_TRACKING_OPTIONS"' -c \$< -o \$@,g'`
 
 PLAYMUS_SOURCES="$srcdir/playmus.c"
 PLAYMUS_OBJECTS=`echo $PLAYMUS_SOURCES`
@@ -516,7 +539,7 @@ PLAYMUS_DEPENDS=`echo $PLAYMUS_SOURCES`
 PLAYMUS_OBJECTS=`echo "$PLAYMUS_OBJECTS" | sed 's,[[^ ]]*/\([[^ ]]*\)\.c,$(objects)/\1.lo,g'`
 PLAYMUS_DEPENDS=`echo "$PLAYMUS_DEPENDS" | sed 's,\([[^ ]]*\)/\([[^ ]]*\)\.c,\\
 $(objects)/\2.lo: \1/\2.c\\
-	\$(LIBTOOL) --mode=compile \$(CC) \$(CFLAGS) \$(EXTRA_CFLAGS) -MMD -MT \$@ -c \$< -o \$@,g'`
+	\$(LIBTOOL) --mode=compile \$(CC) \$(CFLAGS) \$(EXTRA_CFLAGS) '"$DEPENDENCY_TRACKING_OPTIONS"' -c \$< -o \$@,g'`
 
 dnl Expand the sources and objects needed to build the library
 AC_SUBST(ac_aux_dir)
