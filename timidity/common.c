@@ -112,12 +112,18 @@ FILE *open_file(const char *name, int decompress, int noise_mode)
       return 0;
     }
 
-#ifdef DEFAULT_PATH
   if (pathlist==NULL) {
     /* Generate path list */
+#ifdef DEFAULT_PATH
     add_to_pathlist(DEFAULT_PATH);
-  }
 #endif
+#ifdef DEFAULT_PATH1
+    add_to_pathlist(DEFAULT_PATH1);
+#endif
+#ifdef DEFAULT_PATH2
+    add_to_pathlist(DEFAULT_PATH2);
+#endif
+  }
 
   /* First try the given name */
 
