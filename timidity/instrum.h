@@ -163,7 +163,7 @@ extern int free_instruments_afterwards;
 extern int load_missing_instruments(void);
 extern void free_instruments(void);
 extern void end_soundfont(void);
-extern int set_default_instrument(char *name);
+extern int set_default_instrument(const char *name);
 
 
 extern int32 convert_tremolo_sweep(uint8 sweep);

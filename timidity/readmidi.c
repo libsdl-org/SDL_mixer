@@ -258,7 +258,7 @@ static int sysex(uint32 len, uint8 *syschan, uint8 *sysa, uint8 *sysb, SDL_RWops
 
 /* Print a string from the file, followed by a newline. Any non-ASCII
    or unprintable characters will be converted to periods. */
-static int dumpstring(int32 len, char *label)
+static int dumpstring(int32 len, const char *label)
 {
   signed char *s=safe_malloc(len+1);
   if (len != (int32)SDL_RWread(rw, s, 1, len))

@@ -1691,7 +1691,7 @@ void Timidity_SetVolume(int volume)
   ctl->master_volume(amplification);
 }
 
-MidiSong *Timidity_LoadSong(char *midifile)
+MidiSong *Timidity_LoadSong(const char *midifile)
 {
   MidiSong *song;
   int32 events;
