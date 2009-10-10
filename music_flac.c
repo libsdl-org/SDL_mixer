@@ -189,6 +189,9 @@ static FLAC__StreamDecoderWriteStatus flac_write_music_cb(
 	}
 
 	for (i = 0; i < frame->header.blocksize; i++) {
+		FLAC__int16 i16;
+		FLAC__uint16 ui16;
+
 		// make sure we still have at least two bytes that can be read (one for
 		// each channel)
 		if (data->flac_data.max_to_read >= 4) {
@@ -205,9 +208,6 @@ static FLAC__StreamDecoderWriteStatus flac_write_music_cb(
 					return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
 				}
 			}
-
-			FLAC__int16 i16;
-			FLAC__uint16 ui16;
 
 			i16 = (FLAC__int16)buffer[0][i];
 			ui16 = (FLAC__uint16)i16;
@@ -248,9 +248,6 @@ static FLAC__StreamDecoderWriteStatus flac_write_music_cb(
 					return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
 				}
 			}
-
-			FLAC__int16 i16;
-			FLAC__uint16 ui16;
 
 			i16 = (FLAC__int16)buffer[0][i];
 			ui16 = (FLAC__uint16)i16;
