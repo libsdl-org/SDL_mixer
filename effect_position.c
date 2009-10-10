@@ -129,7 +129,7 @@ static void _Eff_position_u8(int chan, void *stream, int len, void *udata)
         len--;
     }
 
-    if (args->room_angle == 0)
+    if (args->room_angle == 180)
     for (i = 0; i < len; i += sizeof (Uint8) * 2) {
         /* must adjust the sample so that 0 is the center */
         *ptr = (Uint8) ((Sint8) ((((float) (Sint8) (*ptr - 128)) 
