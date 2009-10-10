@@ -1329,16 +1329,16 @@ static void set_amplitudes(int channels, int angle, int room_angle)
          *  An angle in the first quadrant, 0-90, does not attenuate the RF.
          *
          *   ...so, we split our angle circle into 8 ...
-	 *
-	 *             CE
-	 *             0
-	 *     LF      |         RF
-	 *             |
-	 *  270<-------|----------->90
-	 *             |
-	 *     LR      |         RR
-	 *            180
-	 *   
+         *
+         *             CE
+         *             0
+         *     LF      |         RF
+         *             |
+         *  270<-------|----------->90
+         *             |
+         *     LR      |         RR
+         *            180
+         *
          */
         if (angle < 45) {
             left = ((int) (255.0f * (((float) (180 - angle)) / 179.0f)));
