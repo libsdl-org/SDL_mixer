@@ -250,7 +250,7 @@ static void reverse_data(int16 *sp, int32 ls, int32 le)
    undefined.
 
    TODO: do reverse loops right */
-static InstrumentLayer *load_instrument(char *name, int font_type, int percussion,
+static InstrumentLayer *load_instrument(const char *name, int font_type, int percussion,
 				   int panning, int amp, int cfg_tuning, int note_to_use,
 				   int strip_loop, int strip_envelope,
 				   int strip_tail, int bank, int gm_num, int sf_ix)
@@ -1012,7 +1012,7 @@ void free_instruments(void)
     }
 }
 
-int set_default_instrument(char *name)
+int set_default_instrument(const char *name)
 {
   InstrumentLayer *lp;
 /*  if (!(lp=load_instrument(name, 0, -1, -1, -1, 0, 0, 0))) */

@@ -40,7 +40,7 @@ static PathList *pathlist=NULL;
 
 /* Try to open a file for reading. If the filename ends in one of the 
    defined compressor extensions, pipe the file through the decompressor */
-static FILE *try_to_open(char *name, int decompress, int noise_mode)
+static FILE *try_to_open(const char *name, int decompress, int noise_mode)
 {
   FILE *fp;
 
@@ -54,7 +54,8 @@ static FILE *try_to_open(char *name, int decompress, int noise_mode)
     {
       int l,el;
       static char *decompressor_list[] = DECOMPRESSOR_LIST, **dec;
-      char tmp[1024], tmp2[1024], *cp, *cp2;
+      const char *cp;
+      char tmp[1024], tmp2[1024], *cp2;
       /* Check if it's a compressed file */ 
       l=strlen(name);
       for (dec=decompressor_list; *dec; dec+=2)

@@ -475,7 +475,7 @@ Mix_Music *Mix_LoadMUS(const char *file)
 #endif
 #ifdef USE_TIMIDITY_MIDI
 		if ( timidity_ok ) {
-			music->data.midi = Timidity_LoadSong((char *)file);
+			music->data.midi = Timidity_LoadSong(file);
 			if ( music->data.midi == NULL ) {
 				Mix_SetError("%s", Timidity_Error());
 				music->error = 1;
