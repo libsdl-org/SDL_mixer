@@ -33,6 +33,7 @@ LT_RELEASE=$MAJOR_VERSION.$MINOR_VERSION
 LT_CURRENT=`expr $MICRO_VERSION - $INTERFACE_AGE`
 LT_REVISION=$INTERFACE_AGE
 LT_AGE=`expr $BINARY_AGE - $INTERFACE_AGE`
+m4_pattern_allow([^LT_])
 
 AC_SUBST(LT_RELEASE)
 AC_SUBST(LT_CURRENT)
@@ -41,7 +42,7 @@ AC_SUBST(LT_AGE)
 
 dnl Detect the canonical build and host environments
 AC_CONFIG_AUX_DIRS($srcdir/build-scripts)
-AC_CANONICAL_HOST
+dnl AC_CANONICAL_HOST
 
 dnl Check for tools
 AC_PROG_LIBTOOL
