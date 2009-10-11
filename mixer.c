@@ -70,6 +70,7 @@ static struct _Mix_Channel {
 	Uint32 start_time;
 	Mix_Fading fading;
 	int fade_volume;
+	int fade_volume_reset;
 	Uint32 fade_length;
 	Uint32 ticks_fade;
 	effect_info *effects;
@@ -212,7 +213,7 @@ static void mix_channels(void *udata, Uint8 *stream, int len)
 			} else if ( mix_channel[i].fading != MIX_NO_FADING ) {
 				Uint32 ticks = sdl_ticks - mix_channel[i].ticks_fade;
 				if( ticks > mix_channel[i].fade_length ) {
-				    Mix_Volume(i, mix_channel[i].fade_volume); /* Restore the volume */
+				    Mix_Volume(i, mix_channel[i].fade_volume_reset); /* Restore the volume */
 					if( mix_channel[i].fading == MIX_FADING_OUT ) {
 						mix_channel[i].playing = 0;
 						mix_channel[i].expire = 0;
@@ -350,6 +351,7 @@ int Mix_OpenAudio(int frequency, Uint16 format, int nchannels, int chunksize)
 		mix_channel[i].looping = 0;
 		mix_channel[i].volume = SDL_MIX_MAXVOLUME;
 		mix_channel[i].fade_volume = SDL_MIX_MAXVOLUME;
+		mix_channel[i].fade_volume_reset = SDL_MIX_MAXVOLUME;
 		mix_channel[i].fading = MIX_NO_FADING;
 		mix_channel[i].tag = -1;
 		mix_channel[i].expire = 0;
@@ -404,6 +406,7 @@ int Mix_AllocateChannels(int numchans)
 			mix_channel[i].looping = 0;
 			mix_channel[i].volume = SDL_MIX_MAXVOLUME;
 			mix_channel[i].fade_volume = SDL_MIX_MAXVOLUME;
+			mix_channel[i].fade_volume_reset = SDL_MIX_MAXVOLUME;
 			mix_channel[i].fading = MIX_NO_FADING;
 			mix_channel[i].tag = -1;
 			mix_channel[i].expire = 0;
@@ -826,6 +829,11 @@ int Mix_FadeInChannelTimed(int which, Mix_Chunk *chunk, int loops, int ms, int t
 			mix_channel[which].fade_length = (Uint32)ms;
 			mix_channel[which].start_time = mix_channel[which].ticks_fade = sdl_ticks;
 			mix_channel[which].expire = (ticks > 0) ? (sdl_ticks+ticks) : 0;
+
+			/* only change fade_volume_reset if we're not fading. */
+			if (mix_channel[which].fading == MIX_NO_FADING) {
+				mix_channel[which].fade_volume_reset = mix_channel[which].volume;
+			}
 		}
 	}
 	SDL_UnlockAudio();
@@ -889,7 +897,7 @@ int Mix_HaltChannel(int which)
 		}
 		mix_channel[which].expire = 0;
 		if(mix_channel[which].fading != MIX_NO_FADING) /* Restore volume */
-			mix_channel[which].volume = mix_channel[which].fade_volume;
+			mix_channel[which].volume = mix_channel[which].fade_volume_reset;
 		mix_channel[which].fading = MIX_NO_FADING;
 		SDL_UnlockAudio();
 	}
@@ -927,11 +935,15 @@ int Mix_FadeOutChannel(int which, int ms)
 			if ( mix_channel[which].playing && 
 			    (mix_channel[which].volume > 0) &&
 			    (mix_channel[which].fading != MIX_FADING_OUT) ) {
-
-				mix_channel[which].fading = MIX_FADING_OUT;
 				mix_channel[which].fade_volume = mix_channel[which].volume;
+				mix_channel[which].fading = MIX_FADING_OUT;
 				mix_channel[which].fade_length = ms;
 				mix_channel[which].ticks_fade = SDL_GetTicks();
+
+				/* only change fade_volume_reset if we're not fading. */
+				if (mix_channel[which].fading == MIX_NO_FADING) {
+				    mix_channel[which].fade_volume_reset = mix_channel[which].volume;
+				}
 				++status;
 			}
 			SDL_UnlockAudio();
