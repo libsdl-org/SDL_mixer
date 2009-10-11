@@ -46,6 +46,7 @@ AC_ARG_ENABLE(sdltest, [  --disable-sdltest       Do not try to compile and run 
 
   if test "x$sdl_pc" = xyes ; then
     no_sdl=""
+    SDL_CONFIG="pkg-config sdl"
   else
     as_save_PATH="$PATH"
     if test "x$prefix" != xNONE && test "$cross_compiling" != yes; then
