@@ -45,6 +45,12 @@ void _Mix_InitEffects(void);
 void _Mix_DeinitEffects(void);
 void _Eff_PositionDeinit(void);
 
+int _Mix_RegisterEffect_locked(int channel, Mix_EffectFunc_t f,
+                               Mix_EffectDone_t d, void *arg);
+int _Mix_UnregisterEffect_locked(int channel, Mix_EffectFunc_t f);
+int _Mix_UnregisterAllEffects_locked(int channel);
+
+
 /* Set up for C function definitions, even when using C++ */
 #ifdef __cplusplus
 }

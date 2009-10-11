@@ -1276,11 +1276,11 @@ static int _Mix_remove_all_effects(int channel, effect_info **e)
 }
 
 
-int Mix_RegisterEffect(int channel, Mix_EffectFunc_t f,
+/* MAKE SURE you hold the audio lock (SDL_LockAudio()) before calling this! */
+int _Mix_RegisterEffect_locked(int channel, Mix_EffectFunc_t f,
 			Mix_EffectDone_t d, void *arg)
 {
 	effect_info **e = NULL;
-	int retval;
 
 	if (channel == MIX_CHANNEL_POST) {
 		e = &posteffects;
@@ -1292,39 +1292,51 @@ int Mix_RegisterEffect(int channel, Mix_EffectFunc_t f,
 		e = &mix_channel[channel].effects;
 	}
 
-	SDL_LockAudio();
-	retval = _Mix_register_effect(e, f, d, arg);
-	SDL_UnlockAudio();
-	return(retval);
+	return _Mix_register_effect(e, f, d, arg);
 }
 
+int Mix_RegisterEffect(int channel, Mix_EffectFunc_t f,
+			Mix_EffectDone_t d, void *arg)
+{
+    int retval;
+	SDL_LockAudio();
+	retval = _Mix_RegisterEffect_locked(channel, f, d, arg);
+	SDL_UnlockAudio();
+    return retval;
+}
+
+
+/* MAKE SURE you hold the audio lock (SDL_LockAudio()) before calling this! */
+int _Mix_UnregisterEffect_locked(int channel, Mix_EffectFunc_t f)
+{
+	effect_info **e = NULL;
+
+	if (channel == MIX_CHANNEL_POST) {
+		e = &posteffects;
+	} else {
+		if ((channel < 0) || (channel >= num_channels)) {
+			Mix_SetError("Invalid channel number");
+			return(0);
+		}
+		e = &mix_channel[channel].effects;
+	}
+
+	return _Mix_remove_effect(channel, e, f);
+}
 
 int Mix_UnregisterEffect(int channel, Mix_EffectFunc_t f)
 {
-	effect_info **e = NULL;
 	int retval;
-
-	if (channel == MIX_CHANNEL_POST) {
-		e = &posteffects;
-	} else {
-		if ((channel < 0) || (channel >= num_channels)) {
-			Mix_SetError("Invalid channel number");
-			return(0);
-		}
-		e = &mix_channel[channel].effects;
-	}
-
 	SDL_LockAudio();
-	retval = _Mix_remove_effect(channel, e, f);
+	retval = _Mix_UnregisterEffect_locked(channel, f);
 	SDL_UnlockAudio();
 	return(retval);
 }
 
-
-int Mix_UnregisterAllEffects(int channel)
+/* MAKE SURE you hold the audio lock (SDL_LockAudio()) before calling this! */
+int _Mix_UnregisterAllEffects_locked(int channel)
 {
 	effect_info **e = NULL;
-	int retval;
 
 	if (channel == MIX_CHANNEL_POST) {
 		e = &posteffects;
@@ -1336,8 +1348,14 @@ int Mix_UnregisterAllEffects(int channel)
 		e = &mix_channel[channel].effects;
 	}
 
+	return _Mix_remove_all_effects(channel, e);
+}
+
+int Mix_UnregisterAllEffects(int channel)
+{
+	int retval;
 	SDL_LockAudio();
-	retval = _Mix_remove_all_effects(channel, e);
+	retval = _Mix_UnregisterAllEffects_locked(channel);
 	SDL_UnlockAudio();
 	return(retval);
 }
