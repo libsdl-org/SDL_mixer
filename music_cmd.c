@@ -155,6 +155,13 @@ void MusicCMD_Start(MusicCMD *music)
 		    char command[PATH_MAX];
 		    char **argv;
 
+		    /* Unblock signals in case we're called from a thread */
+		    {
+			sigset_t mask;
+			sigemptyset(&mask);
+			sigprocmask(SIG_SETMASK, &mask, NULL);
+		    }
+
 		    /* Execute the command */
 		    strcpy(command, music->cmd);
 		    argv = parse_args(command, music->file);
