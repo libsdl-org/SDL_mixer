@@ -21,6 +21,12 @@
    common.h
 */
 
+#include <limits.h>
+
+#ifndef PATH_MAX   /* GNU Hurd doesn't limit path size, thus no PATH_MAX... */
+#define PATH_MAX 1024   /* ...so we'll just impose an arbitrary limit. */
+#endif
+
 extern char *program_name, current_filename[];
 
 extern FILE *msgfp;
