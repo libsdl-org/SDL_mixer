@@ -367,8 +367,9 @@ int Timidity_Init(int rate, int format, int channels, int samples)
   return(0);
 }
 
-char timidity_error[1024] = "";
+char timidity_error[TIMIDITY_ERROR_SIZE] = "";
 const char *Timidity_Error(void)
 {
   return(timidity_error);
 }
+

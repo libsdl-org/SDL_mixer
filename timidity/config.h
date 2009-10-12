@@ -22,6 +22,8 @@
 #include "SDL_config.h"
 #include "SDL_endian.h"
 
+#define TIMIDITY_ERROR_SIZE 1024
+
 /* When a patch file can't be opened, one of these extensions is
    appended to the filename and the open is tried again.
  */
