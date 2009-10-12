@@ -48,7 +48,7 @@ int num_ochannels;
 static int read_config_file(const char *name)
 {
   FILE *fp;
-  char tmp[1024], *w[MAXWORDS], *cp;
+  char tmp[PATH_MAX], *w[MAXWORDS], *cp;
   ToneBank *bank=0;
   int i, j, k, line=0, words;
   static int rcf_count=0;

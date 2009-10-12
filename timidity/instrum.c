@@ -278,9 +278,9 @@ static InstrumentLayer *load_instrument(const char *name, int font_type, int per
       /* Try with various extensions */
       for (i=0; patch_ext[i]; i++)
 	{
-	  if (strlen(name)+strlen(patch_ext[i])<1024)
+	  if (strlen(name)+strlen(patch_ext[i])<PATH_MAX)
 	    {
-              char path[1024];
+              char path[PATH_MAX];
 	      strcpy(path, name);
 	      strcat(path, patch_ext[i]);
 	      if ((fp=open_file(path, 1, OF_NORMAL)) != NULL)
