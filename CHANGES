@@ -1,4 +1,6 @@
 1.2.9:
+Ryan Gordon - Sun Oct 18 11:42:31 PDT 2009
+ * Updated native MIDI support on Mac OS X for 10.6
 Ryan Gordon - Sun Oct 11 05:29:55 2009 UTC
  * Reset channel volumes after a fade out interrupts a fade in.
 Ryan Gordon - Sun Oct 11 02:59:12 2009 UTC
@@ -15,8 +17,6 @@ Sam Lantinga - Sat Oct  3 02:49:41 PDT 2009
  * Added TIMIDITY_CFG environment variable to fully locate timidity.cfg
 Sam Lantinga - Fri Oct  2 07:15:35 PDT 2009
  * Implemented seamless looping for music playback
-Max Horn - 2009-09-27 11:58:18 PDT
- * Disabled native MIDI on Mac OS X since the APIs are not available on 10.6.
 Forrest Voight - 2009-06-13 20:31:38 PDT
  * ID3 files are now recognized as MP3 format
 Steven Noonan - 2008-05-13 13:31:36 PDT
