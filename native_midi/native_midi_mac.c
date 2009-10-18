@@ -22,7 +22,7 @@
 #include "SDL_config.h"
 #include "SDL_endian.h"
 
-#if __MACOS__ || __MACOSX__
+#if __MACOS__ /*|| __MACOSX__ */
 
 #include "native_midi.h"
 #include "native_midi_common.h"
