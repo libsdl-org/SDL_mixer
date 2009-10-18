@@ -234,7 +234,7 @@ return 1;
     if test x$have_libmikmod = xyes; then
         case "$host" in
             *-*-darwin*)
-                mikmod_lib=[`find_lib libmikmod*.dylib`]
+                mikmod_lib=[`find_lib libmikmod.dylib`]
                 ;;
             *-*-cygwin* | *-*-mingw32*)
                 mikmod_lib=[`find_lib "mikmod*.dll"`]
@@ -327,7 +327,7 @@ if test x$enable_music_ogg = xyes; then
         if test x$have_tremor_hdr = xyes -a x$have_tremor_lib = xyes; then
             case "$host" in
                 *-*-darwin*)
-                    ogg_lib=[`find_lib libvorbisidec*.dylib`]
+                    ogg_lib=[`find_lib libvorbisidec.dylib`]
                     if test x$ogg_lib = x; then
                         ogg_lib=[`find_lib libvorbisidec.[0-9]`]
                     fi
@@ -363,7 +363,7 @@ if test x$enable_music_ogg = xyes; then
         if test x$have_ogg_hdr = xyes -a x$have_ogg_lib = xyes; then
             case "$host" in
                 *-*-darwin*)
-                    ogg_lib=[`find_lib libvorbisfile*.dylib`]
+                    ogg_lib=[`find_lib libvorbisfile.dylib`]
                     ;;
                 *-*-cygwin* | *-*-mingw32*)
                     ogg_lib=[`find_lib "libvorbisfile*.dll"`]
@@ -425,7 +425,7 @@ int main( int argc, char *argv[] ) {
         if test x$have_flac_hdr = xyes -a x$have_flac_lib = xyes; then    
             case "$host" in
                 *-*-darwin*)
-                    flac_lib=[`find_lib libFLAC*.dylib`]
+                    flac_lib=[`find_lib libFLAC.dylib`]
                     ;;
                 *-*-cygwin* | *-*-mingw32*)
                     flac_lib=[`find_lib "libFLAC*.dll"`]
@@ -464,7 +464,7 @@ if test x$enable_music_mp3 = xyes; then
     if test x$have_smpeg = xyes; then
         case "$host" in
             *-*-darwin*)
-                smpeg_lib=[`find_lib libsmpeg*.dylib`]
+                smpeg_lib=[`find_lib libsmpeg.dylib`]
                 ;;
             *-*-cygwin* | *-*-mingw32*)
                 smpeg_lib=[`find_lib "smpeg*.dll"`]
