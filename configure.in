@@ -284,7 +284,7 @@ AC_HELP_STRING([--enable-music-native-midi], [enable native MIDI music output [[
                 ;;
             *-*-darwin*)
                 use_music_native_midi=yes
-                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -Wl,-framework,AudioToolbox -Wl,-framework,CoreServices"
+                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -Wl,-framework,AudioToolbox -Wl,-framework,AudioUnit -Wl,-framework,CoreServices"
                 ;;
         esac
         if test x$use_music_native_midi = xyes; then

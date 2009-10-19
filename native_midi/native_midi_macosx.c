@@ -27,8 +27,10 @@
 
 #if __MACOSX__
 
+#include <Carbon/Carbon.h>
 #include <AudioToolbox/AudioToolbox.h>
 
+#include "../SDL_mixer.h"
 #include "SDL_endian.h"
 #include "native_midi.h"
 
@@ -38,9 +40,11 @@ struct _NativeMidiSong
     MusicPlayer player;
     MusicSequence sequence;
     MusicTimeStamp endTime;
+    AudioUnit audiounit;
 };
 
 static NativeMidiSong *currentsong = NULL;
+static int latched_volume = MIX_MAX_VOLUME;
 
 static OSStatus
 GetSequenceLength(MusicSequence sequence, MusicTimeStamp *_sequenceLength)
@@ -77,6 +81,61 @@ GetSequenceLength(MusicSequence sequence, MusicTimeStamp *_sequenceLength)
     *_sequenceLength = sequenceLength;
 
     return noErr;
+}
+
+
+/* we're looking for the sequence output audiounit. */
+static OSStatus
+GetSequenceAudioUnit(MusicSequence sequence, AudioUnit *aunit)
+{
+    AUGraph graph;
+    UInt32 nodecount, i;
+    OSStatus err;
+
+    err = MusicSequenceGetAUGraph(sequence, &graph);
+    if (err != noErr)
+        return err;
+
+    err = AUGraphGetNodeCount(graph, &nodecount);
+    if (err != noErr)
+        return err;
+
+    for (i = 0; i < nodecount; i++) {
+        AUNode node;
+
+        if (AUGraphGetIndNode(graph, i, &node) != noErr)
+            continue;  /* better luck next time. */
+
+        #if 1 /* this is deprecated, but works back to 10.0 */
+        {
+            struct ComponentDescription desc;
+            UInt32 classdatasize = 0;
+            void *classdata = NULL;
+            err = AUGraphGetNodeInfo(graph, node, &desc, &classdatasize,
+                                     &classdata, aunit);
+            if (err != noErr)
+                continue;
+            else if (desc.componentType != kAudioUnitType_Output)
+                continue;
+            else if (desc.componentSubType != kAudioUnitSubType_DefaultOutput)
+                continue;
+        }
+        #else  /* not deprecated, but requires 10.5 or later */
+        {
+            AudioComponentDescription desc;
+            if (AUGraphNodeInfo(graph, node, &desc, aunit) != noErr)
+                continue;
+            else if (desc.componentType != kAudioUnitType_Output)
+                continue;
+            else if (desc.componentSubType != kAudioUnitSubType_DefaultOutput)
+                continue;
+        }
+        #endif
+
+        return noErr;  /* found it! */
+    }
+
+    return kAUGraphErr_NodeNotFound;
 }
 
 
@@ -188,11 +247,13 @@ void native_midi_freesong(NativeMidiSong *song)
 
 void native_midi_start(NativeMidiSong *song)
 {
+    int vol;
+
     if (song == NULL)
         return;
 
-	SDL_PauseAudio(1);
-	SDL_UnlockAudio();
+    SDL_PauseAudio(1);
+    SDL_UnlockAudio();
 
     if (currentsong)
         MusicPlayerStop(currentsong->player);
@@ -200,19 +261,25 @@ void native_midi_start(NativeMidiSong *song)
     currentsong = song;
     MusicPlayerStart(song->player);
 
-	SDL_LockAudio();
-	SDL_PauseAudio(0);
+    GetSequenceAudioUnit(song->sequence, &song->audiounit);
+
+    vol = latched_volume;
+    latched_volume++;  /* just make this not match. */
+    native_midi_setvolume(vol);
+
+    SDL_LockAudio();
+    SDL_PauseAudio(0);
 }
 
 void native_midi_stop()
 {
     if (currentsong) {
-    	SDL_PauseAudio(1);
-	    SDL_UnlockAudio();
+        SDL_PauseAudio(1);
+        SDL_UnlockAudio();
         MusicPlayerStop(currentsong->player);
         currentsong = NULL;
-    	SDL_LockAudio();
-	    SDL_PauseAudio(0);
+        SDL_LockAudio();
+        SDL_PauseAudio(0);
     }
 }
 
@@ -229,8 +296,15 @@ int native_midi_active()
 
 void native_midi_setvolume(int volume)
 {
-    /* !!! FIXME: call MusicSequenceGetAUGraph(), figure out where the output
-       !!! FIXME:  audio unit is, and change its gain */
+    if (latched_volume == volume)
+        return;
+
+    latched_volume = volume;
+    if ((currentsong) && (currentsong->audiounit)) {
+        const float floatvol = ((float) volume) / ((float) MIX_MAX_VOLUME);
+        AudioUnitSetParameter(currentsong->audiounit, kHALOutputParam_Volume,
+                              kAudioUnitScope_Global, 0, floatvol, 0);
+    }
 }
 
 const char *native_midi_error(void)
