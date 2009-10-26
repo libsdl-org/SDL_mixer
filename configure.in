@@ -173,6 +173,9 @@ AM_PATH_SDL($SDL_VERSION,
 EXTRA_CFLAGS="$EXTRA_CFLAGS $SDL_CFLAGS"
 EXTRA_LDFLAGS="$EXTRA_LDFLAGS $SDL_LIBS"
 
+dnl Check for math library
+AC_CHECK_LIB(m, pow, [LIBM="-lm"])
+
 dnl Check command-line options
 
 AC_ARG_ENABLE([music-cmd],
@@ -321,7 +324,7 @@ AC_HELP_STRING([--enable-music-ogg-shared], [dynamically load Ogg Vorbis support
 if test x$enable_music_ogg = xyes; then
     if test x$enable_music_ogg_tremor = xyes; then
         AC_CHECK_HEADER([tremor/ivorbisfile.h], [have_tremor_hdr=yes])
-        AC_CHECK_LIB([vorbisidec], [ov_open_callbacks], [have_tremor_lib=yes], [have_tremor_lib=no], [-lvorbis -logg -lm])
+        AC_CHECK_LIB([vorbisidec], [ov_open_callbacks], [have_tremor_lib=yes], [have_tremor_lib=no], [-lvorbis -logg $LIBM])
         if test x$have_tremor_hdr = xyes -a x$have_tremor_lib = xyes; then
             case "$host" in
                 *-*-darwin*)
@@ -349,7 +352,7 @@ if test x$enable_music_ogg = xyes; then
                 echo "-- dynamic libvorbisidec -> $ogg_lib"
                 EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_DYNAMIC=\\\"$ogg_lib\\\""
             else
-                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lvorbisidec"
+                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lvorbisidec -lvorbis -logg $LIBM"
             fi
         else
             AC_MSG_WARN([*** Unable to find Ogg Vorbis Tremor library (http://www.xiph.org/)])
@@ -357,7 +360,7 @@ if test x$enable_music_ogg = xyes; then
         fi
     else
         AC_CHECK_HEADER([vorbis/vorbisfile.h], [have_ogg_hdr=yes])
-        AC_CHECK_LIB([vorbisfile], [ov_open_callbacks], [have_ogg_lib=yes], [have_ogg_lib=no], [-lvorbis -logg -lm])
+        AC_CHECK_LIB([vorbisfile], [ov_open_callbacks], [have_ogg_lib=yes], [have_ogg_lib=no], [-lvorbis -logg $LIBM])
         if test x$have_ogg_hdr = xyes -a x$have_ogg_lib = xyes; then
             case "$host" in
                 *-*-darwin*)
@@ -379,7 +382,7 @@ if test x$enable_music_ogg = xyes; then
                 echo "-- dynamic libvorbisfile -> $ogg_lib"
                 EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_DYNAMIC=\\\"$ogg_lib\\\""
             else
-                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lvorbisfile -lvorbis -logg"
+                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lvorbisfile -lvorbis -logg $LIBM"
             fi
         else
             AC_MSG_WARN([*** Unable to find Ogg Vorbis library (http://www.xiph.org/)])
