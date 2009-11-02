@@ -29,6 +29,7 @@
 
 #include <Carbon/Carbon.h>
 #include <AudioToolbox/AudioToolbox.h>
+#include <AvailabilityMacros.h>
 
 #include "../SDL_mixer.h"
 #include "SDL_endian.h"
@@ -106,7 +107,7 @@ GetSequenceAudioUnit(MusicSequence sequence, AudioUnit *aunit)
         if (AUGraphGetIndNode(graph, i, &node) != noErr)
             continue;  /* better luck next time. */
 
-        #if 1 /* this is deprecated, but works back to 10.0 */
+#if MAC_OS_X_VERSION_MIN_REQUIRED <= MAC_OS_X_VERSION_10_4 /* this is deprecated, but works back to 10.0 */
         {
             struct ComponentDescription desc;
             UInt32 classdatasize = 0;
@@ -196,11 +197,11 @@ NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw)
     free(buf);
     buf = NULL;
 
-    #if 1 /* this is deprecated, but works back to 10.3 */
+    #if MAC_OS_X_VERSION_MIN_REQUIRED <= MAC_OS_X_VERSION_10_4 /* this is deprecated, but works back to 10.3 */
     if (MusicSequenceLoadSMFDataWithFlags(retval->sequence, data, 0) != noErr)
         goto fail;
     #else  /* not deprecated, but requires 10.5 or later */
-    if (MusicSequenceLoadData(retval->sequence, data, 0, 0) != noErr)
+    if (MusicSequenceFileLoadData(retval->sequence, data, 0, 0) != noErr)
         goto fail;
     #endif
 
