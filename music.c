@@ -139,7 +139,7 @@ static int ms_per_step;
 static const char **music_decoders = NULL;
 static int num_decoders = 0;
 
-int Mix_NumMusicDecoders(void)
+int Mix_GetNumMusicDecoders(void)
 {
 	return(num_decoders);
 }

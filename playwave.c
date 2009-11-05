@@ -89,12 +89,12 @@ static void report_decoders(void)
 	int i, total;
 
     printf("Supported decoders...\n");
-	total = Mix_NumChunkDecoders();
+	total = Mix_GetNumChunkDecoders();
 	for (i = 0; i < total; i++) {
 		fprintf(stderr, " - chunk decoder: %s\n", Mix_GetChunkDecoder(i));
 	}
 
-	total = Mix_NumMusicDecoders();
+	total = Mix_GetNumMusicDecoders();
 	for (i = 0; i < total; i++) {
 		fprintf(stderr, " - music decoder: %s\n", Mix_GetMusicDecoder(i));
 	}
