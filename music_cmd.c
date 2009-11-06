@@ -23,7 +23,7 @@
 
 /* This file supports an external command for playing music */
 
-#if defined(unix) || defined(__MACOSX__) /* This is a UNIX-specific hack */
+#ifdef CMD_MUSIC
 
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -143,7 +143,11 @@ static char **parse_args(char *command, char *last_arg)
 /* Start playback of a given music stream */
 void MusicCMD_Start(MusicCMD *music)
 {
+#ifdef HAVE_FORK
 	music->pid = fork();
+#else
+	music->pid = vfork();
+#endif
 	switch(music->pid) {
 	    /* Failed fork() system call */
 	    case -1:
@@ -235,4 +239,4 @@ int MusicCMD_Active(MusicCMD *music)
 	return(active);
 }
 
-#endif /* unix */
+#endif /* CMD_MUSIC */

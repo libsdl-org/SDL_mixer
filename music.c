@@ -32,11 +32,6 @@
 
 #include "SDL_mixer.h"
 
-/* The music command hack is UNIX specific */
-#ifndef unix
-#undef CMD_MUSIC
-#endif
-
 #ifdef CMD_MUSIC
 #include "music_cmd.h"
 #endif
