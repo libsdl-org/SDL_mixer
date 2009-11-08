@@ -1,4 +1,6 @@
 1.2.10:
+Sam Lantinga - Sun Nov  8 08:34:48 PST 2009
+ * Added Mix_Init()/Mix_Quit() to prevent constantly loading and unloading DLLs
 Mike Frysinger - 2009-11-05 09:11:43 PST
  * Check for fork/vfork on any platform, don't just assume it on UNIX
 Jon Atkins - Thu Nov 5 00:02:50 2009 UTC

@@ -125,4 +125,16 @@ void Mix_QuitOgg()
 }
 #endif /* OGG_DYNAMIC */
 
+#else
+
+int Mix_InitOgg()
+{
+	Mix_SetError("Ogg Vorbis audio is not supported");
+	return -1;
+}
+
+void Mix_QuitOgg()
+{
+}
+
 #endif /* OGG_MUSIC */

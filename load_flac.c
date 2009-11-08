@@ -208,7 +208,8 @@ static FLAC__StreamDecoderWriteStatus flac_write_load_cb(
 static void flac_metadata_load_cb(
 					const FLAC__StreamDecoder *decoder,
 					const FLAC__StreamMetadata *metadata,
-					void *client_data) {
+					void *client_data)
+{
 	FLAC_SDL_Data *data = (FLAC_SDL_Data *)client_data;
 	FLAC__uint64 total_samples;
 	unsigned bps;
@@ -237,7 +238,8 @@ static void flac_metadata_load_cb(
 static void flac_error_load_cb(
 				const FLAC__StreamDecoder *decoder,
 				FLAC__StreamDecoderErrorStatus status,
-				void *client_data) {
+				void *client_data)
+{
 	// print an SDL error based on the error status
 	switch (status) {
 		case FLAC__STREAM_DECODER_ERROR_STATUS_LOST_SYNC:
@@ -260,7 +262,8 @@ static void flac_error_load_cb(
 
 /* don't call this directly; use Mix_LoadWAV_RW() for now. */
 SDL_AudioSpec *Mix_LoadFLAC_RW (SDL_RWops *src, int freesrc,
-        SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len) {
+        SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
+{
 	FLAC__StreamDecoder *decoder = 0;
 	FLAC__StreamDecoderInitStatus init_status;
 	int was_error = 1;
@@ -271,11 +274,11 @@ SDL_AudioSpec *Mix_LoadFLAC_RW (SDL_RWops *src, int freesrc,
 	FLAC_SDL_Data* client_data;
 	client_data = (FLAC_SDL_Data *)malloc (sizeof (FLAC_SDL_Data));
 
-    if ((!src) || (!audio_buf) || (!audio_len))   /* sanity checks. */
-        goto done;
+	if ((!src) || (!audio_buf) || (!audio_len))   /* sanity checks. */
+		goto done;
 
-    if (Mix_InitFLAC() < 0)
-        goto done;
+	if (!Mix_Init(MIX_INIT_FLAC))
+		goto done;
 
 	if ((decoder = flac.FLAC__stream_decoder_new ()) == NULL) {
 		SDL_SetError ("Unable to allocate FLAC decoder.");
@@ -313,25 +316,23 @@ SDL_AudioSpec *Mix_LoadFLAC_RW (SDL_RWops *src, int freesrc,
     *audio_len &= ~(samplesize - 1);
 
 done:
-	if(was_init && decoder) {
+	if (was_init && decoder) {
 		flac.FLAC__stream_decoder_finish (decoder);
 	}
 
-	if(decoder) {
+	if (decoder) {
 		flac.FLAC__stream_decoder_delete (decoder);
 	}
 
-    if (src) {
-        if (freesrc)
-            SDL_RWclose (src);
-        else
-            SDL_RWseek (src, 0, SEEK_SET);
-    }
+	if (src) {
+		if (freesrc)
+			SDL_RWclose (src);
+		else
+			SDL_RWseek (src, 0, SEEK_SET);
+	}
 
-    if (was_error)
-        spec = NULL;
-
-    Mix_QuitFLAC ();
+	if (was_error)
+		spec = NULL;
 
     return spec;
 }

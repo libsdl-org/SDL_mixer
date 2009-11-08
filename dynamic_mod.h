@@ -57,7 +57,7 @@ typedef struct {
 
 extern mikmod_loader mikmod;
 
+#endif /* MOD_MUSIC */
+
 extern int Mix_InitMOD();
 extern void Mix_QuitMOD();
-
-#endif

@@ -105,13 +105,12 @@ OGG_music *OGG_new_RW(SDL_RWops *rw)
 		OGG_setvolume(music, MIX_MAX_VOLUME);
 		music->section = -1;
 
-		if ( Mix_InitOgg() < 0 ) {
+		if ( !Mix_Init(MIX_INIT_OGG) ) {
 			return(NULL);
 		}
 		if ( vorbis.ov_open_callbacks(rw, &music->vf, NULL, 0, callbacks) < 0 ) {
 			free(music);
 			SDL_RWclose(rw);
-			Mix_QuitOgg();
 			SDL_SetError("Not an Ogg Vorbis audio stream");
 			return(NULL);
 		}
@@ -224,7 +223,6 @@ void OGG_delete(OGG_music *music)
 		}
 		vorbis.ov_clear(&music->vf);
 		free(music);
-		Mix_QuitOgg();
 	}
 }
 

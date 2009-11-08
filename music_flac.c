@@ -337,7 +337,7 @@ FLAC_music *FLAC_new_RW(SDL_RWops *rw)
 		music->flac_data.data_len = 0;
 		music->flac_data.data_read = 0;
 
-		if (Mix_InitFLAC () >= 0) {
+		if (Mix_Init(MIX_INIT_FLAC)) {
 			init_stage++; // stage 1!
 
 			music->flac_decoder = flac.FLAC__stream_decoder_new ();
@@ -357,8 +357,14 @@ FLAC_music *FLAC_new_RW(SDL_RWops *rw)
 					if (flac.FLAC__stream_decoder_process_until_end_of_metadata
 											(music->flac_decoder)) {
 						was_error = 0;
+					} else {
+						SDL_SetError("FLAC__stream_decoder_process_until_end_of_metadata() failed");
 					}
+				} else {
+					SDL_SetError("FLAC__stream_decoder_init_stream() failed");
 				}
+			} else {
+				SDL_SetError("FLAC__stream_decoder_new() failed");
 			}
 		}
 
@@ -369,16 +375,11 @@ FLAC_music *FLAC_new_RW(SDL_RWops *rw)
 				case 2:
 					flac.FLAC__stream_decoder_delete( music->flac_decoder );
 				case 1:
-					Mix_QuitFLAC();
 				case 0:
 					free(music);
 					SDL_RWclose(rw);
 					break;
 			}
-
-			SDL_SetError ("There was an error in stage [%d] of FLAC init.",
-							init_stage);
-
 			return NULL;
 		}
 	}
@@ -559,8 +560,6 @@ void FLAC_delete(FLAC_music *music)
 		}
 
 		free (music);
-
-		Mix_QuitFLAC ();
 	}
 }
 
