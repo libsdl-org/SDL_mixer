@@ -1,3 +1,11 @@
+1.2.10:
+Mike Frysinger - 2009-11-05 09:11:43 PST
+ * Check for fork/vfork on any platform, don't just assume it on UNIX
+Jon Atkins - Thu Nov 5 00:02:50 2009 UTC
+ * Fixed export of Mix_GetNumChunkDecoders() and Mix_GetNumMusicDecoders()
+C.W. Betts - 2009-11-02 00:16:21 PST
+ * Use newer MIDI API on Mac OS X 10.5+
+
 1.2.9:
 Ryan Gordon - Sun Oct 18 11:42:31 PDT 2009
  * Updated native MIDI support on Mac OS X for 10.6
