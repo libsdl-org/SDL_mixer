@@ -80,7 +80,7 @@ SDL_AudioSpec *Mix_LoadOGG_RW (SDL_RWops *src, int freesrc,
     if ( (!src) || (!audio_buf) || (!audio_len) )   /* sanity checks. */
         goto done;
 
-    if ( Mix_InitOgg() < 0 )
+    if ( !Mix_Init(MIX_INIT_OGG) )
         goto done;
 
     callbacks.read_func = sdl_read_func;
@@ -152,8 +152,6 @@ done:
 
     if ( was_error )
         spec = NULL;
-
-    Mix_QuitOgg();
 
     return(spec);
 } /* Mix_LoadOGG_RW */

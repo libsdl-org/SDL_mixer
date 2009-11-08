@@ -510,7 +510,7 @@ Mix_Music *Mix_LoadMUS(const char *file)
 	     (ext && MIX_string_equals(ext, "MPEG")) ||
 	     (magic[0] == 0xFF && (magic[1] & 0xF0) == 0xF0) ||
 	     (strncmp((char *)magic, "ID3", 3) == 0) ) {
-		if ( Mix_InitMP3() == 0 ) {
+		if ( Mix_Init(MIX_INIT_MP3) ) {
 			SMPEG_Info info;
 			music->type = MUS_MP3;
 			music->data.mp3 = smpeg.SMPEG_new(file, &info, 0);
@@ -621,7 +621,6 @@ void Mix_FreeMusic(Mix_Music *music)
 #ifdef MP3_MUSIC
 			case MUS_MP3:
 				smpeg.SMPEG_delete(music->data.mp3);
-				Mix_QuitMP3();
 				break;
 #endif
 #ifdef MP3_MAD_MUSIC
@@ -1297,7 +1296,7 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw)
 #endif
 #ifdef MP3_MUSIC
 	if ( ( magic[0] == 0xFF && (magic[1] & 0xF0) == 0xF0) || ( strncmp((char *)magic, "ID3", 3) == 0 ) ) {
-		if ( Mix_InitMP3() == 0 ) {
+		if ( Mix_Init(MIX_INIT_MP3) ) {
 			SMPEG_Info info;
 			music->type = MUS_MP3;
 			music->data.mp3 = smpeg.SMPEG_new_rwops(rw, &info, 0);

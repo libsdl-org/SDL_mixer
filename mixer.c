@@ -35,6 +35,10 @@
 #include "load_voc.h"
 #include "load_ogg.h"
 #include "load_flac.h"
+#include "dynamic_flac.h"
+#include "dynamic_mod.h"
+#include "dynamic_mp3.h"
+#include "dynamic_ogg.h"
 
 #define __MIX_INTERNAL_EFFECT__
 #include "effects_internal.h"
@@ -132,6 +136,54 @@ const SDL_version *Mix_Linked_Version(void)
 	static SDL_version linked_version;
 	SDL_MIXER_VERSION(&linked_version);
 	return(&linked_version);
+}
+
+static int initialized = 0;
+
+int Mix_Init(int flags)
+{
+	int result = 0;
+
+	if ((flags & MIX_INIT_FLAC) && !(initialized & MIX_INIT_FLAC)) {
+		if (Mix_InitFLAC() == 0) {
+			result |= MIX_INIT_FLAC;
+		}
+	}
+	if ((flags & MIX_INIT_MOD) && !(initialized & MIX_INIT_MOD)) {
+		if (Mix_InitMOD() == 0) {
+			result |= MIX_INIT_MOD;
+		}
+	}
+	if ((flags & MIX_INIT_MP3) && !(initialized & MIX_INIT_MP3)) {
+		if (Mix_InitMP3() == 0) {
+			result |= MIX_INIT_MP3;
+		}
+	}
+	if ((flags & MIX_INIT_OGG) && !(initialized & MIX_INIT_OGG)) {
+		if (Mix_InitOgg() == 0) {
+			result |= MIX_INIT_OGG;
+		}
+	}
+	initialized |= result;
+
+	return (result);
+}
+
+void Mix_Quit()
+{
+	if (initialized & MIX_INIT_FLAC) {
+		Mix_QuitFLAC();
+	}
+	if (initialized & MIX_INIT_MOD) {
+		Mix_QuitMOD();
+	}
+	if (initialized & MIX_INIT_MP3) {
+		Mix_QuitMP3();
+	}
+	if (initialized & MIX_INIT_OGG) {
+		Mix_QuitOgg();
+	}
+	initialized = 0;
 }
 
 static int _Mix_remove_all_effects(int channel, effect_info **e);

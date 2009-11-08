@@ -62,7 +62,7 @@ typedef struct {
 
 extern flac_loader flac;
 
+#endif /* FLAC_MUSIC */
+
 extern int Mix_InitFLAC();
 extern void Mix_QuitFLAC();
-
-#endif // FLAC_MUSIC

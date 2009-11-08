@@ -53,7 +53,7 @@ int MOD_init(SDL_AudioSpec *mixerfmt)
 {
 	CHAR *list;
 
-	if ( Mix_InitMOD() < 0 ) {
+	if ( !Mix_Init(MIX_INIT_MOD) ) {
 		return -1;
 	}
 
@@ -132,7 +132,6 @@ int MOD_init(SDL_AudioSpec *mixerfmt)
 void MOD_exit(void)
 {
 	mikmod.MikMod_Exit();
-	Mix_QuitMOD();
 }
 
 /* Set the volume for a MOD stream */

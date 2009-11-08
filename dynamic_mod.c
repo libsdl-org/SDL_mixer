@@ -273,4 +273,16 @@ void Mix_QuitMOD()
 }
 #endif /* MOD_DYNAMIC */
 
+#else
+
+int Mix_InitMOD()
+{
+	Mix_SetError("MOD audio is not supported");
+	return -1;
+}
+
+void Mix_QuitMOD()
+{
+}
+
 #endif /* MOD_MUSIC */

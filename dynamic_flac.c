@@ -35,8 +35,8 @@ flac_loader flac = {
 };
 
 #ifdef FLAC_DYNAMIC
-
-int Mix_InitFLAC() {
+int Mix_InitFLAC()
+{
 	if ( flac.loaded == 0 ) {
 		flac.handle = SDL_LoadObject(FLAC_DYNAMIC);
 		if ( flac.handle == NULL ) {
@@ -130,7 +130,8 @@ int Mix_InitFLAC() {
 
 	return 0;
 }
-void Mix_QuitFLAC() {
+void Mix_QuitFLAC()
+{
 	if ( flac.loaded == 0 ) {
 		return;
 	}
@@ -140,7 +141,8 @@ void Mix_QuitFLAC() {
 	--flac.loaded;
 }
 #else
-int Mix_InitFLAC() {
+int Mix_InitFLAC()
+{
 	if ( flac.loaded == 0 ) {
 		flac.FLAC__stream_decoder_new = FLAC__stream_decoder_new;
 		flac.FLAC__stream_decoder_delete = FLAC__stream_decoder_delete;
@@ -163,7 +165,8 @@ int Mix_InitFLAC() {
 
 	return 0;
 }
-void Mix_QuitFLAC() {
+void Mix_QuitFLAC()
+{
 	if ( flac.loaded == 0 ) {
 		return;
 	}
@@ -171,6 +174,18 @@ void Mix_QuitFLAC() {
 	}
 	--flac.loaded;
 }
-#endif // FLAC_DYNAMIC
+#endif /* FLAC_DYNAMIC */
 
-#endif // FLAC_MUSIC
+#else
+
+int Mix_InitFLAC()
+{
+	Mix_SetError("FLAC audio is not supported");
+	return -1;
+}
+
+void Mix_QuitFLAC()
+{
+}
+
+#endif /* FLAC_MUSIC */

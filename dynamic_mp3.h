@@ -43,7 +43,7 @@ typedef struct {
 
 extern smpeg_loader smpeg;
 
+#endif /* MUSIC_MP3 */
+
 extern int Mix_InitMP3();
 extern void Mix_QuitMP3();
-
-#endif

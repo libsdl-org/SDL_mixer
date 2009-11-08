@@ -44,7 +44,7 @@ typedef struct {
 
 extern vorbis_loader vorbis;
 
+#endif /* OGG_MUSIC */
+
 extern int Mix_InitOgg();
 extern void Mix_QuitOgg();
-
-#endif
