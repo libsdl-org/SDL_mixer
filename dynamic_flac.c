@@ -176,16 +176,4 @@ void Mix_QuitFLAC()
 }
 #endif /* FLAC_DYNAMIC */
 
-#else
-
-int Mix_InitFLAC()
-{
-	Mix_SetError("FLAC audio is not supported");
-	return -1;
-}
-
-void Mix_QuitFLAC()
-{
-}
-
 #endif /* FLAC_MUSIC */
