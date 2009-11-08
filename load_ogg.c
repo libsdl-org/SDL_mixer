@@ -53,7 +53,7 @@ static int sdl_close_func_freesrc(void *datasource)
 
 static int sdl_close_func_nofreesrc(void *datasource)
 {
-    return SDL_RWseek((SDL_RWops*)datasource, 0, SEEK_SET);
+    return SDL_RWseek((SDL_RWops*)datasource, 0, RW_SEEK_SET);
 }
 
 static long sdl_tell_func(void *datasource)
@@ -147,7 +147,7 @@ done:
         if (freesrc)
             SDL_RWclose(src);
         else
-            SDL_RWseek(src, 0, SEEK_SET);
+            SDL_RWseek(src, 0, RW_SEEK_SET);
     }
 
     if ( was_error )

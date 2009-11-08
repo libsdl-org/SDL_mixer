@@ -1248,7 +1248,7 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw)
 		Mix_SetError("Couldn't read from RWops");
 		return NULL;
 	}
-	SDL_RWseek(rw, start, SEEK_SET);
+	SDL_RWseek(rw, start, RW_SEEK_SET);
 	magic[4]='\0';
 	moremagic[8] = '\0';
 

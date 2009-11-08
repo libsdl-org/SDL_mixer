@@ -169,7 +169,7 @@ WAVStream *WAVStream_LoadSong_RW(SDL_RWops *rw, const char *magic)
 /* Start playback of a given WAV stream */
 void WAVStream_Start(WAVStream *wave)
 {
-	SDL_RWseek (wave->rw, wave->start, SEEK_SET);
+	SDL_RWseek (wave->rw, wave->start, RW_SEEK_SET);
 	music = wave;
 }
 
@@ -281,7 +281,7 @@ static int ReadChunk(SDL_RWops *src, Chunk *chunk, int read_data)
 			return(-1);
 		}
 	} else {
-		SDL_RWseek(src, chunk->length, SEEK_CUR);
+		SDL_RWseek(src, chunk->length, RW_SEEK_CUR);
 	}
 	return(chunk->length);
 }
@@ -487,7 +487,7 @@ static SDL_RWops *LoadAIFFStream (SDL_RWops *src, SDL_AudioSpec *spec,
 		    break;
 	    }
 	} while ((!found_SSND || !found_COMM)
-		 && SDL_RWseek(src, next_chunk, SEEK_SET) != -1);
+		 && SDL_RWseek(src, next_chunk, RW_SEEK_SET) != -1);
 
 	if (!found_SSND) {
 	    Mix_SetError("Bad AIFF file (no SSND chunk)");

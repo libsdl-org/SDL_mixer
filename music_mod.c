@@ -206,9 +206,9 @@ MODULE *MikMod_LoadSongRW(SDL_RWops *rw, int maxchan)
 		0
 	};
 	lmmmr.offset = SDL_RWtell(rw);
-	SDL_RWseek(rw, 0, SEEK_END);
+	SDL_RWseek(rw, 0, RW_SEEK_END);
 	lmmmr.eof = SDL_RWtell(rw);
-	SDL_RWseek(rw, lmmmr.offset, SEEK_SET);
+	SDL_RWseek(rw, lmmmr.offset, RW_SEEK_SET);
         lmmmr.rw = rw;
 	return mikmod.Player_LoadGeneric((MREADER*)&lmmmr, maxchan, 0);
 }
