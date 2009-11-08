@@ -314,7 +314,7 @@ mad_seek(mad_data *mp3_mad, double position) {
 	mp3_mad->output_begin = 0;
 	mp3_mad->output_end = 0;
 
-	SDL_RWseek(mp3_mad->rw, 0, SEEK_SET);
+	SDL_RWseek(mp3_mad->rw, 0, RW_SEEK_SET);
   }
 
   /* Now we have to skip frames until we come to the right one.

@@ -92,7 +92,7 @@ static int voc_check_header(SDL_RWops *src)
     Uint8  signature[20];  /* "Creative Voice File\032" */
     Uint16 datablockofs;
 
-    SDL_RWseek(src, 0, SEEK_SET);
+    SDL_RWseek(src, 0, RW_SEEK_SET);
 
     if (SDL_RWread(src, signature, sizeof (signature), 1) != 1)
         return(0);
@@ -108,7 +108,7 @@ static int voc_check_header(SDL_RWops *src)
 
     datablockofs = SDL_SwapLE16(datablockofs);
 
-    if (SDL_RWseek(src, datablockofs, SEEK_SET) != datablockofs)
+    if (SDL_RWseek(src, datablockofs, RW_SEEK_SET) != datablockofs)
         return(0);
 
     return(1);  /* success! */
@@ -448,7 +448,7 @@ done:
         if (freesrc)
             SDL_RWclose(src);
         else
-            SDL_RWseek(src, 0, SEEK_SET);
+            SDL_RWseek(src, 0, RW_SEEK_SET);
     }
 
     if ( was_error )

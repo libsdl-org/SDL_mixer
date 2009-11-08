@@ -81,7 +81,7 @@ static FLAC__StreamDecoderSeekStatus flac_seek_load_cb(
 {
 	FLAC_SDL_Data *data = (FLAC_SDL_Data *)client_data;
 
-	if (SDL_RWseek (data->sdl_src, absolute_byte_offset, SEEK_SET) < 0) {
+	if (SDL_RWseek (data->sdl_src, absolute_byte_offset, RW_SEEK_SET) < 0) {
 		return FLAC__STREAM_DECODER_SEEK_STATUS_ERROR;
 	}
 	else {
@@ -115,9 +115,9 @@ static FLAC__StreamDecoderLengthStatus flac_length_load_cb(
 	FLAC_SDL_Data *data = (FLAC_SDL_Data *)client_data;
 
 	int pos = SDL_RWtell (data->sdl_src);
-	int length = SDL_RWseek (data->sdl_src, 0, SEEK_END);
+	int length = SDL_RWseek (data->sdl_src, 0, RW_SEEK_END);
 
-	if (SDL_RWseek (data->sdl_src, pos, SEEK_SET) != pos || length < 0) {
+	if (SDL_RWseek (data->sdl_src, pos, RW_SEEK_SET) != pos || length < 0) {
 		/* there was an error attempting to return the stream to the original
 		 * position, or the length was invalid. */
 		return FLAC__STREAM_DECODER_LENGTH_STATUS_ERROR;
@@ -134,7 +134,7 @@ static FLAC__bool flac_eof_load_cb(const FLAC__StreamDecoder *decoder,
 	FLAC_SDL_Data *data = (FLAC_SDL_Data *)client_data;
 
 	int pos = SDL_RWtell (data->sdl_src);
-	int end = SDL_RWseek (data->sdl_src, 0, SEEK_END);
+	int end = SDL_RWseek (data->sdl_src, 0, RW_SEEK_END);
 
 	// was the original position equal to the end (a.k.a. the seek didn't move)?
 	if (pos == end) {
@@ -143,7 +143,7 @@ static FLAC__bool flac_eof_load_cb(const FLAC__StreamDecoder *decoder,
 	}
 	else {
 		// not EOF, return to the original position
-		SDL_RWseek (data->sdl_src, pos, SEEK_SET);
+		SDL_RWseek (data->sdl_src, pos, RW_SEEK_SET);
 
 		return false;
 	}
@@ -328,7 +328,7 @@ done:
 		if (freesrc)
 			SDL_RWclose (src);
 		else
-			SDL_RWseek (src, 0, SEEK_SET);
+			SDL_RWseek (src, 0, RW_SEEK_SET);
 	}
 
 	if (was_error)

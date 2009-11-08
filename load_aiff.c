@@ -177,7 +177,7 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
 			next_chunk++;
 	} while ( ( ( (AIFFmagic == AIFF) && ( !found_SSND || !found_COMM ) )
 		  || ( (AIFFmagic == _8SVX ) && ( !found_VHDR || !found_BODY ) ) )
-		  && SDL_RWseek(src, next_chunk, SEEK_SET) != 1 );
+		  && SDL_RWseek(src, next_chunk, RW_SEEK_SET) != 1 );
 
 	if ( (AIFFmagic == AIFF) && !found_SSND ) {
 		SDL_SetError("Bad AIFF (no SSND chunk)");
@@ -227,7 +227,7 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
 		SDL_SetError("Out of memory");
 		return(NULL);
 	}
-	SDL_RWseek(src, start, SEEK_SET);
+	SDL_RWseek(src, start, RW_SEEK_SET);
 	if ( SDL_RWread(src, *audio_buf, *audio_len, 1) != 1 ) {
 		SDL_SetError("Unable to read audio data");
 		return(NULL);

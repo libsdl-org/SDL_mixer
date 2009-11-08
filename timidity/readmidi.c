@@ -349,7 +349,7 @@ static MidiEventList *read_midi_event(void)
 			  "(MIDI port number %d)", midi_port_number);
 		    midi_port_number &= 0x03;
 		}
-		else SDL_RWseek(rw, len, SEEK_CUR);
+		else SDL_RWseek(rw, len, RW_SEEK_CUR);
 		break;
 
 	      case 0x2F: /* End of Track */
@@ -362,7 +362,7 @@ static MidiEventList *read_midi_event(void)
 	      default:
 		ctl->cmsg(CMSG_INFO, VERB_DEBUG, 
 		     "(Meta event type 0x%02x, length %ld)", type, len);
-		SDL_RWseek(rw, len, SEEK_CUR);
+		SDL_RWseek(rw, len, RW_SEEK_CUR);
 		break;
 	      }
 	}
@@ -1028,7 +1028,7 @@ past_riff:
       ctl->cmsg(CMSG_WARNING, VERB_NORMAL, 
 	   "%s: MIDI file header size %ld bytes", 
 	   current_filename, len);
-      SDL_RWseek(rw, len-6, SEEK_CUR); /* skip the excess */
+      SDL_RWseek(rw, len-6, RW_SEEK_CUR); /* skip the excess */
     }
   if (format<0 || format >2)
     {
