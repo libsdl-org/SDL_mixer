@@ -177,16 +177,4 @@ void Mix_QuitMP3()
 }
 #endif /* MP3_DYNAMIC */
 
-#else
-
-int Mix_InitMP3()
-{
-	Mix_SetError("MP3 audio is not supported");
-	return -1;
-}
-
-void Mix_QuitMP3()
-{
-}
-
 #endif /* MP3_MUSIC */
