@@ -107,7 +107,7 @@ GetSequenceAudioUnit(MusicSequence sequence, AudioUnit *aunit)
         if (AUGraphGetIndNode(graph, i, &node) != noErr)
             continue;  /* better luck next time. */
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED <= MAC_OS_X_VERSION_10_4 /* this is deprecated, but works back to 10.0 */
+#if MAC_OS_X_VERSION_MIN_REQUIRED < 1060 /* this is deprecated, but works back to 10.0 */
         {
             struct ComponentDescription desc;
             UInt32 classdatasize = 0;
