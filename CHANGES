@@ -1,3 +1,7 @@
+1.2.11:
+Sam Lantinga - Sat Nov 14 11:22:14 PST 2009
+ * Fixed bug loading multiple music files
+
 1.2.10:
 Sam Lantinga - Sun Nov  8 08:34:48 PST 2009
  * Added Mix_Init()/Mix_Quit() to prevent constantly loading and unloading DLLs
