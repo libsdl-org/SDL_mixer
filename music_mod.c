@@ -131,7 +131,9 @@ int MOD_init(SDL_AudioSpec *mixerfmt)
 /* Uninitialize the music players */
 void MOD_exit(void)
 {
-	mikmod.MikMod_Exit();
+	if (mikmod.MikMod_Exit) {
+		mikmod.MikMod_Exit();
+	}
 }
 
 /* Set the volume for a MOD stream */
