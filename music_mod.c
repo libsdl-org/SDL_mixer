@@ -220,6 +220,11 @@ MODULE *MOD_new_RW(SDL_RWops *rw)
 {
 	MODULE *module;
 
+	/* Make sure the mikmod library is loaded */
+	if ( !Mix_Init(MIX_INIT_MOD) ) {
+		return NULL;
+	}
+
 	module = MikMod_LoadSongRW(rw,64);
 	if (!module) {
 		Mix_SetError("%s", mikmod.MikMod_strerror(*mikmod.MikMod_errno));

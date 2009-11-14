@@ -304,19 +304,13 @@ void music_mixer(void *udata, Uint8 *stream, int len)
 /* Initialize the music players with a certain desired audio format */
 int open_music(SDL_AudioSpec *mixer)
 {
-	int music_error = 0;
-
 #ifdef WAV_MUSIC
-	if ( WAVStream_Init(mixer) < 0 ) {
-		++music_error;
-	} else {
+	if ( WAVStream_Init(mixer) == 0 ) {
 		add_music_decoder("WAVE");
 	}
 #endif
 #ifdef MOD_MUSIC
-	if ( MOD_init(mixer) < 0 ) {
-		++music_error;
-	} else {
+	if ( MOD_init(mixer) == 0 ) {
 		add_music_decoder("MIKMOD");
 	}
 #endif
@@ -345,16 +339,12 @@ int open_music(SDL_AudioSpec *mixer)
 #endif
 #endif
 #ifdef OGG_MUSIC
-	if ( OGG_init(mixer) < 0 ) {
-		++music_error;
-	} else {
+	if ( OGG_init(mixer) == 0 ) {
 		add_music_decoder("OGG");
 	}
 #endif
 #ifdef FLAC_MUSIC
-	if ( FLAC_init(mixer) < 0 ) {
-		++music_error;
-	} else {
+	if ( FLAC_init(mixer) == 0 ) {
 		add_music_decoder("FLAC");
 	}
 #endif
@@ -366,9 +356,6 @@ int open_music(SDL_AudioSpec *mixer)
 
 	music_playing = NULL;
 	music_stopped = 0;
-	if ( music_error ) {
-		return(-1);
-	}
 	Mix_VolumeMusic(SDL_MIX_MAXVOLUME);
 
 	/* Calculate the number of ms for each callback */
