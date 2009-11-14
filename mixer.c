@@ -144,36 +144,36 @@ int Mix_Init(int flags)
 {
 	int result = 0;
 
-	if ((flags & MIX_INIT_FLAC) && !(initialized & MIX_INIT_FLAC)) {
+	if (flags & MIX_INIT_FLAC) {
 #ifdef FLAC_MUSIC
-		if (Mix_InitFLAC() == 0) {
+		if ((initialized & MIX_INIT_FLAC) || Mix_InitFLAC() == 0) {
 			result |= MIX_INIT_FLAC;
 		}
 #else
 		Mix_SetError("Mixer not built with FLAC support");
 #endif
 	}
-	if ((flags & MIX_INIT_MOD) && !(initialized & MIX_INIT_MOD)) {
+	if (flags & MIX_INIT_MOD) {
 #ifdef MOD_MUSIC
-		if (Mix_InitMOD() == 0) {
+		if ((initialized & MIX_INIT_MOD) || Mix_InitMOD() == 0) {
 			result |= MIX_INIT_MOD;
 		}
 #else
 		Mix_SetError("Mixer not built with MOD support");
 #endif
 	}
-	if ((flags & MIX_INIT_MP3) && !(initialized & MIX_INIT_MP3)) {
+	if (flags & MIX_INIT_MP3) {
 #ifdef MP3_MUSIC
-		if (Mix_InitMP3() == 0) {
+		if ((initialized & MIX_INIT_MP3) || Mix_InitMP3() == 0) {
 			result |= MIX_INIT_MP3;
 		}
 #else
 		Mix_SetError("Mixer not built with MP3 support");
 #endif
 	}
-	if ((flags & MIX_INIT_OGG) && !(initialized & MIX_INIT_OGG)) {
+	if (flags & MIX_INIT_OGG) {
 #ifdef OGG_MUSIC
-		if (Mix_InitOgg() == 0) {
+		if ((initialized & MIX_INIT_OGG) || Mix_InitOgg() == 0) {
 			result |= MIX_INIT_OGG;
 		}
 #else
