@@ -80,7 +80,7 @@ typedef enum
 extern DECLSPEC int SDLCALL Mix_Init(int flags);
 
 /* Unloads libraries loaded with Mix_Init */
-extern DECLSPEC void SDLCALL Mix_Quit();
+extern DECLSPEC void SDLCALL Mix_Quit(void);
 
 
 /* The default mixer has 8 simultaneous mixing channels */
