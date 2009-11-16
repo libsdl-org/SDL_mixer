@@ -38,6 +38,9 @@
 #ifdef WAV_MUSIC
 #include "wavestream.h"
 #endif
+#ifdef MODPLUG_MUSIC
+#include "music_modplug.h"
+#endif
 #ifdef MOD_MUSIC
 #include "music_mod.h"
 #endif
@@ -87,6 +90,9 @@ struct _Mix_Music {
 #endif
 #ifdef WAV_MUSIC
 		WAVStream *wave;
+#endif
+#ifdef MODPLUG_MUSIC
+		modplug_data *modplug;
 #endif
 #ifdef MOD_MUSIC
 		struct MODULE *module;
@@ -253,6 +259,11 @@ void music_mixer(void *udata, Uint8 *stream, int len)
 				left = WAVStream_PlaySome(stream, len);
 				break;
 #endif
+#ifdef MODPLUG_MUSIC
+			case MUS_MODPLUG:
+				left = modplug_playAudio(music_playing->data.modplug, stream, len);
+				break;
+#endif
 #ifdef MOD_MUSIC
 			case MUS_MOD:
 				left = MOD_playAudio(music_playing->data.module, stream, len);
@@ -307,6 +318,13 @@ int open_music(SDL_AudioSpec *mixer)
 #ifdef WAV_MUSIC
 	if ( WAVStream_Init(mixer) == 0 ) {
 		add_music_decoder("WAVE");
+	}
+#endif
+#ifdef MODPLUG_MUSIC
+	if ( modplug_init(mixer) < 0 ) {
+		++music_error;
+	} else {
+		add_music_decoder("MODPLUG");
 	}
 #endif
 #ifdef MOD_MUSIC
@@ -527,6 +545,15 @@ Mix_Music *Mix_LoadMUS(const char *file)
 		}
 	} else
 #endif
+#ifdef MODPLUG_MUSIC
+	if ( 1 ) {
+		music->type = MUS_MODPLUG;
+		music->data.modplug = modplug_new(file);
+		if ( music->data.modplug == NULL ) {
+			music->error = 1;
+		}
+	} else
+#endif
 #ifdef MOD_MUSIC
 	if ( 1 ) {
 		music->type = MUS_MOD;
@@ -574,6 +601,11 @@ void Mix_FreeMusic(Mix_Music *music)
 #ifdef WAV_MUSIC
 			case MUS_WAV:
 				WAVStream_FreeSong(music->data.wave);
+				break;
+#endif
+#ifdef MODPLUG_MUSIC
+			case MUS_MODPLUG:
+				modplug_delete(music->data.modplug);
 				break;
 #endif
 #ifdef MOD_MUSIC
@@ -669,6 +701,13 @@ static int music_internal_play(Mix_Music *music, double position)
 #ifdef WAV_MUSIC
 	    case MUS_WAV:
 		WAVStream_Start(music->data.wave);
+		break;
+#endif
+#ifdef MODPLUG_MUSIC
+	    case MUS_MODPLUG:
+		/* can't set volume until file is loaded, so finally set it now */
+		music_internal_initialize_volume();
+		modplug_play(music->data.modplug);
 		break;
 #endif
 #ifdef MOD_MUSIC
@@ -787,6 +826,11 @@ int music_internal_position(double position)
 	int retval = 0;
 
 	switch (music_playing->type) {
+#ifdef MODPLUG_MUSIC
+	    case MUS_MODPLUG:
+		modplug_jump_to_time(music_playing->data.modplug, position);
+		break;
+#endif
 #ifdef MOD_MUSIC
 	    case MUS_MOD:
 		MOD_jump_to_time(music_playing->data.module, position);
@@ -867,6 +911,11 @@ static void music_internal_volume(int volume)
 		WAVStream_SetVolume(volume);
 		break;
 #endif
+#ifdef MODPLUG_MUSIC
+	    case MUS_MODPLUG:
+		modplug_setvolume(music_playing->data.modplug, volume);
+		break;
+#endif
 #ifdef MOD_MUSIC
 	    case MUS_MOD:
 		MOD_setvolume(music_playing->data.module, volume);
@@ -943,6 +992,11 @@ static void music_internal_halt(void)
 #ifdef WAV_MUSIC
 	    case MUS_WAV:
 		WAVStream_Stop();
+		break;
+#endif
+#ifdef MODPLUG_MUSIC
+	    case MUS_MODPLUG:
+		modplug_stop(music_playing->data.modplug);
 		break;
 #endif
 #ifdef MOD_MUSIC
@@ -1091,6 +1145,13 @@ static int music_internal_playing()
 		}
 		break;
 #endif
+#ifdef MODPLUG_MUSIC
+	    case MUS_MODPLUG:
+		if ( ! modplug_playing(music_playing->data.modplug) ) {
+			playing = 0;
+		}
+		break;
+#endif
 #ifdef MOD_MUSIC
 	    case MUS_MOD:
 		if ( ! MOD_playing(music_playing->data.module) ) {
@@ -1197,6 +1258,9 @@ void close_music(void)
 	Mix_HaltMusic();
 #ifdef CMD_MUSIC
 	Mix_SetMusicCMD(NULL);
+#endif
+#ifdef MODPLUG_MUSIC
+	modplug_exit();
 #endif
 #ifdef MOD_MUSIC
 	MOD_exit();
@@ -1335,15 +1399,29 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw)
 #endif
 	} else
 #endif
-#ifdef MOD_MUSIC
+#if defined(MODPLUG_MUSIC) || defined(MODPLUG_MUSIC)
 	if (1) {
-		music->type=MUS_MOD;
-		music->data.module = MOD_new_RW(rw);
-		if ( music->data.module == NULL ) {
-			music->error = 1;
+		music->error = 1;
+#ifdef MODPLUG_MUSIC
+		if ( music->error ) {
+			music->type = MUS_MODPLUG;
+			music->data.modplug = modplug_new_RW(rw);
+			if ( music->data.modplug ) {
+				music->error = 0;
+			}
 		}
-	} else
 #endif
+#ifdef MOD_MUSIC
+		if ( music->error ) {
+			music->type = MUS_MOD;
+			music->data.module = MOD_new_RW(rw);
+			if ( music->data.module ) {
+				music->error = 0;
+			}
+		}
+#endif
+	} else
+#endif /* MODPLUG_MUSIC || MOD_MUSIC */
 	{
 		Mix_SetError("Unrecognized music format");
 		music->error=1;
