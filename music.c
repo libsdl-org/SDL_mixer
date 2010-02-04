@@ -321,7 +321,7 @@ int open_music(SDL_AudioSpec *mixer)
 	}
 #endif
 #ifdef MODPLUG_MUSIC
-	if ( modplug_init(mixer) < 0 ) {
+	if ( modplug_init(mixer) == 0 ) {
 		add_music_decoder("MODPLUG");
 	}
 #endif
