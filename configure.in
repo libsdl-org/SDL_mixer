@@ -315,6 +315,7 @@ dnl     #include "modplug.h"
 dnl    ],[
 dnl    ],[
     have_libmodplug=yes
+    SOURCES="$SOURCES $srcdir/music_modplug.c"
 dnl    ])
 else
 	have_libmodplug=no
