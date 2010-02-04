@@ -60,6 +60,7 @@ int modplug_init(SDL_AudioSpec *spec)
 	settings.mSurroundDelay=10;
 	settings.mLoopCount=0;
 	ModPlug_SetSettings(&settings);
+	return 0;
 }
 
 /* Uninitialize the music players */
