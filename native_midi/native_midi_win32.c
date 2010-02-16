@@ -266,10 +266,10 @@ void native_midi_start(NativeMidiSong *song)
   native_midi_stop();
   if (!hMidiStream)
   {
-    merr=midiStreamOpen(&hMidiStream,&MidiDevice,1,(DWORD)&MidiProc,0,CALLBACK_FUNCTION);
+    merr=midiStreamOpen(&hMidiStream,&MidiDevice,(DWORD)1,(DWORD_PTR)MidiProc,(DWORD_PTR)0,CALLBACK_FUNCTION);
     if (merr!=MMSYSERR_NOERROR)
     {
-      hMidiStream=0;
+      hMidiStream = NULL; // should I do midiStreamClose(hMidiStream) before?
       return;
     }
     //midiStreamStop(hMidiStream);
@@ -291,7 +291,7 @@ void native_midi_stop()
   midiStreamStop(hMidiStream);
   midiStreamClose(hMidiStream);
   currentsong=NULL;
-  hMidiStream = 0;
+  hMidiStream = NULL;
 }
 
 int native_midi_active()
