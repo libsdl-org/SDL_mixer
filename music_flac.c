@@ -405,7 +405,6 @@ int FLAC_playing(FLAC_music *music)
 /* Read some FLAC stream data and convert it for output */
 static void FLAC_getsome(FLAC_music *music)
 {
-	int section;
 	SDL_AudioCVT *cvt;
 
 	/* GET AUDIO wAVE DATA */
@@ -475,7 +474,7 @@ static void FLAC_getsome(FLAC_music *music)
 		return;
 	}
 	cvt = &music->cvt;
-	if (section != music->section) {
+	if (music->section < 0) {
 
 		SDL_BuildAudioCVT (cvt, AUDIO_S16, (Uint8)music->flac_data.channels,
 						(int)music->flac_data.sample_rate, mixer.format,
@@ -484,7 +483,7 @@ static void FLAC_getsome(FLAC_music *music)
 			free (cvt->buf);
 		}
 		cvt->buf = (Uint8 *)malloc (music->flac_data.data_len * cvt->len_mult);
-		music->section = section;
+		music->section = 0;
 	}
 	if (cvt->buf) {
 		memcpy (cvt->buf, music->flac_data.data, music->flac_data.data_read);
