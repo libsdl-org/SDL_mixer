@@ -25,7 +25,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#ifdef HAVE_SIGNAL_H
 #include <signal.h>
+#endif
 #ifdef unix
 #include <unistd.h>
 #endif
@@ -363,8 +366,10 @@ int main(int argc, char *argv[])
 	int reverse_stereo = 0;
 	int reverse_sample = 0;
 
+#ifdef HAVE_SETBUF
 	setbuf(stdout, NULL);    /* rcg06132001 for debugging purposes. */
 	setbuf(stderr, NULL);    /* rcg06192001 for debugging purposes, too. */
+#endif
 	output_test_warnings();
 
 	/* Initialize variables */
@@ -411,8 +416,10 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "Couldn't initialize SDL: %s\n",SDL_GetError());
 		return(255);
 	}
+#ifdef HAVE_SIGNAL_H
 	signal(SIGINT, CleanUp);
 	signal(SIGTERM, CleanUp);
+#endif
 
 	/* Open the audio device */
 	if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, 4096) < 0) {
