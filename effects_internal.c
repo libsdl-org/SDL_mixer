@@ -30,6 +30,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "SDL_getenv.h"
 #include "SDL_mixer.h"
 
 #define __MIX_INTERNAL_EFFECT__
@@ -41,7 +42,7 @@ int _Mix_effects_max_speed = 0;
 
 void _Mix_InitEffects(void)
 {
-    _Mix_effects_max_speed = (getenv(MIX_EFFECTSMAXSPEED) != NULL);
+    _Mix_effects_max_speed = (SDL_getenv(MIX_EFFECTSMAXSPEED) != NULL);
 }
 
 void _Mix_DeinitEffects(void)

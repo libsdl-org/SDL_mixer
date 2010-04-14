@@ -25,7 +25,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#ifdef HAVE_SIGNAL_H
 #include <signal.h>
+#endif
 #ifdef unix
 #include <unistd.h>
 #endif
@@ -67,24 +70,27 @@ void Menu(void)
 
 	printf("Available commands: (p)ause (r)esume (h)alt volume(v#) > ");
 	fflush(stdin);
-	scanf("%s",buf);
-	switch(buf[0]){
-	case 'p': case 'P':
-		Mix_PauseMusic();
-		break;
-	case 'r': case 'R':
-		Mix_ResumeMusic();
-		break;
-	case 'h': case 'H':
-		Mix_HaltMusic();
-		break;
-	case 'v': case 'V':
-		Mix_VolumeMusic(atoi(buf+1));
-		break;
+	if (scanf("%s",buf) == 1) {
+		switch(buf[0]){
+		case 'p': case 'P':
+			Mix_PauseMusic();
+			break;
+		case 'r': case 'R':
+			Mix_ResumeMusic();
+			break;
+		case 'h': case 'H':
+			Mix_HaltMusic();
+			break;
+		case 'v': case 'V':
+			Mix_VolumeMusic(atoi(buf+1));
+			break;
+		}
 	}
 	printf("Music playing: %s Paused: %s\n", Mix_PlayingMusic() ? "yes" : "no", 
 		   Mix_PausedMusic() ? "yes" : "no");
 }
+
+#ifdef HAVE_SIGNAL_H
 
 void IntHandler(int sig)
 {
@@ -95,9 +101,11 @@ void IntHandler(int sig)
 	}
 }
 
+#endif
+
 int main(int argc, char *argv[])
 {
-	SDL_RWops *rwfp;
+	SDL_RWops *rwfp = NULL;
 	int audio_rate;
 	Uint16 audio_format;
 	int audio_channels;
@@ -162,8 +170,10 @@ int main(int argc, char *argv[])
 		return(255);
 	}
 
+#ifdef HAVE_SIGNAL_H
 	signal(SIGINT, IntHandler);
 	signal(SIGTERM, CleanUp);
+#endif
 
 	/* Open the audio device */
 	if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) < 0) {
@@ -183,7 +193,7 @@ int main(int argc, char *argv[])
 	Mix_VolumeMusic(audio_volume);
 
 	/* Set the external music player, if any */
-	Mix_SetMusicCMD(getenv("MUSIC_CMD"));
+	Mix_SetMusicCMD(SDL_getenv("MUSIC_CMD"));
 
 	while (argv[i]) {
 		next_track = 0;
