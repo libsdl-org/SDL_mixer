@@ -579,7 +579,6 @@ if test x$enable_music_mp3_mad_gpl = xyes; then
         SOURCES="$SOURCES $srcdir/music_mad.c"
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMP3_MAD_MUSIC"
         EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lmad"
-        SOURCES="$SOURCES $srcdir/music_modplug.c"
     else
         AC_MSG_WARN([*** Unable to find MAD library (http://www.underbit.com/products/mad/)])
     fi
