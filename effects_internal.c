@@ -30,7 +30,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "SDL_getenv.h"
 #include "SDL_mixer.h"
 
 #define __MIX_INTERNAL_EFFECT__
