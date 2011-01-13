@@ -820,7 +820,7 @@ int Mix_PlayChannelTimed(int which, Mix_Chunk *chunk, int loops, int ticks)
 		}
 
 		/* Queue up the audio data for this channel */
-		if ( which >= 0 ) {
+		if ( which >= 0 && which < num_channels ) {
 			Uint32 sdl_ticks = SDL_GetTicks();
 			if (Mix_Playing(which))
 				_Mix_channel_done_playing(which);
@@ -890,7 +890,7 @@ int Mix_FadeInChannelTimed(int which, Mix_Chunk *chunk, int loops, int ms, int t
 		}
 
 		/* Queue up the audio data for this channel */
-		if ( which >= 0 ) {
+		if ( which >= 0 && which < num_channels ) {
 			Uint32 sdl_ticks = SDL_GetTicks();
 			if (Mix_Playing(which))
 				_Mix_channel_done_playing(which);
@@ -918,15 +918,14 @@ int Mix_FadeInChannelTimed(int which, Mix_Chunk *chunk, int loops, int ms, int t
 int Mix_Volume(int which, int volume)
 {
 	int i;
-	int prev_volume;
+	int prev_volume = 0;
 
 	if ( which == -1 ) {
-		prev_volume = 0;
 		for ( i=0; i<num_channels; ++i ) {
 			prev_volume += Mix_Volume(i, volume);
 		}
 		prev_volume /= num_channels;
-	} else {
+	} else if ( which < num_channels ) {
 		prev_volume = mix_channel[which].volume;
 		if ( volume >= 0 ) {
 			if ( volume > SDL_MIX_MAXVOLUME ) {
@@ -961,7 +960,7 @@ int Mix_HaltChannel(int which)
 		for ( i=0; i<num_channels; ++i ) {
 			Mix_HaltChannel(i);
 		}
-	} else {
+	} else if ( which < num_channels ) {
 		SDL_LockAudio();
 		if (mix_channel[which].playing) {
 			_Mix_channel_done_playing(which);
@@ -1002,7 +1001,7 @@ int Mix_FadeOutChannel(int which, int ms)
 			for ( i=0; i<num_channels; ++i ) {
 				status += Mix_FadeOutChannel(i, ms);
 			}
-		} else {
+		} else if ( which < num_channels ) {
 			SDL_LockAudio();
 			if ( mix_channel[which].playing && 
 			    (mix_channel[which].volume > 0) &&
@@ -1039,6 +1038,9 @@ int Mix_FadeOutGroup(int tag, int ms)
 
 Mix_Fading Mix_FadingChannel(int which)
 {
+	if ( which < 0 || which >= num_channels ) {
+		return MIX_NO_FADING;
+	}
 	return mix_channel[which].fading;
 }
 
@@ -1060,9 +1062,9 @@ int Mix_Playing(int which)
 				++status;
 			}
 		}
-	} else {
-		if ((mix_channel[which].playing > 0) ||
-			(mix_channel[which].looping > 0))
+	} else if ( which < num_channels ) {
+		if ( (mix_channel[which].playing > 0) ||
+		     (mix_channel[which].looping > 0) )
 		{
 			++status;
 		}
@@ -1121,7 +1123,7 @@ void Mix_Pause(int which)
 				mix_channel[i].paused = sdl_ticks;
 			}
 		}
-	} else {
+	} else if ( which < num_channels ) {
 		if ( mix_channel[which].playing > 0 ) {
 			mix_channel[which].paused = sdl_ticks;
 		}
@@ -1144,7 +1146,7 @@ void Mix_Resume(int which)
 				mix_channel[i].paused = 0;
 			}
 		}
-	} else {
+	} else if ( which < num_channels ) {
 		if ( mix_channel[which].playing > 0 ) {
 			if(mix_channel[which].expire > 0)
 				mix_channel[which].expire += sdl_ticks - mix_channel[which].paused;
@@ -1156,8 +1158,6 @@ void Mix_Resume(int which)
 
 int Mix_Paused(int which)
 {
-	if ( which > num_channels )
-		return(0);
 	if ( which < 0 ) {
 		int status = 0;
 		int i;
@@ -1167,8 +1167,10 @@ int Mix_Paused(int which)
 			}
 		}
 		return(status);
-	} else {
+	} else if ( which < num_channels ) {
 		return(mix_channel[which].paused != 0);
+	} else {
+		return(0);
 	}
 }
 
