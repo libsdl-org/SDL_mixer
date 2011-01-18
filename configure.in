@@ -358,10 +358,18 @@ AC_HELP_STRING([--enable-music-native-midi], [enable native MIDI music output [[
                 use_music_native_midi=yes
                 EXTRA_LDFLAGS="$EXTRA_LDFLAGS -Wl,-framework,AudioToolbox -Wl,-framework,AudioUnit -Wl,-framework,CoreServices"
                 ;;
+            *-*-haiku*)
+                use_music_native_midi=yes_cpp
+                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lmidi" 
+                ;;
         esac
         if test x$use_music_native_midi = xyes; then
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DUSE_NATIVE_MIDI -I\$(srcdir)/native_midi"
             SOURCES="$SOURCES $srcdir/native_midi/*.c"
+        elif test x$use_music_native_midi = xyes_cpp; then
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DUSE_NATIVE_MIDI -I\$(srcdir)/native_midi"
+            SOURCES="$SOURCES $srcdir/native_midi/*.c"
+            SOURCES_CXX="$SOURCES_CXX $srcdir/native_midi/*.cpp"
         fi
     fi
     AC_ARG_ENABLE([music-native-midi-gpl],
@@ -595,6 +603,15 @@ OBJECTS=`echo "$OBJECTS" | sed 's,[[^ ]]*/\([[^ ]]*\)\.c,$(objects)/\1.lo,g'`
 DEPENDS=`echo "$DEPENDS" | sed 's,\([[^ ]]*\)/\([[^ ]]*\)\.c,\\
 $(objects)/\2.lo: \1/\2.c\\
 	\$(LIBTOOL) --mode=compile \$(CC) \$(CFLAGS) \$(EXTRA_CFLAGS) '"$DEPENDENCY_TRACKING_OPTIONS"' -c \$< -o \$@,g'`
+
+OBJECTS_CXX=`echo $SOURCES_CXX`
+DEPENDS_CXX=`echo $SOURCES_CXX`
+OBJECTS_CXX=`echo "$OBJECTS_CXX" | sed 's,[[^ ]]*/\([[^ ]]*\)\.cpp,$(objects)/\1.lo,g'`
+DEPENDS_CXX=`echo "$DEPENDS_CXX" | sed 's,\([[^ ]]*\)/\([[^ ]]*\)\.cpp,\\
+$(objects)/\2.lo: \1/\2.cpp\\
+	\$(LIBTOOL) --mode=compile \$(CXX) \$(CFLAGS) \$(EXTRA_CFLAGS) '"$DEPENDENCY_TRACKING_OPTIONS"' -c \$< -o \$@,g'`
+OBJECTS="$OBJECTS $OBJECTS_CXX"
+DEPENDS="$DEPENDS $DEPENDS_CXX"
 
 VERSION_OBJECTS=`echo $VERSION_SOURCES`
 VERSION_DEPENDS=`echo $VERSION_SOURCES`
