@@ -1,4 +1,6 @@
 1.2.12:
+Scott MC - Tue Jan 18 11:06:47 PST 2011
+ * Added support for native MIDI on Haiku OS
 Jon Atkins - Sat Nov 14 13:00:18 PST 2009
  * Added support for libmodplug (disabled by default)
 
