@@ -612,6 +612,7 @@ $(objects)/\2.lo: \1/\2.cpp\\
 	\$(LIBTOOL) --mode=compile \$(CXX) \$(CFLAGS) \$(EXTRA_CFLAGS) '"$DEPENDENCY_TRACKING_OPTIONS"' -c \$< -o \$@,g'`
 OBJECTS="$OBJECTS $OBJECTS_CXX"
 DEPENDS="$DEPENDS $DEPENDS_CXX"
+DEPENDS=`echo "$DEPENDS" | sed 's,\\$,\\\\$,g'`
 
 VERSION_OBJECTS=`echo $VERSION_SOURCES`
 VERSION_DEPENDS=`echo $VERSION_SOURCES`
@@ -619,6 +620,7 @@ VERSION_OBJECTS=`echo "$VERSION_OBJECTS" | sed 's,[[^ ]]*/\([[^ ]]*\)\.rc,$(obje
 VERSION_DEPENDS=`echo "$VERSION_DEPENDS" | sed 's,\([[^ ]]*\)/\([[^ ]]*\)\.rc,\\
 $(objects)/\2.o: \1/\2.rc\\
 	\$(WINDRES) \$< \$@,g'`
+VERSION_DEPENDS=`echo "$VERSION_DEPENDS" | sed 's,\\$,\\\\$,g'`
 
 PLAYWAVE_SOURCES="$srcdir/playwave.c"
 PLAYWAVE_OBJECTS=`echo $PLAYWAVE_SOURCES`
@@ -627,6 +629,7 @@ PLAYWAVE_OBJECTS=`echo "$PLAYWAVE_OBJECTS" | sed 's,[[^ ]]*/\([[^ ]]*\)\.c,$(obj
 PLAYWAVE_DEPENDS=`echo "$PLAYWAVE_DEPENDS" | sed 's,\([[^ ]]*\)/\([[^ ]]*\)\.c,\\
 $(objects)/\2.lo: \1/\2.c\\
 	\$(LIBTOOL) --mode=compile \$(CC) \$(CFLAGS) \$(EXTRA_CFLAGS) '"$DEPENDENCY_TRACKING_OPTIONS"' -c \$< -o \$@,g'`
+PLAYWAVE_DEPENDS=`echo "$PLAYWAVE_DEPENDS" | sed 's,\\$,\\\\$,g'`
 
 PLAYMUS_SOURCES="$srcdir/playmus.c"
 PLAYMUS_OBJECTS=`echo $PLAYMUS_SOURCES`
@@ -635,17 +638,14 @@ PLAYMUS_OBJECTS=`echo "$PLAYMUS_OBJECTS" | sed 's,[[^ ]]*/\([[^ ]]*\)\.c,$(objec
 PLAYMUS_DEPENDS=`echo "$PLAYMUS_DEPENDS" | sed 's,\([[^ ]]*\)/\([[^ ]]*\)\.c,\\
 $(objects)/\2.lo: \1/\2.c\\
 	\$(LIBTOOL) --mode=compile \$(CC) \$(CFLAGS) \$(EXTRA_CFLAGS) '"$DEPENDENCY_TRACKING_OPTIONS"' -c \$< -o \$@,g'`
+PLAYMUS_DEPENDS=`echo "$PLAYMUS_DEPENDS" | sed 's,\\$,\\\\$,g'`
 
 dnl Expand the sources and objects needed to build the library
 AC_SUBST(ac_aux_dir)
 AC_SUBST(OBJECTS)
-AC_SUBST(DEPENDS)
 AC_SUBST(VERSION_OBJECTS)
-AC_SUBST(VERSION_DEPENDS)
 AC_SUBST(PLAYWAVE_OBJECTS)
-AC_SUBST(PLAYWAVE_DEPENDS)
 AC_SUBST(PLAYMUS_OBJECTS)
-AC_SUBST(PLAYMUS_DEPENDS)
 AC_SUBST(BUILD_CFLAGS)
 AC_SUBST(EXTRA_CFLAGS)
 AC_SUBST(BUILD_LDFLAGS)
@@ -657,5 +657,28 @@ AC_SUBST(SDL_CFLAGS)
 AC_SUBST(SDL_LIBS)
 
 AC_OUTPUT([
+])
+AC_CONFIG_FILES([
     Makefile SDL_mixer.spec SDL_mixer.qpg SDL_mixer.pc
 ])
+AC_CONFIG_COMMANDS([default],
+                   [cat >>Makefile <<__EOF__
+
+# Build rules for objects
+-include \$(OBJECTS:.lo=.d)
+$DEPENDS
+$VERSION_DEPENDS
+
+-include \$(PLAYWAVE_OBJECTS:.lo=.d)
+$PLAYWAVE_DEPENDS
+
+-include \$(PLAYMUS_OBJECTS:.lo=.d)
+$PLAYMUS_DEPENDS
+__EOF__ 
+], [
+DEPENDS="$DEPENDS"
+VERSION_DEPENDS="$VERSION_DEPENDS"
+PLAYWAVE_DEPENDS="$PLAYWAVE_DEPENDS"
+PLAYMUS_DEPENDS="$PLAYMUS_DEPENDS"
+])
+AC_OUTPUT
