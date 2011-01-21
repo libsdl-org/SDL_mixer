@@ -62,16 +62,6 @@ $(objects):
 
 .PHONY: all install install-hdrs install-lib install-bin uninstall uninstall-hdrs uninstall-lib uninstall-bin clean distclean dist
 
--include $(OBJECTS:.lo=.d)
-@DEPENDS@
-@VERSION_DEPENDS@
-
--include $(PLAYWAVE_OBJECTS:.lo=.d)
-@PLAYWAVE_DEPENDS@
-
--include $(PLAYMUS_OBJECTS:.lo=.d)
-@PLAYMUS_DEPENDS@
-
 $(objects)/$(TARGET): $(OBJECTS) $(VERSION_OBJECTS)
 	$(LIBTOOL) --mode=link $(CC) -o $@ $(OBJECTS) $(VERSION_OBJECTS) $(LDFLAGS) $(EXTRA_LDFLAGS) $(LT_LDFLAGS)
 
