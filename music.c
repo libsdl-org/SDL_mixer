@@ -779,6 +779,11 @@ int Mix_FadeInMusicPos(Mix_Music *music, int loops, int ms, double position)
 {
 	int retval;
 
+	if ( ms_per_step == 0 ) {
+		SDL_SetError("Audio device hasn't been opened");
+		return(-1);
+	}
+
 	/* Don't play null pointers :-) */
 	if ( music == NULL ) {
 		Mix_SetError("music parameter was NULL");
@@ -1059,6 +1064,11 @@ int Mix_FadeOutMusic(int ms)
 {
 	int retval = 0;
 
+	if ( ms_per_step == 0 ) {
+		SDL_SetError("Audio device hasn't been opened");
+		return 0;
+	}
+
 	if (ms <= 0) {  /* just halt immediately. */
 		Mix_HaltMusic();
 		return 1;
@@ -1273,6 +1283,8 @@ void close_music(void)
 	free(music_decoders);
 	music_decoders = NULL;
 	num_decoders = 0;
+
+	ms_per_step = 0;
 }
 
 Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw)
