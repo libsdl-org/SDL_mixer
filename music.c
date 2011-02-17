@@ -1409,7 +1409,7 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw)
 #endif
 	} else
 #endif
-#if defined(MODPLUG_MUSIC) || defined(MODPLUG_MUSIC)
+#if defined(MODPLUG_MUSIC) || defined(MOD_MUSIC)
 	if (1) {
 		music->error = 1;
 #ifdef MODPLUG_MUSIC
