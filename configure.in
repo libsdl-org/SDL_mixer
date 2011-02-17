@@ -482,16 +482,14 @@ if test x$enable_music_flac = xyes; then
         LIBS_SAVED="$LIBS"
         LIBS="-lFLAC"
         AC_MSG_CHECKING([for libflac so-name version >= $libflac_ver])
-        AC_TRY_RUN([
+        AC_TRY_COMPILE([
 #include "FLAC/export.h"
 #include "stdio.h"
-int main( int argc, char *argv[] ) {
+],[
 #if defined(FLAC_API_VERSION_CURRENT) && (FLAC_API_VERSION_CURRENT >= $libflac_ver)
-    return 0;
 #else
-    return 1;
+#error "old-flac"
 #endif
-}
 ], have_flac_ver=yes, have_flac_ver=no)
         LIBS="$LIBS_SAVED"
         AC_MSG_RESULT($have_flac_ver)
