@@ -26,15 +26,16 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifdef HAVE_SIGNAL_H
-#include <signal.h>
-#endif
 #ifdef unix
 #include <unistd.h>
 #endif
 
 #include "SDL.h"
 #include "SDL_mixer.h"
+
+#ifdef HAVE_SIGNAL_H
+#include <signal.h>
+#endif
 
 
 /*
