@@ -39,7 +39,11 @@ typedef struct {
 #else
 	long (*ov_read)(OggVorbis_File *vf,char *buffer,int length, int bigendianp,int word,int sgned,int *bitstream);
 #endif
+#ifdef OGG_USE_TREMOR
+	int (*ov_time_seek)(OggVorbis_File *vf,ogg_int64_t pos);
+#else
 	int (*ov_time_seek)(OggVorbis_File *vf,double pos);
+#endif
 } vorbis_loader;
 
 extern vorbis_loader vorbis;
