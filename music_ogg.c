@@ -229,7 +229,11 @@ void OGG_delete(OGG_music *music)
 /* Jump (seek) to a given position (time is in seconds) */
 void OGG_jump_to_time(OGG_music *music, double time)
 {
+#ifdef OGG_USE_TREMOR
+       vorbis.ov_time_seek( &music->vf, (ogg_int64_t)time );
+#else
        vorbis.ov_time_seek( &music->vf, time );
+#endif
 }
 
 #endif /* OGG_MUSIC */

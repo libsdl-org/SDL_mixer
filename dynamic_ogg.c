@@ -78,7 +78,11 @@ int Mix_InitOgg()
 			return -1;
 		}
 		vorbis.ov_time_seek =
+#ifdef OGG_USE_TREMOR
+			(long (*)(OggVorbis_File *,ogg_int64_t))
+#else
 			(int (*)(OggVorbis_File *,double))
+#endif
 			SDL_LoadFunction(vorbis.handle, "ov_time_seek");
 		if ( vorbis.ov_time_seek == NULL ) {
 			SDL_UnloadObject(vorbis.handle);
