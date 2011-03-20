@@ -44,7 +44,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /I "..\mikmod" /I "..\timidity" /I "..\native_midi" /I "vorbis\include" /I "smpeg\include" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "WAV_MUSIC" /D "MOD_MUSIC" /D MOD_DYNAMIC=\"mikmod.dll\" /D "MID_MUSIC" /D "USE_TIMIDITY_MIDI" /D "USE_NATIVE_MIDI" /D "OGG_MUSIC" /D OGG_DYNAMIC=\"libvorbisfile-3.dll\" /D "MP3_MUSIC" /D MP3_DYNAMIC=\"smpeg.dll\" /YX /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /I "..\mikmod" /I "..\timidity" /I "..\native_midi" /I "fluidsynth\include" /I "vorbis\include" /I "smpeg\include" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "WAV_MUSIC" /D "MOD_MUSIC" /D MOD_DYNAMIC=\"mikmod.dll\" /D "MID_MUSIC" /D "USE_TIMIDITY_MIDI" /D "USE_NATIVE_MIDI" /D "USE_FLUIDSYNTH_MIDI" /D FLUIDSYNTH_DYNAMIC=\"libfluidsynth.dll\" /D "OGG_MUSIC" /D OGG_DYNAMIC=\"libvorbisfile-3.dll\" /D "MP3_MUSIC" /D MP3_DYNAMIC=\"smpeg.dll\" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /o NUL /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /o NUL /win32
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -70,7 +70,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /Gm /GX /Zi /Od /I "..\mikmod" /I "..\timidity" /I "..\native_midi" /I "vorbis\include" /I "smpeg\include" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "WAV_MUSIC" /D "MOD_MUSIC" /D MOD_DYNAMIC=\"mikmod.dll\" /D MOD_DYNAMIC=\"mikmod.dll\" /D "MID_MUSIC" /D "USE_TIMIDITY_MIDI" /D "USE_NATIVE_MIDI" /D "OGG_MUSIC" /D OGG_DYNAMIC=\"libvorbisfile-3.dll\" /D "MP3_MUSIC" /D MP3_DYNAMIC=\"smpeg.dll\" /YX /FD /c
+# ADD CPP /nologo /MD /W3 /Gm /GX /Zi /Od /I "..\mikmod" /I "..\timidity" /I "..\native_midi" /I "fluidsynth\include" /I "vorbis\include" /I "smpeg\include" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "WAV_MUSIC" /D "MOD_MUSIC" /D MOD_DYNAMIC=\"mikmod.dll\" /D MOD_DYNAMIC=\"mikmod.dll\" /D "MID_MUSIC" /D "USE_TIMIDITY_MIDI" /D "USE_NATIVE_MIDI" /D "USE_FLUIDSYNTH_MIDI" /D FLUIDSYNTH_DYNAMIC=\"libfluidsynth.dll\" /D "OGG_MUSIC" /D OGG_DYNAMIC=\"libvorbisfile-3.dll\" /D "MP3_MUSIC" /D MP3_DYNAMIC=\"smpeg.dll\" /YX /FD /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /o NUL /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /o NUL /win32
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
@@ -95,6 +95,14 @@ SOURCE=..\dynamic_flac.c
 # Begin Source File
 
 SOURCE=..\dynamic_flac.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\dynamic_fluidsynth.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\dynamic_fluidsynth.h
 # End Source File
 # Begin Source File
 
@@ -135,6 +143,14 @@ SOURCE=..\effects_internal.c
 # Begin Source File
 
 SOURCE=..\effects_internal.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\fluidsynth.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\fluidsynth.h
 # End Source File
 # Begin Source File
 
