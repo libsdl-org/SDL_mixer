@@ -48,8 +48,8 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/D OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\timidity;..\native_midi;mikmod\include;smpeg\include;vorbis\include"
-				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WAV_MUSIC;MOD_MUSIC;MOD_DYNAMIC=\&quot;mikmod.dll\&quot;;MID_MUSIC;USE_TIMIDITY_MIDI;USE_NATIVE_MIDI;OGG_MUSIC;OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;;MP3_MUSIC;MP3_DYNAMIC=\&quot;smpeg.dll\&quot;"
+				AdditionalIncludeDirectories="..\timidity;..\native_midi;fluidsynth\include;mikmod\include;smpeg\include;vorbis\include"
+				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WAV_MUSIC;MOD_MUSIC;MOD_DYNAMIC=\&quot;mikmod.dll\&quot;;MID_MUSIC;USE_TIMIDITY_MIDI;USE_NATIVE_MIDI;USE_FLUIDSYNTH_MIDI;FLUIDSYNTH_DYNAMIC=\&quot;libfluidsynth.dll\&quot;;OGG_MUSIC;OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;;MP3_MUSIC;MP3_DYNAMIC=\&quot;smpeg.dll\&quot;"
 				MinimalRebuild="true"
 				RuntimeLibrary="2"
 				PrecompiledHeaderFile=".\Debug/SDL_mixer.pch"
@@ -145,8 +145,8 @@
 				AdditionalOptions="/D OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\timidity;..\native_midi;mikmod\include;smpeg\include;vorbis\include"
-				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WAV_MUSIC;MOD_MUSIC;MID_MUSIC;MOD_DYNAMIC=\&quot;mikmod.dll\&quot;;USE_TIMIDITY_MIDI;USE_NATIVE_MIDI;OGG_MUSIC;OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;;MP3_MUSIC;MP3_DYNAMIC=\&quot;smpeg.dll\&quot;"
+				AdditionalIncludeDirectories="..\timidity;..\native_midi;fluidsynth/include;mikmod\include;smpeg\include;vorbis\include"
+				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WAV_MUSIC;MOD_MUSIC;MID_MUSIC;MOD_DYNAMIC=\&quot;mikmod.dll\&quot;;USE_TIMIDITY_MIDI;USE_NATIVE_MIDI;USE_FLUIDSYNTH_MIDI;FLUIDSYNTH_DYNAMIC=\&quot;libfluidsynth.dll\&quot;;OGG_MUSIC;OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;;MP3_MUSIC;MP3_DYNAMIC=\&quot;smpeg.dll\&quot;"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -216,6 +216,14 @@
 		</File>
 		<File
 			RelativePath="..\dynamic_flac.h"
+			>
+		</File>
+		<File
+			RelativePath="..\dynamic_fluidsynth.c"
+			>
+		</File>
+		<File
+			RelativePath="..\dynamic_fluidsynth.h"
 			>
 		</File>
 		<File
@@ -346,6 +354,14 @@
 		</File>
 		<File
 			RelativePath="..\effects_internal.h"
+			>
+		</File>
+		<File
+			RelativePath="..\fluidsynth.c"
+			>
+		</File>
+		<File
+			RelativePath="..\fluidsynth.h"
 			>
 		</File>
 		<File

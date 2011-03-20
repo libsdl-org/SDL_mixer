@@ -387,6 +387,49 @@ AC_HELP_STRING([--enable-music-native-midi-gpl], [enable native MIDI on UNIX usi
             SOURCES="$SOURCES $srcdir/native_midi_gpl/*.c"
         fi
     fi
+    AC_ARG_ENABLE([music-fluidsynth-midi],
+AC_HELP_STRING([--enable-music-fluidsynth-midi], [enable FluidSynth MIDI output [[default=yes]]]),
+                  [], [enable_music_fluidsynth_midi=yes])
+    AC_ARG_ENABLE([music-fluidsynth-shared],
+AC_HELP_STRING([--enable-music-fluidsynth-shared], [dynamically load FluidSynth support [[default=yes]]]),
+                  [], [enable_music_fluidsynth_shared=yes])
+    if test x$enable_music_fluidsynth_midi = xyes; then
+        AC_CHECK_HEADER([fluidsynth.h], [have_fluidsynth_hdr=yes])
+        AC_CHECK_LIB([fluidsynth], [fluid_player_add_mem], [have_fluidsynth_lib=yes])
+        if test x$have_fluidsynth_hdr = xyes -a x$have_fluidsynth_lib = xyes; then
+            case "$host" in
+                *-*-darwin*)
+                    fluidsynth_lib=[`find_lib libfluidsynth.dylib`]
+                    if test x$fluidsynth_lib = x; then
+                        fluidsynth_lib=[`find_lib libfluidsynth.[0-9]`]
+                    fi
+                    if test x$fluidsynth_lib = x; then
+                        fluidsynth_lib=[`find_lib libfluidsynth.[0-9]*`]
+                    fi
+                    ;;
+                *-*-cygwin* | *-*-mingw32*)
+                    fluidsynth_lib=[`find_lib "fluidsynth*.dll"`]
+                    ;;
+                *)
+                    fluidsynth_lib=[`find_lib "libfluidsynth.so.[0-9]"`]
+                    if test x$fluidsynth_lib = x; then
+                        fluidsynth_lib=[`find_lib "libfluidsynth.so.[0-9]*"`]
+                    fi
+                    ;;
+            esac
+            SOURCES="$SOURCES $srcdir/dynamic_fluidsynth.c $srcdir/fluidsynth.c"
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DUSE_FLUIDSYNTH_MIDI"
+            if test x$enable_music_fluidsynth_shared = xyes && test x$fluidsynth_lib != x; then
+                echo "-- dynamic libfluidsyth -> $fluidsynth_lib"
+                EXTRA_CFLAGS="$EXTRA_CFLAGS -DFLUIDSYNTH_DYNAMIC=\\\"$fluidsynth_lib\\\""
+            else
+                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lfluidsynth"
+            fi
+        else
+            AC_MSG_WARN([*** Unable to find FluidSynth library (http://www.fluidsynth.org/)])
+            AC_MSG_WARN([FluidSynth support disabled])
+        fi
+    fi
 fi
 
 AC_ARG_ENABLE([music-ogg],

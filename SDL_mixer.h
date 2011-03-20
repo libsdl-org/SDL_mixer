@@ -67,10 +67,11 @@ extern DECLSPEC const SDL_version * SDLCALL Mix_Linked_Version(void);
 
 typedef enum
 {
-    MIX_INIT_FLAC = 0x00000001,
-    MIX_INIT_MOD  = 0x00000002,
-    MIX_INIT_MP3  = 0x00000004,
-    MIX_INIT_OGG  = 0x00000008
+    MIX_INIT_FLAC        = 0x00000001,
+    MIX_INIT_MOD         = 0x00000002,
+    MIX_INIT_MP3         = 0x00000004,
+    MIX_INIT_OGG         = 0x00000008,
+    MIX_INIT_FLUIDSYNTH  = 0x00000016
 } MIX_InitFlags;
 
 /* Loads dynamic libraries and prepares them for use.  Flags should be
@@ -604,6 +605,11 @@ extern DECLSPEC int SDLCALL Mix_SetMusicCMD(const char *command);
 /* Synchro value is set by MikMod from modules while playing */
 extern DECLSPEC int SDLCALL Mix_SetSynchroValue(int value);
 extern DECLSPEC int SDLCALL Mix_GetSynchroValue(void);
+
+/* Set/Get/Iterate SoundFonts paths to use by supported MIDI backends */
+extern DECLSPEC int SDLCALL Mix_SetSoundFonts(const char *paths);
+extern DECLSPEC const char* SDLCALL Mix_GetSoundFonts();
+extern DECLSPEC int SDLCALL Mix_EachSoundFont(int (*function)(const char*, void*), void *data);
 
 /* Get the Mix_Chunk currently associated with a mixer channel
     Returns NULL if it's an invalid channel, or there's no chunk associated.

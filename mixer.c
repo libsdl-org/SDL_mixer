@@ -107,6 +107,11 @@ static void *music_data = NULL;
 static const char **chunk_decoders = NULL;
 static int num_decoders = 0;
 
+/* Semicolon-separated SoundFont paths */
+#ifdef MID_MUSIC
+extern char* soundfont_paths;
+#endif
+
 int Mix_GetNumChunkDecoders(void)
 {
 	return(num_decoders);
@@ -144,6 +149,15 @@ int Mix_Init(int flags)
 {
 	int result = 0;
 
+	if (flags & MIX_INIT_FLUIDSYNTH) {
+#ifdef USE_FLUIDSYNTH_MIDI
+		if ((initialized & MIX_INIT_FLUIDSYNTH) || Mix_InitFluidSynth() == 0) {
+			result |= MIX_INIT_FLUIDSYNTH;
+		}
+#else
+		Mix_SetError("Mixer not built with FluidSynth support");
+#endif
+	}
 	if (flags & MIX_INIT_FLAC) {
 #ifdef FLAC_MUSIC
 		if ((initialized & MIX_INIT_FLAC) || Mix_InitFLAC() == 0) {
@@ -187,6 +201,11 @@ int Mix_Init(int flags)
 
 void Mix_Quit()
 {
+#ifdef USE_FLUIDSYNTH_MIDI
+	if (initialized & MIX_INIT_FLUIDSYNTH) {
+		Mix_QuitFluidSynth();
+	}
+#endif
 #ifdef FLAC_MUSIC
 	if (initialized & MIX_INIT_FLAC) {
 		Mix_QuitFLAC();
@@ -205,6 +224,11 @@ void Mix_Quit()
 #ifdef OGG_MUSIC
 	if (initialized & MIX_INIT_OGG) {
 		Mix_QuitOgg();
+	}
+#endif
+#ifdef MID_MUSIC
+	if (soundfont_paths) {
+		free(soundfont_paths);
 	}
 #endif
 	initialized = 0;

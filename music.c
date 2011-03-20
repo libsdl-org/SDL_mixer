@@ -48,13 +48,11 @@
 #  ifdef USE_TIMIDITY_MIDI
 #    include "timidity.h"
 #  endif
+#  ifdef USE_FLUIDSYNTH_MIDI
+#    include "fluidsynth.h"
+#  endif
 #  ifdef USE_NATIVE_MIDI
 #    include "native_midi.h"
-#  endif
-#  if defined(USE_TIMIDITY_MIDI) && defined(USE_NATIVE_MIDI)
-#    define MIDI_ELSE	else
-#  else
-#    define MIDI_ELSE
 #  endif
 #endif
 #ifdef OGG_MUSIC
@@ -101,6 +99,9 @@ struct _Mix_Music {
 #ifdef USE_TIMIDITY_MIDI
 		MidiSong *midi;
 #endif
+#ifdef USE_FLUIDSYNTH_MIDI
+		FluidSynthMidiSong *fluidsynthmidi;
+#endif
 #ifdef USE_NATIVE_MIDI
 		NativeMidiSong *nativemidi;
 #endif
@@ -128,6 +129,9 @@ struct _Mix_Music {
 static int timidity_ok;
 static int samplesize;
 #endif
+#ifdef USE_FLUIDSYNTH_MIDI
+static int fluidsynth_ok;
+#endif
 #ifdef USE_NATIVE_MIDI
 static int native_midi_ok;
 #endif
@@ -139,6 +143,11 @@ static int ms_per_step;
 /* rcg06042009 report available decoders at runtime. */
 static const char **music_decoders = NULL;
 static int num_decoders = 0;
+
+/* Semicolon-separated SoundFont paths */
+#ifdef MID_MUSIC
+char* soundfont_paths = NULL;
+#endif
 
 int Mix_GetNumMusicDecoders(void)
 {
@@ -270,14 +279,21 @@ void music_mixer(void *udata, Uint8 *stream, int len)
 				break;
 #endif
 #ifdef MID_MUSIC
-#ifdef USE_TIMIDITY_MIDI
 			case MUS_MID:
+#ifdef USE_FLUIDSYNTH_MIDI
+				if ( fluidsynth_ok ) {
+					fluidsynth_playsome(music_playing->data.fluidsynthmidi, stream, len);
+					goto skip;
+				}
+#endif
+#ifdef USE_TIMIDITY_MIDI
 				if ( timidity_ok ) {
 					int samples = len / samplesize;
   					Timidity_PlaySome(stream, samples);
+					goto skip;
 				}
-				break;
 #endif
+				break;
 #endif
 #ifdef OGG_MUSIC
 			case MUS_OGG:
@@ -306,6 +322,7 @@ void music_mixer(void *udata, Uint8 *stream, int len)
 		}
 	}
 
+skip:
 	/* Handle seamless music looping */
 	if (left > 0 && left < len && music_halt_or_loop()) {
 		music_mixer(udata, stream+(len-left), left);
@@ -341,9 +358,21 @@ int open_music(SDL_AudioSpec *mixer)
 		timidity_ok = 0;
 	}
 #endif
+#ifdef USE_FLUIDSYNTH_MIDI
+	if ( fluidsynth_init(mixer) == 0 ) {
+		fluidsynth_ok = 1;
+		add_music_decoder("FLUIDSYNTH");
+	} else {
+		fluidsynth_ok = 0;
+	}
+#endif
 #ifdef USE_NATIVE_MIDI
+#ifdef USE_FLUIDSYNTH_MIDI
+	native_midi_ok = !fluidsynth_ok;
+	if ( native_midi_ok )
+#endif
 #ifdef USE_TIMIDITY_MIDI
-	native_midi_ok = !timidity_ok;
+		native_midi_ok = !timidity_ok;
 	if ( !native_midi_ok ) {
 		native_midi_ok = (getenv("SDL_NATIVE_MUSIC") != NULL);
 	}
@@ -469,7 +498,17 @@ Mix_Music *Mix_LoadMUS(const char *file)
 		  		Mix_SetError("%s", native_midi_error());
 			  	music->error = 1;
 			}
-	  	} MIDI_ELSE
+			goto skip;
+	  	}
+#endif
+#ifdef USE_FLUIDSYNTH_MIDI
+		if ( fluidsynth_ok ) {
+			music->data.fluidsynthmidi = fluidsynth_loadsong(file);
+			if ( music->data.fluidsynthmidi == NULL ) {
+				music->error = 1;
+			}
+			goto skip;
+		}
 #endif
 #ifdef USE_TIMIDITY_MIDI
 		if ( timidity_ok ) {
@@ -565,6 +604,8 @@ Mix_Music *Mix_LoadMUS(const char *file)
 		Mix_SetError("Unrecognized music format");
 		music->error = 1;
 	}
+
+skip:
 	if ( music->error ) {
 		free(music);
 		music = NULL;
@@ -616,11 +657,19 @@ void Mix_FreeMusic(Mix_Music *music)
 #ifdef USE_NATIVE_MIDI
   				if ( native_midi_ok ) {
 					native_midi_freesong(music->data.nativemidi);
-				} MIDI_ELSE
+					goto skip;
+				}
+#endif
+#ifdef USE_FLUIDSYNTH_MIDI
+				if ( fluidsynth_ok ) {
+					fluidsynth_freesong(music->data.fluidsynthmidi);
+					goto skip;
+				}
 #endif
 #ifdef USE_TIMIDITY_MIDI
 				if ( timidity_ok ) {
 					Timidity_FreeSong(music->data.midi);
+					goto skip;
 				}
 #endif
 				break;
@@ -649,6 +698,8 @@ void Mix_FreeMusic(Mix_Music *music)
 				/* Unknown music type?? */
 				break;
 		}
+
+    skip:
 		free(music);
 	}
 }
@@ -720,11 +771,19 @@ static int music_internal_play(Mix_Music *music, double position)
 #ifdef USE_NATIVE_MIDI
 		if ( native_midi_ok ) {
 			native_midi_start(music->data.nativemidi);
-		} MIDI_ELSE
+			goto skip;
+		}
+#endif
+#ifdef USE_FLUIDSYNTH_MIDI
+		if (fluidsynth_ok ) {
+			fluidsynth_start(music->data.fluidsynthmidi);
+			goto skip;
+		}
 #endif
 #ifdef USE_TIMIDITY_MIDI
 		if ( timidity_ok ) {
 			Timidity_Start(music->data.midi);
+			goto skip;
 		}
 #endif
 		break;
@@ -757,6 +816,7 @@ static int music_internal_play(Mix_Music *music, double position)
 		break;
 	}
 
+skip:
 	/* Set the playback position, note any errors if an offset is used */
 	if ( retval == 0 ) {
 		if ( position > 0.0 ) {
@@ -929,11 +989,19 @@ static void music_internal_volume(int volume)
 #ifdef USE_NATIVE_MIDI
 		if ( native_midi_ok ) {
 			native_midi_setvolume(volume);
-		} MIDI_ELSE
+			return;
+		}
+#endif
+#ifdef USE_FLUIDSYNTH_MIDI
+		if ( fluidsynth_ok ) {
+			fluidsynth_setvolume(music_playing->data.fluidsynthmidi, volume);
+			return;
+		}
 #endif
 #ifdef USE_TIMIDITY_MIDI
 		if ( timidity_ok ) {
 			Timidity_SetVolume(volume);
+			return;
 		}
 #endif
 		break;
@@ -1012,11 +1080,19 @@ static void music_internal_halt(void)
 #ifdef USE_NATIVE_MIDI
 		if ( native_midi_ok ) {
 			native_midi_stop();
-		} MIDI_ELSE
+			goto skip;
+		}
+#endif
+#ifdef USE_FLUIDSYNTH_MIDI
+		if ( fluidsynth_ok ) {
+			fluidsynth_stop(music_playing->data.fluidsynthmidi);
+			goto skip;
+		}
 #endif
 #ifdef USE_TIMIDITY_MIDI
 		if ( timidity_ok ) {
 			Timidity_Stop();
+			goto skip;
 		}
 #endif
 		break;
@@ -1045,6 +1121,8 @@ static void music_internal_halt(void)
 		/* Unknown music type?? */
 		return;
 	}
+
+skip:
 	music_playing->fading = MIX_NO_FADING;
 	music_playing = NULL;
 }
@@ -1173,12 +1251,21 @@ static int music_internal_playing()
 		if ( native_midi_ok ) {
 			if ( ! native_midi_active() )
 				playing = 0;
-		} MIDI_ELSE
+			goto skip;
+		}
+#endif
+#ifdef USE_FLUIDSYNTH_MIDI
+		if ( fluidsynth_ok ) {
+			if ( ! fluidsynth_active(music_playing->data.fluidsynthmidi) )
+				playing = 0;
+			goto skip;
+		}
 #endif
 #ifdef USE_TIMIDITY_MIDI
 		if ( timidity_ok ) {
 			if ( ! Timidity_Active() )
 				playing = 0;
+			goto skip;
 		}
 #endif
 		break;
@@ -1214,6 +1301,8 @@ static int music_internal_playing()
 		playing = 0;
 		break;
 	}
+
+skip:
 	return(playing);
 }
 int Mix_PlayingMusic(void)
@@ -1393,7 +1482,17 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw)
 		  		Mix_SetError("%s", native_midi_error());
 			  	music->error = 1;
 			}
-		} MIDI_ELSE
+			goto skip;
+		}
+#endif
+#ifdef USE_FLUIDSYNTH_MIDI
+		if ( fluidsynth_ok ) {
+			music->data.fluidsynthmidi = fluidsynth_loadsong_RW(rw);
+			if ( music->data.fluidsynthmidi == NULL ) {
+				music->error = 1;
+			}
+			goto skip;
+		}
 #endif
 #ifdef USE_TIMIDITY_MIDI
 		if ( timidity_ok ) {
@@ -1436,9 +1535,72 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw)
 		Mix_SetError("Unrecognized music format");
 		music->error=1;
 	}
+
+skip:
 	if (music->error) {
 		free(music);
 		music=NULL;
 	}
 	return(music);
 }
+
+int Mix_SetSoundFonts(const char *paths)
+{
+#ifdef MID_MUSIC
+	if (soundfont_paths) {
+		free(soundfont_paths);
+		soundfont_paths = NULL;
+	}
+
+	if (paths) {
+		if (!(soundfont_paths = strdup(paths))) {
+			Mix_SetError("Insufficient memory to set SoundFonts");
+			return 0;
+		}
+	}
+#endif
+	return 1;
+}
+
+#ifdef MID_MUSIC
+const char* Mix_GetSoundFonts()
+{
+	const char* force = getenv("SDL_FORCE_SOUNDFONTS");
+
+	if (!soundfont_paths || (force && force[0] == '1')) {
+		return getenv("SDL_SOUNDFONTS");
+	} else {
+		return soundfont_paths;
+	}
+}
+
+int Mix_EachSoundFont(int (*function)(const char*, void*), void *data)
+{
+	char *context, *path, *paths;
+	const char* cpaths = Mix_GetSoundFonts();
+
+	if (!cpaths) {
+		Mix_SetError("No SoundFonts have been requested");
+		return 0;
+	}
+
+	if (!(paths = strdup(cpaths))) {
+		Mix_SetError("Insufficient memory to iterate over SoundFonts");
+		return 0;
+	}
+
+#ifdef _WIN32
+	for (path = strtok_s(paths, ";", &context); path; path = strtok_s(NULL, ";", &context)) {
+#else
+	for (path = strtok_r(paths, ":;", &context); path; path = strtok_r(NULL, ":;", &context)) {
+#endif
+		if (!function(path, data)) {
+			free(paths);
+			return 0;
+		}
+	}
+
+	free(paths);
+	return 1;
+}
+#endif
