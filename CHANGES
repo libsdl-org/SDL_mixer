@@ -1,4 +1,6 @@
 1.2.12:
+James Le Cuirot - Mon Mar 21 16:54:11 PDT 2011
+ * Added support for FluidSynth
 Scott MC - Tue Jan 18 11:06:47 PST 2011
  * Added support for native MIDI on Haiku OS
 Jon Atkins - Sat Nov 14 13:00:18 PST 2009
