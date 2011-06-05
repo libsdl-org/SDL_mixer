@@ -608,7 +608,7 @@ extern DECLSPEC int SDLCALL Mix_GetSynchroValue(void);
 
 /* Set/Get/Iterate SoundFonts paths to use by supported MIDI backends */
 extern DECLSPEC int SDLCALL Mix_SetSoundFonts(const char *paths);
-extern DECLSPEC const char* SDLCALL Mix_GetSoundFonts();
+extern DECLSPEC const char* SDLCALL Mix_GetSoundFonts(void);
 extern DECLSPEC int SDLCALL Mix_EachSoundFont(int (*function)(const char*, void*), void *data);
 
 /* Get the Mix_Chunk currently associated with a mixer channel
