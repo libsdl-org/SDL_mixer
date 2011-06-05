@@ -1563,7 +1563,7 @@ int Mix_SetSoundFonts(const char *paths)
 }
 
 #ifdef MID_MUSIC
-const char* Mix_GetSoundFonts()
+const char* Mix_GetSoundFonts(void)
 {
 	const char* force = getenv("SDL_FORCE_SOUNDFONTS");
 
