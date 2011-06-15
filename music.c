@@ -253,10 +253,10 @@ void music_mixer(void *udata, Uint8 *stream, int len)
 			}
 		}
 		
-		if (music_halt_or_loop() == 0)
+		music_halt_or_loop();
+		if (!music_internal_playing())
 			return;
-		
-		
+
 		switch (music_playing->type) {
 #ifdef CMD_MUSIC
 			case MUS_CMD:
@@ -324,8 +324,10 @@ void music_mixer(void *udata, Uint8 *stream, int len)
 
 skip:
 	/* Handle seamless music looping */
-	if (left > 0 && left < len && music_halt_or_loop()) {
-		music_mixer(udata, stream+(len-left), left);
+	if (left > 0 && left < len) {
+		music_halt_or_loop();
+		if (music_internal_playing())
+			music_mixer(udata, stream+(len-left), left);
 	}
 }
 
