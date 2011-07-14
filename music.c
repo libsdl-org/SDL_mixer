@@ -1218,6 +1218,11 @@ int Mix_PausedMusic(void)
 static int music_internal_playing()
 {
 	int playing = 1;
+
+	if (music_playing == NULL) {
+		return 0;
+	}
+
 	switch (music_playing->type) {
 #ifdef CMD_MUSIC
 	    case MUS_CMD:
