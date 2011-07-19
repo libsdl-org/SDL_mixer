@@ -566,9 +566,7 @@ Mix_Music *Mix_LoadMUS(const char *file)
 #ifdef MP3_MUSIC
 	if ( (ext && MIX_string_equals(ext, "MPG")) ||
 	     (ext && MIX_string_equals(ext, "MP3")) ||
-	     (ext && MIX_string_equals(ext, "MPEG")) ||
-	     (magic[0] == 0xFF && (magic[1] & 0xF0) == 0xF0) ||
-	     (strncmp((char *)magic, "ID3", 3) == 0) ) {
+	     (ext && MIX_string_equals(ext, "MPEG")) ) {
 		if ( Mix_Init(MIX_INIT_MP3) ) {
 			SMPEG_Info info;
 			music->type = MUS_MP3;
@@ -589,8 +587,9 @@ Mix_Music *Mix_LoadMUS(const char *file)
 	     (ext && MIX_string_equals(ext, "MP3")) ||
 	     (ext && MIX_string_equals(ext, "MPEG")) ||
 	     (ext && MIX_string_equals(ext, "MAD")) ||
+	     /* Don't check the magic. Lots of bogus but usable MP3s out there...
 	     (magic[0] == 0xFF && (magic[1] & 0xF0) == 0xF0) ||
-	     (strncmp((char *)magic, "ID3", 3) == 0) ) {
+	     (strncmp((char *)magic, "ID3", 3) == 0)*/ ) {
 		music->type = MUS_MP3_MAD;
 		music->data.mp3_mad = mad_openFile(file, &used_mixer);
 		if (music->data.mp3_mad == 0) {
