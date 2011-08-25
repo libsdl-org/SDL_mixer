@@ -651,6 +651,7 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
 	chunk->abuf = wavecvt.buf;
 	chunk->alen = wavecvt.len_cvt;
 	chunk->volume = MIX_MAX_VOLUME;
+	free(wavecvt.buf);
 	return(chunk);
 }
 
@@ -1287,7 +1288,7 @@ int Mix_GroupNewer(int tag)
 static int _Mix_register_effect(effect_info **e, Mix_EffectFunc_t f,
 				Mix_EffectDone_t d, void *arg)
 {
-	effect_info *new_e = malloc(sizeof (effect_info));
+	effect_info *new_e;
 
 	if (!e) {
 		Mix_SetError("Internal error");
@@ -1299,6 +1300,7 @@ static int _Mix_register_effect(effect_info **e, Mix_EffectFunc_t f,
 		return(0);
 	}
 
+	new_e = malloc(sizeof (effect_info));
 	if (new_e == NULL) {
 		Mix_SetError("Out of memory");
 		return(0);
