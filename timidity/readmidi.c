@@ -111,9 +111,9 @@ static int sysex(uint32 len, uint8 *syschan, uint8 *sysa, uint8 *sysb, SDL_RWops
   if (id==0x7f && len==7 && port==0x7f && model==0x04 && adhi==0x01)
     {
       ctl->cmsg(CMSG_TEXT, VERB_DEBUG, "Master Volume %d", s[4]+(s[5]<<7));
-      free(s);
       *sysa = s[4];
       *sysb = s[5];
+      free(s);
       return ME_MASTERVOLUME;
       /** return s[4]+(s[5]<<7); **/
     }
