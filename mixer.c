@@ -631,7 +631,7 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
 	}
 	samplesize = ((wavespec.format & 0xFF)/8)*wavespec.channels;
 	wavecvt.len = chunk->alen & ~(samplesize-1);
-	wavecvt.buf = (Uint8 *)malloc(wavecvt.len*wavecvt.len_mult);
+	wavecvt.buf = (Uint8 *)calloc(1, wavecvt.len*wavecvt.len_mult);
 	if ( wavecvt.buf == NULL ) {
 		SDL_SetError("Out of memory");
 		SDL_FreeWAV(chunk->abuf);
