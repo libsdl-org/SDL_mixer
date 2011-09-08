@@ -259,3 +259,23 @@ void native_midi_start(NativeMidiSong *song)
   currentSong = song;
 }
 void native_midi_stop()
+{
+  if (currentSong == NULL) return;
+  currentSong->store->Stop();
+  currentSong->store->Disconnect(&synth);
+  while (currentSong->store->IsPlaying())
+    usleep(1000);
+  currentSong = NULL;
+}
+int native_midi_active()
+{
+  if (currentSong == NULL) return 0;
+  return currentSong->store->CurrentEvent() < currentSong->store->CountEvents();
+}
+
+const char* native_midi_error(void)
+{
+  return lasterr;
+}
+
+#endif /* __HAIKU__ */
