@@ -651,7 +651,7 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
 	chunk->abuf = wavecvt.buf;
 	chunk->alen = wavecvt.len_cvt;
 	chunk->volume = MIX_MAX_VOLUME;
-	free(wavecvt.buf);
+
 	return(chunk);
 }
 
