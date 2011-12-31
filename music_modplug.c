@@ -85,12 +85,12 @@ modplug_data *modplug_new(const char *file)
 		SDL_SetError("Couldn't open %s", file);
 		return NULL;
 	}
-	return modplug_new_RW(rw);
+	return modplug_new_RW(rw, 1);
 
 }
 
 /* Load a modplug stream from an SDL_RWops object */
-modplug_data *modplug_new_RW(SDL_RWops *rw)
+modplug_data *modplug_new_RW(SDL_RWops *rw, int freerw)
 {
 	modplug_data *music=NULL;
 	long offset,sz;
@@ -101,20 +101,35 @@ modplug_data *modplug_new_RW(SDL_RWops *rw)
 	sz = SDL_RWtell(rw)-offset;
 	SDL_RWseek(rw, offset, RW_SEEK_SET);
 	buf=(char*)malloc(sz);
-	if(!buf)
-		return NULL;
-	if(SDL_RWread(rw, buf, sz, 1)==1)
+	if(buf)
 	{
-		music=(modplug_data*)malloc(sizeof(modplug_data));
-		music->playing=0;
-		music->file=ModPlug_Load(buf,sz);
-		if(!music->file)
+		if(SDL_RWread(rw, buf, sz, 1)==1)
 		{
-			free(music);
-			music=NULL;
+			music=(modplug_data*)malloc(sizeof(modplug_data));
+			if (music)
+			{
+				music->playing=0;
+				music->file=ModPlug_Load(buf,sz);
+				if(!music->file)
+				{
+					free(music);
+					music=NULL;
+				}
+			}
+			else
+			{
+				SDL_OutOfMemory();
+			}
 		}
+		free(buf);
 	}
-	free(buf);
+	else
+	{
+		SDL_OutOfMemory();
+	}
+	if (freerw) {
+		SDL_RWclose(rw);
+	}
 	return music;
 }
 

@@ -116,34 +116,32 @@ void WAVStream_SetVolume(int volume)
 WAVStream *WAVStream_LoadSong(const char *file, const char *magic)
 {
 	SDL_RWops *rw;
-	WAVStream *wave;
 
 	rw = SDL_RWFromFile(file, "rb");
 	if ( rw == NULL ) {
 		SDL_SetError("Couldn't open %s", file);
 		return NULL;
 	}
-	wave = WAVStream_LoadSong_RW(rw, magic);
-	if ( wave == NULL ) {
-		SDL_FreeRW(rw);
-		return NULL;
-	}
-	return wave;
+	return WAVStream_LoadSong_RW(rw, magic, 1);
 }
 
 /* Load a WAV stream from the given file */
-WAVStream *WAVStream_LoadSong_RW(SDL_RWops *rw, const char *magic)
+WAVStream *WAVStream_LoadSong_RW(SDL_RWops *rw, const char *magic, int freerw)
 {
 	WAVStream *wave;
 	SDL_AudioSpec wavespec;
 
 	if ( ! mixer.format ) {
 		Mix_SetError("WAV music output not started");
+		if ( freerw ) {
+			SDL_RWclose(rw);
+		}
 		return(NULL);
 	}
 	wave = (WAVStream *)malloc(sizeof *wave);
 	if ( wave ) {
 		memset(wave, 0, (sizeof *wave));
+		wave->freerw = freerw;
 		if ( strcmp(magic, "RIFF") == 0 ) {
 			wave->rw = LoadWAVStream(rw, &wavespec,
 					&wave->start, &wave->stop);
@@ -156,11 +154,20 @@ WAVStream *WAVStream_LoadSong_RW(SDL_RWops *rw, const char *magic)
 		}
 		if ( wave->rw == NULL ) {
 			free(wave);
+			if ( freerw ) {
+				SDL_RWclose(rw);
+			}
 			return(NULL);
 		}
 		SDL_BuildAudioCVT(&wave->cvt,
 			wavespec.format, wavespec.channels, wavespec.freq,
 			mixer.format, mixer.channels, mixer.freq);
+	} else {
+		SDL_OutOfMemory();
+		if ( freerw ) {
+			SDL_RWclose(rw);
+		}
+		return(NULL);
 	}
 	return(wave);
 }
@@ -242,11 +249,11 @@ void WAVStream_FreeSong(WAVStream *wave)
 {
 	if ( wave ) {
 		/* Clean up associated data */
-		if ( wave->freerw ) {
-			SDL_FreeRW(wave->rw);
-		}
 		if ( wave->cvt.buf ) {
 			free(wave->cvt.buf);
+		}
+		if ( wave->freerw ) {
+			SDL_RWclose(wave->rw);
 		}
 		free(wave);
 	}

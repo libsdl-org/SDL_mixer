@@ -152,7 +152,7 @@ MODULE *MOD_new(const char *file)
 		SDL_SetError("Couldn't open %s", file);
 		return NULL;
 	}
-	return MOD_new_RW(rw);
+	return MOD_new_RW(rw, 1);
 }
 
 
@@ -215,18 +215,24 @@ MODULE *MikMod_LoadSongRW(SDL_RWops *rw, int maxchan)
 }
 
 /* Load a MOD stream from an SDL_RWops object */
-MODULE *MOD_new_RW(SDL_RWops *rw)
+MODULE *MOD_new_RW(SDL_RWops *rw, int freerw)
 {
 	MODULE *module;
 
 	/* Make sure the mikmod library is loaded */
 	if ( !Mix_Init(MIX_INIT_MOD) ) {
+		if ( freerw ) {
+			SDL_RWclose(rw);
+		}
 		return NULL;
 	}
 
 	module = MikMod_LoadSongRW(rw,64);
 	if (!module) {
 		Mix_SetError("%s", mikmod.MikMod_strerror(*mikmod.MikMod_errno));
+		if ( freerw ) {
+			SDL_RWclose(rw);
+		}
 		return NULL;
 	}
 
@@ -239,6 +245,10 @@ MODULE *MOD_new_RW(SDL_RWops *rw)
 to query the status of the song or set trigger actions.  Hum. */
 	module->fadeout = 1;
 #endif
+
+	if ( freerw ) {
+		SDL_RWclose(rw);
+	}
 	return module;
 }
 

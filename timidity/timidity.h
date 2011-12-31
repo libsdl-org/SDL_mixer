@@ -13,7 +13,7 @@ extern const char *Timidity_Error(void);
 extern void Timidity_SetVolume(int volume);
 extern int Timidity_PlaySome(void *stream, int samples);
 extern MidiSong *Timidity_LoadSong(const char *midifile);
-extern MidiSong *Timidity_LoadSong_RW(SDL_RWops *rw);
+extern MidiSong *Timidity_LoadSong_RW(SDL_RWops *rw, int freerw);
 extern void Timidity_Start(MidiSong *song);
 extern int Timidity_Active(void);
 extern void Timidity_Stop(void);

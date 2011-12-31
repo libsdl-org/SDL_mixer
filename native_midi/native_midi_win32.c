@@ -189,42 +189,28 @@ int native_midi_detect()
 
 NativeMidiSong *native_midi_loadsong(const char *midifile)
 {
-	NativeMidiSong *newsong;
-	MIDIEvent		*evntlist = NULL;
-	SDL_RWops	*rw;
-
-	newsong=malloc(sizeof(NativeMidiSong));
-	if (!newsong)
-		return NULL;
-	memset(newsong,0,sizeof(NativeMidiSong));
+	SDL_RWops *rw;
 
 	/* Attempt to load the midi file */
 	rw = SDL_RWFromFile(midifile, "rb");
-	if (rw) {
-		evntlist = CreateMIDIEventList(rw, &newsong->ppqn);
-		SDL_RWclose(rw);
-		if (!evntlist)
-		{
-			free(newsong);
-			return NULL;
-		}
+	if (!rw) {
+		return NULL;
 	}
-
-	MIDItoStream(newsong, evntlist);
-
-	FreeMIDIEventList(evntlist);
-
-	return newsong;
+	return native_midi_loadsong_RW(rw, 1);
 }
 
-NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw)
+NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw, int freerw)
 {
 	NativeMidiSong *newsong;
 	MIDIEvent		*evntlist = NULL;
 
 	newsong=malloc(sizeof(NativeMidiSong));
-	if (!newsong)
+	if (!newsong) {
+		if (freerw) {
+			SDL_RWclose(rw);
+		}
 		return NULL;
+	}
 	memset(newsong,0,sizeof(NativeMidiSong));
 
 	/* Attempt to load the midi file */
@@ -232,6 +218,9 @@ NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw)
 	if (!evntlist)
 	{
 		free(newsong);
+		if (freerw) {
+			SDL_RWclose(rw);
+		}
 		return NULL;
 	}
 
@@ -239,6 +228,9 @@ NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw)
 
 	FreeMIDIEventList(evntlist);
 
+	if (freerw) {
+		SDL_RWclose(rw);
+	}
 	return newsong;
 }
 

@@ -52,6 +52,7 @@ typedef struct {
 	FLAC__StreamDecoder *flac_decoder;
 	FLAC_Data flac_data;
 	SDL_RWops *rwops;
+	int freerw;
 	SDL_AudioCVT cvt;
 	int len_available;
 	Uint8 *snd_available;
@@ -69,7 +70,7 @@ extern void FLAC_setvolume(FLAC_music *music, int volume);
 extern FLAC_music *FLAC_new(const char *file);
 
 /* Load an FLAC stream from an SDL_RWops object */
-extern FLAC_music *FLAC_new_RW(SDL_RWops *rw);
+extern FLAC_music *FLAC_new_RW(SDL_RWops *rw, int freerw);
 
 /* Start playback of a given FLAC stream */
 extern void FLAC_play(FLAC_music *music);

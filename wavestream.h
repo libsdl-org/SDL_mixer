@@ -45,7 +45,7 @@ extern void WAVStream_SetVolume(int volume);
 extern WAVStream *WAVStream_LoadSong(const char *file, const char *magic);
 
 /* Load a WAV stream from an SDL_RWops object */
-extern WAVStream *WAVStream_LoadSong_RW(SDL_RWops *rw, const char *magic);
+extern WAVStream *WAVStream_LoadSong_RW(SDL_RWops *rw, const char *magic, int freerw);
 
 /* Start playback of a given WAV stream */
 extern void WAVStream_Start(WAVStream *wave);

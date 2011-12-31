@@ -148,9 +148,15 @@ FluidSynthMidiSong *fluidsynth_loadsong(const char *midifile)
 	return fluidsynth_loadsong_common(fluidsynth_loadsong_internal, (void*) midifile);
 }
 
-FluidSynthMidiSong *fluidsynth_loadsong_RW(SDL_RWops *rw)
+FluidSynthMidiSong *fluidsynth_loadsong_RW(SDL_RWops *rw, int freerw)
 {
-	return fluidsynth_loadsong_common(fluidsynth_loadsong_RW_internal, (void*) rw);
+	FluidSynthMidiSong *song;
+
+	song = fluidsynth_loadsong_common(fluidsynth_loadsong_RW_internal, (void*) rw);
+	if (freerw) {
+		SDL_RWclose(rw);
+	}
+	return song;
 }
 
 void fluidsynth_freesong(FluidSynthMidiSong *song)

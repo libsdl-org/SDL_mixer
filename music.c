@@ -1391,6 +1391,7 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw)
 	Uint8 moremagic[9];
 	Mix_Music *music;
 	int start;
+	int freerw = 0;
 
 	if (!rw) {
 		Mix_SetError("RWops pointer is NULL");
@@ -1423,7 +1424,7 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw)
 	if ( ((strcmp((char *)magic, "RIFF") == 0) && (strcmp((char *)(moremagic+4), "WAVE") == 0)) ||
 	     (strcmp((char *)magic, "FORM") == 0) ) {
 		music->type = MUS_WAV;
-		music->data.wave = WAVStream_LoadSong_RW(rw, (char *)magic);
+		music->data.wave = WAVStream_LoadSong_RW(rw, (char *)magic, freerw);
 		if ( music->data.wave == NULL ) {
 			music->error = 1;
 		}
@@ -1434,7 +1435,7 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw)
 	/* Ogg Vorbis files have the magic four bytes "OggS" */
 	if ( strcmp((char *)magic, "OggS") == 0 ) {
 		music->type = MUS_OGG;
-		music->data.ogg = OGG_new_RW(rw);
+		music->data.ogg = OGG_new_RW(rw, freerw);
 		if ( music->data.ogg == NULL ) {
 			music->error = 1;
 		}
@@ -1444,7 +1445,7 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw)
 	/* FLAC files have the magic four bytes "fLaC" */
 	if ( strcmp((char *)magic, "fLaC") == 0 ) {
 		music->type = MUS_FLAC;
-		music->data.flac = FLAC_new_RW(rw);
+		music->data.flac = FLAC_new_RW(rw, freerw);
 		if ( music->data.flac == NULL ) {
 			music->error = 1;
 		}
@@ -1470,7 +1471,7 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw)
 #ifdef MP3_MAD_MUSIC
 	if ( ( magic[0] == 0xFF && (magic[1] & 0xF0) == 0xF0) || ( strncmp((char *)magic, "ID3", 3) == 0 ) ) {
 		music->type = MUS_MP3_MAD;
-		music->data.mp3_mad = mad_openFileRW(rw, &used_mixer);
+		music->data.mp3_mad = mad_openFileRW(rw, &used_mixer, freerw);
 		if (music->data.mp3_mad == 0) {
 			Mix_SetError("Could not initialize MPEG stream.");
 			music->error = 1;
@@ -1483,7 +1484,7 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw)
 		music->type = MUS_MID;
 #ifdef USE_NATIVE_MIDI
 		if ( native_midi_ok ) {
-			music->data.nativemidi = native_midi_loadsong_RW(rw);
+			music->data.nativemidi = native_midi_loadsong_RW(rw, freerw);
 	  		if ( music->data.nativemidi == NULL ) {
 		  		Mix_SetError("%s", native_midi_error());
 			  	music->error = 1;
@@ -1493,7 +1494,7 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw)
 #endif
 #ifdef USE_FLUIDSYNTH_MIDI
 		if ( fluidsynth_ok ) {
-			music->data.fluidsynthmidi = fluidsynth_loadsong_RW(rw);
+			music->data.fluidsynthmidi = fluidsynth_loadsong_RW(rw, freerw);
 			if ( music->data.fluidsynthmidi == NULL ) {
 				music->error = 1;
 			}
@@ -1502,7 +1503,7 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw)
 #endif
 #ifdef USE_TIMIDITY_MIDI
 		if ( timidity_ok ) {
-			music->data.midi = Timidity_LoadSong_RW(rw);
+			music->data.midi = Timidity_LoadSong_RW(rw, freerw);
 			if ( music->data.midi == NULL ) {
 				Mix_SetError("%s", Timidity_Error());
 				music->error = 1;
@@ -1520,7 +1521,7 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw)
 #ifdef MODPLUG_MUSIC
 		if ( music->error ) {
 			music->type = MUS_MODPLUG;
-			music->data.modplug = modplug_new_RW(rw);
+			music->data.modplug = modplug_new_RW(rw, freerw);
 			if ( music->data.modplug ) {
 				music->error = 0;
 			}
@@ -1529,7 +1530,7 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw)
 #ifdef MOD_MUSIC
 		if ( music->error ) {
 			music->type = MUS_MOD;
-			music->data.module = MOD_new_RW(rw);
+			music->data.module = MOD_new_RW(rw, freerw);
 			if ( music->data.module ) {
 				music->error = 0;
 			}

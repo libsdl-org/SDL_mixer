@@ -1703,7 +1703,7 @@ MidiSong *Timidity_LoadSong(const char *midifile)
   return(song);
 }
 
-MidiSong *Timidity_LoadSong_RW(SDL_RWops *rw)
+MidiSong *Timidity_LoadSong_RW(SDL_RWops *rw, int freerw)
 {
   MidiSong *song;
   int32 events;
@@ -1714,7 +1714,10 @@ MidiSong *Timidity_LoadSong_RW(SDL_RWops *rw)
 
   strcpy(midi_name, "SDLrwops source");
 
-  song->events=read_midi_file(rw, &events, &song->samples);
+  song->events = read_midi_file(rw, &events, &song->samples);
+  if (freerw) {
+    SDL_RWclose(rw);
+  }
 
   /* Make sure everything is okay */
   if (!song->events) {

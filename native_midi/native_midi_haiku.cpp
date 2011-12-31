@@ -213,12 +213,15 @@ void native_midi_setvolume(int volume)
   synth.SetVolume(volume / 128.0);
 }
 
-NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw)
+NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw, int freerw)
 {
   NativeMidiSong *song = new NativeMidiSong;
   song->store = new MidiEventsStore;
   status_t res = song->store->Import(rw);
 
+  if (freerw) {
+    SDL_RWclose(rw);
+  }
   if (res != B_OK)
   {
     snprintf(lasterr, sizeof lasterr, "Cannot Import() midi file: status_t=%d", res);
@@ -233,9 +236,7 @@ NativeMidiSong *native_midi_loadsong(const char *midifile)
 {
   SDL_RWops *rw = SDL_RWFromFile(midifile, "rb");
   if (!rw) return NULL;
-  NativeMidiSong *song = native_midi_loadsong_RW(rw);
-  SDL_RWclose(rw);
-  return song;
+  return native_midi_loadsong_RW(rw, 1);
 }
 
 void native_midi_freesong(NativeMidiSong *song)
