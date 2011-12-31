@@ -757,7 +757,7 @@
 					"-sub_umbrella",
 					smpeg,
 				);
-				PRODUCT_NAME = SDL_mixer;
+				PRODUCT_NAME = SDLmixer;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
 					"-Wall",
@@ -832,7 +832,7 @@
 					"-sub_umbrella",
 					smpeg,
 				);
-				PRODUCT_NAME = SDL_mixer;
+				PRODUCT_NAME = SDLmixer;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
 					"-Wall",
@@ -904,7 +904,7 @@
 					"-sub_umbrella",
 					smpeg,
 				);
-				PRODUCT_NAME = SDL_mixer;
+				PRODUCT_NAME = SDLmixer;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
 					"-Wall",
@@ -955,7 +955,7 @@
 				);
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = SDL_mixer;
+				PRODUCT_NAME = SDLmixer;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -1011,7 +1011,7 @@
 				);
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = SDL_mixer;
+				PRODUCT_NAME = SDLmixer;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -1063,7 +1063,7 @@
 				);
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = SDL_mixer;
+				PRODUCT_NAME = SDLmixer;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
