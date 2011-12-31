@@ -60,7 +60,7 @@ FLAC_music *FLAC_new(const char *file)
 		SDL_SetError ("Couldn't open %s", file);
 		return NULL;
 	}
-	return FLAC_new_RW (rw);
+	return FLAC_new_RW (rw, 1);
 }
 
 static FLAC__StreamDecoderReadStatus flac_read_music_cb(
@@ -313,7 +313,7 @@ static void flac_error_music_cb(
 }
 
 /* Load an FLAC stream from an SDL_RWops object */
-FLAC_music *FLAC_new_RW(SDL_RWops *rw)
+FLAC_music *FLAC_new_RW(SDL_RWops *rw, int freerw)
 {
 	FLAC_music *music;
 	int init_stage = 0;
@@ -327,6 +327,7 @@ FLAC_music *FLAC_new_RW(SDL_RWops *rw)
 		FLAC_setvolume (music, MIX_MAX_VOLUME);
 		music->section = -1;
 		music->rwops = rw;
+		music->freerw = freerw;
 		music->flac_data.max_to_read = 0;
 		music->flac_data.overflow = NULL;
 		music->flac_data.overflow_len = 0;
@@ -375,14 +376,19 @@ FLAC_music *FLAC_new_RW(SDL_RWops *rw)
 				case 1:
 				case 0:
 					free(music);
-					SDL_RWclose(rw);
+					if (freerw) {
+						SDL_RWclose(rw);
+					}
 					break;
 			}
 			return NULL;
 		}
-	}
-	else {
+	} else {
 		SDL_OutOfMemory();
+		if (freerw) {
+			SDL_RWclose(rw);
+		}
+		return NULL;
 	}
 
 	return music;
@@ -556,6 +562,9 @@ void FLAC_delete(FLAC_music *music)
 			free (music->cvt.buf);
 		}
 
+		if (music->freerw) {
+			SDL_RWclose(music->rwops);
+		}
 		free (music);
 	}
 }

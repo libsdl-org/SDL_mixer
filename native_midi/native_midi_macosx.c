@@ -149,14 +149,13 @@ NativeMidiSong *native_midi_loadsong(const char *midifile)
     NativeMidiSong *retval = NULL;
     SDL_RWops *rw = SDL_RWFromFile(midifile, "rb");
     if (rw != NULL) {
-        retval = native_midi_loadsong_RW(rw);
-        SDL_RWclose(rw);
+        retval = native_midi_loadsong_RW(rw, 1);
     }
 
     return retval;
 }
 
-NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw)
+NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw, int freerw)
 {
     NativeMidiSong *retval = NULL;
     void *buf = NULL;
@@ -213,6 +212,9 @@ NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw)
     if (MusicPlayerSetSequence(retval->player, retval->sequence) != noErr)
         goto fail;
 
+    if (freerw)
+        SDL_RWclose(rw);
+
     return retval;
 
 fail:
@@ -229,6 +231,9 @@ fail:
 
     if (buf)
         free(buf);
+
+    if (freerw)
+        SDL_RWclose(rw);
 
     return NULL;
 }

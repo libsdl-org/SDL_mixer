@@ -22,7 +22,7 @@ void modplug_setvolume(modplug_data *music, int volume);
 modplug_data *modplug_new(const char *file);
 
 /* Load a modplug stream from an SDL_RWops object */
-modplug_data *modplug_new_RW(SDL_RWops *rw);
+modplug_data *modplug_new_RW(SDL_RWops *rw, int freerw);
 
 /* Start playback of a given modplug stream */
 void modplug_play(modplug_data *music);

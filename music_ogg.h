@@ -32,6 +32,8 @@
 #endif
 
 typedef struct {
+	SDL_RWops *rw;
+	int freerw;
 	int playing;
 	int volume;
 	OggVorbis_File vf;
@@ -53,7 +55,7 @@ extern void OGG_setvolume(OGG_music *music, int volume);
 extern OGG_music *OGG_new(const char *file);
 
 /* Load an OGG stream from an SDL_RWops object */
-extern OGG_music *OGG_new_RW(SDL_RWops *rw);
+extern OGG_music *OGG_new_RW(SDL_RWops *rw, int freerw);
 
 /* Start playback of a given OGG stream */
 extern void OGG_play(OGG_music *music);

@@ -42,7 +42,7 @@ enum {
 
 typedef struct {
   SDL_RWops *rw;
-  SDL_bool freerw;
+  int freerw;
   struct mad_stream stream;
   struct mad_frame frame;
   struct mad_synth synth;
@@ -59,7 +59,7 @@ typedef struct {
 } mad_data;
 
 mad_data *mad_openFile(const char *filename, SDL_AudioSpec *mixer);
-mad_data *mad_openFileRW(SDL_RWops *rw, SDL_AudioSpec *mixer);
+mad_data *mad_openFileRW(SDL_RWops *rw, SDL_AudioSpec *mixer, int freerw);
 void mad_closeFile(mad_data *mp3_mad);
 
 void mad_start(mad_data *mp3_mad);

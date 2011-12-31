@@ -37,7 +37,7 @@ typedef struct {
 
 int fluidsynth_init(SDL_AudioSpec *mixer);
 FluidSynthMidiSong *fluidsynth_loadsong(const char *midifile);
-FluidSynthMidiSong *fluidsynth_loadsong_RW(SDL_RWops *rw);
+FluidSynthMidiSong *fluidsynth_loadsong_RW(SDL_RWops *rw, int freerw);
 void fluidsynth_freesong(FluidSynthMidiSong *song);
 void fluidsynth_start(FluidSynthMidiSong *song);
 void fluidsynth_stop(FluidSynthMidiSong *song);

@@ -222,7 +222,7 @@ int main(int argc, char *argv[])
 		}
 		Mix_FreeMusic(music);
 		if ( rwops ) {
-			SDL_FreeRW(rwfp);
+			SDL_RWclose(rwfp);
 		}
 		music = NULL;
 

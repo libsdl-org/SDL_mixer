@@ -26,7 +26,8 @@
 #include "music_mad.h"
 
 mad_data *
-mad_openFile(const char *filename, SDL_AudioSpec *mixer) {
+mad_openFile(const char *filename, SDL_AudioSpec *mixer)
+{
   SDL_RWops *rw;
   mad_data *mp3_mad;
 
@@ -35,23 +36,18 @@ mad_openFile(const char *filename, SDL_AudioSpec *mixer) {
 	return NULL;
   }
 
-  mp3_mad = mad_openFileRW(rw, mixer);
-  if (mp3_mad == NULL) {
-	SDL_FreeRW(rw);
-	return NULL;
-  }
-  mp3_mad->freerw = SDL_TRUE;
-  return mp3_mad;
+  return mad_openFileRW(rw, mixer, 1);
 }
 
 mad_data *
-mad_openFileRW(SDL_RWops *rw, SDL_AudioSpec *mixer) {
+mad_openFileRW(SDL_RWops *rw, SDL_AudioSpec *mixer, int freerw)
+{
   mad_data *mp3_mad;
 
   mp3_mad = (mad_data *)malloc(sizeof(mad_data));
   if (mp3_mad) {
 	mp3_mad->rw = rw;
-	mp3_mad->freerw = SDL_FALSE;
+	mp3_mad->freerw = freerw;
 	mad_stream_init(&mp3_mad->stream);
 	mad_frame_init(&mp3_mad->frame);
 	mad_synth_init(&mp3_mad->synth);
@@ -67,13 +63,14 @@ mad_openFileRW(SDL_RWops *rw, SDL_AudioSpec *mixer) {
 }
 
 void
-mad_closeFile(mad_data *mp3_mad) {
+mad_closeFile(mad_data *mp3_mad)
+{
   mad_stream_finish(&mp3_mad->stream);
   mad_frame_finish(&mp3_mad->frame);
   mad_synth_finish(&mp3_mad->synth);
 
   if (mp3_mad->freerw) {
-	SDL_FreeRW(mp3_mad->rw);
+	SDL_RWclose(mp3_mad->rw);
   }
   free(mp3_mad);
 }

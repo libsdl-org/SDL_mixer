@@ -42,7 +42,7 @@ extern void MOD_setvolume(struct MODULE *music, int volume);
 extern struct MODULE *MOD_new(const char *file);
 
 /* Load a MOD stream from an SDL_RWops object */
-extern struct MODULE *MOD_new_RW(SDL_RWops *rw);
+extern struct MODULE *MOD_new_RW(SDL_RWops *rw, int freerw);
 
 /* Start playback of a given MOD stream */
 extern void MOD_play(struct MODULE *music);
