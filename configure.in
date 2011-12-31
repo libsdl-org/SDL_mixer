@@ -372,21 +372,6 @@ AC_HELP_STRING([--enable-music-native-midi], [enable native MIDI music output [[
             SOURCES_CXX="$SOURCES_CXX $srcdir/native_midi/*.cpp"
         fi
     fi
-    AC_ARG_ENABLE([music-native-midi-gpl],
-AC_HELP_STRING([--enable-music-native-midi-gpl], [enable native MIDI on UNIX using GPL code [[default=no]]]),
-                  [], [enable_music_native_midi_gpl=no])
-    if test x$enable_music_native_midi_gpl = xyes; then
-        use_music_native_midi_gpl=no
-        case "$host" in
-            *-*-linux* | *-*-freebsd*)
-                use_music_native_midi_gpl=yes
-                ;;
-        esac
-        if test x$use_music_native_midi_gpl = xyes; then
-            EXTRA_CFLAGS="$EXTRA_CFLAGS -DUSE_NATIVE_MIDI -I\$(srcdir)/native_midi"
-            SOURCES="$SOURCES $srcdir/native_midi_gpl/*.c"
-        fi
-    fi
     AC_ARG_ENABLE([music-fluidsynth-midi],
 AC_HELP_STRING([--enable-music-fluidsynth-midi], [enable FluidSynth MIDI output [[default=yes]]]),
                   [], [enable_music_fluidsynth_midi=yes])

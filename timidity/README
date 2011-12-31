@@ -42,9 +42,6 @@ Win32, and porting to other systems with gcc should be easy.
 	  - Pitch wheel sensitivity
 	  - Change drum set
 
-* The GNU General Public License can, as always, be found in the file
-  "../COPYING".
-
 * TiMidity requires sampled instruments (patches) to play MIDI files. You
   should get the file "timidity-lib-0.1.tar.gz" and unpack it in the same
   directory where you unpacked the source code archive. You'll want more
