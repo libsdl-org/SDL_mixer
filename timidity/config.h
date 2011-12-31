@@ -26,7 +26,7 @@
    On the other hand, some files know that 16 is not a drum channel and
    try to play music on it. This is now a runtime option, so this isn't
    a critical choice anymore. */
-#define DEFAULT_DRUMCHANNELS ((1<<9) | (1<<15))
+#define DEFAULT_DRUMCHANNELS (1<<9)
 
 /* A somewhat arbitrary frequency range. The low end of this will
    sound terrible as no lowpass filtering is performed on most
