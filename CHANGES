@@ -1,4 +1,6 @@
 1.2.12:
+Sam Lantinga - Sat Dec 31 10:22:05 EST 2011
+ * SDL_mixer is now under the zlib license
 James Le Cuirot - Mon Mar 21 16:54:11 PDT 2011
  * Added support for FluidSynth
 Scott MC - Tue Jan 18 11:06:47 PST 2011

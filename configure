@@ -1482,9 +1482,6 @@ Optional Features:
                           enable timidity MIDI output [default=yes]
   --enable-music-native-midi
                           enable native MIDI music output [default=yes]
-  --enable-music-native-midi-gpl
-                          enable native MIDI on UNIX using GPL code
-                          [default=no]
   --enable-music-fluidsynth-midi
                           enable FluidSynth MIDI output [default=yes]
   --enable-music-fluidsynth-shared
@@ -3690,13 +3687,13 @@ if test "${lt_cv_nm_interface+set}" = set; then
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:3693: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:3690: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:3696: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:3693: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:3699: output\"" >&5)
+  (eval echo "\"\$as_me:3696: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -4923,7 +4920,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 4926 "configure"' > conftest.$ac_ext
+  echo '#line 4923 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -7084,11 +7081,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7087: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7084: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7091: \$? = $ac_status" >&5
+   echo "$as_me:7088: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7423,11 +7420,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7426: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7423: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7430: \$? = $ac_status" >&5
+   echo "$as_me:7427: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7528,11 +7525,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7531: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7528: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:7535: \$? = $ac_status" >&5
+   echo "$as_me:7532: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -7583,11 +7580,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7586: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7583: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:7590: \$? = $ac_status" >&5
+   echo "$as_me:7587: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -10341,7 +10338,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10344 "configure"
+#line 10341 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -10437,7 +10434,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10440 "configure"
+#line 10437 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -12939,25 +12936,6 @@ fi
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DUSE_NATIVE_MIDI -I\$(srcdir)/native_midi"
             SOURCES="$SOURCES $srcdir/native_midi/*.c"
             SOURCES_CXX="$SOURCES_CXX $srcdir/native_midi/*.cpp"
-        fi
-    fi
-    # Check whether --enable-music-native-midi-gpl was given.
-if test "${enable_music_native_midi_gpl+set}" = set; then
-  enableval=$enable_music_native_midi_gpl;
-else
-  enable_music_native_midi_gpl=no
-fi
-
-    if test x$enable_music_native_midi_gpl = xyes; then
-        use_music_native_midi_gpl=no
-        case "$host" in
-            *-*-linux* | *-*-freebsd*)
-                use_music_native_midi_gpl=yes
-                ;;
-        esac
-        if test x$use_music_native_midi_gpl = xyes; then
-            EXTRA_CFLAGS="$EXTRA_CFLAGS -DUSE_NATIVE_MIDI -I\$(srcdir)/native_midi"
-            SOURCES="$SOURCES $srcdir/native_midi_gpl/*.c"
         fi
     fi
     # Check whether --enable-music-fluidsynth-midi was given.
