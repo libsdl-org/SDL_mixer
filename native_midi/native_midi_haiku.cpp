@@ -258,6 +258,11 @@ void native_midi_start(NativeMidiSong *song)
   song->store->Start();
   currentSong = song;
 }
+int native_midi_jump_to_time(NativeMidiSong *song, double time)
+{
+  /* Not yet implemented */
+  return -1;
+}
 void native_midi_stop()
 {
   if (currentSong == NULL) return;

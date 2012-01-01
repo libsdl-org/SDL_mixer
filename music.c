@@ -279,6 +279,12 @@ void music_mixer(void *udata, Uint8 *stream, int len)
 #endif
 #ifdef MID_MUSIC
 			case MUS_MID:
+#ifdef USE_NATIVE_MIDI
+  				if ( native_midi_ok ) {
+					/* Native midi is handled asynchronously */
+					goto skip;
+	  			}
+#endif
 #ifdef USE_FLUIDSYNTH_MIDI
 				if ( fluidsynth_ok ) {
 					fluidsynth_playsome(music_playing->data.fluidsynthmidi, stream, len);
@@ -494,6 +500,7 @@ Mix_Music *Mix_LoadMUS(const char *file)
 		music->type = MUS_MID;
 #ifdef USE_NATIVE_MIDI
   		if ( native_midi_ok ) {
+/*printf("Native MIDI\n");*/
   			music->data.nativemidi = native_midi_loadsong(file);
 	  		if ( music->data.nativemidi == NULL ) {
 		  		Mix_SetError("%s", native_midi_error());
@@ -504,6 +511,7 @@ Mix_Music *Mix_LoadMUS(const char *file)
 #endif
 #ifdef USE_FLUIDSYNTH_MIDI
 		if ( fluidsynth_ok ) {
+/*printf("FluidSynth MIDI\n");*/
 			music->data.fluidsynthmidi = fluidsynth_loadsong(file);
 			if ( music->data.fluidsynthmidi == NULL ) {
 				music->error = 1;
@@ -513,6 +521,7 @@ Mix_Music *Mix_LoadMUS(const char *file)
 #endif
 #ifdef USE_TIMIDITY_MIDI
 		if ( timidity_ok ) {
+/*printf("Timidity MIDI\n");*/
 			music->data.midi = Timidity_LoadSong(file);
 			if ( music->data.midi == NULL ) {
 				Mix_SetError("%s", Timidity_Error());
@@ -730,6 +739,18 @@ static int music_internal_play(Mix_Music *music, double position)
 {
 	int retval = 0;
 
+	/* Try to seek instead of do a full halt and restart.
+	   This fixes a bug with native MIDI on Mac OS X, where you
+	   can't really stop and restart from the audio callback.
+	*/
+	if ( music == music_playing
+	  /* MUS_MOD position isn't time, it's pattern order number (??) */
+	     && music->type != MUS_MOD ) {
+		if ( music_internal_position(position) == 0 ) {
+			return 0;
+		}
+	}
+
 	/* Note the music we're playing */
 	if ( music_playing ) {
 		music_internal_halt();
@@ -898,6 +919,18 @@ int music_internal_position(double position)
 #ifdef MOD_MUSIC
 	    case MUS_MOD:
 		MOD_jump_to_time(music_playing->data.module, position);
+		break;
+#endif
+#ifdef MID_MUSIC
+	    case MUS_MID:
+#ifdef USE_NATIVE_MIDI
+		if ( native_midi_ok ) {
+			retval = native_midi_jump_to_time(music_playing->data.nativemidi, position);
+			break;
+		}
+#endif
+		/* TODO: Implement this for other music backends */
+		retval = -1;
 		break;
 #endif
 #ifdef OGG_MUSIC
@@ -1317,7 +1350,7 @@ int Mix_PlayingMusic(void)
 
 	SDL_LockAudio();
 	if ( music_playing ) {
-		playing = music_internal_playing();
+		playing = music_loops || music_internal_playing();
 	}
 	SDL_UnlockAudio();
 
