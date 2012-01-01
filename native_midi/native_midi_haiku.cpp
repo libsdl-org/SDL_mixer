@@ -45,6 +45,7 @@ class MidiEventsStore : public BMidi
   MidiEventsStore()
   {
     fPlaying = false;
+    fLoops = 0;
   }
   virtual status_t Import(SDL_RWops *rw)
   {
@@ -66,8 +67,16 @@ class MidiEventsStore : public BMidi
     MIDIEvent *ev = fEvs;
 
     uint32 startTime = B_NOW;
-    while (KeepRunning() && ev)
+    while (KeepRunning())
     {
+      if (!ev) {
+        if (fLoops && fEvs) {
+          --fLoops;
+          fPos = 0;
+          ev = fEvs;
+        } else
+          break;
+      }
       SprayEvent(ev, ev->time + startTime);
       ev = ev->next;
       fPos++;
@@ -82,18 +91,14 @@ class MidiEventsStore : public BMidi
     fEvs = 0;
   }
 
-  int CurrentEvent()
-  {
-    return fPos;
-  }
-  int CountEvents()
-  {
-    return fTotal;
-  }
-
   bool IsPlaying()
   {
     return fPlaying;
+  }
+
+  void SetLoops(int loops)
+  {
+    fLoops = loops;
   }
 
   protected:
@@ -101,6 +106,7 @@ class MidiEventsStore : public BMidi
   Uint16 fDivision;
 
   int fPos, fTotal;
+  int fLoops;
   bool fPlaying;
 
   void SprayEvent(MIDIEvent *ev, uint32 time)
@@ -251,17 +257,13 @@ void native_midi_freesong(NativeMidiSong *song)
   delete song->store;
   delete song; song = 0;
 }
-void native_midi_start(NativeMidiSong *song)
+void native_midi_start(NativeMidiSong *song, int loops)
 {
   native_midi_stop();
   song->store->Connect(&synth);
+  song->store->SetLoops(loops);
   song->store->Start();
   currentSong = song;
-}
-int native_midi_jump_to_time(NativeMidiSong *song, double time)
-{
-  /* Not yet implemented */
-  return -1;
 }
 void native_midi_stop()
 {
@@ -275,7 +277,7 @@ void native_midi_stop()
 int native_midi_active()
 {
   if (currentSong == NULL) return 0;
-  return currentSong->store->CurrentEvent() < currentSong->store->CountEvents();
+  return currentSong->store->IsPlaying();
 }
 
 const char* native_midi_error(void)

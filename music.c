@@ -199,10 +199,17 @@ static int music_halt_or_loop (void)
 	
 	if (!music_internal_playing()) 
 	{
+		/* Native MIDI handles looping internally */
+		if (music_playing->type == MUS_MID && native_midi_ok) {
+			music_loops = 0;
+		}
+
 		/* Restart music if it has to loop at a high level */
-		if (music_loops && --music_loops)
+		if (music_loops)
 		{
-			Mix_Fading current_fade = music_playing->fading;
+			Mix_Fading current_fade;
+			--music_loops;
+			current_fade = music_playing->fading;
 			music_internal_play(music_playing, 0.0);
 			music_playing->fading = current_fade;
 		} 
@@ -791,7 +798,7 @@ static int music_internal_play(Mix_Music *music, double position)
 	    case MUS_MID:
 #ifdef USE_NATIVE_MIDI
 		if ( native_midi_ok ) {
-			native_midi_start(music->data.nativemidi);
+			native_midi_start(music->data.nativemidi, music_loops);
 			goto skip;
 		}
 #endif
@@ -889,6 +896,10 @@ int Mix_FadeInMusicPos(Mix_Music *music, int loops, int ms, double position)
 		SDL_LockAudio();
 	}
 	music_active = 1;
+	if (loops == 1) {
+		/* Loop is the number of times to play the audio */
+		loops = 0;
+	}
 	music_loops = loops;
 	retval = music_internal_play(music, position);
 	SDL_UnlockAudio();
@@ -918,18 +929,6 @@ int music_internal_position(double position)
 #ifdef MOD_MUSIC
 	    case MUS_MOD:
 		MOD_jump_to_time(music_playing->data.module, position);
-		break;
-#endif
-#ifdef MID_MUSIC
-	    case MUS_MID:
-#ifdef USE_NATIVE_MIDI
-		if ( native_midi_ok ) {
-			retval = native_midi_jump_to_time(music_playing->data.nativemidi, position);
-			break;
-		}
-#endif
-		/* TODO: Implement this for other music backends */
-		retval = -1;
 		break;
 #endif
 #ifdef OGG_MUSIC

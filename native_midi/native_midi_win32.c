@@ -36,9 +36,11 @@
 struct _NativeMidiSong {
   int MusicLoaded;
   int MusicPlaying;
-  MIDIHDR MidiStreamHdr;
+  int Loops;
+  int CurrentHdr;
+  MIDIHDR MidiStreamHdr[2];
   MIDIEVENT *NewEvents;
-	Uint16 ppqn;
+  Uint16 ppqn;
   int Size;
   int NewPos;
 };
@@ -51,11 +53,14 @@ static int BlockOut(NativeMidiSong *song)
 {
   MMRESULT err;
   int BlockSize;
+  MIDIHDR *hdr;
 
   if ((song->MusicLoaded) && (song->NewEvents))
   {
-    // proff 12/8/98: Added for savety
-    midiOutUnprepareHeader((HMIDIOUT)hMidiStream,&song->MidiStreamHdr,sizeof(MIDIHDR));
+    // proff 12/8/98: Added for safety
+    song->CurrentHdr = !song->CurrentHdr;
+    hdr = &song->MidiStreamHdr[song->CurrentHdr];
+    midiOutUnprepareHeader((HMIDIOUT)hMidiStream,hdr,sizeof(MIDIHDR));
     if (song->NewPos>=song->Size)
       return 0;
     BlockSize=(song->Size-song->NewPos);
@@ -63,15 +68,16 @@ static int BlockOut(NativeMidiSong *song)
       return 0;
     if (BlockSize>36000)
       BlockSize=36000;
-    song->MidiStreamHdr.lpData=(void *)((unsigned char *)song->NewEvents+song->NewPos);
+    hdr->lpData=(void *)((unsigned char *)song->NewEvents+song->NewPos);
     song->NewPos+=BlockSize;
-    song->MidiStreamHdr.dwBufferLength=BlockSize;
-    song->MidiStreamHdr.dwBytesRecorded=BlockSize;
-    song->MidiStreamHdr.dwFlags=0;
-    err=midiOutPrepareHeader((HMIDIOUT)hMidiStream,&song->MidiStreamHdr,sizeof(MIDIHDR));
+    hdr->dwBufferLength=BlockSize;
+    hdr->dwBytesRecorded=BlockSize;
+    hdr->dwFlags=0;
+    hdr->dwOffset=0;
+    err=midiOutPrepareHeader((HMIDIOUT)hMidiStream,hdr,sizeof(MIDIHDR));
     if (err!=MMSYSERR_NOERROR)
       return 0;
-    err=midiStreamOut(hMidiStream,&song->MidiStreamHdr,sizeof(MIDIHDR));
+    err=midiStreamOut(hMidiStream,hdr,sizeof(MIDIHDR));
       return 0;
   }
   return 1;
@@ -163,12 +169,19 @@ void CALLBACK MidiProc( HMIDIIN hMidi, UINT uMsg, DWORD_PTR dwInstance,
     switch( uMsg )
     {
     case MOM_DONE:
-      if ((currentsong->MusicLoaded) && (dwParam1 == (DWORD_PTR)&currentsong->MidiStreamHdr))
+      if ((currentsong->MusicLoaded) && (dwParam1 == (DWORD_PTR)&currentsong->MidiStreamHdr[currentsong->CurrentHdr]))
         BlockOut(currentsong);
       break;
     case MOM_POSITIONCB:
-      if ((currentsong->MusicLoaded) && (dwParam1 == (DWORD_PTR)&currentsong->MidiStreamHdr))
-        currentsong->MusicPlaying=0;
+      if ((currentsong->MusicLoaded) && (dwParam1 == (DWORD_PTR)&currentsong->MidiStreamHdr[currentsong->CurrentHdr])) {
+        if (currentsong->Loops) {
+          --currentsong->Loops;
+          currentsong->NewPos=0;
+          BlockOut(currentsong);
+        } else {
+          currentsong->MusicPlaying=0;
+        }
+      }
       break;
     default:
       break;
@@ -249,7 +262,7 @@ void native_midi_freesong(NativeMidiSong *song)
   }
 }
 
-void native_midi_start(NativeMidiSong *song)
+void native_midi_start(NativeMidiSong *song, int loops)
 {
   MMRESULT merr;
   MIDIPROPTIMEDIV mptd;
@@ -267,18 +280,13 @@ void native_midi_start(NativeMidiSong *song)
     currentsong=song;
     currentsong->NewPos=0;
     currentsong->MusicPlaying=1;
+    currentsong->Loops=loops;
     mptd.cbStruct=sizeof(MIDIPROPTIMEDIV);
     mptd.dwTimeDiv=currentsong->ppqn;
     merr=midiStreamProperty(hMidiStream,(LPBYTE)&mptd,MIDIPROP_SET | MIDIPROP_TIMEDIV);
     BlockOut(song);
     merr=midiStreamRestart(hMidiStream);
   }
-}
-
-int native_midi_jump_to_time(NativeMidiSong *song, double time)
-{
-	/* Not yet implemented */
-	return -1;
 }
 
 void native_midi_stop()
