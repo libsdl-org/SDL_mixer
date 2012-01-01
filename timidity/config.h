@@ -168,7 +168,8 @@ typedef char int8;
 #else
 #define DEFAULT_PATH	"/etc/timidity"
 #define DEFAULT_PATH1	"/usr/share/timidity"
-#define DEFAULT_PATH2	"/usr/local/lib/timidity"
+#define DEFAULT_PATH2	"/usr/local/share/timidity"
+#define DEFAULT_PATH3	"/usr/local/lib/timidity"
 #endif
 
 /* These affect general volume */
