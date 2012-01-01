@@ -192,12 +192,15 @@ void native_midi_freesong(NativeMidiSong *song)
 	}
 }
 
-void native_midi_start(NativeMidiSong *song)
+void native_midi_start(NativeMidiSong *song, int loops)
 {
 	UInt32		queueFlags = 0;
 	ComponentResult tpError;
 	
 	assert (gTunePlayer != NULL);
+
+	/* FIXME: is this code even used anymore? */
+	assert (loops == 0);
 	
 	SDL_PauseAudio(1);
 	SDL_UnlockAudio();
@@ -252,12 +255,6 @@ void native_midi_start(NativeMidiSong *song)
 done:
 	SDL_LockAudio();
 	SDL_PauseAudio(0);
-}
-
-int native_midi_jump_to_time(NativeMidiSong *song, double time)
-{
-	/* Not yet implemented */
-	return -1;
 }
 
 void native_midi_stop()

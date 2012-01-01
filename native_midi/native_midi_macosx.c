@@ -41,6 +41,7 @@ struct _NativeMidiSong
     MusicSequence sequence;
     MusicTimeStamp endTime;
     AudioUnit audiounit;
+    int loops;
 };
 
 static NativeMidiSong *currentsong = NULL;
@@ -250,7 +251,7 @@ void native_midi_freesong(NativeMidiSong *song)
     }
 }
 
-void native_midi_start(NativeMidiSong *song)
+void native_midi_start(NativeMidiSong *song, int loops)
 {
     int vol;
 
@@ -264,6 +265,7 @@ void native_midi_start(NativeMidiSong *song)
         MusicPlayerStop(currentsong->player);
 
     currentsong = song;
+    currentsong->loops = loops;
 
     MusicPlayerPreroll(song->player);
     MusicPlayerSetTime(song->player, 0);
@@ -277,13 +279,6 @@ void native_midi_start(NativeMidiSong *song)
 
     SDL_LockAudio();
     SDL_PauseAudio(0);
-}
-
-int native_midi_jump_to_time(NativeMidiSong *song, double time)
-{
-    if (MusicPlayerSetTime(song->player, time) != noErr)
-        return -1;
-    return 0;
 }
 
 void native_midi_stop()
@@ -305,8 +300,15 @@ int native_midi_active()
         return 0;
 
     MusicPlayerGetTime(currentsong->player, &currentTime);
-    return ((currentTime < currentsong->endTime) ||
-            (currentTime >= kMusicTimeStamp_EndOfTrack));
+    if ((currentTime < currentsong->endTime) ||
+        (currentTime >= kMusicTimeStamp_EndOfTrack)) {
+        return 1;
+    } else if (currentsong->loops) {
+        --currentsong->loops;
+        MusicPlayerSetTime(currentsong->player, 0);
+        return 1;
+    }
+    return 0;
 }
 
 void native_midi_setvolume(int volume)
