@@ -275,6 +275,12 @@ void native_midi_start(NativeMidiSong *song)
   }
 }
 
+int native_midi_jump_to_time(NativeMidiSong *song, double time)
+{
+	/* Not yet implemented */
+	return -1;
+}
+
 void native_midi_stop()
 {
   if (!hMidiStream)
