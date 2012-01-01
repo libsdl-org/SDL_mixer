@@ -108,6 +108,9 @@ FILE *open_file(const char *name, int decompress, int noise_mode)
 #ifdef DEFAULT_PATH2
     add_to_pathlist(DEFAULT_PATH2);
 #endif
+#ifdef DEFAULT_PATH3
+    add_to_pathlist(DEFAULT_PATH3);
+#endif
   }
 
   /* First try the given name */
