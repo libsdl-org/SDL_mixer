@@ -196,6 +196,7 @@ void Mix_HookMusicFinished(void (*music_finished)(void))
 static int music_halt_or_loop (void)
 {
 	/* Restart music if it has to loop */
+	
 	if (!music_internal_playing()) 
 	{
 		/* Restart music if it has to loop at a high level */
@@ -251,6 +252,10 @@ void music_mixer(void *udata, Uint8 *stream, int len)
 			}
 		}
 		
+		music_halt_or_loop();
+		if (!music_internal_playing())
+			return;
+
 		switch (music_playing->type) {
 #ifdef CMD_MUSIC
 			case MUS_CMD:
@@ -277,14 +282,14 @@ void music_mixer(void *udata, Uint8 *stream, int len)
 #ifdef USE_FLUIDSYNTH_MIDI
 				if ( fluidsynth_ok ) {
 					fluidsynth_playsome(music_playing->data.fluidsynthmidi, stream, len);
-					break;
+					goto skip;
 				}
 #endif
 #ifdef USE_TIMIDITY_MIDI
 				if ( timidity_ok ) {
 					int samples = len / samplesize;
   					Timidity_PlaySome(stream, samples);
-					break;
+					goto skip;
 				}
 #endif
 				break;
@@ -314,12 +319,14 @@ void music_mixer(void *udata, Uint8 *stream, int len)
 				/* Unknown music type?? */
 				break;
 		}
+	}
 
-		/* Handle seamless music looping */
+skip:
+	/* Handle seamless music looping */
+	if (left > 0 && left < len) {
 		music_halt_or_loop();
-		if (left > 0 && left < len && music_internal_playing()) {
+		if (music_internal_playing())
 			music_mixer(udata, stream+(len-left), left);
-		}
 	}
 }
 

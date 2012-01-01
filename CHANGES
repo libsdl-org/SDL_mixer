@@ -1,6 +1,4 @@
 1.2.12:
-Sam Lantinga - Sat Dec 31 22:56:34 EST 2011
- * Fixed looping MIDI music
 Sam Lantinga - Sat Dec 31 19:11:59 EST 2011
  * Fixed dropping audio in the FLAC audio decoding
 Sam Lantinga - Sat Dec 31 18:32:05 EST 2011
