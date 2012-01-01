@@ -414,15 +414,11 @@ static void FLAC_getsome(FLAC_music *music)
 	/* GET AUDIO WAVE DATA */
 	// set the max number of characters to read
 	music->flac_data.max_to_read = 8192;
-
-	// clear out the data buffer if it exists
-	if (music->flac_data.data) {
-		free (music->flac_data.data);
-	}
-
 	music->flac_data.data_len = music->flac_data.max_to_read;
 	music->flac_data.data_read = 0;
-	music->flac_data.data = (char *)malloc (music->flac_data.data_len);
+	if (!music->flac_data.data) {
+		music->flac_data.data = (char *)malloc (music->flac_data.data_len);
+	}
 
 	// we have data to read
 	while(music->flac_data.max_to_read > 0) {
@@ -434,15 +430,12 @@ static void FLAC_getsome(FLAC_music *music)
 				size_t overflow_extra_len = overflow_len -
 												music->flac_data.max_to_read;
 
-				char* new_overflow = (char *)malloc (overflow_extra_len);
 				memcpy (music->flac_data.data+music->flac_data.data_read,
 					music->flac_data.overflow, music->flac_data.max_to_read);
 				music->flac_data.data_read += music->flac_data.max_to_read;
-				memcpy (new_overflow,
+				memcpy (music->flac_data.overflow,
 					music->flac_data.overflow + music->flac_data.max_to_read,
 					overflow_extra_len);
-				free (music->flac_data.overflow);
-				music->flac_data.overflow = new_overflow;
 				music->flac_data.overflow_len = overflow_extra_len;
 				music->flac_data.overflow_read = overflow_extra_len;
 				music->flac_data.max_to_read = 0;
