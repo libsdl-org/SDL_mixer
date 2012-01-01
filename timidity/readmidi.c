@@ -530,7 +530,7 @@ static int read_track(int append)
 {
   MidiEventList *meep;
   MidiEventList *next, *new;
-  int32 len;
+  int32 len, next_pos, pos;
   char tmp[4];
 
   meep=evlist;
@@ -552,7 +552,7 @@ static int read_track(int append)
       return -1;
     }
   len=BE_LONG(len);
-
+  next_pos = SDL_RWtell(rw) + len;
   if (memcmp(tmp, "MTrk", 4))
     {
       ctl->cmsg(CMSG_ERROR, VERB_NORMAL,
@@ -567,6 +567,9 @@ static int read_track(int append)
 
       if (new==MAGIC_EOT) /* End-of-track Hack. */
 	{
+          pos = SDL_RWtell(rw);
+          if (pos < next_pos)
+            SDL_RWseek(rw, next_pos - pos, RW_SEEK_CUR);
 	  return 0;
 	}
 
