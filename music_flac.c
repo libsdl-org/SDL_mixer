@@ -411,7 +411,7 @@ static void FLAC_getsome(FLAC_music *music)
 {
 	SDL_AudioCVT *cvt;
 
-	/* GET AUDIO wAVE DATA */
+	/* GET AUDIO WAVE DATA */
 	// set the max number of characters to read
 	music->flac_data.max_to_read = 8192;
 
@@ -444,7 +444,7 @@ static void FLAC_getsome(FLAC_music *music)
 				free (music->flac_data.overflow);
 				music->flac_data.overflow = new_overflow;
 				music->flac_data.overflow_len = overflow_extra_len;
-				music->flac_data.overflow_read = 0;
+				music->flac_data.overflow_read = overflow_extra_len;
 				music->flac_data.max_to_read = 0;
 			}
 			else {
