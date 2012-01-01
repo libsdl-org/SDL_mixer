@@ -739,17 +739,16 @@ static int music_internal_play(Mix_Music *music, double position)
 {
 	int retval = 0;
 
-	/* Try to seek instead of do a full halt and restart.
-	   This fixes a bug with native MIDI on Mac OS X, where you
-	   can't really stop and restart from the audio callback.
+#ifdef __MACOSX__
+	/* This fixes a bug with native MIDI on Mac OS X, where you
+	   can't really stop and restart MIDI from the audio callback.
 	*/
-	if ( music == music_playing
-	  /* MUS_MOD position isn't time, it's pattern order number (??) */
-	     && music->type != MUS_MOD ) {
-		if ( music_internal_position(position) == 0 ) {
-			return 0;
-		}
+	if ( music == music_playing && music->type == MUS_MID && native_midi_ok ) {
+		/* Just a seek suffices to restart playing */
+		music_internal_position(position);
+		return 0;
 	}
+#endif
 
 	/* Note the music we're playing */
 	if ( music_playing ) {
