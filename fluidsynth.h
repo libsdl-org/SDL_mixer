@@ -25,6 +25,8 @@
 #ifndef _FLUIDSYNTH_H_
 #define _FLUIDSYNTH_H_
 
+#ifdef USE_FLUIDSYNTH_MIDI
+
 #include "dynamic_fluidsynth.h"
 #include <SDL_rwops.h>
 #include <SDL_audio.h>
@@ -44,5 +46,7 @@ void fluidsynth_stop(FluidSynthMidiSong *song);
 int fluidsynth_active(FluidSynthMidiSong *song);
 void fluidsynth_setvolume(FluidSynthMidiSong *song, int volume);
 int fluidsynth_playsome(FluidSynthMidiSong *song, void *stream, int len);
+
+#endif /* USE_FLUIDSYNTH_MIDI */
 
 #endif /* _FLUIDSYNTH_H_ */

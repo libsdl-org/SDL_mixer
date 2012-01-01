@@ -22,10 +22,13 @@
   chewi@aura-online.co.uk
 */
 
-#include "fluidsynth.h"
-#include "SDL_mixer.h"
+#ifdef USE_FLUIDSYNTH_MIDI
+
 #include <stdio.h>
 #include <sys/types.h>
+
+#include "SDL_mixer.h"
+#include "fluidsynth.h"
 
 static Uint16 format;
 static Uint8 channels;
@@ -228,3 +231,5 @@ finish:
 
 	return result;
 }
+
+#endif /* USE_FLUIDSYNTH_MIDI */
