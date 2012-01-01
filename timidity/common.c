@@ -172,6 +172,8 @@ void close_file(FILE *fp)
   if (pclose(fp)) /* Any better ideas? */
 #endif
     fclose(fp);
+
+  strncpy(current_filename, "MIDI file", PATH_MAX - 1);
 }
 
 /* This is meant for skipping a few bytes in a file or fifo. */
