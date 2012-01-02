@@ -1,0 +1,10 @@
+syntax:glob
+autom4te*
+config.cache
+config.log
+config.status
+Makefile
+SDL_mixer.pc
+SDL_mixer.qpg
+SDL_mixer.spec
+libtool
