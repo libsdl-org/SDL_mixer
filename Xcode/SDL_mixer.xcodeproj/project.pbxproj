@@ -739,53 +739,9 @@
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 11;
 				DYLIB_CURRENT_VERSION = 11.2;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_4)",
-					"$(HOME)/Library/Frameworks",
-					/Library/Frameworks,
-					"\"$(SRCROOT)/vorbis\"",
-					"\"$(SRCROOT)/flac\"",
-				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/mikmod\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/smpeg\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/vorbis\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/flac\"";
-				FRAMEWORK_VERSION = A;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					MACOSX,
-					__MACOSX__,
-					CMD_MUSIC,
-					WAV_MUSIC,
-					MOD_MUSIC,
-					MID_MUSIC,
-					USE_NATIVE_MIDI,
-					OGG_MUSIC,
-					FLAC_MUSIC,
-					MP3_MUSIC,
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				HEADER_SEARCH_PATHS = (
-					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
-					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
-					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
-					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_4)",
-					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
-					/Library/Frameworks/SDL.framework/Headers,
-				);
-				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/mikmod/mikmod.framework/Headers\"";
-				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/smpeg/smpeg.framework/Headers\"";
-				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/vorbis/Ogg.framework/Headers\" \"$(SRCROOT)/vorbis/Vorbis.framework/Headers\"";
-				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/flac/FLAC.framework/Headers\"";
 				INFOPLIST_FILE = "Info-Framework__Upgraded_.plist";
 				INSTALL_PATH = "@rpath";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "";
-				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-framework",
 					AudioToolbox,
@@ -793,14 +749,6 @@
 					AudioUnit,
 					"-framework",
 					CoreServices,
-				);
-				PRODUCT_NAME = SDLmixer;
-				SDKROOT = macosx;
-				SECTORDER_FLAGS = "";
-				USER_HEADER_SEARCH_PATHS = "$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1) $(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2) $(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_3) $(HOME)/Library/Frameworks /Library/Frameworks $(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_4)";
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-Wno-four-char-constants",
 				);
 				WRAPPER_EXTENSION = framework;
 			};
@@ -811,55 +759,9 @@
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 11;
 				DYLIB_CURRENT_VERSION = 11.2;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_4)",
-					"$(HOME)/Library/Frameworks",
-					/Library/Frameworks,
-					"\"$(SRCROOT)/vorbis\"",
-					"\"$(SRCROOT)/flac\"",
-				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/mikmod\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/smpeg\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/vorbis\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/flac\"";
-				FRAMEWORK_VERSION = A;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					MACOSX,
-					__MACOSX__,
-					CMD_MUSIC,
-					WAV_MUSIC,
-					MOD_MUSIC,
-					MID_MUSIC,
-					USE_NATIVE_MIDI,
-					OGG_MUSIC,
-					FLAC_MUSIC,
-					MP3_MUSIC,
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				HEADER_SEARCH_PATHS = (
-					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
-					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
-					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
-					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_4)",
-					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
-					/Library/Frameworks/SDL.framework/Headers,
-				);
-				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/mikmod/mikmod.framework/Headers\"";
-				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/smpeg/smpeg.framework/Headers\"";
-				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/vorbis/Ogg.framework/Headers\" \"$(SRCROOT)/vorbis/Vorbis.framework/Headers\"";
-				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/flac/FLAC.framework/Headers\"";
 				INFOPLIST_FILE = "Info-Framework__Upgraded_.plist";
 				INSTALL_PATH = "@rpath";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "";
-				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-framework",
 					AudioToolbox,
@@ -868,14 +770,6 @@
 					"-framework",
 					CoreServices,
 				);
-				PRODUCT_NAME = SDLmixer;
-				SDKROOT = macosx;
-				SECTORDER_FLAGS = "";
-				USER_HEADER_SEARCH_PATHS = "$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1) $(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2) $(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_3) $(HOME)/Library/Frameworks /Library/Frameworks $(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_4)";
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-Wno-four-char-constants",
-				);
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -883,54 +777,10 @@
 		00B7E490097EC6B300826121 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					MACOSX,
-					__MACOSX__,
-					USE_RWOPS,
-					CMD_MUSIC,
-					WAV_MUSIC,
-					MOD_MUSIC,
-					MID_MUSIC,
-					USE_NATIVE_MIDI,
-					OGG_MUSIC,
-				);
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				HEADER_SEARCH_PATHS = (
-					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
-					/Library/Frameworks/SDL.framework/Headers,
-					vorbis/include,
-					smpeg/include,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					vorbis/lib,
-					smpeg/lib,
-				);
 				LIBRARY_STYLE = STATIC;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-framework",
-					QuickTime,
-					"-framework",
-					Carbon,
-					"-lvorbisfile",
-					"-lvorbis",
-					"-logg",
-				);
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = SDLmixer;
 				REZ_EXECUTABLE = YES;
-				SDKROOT = macosx;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -938,56 +788,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUGGING_SYMBOLS = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					MACOSX,
-					__MACOSX__,
-					USE_RWOPS,
-					CMD_MUSIC,
-					WAV_MUSIC,
-					MOD_MUSIC,
-					MID_MUSIC,
-					USE_NATIVE_MIDI,
-					OGG_MUSIC,
-				);
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				HEADER_SEARCH_PATHS = (
-					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
-					/Library/Frameworks/SDL.framework/Headers,
-					vorbis/include,
-					smpeg/include,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					vorbis/lib,
-					smpeg/lib,
-				);
 				LIBRARY_STYLE = STATIC;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-framework",
-					QuickTime,
-					"-framework",
-					Carbon,
-					"-lvorbisfile",
-					"-lvorbis",
-					"-logg",
-				);
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = SDLmixer;
 				REZ_EXECUTABLE = YES;
-				SDKROOT = macosx;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
-				ZERO_LINK = YES;
 			};
 			name = Debug;
 		};
@@ -1039,17 +843,36 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				FRAMEWORK_SEARCH_PATHS = (
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED)",
 					"$(HOME)/Library/Frameworks",
 					/Library/Frameworks,
 				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED = "\"$(SRCROOT)/mikmod\" \"$(SRCROOT)/smpeg\" \"$(SRCROOT)/vorbis\" \"$(SRCROOT)/flac\"";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					CMD_MUSIC,
+					WAV_MUSIC,
+					MOD_MUSIC,
+					MID_MUSIC,
+					USE_NATIVE_MIDI,
+					OGG_MUSIC,
+					FLAC_MUSIC,
+					MP3_MUSIC,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				HEADER_SEARCH_PATHS = (
+					"$(HEADER_SEARCH_PATHS_QUOTED)",
 					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
 					/Library/Frameworks/SDL.framework/Headers,
-					vorbis/include,
 				);
-				LIBRARY_SEARCH_PATHS = vorbis/lib;
+				HEADER_SEARCH_PATHS_QUOTED = "\"$(SRCROOT)/mikmod/mikmod.framework/Headers\" \"$(SRCROOT)/smpeg/smpeg.framework/Headers\" \"$(SRCROOT)/vorbis/Ogg.framework/Headers\" \"$(SRCROOT)/vorbis/Vorbis.framework/Headers\" \"$(SRCROOT)/flac/FLAC.framework/Headers\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				PRODUCT_NAME = SDLmixer;
 				SDKROOT = macosx;
+				WARNING_CFLAGS = (
+					"-Wall",
+					"-Wno-four-char-constants",
+				);
 			};
 			name = Release;
 		};
@@ -1058,18 +881,36 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				FRAMEWORK_SEARCH_PATHS = (
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED)",
 					"$(HOME)/Library/Frameworks",
 					/Library/Frameworks,
 				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED = "\"$(SRCROOT)/mikmod\" \"$(SRCROOT)/smpeg\" \"$(SRCROOT)/vorbis\" \"$(SRCROOT)/flac\"";
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					CMD_MUSIC,
+					WAV_MUSIC,
+					MOD_MUSIC,
+					MID_MUSIC,
+					USE_NATIVE_MIDI,
+					OGG_MUSIC,
+					FLAC_MUSIC,
+					MP3_MUSIC,
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				HEADER_SEARCH_PATHS = (
+					"$(HEADER_SEARCH_PATHS_QUOTED)",
 					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
 					/Library/Frameworks/SDL.framework/Headers,
-					vorbis/include,
 				);
-				LIBRARY_SEARCH_PATHS = vorbis/lib;
+				HEADER_SEARCH_PATHS_QUOTED = "\"$(SRCROOT)/mikmod/mikmod.framework/Headers\" \"$(SRCROOT)/smpeg/smpeg.framework/Headers\" \"$(SRCROOT)/vorbis/Ogg.framework/Headers\" \"$(SRCROOT)/vorbis/Vorbis.framework/Headers\" \"$(SRCROOT)/flac/FLAC.framework/Headers\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				PRODUCT_NAME = SDLmixer;
 				SDKROOT = macosx;
+				WARNING_CFLAGS = (
+					"-Wall",
+					"-Wno-four-char-constants",
+				);
 			};
 			name = Debug;
 		};
