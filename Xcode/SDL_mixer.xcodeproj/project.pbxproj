@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 42;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -26,15 +26,21 @@
 		00938E55108A397A0009CF19 /* dynamic_mod.c in Sources */ = {isa = PBXBuildFile; fileRef = 00938E4B108A397A0009CF19 /* dynamic_mod.c */; };
 		00938E56108A397A0009CF19 /* dynamic_mp3.h in Headers */ = {isa = PBXBuildFile; fileRef = 00938E4C108A397A0009CF19 /* dynamic_mp3.h */; };
 		00938E57108A397A0009CF19 /* dynamic_ogg.h in Headers */ = {isa = PBXBuildFile; fileRef = 00938E4D108A397A0009CF19 /* dynamic_ogg.h */; };
-		00938EF8108A4CD20009CF19 /* mikmod.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 00938E1B108A36520009CF19 /* mikmod.framework */; };
 		00939015108A5C470009CF19 /* smpeg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00939014108A5C470009CF19 /* smpeg.framework */; };
-		00939025108A5C600009CF19 /* smpeg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 00939014108A5C470009CF19 /* smpeg.framework */; };
 		0448E8AE108B937A00C9D3EA /* native_midi_macosx.c in Sources */ = {isa = PBXBuildFile; fileRef = 0448E8AD108B937A00C9D3EA /* native_midi_macosx.c */; };
 		0448E8AF108B937A00C9D3EA /* native_midi_macosx.c in Sources */ = {isa = PBXBuildFile; fileRef = 0448E8AD108B937A00C9D3EA /* native_midi_macosx.c */; };
 		04A8FCA60A19CAEC0046373F /* dynamic_mp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A8FCA40A19CAEC0046373F /* dynamic_mp3.c */; };
 		04A8FCA70A19CAEC0046373F /* dynamic_mp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A8FCA40A19CAEC0046373F /* dynamic_mp3.c */; };
 		04A8FCAB0A19CB070046373F /* dynamic_ogg.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A8FCA90A19CB070046373F /* dynamic_ogg.c */; };
 		04A8FCAC0A19CB070046373F /* dynamic_ogg.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A8FCA90A19CB070046373F /* dynamic_ogg.c */; };
+		AA9F7DB514B15ADC00278D1E /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA9F7DB314B15ADC00278D1E /* Ogg.framework */; };
+		AA9F7DB614B15ADC00278D1E /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA9F7DB414B15ADC00278D1E /* Vorbis.framework */; };
+		AA9F7DB814B15AE700278D1E /* FLAC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA9F7DB714B15AE700278D1E /* FLAC.framework */; };
+		AA9F7DB914B15D3300278D1E /* FLAC.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = AA9F7DB714B15AE700278D1E /* FLAC.framework */; };
+		AA9F7DBA14B15D4100278D1E /* mikmod.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 00938E1B108A36520009CF19 /* mikmod.framework */; };
+		AA9F7DBB14B15D4400278D1E /* Ogg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = AA9F7DB314B15ADC00278D1E /* Ogg.framework */; };
+		AA9F7DBC14B15D4A00278D1E /* smpeg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 00939014108A5C470009CF19 /* smpeg.framework */; };
+		AA9F7DBE14B15D5400278D1E /* Vorbis.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = AA9F7DB414B15ADC00278D1E /* Vorbis.framework */; };
 		BE1FA8B907AF96B2004B6283 /* music_cmd.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC1B87B012FB8CD7F000001 /* music_cmd.h */; };
 		BE1FA8BA07AF96B2004B6283 /* music_ogg.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC1B87D012FB8CD7F000001 /* music_ogg.h */; };
 		BE1FA8BB07AF96B2004B6283 /* common.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC1B881012FB8CD7F000001 /* common.h */; };
@@ -142,8 +148,11 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				00939025108A5C600009CF19 /* smpeg.framework in Copy Frameworks */,
-				00938EF8108A4CD20009CF19 /* mikmod.framework in Copy Frameworks */,
+				AA9F7DB914B15D3300278D1E /* FLAC.framework in Copy Frameworks */,
+				AA9F7DBA14B15D4100278D1E /* mikmod.framework in Copy Frameworks */,
+				AA9F7DBB14B15D4400278D1E /* Ogg.framework in Copy Frameworks */,
+				AA9F7DBC14B15D4A00278D1E /* smpeg.framework in Copy Frameworks */,
+				AA9F7DBE14B15D5400278D1E /* Vorbis.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -166,7 +175,6 @@
 		00938E4C108A397A0009CF19 /* dynamic_mp3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dynamic_mp3.h; path = ../dynamic_mp3.h; sourceTree = SOURCE_ROOT; };
 		00938E4D108A397A0009CF19 /* dynamic_ogg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dynamic_ogg.h; path = ../dynamic_ogg.h; sourceTree = SOURCE_ROOT; };
 		00939014108A5C470009CF19 /* smpeg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = smpeg.framework; path = smpeg/smpeg.framework; sourceTree = "<group>"; };
-		00F5DE28099185B10051C449 /* Info-Framework__Upgraded_.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-Framework__Upgraded_.plist"; sourceTree = "<group>"; };
 		0448E8AD108B937A00C9D3EA /* native_midi_macosx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = native_midi_macosx.c; sourceTree = "<group>"; };
 		04A8FCA40A19CAEC0046373F /* dynamic_mp3.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = dynamic_mp3.c; path = ../dynamic_mp3.c; sourceTree = SOURCE_ROOT; };
 		04A8FCA90A19CB070046373F /* dynamic_ogg.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = dynamic_ogg.c; path = ../dynamic_ogg.c; sourceTree = SOURCE_ROOT; };
@@ -204,12 +212,15 @@
 		5CC1B898012FB8CD7F000001 /* timidity.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = timidity.h; sourceTree = "<group>"; };
 		5CC1B89B012FB8CD7F000001 /* wavestream.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = wavestream.c; path = ../wavestream.c; sourceTree = "<group>"; };
 		5CC1B89C012FB8CD7F000001 /* wavestream.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = wavestream.h; path = ../wavestream.h; sourceTree = "<group>"; };
+		AA9F7DB314B15ADC00278D1E /* Ogg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ogg.framework; path = vorbis/Ogg.framework; sourceTree = "<group>"; };
+		AA9F7DB414B15ADC00278D1E /* Vorbis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Vorbis.framework; path = vorbis/Vorbis.framework; sourceTree = "<group>"; };
+		AA9F7DB714B15AE700278D1E /* FLAC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FLAC.framework; path = flac/FLAC.framework; sourceTree = "<group>"; };
 		B2A42D0E03FAC6A400A8000A /* load_ogg.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = load_ogg.c; path = ../load_ogg.c; sourceTree = SOURCE_ROOT; };
 		B2A42D0F03FAC6A400A8000A /* load_ogg.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = load_ogg.h; path = ../load_ogg.h; sourceTree = SOURCE_ROOT; };
 		BE1FA8AE07AF95F7004B6283 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = /Library/Frameworks/SDL.framework; sourceTree = "<absolute>"; };
 		BE1FA90507AF96B2004B6283 /* Info-Framework__Upgraded_.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-Framework__Upgraded_.plist"; sourceTree = "<group>"; };
-		BE1FA90607AF96B2004B6283 /* SDL_mixer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SDL_mixer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		BE1FA95407AF96B2004B6283 /* libSDL_mixer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSDL_mixer.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		BE1FA90607AF96B2004B6283 /* SDLmixer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SDLmixer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BE1FA95407AF96B2004B6283 /* libSDLmixer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSDLmixer.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE1FA95807AF96B3004B6283 /* Create DMG */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Create DMG"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F51BFB0101F724BE01D3D55B /* native_midi.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = native_midi.h; sourceTree = "<group>"; };
 		F567D63B01CD881401F3E8B9 /* effect_position.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = effect_position.c; path = ../effect_position.c; sourceTree = SOURCE_ROOT; };
@@ -233,6 +244,9 @@
 				BE1FA90207AF96B2004B6283 /* SDL.framework in Frameworks */,
 				00938E1C108A36520009CF19 /* mikmod.framework in Frameworks */,
 				00939015108A5C470009CF19 /* smpeg.framework in Frameworks */,
+				AA9F7DB514B15ADC00278D1E /* Ogg.framework in Frameworks */,
+				AA9F7DB614B15ADC00278D1E /* Vorbis.framework in Frameworks */,
+				AA9F7DB814B15AE700278D1E /* FLAC.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -258,8 +272,8 @@
 			isa = PBXGroup;
 			children = (
 				089C1665FE841158C02AAC07 /* Resources */,
-				BE1FA90607AF96B2004B6283 /* SDL_mixer.framework */,
-				BE1FA95407AF96B2004B6283 /* libSDL_mixer.a */,
+				BE1FA90607AF96B2004B6283 /* SDLmixer.framework */,
+				BE1FA95407AF96B2004B6283 /* libSDLmixer.a */,
 				BE1FA95807AF96B3004B6283 /* Create DMG */,
 			);
 			name = Products;
@@ -291,20 +305,18 @@
 				00938E49108A397A0009CF19 /* dynamic_flac.c */,
 				00938E4A108A397A0009CF19 /* dynamic_flac.h */,
 				00938E4B108A397A0009CF19 /* dynamic_mod.c */,
-				00938E4C108A397A0009CF19 /* dynamic_mp3.h */,
-				00938E4D108A397A0009CF19 /* dynamic_ogg.h */,
-				00938E2B108A37800009CF19 /* load_flac.c */,
-				00938E2C108A37800009CF19 /* load_flac.h */,
-				00938E2D108A37800009CF19 /* music_flac.c */,
-				00938E2E108A37800009CF19 /* music_flac.h */,
-				00938E2F108A37800009CF19 /* music_mad.c */,
-				00938E30108A37800009CF19 /* music_mad.h */,
-				00938E31108A37800009CF19 /* music_mod.c */,
-				00938E32108A37800009CF19 /* music_mod.h */,
-				04A8FCA90A19CB070046373F /* dynamic_ogg.c */,
 				04A8FCA40A19CAEC0046373F /* dynamic_mp3.c */,
+				00938E4C108A397A0009CF19 /* dynamic_mp3.h */,
+				04A8FCA90A19CB070046373F /* dynamic_ogg.c */,
+				00938E4D108A397A0009CF19 /* dynamic_ogg.h */,
+				F567D63B01CD881401F3E8B9 /* effect_position.c */,
+				F567D63C01CD881401F3E8B9 /* effect_stereoreverse.c */,
+				F567D63D01CD881401F3E8B9 /* effects_internal.c */,
+				F567D63E01CD881401F3E8B9 /* effects_internal.h */,
 				F567D64701CD88A701F3E8B9 /* load_aiff.c */,
 				F567D64801CD88A701F3E8B9 /* load_aiff.h */,
+				00938E2B108A37800009CF19 /* load_flac.c */,
+				00938E2C108A37800009CF19 /* load_flac.h */,
 				B2A42D0E03FAC6A400A8000A /* load_ogg.c */,
 				B2A42D0F03FAC6A400A8000A /* load_ogg.h */,
 				F567D64901CD88A701F3E8B9 /* load_voc.c */,
@@ -313,16 +325,18 @@
 				5CC1B87E012FB8CD7F000001 /* music.c */,
 				5CC1B87A012FB8CD7F000001 /* music_cmd.c */,
 				5CC1B87B012FB8CD7F000001 /* music_cmd.h */,
+				00938E2D108A37800009CF19 /* music_flac.c */,
+				00938E2E108A37800009CF19 /* music_flac.h */,
+				00938E2F108A37800009CF19 /* music_mad.c */,
+				00938E30108A37800009CF19 /* music_mad.h */,
+				00938E31108A37800009CF19 /* music_mod.c */,
+				00938E32108A37800009CF19 /* music_mod.h */,
 				5CC1B87C012FB8CD7F000001 /* music_ogg.c */,
 				5CC1B87D012FB8CD7F000001 /* music_ogg.h */,
+				F51BFAFD01F724BE01D3D55B /* native_midi */,
+				5CC1B87F012FB8CD7F000001 /* timidity */,
 				5CC1B89B012FB8CD7F000001 /* wavestream.c */,
 				5CC1B89C012FB8CD7F000001 /* wavestream.h */,
-				F567D63B01CD881401F3E8B9 /* effect_position.c */,
-				F567D63C01CD881401F3E8B9 /* effect_stereoreverse.c */,
-				F567D63D01CD881401F3E8B9 /* effects_internal.c */,
-				F567D63E01CD881401F3E8B9 /* effects_internal.h */,
-				5CC1B87F012FB8CD7F000001 /* timidity */,
-				F51BFAFD01F724BE01D3D55B /* native_midi */,
 			);
 			name = "Library Source";
 			sourceTree = "<group>";
@@ -371,9 +385,12 @@
 		BE1FA8AD07AF95DC004B6283 /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				BE1FA8AE07AF95F7004B6283 /* SDL.framework */,
+				AA9F7DB714B15AE700278D1E /* FLAC.framework */,
 				00938E1B108A36520009CF19 /* mikmod.framework */,
+				AA9F7DB314B15ADC00278D1E /* Ogg.framework */,
+				BE1FA8AE07AF95F7004B6283 /* SDL.framework */,
 				00939014108A5C470009CF19 /* smpeg.framework */,
+				AA9F7DB414B15ADC00278D1E /* Vorbis.framework */,
 			);
 			name = "Linked Frameworks";
 			sourceTree = "<group>";
@@ -486,6 +503,7 @@
 				BE1FA90307AF96B2004B6283 /* Rez */,
 				001D90F8108A2CB8006E367C /* Copy Frameworks */,
 				00938F15108A50740009CF19 /* Create Frameworks symlink */,
+				AA9F7D9714B143C700278D1E /* Convert SDL includes to SDL Framework includes */,
 			);
 			buildRules = (
 			);
@@ -495,7 +513,7 @@
 			name = Framework;
 			productInstallPath = "@executable_path/../Frameworks";
 			productName = SDL_mixer;
-			productReference = BE1FA90607AF96B2004B6283 /* SDL_mixer.framework */;
+			productReference = BE1FA90607AF96B2004B6283 /* SDLmixer.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		BE1FA90707AF96B2004B6283 /* Static Library */ = {
@@ -514,7 +532,7 @@
 			name = "Static Library";
 			productInstallPath = /usr/local/lib;
 			productName = "Static Library";
-			productReference = BE1FA95407AF96B2004B6283 /* libSDL_mixer.a */;
+			productReference = BE1FA95407AF96B2004B6283 /* libSDLmixer.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		BE1FA95507AF96B2004B6283 /* Create DMG */ = {
@@ -539,9 +557,16 @@
 /* Begin PBXProject section */
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
 			buildConfigurationList = 00B7E497097EC6B300826121 /* Build configuration list for PBXProject "SDL_mixer" */;
-			compatibilityVersion = "Xcode 2.4";
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
 			mainGroup = 0867D691FE84028FC02AAC07 /* SDL_mixerFramework */;
 			productRefGroup = 034768DDFF38A45A11DB9C8B /* Products */;
 			projectDirPath = "";
@@ -594,7 +619,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd $SYMROOT/$CONFIGURATION/SDL_mixer.framework\nif ! [ -L Frameworks ]; then\n\tln -s Versions/Current/Frameworks Frameworks\nfi\n";
+			shellScript = "cd $SYMROOT/$CONFIGURATION/SDLmixer.framework\nif ! [ -L Frameworks ]; then\n\tln -s Versions/Current/Frameworks Frameworks\nfi\n";
+		};
+		AA9F7D9714B143C700278D1E /* Convert SDL includes to SDL Framework includes */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Convert SDL includes to SDL Framework includes";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd $SYMROOT/$CONFIGURATION/SDLmixer.framework/Versions/Current/Headers\nsed 's,#include \"\\(.*\\)\",#include <SDL/\\1>,' <SDL_mixer.h >SDL_mixer.h.new\nmv SDL_mixer.h.new SDL_mixer.h";
 		};
 		BE1FA95707AF96B2004B6283 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -603,7 +642,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# clean up the framework, remove headers, extra files\nmkdir -p build/dmg-tmp\n/Developer/Tools/CpMac -r $TARGET_BUILD_DIR/SDL_mixer.framework build/dmg-tmp/\ncp pkg-support/resources/ReadMe.txt build/dmg-tmp\n\n# remove the .DS_Store files if any (we may want to provide one in the future for fancy .dmgs)\nrm -rf build/dmg-tmp/.DS_Store\n\n# create the dmg\nhdiutil create -ov -fs HFS+ -volname SDL_mixer -srcfolder build/dmg-tmp build/SDL_mixer.dmg\n\n# clean up\nrm -rf build/dmg-tmp\n\n# compress it???\n#(cd build; gnutar -zcvf SDL_mixer.dmg.tar.gz SDL_mixer.dmg)";
+			shellScript = "# clean up the framework, remove headers, extra files\nmkdir -p build/dmg-tmp\n/Developer/Tools/CpMac -r $TARGET_BUILD_DIR/SDLmixer.framework build/dmg-tmp/\ncp pkg-support/resources/ReadMe.txt build/dmg-tmp\n\n# remove the .DS_Store files if any (we may want to provide one in the future for fancy .dmgs)\nrm -rf build/dmg-tmp/.DS_Store\n\n# create the dmg\nhdiutil create -ov -fs HFS+ -volname SDL_mixer -srcfolder build/dmg-tmp build/SDL_mixer.dmg\n\n# clean up\nrm -rf build/dmg-tmp\n\n# compress it???\n#(cd build; gnutar -zcvf SDL_mixer.dmg.tar.gz SDL_mixer.dmg)";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -698,45 +737,54 @@
 		00B7E48C097EC6B300826121 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_COMPATIBILITY_VERSION = 11;
+				DYLIB_CURRENT_VERSION = 11.2;
 				FRAMEWORK_SEARCH_PATHS = (
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_4)",
 					"$(HOME)/Library/Frameworks",
 					/Library/Frameworks,
+					"\"$(SRCROOT)/vorbis\"",
+					"\"$(SRCROOT)/flac\"",
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/mikmod\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/mikmod\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/smpeg\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/smpeg\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/vorbis\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/flac\"";
 				FRAMEWORK_VERSION = A;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					MACOSX,
 					__MACOSX__,
-					USE_RWOPS,
 					CMD_MUSIC,
 					WAV_MUSIC,
 					MOD_MUSIC,
 					MID_MUSIC,
 					USE_NATIVE_MIDI,
 					OGG_MUSIC,
+					FLAC_MUSIC,
 					MP3_MUSIC,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
 					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
+					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_4)",
 					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
 					/Library/Frameworks/SDL.framework/Headers,
-					vorbis/include,
 				);
 				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/mikmod/mikmod.framework/Headers\"";
 				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/smpeg/smpeg.framework/Headers\"";
+				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/vorbis/Ogg.framework/Headers\" \"$(SRCROOT)/vorbis/Vorbis.framework/Headers\"";
+				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/flac/FLAC.framework/Headers\"";
 				INFOPLIST_FILE = "Info-Framework__Upgraded_.plist";
-				INSTALL_PATH = "@executable_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = vorbis/lib;
+				INSTALL_PATH = "@rpath";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -745,73 +793,72 @@
 					AudioUnit,
 					"-framework",
 					CoreServices,
-					"-lvorbisfile",
-					"-lvorbis",
-					"-logg",
-					"-framework",
-					mikmod,
-					"-sub_umbrella",
-					mikmod,
-					"-framework",
-					smpeg,
-					"-sub_umbrella",
-					smpeg,
 				);
 				PRODUCT_NAME = SDLmixer;
+				SDKROOT = macosx;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1) $(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2) $(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_3) $(HOME)/Library/Frameworks /Library/Frameworks $(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_4)";
 				WARNING_CFLAGS = (
 					"-Wall",
 					"-Wno-four-char-constants",
 				);
 				WRAPPER_EXTENSION = framework;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
 		00B7E48D097EC6B300826121 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_COMPATIBILITY_VERSION = 11;
+				DYLIB_CURRENT_VERSION = 11.2;
 				FRAMEWORK_SEARCH_PATHS = (
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_4)",
 					"$(HOME)/Library/Frameworks",
 					/Library/Frameworks,
+					"\"$(SRCROOT)/vorbis\"",
+					"\"$(SRCROOT)/flac\"",
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/mikmod\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/mikmod\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/smpeg\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/smpeg\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/vorbis\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/flac\"";
 				FRAMEWORK_VERSION = A;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					MACOSX,
 					__MACOSX__,
-					USE_RWOPS,
 					CMD_MUSIC,
 					WAV_MUSIC,
 					MOD_MUSIC,
 					MID_MUSIC,
 					USE_NATIVE_MIDI,
 					OGG_MUSIC,
+					FLAC_MUSIC,
 					MP3_MUSIC,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
 					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
+					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_4)",
 					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
 					/Library/Frameworks/SDL.framework/Headers,
-					vorbis/include,
 				);
 				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/mikmod/mikmod.framework/Headers\"";
 				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/smpeg/smpeg.framework/Headers\"";
+				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/vorbis/Ogg.framework/Headers\" \"$(SRCROOT)/vorbis/Vorbis.framework/Headers\"";
+				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/flac/FLAC.framework/Headers\"";
 				INFOPLIST_FILE = "Info-Framework__Upgraded_.plist";
-				INSTALL_PATH = "@executable_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = vorbis/lib;
+				INSTALL_PATH = "@rpath";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -820,106 +867,24 @@
 					AudioUnit,
 					"-framework",
 					CoreServices,
-					"-lvorbisfile",
-					"-lvorbis",
-					"-logg",
-					"-framework",
-					mikmod,
-					"-sub_umbrella",
-					mikmod,
-					"-framework",
-					smpeg,
-					"-sub_umbrella",
-					smpeg,
 				);
 				PRODUCT_NAME = SDLmixer;
+				SDKROOT = macosx;
 				SECTORDER_FLAGS = "";
+				USER_HEADER_SEARCH_PATHS = "$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1) $(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2) $(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_3) $(HOME)/Library/Frameworks /Library/Frameworks $(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_4)";
 				WARNING_CFLAGS = (
 					"-Wall",
 					"-Wno-four-char-constants",
 				);
 				WRAPPER_EXTENSION = framework;
-				ZERO_LINK = YES;
 			};
 			name = Debug;
-		};
-		00B7E48E097EC6B300826121 /* Default */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
-					"$(HOME)/Library/Frameworks",
-					/Library/Frameworks,
-				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/mikmod\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/mikmod\"";
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/smpeg\"";
-				FRAMEWORK_VERSION = A;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					MACOSX,
-					__MACOSX__,
-					USE_RWOPS,
-					CMD_MUSIC,
-					WAV_MUSIC,
-					MOD_MUSIC,
-					MID_MUSIC,
-					USE_NATIVE_MIDI,
-					OGG_MUSIC,
-					MP3_MUSIC,
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (
-					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
-					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
-					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
-					/Library/Frameworks/SDL.framework/Headers,
-					vorbis/include,
-				);
-				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/mikmod/mikmod.framework/Headers\"";
-				HEADER_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/smpeg/smpeg.framework/Headers\"";
-				INFOPLIST_FILE = "Info-Framework__Upgraded_.plist";
-				INSTALL_PATH = "@executable_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = vorbis/lib;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-framework",
-					AudioToolbox,
-					"-framework",
-					AudioUnit,
-					"-framework",
-					CoreServices,
-					"-lvorbisfile",
-					"-lvorbis",
-					"-logg",
-					"-framework",
-					mikmod,
-					"-sub_umbrella",
-					mikmod,
-					"-framework",
-					smpeg,
-					"-sub_umbrella",
-					smpeg,
-				);
-				PRODUCT_NAME = SDLmixer;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-Wno-four-char-constants",
-				);
-				WRAPPER_EXTENSION = framework;
-			};
-			name = Default;
 		};
 		00B7E490097EC6B300826121 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					MACOSX,
@@ -932,6 +897,7 @@
 					USE_NATIVE_MIDI,
 					OGG_MUSIC,
 				);
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
 					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
 					/Library/Frameworks/SDL.framework/Headers,
@@ -957,6 +923,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = SDLmixer;
 				REZ_EXECUTABLE = YES;
+				SDKROOT = macosx;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
 					"-Wmost",
@@ -974,7 +941,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -988,6 +954,7 @@
 					USE_NATIVE_MIDI,
 					OGG_MUSIC,
 				);
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
 					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
 					/Library/Frameworks/SDL.framework/Headers,
@@ -1013,6 +980,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = SDLmixer;
 				REZ_EXECUTABLE = YES;
+				SDKROOT = macosx;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
 					"-Wmost",
@@ -1023,61 +991,9 @@
 			};
 			name = Debug;
 		};
-		00B7E492097EC6B300826121 /* Default */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					MACOSX,
-					__MACOSX__,
-					USE_RWOPS,
-					CMD_MUSIC,
-					WAV_MUSIC,
-					MOD_MUSIC,
-					MID_MUSIC,
-					USE_NATIVE_MIDI,
-					OGG_MUSIC,
-				);
-				HEADER_SEARCH_PATHS = (
-					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
-					/Library/Frameworks/SDL.framework/Headers,
-					vorbis/include,
-					smpeg/include,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					vorbis/lib,
-					smpeg/lib,
-				);
-				LIBRARY_STYLE = STATIC;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-framework",
-					QuickTime,
-					"-framework",
-					Carbon,
-					"-lvorbisfile",
-					"-lvorbis",
-					"-logg",
-				);
-				OTHER_LIBTOOL_FLAGS = "";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = SDLmixer;
-				REZ_EXECUTABLE = YES;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
-			};
-			name = Default;
-		};
 		00B7E494097EC6B300826121 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
@@ -1098,7 +1014,6 @@
 			buildSettings = {
 				DEBUGGING_SYMBOLS = YES;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				OTHER_CFLAGS = "";
@@ -1119,106 +1034,44 @@
 			};
 			name = Debug;
 		};
-		00B7E496097EC6B300826121 /* Default */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "Create DMG";
-				REZ_EXECUTABLE = YES;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
-			};
-			name = Default;
-		};
 		00B7E498097EC6B300826121 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(HOME)/Library/Frameworks",
 					/Library/Frameworks,
 				);
-				GCC_VERSION_i386 = 4.0;
-				GCC_VERSION_ppc = 4.0;
-				GCC_VERSION_x86_64 = 4.2;
 				HEADER_SEARCH_PATHS = (
 					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
 					/Library/Frameworks/SDL.framework/Headers,
 					vorbis/include,
 				);
 				LIBRARY_SEARCH_PATHS = vorbis/lib;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_x86_64 = 10.6;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_x86_64 = /Developer/SDKs/MacOSX10.6.sdk;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
 		00B7E499097EC6B300826121 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(HOME)/Library/Frameworks",
 					/Library/Frameworks,
 				);
-				GCC_VERSION_i386 = 4.0;
-				GCC_VERSION_ppc = 4.0;
-				GCC_VERSION_x86_64 = 4.2;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = (
 					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
 					/Library/Frameworks/SDL.framework/Headers,
 					vorbis/include,
 				);
 				LIBRARY_SEARCH_PATHS = vorbis/lib;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_x86_64 = 10.6;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_x86_64 = /Developer/SDKs/MacOSX10.6.sdk;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				SDKROOT = macosx;
 			};
 			name = Debug;
-		};
-		00B7E49A097EC6B300826121 /* Default */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(HOME)/Library/Frameworks",
-					/Library/Frameworks,
-				);
-				GCC_VERSION_i386 = 4.0;
-				GCC_VERSION_ppc = 4.0;
-				GCC_VERSION_x86_64 = 4.2;
-				HEADER_SEARCH_PATHS = (
-					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
-					/Library/Frameworks/SDL.framework/Headers,
-					vorbis/include,
-				);
-				LIBRARY_SEARCH_PATHS = vorbis/lib;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_x86_64 = 10.6;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_x86_64 = /Developer/SDKs/MacOSX10.6.sdk;
-			};
-			name = Default;
 		};
 /* End XCBuildConfiguration section */
 
@@ -1228,40 +1081,36 @@
 			buildConfigurations = (
 				00B7E48C097EC6B300826121 /* Release */,
 				00B7E48D097EC6B300826121 /* Debug */,
-				00B7E48E097EC6B300826121 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = Release;
 		};
 		00B7E48F097EC6B300826121 /* Build configuration list for PBXNativeTarget "Static Library" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				00B7E490097EC6B300826121 /* Release */,
 				00B7E491097EC6B300826121 /* Debug */,
-				00B7E492097EC6B300826121 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = Release;
 		};
 		00B7E493097EC6B300826121 /* Build configuration list for PBXNativeTarget "Create DMG" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				00B7E494097EC6B300826121 /* Release */,
 				00B7E495097EC6B300826121 /* Debug */,
-				00B7E496097EC6B300826121 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = Release;
 		};
 		00B7E497097EC6B300826121 /* Build configuration list for PBXProject "SDL_mixer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				00B7E498097EC6B300826121 /* Release */,
 				00B7E499097EC6B300826121 /* Debug */,
-				00B7E49A097EC6B300826121 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

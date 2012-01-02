@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 42;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -12,7 +12,7 @@
 		BE1FA99007AF9AAE004B6283 /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = F5A47A9E01A0483001D3D55B /* SDLMain.m */; };
 		BE1FA99107AF9AAE004B6283 /* playmus.c in Sources */ = {isa = PBXBuildFile; fileRef = F567D67401CD945F01F3E8B9 /* playmus.c */; };
 		BE1FA99307AF9AAE004B6283 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		BE1FA99B07AF9B6E004B6283 /* SDL_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE1FA99907AF9B6E004B6283 /* SDL_mixer.framework */; };
+		BE1FA99B07AF9B6E004B6283 /* SDLmixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE1FA99907AF9B6E004B6283 /* SDLmixer.framework */; };
 		BE1FA99C07AF9B6E004B6283 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE1FA99A07AF9B6E004B6283 /* SDL.framework */; };
 /* End PBXBuildFile section */
 
@@ -23,7 +23,7 @@
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		BE1FA99407AF9AAE004B6283 /* Info-playmus__Upgraded_.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-playmus__Upgraded_.plist"; sourceTree = "<group>"; };
 		BE1FA99507AF9AAE004B6283 /* playmus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = playmus.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		BE1FA99907AF9B6E004B6283 /* SDL_mixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_mixer.framework; path = /Library/Frameworks/SDL_mixer.framework; sourceTree = "<absolute>"; };
+		BE1FA99907AF9B6E004B6283 /* SDLmixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDLmixer.framework; path = /Library/Frameworks/SDLmixer.framework; sourceTree = "<absolute>"; };
 		BE1FA99A07AF9B6E004B6283 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = /Library/Frameworks/SDL.framework; sourceTree = "<absolute>"; };
 		F567D67401CD945F01F3E8B9 /* playmus.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = playmus.c; path = ../../playmus.c; sourceTree = SOURCE_ROOT; };
 		F5A47A9D01A0482F01D3D55B /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = SOURCE_ROOT; };
@@ -36,7 +36,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BE1FA99307AF9AAE004B6283 /* Cocoa.framework in Frameworks */,
-				BE1FA99B07AF9B6E004B6283 /* SDL_mixer.framework in Frameworks */,
+				BE1FA99B07AF9B6E004B6283 /* SDLmixer.framework in Frameworks */,
 				BE1FA99C07AF9B6E004B6283 /* SDL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -56,7 +56,7 @@
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				BE1FA99907AF9B6E004B6283 /* SDL_mixer.framework */,
+				BE1FA99907AF9B6E004B6283 /* SDLmixer.framework */,
 				BE1FA99A07AF9B6E004B6283 /* SDL.framework */,
 				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
 			);
@@ -156,9 +156,16 @@
 /* Begin PBXProject section */
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
 			buildConfigurationList = 00B7E4D9097ECFD800826121 /* Build configuration list for PBXProject "playmus" */;
-			compatibilityVersion = "Xcode 2.4";
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* SDL App */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -210,13 +217,13 @@
 					"$(HOME)/Library/Frameworks",
 					/Library/Frameworks,
 				);
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
 					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
 					/Library/Frameworks/SDL.framework/Headers,
-					"$(HOME)/Library/Frameworks/SDL_mixer.framework/Headers",
-					/Library/Frameworks/SDL_mixer.framework/Headers,
+					"$(HOME)/Library/Frameworks/SDLmixer.framework/Headers",
+					/Library/Frameworks/SDLmixer.framework/Headers,
 				);
 				INFOPLIST_FILE = "Info-playmus__Upgraded_.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -243,14 +250,14 @@
 					/Library/Frameworks,
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
 					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
 					/Library/Frameworks/SDL.framework/Headers,
-					"$(HOME)/Library/Frameworks/SDL_mixer.framework/Headers",
-					/Library/Frameworks/SDL_mixer.framework/Headers,
+					"$(HOME)/Library/Frameworks/SDLmixer.framework/Headers",
+					/Library/Frameworks/SDLmixer.framework/Headers,
 				);
 				INFOPLIST_FILE = "Info-playmus__Upgraded_.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -276,11 +283,12 @@
 					/Library/Frameworks,
 				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
 					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
 					/Library/Frameworks/SDL.framework/Headers,
-					"$(HOME)/Library/Frameworks/SDL_mixer.framework/Headers",
-					/Library/Frameworks/SDL_mixer.framework/Headers,
+					"$(HOME)/Library/Frameworks/SDLmixer.framework/Headers",
+					/Library/Frameworks/SDLmixer.framework/Headers,
 				);
 				INFOPLIST_FILE = "Info-playmus__Upgraded_.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -300,54 +308,24 @@
 		00B7E4DA097ECFD800826121 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
-				GCC_VERSION_i386 = 4.0;
-				GCC_VERSION_ppc = 4.0;
-				GCC_VERSION_x86_64 = 4.2;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_x86_64 = 10.6;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_x86_64 = /Developer/SDKs/MacOSX10.6.sdk;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				SDKROOT = "";
 			};
 			name = Deployment;
 		};
 		00B7E4DB097ECFD800826121 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
-				GCC_VERSION_i386 = 4.0;
-				GCC_VERSION_ppc = 4.0;
-				GCC_VERSION_x86_64 = 4.2;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_x86_64 = 10.6;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_x86_64 = /Developer/SDKs/MacOSX10.6.sdk;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				SDKROOT = "";
 			};
 			name = Development;
 		};
 		00B7E4DC097ECFD800826121 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
-				GCC_VERSION_i386 = 4.0;
-				GCC_VERSION_ppc = 4.0;
-				GCC_VERSION_x86_64 = 4.2;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_x86_64 = 10.6;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_x86_64 = /Developer/SDKs/MacOSX10.6.sdk;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				SDKROOT = "";
 			};
 			name = Default;
 		};
