@@ -306,6 +306,7 @@ static void mix_channels(void *udata, Uint8 *stream, int len)
 			if ( mix_channel[i].expire > 0 && mix_channel[i].expire < sdl_ticks ) {
 				/* Expiration delay for that channel is reached */
 				mix_channel[i].playing = 0;
+				mix_channel[i].looping = 0;
 				mix_channel[i].fading = MIX_NO_FADING;
 				mix_channel[i].expire = 0;
 				_Mix_channel_done_playing(i);
@@ -315,6 +316,7 @@ static void mix_channels(void *udata, Uint8 *stream, int len)
 				    Mix_Volume(i, mix_channel[i].fade_volume_reset); /* Restore the volume */
 					if( mix_channel[i].fading == MIX_FADING_OUT ) {
 						mix_channel[i].playing = 0;
+						mix_channel[i].looping = 0;
 						mix_channel[i].expire = 0;
 						_Mix_channel_done_playing(i);
 					}
@@ -729,6 +731,7 @@ void Mix_FreeChunk(Mix_Chunk *chunk)
 			for ( i=0; i<num_channels; ++i ) {
 				if ( chunk == mix_channel[i].chunk ) {
 					mix_channel[i].playing = 0;
+					mix_channel[i].looping = 0;
 				}
 			}
 		}
@@ -988,7 +991,8 @@ int Mix_HaltChannel(int which)
 		SDL_LockAudio();
 		if (mix_channel[which].playing) {
 			_Mix_channel_done_playing(which);
-		mix_channel[which].playing = 0;
+			mix_channel[which].playing = 0;
+			mix_channel[which].looping = 0;
 		}
 		mix_channel[which].expire = 0;
 		if(mix_channel[which].fading != MIX_NO_FADING) /* Restore volume */
