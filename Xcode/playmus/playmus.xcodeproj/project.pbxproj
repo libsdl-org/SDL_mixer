@@ -218,7 +218,6 @@
 					/Library/Frameworks,
 				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
 					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
 					/Library/Frameworks/SDL.framework/Headers,
@@ -227,7 +226,6 @@
 				);
 				INFOPLIST_FILE = "Info-playmus__Upgraded_.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = "";
 				OTHER_LDFLAGS = "-lstdc++";
 				PRODUCT_NAME = playmus;
 				SECTORDER_FLAGS = "";
@@ -252,7 +250,6 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
 					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
 					/Library/Frameworks/SDL.framework/Headers,
@@ -261,7 +258,6 @@
 				);
 				INFOPLIST_FILE = "Info-playmus__Upgraded_.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = "";
 				OTHER_LDFLAGS = "-lstdc++";
 				PRODUCT_NAME = playmus;
 				SECTORDER_FLAGS = "";
@@ -283,7 +279,6 @@
 					/Library/Frameworks,
 				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
 					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
 					/Library/Frameworks/SDL.framework/Headers,
@@ -292,7 +287,6 @@
 				);
 				INFOPLIST_FILE = "Info-playmus__Upgraded_.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = "";
 				OTHER_LDFLAGS = "-lstdc++";
 				PRODUCT_NAME = playmus;
 				SECTORDER_FLAGS = "";
