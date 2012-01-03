@@ -1,4 +1,6 @@
 1.2.12:
+Sam Lantinga - Tue Jan  3 01:36:33 EST 2012
+ * The Mac OS X framework name changed to SDLmixer, to meet Apple's requirements
 Sam Lantinga - Sat Dec 31 19:11:59 EST 2011
  * Fixed dropping audio in the FLAC audio decoding
 Sam Lantinga - Sat Dec 31 18:32:05 EST 2011
