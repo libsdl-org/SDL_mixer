@@ -71,6 +71,10 @@ static FluidSynthMidiSong *fluidsynth_loadsong_common(int (*function)(FluidSynth
 	FluidSynthMidiSong *song;
 	fluid_settings_t *settings = NULL;
 
+	if (!Mix_Init(MIX_INIT_FLUIDSYNTH)) {
+		return NULL;
+	}
+
 	if ((song = malloc(sizeof(FluidSynthMidiSong)))) {
 		memset(song, 0, sizeof(FluidSynthMidiSong));
 

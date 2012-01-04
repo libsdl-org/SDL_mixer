@@ -306,6 +306,13 @@ FLAC_music *FLAC_new_RW(SDL_RWops *rw, int freerw)
 	int init_stage = 0;
 	int was_error = 1;
 
+	if (!Mix_Init(MIX_INIT_FLAC)) {
+		if (freerw) {
+			SDL_RWclose(rw);
+		}
+		return NULL;
+	}
+
 	music = (FLAC_music *)malloc ( sizeof (*music));
 	if (music) {
 		/* Initialize the music structure */
@@ -323,35 +330,33 @@ FLAC_music *FLAC_new_RW(SDL_RWops *rw, int freerw)
 		music->flac_data.data_len = 0;
 		music->flac_data.data_read = 0;
 
-		if (Mix_Init(MIX_INIT_FLAC)) {
-			init_stage++; // stage 1!
+		init_stage++; // stage 1!
 
-			music->flac_decoder = flac.FLAC__stream_decoder_new ();
+		music->flac_decoder = flac.FLAC__stream_decoder_new ();
 
-			if (music->flac_decoder != NULL) {
-				init_stage++; // stage 2!
+		if (music->flac_decoder != NULL) {
+			init_stage++; // stage 2!
 
-				if (flac.FLAC__stream_decoder_init_stream(
-							music->flac_decoder,
-							flac_read_music_cb, flac_seek_music_cb,
-							flac_tell_music_cb, flac_length_music_cb,
-							flac_eof_music_cb, flac_write_music_cb,
-							flac_metadata_music_cb, flac_error_music_cb,
-							music) == FLAC__STREAM_DECODER_INIT_STATUS_OK ) {
-					init_stage++; // stage 3!
+			if (flac.FLAC__stream_decoder_init_stream(
+						music->flac_decoder,
+						flac_read_music_cb, flac_seek_music_cb,
+						flac_tell_music_cb, flac_length_music_cb,
+						flac_eof_music_cb, flac_write_music_cb,
+						flac_metadata_music_cb, flac_error_music_cb,
+						music) == FLAC__STREAM_DECODER_INIT_STATUS_OK ) {
+				init_stage++; // stage 3!
 
-					if (flac.FLAC__stream_decoder_process_until_end_of_metadata
-											(music->flac_decoder)) {
-						was_error = 0;
-					} else {
-						SDL_SetError("FLAC__stream_decoder_process_until_end_of_metadata() failed");
-					}
+				if (flac.FLAC__stream_decoder_process_until_end_of_metadata
+										(music->flac_decoder)) {
+					was_error = 0;
 				} else {
-					SDL_SetError("FLAC__stream_decoder_init_stream() failed");
+					SDL_SetError("FLAC__stream_decoder_process_until_end_of_metadata() failed");
 				}
 			} else {
-				SDL_SetError("FLAC__stream_decoder_new() failed");
+				SDL_SetError("FLAC__stream_decoder_init_stream() failed");
 			}
+		} else {
+			SDL_SetError("FLAC__stream_decoder_new() failed");
 		}
 
 		if (was_error) {

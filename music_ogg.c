@@ -72,6 +72,13 @@ OGG_music *OGG_new_RW(SDL_RWops *rw, int freerw)
 	OGG_music *music;
 	ov_callbacks callbacks;
 
+	if ( !Mix_Init(MIX_INIT_OGG) ) {
+		if ( freerw ) {
+			SDL_RWclose(rw);
+		}
+		return(NULL);
+	}
+
 	SDL_memset(&callbacks, 0, sizeof(callbacks));
 	callbacks.read_func = sdl_read_func;
 	callbacks.seek_func = sdl_seek_func;
@@ -87,12 +94,6 @@ OGG_music *OGG_new_RW(SDL_RWops *rw, int freerw)
 		OGG_setvolume(music, MIX_MAX_VOLUME);
 		music->section = -1;
 
-		if ( !Mix_Init(MIX_INIT_OGG) ) {
-			if ( freerw ) {
-				SDL_RWclose(rw);
-			}
-			return(NULL);
-		}
 		if ( vorbis.ov_open_callbacks(rw, &music->vf, NULL, 0, callbacks) < 0 ) {
 			free(music);
 			if ( freerw ) {
