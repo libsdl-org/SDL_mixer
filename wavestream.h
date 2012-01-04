@@ -41,9 +41,6 @@ extern int WAVStream_Init(SDL_AudioSpec *mixer);
 /* Unimplemented */
 extern void WAVStream_SetVolume(int volume);
 
-/* Load a WAV stream from the given file */
-extern WAVStream *WAVStream_LoadSong(const char *file, const char *magic);
-
 /* Load a WAV stream from an SDL_RWops object */
 extern WAVStream *WAVStream_LoadSong_RW(SDL_RWops *rw, const char *magic, int freerw);
 

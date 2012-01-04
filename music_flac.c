@@ -50,19 +50,6 @@ void FLAC_setvolume(FLAC_music *music, int volume)
 	music->volume = volume;
 }
 
-/* Load an FLAC stream from the given file */
-FLAC_music *FLAC_new(const char *file)
-{
-	SDL_RWops *rw;
-
-	rw = SDL_RWFromFile (file, "rb");
-	if (rw == NULL) {
-		SDL_SetError ("Couldn't open %s", file);
-		return NULL;
-	}
-	return FLAC_new_RW (rw, 1);
-}
-
 static FLAC__StreamDecoderReadStatus flac_read_music_cb(
 									const FLAC__StreamDecoder *decoder,
 									FLAC__byte buffer[],

@@ -1676,33 +1676,6 @@ void Timidity_SetVolume(int volume)
   ctl->master_volume(amplification);
 }
 
-MidiSong *Timidity_LoadSong(const char *midifile)
-{
-  MidiSong *song;
-  int32 events;
-  SDL_RWops *rw;
-
-  /* Allocate memory for the song */
-  song = (MidiSong *)safe_malloc(sizeof(*song));
-  memset(song, 0, sizeof(*song));
-
-  /* Open the file */
-  strcpy(midi_name, midifile);
-
-  rw = SDL_RWFromFile(midifile, "rb");
-  if ( rw != NULL ) {
-    song->events=read_midi_file(rw, &events, &song->samples);
-    SDL_RWclose(rw);
-  }
-
-  /* Make sure everything is okay */
-  if (!song->events) {
-    free(song);
-    song = NULL;
-  }
-  return(song);
-}
-
 MidiSong *Timidity_LoadSong_RW(SDL_RWops *rw, int freerw)
 {
   MidiSong *song;

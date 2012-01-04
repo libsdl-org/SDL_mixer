@@ -65,13 +65,6 @@ int Mix_InitMP3()
 			SDL_UnloadObject(smpeg.handle);
 			return -1;
 		}
-		smpeg.SMPEG_new =
-			(SMPEG* (*)(const char *, SMPEG_Info*, int))
-			SDL_LoadFunction(smpeg.handle, "SMPEG_new");
-		if ( smpeg.SMPEG_new == NULL ) {
-			SDL_UnloadObject(smpeg.handle);
-			return -1;
-		}
 		smpeg.SMPEG_new_rwops =
 			(SMPEG* (*)(SDL_RWops *, SMPEG_Info*, int))
 			SDL_LoadFunction(smpeg.handle, "SMPEG_new_rwops");
@@ -151,7 +144,6 @@ int Mix_InitMP3()
 		smpeg.SMPEG_delete = SMPEG_delete;
 		smpeg.SMPEG_enableaudio = SMPEG_enableaudio;
 		smpeg.SMPEG_enablevideo = SMPEG_enablevideo;
-		smpeg.SMPEG_new = SMPEG_new;
 		smpeg.SMPEG_new_rwops = SMPEG_new_rwops;
 		smpeg.SMPEG_play = SMPEG_play;
 		smpeg.SMPEG_playAudio = SMPEG_playAudio;

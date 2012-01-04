@@ -26,20 +26,6 @@
 #include "music_mad.h"
 
 mad_data *
-mad_openFile(const char *filename, SDL_AudioSpec *mixer)
-{
-  SDL_RWops *rw;
-  mad_data *mp3_mad;
-
-  rw = SDL_RWFromFile(filename, "rb");
-  if (rw == NULL) {
-	return NULL;
-  }
-
-  return mad_openFileRW(rw, mixer, 1);
-}
-
-mad_data *
 mad_openFileRW(SDL_RWops *rw, SDL_AudioSpec *mixer, int freerw)
 {
   mad_data *mp3_mad;

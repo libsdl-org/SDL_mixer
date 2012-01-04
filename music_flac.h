@@ -66,9 +66,6 @@ extern int FLAC_init(SDL_AudioSpec *mixer);
 /* Set the volume for a FLAC stream */
 extern void FLAC_setvolume(FLAC_music *music, int volume);
 
-/* Load a FLAC stream from the given file */
-extern FLAC_music *FLAC_new(const char *file);
-
 /* Load an FLAC stream from an SDL_RWops object */
 extern FLAC_music *FLAC_new_RW(SDL_RWops *rw, int freerw);
 

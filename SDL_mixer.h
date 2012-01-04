@@ -154,6 +154,9 @@ extern DECLSPEC Mix_Music * SDLCALL Mix_LoadMUS(const char *file);
    Matt Campbell (matt@campbellhome.dhs.org) April 2000 */
 extern DECLSPEC Mix_Music * SDLCALL Mix_LoadMUS_RW(SDL_RWops *rw);
 
+/* Load a music file from an SDL_RWop object assuming a specific format */
+extern DECLSPEC Mix_Music * SDLCALL Mix_LoadMUSType_RW(SDL_RWops *rw, Mix_MusicType type, int freesrc);
+
 /* Load a wave file of the mixer format from a memory buffer */
 extern DECLSPEC Mix_Chunk * SDLCALL Mix_QuickLoad_WAV(Uint8 *mem);
 

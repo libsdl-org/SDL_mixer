@@ -74,21 +74,6 @@ void modplug_setvolume(modplug_data *music, int volume)
 	ModPlug_SetMasterVolume(music->file, volume*4);
 }
 
-/* Load a modplug stream from the given file */
-modplug_data *modplug_new(const char *file)
-{
-	SDL_RWops *rw;
-
-	rw = SDL_RWFromFile(file, "rb");
-	if ( rw == NULL ) {
-		/* FIXME: Free rw, need to free on delete */
-		SDL_SetError("Couldn't open %s", file);
-		return NULL;
-	}
-	return modplug_new_RW(rw, 1);
-
-}
-
 /* Load a modplug stream from an SDL_RWops object */
 modplug_data *modplug_new_RW(SDL_RWops *rw, int freerw)
 {

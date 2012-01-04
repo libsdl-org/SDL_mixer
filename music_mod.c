@@ -141,21 +141,6 @@ void MOD_setvolume(MODULE *music, int volume)
 	mikmod.Player_SetVolume((SWORD)volume);
 }
 
-/* Load a MOD stream from the given file */
-MODULE *MOD_new(const char *file)
-{
-	SDL_RWops *rw;
-
-	rw = SDL_RWFromFile(file, "rb");
-	if ( rw == NULL ) {
-		/* FIXME: Free rw, need to free on delete */
-		SDL_SetError("Couldn't open %s", file);
-		return NULL;
-	}
-	return MOD_new_RW(rw, 1);
-}
-
-
 typedef struct
 {
 	MREADER mr;

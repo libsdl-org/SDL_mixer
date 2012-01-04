@@ -113,19 +113,7 @@ void WAVStream_SetVolume(int volume)
 	wavestream_volume = volume;
 }
 
-WAVStream *WAVStream_LoadSong(const char *file, const char *magic)
-{
-	SDL_RWops *rw;
-
-	rw = SDL_RWFromFile(file, "rb");
-	if ( rw == NULL ) {
-		SDL_SetError("Couldn't open %s", file);
-		return NULL;
-	}
-	return WAVStream_LoadSong_RW(rw, magic, 1);
-}
-
-/* Load a WAV stream from the given file */
+/* Load a WAV stream from the given RWops object */
 WAVStream *WAVStream_LoadSong_RW(SDL_RWops *rw, const char *magic, int freerw)
 {
 	WAVStream *wave;

@@ -51,9 +51,6 @@ extern int OGG_init(SDL_AudioSpec *mixer);
 /* Set the volume for an OGG stream */
 extern void OGG_setvolume(OGG_music *music, int volume);
 
-/* Load an OGG stream from the given file */
-extern OGG_music *OGG_new(const char *file);
-
 /* Load an OGG stream from an SDL_RWops object */
 extern OGG_music *OGG_new_RW(SDL_RWops *rw, int freerw);
 
