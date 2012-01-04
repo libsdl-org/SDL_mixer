@@ -199,10 +199,12 @@ static int music_halt_or_loop (void)
 	
 	if (!music_internal_playing()) 
 	{
+#ifdef USE_NATIVE_MIDI
 		/* Native MIDI handles looping internally */
 		if (music_playing->type == MUS_MID && native_midi_ok) {
 			music_loops = 0;
 		}
+#endif
 
 		/* Restart music if it has to loop at a high level */
 		if (music_loops)
