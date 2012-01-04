@@ -38,9 +38,6 @@ extern void MOD_exit(void);
 /* Set the volume for a MOD stream */
 extern void MOD_setvolume(struct MODULE *music, int volume);
 
-/* Load a MOD stream from the given file */
-extern struct MODULE *MOD_new(const char *file);
-
 /* Load a MOD stream from an SDL_RWops object */
 extern struct MODULE *MOD_new_RW(SDL_RWops *rw, int freerw);
 

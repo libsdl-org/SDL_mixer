@@ -51,20 +51,6 @@ void OGG_setvolume(OGG_music *music, int volume)
 	music->volume = volume;
 }
 
-/* Load an OGG stream from the given file */
-OGG_music *OGG_new(const char *file)
-{
-	SDL_RWops *rw;
-
-	rw = SDL_RWFromFile(file, "rb");
-	if ( rw == NULL ) {
-		SDL_SetError("Couldn't open %s", file);
-		return NULL;
-	}
-	return OGG_new_RW(rw, 1);
-}
-
-
 static size_t sdl_read_func(void *ptr, size_t size, size_t nmemb, void *datasource)
 {
     return SDL_RWread((SDL_RWops*)datasource, ptr, size, nmemb);

@@ -66,7 +66,7 @@ int fluidsynth_init(SDL_AudioSpec *mixer)
 	return 0;
 }
 
-FluidSynthMidiSong *fluidsynth_loadsong_common(int (*function)(FluidSynthMidiSong*, void*), void *data)
+static FluidSynthMidiSong *fluidsynth_loadsong_common(int (*function)(FluidSynthMidiSong*, void*), void *data)
 {
 	FluidSynthMidiSong *song;
 	fluid_settings_t *settings = NULL;
@@ -105,19 +105,7 @@ FluidSynthMidiSong *fluidsynth_loadsong_common(int (*function)(FluidSynthMidiSon
 	return NULL;
 }
 
-int fluidsynth_loadsong_internal(FluidSynthMidiSong *song, void *data)
-{
-	const char* path = (const char*) data;
-
-	if (fluidsynth.fluid_player_add(song->player, path) == FLUID_OK) {
-		return 1;
-	} else {
-		Mix_SetError("FluidSynth failed to load %s", path);
-		return 0;
-	}
-}
-
-int fluidsynth_loadsong_RW_internal(FluidSynthMidiSong *song, void *data)
+static int fluidsynth_loadsong_RW_internal(FluidSynthMidiSong *song, void *data)
 {
 	off_t offset;
 	size_t size;
@@ -144,11 +132,6 @@ int fluidsynth_loadsong_RW_internal(FluidSynthMidiSong *song, void *data)
 		Mix_SetError("Insufficient memory for song");
 	}
 	return 0;
-}
-
-FluidSynthMidiSong *fluidsynth_loadsong(const char *midifile)
-{
-	return fluidsynth_loadsong_common(fluidsynth_loadsong_internal, (void*) midifile);
 }
 
 FluidSynthMidiSong *fluidsynth_loadsong_RW(SDL_RWops *rw, int freerw)

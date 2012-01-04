@@ -200,18 +200,6 @@ int native_midi_detect()
   return 1;
 }
 
-NativeMidiSong *native_midi_loadsong(const char *midifile)
-{
-	SDL_RWops *rw;
-
-	/* Attempt to load the midi file */
-	rw = SDL_RWFromFile(midifile, "rb");
-	if (!rw) {
-		return NULL;
-	}
-	return native_midi_loadsong_RW(rw, 1);
-}
-
 NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw, int freerw)
 {
 	NativeMidiSong *newsong;

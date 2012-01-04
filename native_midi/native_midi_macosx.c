@@ -145,17 +145,6 @@ int native_midi_detect()
     return 1;  /* always available. */
 }
 
-NativeMidiSong *native_midi_loadsong(const char *midifile)
-{
-    NativeMidiSong *retval = NULL;
-    SDL_RWops *rw = SDL_RWFromFile(midifile, "rb");
-    if (rw != NULL) {
-        retval = native_midi_loadsong_RW(rw, 1);
-    }
-
-    return retval;
-}
-
 NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw, int freerw)
 {
     NativeMidiSong *retval = NULL;
