@@ -737,8 +737,8 @@
 		00B7E48C097EC6B300826121 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				DYLIB_COMPATIBILITY_VERSION = 11;
-				DYLIB_CURRENT_VERSION = 11.2;
+				DYLIB_COMPATIBILITY_VERSION = 13;
+				DYLIB_CURRENT_VERSION = 13;
 				INFOPLIST_FILE = "Info-Framework__Upgraded_.plist";
 				INSTALL_PATH = "@rpath";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks";
@@ -757,8 +757,8 @@
 		00B7E48D097EC6B300826121 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				DYLIB_COMPATIBILITY_VERSION = 11;
-				DYLIB_CURRENT_VERSION = 11.2;
+				DYLIB_COMPATIBILITY_VERSION = 13;
+				DYLIB_CURRENT_VERSION = 13;
 				INFOPLIST_FILE = "Info-Framework__Upgraded_.plist";
 				INSTALL_PATH = "@rpath";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks";
