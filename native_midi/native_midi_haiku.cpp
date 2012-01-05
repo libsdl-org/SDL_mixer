@@ -1,5 +1,5 @@
 /*
-  native_midi_haiku:  Native Midi support on HaikuOS for the SDL_mixer library
+  native_midi_haiku:  Native Midi support on Haiku for the SDL_mixer library
   Copyright (C) 2010  Egor Suvorov <egor_suvorov@mail.ru>
 
   This software is provided 'as-is', without any express or implied
