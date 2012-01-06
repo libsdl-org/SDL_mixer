@@ -867,7 +867,7 @@ static int music_internal_play(Mix_Music *music, double position)
 {
 	int retval = 0;
 
-#ifdef __MACOSX__
+#if defined(__MACOSX__) && defined(USE_NATIVE_MIDI)
 	/* This fixes a bug with native MIDI on Mac OS X, where you
 	   can't really stop and restart MIDI from the audio callback.
 	*/
