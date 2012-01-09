@@ -219,8 +219,8 @@
 		B2A42D0F03FAC6A400A8000A /* load_ogg.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = load_ogg.h; path = ../load_ogg.h; sourceTree = SOURCE_ROOT; };
 		BE1FA8AE07AF95F7004B6283 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = /Library/Frameworks/SDL.framework; sourceTree = "<absolute>"; };
 		BE1FA90507AF96B2004B6283 /* Info-Framework__Upgraded_.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-Framework__Upgraded_.plist"; sourceTree = "<group>"; };
-		BE1FA90607AF96B2004B6283 /* SDLmixer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SDLmixer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		BE1FA95407AF96B2004B6283 /* libSDLmixer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSDLmixer.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		BE1FA90607AF96B2004B6283 /* SDL_mixer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SDL_mixer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BE1FA95407AF96B2004B6283 /* libSDL_mixer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSDL_mixer.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE1FA95807AF96B3004B6283 /* Create DMG */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Create DMG"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F51BFB0101F724BE01D3D55B /* native_midi.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = native_midi.h; sourceTree = "<group>"; };
 		F567D63B01CD881401F3E8B9 /* effect_position.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = effect_position.c; path = ../effect_position.c; sourceTree = SOURCE_ROOT; };
@@ -272,8 +272,8 @@
 			isa = PBXGroup;
 			children = (
 				089C1665FE841158C02AAC07 /* Resources */,
-				BE1FA90607AF96B2004B6283 /* SDLmixer.framework */,
-				BE1FA95407AF96B2004B6283 /* libSDLmixer.a */,
+				BE1FA90607AF96B2004B6283 /* SDL_mixer.framework */,
+				BE1FA95407AF96B2004B6283 /* libSDL_mixer.a */,
 				BE1FA95807AF96B3004B6283 /* Create DMG */,
 			);
 			name = Products;
@@ -513,7 +513,7 @@
 			name = Framework;
 			productInstallPath = "@executable_path/../Frameworks";
 			productName = SDL_mixer;
-			productReference = BE1FA90607AF96B2004B6283 /* SDLmixer.framework */;
+			productReference = BE1FA90607AF96B2004B6283 /* SDL_mixer.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		BE1FA90707AF96B2004B6283 /* Static Library */ = {
@@ -532,7 +532,7 @@
 			name = "Static Library";
 			productInstallPath = /usr/local/lib;
 			productName = "Static Library";
-			productReference = BE1FA95407AF96B2004B6283 /* libSDLmixer.a */;
+			productReference = BE1FA95407AF96B2004B6283 /* libSDL_mixer.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		BE1FA95507AF96B2004B6283 /* Create DMG */ = {
@@ -619,7 +619,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd $SYMROOT/$CONFIGURATION/SDLmixer.framework\nif ! [ -L Frameworks ]; then\n\tln -s Versions/Current/Frameworks Frameworks\nfi\n";
+			shellScript = "cd $SYMROOT/$CONFIGURATION/SDL_mixer.framework\nif ! [ -L Frameworks ]; then\n\tln -s Versions/Current/Frameworks Frameworks\nfi\n";
 		};
 		AA9F7D9714B143C700278D1E /* Convert SDL includes to SDL Framework includes */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -633,7 +633,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd $SYMROOT/$CONFIGURATION/SDLmixer.framework/Versions/Current/Headers\nsed 's,#include \"\\(.*\\)\",#include <SDL/\\1>,' <SDL_mixer.h >SDL_mixer.h.new\nmv SDL_mixer.h.new SDL_mixer.h";
+			shellScript = "cd $SYMROOT/$CONFIGURATION/SDL_mixer.framework/Versions/Current/Headers\nsed 's,#include \"\\(.*\\)\",#include <SDL/\\1>,' <SDL_mixer.h >SDL_mixer.h.new\nmv SDL_mixer.h.new SDL_mixer.h";
 		};
 		BE1FA95707AF96B2004B6283 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -642,7 +642,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# clean up the framework, remove headers, extra files\nmkdir -p build/dmg-tmp\n/Developer/Tools/CpMac -r $TARGET_BUILD_DIR/SDLmixer.framework build/dmg-tmp/\ncp pkg-support/resources/ReadMe.txt build/dmg-tmp\n\n# remove the .DS_Store files if any (we may want to provide one in the future for fancy .dmgs)\nrm -rf build/dmg-tmp/.DS_Store\n\n# create the dmg\nhdiutil create -ov -fs HFS+ -volname SDL_mixer -srcfolder build/dmg-tmp build/SDL_mixer.dmg\n\n# clean up\nrm -rf build/dmg-tmp\n\n# compress it???\n#(cd build; gnutar -zcvf SDL_mixer.dmg.tar.gz SDL_mixer.dmg)";
+			shellScript = "# clean up the framework, remove headers, extra files\nmkdir -p build/dmg-tmp\n/Developer/Tools/CpMac -r $TARGET_BUILD_DIR/SDL_mixer.framework build/dmg-tmp/\ncp pkg-support/resources/ReadMe.txt build/dmg-tmp\n\n# remove the .DS_Store files if any (we may want to provide one in the future for fancy .dmgs)\nrm -rf build/dmg-tmp/.DS_Store\n\n# create the dmg\nhdiutil create -ov -fs HFS+ -volname SDL_mixer -srcfolder build/dmg-tmp build/SDL_mixer.dmg\n\n# clean up\nrm -rf build/dmg-tmp\n\n# compress it???\n#(cd build; gnutar -zcvf SDL_mixer.dmg.tar.gz SDL_mixer.dmg)";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -868,7 +868,7 @@
 				);
 				HEADER_SEARCH_PATHS_QUOTED = "\"$(SRCROOT)/mikmod/mikmod.framework/Headers\" \"$(SRCROOT)/smpeg/smpeg.framework/Headers\" \"$(SRCROOT)/vorbis/Ogg.framework/Headers\" \"$(SRCROOT)/vorbis/Vorbis.framework/Headers\" \"$(SRCROOT)/flac/FLAC.framework/Headers\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				PRODUCT_NAME = SDLmixer;
+				PRODUCT_NAME = SDL_mixer;
 				SDKROOT = macosx;
 				SEPARATE_STRIP = YES;
 				STRIP_STYLE = "non-global";
@@ -904,7 +904,7 @@
 				);
 				HEADER_SEARCH_PATHS_QUOTED = "\"$(SRCROOT)/mikmod/mikmod.framework/Headers\" \"$(SRCROOT)/smpeg/smpeg.framework/Headers\" \"$(SRCROOT)/vorbis/Ogg.framework/Headers\" \"$(SRCROOT)/vorbis/Vorbis.framework/Headers\" \"$(SRCROOT)/flac/FLAC.framework/Headers\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				PRODUCT_NAME = SDLmixer;
+				PRODUCT_NAME = SDL_mixer;
 				SDKROOT = macosx;
 			};
 			name = Debug;
