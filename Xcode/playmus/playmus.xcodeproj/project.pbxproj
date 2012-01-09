@@ -12,7 +12,7 @@
 		BE1FA99007AF9AAE004B6283 /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = F5A47A9E01A0483001D3D55B /* SDLMain.m */; };
 		BE1FA99107AF9AAE004B6283 /* playmus.c in Sources */ = {isa = PBXBuildFile; fileRef = F567D67401CD945F01F3E8B9 /* playmus.c */; };
 		BE1FA99307AF9AAE004B6283 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		BE1FA99B07AF9B6E004B6283 /* SDLmixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE1FA99907AF9B6E004B6283 /* SDLmixer.framework */; };
+		BE1FA99B07AF9B6E004B6283 /* SDL_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE1FA99907AF9B6E004B6283 /* SDL_mixer.framework */; };
 		BE1FA99C07AF9B6E004B6283 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE1FA99A07AF9B6E004B6283 /* SDL.framework */; };
 /* End PBXBuildFile section */
 
@@ -23,7 +23,7 @@
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		BE1FA99407AF9AAE004B6283 /* Info-playmus__Upgraded_.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-playmus__Upgraded_.plist"; sourceTree = "<group>"; };
 		BE1FA99507AF9AAE004B6283 /* playmus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = playmus.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		BE1FA99907AF9B6E004B6283 /* SDLmixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDLmixer.framework; path = /Library/Frameworks/SDLmixer.framework; sourceTree = "<absolute>"; };
+		BE1FA99907AF9B6E004B6283 /* SDL_mixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_mixer.framework; path = /Library/Frameworks/SDL_mixer.framework; sourceTree = "<absolute>"; };
 		BE1FA99A07AF9B6E004B6283 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = /Library/Frameworks/SDL.framework; sourceTree = "<absolute>"; };
 		F567D67401CD945F01F3E8B9 /* playmus.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = playmus.c; path = ../../playmus.c; sourceTree = SOURCE_ROOT; };
 		F5A47A9D01A0482F01D3D55B /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = SOURCE_ROOT; };
@@ -36,7 +36,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BE1FA99307AF9AAE004B6283 /* Cocoa.framework in Frameworks */,
-				BE1FA99B07AF9B6E004B6283 /* SDLmixer.framework in Frameworks */,
+				BE1FA99B07AF9B6E004B6283 /* SDL_mixer.framework in Frameworks */,
 				BE1FA99C07AF9B6E004B6283 /* SDL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -56,7 +56,7 @@
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				BE1FA99907AF9B6E004B6283 /* SDLmixer.framework */,
+				BE1FA99907AF9B6E004B6283 /* SDL_mixer.framework */,
 				BE1FA99A07AF9B6E004B6283 /* SDL.framework */,
 				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
 			);
