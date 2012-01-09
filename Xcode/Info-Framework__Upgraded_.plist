@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>SDLmixer</string>
+	<string>SDL_mixer</string>
 	<key>CFBundleGetInfoString</key>
 	<string>http://www.libsdl.org/projects/SDL_mixer</string>
 	<key>CFBundleIconFile</key>
