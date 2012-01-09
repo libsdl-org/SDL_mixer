@@ -92,8 +92,8 @@ typedef signed char     SBYTE;      /* 1 byte, signed */
 typedef unsigned char   UBYTE;      /* 1 byte, unsigned */
 typedef signed short    SWORD;      /* 2 bytes, signed */
 typedef unsigned short  UWORD;      /* 2 bytes, unsigned */
-typedef signed int      SLONG;      /* 4 bytes, signed */
-typedef unsigned int    ULONG;      /* 4 bytes, unsigned */
+typedef signed long     SLONG;      /* 4 bytes, signed */
+typedef unsigned long   ULONG;      /* 4 bytes, unsigned */
 typedef int             BOOL;       /* 0=false, <>0 true */
 
 #else
