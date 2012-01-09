@@ -6,22 +6,16 @@
 	<string>English</string>
 	<key>CFBundleExecutable</key>
 	<string>SDL_mixer</string>
-	<key>CFBundleGetInfoString</key>
-	<string>http://www.libsdl.org/projects/SDL_mixer</string>
-	<key>CFBundleIconFile</key>
-	<string></string>
 	<key>CFBundleIdentifier</key>
-	<string>SDLmixer</string>
+	<string>org.libsdl.SDL-mixer</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>Simple DirectMedia Layer Mixer Library</string>
+	<string>SDL_mixer</string>
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.2.12</string>
-	<key>CFBundleSignature</key>
-	<string>SDLmixerX</string>
 	<key>CFBundleVersion</key>
 	<string>1.2.12</string>
 </dict>
