@@ -12728,7 +12728,7 @@ fi
                 mikmod_lib=`find_lib libmikmod.dylib`
                 ;;
             *-*-cygwin* | *-*-mingw32*)
-                mikmod_lib=`find_lib "mikmod*.dll"`
+                mikmod_lib=`find_lib "libmikmod*.dll"`
                 ;;
             *)
                 mikmod_lib=`find_lib "libmikmod*.so.[0-9]"`
