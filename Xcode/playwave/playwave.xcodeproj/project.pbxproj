@@ -12,7 +12,7 @@
 		BE1FA9E207AF9BE7004B6283 /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = F5A47A9E01A0483001D3D55B /* SDLMain.m */; };
 		BE1FA9E307AF9BE7004B6283 /* playwave.c in Sources */ = {isa = PBXBuildFile; fileRef = F567D66E01CD930A01F3E8B9 /* playwave.c */; };
 		BE1FA9E507AF9BE7004B6283 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		BE1FA9E607AF9BE7004B6283 /* SDLmixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE1FA9CC07AF9BD0004B6283 /* SDLmixer.framework */; };
+		BE1FA9E607AF9BE7004B6283 /* SDL_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE1FA9CC07AF9BD0004B6283 /* SDL_mixer.framework */; };
 		BE1FA9E707AF9BE7004B6283 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE1FA9CD07AF9BD0004B6283 /* SDL.framework */; };
 /* End PBXBuildFile section */
 
@@ -21,7 +21,7 @@
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		BE1FA9CC07AF9BD0004B6283 /* SDLmixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDLmixer.framework; path = /Library/Frameworks/SDLmixer.framework; sourceTree = "<absolute>"; };
+		BE1FA9CC07AF9BD0004B6283 /* SDL_mixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_mixer.framework; path = /Library/Frameworks/SDL_mixer.framework; sourceTree = "<absolute>"; };
 		BE1FA9CD07AF9BD0004B6283 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = /Library/Frameworks/SDL.framework; sourceTree = "<absolute>"; };
 		BE1FA9E807AF9BE7004B6283 /* Info-playwave__Upgraded_.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-playwave__Upgraded_.plist"; sourceTree = "<group>"; };
 		BE1FA9E907AF9BE7004B6283 /* playwave.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = playwave.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -36,7 +36,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BE1FA9E507AF9BE7004B6283 /* Cocoa.framework in Frameworks */,
-				BE1FA9E607AF9BE7004B6283 /* SDLmixer.framework in Frameworks */,
+				BE1FA9E607AF9BE7004B6283 /* SDL_mixer.framework in Frameworks */,
 				BE1FA9E707AF9BE7004B6283 /* SDL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -56,7 +56,7 @@
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				BE1FA9CC07AF9BD0004B6283 /* SDLmixer.framework */,
+				BE1FA9CC07AF9BD0004B6283 /* SDL_mixer.framework */,
 				BE1FA9CD07AF9BD0004B6283 /* SDL.framework */,
 				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
 			);
