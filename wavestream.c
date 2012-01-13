@@ -126,7 +126,7 @@ WAVStream *WAVStream_LoadSong_RW(SDL_RWops *rw, const char *magic, int freerw)
 		}
 		return(NULL);
 	}
-	wave = (WAVStream *)malloc(sizeof *wave);
+	wave = (WAVStream *)SDL_malloc(sizeof *wave);
 	if ( wave ) {
 		memset(wave, 0, (sizeof *wave));
 		wave->freerw = freerw;
@@ -141,7 +141,7 @@ WAVStream *WAVStream_LoadSong_RW(SDL_RWops *rw, const char *magic, int freerw)
 			Mix_SetError("Unknown WAVE format");
 		}
 		if ( wave->rw == NULL ) {
-			free(wave);
+			SDL_free(wave);
 			if ( freerw ) {
 				SDL_RWclose(rw);
 			}
@@ -181,10 +181,10 @@ int WAVStream_PlaySome(Uint8 *stream, int len)
 			if ( music->cvt.len != original_len ) {
 				int worksize;
 				if ( music->cvt.buf != NULL ) {
-					free(music->cvt.buf);
+					SDL_free(music->cvt.buf);
 				}
 				worksize = original_len*music->cvt.len_mult;
-				music->cvt.buf=(Uint8 *)malloc(worksize);
+				music->cvt.buf=(Uint8 *)SDL_malloc(worksize);
 				if ( music->cvt.buf == NULL ) {
 					return 0;
 				}
@@ -238,12 +238,12 @@ void WAVStream_FreeSong(WAVStream *wave)
 	if ( wave ) {
 		/* Clean up associated data */
 		if ( wave->cvt.buf ) {
-			free(wave->cvt.buf);
+			SDL_free(wave->cvt.buf);
 		}
 		if ( wave->freerw ) {
 			SDL_RWclose(wave->rw);
 		}
-		free(wave);
+		SDL_free(wave);
 	}
 }
 
@@ -264,14 +264,14 @@ static int ReadChunk(SDL_RWops *src, Chunk *chunk, int read_data)
 	chunk->magic	= SDL_ReadLE32(src);
 	chunk->length	= SDL_ReadLE32(src);
 	if ( read_data ) {
-		chunk->data = (Uint8 *)malloc(chunk->length);
+		chunk->data = (Uint8 *)SDL_malloc(chunk->length);
 		if ( chunk->data == NULL ) {
 			Mix_SetError("Out of memory");
 			return(-1);
 		}
 		if ( SDL_RWread(src, chunk->data, chunk->length, 1) != 1 ) {
 			Mix_SetError("Couldn't read chunk");
-			free(chunk->data);
+			SDL_free(chunk->data);
 			return(-1);
 		}
 	} else {
@@ -312,7 +312,7 @@ static SDL_RWops *LoadWAVStream (SDL_RWops *src, SDL_AudioSpec *spec,
 	do {
 		/* FIXME! Add this logic to SDL_LoadWAV_RW() */
 		if ( chunk.data ) {
-			free(chunk.data);
+			SDL_free(chunk.data);
 		}
 		lenread = ReadChunk(src, &chunk, 1);
 		if ( lenread < 0 ) {
@@ -324,7 +324,7 @@ static SDL_RWops *LoadWAVStream (SDL_RWops *src, SDL_AudioSpec *spec,
 	/* Decode the audio data format */
 	format = (WaveFMT *)chunk.data;
 	if ( chunk.magic != FMT ) {
-		free(chunk.data);
+		SDL_free(chunk.data);
 		Mix_SetError("Complex WAVE files not supported");
 		was_error = 1;
 		goto done;
@@ -369,7 +369,7 @@ static SDL_RWops *LoadWAVStream (SDL_RWops *src, SDL_AudioSpec *spec,
 
 done:
 	if ( format != NULL ) {
-		free(format);
+		SDL_free(format);
 	}
 	if ( was_error ) {
 		return NULL;

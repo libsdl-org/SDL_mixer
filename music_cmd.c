@@ -48,7 +48,7 @@ MusicCMD *MusicCMD_LoadSong(const char *cmd, const char *file)
 	MusicCMD *music;
 
 	/* Allocate and fill the music structure */
-	music = (MusicCMD *)malloc(sizeof *music);
+	music = (MusicCMD *)SDL_malloc(sizeof *music);
 	if ( music == NULL ) {
 		Mix_SetError("Out of memory");
 		return(NULL);
@@ -123,7 +123,7 @@ static char **parse_args(char *command, char *last_arg)
 	if ( last_arg ) {
 		++argc;
 	}
-	argv = (char **)malloc((argc+1)*(sizeof *argv));
+	argv = (char **)SDL_malloc((argc+1)*(sizeof *argv));
 	if ( argv == NULL ) {
 		return(NULL);
 	}
@@ -219,7 +219,7 @@ void MusicCMD_Resume(MusicCMD *music)
 /* Close the given music stream */
 void MusicCMD_FreeSong(MusicCMD *music)
 {
-	free(music);
+	SDL_free(music);
 }
 
 /* Return non-zero if a stream is currently playing */

@@ -163,7 +163,7 @@ const char *Mix_GetMusicDecoder(int index)
 
 static void add_music_decoder(const char *decoder)
 {
-	void *ptr = realloc(music_decoders, (num_decoders + 1) * sizeof (const char **));
+	void *ptr = SDL_realloc(music_decoders, (num_decoders + 1) * sizeof (const char **));
 	if (ptr == NULL) {
 		return;  /* oh well, go on without it. */
 	}
@@ -520,7 +520,7 @@ Mix_Music *Mix_LoadMUS(const char *file)
 #ifdef CMD_MUSIC
 	if ( music_cmd ) {
 		/* Allocate memory for the music structure */
-		music = (Mix_Music *)malloc(sizeof(Mix_Music));
+		music = (Mix_Music *)SDL_malloc(sizeof(Mix_Music));
 		if ( music == NULL ) {
 			Mix_SetError("Out of memory");
 			return(NULL);
@@ -529,7 +529,7 @@ Mix_Music *Mix_LoadMUS(const char *file)
 		music->type = MUS_CMD;
 		music->data.cmd = MusicCMD_LoadSong(music_cmd, file);
 		if ( music->data.cmd == NULL ) {
-			free(music);
+			SDL_free(music);
 			music == NULL;
 		}
 		return music;
@@ -606,7 +606,7 @@ Mix_Music *Mix_LoadMUSType_RW(SDL_RWops *rw, Mix_MusicType type, int freesrc)
 	}
 
 	/* Allocate memory for the music structure */
-	music = (Mix_Music *)malloc(sizeof(Mix_Music));
+	music = (Mix_Music *)SDL_malloc(sizeof(Mix_Music));
 	if (music == NULL ) {
 		Mix_SetError("Out of memory");
 		return NULL;
@@ -745,7 +745,7 @@ Mix_Music *Mix_LoadMUSType_RW(SDL_RWops *rw, Mix_MusicType type, int freesrc)
 
 
 	if (music->error) {
-		free(music);
+		SDL_free(music);
 		music=NULL;
 	}
 	return(music);
@@ -838,7 +838,7 @@ void Mix_FreeMusic(Mix_Music *music)
 		}
 
     skip:
-		free(music);
+		SDL_free(music);
 	}
 }
 
@@ -1481,11 +1481,11 @@ int Mix_SetMusicCMD(const char *command)
 {
 	Mix_HaltMusic();
 	if ( music_cmd ) {
-		free(music_cmd);
+		SDL_free(music_cmd);
 		music_cmd = NULL;
 	}
 	if ( command ) {
-		music_cmd = (char *)malloc(strlen(command)+1);
+		music_cmd = (char *)SDL_malloc(strlen(command)+1);
 		if ( music_cmd == NULL ) {
 			return(-1);
 		}
@@ -1527,7 +1527,7 @@ void close_music(void)
 #endif
 
 	/* rcg06042009 report available decoders at runtime. */
-	free(music_decoders);
+	SDL_free(music_decoders);
 	music_decoders = NULL;
 	num_decoders = 0;
 
@@ -1538,12 +1538,12 @@ int Mix_SetSoundFonts(const char *paths)
 {
 #ifdef MID_MUSIC
 	if (soundfont_paths) {
-		free(soundfont_paths);
+		SDL_free(soundfont_paths);
 		soundfont_paths = NULL;
 	}
 
 	if (paths) {
-		if (!(soundfont_paths = strdup(paths))) {
+		if (!(soundfont_paths = SDL_strdup(paths))) {
 			Mix_SetError("Insufficient memory to set SoundFonts");
 			return 0;
 		}
@@ -1574,7 +1574,7 @@ int Mix_EachSoundFont(int (*function)(const char*, void*), void *data)
 		return 0;
 	}
 
-	if (!(paths = strdup(cpaths))) {
+	if (!(paths = SDL_strdup(cpaths))) {
 		Mix_SetError("Insufficient memory to iterate over SoundFonts");
 		return 0;
 	}
@@ -1587,12 +1587,12 @@ int Mix_EachSoundFont(int (*function)(const char*, void*), void *data)
 	for (path = strtok_r(paths, ":;", &context); path; path = strtok_r(NULL, ":;", &context)) {
 #endif
 		if (!function(path, data)) {
-			free(paths);
+			SDL_free(paths);
 			return 0;
 		}
 	}
 
-	free(paths);
+	SDL_free(paths);
 	return 1;
 }
 #endif

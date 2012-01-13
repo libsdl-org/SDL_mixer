@@ -85,14 +85,14 @@ void _Eff_PositionDeinit(void)
 {
     int i;
     for (i = 0; i < position_channels; i++) {
-        free(pos_args_array[i]);
+        SDL_free(pos_args_array[i]);
     }
 
     position_channels = 0;
 
-    free(pos_args_global);
+    SDL_free(pos_args_global);
     pos_args_global = NULL;
-    free(pos_args_array);
+    SDL_free(pos_args_array);
     pos_args_array = NULL;
 }
 
@@ -102,13 +102,13 @@ static void _Eff_PositionDone(int channel, void *udata)
 {
     if (channel < 0) {
         if (pos_args_global != NULL) {
-            free(pos_args_global);
+            SDL_free(pos_args_global);
             pos_args_global = NULL;
         }
     }
 
     else if (pos_args_array[channel] != NULL) {
-        free(pos_args_array[channel]);
+        SDL_free(pos_args_array[channel]);
         pos_args_array[channel] = NULL;
     }
 }
@@ -1149,7 +1149,7 @@ static position_args *get_position_arg(int channel)
 
     if (channel < 0) {
         if (pos_args_global == NULL) {
-            pos_args_global = malloc(sizeof (position_args));
+            pos_args_global = SDL_malloc(sizeof (position_args));
             if (pos_args_global == NULL) {
                 Mix_SetError("Out of memory");
                 return(NULL);
@@ -1161,7 +1161,7 @@ static position_args *get_position_arg(int channel)
     }
 
     if (channel >= position_channels) {
-        rc = realloc(pos_args_array, (channel + 1) * sizeof (position_args *));
+        rc = SDL_realloc(pos_args_array, (channel + 1) * sizeof (position_args *));
         if (rc == NULL) {
             Mix_SetError("Out of memory");
             return(NULL);
@@ -1174,7 +1174,7 @@ static position_args *get_position_arg(int channel)
     }
 
     if (pos_args_array[channel] == NULL) {
-        pos_args_array[channel] = (position_args *)malloc(sizeof(position_args));
+        pos_args_array[channel] = (position_args *)SDL_malloc(sizeof(position_args));
         if (pos_args_array[channel] == NULL) {
             Mix_SetError("Out of memory");
             return(NULL);

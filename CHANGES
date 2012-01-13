@@ -1,4 +1,6 @@
 1.2.12:
+Sam Lantinga - Fri Jan 13 03:04:27 EST 2012
+ * Fixed memory crash loading Ogg Vorbis files on Windows
 Nikos Chantziaras - 2012-01-02 17:37:36 PST
  * Added Mix_LoadMUSType_RW() so you can tell SDL_mixer what type the music is
 Sam Lantinga - Sat Dec 31 19:11:59 EST 2011

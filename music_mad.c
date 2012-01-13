@@ -30,7 +30,7 @@ mad_openFileRW(SDL_RWops *rw, SDL_AudioSpec *mixer, int freerw)
 {
   mad_data *mp3_mad;
 
-  mp3_mad = (mad_data *)malloc(sizeof(mad_data));
+  mp3_mad = (mad_data *)SDL_malloc(sizeof(mad_data));
   if (mp3_mad) {
 	mp3_mad->rw = rw;
 	mp3_mad->freerw = freerw;
@@ -58,7 +58,7 @@ mad_closeFile(mad_data *mp3_mad)
   if (mp3_mad->freerw) {
 	SDL_RWclose(mp3_mad->rw);
   }
-  free(mp3_mad);
+  SDL_free(mp3_mad);
 }
 
 /* Starts the playback. */

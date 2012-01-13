@@ -224,7 +224,7 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
 	spec->samples = 4096;		/* Good default buffer size */
 
 	*audio_len = channels * numsamples * (samplesize / 8);
-	*audio_buf = (Uint8 *)malloc(*audio_len);
+	*audio_buf = (Uint8 *)SDL_malloc(*audio_len);
 	if ( *audio_buf == NULL ) {
 		SDL_SetError("Out of memory");
 		return(NULL);

@@ -411,7 +411,7 @@ SDL_AudioSpec *Mix_LoadVOC_RW (SDL_RWops *src, int freesrc,
         spec->channels = v.channels;
 
     *audio_len = v.rest;
-    *audio_buf = malloc(v.rest);
+    *audio_buf = SDL_malloc(v.rest);
     if (*audio_buf == NULL)
         goto done;
 
@@ -423,10 +423,10 @@ SDL_AudioSpec *Mix_LoadVOC_RW (SDL_RWops *src, int freesrc,
             goto done;
 
         *audio_len += v.rest;
-        ptr = realloc(*audio_buf, *audio_len);
+        ptr = SDL_realloc(*audio_buf, *audio_len);
         if (ptr == NULL)
         {
-            free(*audio_buf);
+            SDL_free(*audio_buf);
             *audio_buf = NULL;
             *audio_len = 0;
             goto done;

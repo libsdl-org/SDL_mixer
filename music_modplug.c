@@ -85,19 +85,19 @@ modplug_data *modplug_new_RW(SDL_RWops *rw, int freerw)
 	SDL_RWseek(rw, 0, RW_SEEK_END);
 	sz = SDL_RWtell(rw)-offset;
 	SDL_RWseek(rw, offset, RW_SEEK_SET);
-	buf=(char*)malloc(sz);
+	buf=(char*)SDL_malloc(sz);
 	if(buf)
 	{
 		if(SDL_RWread(rw, buf, sz, 1)==1)
 		{
-			music=(modplug_data*)malloc(sizeof(modplug_data));
+			music=(modplug_data*)SDL_malloc(sizeof(modplug_data));
 			if (music)
 			{
 				music->playing=0;
 				music->file=ModPlug_Load(buf,sz);
 				if(!music->file)
 				{
-					free(music);
+					SDL_free(music);
 					music=NULL;
 				}
 			}
@@ -106,7 +106,7 @@ modplug_data *modplug_new_RW(SDL_RWops *rw, int freerw)
 				SDL_OutOfMemory();
 			}
 		}
-		free(buf);
+		SDL_free(buf);
 	}
 	else
 	{
@@ -227,7 +227,7 @@ void modplug_stop(modplug_data *music)
 void modplug_delete(modplug_data *music)
 {
 	ModPlug_Unload(music->file);
-	free(music);
+	SDL_free(music);
 }
 
 /* Jump (seek) to a given position (time is in seconds) */
