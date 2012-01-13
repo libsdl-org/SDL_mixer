@@ -614,6 +614,9 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
 	}
 	if ( !loaded ) {
 		free(chunk);
+		if ( freesrc ) {
+			SDL_RWclose(src);
+		}
 		return(NULL);
 	}
 
@@ -623,31 +626,36 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
 #endif
 
 	/* Build the audio converter and create conversion buffers */
-	if ( SDL_BuildAudioCVT(&wavecvt,
-			wavespec.format, wavespec.channels, wavespec.freq,
-			mixer.format, mixer.channels, mixer.freq) < 0 ) {
+	if ( wavespec.format != mixer.format ||
+		 wavespec.channels != mixer.channels ||
+		 wavespec.freq != mixer.freq ) {
+		if ( SDL_BuildAudioCVT(&wavecvt,
+				wavespec.format, wavespec.channels, wavespec.freq,
+				mixer.format, mixer.channels, mixer.freq) < 0 ) {
+			SDL_FreeWAV(chunk->abuf);
+			free(chunk);
+			return(NULL);
+		}
+		samplesize = ((wavespec.format & 0xFF)/8)*wavespec.channels;
+		wavecvt.len = chunk->alen & ~(samplesize-1);
+		wavecvt.buf = (Uint8 *)calloc(1, wavecvt.len*wavecvt.len_mult);
+		if ( wavecvt.buf == NULL ) {
+			SDL_SetError("Out of memory");
+			SDL_FreeWAV(chunk->abuf);
+			free(chunk);
+			return(NULL);
+		}
+		memcpy(wavecvt.buf, chunk->abuf, chunk->alen);
 		SDL_FreeWAV(chunk->abuf);
-		free(chunk);
-		return(NULL);
-	}
-	samplesize = ((wavespec.format & 0xFF)/8)*wavespec.channels;
-	wavecvt.len = chunk->alen & ~(samplesize-1);
-	wavecvt.buf = (Uint8 *)calloc(1, wavecvt.len*wavecvt.len_mult);
-	if ( wavecvt.buf == NULL ) {
-		SDL_SetError("Out of memory");
-		SDL_FreeWAV(chunk->abuf);
-		free(chunk);
-		return(NULL);
-	}
-	memcpy(wavecvt.buf, chunk->abuf, chunk->alen);
-	SDL_FreeWAV(chunk->abuf);
 
-	/* Run the audio converter */
-	if ( SDL_ConvertAudio(&wavecvt) < 0 ) {
-		free(wavecvt.buf);
-		free(chunk);
-		return(NULL);
+		/* Run the audio converter */
+		if ( SDL_ConvertAudio(&wavecvt) < 0 ) {
+			free(wavecvt.buf);
+			free(chunk);
+			return(NULL);
+		}
 	}
+
 	chunk->allocated = 1;
 	chunk->abuf = wavecvt.buf;
 	chunk->alen = wavecvt.len_cvt;
