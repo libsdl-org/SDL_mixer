@@ -187,7 +187,7 @@ static FLAC__StreamDecoderWriteStatus flac_write_music_cb(
 
 				// create it
 				data->flac_data.data =
-									(char *)malloc (data->flac_data.data_len);
+					(char *)SDL_malloc (data->flac_data.data_len);
 
 				if (!data->flac_data.data) {
 					return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
@@ -227,7 +227,7 @@ static FLAC__StreamDecoderWriteStatus flac_write_music_cb(
 
 				// make it big enough for the rest of the block
 				data->flac_data.overflow =
-								(char *)malloc (data->flac_data.overflow_len);
+					(char *)SDL_malloc (data->flac_data.overflow_len);
 
 				if (!data->flac_data.overflow) {
 					return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
@@ -313,7 +313,7 @@ FLAC_music *FLAC_new_RW(SDL_RWops *rw, int freerw)
 		return NULL;
 	}
 
-	music = (FLAC_music *)malloc ( sizeof (*music));
+	music = (FLAC_music *)SDL_malloc ( sizeof (*music));
 	if (music) {
 		/* Initialize the music structure */
 		memset (music, 0, (sizeof (*music)));
@@ -367,7 +367,7 @@ FLAC_music *FLAC_new_RW(SDL_RWops *rw, int freerw)
 					flac.FLAC__stream_decoder_delete( music->flac_decoder );
 				case 1:
 				case 0:
-					free(music);
+					SDL_free(music);
 					if (freerw) {
 						SDL_RWclose(rw);
 					}
@@ -409,7 +409,7 @@ static void FLAC_getsome(FLAC_music *music)
 	music->flac_data.data_len = music->flac_data.max_to_read;
 	music->flac_data.data_read = 0;
 	if (!music->flac_data.data) {
-		music->flac_data.data = (char *)malloc (music->flac_data.data_len);
+		music->flac_data.data = (char *)SDL_malloc (music->flac_data.data_len);
 	}
 
 	// we have data to read
@@ -471,7 +471,7 @@ static void FLAC_getsome(FLAC_music *music)
 		if (cvt->buf) {
 			free (cvt->buf);
 		}
-		cvt->buf = (Uint8 *)malloc (music->flac_data.data_len * cvt->len_mult);
+		cvt->buf = (Uint8 *)SDL_malloc (music->flac_data.data_len * cvt->len_mult);
 		music->section = 0;
 	}
 	if (cvt->buf) {

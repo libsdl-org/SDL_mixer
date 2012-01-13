@@ -75,7 +75,7 @@ static FluidSynthMidiSong *fluidsynth_loadsong_common(int (*function)(FluidSynth
 		return NULL;
 	}
 
-	if ((song = malloc(sizeof(FluidSynthMidiSong)))) {
+	if ((song = SDL_malloc(sizeof(FluidSynthMidiSong)))) {
 		memset(song, 0, sizeof(FluidSynthMidiSong));
 
 		if (SDL_BuildAudioCVT(&song->convert, AUDIO_S16, 2, freq, format, channels, freq) >= 0) {
@@ -102,7 +102,7 @@ static FluidSynthMidiSong *fluidsynth_loadsong_common(int (*function)(FluidSynth
 		} else {
 			Mix_SetError("Failed to set up audio conversion");
 		}
-		free(song);
+		SDL_free(song);
 	} else {
 		Mix_SetError("Insufficient memory for song");
 	}
@@ -121,7 +121,7 @@ static int fluidsynth_loadsong_RW_internal(FluidSynthMidiSong *song, void *data)
 	size = SDL_RWtell(rw) - offset;
 	SDL_RWseek(rw, offset, RW_SEEK_SET);
 
-	if ((buffer = (char*) malloc(size))) {
+	if ((buffer = (char*) SDL_malloc(size))) {
 		if(SDL_RWread(rw, buffer, size, 1) == 1) {
 			if (fluidsynth.fluid_player_add_mem(song->player, buffer, size) == FLUID_OK) {
 				return 1;
@@ -131,7 +131,7 @@ static int fluidsynth_loadsong_RW_internal(FluidSynthMidiSong *song, void *data)
 		} else {
 			Mix_SetError("Failed to read in-memory song");
 		}
-		free(buffer);
+		SDL_free(buffer);
 	} else {
 		Mix_SetError("Insufficient memory for song");
 	}
@@ -155,7 +155,7 @@ void fluidsynth_freesong(FluidSynthMidiSong *song)
 	fluidsynth.delete_fluid_player(song->player);
 	fluidsynth.delete_fluid_settings(fluidsynth.fluid_synth_get_settings(song->synth));
 	fluidsynth.delete_fluid_synth(song->synth);
-	free(song);
+	SDL_free(song);
 }
 
 void fluidsynth_start(FluidSynthMidiSong *song)
@@ -188,7 +188,7 @@ int fluidsynth_playsome(FluidSynthMidiSong *song, void *dest, int dest_len)
 	void *src = dest;
 
 	if (dest_len < src_len) {
-		if (!(src = malloc(src_len))) {
+		if (!(src = SDL_malloc(src_len))) {
 			Mix_SetError("Insufficient memory for audio conversion");
 			return result;
 		}
@@ -214,7 +214,7 @@ int fluidsynth_playsome(FluidSynthMidiSong *song, void *dest, int dest_len)
 
 finish:
 	if (src != dest)
-		free(src);
+		SDL_free(src);
 
 	return result;
 }

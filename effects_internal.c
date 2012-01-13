@@ -73,7 +73,7 @@ void *_Eff_build_volume_table_u8(void)
     }
 
     if (!_Eff_volume_table) {
-        rc = malloc(256 * 256);
+        rc = SDL_malloc(256 * 256);
         if (rc) {
             _Eff_volume_table = (void *) rc;
             for (volume = 0; volume < 256; volume++) {
@@ -104,7 +104,7 @@ void *_Eff_build_volume_table_s8(void)
     Sint8 *rc;
 
     if (!_Eff_volume_table) {
-        rc = malloc(256 * 256);
+        rc = SDL_malloc(256 * 256);
         if (rc) {
             _Eff_volume_table = (void *) rc;
             for (volume = 0; volume < 256; volume++) {

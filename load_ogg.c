@@ -113,7 +113,7 @@ SDL_AudioSpec *Mix_LoadOGG_RW (SDL_RWops *src, int freesrc,
     samples = (long)vorbis.ov_pcm_total(&vf, -1);
 
     *audio_len = spec->size = samples * spec->channels * 2;
-    *audio_buf = malloc(*audio_len);
+    *audio_buf = SDL_malloc(*audio_len);
     if (*audio_buf == NULL)
         goto done;
 

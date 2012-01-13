@@ -176,7 +176,7 @@ static FLAC__StreamDecoderWriteStatus flac_write_load_cb(
 	if (frame->header.number.sample_number == 0) {
 		*(data->sdl_audio_len) = data->sdl_spec->size;
 		data->sdl_audio_read = 0;
-    	*(data->sdl_audio_buf) = malloc (*(data->sdl_audio_len));
+    	*(data->sdl_audio_buf) = SDL_malloc (*(data->sdl_audio_len));
 
     	if (*(data->sdl_audio_buf) == NULL) {
     		SDL_SetError
@@ -274,7 +274,7 @@ SDL_AudioSpec *Mix_LoadFLAC_RW (SDL_RWops *src, int freesrc,
 
 	// create the client data passing information
 	FLAC_SDL_Data* client_data;
-	client_data = (FLAC_SDL_Data *)malloc (sizeof (FLAC_SDL_Data));
+	client_data = (FLAC_SDL_Data *)SDL_malloc (sizeof (FLAC_SDL_Data));
 
 	if ((!src) || (!audio_buf) || (!audio_len))   /* sanity checks. */
 		goto done;
@@ -313,9 +313,9 @@ SDL_AudioSpec *Mix_LoadFLAC_RW (SDL_RWops *src, int freesrc,
 
 	was_error = 0;
 
-    /* Don't return a buffer that isn't a multiple of samplesize */
-    samplesize = ((spec->format & 0xFF) / 8) * spec->channels;
-    *audio_len &= ~(samplesize - 1);
+	/* Don't return a buffer that isn't a multiple of samplesize */
+	samplesize = ((spec->format & 0xFF) / 8) * spec->channels;
+	*audio_len &= ~(samplesize - 1);
 
 done:
 	if (was_init && decoder) {

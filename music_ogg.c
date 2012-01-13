@@ -84,7 +84,7 @@ OGG_music *OGG_new_RW(SDL_RWops *rw, int freerw)
 	callbacks.seek_func = sdl_seek_func;
 	callbacks.tell_func = sdl_tell_func;
 
-	music = (OGG_music *)malloc(sizeof *music);
+	music = (OGG_music *)SDL_malloc(sizeof *music);
 	if ( music ) {
 		/* Initialize the music structure */
 		memset(music, 0, (sizeof *music));
@@ -95,7 +95,7 @@ OGG_music *OGG_new_RW(SDL_RWops *rw, int freerw)
 		music->section = -1;
 
 		if ( vorbis.ov_open_callbacks(rw, &music->vf, NULL, 0, callbacks) < 0 ) {
-			free(music);
+			SDL_free(music);
 			if ( freerw ) {
 				SDL_RWclose(rw);
 			}
@@ -151,9 +151,9 @@ static void OGG_getsome(OGG_music *music)
 		SDL_BuildAudioCVT(cvt, AUDIO_S16, vi->channels, vi->rate,
 		                       mixer.format,mixer.channels,mixer.freq);
 		if ( cvt->buf ) {
-			free(cvt->buf);
+			SDL_free(cvt->buf);
 		}
-		cvt->buf = (Uint8 *)malloc(sizeof(data)*cvt->len_mult);
+		cvt->buf = (Uint8 *)SDL_malloc(sizeof(data)*cvt->len_mult);
 		music->section = section;
 	}
 	if ( cvt->buf ) {
@@ -211,13 +211,13 @@ void OGG_delete(OGG_music *music)
 {
 	if ( music ) {
 		if ( music->cvt.buf ) {
-			free(music->cvt.buf);
+			SDL_free(music->cvt.buf);
 		}
 		if ( music->freerw ) {
 			SDL_RWclose(music->rw);
 		}
 		vorbis.ov_clear(&music->vf);
-		free(music);
+		SDL_free(music);
 	}
 }
 
