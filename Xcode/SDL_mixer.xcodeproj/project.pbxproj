@@ -737,7 +737,7 @@
 		00B7E48C097EC6B300826121 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				DYLIB_COMPATIBILITY_VERSION = 13;
+				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 13;
 				INFOPLIST_FILE = "Info-Framework__Upgraded_.plist";
 				INSTALL_PATH = "@rpath";
@@ -757,7 +757,7 @@
 		00B7E48D097EC6B300826121 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				DYLIB_COMPATIBILITY_VERSION = 13;
+				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 13;
 				INFOPLIST_FILE = "Info-Framework__Upgraded_.plist";
 				INSTALL_PATH = "@rpath";
