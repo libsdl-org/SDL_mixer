@@ -1064,11 +1064,10 @@ int music_internal_position(double position)
 #endif
 #ifdef MP3_MUSIC
 	    case MUS_MP3:
+		smpeg.SMPEG_rewind(music_playing->data.mp3);
+		smpeg.SMPEG_play(music_playing->data.mp3);
 		if ( position > 0.0 ) {
 			smpeg.SMPEG_skip(music_playing->data.mp3, (float)position);
-		} else {
-			smpeg.SMPEG_rewind(music_playing->data.mp3);
-			smpeg.SMPEG_play(music_playing->data.mp3);
 		}
 		break;
 #endif
