@@ -1,18 +1,36 @@
 1.2.12:
+Sam Lantinga - Sat Jan 14 22:00:29 2012 -0500
+ * Fixed seek offset with SMPEG (was relative, should be absolute)
 Sam Lantinga - Fri Jan 13 03:04:27 EST 2012
  * Fixed memory crash loading Ogg Vorbis files on Windows
+Sam Lantinga - Thu Jan 05 22:51:54 2012 -0500
+ * Added an Xcode project for iOS
 Nikos Chantziaras - 2012-01-02 17:37:36 PST
  * Added Mix_LoadMUSType_RW() so you can tell SDL_mixer what type the music is
+Sam Lantinga - Sun Jan 01 16:45:58 2012 -0500
+ * Fixed looping native MIDI on Mac OS X and Windows
+Sam Lantinga - Sun Jan 01 01:00:51 2012 -0500
+ * Added /usr/local/share/timidity to the timidity data path
+Sam Lantinga - Sat Dec 31 21:26:46 2011 -0500
+ * Fixed timidity loading of some MIDI files
 Sam Lantinga - Sat Dec 31 19:11:59 EST 2011
  * Fixed dropping audio in the FLAC audio decoding
 Sam Lantinga - Sat Dec 31 18:32:05 EST 2011
  * Fixed memory leak in SDL_LoadMUS()
 Sam Lantinga - Sat Dec 31 10:22:05 EST 2011
+ * Removed GPL native MIDI code for new licensing
+Sam Lantinga - Sat Dec 31 10:22:05 EST 2011
  * SDL_mixer is now under the zlib license
+Manuel Montezelo - 2011-12-28 11:42:44 PST
+ * Fixed drums playing on MIDI channel 16 with timidity
+Ryan C. Gordon - Wed Jun 15 03:41:31 2011 -0400
+ * The music-finished hook can start a track immediately
 James Le Cuirot - Mon Mar 21 16:54:11 PDT 2011
  * Added support for FluidSynth
 Scott MC - Tue Jan 18 11:06:47 PST 2011
- * Added support for native MIDI on Haiku OS
+ * Added support for native MIDI on Haiku
+Sam Lantinga - Tue Jan 11 01:29:19 2011 -0800
+ * Added Android.mk to build on the Android platform
 Jon Atkins - Sat Nov 14 13:00:18 PST 2009
  * Added support for libmodplug (disabled by default)
 
