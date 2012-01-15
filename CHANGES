@@ -27,7 +27,7 @@ Ryan C. Gordon - Wed Jun 15 03:41:31 2011 -0400
  * The music-finished hook can start a track immediately
 James Le Cuirot - Mon Mar 21 16:54:11 PDT 2011
  * Added support for FluidSynth
-Scott MC - Tue Jan 18 11:06:47 PST 2011
+Egor Suvorov - Tue Jan 18 11:06:47 PST 2011
  * Added support for native MIDI on Haiku
 Sam Lantinga - Tue Jan 11 01:29:19 2011 -0800
  * Added Android.mk to build on the Android platform
