@@ -13431,7 +13431,7 @@ fi
                 echo "-- dynamic libvorbisidec -> $ogg_lib"
                 EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_DYNAMIC=\\\"$ogg_lib\\\""
             else
-                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lvorbisidec -lvorbis -logg"
+                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lvorbisidec -lvorbis"
             fi
         else
             { echo "$as_me:$LINENO: WARNING: *** Unable to find Ogg Vorbis Tremor library (http://www.xiph.org/)" >&5
@@ -13656,7 +13656,7 @@ fi
                 echo "-- dynamic libvorbisfile -> $ogg_lib"
                 EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_DYNAMIC=\\\"$ogg_lib\\\""
             else
-                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lvorbisfile -lvorbis -logg"
+                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lvorbisfile -lvorbis"
             fi
         else
             { echo "$as_me:$LINENO: WARNING: *** Unable to find Ogg Vorbis library (http://www.xiph.org/)" >&5
