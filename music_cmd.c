@@ -53,10 +53,8 @@ MusicCMD *MusicCMD_LoadSong(const char *cmd, const char *file)
 		Mix_SetError("Out of memory");
 		return(NULL);
 	}
-	strncpy(music->file, file, (sizeof music->file)-1);
-	music->file[(sizeof music->file)-1] = '\0';
-	strncpy(music->cmd, cmd, (sizeof music->cmd)-1);
-	music->cmd[(sizeof music->cmd)-1] = '\0';
+	music->file = SDL_strdup(file);
+	music->cmd = SDL_strdup(cmd);
 	music->pid = 0;
 
 	/* We're done */
@@ -155,7 +153,7 @@ void MusicCMD_Start(MusicCMD *music)
 
 	    /* Child process - executes here */
 	    case 0: {
-		    char command[PATH_MAX];
+		    char *command;
 		    char **argv;
 
 		    /* Unblock signals in case we're called from a thread */
@@ -166,11 +164,12 @@ void MusicCMD_Start(MusicCMD *music)
 		    }
 
 		    /* Execute the command */
-		    strcpy(command, music->cmd);
+		    command = SDL_strdup(music->cmd);
 		    argv = parse_args(command, music->file);
 		    if ( argv != NULL ) {
 			execvp(argv[0], argv);
 		    }
+		    SDL_free(command);
 
 		    /* exec() failed */
 		    perror(argv[0]);
@@ -219,6 +218,8 @@ void MusicCMD_Resume(MusicCMD *music)
 /* Close the given music stream */
 void MusicCMD_FreeSong(MusicCMD *music)
 {
+	SDL_free(music->file);
+	SDL_free(music->cmd);
 	SDL_free(music);
 }
 

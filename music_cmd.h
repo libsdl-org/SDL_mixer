@@ -30,8 +30,8 @@
 # include <linux/limits.h>
 #endif
 typedef struct {
-	char file[PATH_MAX];
-	char cmd[PATH_MAX];
+	char *file;
+	char *cmd;
 	pid_t pid;
 } MusicCMD;
 
