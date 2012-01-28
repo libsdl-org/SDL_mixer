@@ -3,10 +3,10 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-Name: SDL_mixer
+Name: SDL2_mixer
 Description: mixer library for Simple DirectMedia Layer
 Version: @VERSION@
-Requires: sdl >= @SDL_VERSION@
-Libs: -L${libdir} -lSDL_mixer
-Cflags: -I${includedir}/SDL
+Requires: sdl2 >= @SDL_VERSION@
+Libs: -L${libdir} -lSDL2_mixer
+Cflags: -I${includedir}/SDL2
 

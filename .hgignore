@@ -4,7 +4,7 @@ config.cache
 config.log
 config.status
 Makefile
-SDL_mixer.pc
-SDL_mixer.qpg
-SDL_mixer.spec
+SDL2_mixer.pc
+SDL2_mixer.spec
 libtool
+build

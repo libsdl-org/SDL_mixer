@@ -13,7 +13,7 @@ datadir	= @datadir@
 mandir	= @mandir@
 auxdir	= @ac_aux_dir@
 distpath = $(srcdir)/..
-distdir = SDL_mixer-@VERSION@
+distdir = SDL2_mixer-@VERSION@
 distfile = $(distdir).tar.gz
 
 @SET_MAKE@
@@ -33,13 +33,13 @@ WINDRES	= @WINDRES@
 SDL_CFLAGS = @SDL_CFLAGS@
 SDL_LIBS = @SDL_LIBS@
 
-TARGET  = libSDL_mixer.la
+TARGET  = libSDL2_mixer.la
 OBJECTS = @OBJECTS@
 VERSION_OBJECTS = @VERSION_OBJECTS@
 PLAYWAVE_OBJECTS = @PLAYWAVE_OBJECTS@
 PLAYMUS_OBJECTS = @PLAYMUS_OBJECTS@
 
-DIST = Android.mk CHANGES COPYING Makefile.in SDL_mixer.pc.in README SDL_mixer.h SDL_mixer.qpg.in SDL_mixer.spec SDL_mixer.spec.in VisualC Xcode Xcode-iOS acinclude autogen.sh build-scripts configure configure.in dynamic_flac.c dynamic_flac.h dynamic_fluidsynth.c dynamic_fluidsynth.h dynamic_mod.c dynamic_mod.h dynamic_mp3.c dynamic_mp3.h dynamic_ogg.c dynamic_ogg.h effect_position.c effect_stereoreverse.c effects_internal.c effects_internal.h fluidsynth.c fluidsynth.h gcc-fat.sh libmikmod-3.1.12.zip load_aiff.c load_aiff.h load_flac.c load_flac.h load_ogg.c load_ogg.h load_voc.c load_voc.h mixer.c music.c music_cmd.c music_cmd.h music_flac.c music_flac.h music_mad.c music_mad.h music_mod.c music_mod.h music_modplug.c music_modplug.h music_ogg.c music_ogg.h native_midi playmus.c playwave.c timidity wavestream.c wavestream.h version.rc
+DIST = Android.mk CHANGES COPYING Makefile.in SDL2_mixer.pc.in README SDL_mixer.h SDL2_mixer.spec SDL2_mixer.spec.in VisualC Xcode Xcode-iOS acinclude autogen.sh build-scripts configure configure.in dynamic_flac.c dynamic_flac.h dynamic_fluidsynth.c dynamic_fluidsynth.h dynamic_mod.c dynamic_mod.h dynamic_mp3.c dynamic_mp3.h dynamic_ogg.c dynamic_ogg.h effect_position.c effect_stereoreverse.c effects_internal.c effects_internal.h fluidsynth.c fluidsynth.h gcc-fat.sh libmikmod-3.1.12.zip load_aiff.c load_aiff.h load_flac.c load_flac.h load_ogg.c load_ogg.h load_voc.c load_voc.h mixer.c music.c music_cmd.c music_cmd.h music_flac.c music_flac.h music_mad.c music_mad.h music_mod.c music_mod.h music_modplug.c music_modplug.h music_ogg.c music_ogg.h native_midi playmus.c playwave.c timidity wavestream.c wavestream.h version.rc
 
 LT_AGE      = @LT_AGE@
 LT_CURRENT  = @LT_CURRENT@
@@ -73,13 +73,13 @@ $(objects)/playmus$(EXE): $(objects)/playmus.lo $(objects)/$(TARGET)
 
 install: all install-hdrs install-lib #install-bin
 install-hdrs:
-	$(SHELL) $(auxdir)/mkinstalldirs $(includedir)/SDL
+	$(SHELL) $(auxdir)/mkinstalldirs $(includedir)/SDL2
 	for src in $(srcdir)/SDL_mixer.h; do \
 	    file=`echo $$src | sed -e 's|^.*/||'`; \
-	    $(INSTALL) -m 644 $$src $(includedir)/SDL/$$file; \
+	    $(INSTALL) -m 644 $$src $(includedir)/SDL2/$$file; \
 	done
 	$(SHELL) $(auxdir)/mkinstalldirs $(libdir)/pkgconfig
-	$(INSTALL) -m 644 SDL_mixer.pc $(libdir)/pkgconfig/
+	$(INSTALL) -m 644 SDL2_mixer.pc $(libdir)/pkgconfig/
 install-lib: $(objects) $(objects)/$(TARGET)
 	$(SHELL) $(auxdir)/mkinstalldirs $(libdir)
 	$(LIBTOOL) --mode=install $(INSTALL) $(objects)/$(TARGET) $(libdir)/$(TARGET)
@@ -92,10 +92,10 @@ uninstall: uninstall-hdrs uninstall-lib uninstall-bin
 uninstall-hdrs:
 	for src in $(srcdir)/SDL_mixer.h; do \
 	    file=`echo $$src | sed -e 's|^.*/||'`; \
-	    rm -f $(includedir)/SDL/$$file; \
+	    rm -f $(includedir)/SDL2/$$file; \
 	done
-	-rmdir $(includedir)/SDL
-	rm -f $(libdir)/pkgconfig/SDL_mixer.pc
+	-rmdir $(includedir)/SDL2
+	rm -f $(libdir)/pkgconfig/SDL2_mixer.pc
 	-rmdir $(libdir)/pkgconfig
 uninstall-lib:
 	$(LIBTOOL) --mode=uninstall rm -f $(libdir)/$(TARGET)
@@ -108,9 +108,8 @@ clean:
 
 distclean: clean
 	rm -f Makefile
-	rm -f SDL_mixer.qpg
 	rm -f config.status config.cache config.log libtool
-	rm -f SDL_mixer.pc
+	rm -f SDL2_mixer.pc
 	rm -rf $(srcdir)/autom4te*
 	find $(srcdir) \( \
 	    -name '*~' -o \
