@@ -85,7 +85,7 @@
 		BE1FA8FC07AF96B2004B6283 /* load_aiff.c in Sources */ = {isa = PBXBuildFile; fileRef = F567D64701CD88A701F3E8B9 /* load_aiff.c */; };
 		BE1FA8FD07AF96B2004B6283 /* load_voc.c in Sources */ = {isa = PBXBuildFile; fileRef = F567D64901CD88A701F3E8B9 /* load_voc.c */; };
 		BE1FA90007AF96B2004B6283 /* load_ogg.c in Sources */ = {isa = PBXBuildFile; fileRef = B2A42D0E03FAC6A400A8000A /* load_ogg.c */; };
-		BE1FA90207AF96B2004B6283 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE1FA8AE07AF95F7004B6283 /* SDL.framework */; };
+		BE1FA90207AF96B2004B6283 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE1FA8AE07AF95F7004B6283 /* SDL2.framework */; };
 		BE1FA90C07AF96B2004B6283 /* music_cmd.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC1B87B012FB8CD7F000001 /* music_cmd.h */; };
 		BE1FA90D07AF96B2004B6283 /* music_ogg.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC1B87D012FB8CD7F000001 /* music_ogg.h */; };
 		BE1FA90E07AF96B2004B6283 /* common.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC1B881012FB8CD7F000001 /* common.h */; };
@@ -217,7 +217,7 @@
 		AA9F7DB714B15AE700278D1E /* FLAC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FLAC.framework; path = Frameworks/FLAC.framework; sourceTree = "<group>"; };
 		B2A42D0E03FAC6A400A8000A /* load_ogg.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = load_ogg.c; path = ../load_ogg.c; sourceTree = SOURCE_ROOT; };
 		B2A42D0F03FAC6A400A8000A /* load_ogg.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = load_ogg.h; path = ../load_ogg.h; sourceTree = SOURCE_ROOT; };
-		BE1FA8AE07AF95F7004B6283 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = /Library/Frameworks/SDL.framework; sourceTree = "<absolute>"; };
+		BE1FA8AE07AF95F7004B6283 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = /Library/Frameworks/SDL2.framework; sourceTree = "<absolute>"; };
 		BE1FA90507AF96B2004B6283 /* Info-Framework__Upgraded_.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-Framework__Upgraded_.plist"; sourceTree = "<group>"; };
 		BE1FA90607AF96B2004B6283 /* SDL_mixer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SDL_mixer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE1FA95407AF96B2004B6283 /* libSDL_mixer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSDL_mixer.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -241,7 +241,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BE1FA90207AF96B2004B6283 /* SDL.framework in Frameworks */,
+				BE1FA90207AF96B2004B6283 /* SDL2.framework in Frameworks */,
 				00938E1C108A36520009CF19 /* mikmod.framework in Frameworks */,
 				00939015108A5C470009CF19 /* smpeg.framework in Frameworks */,
 				AA9F7DB514B15ADC00278D1E /* Ogg.framework in Frameworks */,
@@ -388,7 +388,7 @@
 				AA9F7DB714B15AE700278D1E /* FLAC.framework */,
 				00938E1B108A36520009CF19 /* mikmod.framework */,
 				AA9F7DB314B15ADC00278D1E /* Ogg.framework */,
-				BE1FA8AE07AF95F7004B6283 /* SDL.framework */,
+				BE1FA8AE07AF95F7004B6283 /* SDL2.framework */,
 				00939014108A5C470009CF19 /* smpeg.framework */,
 				AA9F7DB414B15ADC00278D1E /* Vorbis.framework */,
 			);
@@ -619,7 +619,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd $SYMROOT/$CONFIGURATION/SDL_mixer.framework\nif ! [ -L Frameworks ]; then\n\tln -s Versions/Current/Frameworks Frameworks\nfi\n";
+			shellScript = "cd $SYMROOT/$CONFIGURATION/$FULL_PRODUCT_NAME\nif ! [ -L Frameworks ]; then\n    rm -f Frameworks\n    ln -s Versions/Current/Frameworks Frameworks\nfi";
 		};
 		AA9F7D9714B143C700278D1E /* Convert SDL includes to SDL Framework includes */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -633,7 +633,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd $SYMROOT/$CONFIGURATION/SDL_mixer.framework/Versions/Current/Headers\nsed 's,#include \"\\(.*\\)\",#include <SDL/\\1>,' <SDL_mixer.h >SDL_mixer.h.new\nmv SDL_mixer.h.new SDL_mixer.h";
+			shellScript = "cd $SYMROOT/$CONFIGURATION/$PUBLIC_HEADERS_FOLDER_PATH\nHEADER=SDL_mixer.h\nsed 's,#include \"\\(.*\\)\",#include <SDL2/\\1>,' <$HEADER >$HEADER.new\nmv $HEADER.new $HEADER";
 		};
 		BE1FA95707AF96B2004B6283 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -642,7 +642,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# clean up the framework, remove headers, extra files\nmkdir -p build/dmg-tmp\n/Developer/Tools/CpMac -r $TARGET_BUILD_DIR/SDL_mixer.framework build/dmg-tmp/\ncp pkg-support/resources/ReadMe.txt build/dmg-tmp\n\n# remove the .DS_Store files if any (we may want to provide one in the future for fancy .dmgs)\nrm -rf build/dmg-tmp/.DS_Store\n\n# create the dmg\nhdiutil create -ov -fs HFS+ -volname SDL_mixer -srcfolder build/dmg-tmp build/SDL_mixer.dmg\n\n# clean up\nrm -rf build/dmg-tmp\n\n# compress it???\n#(cd build; gnutar -zcvf SDL_mixer.dmg.tar.gz SDL_mixer.dmg)";
+			shellScript = "# clean up the framework, remove headers, extra files\nPRODUCT_NAME=SDL2_mixer\nmkdir -p build/dmg-tmp\n/Developer/Tools/CpMac -r $TARGET_BUILD_DIR/$PRODUCT_NAME.framework build/dmg-tmp/\ncp pkg-support/resources/ReadMe.txt build/dmg-tmp\n\n# remove the .DS_Store files if any (we may want to provide one in the future for fancy .dmgs)\nrm -rf build/dmg-tmp/.DS_Store\n\n# create the dmg\nhdiutil create -ov -fs HFS+ -volname $PRODUCT_NAME -srcfolder build/dmg-tmp build/$PRODUCT_NAME.dmg\n\n# clean up\nrm -rf build/dmg-tmp";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -858,17 +858,17 @@
 					USE_NATIVE_MIDI,
 					OGG_MUSIC,
 					FLAC_MUSIC,
-					MP3_MUSIC,
+					MP3_MUSIC_DISABLED,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(HEADER_SEARCH_PATHS_QUOTED)",
-					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
-					/Library/Frameworks/SDL.framework/Headers,
+					"$(HOME)/Library/Frameworks/SDL2.framework/Headers",
+					/Library/Frameworks/SDL2.framework/Headers,
 				);
 				HEADER_SEARCH_PATHS_QUOTED = "\"$(SRCROOT)/Frameworks/mikmod.framework/Headers\" \"$(SRCROOT)/Frameworks/smpeg.framework/Headers\" \"$(SRCROOT)/Frameworks/Ogg.framework/Headers\" \"$(SRCROOT)/Frameworks/Vorbis.framework/Headers\" \"$(SRCROOT)/Frameworks/FLAC.framework/Headers\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				PRODUCT_NAME = SDL_mixer;
+				PRODUCT_NAME = SDL2_mixer;
 				SDKROOT = macosx;
 				SEPARATE_STRIP = YES;
 				STRIP_STYLE = "non-global";
@@ -894,17 +894,17 @@
 					USE_NATIVE_MIDI,
 					OGG_MUSIC,
 					FLAC_MUSIC,
-					MP3_MUSIC,
+					MP3_MUSIC_DISABLED,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(HEADER_SEARCH_PATHS_QUOTED)",
-					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
-					/Library/Frameworks/SDL.framework/Headers,
+					"$(HOME)/Library/Frameworks/SDL2.framework/Headers",
+					/Library/Frameworks/SDL2.framework/Headers,
 				);
 				HEADER_SEARCH_PATHS_QUOTED = "\"$(SRCROOT)/Frameworks/mikmod.framework/Headers\" \"$(SRCROOT)/Frameworks/smpeg.framework/Headers\" \"$(SRCROOT)/Frameworks/Ogg.framework/Headers\" \"$(SRCROOT)/Frameworks/Vorbis.framework/Headers\" \"$(SRCROOT)/Frameworks/FLAC.framework/Headers\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				PRODUCT_NAME = SDL_mixer;
+				PRODUCT_NAME = SDL2_mixer;
 				SDKROOT = macosx;
 			};
 			name = Debug;
