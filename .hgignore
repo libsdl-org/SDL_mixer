@@ -5,6 +5,5 @@ config.log
 config.status
 Makefile
 SDL2_mixer.pc
-SDL2_mixer.spec
 libtool
 build
