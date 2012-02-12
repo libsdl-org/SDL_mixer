@@ -610,13 +610,15 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
 			break;
 		default:
 			SDL_SetError("Unrecognized sound file type");
-			return(0);			
+			if ( freesrc ) {
+				SDL_RWclose(src);
+			}
+			loaded = NULL;
+			break;
 	}
 	if ( !loaded ) {
+		/* The individual loaders have closed src if needed */
 		SDL_free(chunk);
-		if ( freesrc ) {
-			SDL_RWclose(src);
-		}
 		return(NULL);
 	}
 
