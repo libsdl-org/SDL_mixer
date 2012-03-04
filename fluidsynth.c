@@ -176,8 +176,8 @@ int fluidsynth_active(FluidSynthMidiSong *song)
 
 void fluidsynth_setvolume(FluidSynthMidiSong *song, int volume)
 {
-	/* FluidSynth's default is 0.2. Make 0.8 the maximum. */
-	fluidsynth.fluid_synth_set_gain(song->synth, (float) (volume * 0.00625));
+	/* FluidSynth's default is 0.2. Make 1.2 the maximum. */
+	fluidsynth.fluid_synth_set_gain(song->synth, (float) (volume * 1.2 / MIX_MAX_VOLUME));
 }
 
 int fluidsynth_playsome(FluidSynthMidiSong *song, void *dest, int dest_len)
