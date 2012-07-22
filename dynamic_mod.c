@@ -93,6 +93,13 @@ int Mix_InitMOD()
 			SDL_UnloadObject(mikmod.handle);
 			return -1;
 		}
+		mikmod.MikMod_free =
+			(void (*)(void*))
+			SDL_LoadFunction(mikmod.handle, "MikMod_free");
+		if ( mikmod.MikMod_free == NULL ) {
+			SDL_UnloadObject(mikmod.handle);
+			return -1;
+		}
 		mikmod.Player_Active =
 			(BOOL (*)(void))
 			SDL_LoadFunction(mikmod.handle, "Player_Active");

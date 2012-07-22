@@ -109,13 +109,13 @@ int MOD_init(SDL_AudioSpec *mixerfmt)
 
 	list = mikmod.MikMod_InfoDriver();
 	if ( list )
-	  free(list);
+	  mikmod.MikMod_free(list);
 	else
 	  mikmod.MikMod_RegisterDriver(mikmod.drv_nos);
 
 	list = mikmod.MikMod_InfoLoader();
 	if ( list )
-	  free(list);
+	  mikmod.MikMod_free(list);
 	else
 	  mikmod.MikMod_RegisterAllLoaders();
 
