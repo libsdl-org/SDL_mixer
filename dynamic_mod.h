@@ -35,6 +35,7 @@ typedef struct {
 	void (*MikMod_RegisterDriver)(struct MDRIVER*);
 	int* MikMod_errno;
 	char* (*MikMod_strerror)(int);
+	void (*MikMod_free)(void*);
 	BOOL (*Player_Active)(void);
 	void (*Player_Free)(MODULE*);
 	MODULE* (*Player_LoadGeneric)(MREADER*,int,BOOL);
