@@ -194,10 +194,20 @@ NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw, int freerw)
     free(buf);
     buf = NULL;
 
-    #if MAC_OS_X_VERSION_MIN_REQUIRED <= MAC_OS_X_VERSION_10_4 /* this is deprecated, but works back to 10.3 */
+    #if MAC_OS_X_VERSION_MIN_REQUIRED < 1050
+    /* MusicSequenceLoadSMFData() (avail. in 10.2, no 64 bit) is
+     * equivalent to calling MusicSequenceLoadSMFDataWithFlags()
+     * with a flags value of 0 (avail. in 10.3, avail. 64 bit).
+     * So, we use MusicSequenceLoadSMFData() for powerpc versions
+     * but the *WithFlags() on intel which require 10.4 anyway. */
+    # if defined(__ppc__) || defined(__POWERPC__)
+    if (MusicSequenceLoadSMFData(song->sequence, data) != noErr)
+        goto fail;
+    # else
     if (MusicSequenceLoadSMFDataWithFlags(retval->sequence, data, 0) != noErr)
         goto fail;
-    #else  /* not deprecated, but requires 10.5 or later */
+    # endif
+    #else  /* MusicSequenceFileLoadData() requires 10.5 or later.  */
     if (MusicSequenceFileLoadData(retval->sequence, data, 0, 0) != noErr)
         goto fail;
     #endif
