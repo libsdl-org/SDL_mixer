@@ -125,7 +125,7 @@
 		AA5F0F0814B6A6490036992F /* music_modplug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = music_modplug.h; path = ../music_modplug.h; sourceTree = "<group>"; };
 		B2A42D0E03FAC6A400A8000A /* load_ogg.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = load_ogg.c; path = ../load_ogg.c; sourceTree = SOURCE_ROOT; };
 		B2A42D0F03FAC6A400A8000A /* load_ogg.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = load_ogg.h; path = ../load_ogg.h; sourceTree = SOURCE_ROOT; };
-		BE1FA95407AF96B2004B6283 /* libSDL_mixer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSDL_mixer.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		BE1FA95407AF96B2004B6283 /* libSDL2_mixer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSDL2_mixer.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F567D63B01CD881401F3E8B9 /* effect_position.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = effect_position.c; path = ../effect_position.c; sourceTree = SOURCE_ROOT; };
 		F567D63C01CD881401F3E8B9 /* effect_stereoreverse.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = effect_stereoreverse.c; path = ../effect_stereoreverse.c; sourceTree = SOURCE_ROOT; };
 		F567D63D01CD881401F3E8B9 /* effects_internal.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = effects_internal.c; path = ../effects_internal.c; sourceTree = SOURCE_ROOT; };
@@ -159,7 +159,7 @@
 			isa = PBXGroup;
 			children = (
 				089C1665FE841158C02AAC07 /* Resources */,
-				BE1FA95407AF96B2004B6283 /* libSDL_mixer.a */,
+				BE1FA95407AF96B2004B6283 /* libSDL2_mixer.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -317,7 +317,7 @@
 			name = "Static Library";
 			productInstallPath = /usr/local/lib;
 			productName = "Static Library";
-			productReference = BE1FA95407AF96B2004B6283 /* libSDL_mixer.a */;
+			productReference = BE1FA95407AF96B2004B6283 /* libSDL2_mixer.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -407,7 +407,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				LIBRARY_STYLE = STATIC;
 				OTHER_CFLAGS = "";
-				PRODUCT_NAME = SDL_mixer;
+				PRODUCT_NAME = SDL2_mixer;
 			};
 			name = Release;
 		};
@@ -418,7 +418,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				LIBRARY_STYLE = STATIC;
 				OTHER_CFLAGS = "";
-				PRODUCT_NAME = SDL_mixer;
+				PRODUCT_NAME = SDL2_mixer;
 			};
 			name = Debug;
 		};
