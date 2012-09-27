@@ -13339,7 +13339,7 @@ if test "${ac_cv_lib_vorbisidec_ov_open_callbacks+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-lvorbisidec  $LIBS"
+LIBS="-lvorbisidec -logg $LIBS"
 cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
@@ -13425,7 +13425,7 @@ fi
                 echo "-- dynamic libvorbisidec -> $ogg_lib"
                 EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_DYNAMIC=\\\"$ogg_lib\\\""
             else
-                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lvorbisidec -lvorbis"
+                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lvorbisidec -lvorbis -logg"
             fi
         else
             { echo "$as_me:$LINENO: WARNING: *** Unable to find Ogg Vorbis Tremor library (http://www.xiph.org/)" >&5
@@ -13570,7 +13570,7 @@ if test "${ac_cv_lib_vorbisfile_ov_open_callbacks+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-lvorbisfile  $LIBS"
+LIBS="-lvorbisfile -lvorbis -logg -lm $LIBS"
 cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
@@ -13650,7 +13650,7 @@ fi
                 echo "-- dynamic libvorbisfile -> $ogg_lib"
                 EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_DYNAMIC=\\\"$ogg_lib\\\""
             else
-                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lvorbisfile -lvorbis"
+                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lvorbisfile -lvorbis -logg -lm"
             fi
         else
             { echo "$as_me:$LINENO: WARNING: *** Unable to find Ogg Vorbis library (http://www.xiph.org/)" >&5
