@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="SDL_mixer"
+	Name="SDL2_mixer"
 	ProjectGUID="{F7E944B3-0815-40CD-B3E4-90B2A15B0E33}"
 	RootNamespace="SDL_mixer"
 	TargetFrameworkVersion="131072"
