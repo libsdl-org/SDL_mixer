@@ -408,6 +408,7 @@
 				LIBRARY_STYLE = STATIC;
 				OTHER_CFLAGS = "";
 				PRODUCT_NAME = SDL2_mixer;
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
@@ -419,6 +420,7 @@
 				LIBRARY_STYLE = STATIC;
 				OTHER_CFLAGS = "";
 				PRODUCT_NAME = SDL2_mixer;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
