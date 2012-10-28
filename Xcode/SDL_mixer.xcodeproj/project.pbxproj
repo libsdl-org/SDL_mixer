@@ -219,8 +219,8 @@
 		B2A42D0F03FAC6A400A8000A /* load_ogg.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = load_ogg.h; path = ../load_ogg.h; sourceTree = SOURCE_ROOT; };
 		BE1FA8AE07AF95F7004B6283 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = /Library/Frameworks/SDL2.framework; sourceTree = "<absolute>"; };
 		BE1FA90507AF96B2004B6283 /* Info-Framework__Upgraded_.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-Framework__Upgraded_.plist"; sourceTree = "<group>"; };
-		BE1FA90607AF96B2004B6283 /* SDL_mixer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = SDL_mixer.framework; path = SDL2_mixer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		BE1FA95407AF96B2004B6283 /* libSDL_mixer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libSDL_mixer.a; path = libSDL2_mixer.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		BE1FA90607AF96B2004B6283 /* SDL2_mixer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SDL2_mixer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BE1FA95407AF96B2004B6283 /* libSDL2_mixer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSDL2_mixer.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE1FA95807AF96B3004B6283 /* Create DMG */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Create DMG"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F51BFB0101F724BE01D3D55B /* native_midi.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = native_midi.h; sourceTree = "<group>"; };
 		F567D63B01CD881401F3E8B9 /* effect_position.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = effect_position.c; path = ../effect_position.c; sourceTree = SOURCE_ROOT; };
@@ -272,8 +272,8 @@
 			isa = PBXGroup;
 			children = (
 				089C1665FE841158C02AAC07 /* Resources */,
-				BE1FA90607AF96B2004B6283 /* SDL_mixer.framework */,
-				BE1FA95407AF96B2004B6283 /* libSDL_mixer.a */,
+				BE1FA90607AF96B2004B6283 /* SDL2_mixer.framework */,
+				BE1FA95407AF96B2004B6283 /* libSDL2_mixer.a */,
 				BE1FA95807AF96B3004B6283 /* Create DMG */,
 			);
 			name = Products;
@@ -513,7 +513,7 @@
 			name = Framework;
 			productInstallPath = "@executable_path/../Frameworks";
 			productName = SDL_mixer;
-			productReference = BE1FA90607AF96B2004B6283 /* SDL_mixer.framework */;
+			productReference = BE1FA90607AF96B2004B6283 /* SDL2_mixer.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		BE1FA90707AF96B2004B6283 /* Static Library */ = {
@@ -532,7 +532,7 @@
 			name = "Static Library";
 			productInstallPath = /usr/local/lib;
 			productName = "Static Library";
-			productReference = BE1FA95407AF96B2004B6283 /* libSDL_mixer.a */;
+			productReference = BE1FA95407AF96B2004B6283 /* libSDL2_mixer.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		BE1FA95507AF96B2004B6283 /* Create DMG */ = {
@@ -740,7 +740,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 13;
 				INFOPLIST_FILE = "Info-Framework__Upgraded_.plist";
-				INSTALL_PATH = "@rpath";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -760,7 +760,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 13;
 				INFOPLIST_FILE = "Info-Framework__Upgraded_.plist";
-				INSTALL_PATH = "@rpath";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -781,6 +781,7 @@
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
 				REZ_EXECUTABLE = YES;
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
@@ -792,6 +793,7 @@
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
 				REZ_EXECUTABLE = YES;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
