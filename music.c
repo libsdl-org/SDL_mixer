@@ -1283,6 +1283,9 @@ int Mix_HaltMusic(void)
 	SDL_LockAudio();
 	if ( music_playing ) {
 		music_internal_halt();
+		if ( music_finished_hook ) {
+			music_finished_hook();
+		}
 	}
 	SDL_UnlockAudio();
 
