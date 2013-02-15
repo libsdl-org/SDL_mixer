@@ -487,7 +487,7 @@ if test x$enable_music_ogg = xyes; then
                 echo "-- dynamic libvorbisfile -> $ogg_lib"
                 EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_DYNAMIC=\\\"$ogg_lib\\\""
             else
-                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lvorbisfile -lvorbis -logg -lm"
+                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lvorbisfile -lvorbis"
             fi
         else
             AC_MSG_WARN([*** Unable to find Ogg Vorbis library (http://www.xiph.org/)])
