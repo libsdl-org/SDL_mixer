@@ -153,7 +153,7 @@ static int read_config_file(const char *name)
     {
      ctl->cmsg(CMSG_ERROR, VERB_NORMAL,
         "%s: line %d: syntax error\n", name, line);
-     return -2;
+     continue;
     }
   i=atoi(w[0]);
   if (i<0 || i>127)
