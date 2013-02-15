@@ -162,6 +162,7 @@ typedef char int8;
    then specify the library directory in the configuration file. */
 #define CONFIG_FILE	"timidity.cfg"
 #define CONFIG_FILE_ETC "/etc/timidity.cfg"
+#define CONFIG_FILE_ETC_TIMIDITY_FREEPATS "/etc/timidity/freepats.cfg"
 
 #if defined(__WIN32__) || defined(__OS2__)
 #define DEFAULT_PATH	"C:\\TIMIDITY"
