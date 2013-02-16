@@ -46,3 +46,6 @@ override_dh_auto_configure:
 
 override_dh_auto_installchangelogs:
 	dh_auto_installchangelogs -- CHANGES
+
+override_dh_compress:
+	dh_compress -Xplaywave.c -Xplaymus.c
