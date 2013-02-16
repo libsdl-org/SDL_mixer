@@ -566,7 +566,7 @@ AC_ARG_ENABLE([music-mp3-shared],
 AC_HELP_STRING([--enable-music-mp3-shared], [dynamically load MP3 support [[default=yes]]]),
               [], [enable_music_mp3_shared=yes])
 if test x$enable_music_mp3 = xyes; then
-    SMPEG_VERSION=0.4.3
+    SMPEG_VERSION=0.5.0
     AM_PATH_SMPEG($SMPEG_VERSION, have_smpeg=yes, have_smpeg=no)
     if test x$have_smpeg = xyes; then
         case "$host" in
