@@ -23,10 +23,10 @@ Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${shlibs:Depends},
          ${misc:Depends}
-Description: Mixer library for Simple DirectMedia Layer 1.2, libraries
- SDL Mixer is a sample multi-channel audio mixer library.  It supports 4
- channels of 16 bit stereo audio, plus a single channel of music, mixed by
- the popular MikMod MOD, Timidity MIDI, and MP3 and Ogg Vorbis libraries.
+Description: Mixer library for Simple DirectMedia Layer 2.0
+ This is a multi-channel audio mixer library.  It supports 4 channels of
+ 16 bit stereo audio, plus a single channel of music, mixed by the popular
+ MikMod MOD, Timidity MIDI, and MP3 and Ogg Vorbis libraries.
  .
  This package contains the shared library.
 
