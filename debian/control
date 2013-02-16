@@ -21,8 +21,8 @@ Package: libsdl2-mixer
 Architecture: any
 Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
-Depends: ${shlibs:Depends},
-         ${misc:Depends}
+Depends: ${misc:Depends},
+         ${shlibs:Depends}
 Description: Mixer library for Simple DirectMedia Layer 2.0
  This is a multi-channel audio mixer library.  It supports 4 channels of
  16 bit stereo audio, plus a single channel of music, mixed by the popular
@@ -35,9 +35,9 @@ Section: libdevel
 Architecture: any
 Multi-Arch: same
 Depends: ${misc:Depends},
-         libc6-dev,
          libsdl2-mixer (= ${binary:Version}),
-         libsdl2-dev (>= 2.0.0),
+         libc6-dev,
+         libsdl2-dev (>= 2.0.0)
 Description: Mixer library for Simple DirectMedia Layer 1.2, development files
  SDL Mixer is a sample multi-channel audio mixer library.  It supports 4
  channels of 16 bit stereo audio, plus a single channel of music, mixed by
