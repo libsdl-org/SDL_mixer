@@ -777,6 +777,13 @@
 		00B7E490097EC6B300826121 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					CMD_MUSIC,
+					WAV_MUSIC,
+					MID_MUSIC,
+					USE_NATIVE_MIDI,
+					MP3_MUSIC_DISABLED,
+				);
 				LIBRARY_STYLE = STATIC;
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
@@ -789,6 +796,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUGGING_SYMBOLS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					CMD_MUSIC,
+					WAV_MUSIC,
+					MID_MUSIC,
+					USE_NATIVE_MIDI,
+					MP3_MUSIC_DISABLED,
+				);
 				LIBRARY_STYLE = STATIC;
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
