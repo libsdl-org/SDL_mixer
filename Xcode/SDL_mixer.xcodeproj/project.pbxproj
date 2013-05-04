@@ -26,7 +26,6 @@
 		00938E55108A397A0009CF19 /* dynamic_mod.c in Sources */ = {isa = PBXBuildFile; fileRef = 00938E4B108A397A0009CF19 /* dynamic_mod.c */; };
 		00938E56108A397A0009CF19 /* dynamic_mp3.h in Headers */ = {isa = PBXBuildFile; fileRef = 00938E4C108A397A0009CF19 /* dynamic_mp3.h */; };
 		00938E57108A397A0009CF19 /* dynamic_ogg.h in Headers */ = {isa = PBXBuildFile; fileRef = 00938E4D108A397A0009CF19 /* dynamic_ogg.h */; };
-		00939015108A5C470009CF19 /* smpeg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00939014108A5C470009CF19 /* smpeg.framework */; };
 		0448E8AE108B937A00C9D3EA /* native_midi_macosx.c in Sources */ = {isa = PBXBuildFile; fileRef = 0448E8AD108B937A00C9D3EA /* native_midi_macosx.c */; };
 		0448E8AF108B937A00C9D3EA /* native_midi_macosx.c in Sources */ = {isa = PBXBuildFile; fileRef = 0448E8AD108B937A00C9D3EA /* native_midi_macosx.c */; };
 		04A8FCA60A19CAEC0046373F /* dynamic_mp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A8FCA40A19CAEC0046373F /* dynamic_mp3.c */; };
@@ -39,7 +38,6 @@
 		AA9F7DB914B15D3300278D1E /* FLAC.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = AA9F7DB714B15AE700278D1E /* FLAC.framework */; };
 		AA9F7DBA14B15D4100278D1E /* mikmod.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 00938E1B108A36520009CF19 /* mikmod.framework */; };
 		AA9F7DBB14B15D4400278D1E /* Ogg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = AA9F7DB314B15ADC00278D1E /* Ogg.framework */; };
-		AA9F7DBC14B15D4A00278D1E /* smpeg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 00939014108A5C470009CF19 /* smpeg.framework */; };
 		AA9F7DBE14B15D5400278D1E /* Vorbis.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = AA9F7DB414B15ADC00278D1E /* Vorbis.framework */; };
 		BE1FA8B907AF96B2004B6283 /* music_cmd.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC1B87B012FB8CD7F000001 /* music_cmd.h */; };
 		BE1FA8BA07AF96B2004B6283 /* music_ogg.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC1B87D012FB8CD7F000001 /* music_ogg.h */; };
@@ -151,7 +149,6 @@
 				AA9F7DB914B15D3300278D1E /* FLAC.framework in Copy Frameworks */,
 				AA9F7DBA14B15D4100278D1E /* mikmod.framework in Copy Frameworks */,
 				AA9F7DBB14B15D4400278D1E /* Ogg.framework in Copy Frameworks */,
-				AA9F7DBC14B15D4A00278D1E /* smpeg.framework in Copy Frameworks */,
 				AA9F7DBE14B15D5400278D1E /* Vorbis.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
@@ -174,7 +171,6 @@
 		00938E4B108A397A0009CF19 /* dynamic_mod.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dynamic_mod.c; path = ../dynamic_mod.c; sourceTree = SOURCE_ROOT; };
 		00938E4C108A397A0009CF19 /* dynamic_mp3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dynamic_mp3.h; path = ../dynamic_mp3.h; sourceTree = SOURCE_ROOT; };
 		00938E4D108A397A0009CF19 /* dynamic_ogg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dynamic_ogg.h; path = ../dynamic_ogg.h; sourceTree = SOURCE_ROOT; };
-		00939014108A5C470009CF19 /* smpeg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = smpeg.framework; path = Frameworks/smpeg.framework; sourceTree = "<group>"; };
 		0448E8AD108B937A00C9D3EA /* native_midi_macosx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = native_midi_macosx.c; sourceTree = "<group>"; };
 		04A8FCA40A19CAEC0046373F /* dynamic_mp3.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = dynamic_mp3.c; path = ../dynamic_mp3.c; sourceTree = SOURCE_ROOT; };
 		04A8FCA90A19CB070046373F /* dynamic_ogg.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = dynamic_ogg.c; path = ../dynamic_ogg.c; sourceTree = SOURCE_ROOT; };
@@ -243,7 +239,6 @@
 			files = (
 				BE1FA90207AF96B2004B6283 /* SDL2.framework in Frameworks */,
 				00938E1C108A36520009CF19 /* mikmod.framework in Frameworks */,
-				00939015108A5C470009CF19 /* smpeg.framework in Frameworks */,
 				AA9F7DB514B15ADC00278D1E /* Ogg.framework in Frameworks */,
 				AA9F7DB614B15ADC00278D1E /* Vorbis.framework in Frameworks */,
 				AA9F7DB814B15AE700278D1E /* FLAC.framework in Frameworks */,
@@ -389,7 +384,6 @@
 				00938E1B108A36520009CF19 /* mikmod.framework */,
 				AA9F7DB314B15ADC00278D1E /* Ogg.framework */,
 				BE1FA8AE07AF95F7004B6283 /* SDL2.framework */,
-				00939014108A5C470009CF19 /* smpeg.framework */,
 				AA9F7DB414B15ADC00278D1E /* Vorbis.framework */,
 			);
 			name = "Linked Frameworks";
@@ -882,7 +876,7 @@
 					"$(HOME)/Library/Frameworks/SDL2.framework/Headers",
 					/Library/Frameworks/SDL2.framework/Headers,
 				);
-				HEADER_SEARCH_PATHS_QUOTED = "\"$(SRCROOT)/Frameworks/mikmod.framework/Headers\" \"$(SRCROOT)/Frameworks/smpeg.framework/Headers\" \"$(SRCROOT)/Frameworks/Ogg.framework/Headers\" \"$(SRCROOT)/Frameworks/Vorbis.framework/Headers\" \"$(SRCROOT)/Frameworks/FLAC.framework/Headers\"";
+				HEADER_SEARCH_PATHS_QUOTED = "\"$(SRCROOT)/Frameworks/mikmod.framework/Headers\" \"$(SRCROOT)/Frameworks/Ogg.framework/Headers\" \"$(SRCROOT)/Frameworks/Vorbis.framework/Headers\" \"$(SRCROOT)/Frameworks/FLAC.framework/Headers\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				PRODUCT_NAME = SDL2_mixer;
 				SDKROOT = macosx;
@@ -918,7 +912,7 @@
 					"$(HOME)/Library/Frameworks/SDL2.framework/Headers",
 					/Library/Frameworks/SDL2.framework/Headers,
 				);
-				HEADER_SEARCH_PATHS_QUOTED = "\"$(SRCROOT)/Frameworks/mikmod.framework/Headers\" \"$(SRCROOT)/Frameworks/smpeg.framework/Headers\" \"$(SRCROOT)/Frameworks/Ogg.framework/Headers\" \"$(SRCROOT)/Frameworks/Vorbis.framework/Headers\" \"$(SRCROOT)/Frameworks/FLAC.framework/Headers\"";
+				HEADER_SEARCH_PATHS_QUOTED = "\"$(SRCROOT)/Frameworks/mikmod.framework/Headers\" \"$(SRCROOT)/Frameworks/Ogg.framework/Headers\" \"$(SRCROOT)/Frameworks/Vorbis.framework/Headers\" \"$(SRCROOT)/Frameworks/FLAC.framework/Headers\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				PRODUCT_NAME = SDL2_mixer;
 				SDKROOT = macosx;
