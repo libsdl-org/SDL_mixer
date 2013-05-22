@@ -19,7 +19,7 @@
   3. This notice may not be removed or altered from any source distribution.
 
   This is the source needed to decode a FLAC into a waveform.
-  	~ Austen Dicken (admin@cvpcs.org).
+    ~ Austen Dicken (admin@cvpcs.org).
 */
 
 /* $Id: $ */
@@ -27,5 +27,5 @@
 #ifdef FLAC_MUSIC
 /* Don't call this directly; use Mix_LoadWAV_RW() for now. */
 SDL_AudioSpec *Mix_LoadFLAC_RW (SDL_RWops *src, int freesrc,
-		SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len);
+        SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len);
 #endif

@@ -78,7 +78,7 @@ SDL_AudioSpec *Mix_LoadOGG_RW (SDL_RWops *src, int freesrc,
     int read, to_read;
     int must_close = 1;
     int was_error = 1;
-    
+
     if ( (!src) || (!audio_buf) || (!audio_len) )   /* sanity checks. */
         goto done;
 
@@ -88,7 +88,7 @@ SDL_AudioSpec *Mix_LoadOGG_RW (SDL_RWops *src, int freesrc,
     callbacks.read_func = sdl_read_func;
     callbacks.seek_func = sdl_seek_func;
     callbacks.tell_func = sdl_tell_func;
-    callbacks.close_func = freesrc ? 
+    callbacks.close_func = freesrc ?
                            sdl_close_func_freesrc : sdl_close_func_nofreesrc;
 
     if (vorbis.ov_open_callbacks(src, &vf, NULL, 0, callbacks) != 0)
@@ -98,9 +98,9 @@ SDL_AudioSpec *Mix_LoadOGG_RW (SDL_RWops *src, int freesrc,
     }
 
     must_close = 0;
-    
+
     info = vorbis.ov_info(&vf, -1);
-    
+
     *audio_buf = NULL;
     *audio_len = 0;
     memset(spec, '\0', sizeof (SDL_AudioSpec));
@@ -109,7 +109,7 @@ SDL_AudioSpec *Mix_LoadOGG_RW (SDL_RWops *src, int freesrc,
     spec->channels = info->channels;
     spec->freq = info->rate;
     spec->samples = 4096; /* buffer size */
-    
+
     samples = (long)vorbis.ov_pcm_total(&vf, -1);
 
     *audio_len = spec->size = samples * spec->channels * 2;
@@ -121,17 +121,17 @@ SDL_AudioSpec *Mix_LoadOGG_RW (SDL_RWops *src, int freesrc,
     to_read = *audio_len;
 #ifdef OGG_USE_TREMOR
     for (read = vorbis.ov_read(&vf, (char *)buf, to_read, &bitstream);
-	 read > 0;
-	 read = vorbis.ov_read(&vf, (char *)buf, to_read, &bitstream))
+     read > 0;
+     read = vorbis.ov_read(&vf, (char *)buf, to_read, &bitstream))
 #else
     for (read = vorbis.ov_read(&vf, (char *)buf, to_read, 0/*LE*/, 2/*16bit*/, 1/*signed*/, &bitstream);
          read > 0;
          read = vorbis.ov_read(&vf, (char *)buf, to_read, 0, 2, 1, &bitstream))
-#endif	 
+#endif
     {
         if (read == OV_HOLE || read == OV_EBADLINK)
             break; /* error */
-        
+
         to_read -= read;
         buf += read;
     }

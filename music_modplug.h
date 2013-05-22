@@ -6,8 +6,8 @@
 #include "SDL_mixer.h"
 
 typedef struct {
-	ModPlugFile *file;
-	int playing;
+    ModPlugFile *file;
+    int playing;
 } modplug_data;
 
 int modplug_init(SDL_AudioSpec *mixer);

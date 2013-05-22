@@ -32,9 +32,9 @@
 #include <SDL_audio.h>
 
 typedef struct {
-	SDL_AudioCVT convert;
-	fluid_synth_t *synth;
-	fluid_player_t* player;
+    SDL_AudioCVT convert;
+    fluid_synth_t *synth;
+    fluid_player_t* player;
 } FluidSynthMidiSong;
 
 int fluidsynth_init(SDL_AudioSpec *mixer);

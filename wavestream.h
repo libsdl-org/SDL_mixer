@@ -26,11 +26,11 @@
 #include <stdio.h>
 
 typedef struct {
-	SDL_RWops *rw;
-	SDL_bool freerw;
-	long  start;
-	long  stop;
-	SDL_AudioCVT cvt;
+    SDL_RWops *rw;
+    SDL_bool freerw;
+    long  start;
+    long  stop;
+    SDL_AudioCVT cvt;
 } WAVStream;
 
 /* Initialize the WAVStream player, with the given mixer settings

@@ -78,7 +78,7 @@ void *_Eff_build_volume_table_u8(void)
             _Eff_volume_table = (void *) rc;
             for (volume = 0; volume < 256; volume++) {
                 for (sample = -128; sample < 128; sample ++) {
-                    *rc = (Uint8)(((float) sample) * ((float) volume / 255.0)) 
+                    *rc = (Uint8)(((float) sample) * ((float) volume / 255.0))
                         + 128;
                     rc++;
                 }

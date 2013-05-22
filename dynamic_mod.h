@@ -24,35 +24,35 @@
 #include "mikmod.h"
 
 typedef struct {
-	int loaded;
-	void *handle;
+    int loaded;
+    void *handle;
 
-	void (*MikMod_Exit)(void);
-	CHAR* (*MikMod_InfoDriver)(void);
-	CHAR* (*MikMod_InfoLoader)(void);
-	BOOL (*MikMod_Init)(CHAR*);
-	void (*MikMod_RegisterAllLoaders)(void);
-	void (*MikMod_RegisterDriver)(struct MDRIVER*);
-	int* MikMod_errno;
-	char* (*MikMod_strerror)(int);
-	void (*MikMod_free)(void*);
-	BOOL (*Player_Active)(void);
-	void (*Player_Free)(MODULE*);
-	MODULE* (*Player_LoadGeneric)(MREADER*,int,BOOL);
-	void (*Player_SetPosition)(UWORD);
-	void (*Player_SetVolume)(SWORD);
-	void (*Player_Start)(MODULE*);
-	void (*Player_Stop)(void);
-	ULONG (*VC_WriteBytes)(SBYTE*,ULONG);
-	struct MDRIVER* drv_nos;
-	UWORD* md_device;
-	UWORD* md_mixfreq;
-	UWORD* md_mode;
-	UBYTE* md_musicvolume;
-	UBYTE* md_pansep;
-	UBYTE* md_reverb;
-	UBYTE* md_sndfxvolume;
-	UBYTE* md_volume;
+    void (*MikMod_Exit)(void);
+    CHAR* (*MikMod_InfoDriver)(void);
+    CHAR* (*MikMod_InfoLoader)(void);
+    BOOL (*MikMod_Init)(CHAR*);
+    void (*MikMod_RegisterAllLoaders)(void);
+    void (*MikMod_RegisterDriver)(struct MDRIVER*);
+    int* MikMod_errno;
+    char* (*MikMod_strerror)(int);
+    void (*MikMod_free)(void*);
+    BOOL (*Player_Active)(void);
+    void (*Player_Free)(MODULE*);
+    MODULE* (*Player_LoadGeneric)(MREADER*,int,BOOL);
+    void (*Player_SetPosition)(UWORD);
+    void (*Player_SetVolume)(SWORD);
+    void (*Player_Start)(MODULE*);
+    void (*Player_Stop)(void);
+    ULONG (*VC_WriteBytes)(SBYTE*,ULONG);
+    struct MDRIVER* drv_nos;
+    UWORD* md_device;
+    UWORD* md_mixfreq;
+    UWORD* md_mode;
+    UBYTE* md_musicvolume;
+    UBYTE* md_pansep;
+    UBYTE* md_reverb;
+    UBYTE* md_sndfxvolume;
+    UBYTE* md_volume;
 } mikmod_loader;
 
 extern mikmod_loader mikmod;

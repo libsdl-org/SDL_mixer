@@ -44,48 +44,48 @@
 
 /* Private data for VOC file */
 typedef struct vocstuff {
-	Uint32	rest;			/* bytes remaining in current block */
-	Uint32	rate;			/* rate code (byte) of this chunk */
-	int 	silent;		/* sound or silence? */
-	Uint32	srate;			/* rate code (byte) of silence */
-	Uint32	blockseek;		/* start of current output block */
-	Uint32	samples;		/* number of samples output */
-	Uint32	size;		/* word length of data */
-	Uint8 	channels;	/* number of sound channels */
-	int     has_extended;       /* Has an extended block been read? */
+    Uint32  rest;           /* bytes remaining in current block */
+    Uint32  rate;           /* rate code (byte) of this chunk */
+    int     silent;         /* sound or silence? */
+    Uint32  srate;          /* rate code (byte) of silence */
+    Uint32  blockseek;      /* start of current output block */
+    Uint32  samples;        /* number of samples output */
+    Uint32  size;           /* word length of data */
+    Uint8   channels;       /* number of sound channels */
+    int     has_extended;   /* Has an extended block been read? */
 } vs_t;
 
-/* Size field */ 
+/* Size field */
 /* SJB: note that the 1st 3 are sometimes used as sizeof(type) */
-#define	ST_SIZE_BYTE	1
-#define ST_SIZE_8BIT	1
-#define	ST_SIZE_WORD	2
-#define ST_SIZE_16BIT	2
-#define	ST_SIZE_DWORD	4
-#define ST_SIZE_32BIT	4
-#define	ST_SIZE_FLOAT	5
-#define ST_SIZE_DOUBLE	6
-#define ST_SIZE_IEEE	7	/* IEEE 80-bit floats. */
+#define ST_SIZE_BYTE    1
+#define ST_SIZE_8BIT    1
+#define ST_SIZE_WORD    2
+#define ST_SIZE_16BIT   2
+#define ST_SIZE_DWORD   4
+#define ST_SIZE_32BIT   4
+#define ST_SIZE_FLOAT   5
+#define ST_SIZE_DOUBLE  6
+#define ST_SIZE_IEEE    7   /* IEEE 80-bit floats. */
 
 /* Style field */
-#define ST_ENCODING_UNSIGNED	1 /* unsigned linear: Sound Blaster */
-#define ST_ENCODING_SIGN2	2 /* signed linear 2's comp: Mac */
-#define	ST_ENCODING_ULAW	3 /* U-law signed logs: US telephony, SPARC */
-#define ST_ENCODING_ALAW	4 /* A-law signed logs: non-US telephony */
-#define ST_ENCODING_ADPCM	5 /* Compressed PCM */
-#define ST_ENCODING_IMA_ADPCM	6 /* Compressed PCM */
-#define ST_ENCODING_GSM		7 /* GSM 6.10 33-byte frame lossy compression */
+#define ST_ENCODING_UNSIGNED    1 /* unsigned linear: Sound Blaster */
+#define ST_ENCODING_SIGN2       2 /* signed linear 2's comp: Mac */
+#define ST_ENCODING_ULAW        3 /* U-law signed logs: US telephony, SPARC */
+#define ST_ENCODING_ALAW        4 /* A-law signed logs: non-US telephony */
+#define ST_ENCODING_ADPCM       5 /* Compressed PCM */
+#define ST_ENCODING_IMA_ADPCM   6 /* Compressed PCM */
+#define ST_ENCODING_GSM         7 /* GSM 6.10 33-byte frame lossy compression */
 
-#define	VOC_TERM	0
-#define	VOC_DATA	1
-#define	VOC_CONT	2
-#define	VOC_SILENCE	3
-#define	VOC_MARKER	4
-#define	VOC_TEXT	5
-#define	VOC_LOOP	6
-#define	VOC_LOOPEND	7
+#define VOC_TERM        0
+#define VOC_DATA        1
+#define VOC_CONT        2
+#define VOC_SILENCE     3
+#define VOC_MARKER      4
+#define VOC_TEXT        5
+#define VOC_LOOP        6
+#define VOC_LOOPEND     7
 #define VOC_EXTENDED    8
-#define VOC_DATA_16	9
+#define VOC_DATA_16     9
 
 
 static int voc_check_header(SDL_RWops *src)
@@ -140,7 +140,7 @@ static int voc_get_block(SDL_RWops *src, vs_t *v, SDL_AudioSpec *spec)
 
         if (SDL_RWread(src, bits24, sizeof (bits24), 1) != 1)
             return 1;  /* assume that's the end of the file. */
-        
+
         /* Size is an 24-bit value. Ugh. */
         sblen = ( (bits24[0]) | (bits24[1] << 8) | (bits24[2] << 16) );
 
