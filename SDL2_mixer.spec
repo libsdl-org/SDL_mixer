@@ -1,5 +1,5 @@
 %define name SDL2_mixer
-%define version 1.2.13
+%define version 2.0.0
 %define release 1
 
 Summary: Simple DirectMedia Layer - Sample Mixer Library
