@@ -32,15 +32,15 @@
 #endif
 
 typedef struct {
-	SDL_RWops *rw;
-	int freerw;
-	int playing;
-	int volume;
-	OggVorbis_File vf;
-	int section;
-	SDL_AudioCVT cvt;
-	int len_available;
-	Uint8 *snd_available;
+    SDL_RWops *rw;
+    int freerw;
+    int playing;
+    int volume;
+    OggVorbis_File vf;
+    int section;
+    SDL_AudioCVT cvt;
+    int len_available;
+    Uint8 *snd_available;
 } OGG_music;
 
 /* Initialize the Ogg Vorbis player, with the given mixer settings

@@ -26,105 +26,105 @@
 #include "dynamic_ogg.h"
 
 vorbis_loader vorbis = {
-	0, NULL
+    0, NULL
 };
 
 #ifdef OGG_DYNAMIC
 int Mix_InitOgg()
 {
-	if ( vorbis.loaded == 0 ) {
-		vorbis.handle = SDL_LoadObject(OGG_DYNAMIC);
-		if ( vorbis.handle == NULL ) {
-			return -1;
-		}
-		vorbis.ov_clear =
-			(int (*)(OggVorbis_File *))
-			SDL_LoadFunction(vorbis.handle, "ov_clear");
-		if ( vorbis.ov_clear == NULL ) {
-			SDL_UnloadObject(vorbis.handle);
-			return -1;
-		}
-		vorbis.ov_info =
-			(vorbis_info *(*)(OggVorbis_File *,int))
-			SDL_LoadFunction(vorbis.handle, "ov_info");
-		if ( vorbis.ov_info == NULL ) {
-			SDL_UnloadObject(vorbis.handle);
-			return -1;
-		}
-		vorbis.ov_open_callbacks =
-			(int (*)(void *, OggVorbis_File *, char *, long, ov_callbacks))
-			SDL_LoadFunction(vorbis.handle, "ov_open_callbacks");
-		if ( vorbis.ov_open_callbacks == NULL ) {
-			SDL_UnloadObject(vorbis.handle);
-			return -1;
-		}
-		vorbis.ov_pcm_total =
-			(ogg_int64_t (*)(OggVorbis_File *,int))
-			SDL_LoadFunction(vorbis.handle, "ov_pcm_total");
-		if ( vorbis.ov_pcm_total == NULL ) {
-			SDL_UnloadObject(vorbis.handle);
-			return -1;
-		}
-		vorbis.ov_read =
+    if ( vorbis.loaded == 0 ) {
+        vorbis.handle = SDL_LoadObject(OGG_DYNAMIC);
+        if ( vorbis.handle == NULL ) {
+            return -1;
+        }
+        vorbis.ov_clear =
+            (int (*)(OggVorbis_File *))
+            SDL_LoadFunction(vorbis.handle, "ov_clear");
+        if ( vorbis.ov_clear == NULL ) {
+            SDL_UnloadObject(vorbis.handle);
+            return -1;
+        }
+        vorbis.ov_info =
+            (vorbis_info *(*)(OggVorbis_File *,int))
+            SDL_LoadFunction(vorbis.handle, "ov_info");
+        if ( vorbis.ov_info == NULL ) {
+            SDL_UnloadObject(vorbis.handle);
+            return -1;
+        }
+        vorbis.ov_open_callbacks =
+            (int (*)(void *, OggVorbis_File *, char *, long, ov_callbacks))
+            SDL_LoadFunction(vorbis.handle, "ov_open_callbacks");
+        if ( vorbis.ov_open_callbacks == NULL ) {
+            SDL_UnloadObject(vorbis.handle);
+            return -1;
+        }
+        vorbis.ov_pcm_total =
+            (ogg_int64_t (*)(OggVorbis_File *,int))
+            SDL_LoadFunction(vorbis.handle, "ov_pcm_total");
+        if ( vorbis.ov_pcm_total == NULL ) {
+            SDL_UnloadObject(vorbis.handle);
+            return -1;
+        }
+        vorbis.ov_read =
 #ifdef OGG_USE_TREMOR
-			(long (*)(OggVorbis_File *,char *,int,int *))
+            (long (*)(OggVorbis_File *,char *,int,int *))
 #else
-			(long (*)(OggVorbis_File *,char *,int,int,int,int,int *))
+            (long (*)(OggVorbis_File *,char *,int,int,int,int,int *))
 #endif
-			SDL_LoadFunction(vorbis.handle, "ov_read");
-		if ( vorbis.ov_read == NULL ) {
-			SDL_UnloadObject(vorbis.handle);
-			return -1;
-		}
-		vorbis.ov_time_seek =
+            SDL_LoadFunction(vorbis.handle, "ov_read");
+        if ( vorbis.ov_read == NULL ) {
+            SDL_UnloadObject(vorbis.handle);
+            return -1;
+        }
+        vorbis.ov_time_seek =
 #ifdef OGG_USE_TREMOR
-			(long (*)(OggVorbis_File *,ogg_int64_t))
+            (long (*)(OggVorbis_File *,ogg_int64_t))
 #else
-			(int (*)(OggVorbis_File *,double))
+            (int (*)(OggVorbis_File *,double))
 #endif
-			SDL_LoadFunction(vorbis.handle, "ov_time_seek");
-		if ( vorbis.ov_time_seek == NULL ) {
-			SDL_UnloadObject(vorbis.handle);
-			return -1;
-		}
-	}
-	++vorbis.loaded;
+            SDL_LoadFunction(vorbis.handle, "ov_time_seek");
+        if ( vorbis.ov_time_seek == NULL ) {
+            SDL_UnloadObject(vorbis.handle);
+            return -1;
+        }
+    }
+    ++vorbis.loaded;
 
-	return 0;
+    return 0;
 }
 void Mix_QuitOgg()
 {
-	if ( vorbis.loaded == 0 ) {
-		return;
-	}
-	if ( vorbis.loaded == 1 ) {
-		SDL_UnloadObject(vorbis.handle);
-	}
-	--vorbis.loaded;
+    if ( vorbis.loaded == 0 ) {
+        return;
+    }
+    if ( vorbis.loaded == 1 ) {
+        SDL_UnloadObject(vorbis.handle);
+    }
+    --vorbis.loaded;
 }
 #else
 int Mix_InitOgg()
 {
-	if ( vorbis.loaded == 0 ) {
-		vorbis.ov_clear = ov_clear;
-		vorbis.ov_info = ov_info;
-		vorbis.ov_open_callbacks = ov_open_callbacks;
-		vorbis.ov_pcm_total = ov_pcm_total;
-		vorbis.ov_read = ov_read;
-		vorbis.ov_time_seek = ov_time_seek;
-	}
-	++vorbis.loaded;
+    if ( vorbis.loaded == 0 ) {
+        vorbis.ov_clear = ov_clear;
+        vorbis.ov_info = ov_info;
+        vorbis.ov_open_callbacks = ov_open_callbacks;
+        vorbis.ov_pcm_total = ov_pcm_total;
+        vorbis.ov_read = ov_read;
+        vorbis.ov_time_seek = ov_time_seek;
+    }
+    ++vorbis.loaded;
 
-	return 0;
+    return 0;
 }
 void Mix_QuitOgg()
 {
-	if ( vorbis.loaded == 0 ) {
-		return;
-	}
-	if ( vorbis.loaded == 1 ) {
-	}
-	--vorbis.loaded;
+    if ( vorbis.loaded == 0 ) {
+        return;
+    }
+    if ( vorbis.loaded == 1 ) {
+    }
+    --vorbis.loaded;
 }
 #endif /* OGG_DYNAMIC */
 

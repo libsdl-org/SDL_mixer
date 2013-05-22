@@ -139,7 +139,7 @@ class MidiEventsStore : public BMidi
       {
       case B_SYS_EX_START:
         SpraySystemExclusive(ev->extraData, ev->extraLen, time);
-	break;
+    break;
       case B_MIDI_TIME_CODE:
       case B_SONG_POSITION:
       case B_SONG_SELECT:
@@ -147,26 +147,26 @@ class MidiEventsStore : public BMidi
       case B_TUNE_REQUEST:
       case B_SYS_EX_END:
         SpraySystemCommon(ev->status, ev->data[0], ev->data[1], time);
-	break;
+    break;
       case B_TIMING_CLOCK:
       case B_START:
       case B_STOP:
       case B_CONTINUE:
       case B_ACTIVE_SENSING:
         SpraySystemRealTime(ev->status, time);
-	break;
+    break;
       case B_SYSTEM_RESET:
         if (ev->data[0] == 0x51 && ev->data[1] == 0x03)
-	{
-	  assert(ev->extraLen == 3);
-	  int val = (ev->extraData[0] << 16) | (ev->extraData[1] << 8) | ev->extraData[2];
-	  int tempo = 60000000 / val;
-	  SprayTempoChange(tempo, time);
-	}
-	else
-	{
-	  SpraySystemRealTime(ev->status, time);
-	}
+    {
+      assert(ev->extraLen == 3);
+      int val = (ev->extraData[0] << 16) | (ev->extraData[1] << 8) | ev->extraData[2];
+      int tempo = 60000000 / val;
+      SprayTempoChange(tempo, time);
+    }
+    else
+    {
+      SpraySystemRealTime(ev->status, time);
+    }
       }
       break;
     }
@@ -243,7 +243,7 @@ void native_midi_freesong(NativeMidiSong *song)
   if (song == NULL) return;
   song->store->Stop();
   song->store->Disconnect(&synth);
-  if (currentSong == song) 
+  if (currentSong == song)
   {
     currentSong = NULL;
   }

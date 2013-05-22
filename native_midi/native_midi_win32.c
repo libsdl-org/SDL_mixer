@@ -106,34 +106,34 @@ static void MIDItoStream(NativeMidiSong *song, MIDIEvent *evntlist)
   newevent=song->NewEvents;
   while (event)
   {
-		int status = (event->status&0xF0)>>4;
-		switch (status)
-		{
-		case MIDI_STATUS_NOTE_OFF:
-		case MIDI_STATUS_NOTE_ON:
-		case MIDI_STATUS_AFTERTOUCH:
-		case MIDI_STATUS_CONTROLLER:
-		case MIDI_STATUS_PROG_CHANGE:
-		case MIDI_STATUS_PRESSURE:
-		case MIDI_STATUS_PITCH_WHEEL:
+        int status = (event->status&0xF0)>>4;
+        switch (status)
+        {
+        case MIDI_STATUS_NOTE_OFF:
+        case MIDI_STATUS_NOTE_ON:
+        case MIDI_STATUS_AFTERTOUCH:
+        case MIDI_STATUS_CONTROLLER:
+        case MIDI_STATUS_PROG_CHANGE:
+        case MIDI_STATUS_PRESSURE:
+        case MIDI_STATUS_PITCH_WHEEL:
       newevent->dwDeltaTime=event->time;
-		  newevent->dwEvent=(event->status|0x80)|(event->data[0]<<8)|(event->data[1]<<16)|(MEVT_SHORTMSG<<24);
+          newevent->dwEvent=(event->status|0x80)|(event->data[0]<<8)|(event->data[1]<<16)|(MEVT_SHORTMSG<<24);
       newevent=(MIDIEVENT*)((char*)newevent+(3*sizeof(DWORD)));
       eventcount++;
-			break;
+            break;
 
-		case MIDI_STATUS_SYSEX:
-			if (event->status == 0xFF && event->data[0] == 0x51) /* Tempo change */
-			{
-				int tempo = (event->extraData[0] << 16) |
-					          (event->extraData[1] << 8) |
-					           event->extraData[2];
+        case MIDI_STATUS_SYSEX:
+            if (event->status == 0xFF && event->data[0] == 0x51) /* Tempo change */
+            {
+                int tempo = (event->extraData[0] << 16) |
+                              (event->extraData[1] << 8) |
+                               event->extraData[2];
         newevent->dwDeltaTime=event->time;
-				newevent->dwEvent=(MEVT_TEMPO<<24) | tempo;
+                newevent->dwEvent=(MEVT_TEMPO<<24) | tempo;
         newevent=(MIDIEVENT*)((char*)newevent+(3*sizeof(DWORD)));
         eventcount++;
-			}
-			break;
+            }
+            break;
     }
 
     event=event->next;
@@ -202,37 +202,37 @@ int native_midi_detect()
 
 NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw, int freerw)
 {
-	NativeMidiSong *newsong;
-	MIDIEvent		*evntlist = NULL;
+    NativeMidiSong *newsong;
+    MIDIEvent       *evntlist = NULL;
 
-	newsong=malloc(sizeof(NativeMidiSong));
-	if (!newsong) {
-		if (freerw) {
-			SDL_RWclose(rw);
-		}
-		return NULL;
-	}
-	memset(newsong,0,sizeof(NativeMidiSong));
+    newsong=malloc(sizeof(NativeMidiSong));
+    if (!newsong) {
+        if (freerw) {
+            SDL_RWclose(rw);
+        }
+        return NULL;
+    }
+    memset(newsong,0,sizeof(NativeMidiSong));
 
-	/* Attempt to load the midi file */
-	evntlist = CreateMIDIEventList(rw, &newsong->ppqn);
-	if (!evntlist)
-	{
-		free(newsong);
-		if (freerw) {
-			SDL_RWclose(rw);
-		}
-		return NULL;
-	}
+    /* Attempt to load the midi file */
+    evntlist = CreateMIDIEventList(rw, &newsong->ppqn);
+    if (!evntlist)
+    {
+        free(newsong);
+        if (freerw) {
+            SDL_RWclose(rw);
+        }
+        return NULL;
+    }
 
-	MIDItoStream(newsong, evntlist);
+    MIDItoStream(newsong, evntlist);
 
-	FreeMIDIEventList(evntlist);
+    FreeMIDIEventList(evntlist);
 
-	if (freerw) {
-		SDL_RWclose(rw);
-	}
-	return newsong;
+    if (freerw) {
+        SDL_RWclose(rw);
+    }
+    return newsong;
 }
 
 void native_midi_freesong(NativeMidiSong *song)

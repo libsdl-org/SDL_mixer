@@ -27,26 +27,26 @@
 #include <fluidsynth.h>
 
 typedef struct {
-	int loaded;
-	void *handle;
+    int loaded;
+    void *handle;
 
-	int (*delete_fluid_player)(fluid_player_t*);
-	void (*delete_fluid_settings)(fluid_settings_t*);
-	int (*delete_fluid_synth)(fluid_synth_t*);
-	int (*fluid_player_add)(fluid_player_t*, const char*);
-	int (*fluid_player_add_mem)(fluid_player_t*, const void*, size_t);
-	int (*fluid_player_get_status)(fluid_player_t*);
-	int (*fluid_player_play)(fluid_player_t*);
-	int (*fluid_player_set_loop)(fluid_player_t*, int);
-	int (*fluid_player_stop)(fluid_player_t*);
-	int (*fluid_settings_setnum)(fluid_settings_t*, const char*, double);
-	fluid_settings_t* (*fluid_synth_get_settings)(fluid_synth_t*);
-	void (*fluid_synth_set_gain)(fluid_synth_t*, float);
-	int (*fluid_synth_sfload)(fluid_synth_t*, const char*, int);
-	int (*fluid_synth_write_s16)(fluid_synth_t*, int, void*, int, int, void*, int, int);
-	fluid_player_t* (*new_fluid_player)(fluid_synth_t*);
-	fluid_settings_t* (*new_fluid_settings)(void);
-	fluid_synth_t* (*new_fluid_synth)(fluid_settings_t*);
+    int (*delete_fluid_player)(fluid_player_t*);
+    void (*delete_fluid_settings)(fluid_settings_t*);
+    int (*delete_fluid_synth)(fluid_synth_t*);
+    int (*fluid_player_add)(fluid_player_t*, const char*);
+    int (*fluid_player_add_mem)(fluid_player_t*, const void*, size_t);
+    int (*fluid_player_get_status)(fluid_player_t*);
+    int (*fluid_player_play)(fluid_player_t*);
+    int (*fluid_player_set_loop)(fluid_player_t*, int);
+    int (*fluid_player_stop)(fluid_player_t*);
+    int (*fluid_settings_setnum)(fluid_settings_t*, const char*, double);
+    fluid_settings_t* (*fluid_synth_get_settings)(fluid_synth_t*);
+    void (*fluid_synth_set_gain)(fluid_synth_t*, float);
+    int (*fluid_synth_sfload)(fluid_synth_t*, const char*, int);
+    int (*fluid_synth_write_s16)(fluid_synth_t*, int, void*, int, int, void*, int, int);
+    fluid_player_t* (*new_fluid_player)(fluid_synth_t*);
+    fluid_settings_t* (*new_fluid_settings)(void);
+    fluid_synth_t* (*new_fluid_synth)(fluid_settings_t*);
 } fluidsynth_loader;
 
 extern fluidsynth_loader fluidsynth;

@@ -26,7 +26,7 @@
 
 #if __MACOSX__
 
-#include <CoreServices/CoreServices.h>		/* ComponentDescription */
+#include <CoreServices/CoreServices.h>      /* ComponentDescription */
 #include <AudioUnit/AudioUnit.h>
 #include <AudioToolbox/AudioToolbox.h>
 #include <AvailabilityMacros.h>

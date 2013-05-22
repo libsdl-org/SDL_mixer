@@ -30,9 +30,9 @@
 # include <linux/limits.h>
 #endif
 typedef struct {
-	char *file;
-	char *cmd;
-	pid_t pid;
+    char *file;
+    char *cmd;
+    pid_t pid;
 } MusicCMD;
 
 /* Unimplemented */

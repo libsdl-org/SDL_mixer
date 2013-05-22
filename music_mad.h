@@ -26,8 +26,8 @@
 #include "SDL_audio.h"
 #include "SDL_mixer.h"
 
-#define MAD_INPUT_BUFFER_SIZE	(5*8192)
-#define MAD_OUTPUT_BUFFER_SIZE	8192
+#define MAD_INPUT_BUFFER_SIZE   (5*8192)
+#define MAD_OUTPUT_BUFFER_SIZE  8192
 
 enum {
   MS_input_eof    = 0x0001,
