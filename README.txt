@@ -1,5 +1,5 @@
 
-SDL_mixer 1.2
+SDL_mixer 2.0
 
 The latest version of this library is available from:
 http://www.libsdl.org/projects/SDL_mixer/
