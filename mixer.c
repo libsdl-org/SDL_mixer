@@ -126,7 +126,7 @@ const char *Mix_GetChunkDecoder(int index)
 
 static void add_chunk_decoder(const char *decoder)
 {
-    void *ptr = SDL_realloc(chunk_decoders, (num_decoders + 1) * sizeof (const char **));
+    void *ptr = SDL_realloc((void *)chunk_decoders, (num_decoders + 1) * sizeof (const char **));
     if (ptr == NULL) {
         return;  /* oh well, go on without it. */
     }
@@ -267,7 +267,7 @@ static void *Mix_DoEffects(int chan, void *snd, int len)
             if (buf == NULL) {
                 return(snd);
             }
-            memcpy(buf, snd, len);
+            SDL_memcpy(buf, snd, len);
         }
 
         for (; e != NULL; e = e->next) {
@@ -291,7 +291,7 @@ static void mix_channels(void *udata, Uint8 *stream, int len)
 
 #if SDL_VERSION_ATLEAST(1, 3, 0)
     /* Need to initialize the stream in SDL 1.3+ */
-    memset(stream, mixer.silence, len);
+    SDL_memset(stream, mixer.silence, len);
 #endif
 
     /* Mix the music (must be done before the channels are added) */
@@ -647,7 +647,7 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
             SDL_free(chunk);
             return(NULL);
         }
-        memcpy(wavecvt.buf, chunk->abuf, chunk->alen);
+        SDL_memcpy(wavecvt.buf, chunk->abuf, chunk->alen);
         SDL_free(chunk->abuf);
 
         /* Run the audio converter */
@@ -690,7 +690,7 @@ Mix_Chunk *Mix_QuickLoad_WAV(Uint8 *mem)
     chunk->allocated = 0;
     mem += 12; /* WAV header */
     do {
-        memcpy(magic, mem, 4);
+        SDL_memcpy(magic, mem, 4);
         mem += 4;
         chunk->alen = ((mem[3]<<24)|(mem[2]<<16)|(mem[1]<<8)|(mem[0]));
         mem += 4;
@@ -1142,7 +1142,7 @@ void Mix_CloseAudio(void)
             mix_channel = NULL;
 
             /* rcg06042009 report available decoders at runtime. */
-            SDL_free(chunk_decoders);
+            SDL_free((void *)chunk_decoders);
             chunk_decoders = NULL;
             num_decoders = 0;
         }

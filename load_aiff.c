@@ -75,11 +75,11 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
     int found_COMM;
     int found_VHDR;
     int found_BODY;
-    long start = 0;
+    Sint64 start = 0;
 
     Uint32 chunk_type;
     Uint32 chunk_length;
-    long next_chunk;
+    Sint64 next_chunk;
 
     /* AIFF magic header */
     Uint32 FORMchunk;
@@ -127,7 +127,7 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
 
     do {
         chunk_type  = SDL_ReadLE32(src);
-        chunk_length    = SDL_ReadBE32(src);
+        chunk_length = SDL_ReadBE32(src);
         next_chunk  = SDL_RWtell(src) + chunk_length;
         /* Paranoia to avoid infinite loops */
         if (chunk_length == 0)
@@ -206,7 +206,7 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
     }
 
     /* Decode the audio data format */
-    memset(spec, 0, sizeof(*spec));
+    SDL_memset(spec, 0, sizeof(*spec));
     spec->freq = frequency;
     switch (samplesize) {
         case 8:

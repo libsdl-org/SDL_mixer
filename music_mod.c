@@ -144,23 +144,24 @@ void MOD_setvolume(MODULE *music, int volume)
 typedef struct
 {
     MREADER mr;
-    long offset;
-    long eof;
+    Sint64 offset;
+    Sint64 eof;
     SDL_RWops *rw;
 } LMM_MREADER;
 
 BOOL LMM_Seek(struct MREADER *mr,long to,int dir)
 {
+	Sint64 offset = to;
     LMM_MREADER* lmmmr = (LMM_MREADER*)mr;
     if ( dir == SEEK_SET ) {
-        to += lmmmr->offset;
+        offset += lmmmr->offset;
     }
-    return (SDL_RWseek(lmmmr->rw, to, dir) < lmmmr->offset);
+    return (SDL_RWseek(lmmmr->rw, offset, dir) < lmmmr->offset);
 }
 long LMM_Tell(struct MREADER *mr)
 {
     LMM_MREADER* lmmmr = (LMM_MREADER*)mr;
-    return SDL_RWtell(lmmmr->rw) - lmmmr->offset;
+    return (long)(SDL_RWtell(lmmmr->rw) - lmmmr->offset);
 }
 BOOL LMM_Read(struct MREADER *mr,void *buf,size_t sz)
 {

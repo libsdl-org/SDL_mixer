@@ -25,16 +25,15 @@
 #include "SDL.h"
 #include "SDL_mutex.h"
 #include "SDL_audio.h"
-
-#include "MPEGfilter.h"
+#include "MPEGframe.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define SMPEG_MAJOR_VERSION      0
-#define SMPEG_MINOR_VERSION      4
-#define SMPEG_PATCHLEVEL         5
+#define SMPEG_MAJOR_VERSION      2
+#define SMPEG_MINOR_VERSION      0
+#define SMPEG_PATCHLEVEL         0
 
 typedef struct {
         Uint8 major;
@@ -80,8 +79,7 @@ typedef enum {
 
 
 /* Matches the declaration of SDL_UpdateRect() */
-typedef void(*SMPEG_DisplayCallback)(SDL_Surface* dst, int x, int y,
-                                     unsigned int w, unsigned int h);
+typedef void(*SMPEG_DisplayCallback)(void *data, SMPEG_Frame *frame);
 
 /* Create a new SMPEG object from an MPEG file.
    On return, if 'info' is not NULL, it will be filled with information 
@@ -125,29 +123,13 @@ extern DECLSPEC SMPEGstatus SMPEG_status( SMPEG* mpeg );
 /* Set the audio volume of an MPEG stream, in the range 0-100 */
 extern DECLSPEC void SMPEG_setvolume( SMPEG* mpeg, int volume );
 
-/* Set the destination surface for MPEG video playback
-   'surfLock' is a mutex used to synchronize access to 'dst', and can be NULL.
-   'callback' is a function called when an area of 'dst' needs to be updated.
-   If 'callback' is NULL, the default function (SDL_UpdateRect) will be used.
+/* Set the frame display callback for MPEG video
+   'lock' is a mutex used to synchronize access to the frame data, and is held during the update callback.
 */
-extern DECLSPEC void SMPEG_setdisplay(SMPEG* mpeg, SDL_Surface* dst, SDL_mutex* surfLock,
-                                            SMPEG_DisplayCallback callback);
+extern DECLSPEC void SMPEG_setdisplay(SMPEG* mpeg, SMPEG_DisplayCallback callback, void* data, SDL_mutex* lock);
 
 /* Set or clear looping play on an SMPEG object */
 extern DECLSPEC void SMPEG_loop( SMPEG* mpeg, int repeat );
-
-/* Scale pixel display on an SMPEG object */
-extern DECLSPEC void SMPEG_scaleXY( SMPEG* mpeg, int width, int height );
-extern DECLSPEC void SMPEG_scale( SMPEG* mpeg, int scale );
-/* */
-#define SMPEG_double(mpeg, on) \
-	SMPEG_scale(mpeg, (on) ? 2 : 1)
-
-/* Move the video display area within the destination surface */
-extern DECLSPEC void SMPEG_move( SMPEG* mpeg, int x, int y );
-
-/* Set the region of the video to be shown */
-extern DECLSPEC void SMPEG_setdisplayregion(SMPEG* mpeg, int x, int y, int w, int h);
 
 /* Play an SMPEG object */
 extern DECLSPEC void SMPEG_play( SMPEG* mpeg );
@@ -167,17 +149,11 @@ extern DECLSPEC void SMPEG_seek( SMPEG* mpeg, int bytes);
 /* Skip 'seconds' seconds in the MPEG stream */
 extern DECLSPEC void SMPEG_skip( SMPEG* mpeg, float seconds );
 
-/* Render a particular frame in the MPEG video
-   API CHANGE: This function no longer takes a target surface and position.
-               Use SMPEG_setdisplay() and SMPEG_move() to set this information.
-*/
+/* Render a particular frame in the MPEG video */
 extern DECLSPEC void SMPEG_renderFrame( SMPEG* mpeg, int framenum );
 
 /* Render the last frame of an MPEG video */
-extern DECLSPEC void SMPEG_renderFinal( SMPEG* mpeg, SDL_Surface* dst, int x, int y );
-
-/* Set video filter */
-extern DECLSPEC SMPEG_Filter * SMPEG_filter( SMPEG* mpeg, SMPEG_Filter * filter );
+extern DECLSPEC void SMPEG_renderFinal( SMPEG* mpeg );
 
 /* Return NULL if there is no error in the MPEG stream, or an error message
    if there was a fatal error in the MPEG stream for the SMPEG object.

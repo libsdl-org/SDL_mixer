@@ -142,7 +142,7 @@ int modplug_playAudio(modplug_data *music, Uint8 *stream, int len)
         i=ModPlug_Read(music->file, stream, small_len);
         if(i<small_len)
         {
-            memset(stream+i,0,small_len-i);
+            SDL_memset(stream+i,0,small_len-i);
             music->playing=0;
         }
         /* and extend to len by copying channels */
@@ -189,7 +189,7 @@ int modplug_playAudio(modplug_data *music, Uint8 *stream, int len)
         int i=ModPlug_Read(music->file, stream, len);
         if(i<len)
         {
-            memset(stream+i,0,len-i);
+            SDL_memset(stream+i,0,len-i);
             music->playing=0;
         }
     }

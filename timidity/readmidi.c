@@ -530,7 +530,8 @@ static int read_track(int append)
 {
   MidiEventList *meep;
   MidiEventList *next, *new;
-  int32 len, next_pos, pos;
+  int32 len;
+  Sint64 next_pos, pos;
   char tmp[4];
 
   meep=evlist;

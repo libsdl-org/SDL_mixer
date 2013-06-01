@@ -64,12 +64,10 @@ static FLAC__StreamDecoderReadStatus flac_read_music_cb(
 
         if (*bytes == 0 ) { // error or no data was read (EOF)
             return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
-        }
-        else { // data was read, continue
+        } else { // data was read, continue
             return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
         }
-    }
-    else {
+    } else {
         return FLAC__STREAM_DECODER_READ_STATUS_ABORT;
     }
 }
@@ -83,8 +81,7 @@ static FLAC__StreamDecoderSeekStatus flac_seek_music_cb(
 
     if (SDL_RWseek (data->rwops, absolute_byte_offset, RW_SEEK_SET) < 0) {
         return FLAC__STREAM_DECODER_SEEK_STATUS_ERROR;
-    }
-    else {
+    } else {
         return FLAC__STREAM_DECODER_SEEK_STATUS_OK;
     }
 }
@@ -96,12 +93,11 @@ static FLAC__StreamDecoderTellStatus flac_tell_music_cb(
 {
     FLAC_music *data = (FLAC_music*)client_data;
 
-    int pos = SDL_RWtell (data->rwops);
+    Sint64 pos = SDL_RWtell (data->rwops);
 
     if (pos < 0) {
         return FLAC__STREAM_DECODER_TELL_STATUS_ERROR;
-    }
-    else {
+    } else {
         *absolute_byte_offset = (FLAC__uint64)pos;
         return FLAC__STREAM_DECODER_TELL_STATUS_OK;
     }
@@ -114,15 +110,14 @@ static FLAC__StreamDecoderLengthStatus flac_length_music_cb (
 {
     FLAC_music *data = (FLAC_music*)client_data;
 
-    int pos = SDL_RWtell (data->rwops);
-    int length = SDL_RWseek (data->rwops, 0, RW_SEEK_END);
+    Sint64 pos = SDL_RWtell (data->rwops);
+    Sint64 length = SDL_RWseek (data->rwops, 0, RW_SEEK_END);
 
     if (SDL_RWseek (data->rwops, pos, RW_SEEK_SET) != pos || length < 0) {
         /* there was an error attempting to return the stream to the original
          * position, or the length was invalid. */
         return FLAC__STREAM_DECODER_LENGTH_STATUS_ERROR;
-    }
-    else {
+    } else {
         *stream_length = (FLAC__uint64)length;
         return FLAC__STREAM_DECODER_LENGTH_STATUS_OK;
     }
@@ -134,18 +129,16 @@ static FLAC__bool flac_eof_music_cb(
 {
     FLAC_music *data = (FLAC_music*)client_data;
 
-    int pos = SDL_RWtell (data->rwops);
-    int end = SDL_RWseek (data->rwops, 0, RW_SEEK_END);
+    Sint64 pos = SDL_RWtell (data->rwops);
+    Sint64 end = SDL_RWseek (data->rwops, 0, RW_SEEK_END);
 
     // was the original position equal to the end (a.k.a. the seek didn't move)?
     if (pos == end) {
         // must be EOF
         return true;
-    }
-    else {
+    } else {
         // not EOF, return to the original position
         SDL_RWseek (data->rwops, pos, RW_SEEK_SET);
-
         return false;
     }
 }
@@ -419,21 +412,20 @@ static void FLAC_getsome(FLAC_music *music)
                 size_t overflow_extra_len = overflow_len -
                                                 music->flac_data.max_to_read;
 
-                memcpy (music->flac_data.data+music->flac_data.data_read,
+                SDL_memcpy (music->flac_data.data+music->flac_data.data_read,
                     music->flac_data.overflow, music->flac_data.max_to_read);
                 music->flac_data.data_read += music->flac_data.max_to_read;
-                memcpy (music->flac_data.overflow,
+                SDL_memcpy (music->flac_data.overflow,
                     music->flac_data.overflow + music->flac_data.max_to_read,
                     overflow_extra_len);
                 music->flac_data.overflow_len = overflow_extra_len;
                 music->flac_data.overflow_read = overflow_extra_len;
                 music->flac_data.max_to_read = 0;
-            }
-            else {
-                memcpy (music->flac_data.data+music->flac_data.data_read,
+            } else {
+                SDL_memcpy (music->flac_data.data+music->flac_data.data_read,
                     music->flac_data.overflow, overflow_len);
                 music->flac_data.data_read += overflow_len;
-                free (music->flac_data.overflow);
+                SDL_free (music->flac_data.overflow);
                 music->flac_data.overflow = NULL;
                 music->flac_data.overflow_len = 0;
                 music->flac_data.overflow_read = 0;
@@ -461,18 +453,17 @@ static void FLAC_getsome(FLAC_music *music)
     }
     cvt = &music->cvt;
     if (music->section < 0) {
-
         SDL_BuildAudioCVT (cvt, AUDIO_S16, (Uint8)music->flac_data.channels,
                         (int)music->flac_data.sample_rate, mixer.format,
                         mixer.channels, mixer.freq);
         if (cvt->buf) {
-            free (cvt->buf);
+            SDL_free (cvt->buf);
         }
         cvt->buf = (Uint8 *)SDL_malloc (music->flac_data.data_len * cvt->len_mult);
         music->section = 0;
     }
     if (cvt->buf) {
-        memcpy (cvt->buf, music->flac_data.data, music->flac_data.data_read);
+        SDL_memcpy (cvt->buf, music->flac_data.data, music->flac_data.data_read);
         if (cvt->needed) {
             cvt->len = music->flac_data.data_read;
             SDL_ConvertAudio (cvt);
@@ -503,7 +494,7 @@ int FLAC_playAudio(FLAC_music *music, Uint8 *snd, int len)
             mixable = music->len_available;
         }
         if (music->volume == MIX_MAX_VOLUME) {
-            memcpy (snd, music->snd_available, mixable);
+            SDL_memcpy (snd, music->snd_available, mixable);
         }
         else {
             SDL_MixAudio (snd, music->snd_available, mixable, music->volume);
@@ -533,21 +524,21 @@ void FLAC_delete(FLAC_music *music)
         }
 
         if (music->flac_data.data) {
-            free (music->flac_data.data);
+            SDL_free (music->flac_data.data);
         }
 
         if (music->flac_data.overflow) {
-            free (music->flac_data.overflow);
+            SDL_free (music->flac_data.overflow);
         }
 
         if (music->cvt.buf) {
-            free (music->cvt.buf);
+            SDL_free (music->cvt.buf);
         }
 
         if (music->freerw) {
             SDL_RWclose(music->rwops);
         }
-        free (music);
+        SDL_free (music);
     }
 }
 
@@ -560,13 +551,13 @@ void FLAC_jump_to_time(FLAC_music *music, double time)
 
             // clear data if it has data
             if (music->flac_data.data) {
-                free (music->flac_data.data);
+                SDL_free (music->flac_data.data);
                 music->flac_data.data = NULL;
             }
 
             // clear overflow if it has data
             if (music->flac_data.overflow) {
-                free (music->flac_data.overflow);
+                SDL_free (music->flac_data.overflow);
                 music->flac_data.overflow = NULL;
             }
 

@@ -347,7 +347,7 @@ static int voc_read(SDL_RWops *src, vs_t *v, Uint8 *buf, SDL_AudioSpec *spec)
             silence = 0x00;
 
         /* Fill in silence */
-        memset(buf, silence, v->rest);
+        SDL_memset(buf, silence, v->rest);
         done = v->rest;
         v->rest = 0;
     }
@@ -395,7 +395,7 @@ SDL_AudioSpec *Mix_LoadVOC_RW (SDL_RWops *src, int freesrc,
     v.has_extended = 0;
     *audio_buf = NULL;
     *audio_len = 0;
-    memset(spec, '\0', sizeof (SDL_AudioSpec));
+    SDL_memset(spec, '\0', sizeof (SDL_AudioSpec));
 
     if (!voc_get_block(src, &v, spec))
         goto done;
