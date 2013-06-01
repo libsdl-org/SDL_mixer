@@ -117,7 +117,7 @@ read_next_frame(mad_data *mp3_mad) {
 
         /* At the end of the file, we must stuff MAD_BUFFER_GUARD
            number of 0 bytes. */
-        memset(read_start + read_size, 0, MAD_BUFFER_GUARD);
+        SDL_memset(read_start + read_size, 0, MAD_BUFFER_GUARD);
         read_size += MAD_BUFFER_GUARD;
       }
     }
@@ -223,7 +223,7 @@ mad_getSamples(mad_data *mp3_mad, Uint8 *stream, int len) {
 
   if ((mp3_mad->status & MS_playing) == 0) {
     /* We're not supposed to be playing, so send silence instead. */
-    memset(stream, 0, len);
+    SDL_memset(stream, 0, len);
     return 0;
   }
 
@@ -238,7 +238,7 @@ mad_getSamples(mad_data *mp3_mad, Uint8 *stream, int len) {
         if ((mp3_mad->status & MS_error_flags) != 0) {
           /* Couldn't read a frame; either an error condition or
              end-of-file.  Stop. */
-          memset(out, 0, bytes_remaining);
+          SDL_memset(out, 0, bytes_remaining);
           mp3_mad->status &= ~MS_playing;
           return bytes_remaining;
         }
@@ -262,7 +262,7 @@ mad_getSamples(mad_data *mp3_mad, Uint8 *stream, int len) {
     }
 
     if (mp3_mad->volume == MIX_MAX_VOLUME) {
-      memcpy(out, mp3_mad->output_buffer + mp3_mad->output_begin, num_bytes);
+      SDL_memcpy(out, mp3_mad->output_buffer + mp3_mad->output_begin, num_bytes);
     } else {
       SDL_MixAudio(out, mp3_mad->output_buffer + mp3_mad->output_begin,
                    num_bytes, mp3_mad->volume);

@@ -45,7 +45,7 @@ static size_t sdl_read_func(void *ptr, size_t size, size_t nmemb, void *datasour
 
 static int sdl_seek_func(void *datasource, ogg_int64_t offset, int whence)
 {
-    return SDL_RWseek((SDL_RWops*)datasource, (int)offset, whence);
+    return (int)SDL_RWseek((SDL_RWops*)datasource, (int)offset, whence);
 }
 
 static int sdl_close_func_freesrc(void *datasource)
@@ -55,12 +55,12 @@ static int sdl_close_func_freesrc(void *datasource)
 
 static int sdl_close_func_nofreesrc(void *datasource)
 {
-    return SDL_RWseek((SDL_RWops*)datasource, 0, RW_SEEK_SET);
+    return (int)SDL_RWseek((SDL_RWops*)datasource, 0, RW_SEEK_SET);
 }
 
 static long sdl_tell_func(void *datasource)
 {
-    return SDL_RWtell((SDL_RWops*)datasource);
+    return (long)SDL_RWtell((SDL_RWops*)datasource);
 }
 
 

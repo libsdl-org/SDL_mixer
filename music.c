@@ -163,7 +163,7 @@ const char *Mix_GetMusicDecoder(int index)
 
 static void add_music_decoder(const char *decoder)
 {
-    void *ptr = SDL_realloc(music_decoders, (num_decoders + 1) * sizeof (const char **));
+    void *ptr = SDL_realloc((void *)music_decoders, (num_decoders + 1) * sizeof (const char **));
     if (ptr == NULL) {
         return;  /* oh well, go on without it. */
     }
@@ -466,7 +466,7 @@ static Mix_MusicType detect_music_type(SDL_RWops *rw)
     Uint8 magic[5];
     Uint8 moremagic[9];
 
-    int start = SDL_RWtell(rw);
+    Sint64 start = SDL_RWtell(rw);
     if (SDL_RWread(rw, magic, 1, 4) != 4 || SDL_RWread(rw, moremagic, 1, 8) != 8 ) {
         Mix_SetError("Couldn't read from RWops");
         return MUS_NONE;
@@ -619,11 +619,11 @@ Mix_Music *Mix_LoadMUSType_RW(SDL_RWops *rw, Mix_MusicType type, int freesrc)
         /* The WAVE loader needs the first 4 bytes of the header */
         {
             Uint8 magic[5];
-            int start = SDL_RWtell(rw);
+            Sint64 start = SDL_RWtell(rw);
             if (SDL_RWread(rw, magic, 1, 4) != 4) {
                 Mix_SetError("Couldn't read from RWops");
                 SDL_free(music);
-                return MUS_NONE;
+                return NULL;
             }
             SDL_RWseek(rw, start, RW_SEEK_SET);
             magic[4] = '\0';
@@ -1530,7 +1530,7 @@ void close_music(void)
 #endif
 
     /* rcg06042009 report available decoders at runtime. */
-    SDL_free(music_decoders);
+    SDL_free((void *)music_decoders);
     music_decoders = NULL;
     num_decoders = 0;
 

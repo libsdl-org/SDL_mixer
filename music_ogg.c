@@ -58,12 +58,12 @@ static size_t sdl_read_func(void *ptr, size_t size, size_t nmemb, void *datasour
 
 static int sdl_seek_func(void *datasource, ogg_int64_t offset, int whence)
 {
-    return SDL_RWseek((SDL_RWops*)datasource, (int)offset, whence);
+    return (int)SDL_RWseek((SDL_RWops*)datasource, (int)offset, whence);
 }
 
 static long sdl_tell_func(void *datasource)
 {
-    return SDL_RWtell((SDL_RWops*)datasource);
+    return (long)SDL_RWtell((SDL_RWops*)datasource);
 }
 
 /* Load an OGG stream from an SDL_RWops object */
@@ -87,7 +87,7 @@ OGG_music *OGG_new_RW(SDL_RWops *rw, int freerw)
     music = (OGG_music *)SDL_malloc(sizeof *music);
     if ( music ) {
         /* Initialize the music structure */
-        memset(music, 0, (sizeof *music));
+        SDL_memset(music, 0, (sizeof *music));
         music->rw = rw;
         music->freerw = freerw;
         OGG_stop(music);
@@ -157,7 +157,7 @@ static void OGG_getsome(OGG_music *music)
         music->section = section;
     }
     if ( cvt->buf ) {
-        memcpy(cvt->buf, data, len);
+        SDL_memcpy(cvt->buf, data, len);
         if ( cvt->needed ) {
             cvt->len = len;
             SDL_ConvertAudio(cvt);
@@ -186,7 +186,7 @@ int OGG_playAudio(OGG_music *music, Uint8 *snd, int len)
             mixable = music->len_available;
         }
         if ( music->volume == MIX_MAX_VOLUME ) {
-            memcpy(snd, music->snd_available, mixable);
+            SDL_memcpy(snd, music->snd_available, mixable);
         } else {
             SDL_MixAudio(snd, music->snd_available, mixable,
                                           music->volume);

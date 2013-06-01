@@ -76,7 +76,7 @@ static FluidSynthMidiSong *fluidsynth_loadsong_common(int (*function)(FluidSynth
     }
 
     if ((song = SDL_malloc(sizeof(FluidSynthMidiSong)))) {
-        memset(song, 0, sizeof(FluidSynthMidiSong));
+        SDL_memset(song, 0, sizeof(FluidSynthMidiSong));
 
         if (SDL_BuildAudioCVT(&song->convert, AUDIO_S16, 2, freq, format, channels, freq) >= 0) {
             if ((settings = fluidsynth.new_fluid_settings())) {
@@ -208,7 +208,7 @@ int fluidsynth_playsome(FluidSynthMidiSong *song, void *dest, int dest_len)
     }
 
     if (src != dest)
-        memcpy(dest, src, dest_len);
+        SDL_memcpy(dest, src, dest_len);
 
     result = 0;
 

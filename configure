@@ -1577,7 +1577,7 @@ Optional Features:
   --enable-music-mp3      enable MP3 music via smpeg [[default=no]]
   --enable-music-mp3-shared
                           dynamically load MP3 support [[default=yes]]
-  --disable-smpegtest       Do not try to compile and run a test SMPEG program
+  --disable-smpegtest     Do not try to compile and run a test SMPEG program
   --enable-music-mp3-mad-gpl
                           enable MP3 music via libmad GPL code [[default=no]]
 
@@ -1589,8 +1589,9 @@ Optional Packages:
   --with-gnu-ld           assume the C compiler uses GNU ld [default=no]
   --with-sdl-prefix=PFX   Prefix where SDL is installed (optional)
   --with-sdl-exec-prefix=PFX Exec prefix where SDL is installed (optional)
-  --with-smpeg-prefix=PFX   Prefix where SMPEG is installed (optional)
-  --with-smpeg-exec-prefix=PFX Exec prefix where SMPEG is installed (optional)
+  --with-smpeg-prefix=PFX Prefix where SMPEG is installed (optional)
+  --with-smpeg-exec-prefix=PFX
+                          Exec prefix where SMPEG is installed (optional)
 
 Some influential environment variables:
   CC          C compiler command
@@ -3911,13 +3912,13 @@ if ${lt_cv_nm_interface+:} false; then :
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:3914: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:3915: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:3917: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:3918: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:3920: output\"" >&5)
+  (eval echo "\"\$as_me:3921: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -5128,7 +5129,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 5131 "configure"' > conftest.$ac_ext
+  echo '#line 5132 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -6955,11 +6956,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:6958: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:6959: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:6962: \$? = $ac_status" >&5
+   echo "$as_me:6963: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7294,11 +7295,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7297: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7298: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7301: \$? = $ac_status" >&5
+   echo "$as_me:7302: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7399,11 +7400,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7402: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7403: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:7406: \$? = $ac_status" >&5
+   echo "$as_me:7407: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -7454,11 +7455,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7457: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7458: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:7461: \$? = $ac_status" >&5
+   echo "$as_me:7462: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -9823,7 +9824,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 9826 "configure"
+#line 9827 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -9919,7 +9920,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 9922 "configure"
+#line 9923 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -12447,7 +12448,7 @@ done
 if test "${enable_music_mp3+set}" = set; then :
   enableval=$enable_music_mp3;
 else
-  enable_music_mp3=no
+  enable_music_mp3=yes
 fi
 
 # Check whether --enable-music-mp3-shared was given.
@@ -12458,7 +12459,7 @@ else
 fi
 
 if test x$enable_music_mp3 = xyes; then
-    SMPEG_VERSION=0.5.0
+    SMPEG_VERSION=2.0.0
 
 # Check whether --with-smpeg-prefix was given.
 if test "${with_smpeg_prefix+set}" = set; then :
@@ -12486,18 +12487,18 @@ fi
   if test x$smpeg_exec_prefix != x ; then
      smpeg_args="$smpeg_args --exec-prefix=$smpeg_exec_prefix"
      if test x${SMPEG_CONFIG+set} != xset ; then
-        SMPEG_CONFIG=$smpeg_exec_prefix/bin/smpeg-config
+        SMPEG_CONFIG=$smpeg_exec_prefix/bin/smpeg2-config
      fi
   fi
   if test x$smpeg_prefix != x ; then
      smpeg_args="$smpeg_args --prefix=$smpeg_prefix"
      if test x${SMPEG_CONFIG+set} != xset ; then
-        SMPEG_CONFIG=$smpeg_prefix/bin/smpeg-config
+        SMPEG_CONFIG=$smpeg_prefix/bin/smpeg2-config
      fi
   fi
 
-  # Extract the first word of "smpeg-config", so it can be a program name with args.
-set dummy smpeg-config; ac_word=$2
+  # Extract the first word of "smpeg2-config", so it can be a program name with args.
+set dummy smpeg2-config; ac_word=$2
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
 $as_echo_n "checking for $ac_word... " >&6; }
 if ${ac_cv_path_SMPEG_CONFIG+:} false; then :
@@ -12611,11 +12612,11 @@ int main (int argc, char *argv[])
     }
   else
     {
-      printf("\n*** 'smpeg-config --version' returned %d.%d.%d, but the minimum version\n", $smpeg_major_version, $smpeg_minor_version, $smpeg_micro_version);
-      printf("*** of SMPEG required is %d.%d.%d. If smpeg-config is correct, then it is\n", major, minor, micro);
+      printf("\n*** 'smpeg2-config --version' returned %d.%d.%d, but the minimum version\n", $smpeg_major_version, $smpeg_minor_version, $smpeg_micro_version);
+      printf("*** of SMPEG required is %d.%d.%d. If smpeg2-config is correct, then it is\n", major, minor, micro);
       printf("*** best to upgrade to the required version.\n");
-      printf("*** If smpeg-config was wrong, set the environment variable SMPEG_CONFIG\n");
-      printf("*** to point to the correct copy of smpeg-config, and remove the file\n");
+      printf("*** If smpeg2-config was wrong, set the environment variable SMPEG_CONFIG\n");
+      printf("*** to point to the correct copy of smpeg2-config, and remove the file\n");
       printf("*** config.cache before re-running configure\n");
       return 1;
     }
@@ -12644,10 +12645,10 @@ $as_echo "yes" >&6; }
      { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
      if test "$SMPEG_CONFIG" = "no" ; then
-       echo "*** The smpeg-config script installed by SMPEG could not be found"
+       echo "*** The smpeg2-config script installed by SMPEG could not be found"
        echo "*** If SMPEG was installed in PREFIX, make sure PREFIX/bin is in"
        echo "*** your path, or set the SMPEG_CONFIG environment variable to the"
-       echo "*** full path to smpeg-config."
+       echo "*** full path to smpeg2-config."
      else
        if test -f conf.smpegtest ; then
         :
@@ -12683,7 +12684,7 @@ else
    echo "*** The test program failed to compile or link. See the file config.log for the"
           echo "*** exact error that occured. This usually means SMPEG was incorrectly installed"
           echo "*** or that you have moved SMPEG since it was installed. In the latter case, you"
-          echo "*** may want to edit the smpeg-config script: $SMPEG_CONFIG"
+          echo "*** may want to edit the smpeg2-config script: $SMPEG_CONFIG"
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
@@ -12702,15 +12703,15 @@ rm -f core conftest.err conftest.$ac_objext \
     if test x$have_smpeg = xyes; then
         case "$host" in
             *-*-darwin*)
-                smpeg_lib=`find_lib libsmpeg.dylib`
+                smpeg_lib=`find_lib libsmpeg2.dylib`
                 ;;
             *-*-cygwin* | *-*-mingw32*)
-                smpeg_lib=`find_lib "smpeg*.dll"`
+                smpeg_lib=`find_lib "smpeg2*.dll"`
                 ;;
             *)
-                smpeg_lib=`find_lib "libsmpeg*.so.[0-9]"`
+                smpeg_lib=`find_lib "libsmpeg2*.so.[0-9]"`
                 if test x$smpeg_lib = x; then
-                    smpeg_lib=`find_lib "libsmpeg*.so.[0-9]*"`
+                    smpeg_lib=`find_lib "libsmpeg2*.so.[0-9]*"`
                 fi
                 ;;
         esac

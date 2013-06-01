@@ -128,7 +128,7 @@ WAVStream *WAVStream_LoadSong_RW(SDL_RWops *rw, const char *magic, int freerw)
     }
     wave = (WAVStream *)SDL_malloc(sizeof *wave);
     if ( wave ) {
-        memset(wave, 0, (sizeof *wave));
+        SDL_memset(wave, 0, (sizeof *wave));
         wave->freerw = freerw;
         if ( strcmp(magic, "RIFF") == 0 ) {
             wave->rw = LoadWAVStream(rw, &wavespec,
@@ -170,8 +170,8 @@ void WAVStream_Start(WAVStream *wave)
 /* Play some of a stream previously started with WAVStream_Start() */
 int WAVStream_PlaySome(Uint8 *stream, int len)
 {
-    long pos;
-    int left = 0;
+    Sint64 pos;
+    Sint64 left = 0;
 
     if ( music && ((pos=SDL_RWtell(music->rw)) < music->stop) ) {
         if ( music->cvt.needed ) {
@@ -338,7 +338,7 @@ static SDL_RWops *LoadWAVStream (SDL_RWops *src, SDL_AudioSpec *spec,
             was_error = 1;
             goto done;
     }
-    memset(spec, 0, (sizeof *spec));
+    SDL_memset(spec, 0, (sizeof *spec));
     spec->freq = SDL_SwapLE32(format->frequency);
     switch (SDL_SwapLE16(format->bitspersample)) {
         case 8:
@@ -412,7 +412,7 @@ static SDL_RWops *LoadAIFFStream (SDL_RWops *src, SDL_AudioSpec *spec,
 
     Uint32 chunk_type;
     Uint32 chunk_length;
-    long next_chunk;
+    Sint64 next_chunk;
 
     /* AIFF magic header */
     Uint32 FORMchunk;
@@ -498,7 +498,7 @@ static SDL_RWops *LoadAIFFStream (SDL_RWops *src, SDL_AudioSpec *spec,
     *stop = *start + channels * numsamples * (samplesize / 8);
 
     /* Decode the audio data format */
-    memset(spec, 0, (sizeof *spec));
+    SDL_memset(spec, 0, (sizeof *spec));
     spec->freq = frequency;
     switch (samplesize) {
         case 8:

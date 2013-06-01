@@ -45,7 +45,7 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="1"
-				TypeLibraryName=".\Debug/SDL_mixer.tlb"
+				TypeLibraryName=".\Debug/SDL2_mixer.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -53,10 +53,10 @@
 				AdditionalOptions="/D OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\timidity;..\native_midi;external\include"
-				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WAV_MUSIC;MOD_MUSIC;MOD_DYNAMIC=\&quot;libmikmod-2.dll\&quot;;OGG_MUSIC;OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;;FLAC_MUSIC;FLAC_DYNAMIC=\&quot;libFLAC-8.dll\&quot;;MP3_MUSIC;MP3_DYNAMIC=\&quot;smpeg.dll\&quot;;MID_MUSIC;USE_TIMIDITY_MIDI;USE_NATIVE_MIDI"
+				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WAV_MUSIC;MOD_MUSIC;MOD_DYNAMIC=\&quot;libmikmod-2.dll\&quot;;OGG_MUSIC;OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;;FLAC_MUSIC;FLAC_DYNAMIC=\&quot;libFLAC-8.dll\&quot;;MP3_MUSIC;MP3_DYNAMIC=\&quot;smpeg2.dll\&quot;;MID_MUSIC;USE_TIMIDITY_MIDI;USE_NATIVE_MIDI"
 				MinimalRebuild="true"
 				RuntimeLibrary="2"
-				PrecompiledHeaderFile=".\Debug/SDL_mixer.pch"
+				PrecompiledHeaderFile=".\Debug/SDL2_mixer.pch"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="4"
@@ -74,10 +74,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib SDL.lib"
+				AdditionalDependencies="winmm.lib SDL2.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/SDL_mixer.pdb"
+				ProgramDatabaseFile=".\Debug/SDL2_mixer.pdb"
 				SubSystem="2"
 				TargetMachine="1"
 			/>
@@ -93,7 +93,7 @@
 			<Tool
 				Name="VCBscMakeTool"
 				SuppressStartupBanner="true"
-				OutputFile=".\Debug/SDL_mixer.bsc"
+				OutputFile=".\Debug/SDL2_mixer.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -132,7 +132,7 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="3"
-				TypeLibraryName=".\Debug/SDL_mixer.tlb"
+				TypeLibraryName=".\Debug/SDL2_mixer.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -140,10 +140,10 @@
 				AdditionalOptions="/D OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\timidity;..\native_midi;external\include"
-				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WAV_MUSIC;MOD_MUSIC;MOD_DYNAMIC=\&quot;libmikmod-2.dll\&quot;;OGG_MUSIC;OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;;FLAC_MUSIC;FLAC_DYNAMIC=\&quot;libFLAC-8.dll\&quot;;MP3_MUSIC;MP3_DYNAMIC=\&quot;smpeg.dll\&quot;;MID_MUSIC;USE_TIMIDITY_MIDI;USE_NATIVE_MIDI"
+				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WAV_MUSIC;MOD_MUSIC;MOD_DYNAMIC=\&quot;libmikmod-2.dll\&quot;;OGG_MUSIC;OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;;FLAC_MUSIC;FLAC_DYNAMIC=\&quot;libFLAC-8.dll\&quot;;MP3_MUSIC;MP3_DYNAMIC=\&quot;smpeg2.dll\&quot;;MID_MUSIC;USE_TIMIDITY_MIDI;USE_NATIVE_MIDI"
 				MinimalRebuild="true"
 				RuntimeLibrary="2"
-				PrecompiledHeaderFile=".\Debug/SDL_mixer.pch"
+				PrecompiledHeaderFile=".\Debug/SDL2_mixer.pch"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="3"
@@ -161,10 +161,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib SDL.lib"
+				AdditionalDependencies="winmm.lib SDL2.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/SDL_mixer.pdb"
+				ProgramDatabaseFile=".\Debug/SDL2_mixer.pdb"
 				SubSystem="2"
 				TargetMachine="17"
 			/>
@@ -180,7 +180,7 @@
 			<Tool
 				Name="VCBscMakeTool"
 				SuppressStartupBanner="true"
-				OutputFile=".\Debug/SDL_mixer.bsc"
+				OutputFile=".\Debug/SDL2_mixer.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -219,7 +219,7 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="1"
-				TypeLibraryName=".\Release/SDL_mixer.tlb"
+				TypeLibraryName=".\Release/SDL2_mixer.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -228,11 +228,11 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="..\timidity;..\native_midi;external\include"
-				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WAV_MUSIC;MOD_MUSIC;MOD_DYNAMIC=\&quot;libmikmod-2.dll\&quot;;OGG_MUSIC;OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;;FLAC_MUSIC;FLAC_DYNAMIC=\&quot;libFLAC-8.dll\&quot;;MP3_MUSIC;MP3_DYNAMIC=\&quot;smpeg.dll\&quot;;MID_MUSIC;USE_TIMIDITY_MIDI;USE_NATIVE_MIDI"
+				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WAV_MUSIC;MOD_MUSIC;MOD_DYNAMIC=\&quot;libmikmod-2.dll\&quot;;OGG_MUSIC;OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;;FLAC_MUSIC;FLAC_DYNAMIC=\&quot;libFLAC-8.dll\&quot;;MP3_MUSIC;MP3_DYNAMIC=\&quot;smpeg2.dll\&quot;;MID_MUSIC;USE_TIMIDITY_MIDI;USE_NATIVE_MIDI"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
-				PrecompiledHeaderFile=".\Release/SDL_mixer.pch"
+				PrecompiledHeaderFile=".\Release/SDL2_mixer.pch"
 				WarningLevel="3"
 			/>
 			<Tool
@@ -248,9 +248,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib SDL.lib"
+				AdditionalDependencies="winmm.lib SDL2.lib"
 				LinkIncremental="1"
-				ProgramDatabaseFile=".\Release/SDL_mixer.pdb"
+				ProgramDatabaseFile=".\Release/SDL2_mixer.pdb"
 				SubSystem="2"
 				TargetMachine="1"
 			/>
@@ -266,7 +266,7 @@
 			<Tool
 				Name="VCBscMakeTool"
 				SuppressStartupBanner="true"
-				OutputFile=".\Release/SDL_mixer.bsc"
+				OutputFile=".\Release/SDL2_mixer.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -305,7 +305,7 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="3"
-				TypeLibraryName=".\Release/SDL_mixer.tlb"
+				TypeLibraryName=".\Release/SDL2_mixer.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -314,11 +314,11 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="..\timidity;..\native_midi;external\include"
-				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WAV_MUSIC;MOD_MUSIC;MOD_DYNAMIC=\&quot;libmikmod-2.dll\&quot;;OGG_MUSIC;OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;;FLAC_MUSIC;FLAC_DYNAMIC=\&quot;libFLAC-8.dll\&quot;;MP3_MUSIC;MP3_DYNAMIC=\&quot;smpeg.dll\&quot;;MID_MUSIC;USE_TIMIDITY_MIDI;USE_NATIVE_MIDI"
+				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WAV_MUSIC;MOD_MUSIC;MOD_DYNAMIC=\&quot;libmikmod-2.dll\&quot;;OGG_MUSIC;OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;;FLAC_MUSIC;FLAC_DYNAMIC=\&quot;libFLAC-8.dll\&quot;;MP3_MUSIC;MP3_DYNAMIC=\&quot;smpeg2.dll\&quot;;MID_MUSIC;USE_TIMIDITY_MIDI;USE_NATIVE_MIDI"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
-				PrecompiledHeaderFile=".\Release/SDL_mixer.pch"
+				PrecompiledHeaderFile=".\Release/SDL2_mixer.pch"
 				WarningLevel="3"
 			/>
 			<Tool
@@ -334,9 +334,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib SDL.lib"
+				AdditionalDependencies="winmm.lib SDL2.lib"
 				LinkIncremental="1"
-				ProgramDatabaseFile=".\Release/SDL_mixer.pdb"
+				ProgramDatabaseFile=".\Release/SDL2_mixer.pdb"
 				SubSystem="2"
 				TargetMachine="17"
 			/>
@@ -352,7 +352,7 @@
 			<Tool
 				Name="VCBscMakeTool"
 				SuppressStartupBanner="true"
-				OutputFile=".\Release/SDL_mixer.bsc"
+				OutputFile=".\Release/SDL2_mixer.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"

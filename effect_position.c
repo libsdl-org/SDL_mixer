@@ -1131,7 +1131,7 @@ static void _Eff_position_s16msb_c6(int chan, void *stream, int len, void *udata
 
 static void init_position_args(position_args *args)
 {
-    memset(args, '\0', sizeof (position_args));
+    SDL_memset(args, '\0', sizeof (position_args));
     args->in_use = 0;
     args->room_angle = 0;
     args->left_u8 = args->right_u8 = args->distance_u8 = 255;
