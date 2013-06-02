@@ -21,6 +21,37 @@
 		AA5F0F0D14B6A6490036992F /* fluidsynth.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5F0F0614B6A6490036992F /* fluidsynth.h */; };
 		AA5F0F0E14B6A6490036992F /* music_modplug.c in Sources */ = {isa = PBXBuildFile; fileRef = AA5F0F0714B6A6490036992F /* music_modplug.c */; };
 		AA5F0F0F14B6A6490036992F /* music_modplug.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5F0F0814B6A6490036992F /* music_modplug.h */; };
+		AA644294175B0E0600A2125A /* bitwise.c in Sources */ = {isa = PBXBuildFile; fileRef = AA644292175B0E0600A2125A /* bitwise.c */; };
+		AA644295175B0E0600A2125A /* framing.c in Sources */ = {isa = PBXBuildFile; fileRef = AA644293175B0E0600A2125A /* framing.c */; };
+		AA64429E175B0E2500A2125A /* asm_arm.h in Headers */ = {isa = PBXBuildFile; fileRef = AA644296175B0E2500A2125A /* asm_arm.h */; };
+		AA64429F175B0E2500A2125A /* backends.h in Headers */ = {isa = PBXBuildFile; fileRef = AA644297175B0E2500A2125A /* backends.h */; };
+		AA6442A0175B0E2500A2125A /* block.c in Sources */ = {isa = PBXBuildFile; fileRef = AA644298175B0E2500A2125A /* block.c */; };
+		AA6442A1175B0E2500A2125A /* block.h in Headers */ = {isa = PBXBuildFile; fileRef = AA644299175B0E2500A2125A /* block.h */; };
+		AA6442A2175B0E2500A2125A /* codebook.c in Sources */ = {isa = PBXBuildFile; fileRef = AA64429A175B0E2500A2125A /* codebook.c */; };
+		AA6442A3175B0E2500A2125A /* codebook.h in Headers */ = {isa = PBXBuildFile; fileRef = AA64429B175B0E2500A2125A /* codebook.h */; };
+		AA6442A4175B0E2500A2125A /* codec_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = AA64429C175B0E2500A2125A /* codec_internal.h */; };
+		AA6442A5175B0E2500A2125A /* config_types.h in Headers */ = {isa = PBXBuildFile; fileRef = AA64429D175B0E2500A2125A /* config_types.h */; };
+		AA6442BB175B0E5000A2125A /* floor0.c in Sources */ = {isa = PBXBuildFile; fileRef = AA6442A6175B0E5000A2125A /* floor0.c */; };
+		AA6442BC175B0E5000A2125A /* floor1.c in Sources */ = {isa = PBXBuildFile; fileRef = AA6442A7175B0E5000A2125A /* floor1.c */; };
+		AA6442BD175B0E5000A2125A /* info.c in Sources */ = {isa = PBXBuildFile; fileRef = AA6442A8175B0E5000A2125A /* info.c */; };
+		AA6442BE175B0E5000A2125A /* ivorbiscodec.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6442A9175B0E5000A2125A /* ivorbiscodec.h */; };
+		AA6442BF175B0E5000A2125A /* ivorbisfile.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6442AA175B0E5000A2125A /* ivorbisfile.h */; };
+		AA6442C0175B0E5000A2125A /* lsp_lookup.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6442AB175B0E5000A2125A /* lsp_lookup.h */; };
+		AA6442C1175B0E5000A2125A /* mapping0.c in Sources */ = {isa = PBXBuildFile; fileRef = AA6442AC175B0E5000A2125A /* mapping0.c */; };
+		AA6442C2175B0E5000A2125A /* mdct_lookup.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6442AD175B0E5000A2125A /* mdct_lookup.h */; };
+		AA6442C3175B0E5000A2125A /* mdct.c in Sources */ = {isa = PBXBuildFile; fileRef = AA6442AE175B0E5000A2125A /* mdct.c */; };
+		AA6442C4175B0E5000A2125A /* mdct.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6442AF175B0E5000A2125A /* mdct.h */; };
+		AA6442C5175B0E5000A2125A /* misc.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6442B0175B0E5000A2125A /* misc.h */; };
+		AA6442C6175B0E5000A2125A /* os.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6442B1175B0E5000A2125A /* os.h */; };
+		AA6442C7175B0E5000A2125A /* registry.c in Sources */ = {isa = PBXBuildFile; fileRef = AA6442B2175B0E5000A2125A /* registry.c */; };
+		AA6442C8175B0E5000A2125A /* registry.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6442B3175B0E5000A2125A /* registry.h */; };
+		AA6442C9175B0E5000A2125A /* res012.c in Sources */ = {isa = PBXBuildFile; fileRef = AA6442B4175B0E5000A2125A /* res012.c */; };
+		AA6442CA175B0E5000A2125A /* sharedbook.c in Sources */ = {isa = PBXBuildFile; fileRef = AA6442B5175B0E5000A2125A /* sharedbook.c */; };
+		AA6442CB175B0E5000A2125A /* synthesis.c in Sources */ = {isa = PBXBuildFile; fileRef = AA6442B6175B0E5000A2125A /* synthesis.c */; };
+		AA6442CC175B0E5000A2125A /* vorbisfile.c in Sources */ = {isa = PBXBuildFile; fileRef = AA6442B7175B0E5000A2125A /* vorbisfile.c */; };
+		AA6442CD175B0E5000A2125A /* window_lookup.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6442B8175B0E5000A2125A /* window_lookup.h */; };
+		AA6442CE175B0E5000A2125A /* window.c in Sources */ = {isa = PBXBuildFile; fileRef = AA6442B9175B0E5000A2125A /* window.c */; };
+		AA6442CF175B0E5000A2125A /* window.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6442BA175B0E5000A2125A /* window.h */; };
 		BE1FA90C07AF96B2004B6283 /* music_cmd.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC1B87B012FB8CD7F000001 /* music_cmd.h */; };
 		BE1FA90D07AF96B2004B6283 /* music_ogg.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC1B87D012FB8CD7F000001 /* music_ogg.h */; };
 		BE1FA90E07AF96B2004B6283 /* common.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC1B881012FB8CD7F000001 /* common.h */; };
@@ -123,6 +154,37 @@
 		AA5F0F0614B6A6490036992F /* fluidsynth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fluidsynth.h; path = ../fluidsynth.h; sourceTree = "<group>"; };
 		AA5F0F0714B6A6490036992F /* music_modplug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = music_modplug.c; path = ../music_modplug.c; sourceTree = "<group>"; };
 		AA5F0F0814B6A6490036992F /* music_modplug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = music_modplug.h; path = ../music_modplug.h; sourceTree = "<group>"; };
+		AA644292175B0E0600A2125A /* bitwise.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bitwise.c; path = "libogg-1.3.1/src/bitwise.c"; sourceTree = "<group>"; };
+		AA644293175B0E0600A2125A /* framing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = framing.c; path = "libogg-1.3.1/src/framing.c"; sourceTree = "<group>"; };
+		AA644296175B0E2500A2125A /* asm_arm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = asm_arm.h; path = "libvorbisidec-1.2.1/asm_arm.h"; sourceTree = "<group>"; };
+		AA644297175B0E2500A2125A /* backends.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = backends.h; path = "libvorbisidec-1.2.1/backends.h"; sourceTree = "<group>"; };
+		AA644298175B0E2500A2125A /* block.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = block.c; path = "libvorbisidec-1.2.1/block.c"; sourceTree = "<group>"; };
+		AA644299175B0E2500A2125A /* block.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = block.h; path = "libvorbisidec-1.2.1/block.h"; sourceTree = "<group>"; };
+		AA64429A175B0E2500A2125A /* codebook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = codebook.c; path = "libvorbisidec-1.2.1/codebook.c"; sourceTree = "<group>"; };
+		AA64429B175B0E2500A2125A /* codebook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = codebook.h; path = "libvorbisidec-1.2.1/codebook.h"; sourceTree = "<group>"; };
+		AA64429C175B0E2500A2125A /* codec_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = codec_internal.h; path = "libvorbisidec-1.2.1/codec_internal.h"; sourceTree = "<group>"; };
+		AA64429D175B0E2500A2125A /* config_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config_types.h; path = "libvorbisidec-1.2.1/config_types.h"; sourceTree = "<group>"; };
+		AA6442A6175B0E5000A2125A /* floor0.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = floor0.c; path = "libvorbisidec-1.2.1/floor0.c"; sourceTree = "<group>"; };
+		AA6442A7175B0E5000A2125A /* floor1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = floor1.c; path = "libvorbisidec-1.2.1/floor1.c"; sourceTree = "<group>"; };
+		AA6442A8175B0E5000A2125A /* info.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = info.c; path = "libvorbisidec-1.2.1/info.c"; sourceTree = "<group>"; };
+		AA6442A9175B0E5000A2125A /* ivorbiscodec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ivorbiscodec.h; path = "libvorbisidec-1.2.1/ivorbiscodec.h"; sourceTree = "<group>"; };
+		AA6442AA175B0E5000A2125A /* ivorbisfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ivorbisfile.h; path = "libvorbisidec-1.2.1/ivorbisfile.h"; sourceTree = "<group>"; };
+		AA6442AB175B0E5000A2125A /* lsp_lookup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = lsp_lookup.h; path = "libvorbisidec-1.2.1/lsp_lookup.h"; sourceTree = "<group>"; };
+		AA6442AC175B0E5000A2125A /* mapping0.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mapping0.c; path = "libvorbisidec-1.2.1/mapping0.c"; sourceTree = "<group>"; };
+		AA6442AD175B0E5000A2125A /* mdct_lookup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mdct_lookup.h; path = "libvorbisidec-1.2.1/mdct_lookup.h"; sourceTree = "<group>"; };
+		AA6442AE175B0E5000A2125A /* mdct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mdct.c; path = "libvorbisidec-1.2.1/mdct.c"; sourceTree = "<group>"; };
+		AA6442AF175B0E5000A2125A /* mdct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mdct.h; path = "libvorbisidec-1.2.1/mdct.h"; sourceTree = "<group>"; };
+		AA6442B0175B0E5000A2125A /* misc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = misc.h; path = "libvorbisidec-1.2.1/misc.h"; sourceTree = "<group>"; };
+		AA6442B1175B0E5000A2125A /* os.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = os.h; path = "libvorbisidec-1.2.1/os.h"; sourceTree = "<group>"; };
+		AA6442B2175B0E5000A2125A /* registry.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = registry.c; path = "libvorbisidec-1.2.1/registry.c"; sourceTree = "<group>"; };
+		AA6442B3175B0E5000A2125A /* registry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = registry.h; path = "libvorbisidec-1.2.1/registry.h"; sourceTree = "<group>"; };
+		AA6442B4175B0E5000A2125A /* res012.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = res012.c; path = "libvorbisidec-1.2.1/res012.c"; sourceTree = "<group>"; };
+		AA6442B5175B0E5000A2125A /* sharedbook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sharedbook.c; path = "libvorbisidec-1.2.1/sharedbook.c"; sourceTree = "<group>"; };
+		AA6442B6175B0E5000A2125A /* synthesis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = synthesis.c; path = "libvorbisidec-1.2.1/synthesis.c"; sourceTree = "<group>"; };
+		AA6442B7175B0E5000A2125A /* vorbisfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vorbisfile.c; path = "libvorbisidec-1.2.1/vorbisfile.c"; sourceTree = "<group>"; };
+		AA6442B8175B0E5000A2125A /* window_lookup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = window_lookup.h; path = "libvorbisidec-1.2.1/window_lookup.h"; sourceTree = "<group>"; };
+		AA6442B9175B0E5000A2125A /* window.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = window.c; path = "libvorbisidec-1.2.1/window.c"; sourceTree = "<group>"; };
+		AA6442BA175B0E5000A2125A /* window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = window.h; path = "libvorbisidec-1.2.1/window.h"; sourceTree = "<group>"; };
 		B2A42D0E03FAC6A400A8000A /* load_ogg.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = load_ogg.c; path = ../load_ogg.c; sourceTree = SOURCE_ROOT; };
 		B2A42D0F03FAC6A400A8000A /* load_ogg.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = load_ogg.h; path = ../load_ogg.h; sourceTree = SOURCE_ROOT; };
 		BE1FA95407AF96B2004B6283 /* libSDL2_mixer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSDL2_mixer.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -184,6 +246,8 @@
 		08FB77ACFE841707C02AAC07 /* Library Source */ = {
 			isa = PBXGroup;
 			children = (
+				AA644291175B0D6E00A2125A /* tremor */,
+				5CC1B87F012FB8CD7F000001 /* timidity */,
 				00938E49108A397A0009CF19 /* dynamic_flac.c */,
 				00938E4A108A397A0009CF19 /* dynamic_flac.h */,
 				AA5F0F0214B6A6490036992F /* dynamic_fluidsynth.c */,
@@ -222,7 +286,6 @@
 				AA5F0F0814B6A6490036992F /* music_modplug.h */,
 				5CC1B87C012FB8CD7F000001 /* music_ogg.c */,
 				5CC1B87D012FB8CD7F000001 /* music_ogg.h */,
-				5CC1B87F012FB8CD7F000001 /* timidity */,
 				5CC1B89B012FB8CD7F000001 /* wavestream.c */,
 				5CC1B89C012FB8CD7F000001 /* wavestream.h */,
 			);
@@ -262,6 +325,45 @@
 			path = ../timidity;
 			sourceTree = "<group>";
 		};
+		AA644291175B0D6E00A2125A /* tremor */ = {
+			isa = PBXGroup;
+			children = (
+				AA644296175B0E2500A2125A /* asm_arm.h */,
+				AA644297175B0E2500A2125A /* backends.h */,
+				AA644292175B0E0600A2125A /* bitwise.c */,
+				AA644298175B0E2500A2125A /* block.c */,
+				AA644299175B0E2500A2125A /* block.h */,
+				AA64429A175B0E2500A2125A /* codebook.c */,
+				AA64429B175B0E2500A2125A /* codebook.h */,
+				AA64429C175B0E2500A2125A /* codec_internal.h */,
+				AA64429D175B0E2500A2125A /* config_types.h */,
+				AA6442A6175B0E5000A2125A /* floor0.c */,
+				AA6442A7175B0E5000A2125A /* floor1.c */,
+				AA644293175B0E0600A2125A /* framing.c */,
+				AA6442A8175B0E5000A2125A /* info.c */,
+				AA6442A9175B0E5000A2125A /* ivorbiscodec.h */,
+				AA6442AA175B0E5000A2125A /* ivorbisfile.h */,
+				AA6442AB175B0E5000A2125A /* lsp_lookup.h */,
+				AA6442AC175B0E5000A2125A /* mapping0.c */,
+				AA6442AE175B0E5000A2125A /* mdct.c */,
+				AA6442AF175B0E5000A2125A /* mdct.h */,
+				AA6442AD175B0E5000A2125A /* mdct_lookup.h */,
+				AA6442B0175B0E5000A2125A /* misc.h */,
+				AA6442B1175B0E5000A2125A /* os.h */,
+				AA6442B2175B0E5000A2125A /* registry.c */,
+				AA6442B3175B0E5000A2125A /* registry.h */,
+				AA6442B4175B0E5000A2125A /* res012.c */,
+				AA6442B5175B0E5000A2125A /* sharedbook.c */,
+				AA6442B6175B0E5000A2125A /* synthesis.c */,
+				AA6442B7175B0E5000A2125A /* vorbisfile.c */,
+				AA6442B9175B0E5000A2125A /* window.c */,
+				AA6442BA175B0E5000A2125A /* window.h */,
+				AA6442B8175B0E5000A2125A /* window_lookup.h */,
+			);
+			name = tremor;
+			path = ../external;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -295,6 +397,22 @@
 				AA5F0F0B14B6A6490036992F /* dynamic_mod.h in Headers */,
 				AA5F0F0D14B6A6490036992F /* fluidsynth.h in Headers */,
 				AA5F0F0F14B6A6490036992F /* music_modplug.h in Headers */,
+				AA64429E175B0E2500A2125A /* asm_arm.h in Headers */,
+				AA64429F175B0E2500A2125A /* backends.h in Headers */,
+				AA6442A1175B0E2500A2125A /* block.h in Headers */,
+				AA6442A3175B0E2500A2125A /* codebook.h in Headers */,
+				AA6442A4175B0E2500A2125A /* codec_internal.h in Headers */,
+				AA6442A5175B0E2500A2125A /* config_types.h in Headers */,
+				AA6442BE175B0E5000A2125A /* ivorbiscodec.h in Headers */,
+				AA6442BF175B0E5000A2125A /* ivorbisfile.h in Headers */,
+				AA6442C0175B0E5000A2125A /* lsp_lookup.h in Headers */,
+				AA6442C2175B0E5000A2125A /* mdct_lookup.h in Headers */,
+				AA6442C4175B0E5000A2125A /* mdct.h in Headers */,
+				AA6442C5175B0E5000A2125A /* misc.h in Headers */,
+				AA6442C6175B0E5000A2125A /* os.h in Headers */,
+				AA6442C8175B0E5000A2125A /* registry.h in Headers */,
+				AA6442CD175B0E5000A2125A /* window_lookup.h in Headers */,
+				AA6442CF175B0E5000A2125A /* window.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -394,6 +512,21 @@
 				AA5F0F0914B6A6490036992F /* dynamic_fluidsynth.c in Sources */,
 				AA5F0F0C14B6A6490036992F /* fluidsynth.c in Sources */,
 				AA5F0F0E14B6A6490036992F /* music_modplug.c in Sources */,
+				AA644294175B0E0600A2125A /* bitwise.c in Sources */,
+				AA644295175B0E0600A2125A /* framing.c in Sources */,
+				AA6442A0175B0E2500A2125A /* block.c in Sources */,
+				AA6442A2175B0E2500A2125A /* codebook.c in Sources */,
+				AA6442BB175B0E5000A2125A /* floor0.c in Sources */,
+				AA6442BC175B0E5000A2125A /* floor1.c in Sources */,
+				AA6442BD175B0E5000A2125A /* info.c in Sources */,
+				AA6442C1175B0E5000A2125A /* mapping0.c in Sources */,
+				AA6442C3175B0E5000A2125A /* mdct.c in Sources */,
+				AA6442C7175B0E5000A2125A /* registry.c in Sources */,
+				AA6442C9175B0E5000A2125A /* res012.c in Sources */,
+				AA6442CA175B0E5000A2125A /* sharedbook.c in Sources */,
+				AA6442CB175B0E5000A2125A /* synthesis.c in Sources */,
+				AA6442CC175B0E5000A2125A /* vorbisfile.c in Sources */,
+				AA6442CE175B0E5000A2125A /* window.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -439,10 +572,9 @@
 				HEADER_SEARCH_PATHS = (
 					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_1)",
 					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_2)",
-					vorbis/include,
 				);
 				HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_1 = "\"$(SRCROOT)/../../SDL/include\"";
-				HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_2 = "\"$(SRCROOT)/../../libtremor\"";
+				HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_2 = "\"$(SRCROOT)/../external/libvorbisidec-1.2.1\" \"$(SRCROOT)/../external/libogg-1.3.1/include\"";
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -464,10 +596,9 @@
 				HEADER_SEARCH_PATHS = (
 					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_1)",
 					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_2)",
-					vorbis/include,
 				);
 				HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_1 = "\"$(SRCROOT)/../../SDL/include\"";
-				HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_2 = "\"$(SRCROOT)/../../libtremor\"";
+				HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_2 = "\"$(SRCROOT)/../external/libvorbisidec-1.2.1\" \"$(SRCROOT)/../external/libogg-1.3.1/include\"";
 				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
