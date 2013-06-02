@@ -22,7 +22,7 @@
 #ifdef MOD_MUSIC
 
 #include "SDL_loadso.h"
-
+#include "SDL_mixer.h"
 #include "dynamic_mod.h"
 
 mikmod_loader mikmod = {
@@ -238,6 +238,16 @@ void Mix_QuitMOD()
 int Mix_InitMOD()
 {
     if ( mikmod.loaded == 0 ) {
+#ifdef __MACOSX__
+        extern void Player_Start(MODULE*) __attribute__((weak_import));
+        if ( Player_Start == NULL )
+        {
+            /* Missing weakly linked framework */
+            Mix_SetError("Missing mikmod.framework");
+            return -1;
+        }
+#endif // __MACOSX__
+
         mikmod.MikMod_Exit = MikMod_Exit;
         mikmod.MikMod_InfoDriver = MikMod_InfoDriver;
         mikmod.MikMod_InfoLoader = MikMod_InfoLoader;

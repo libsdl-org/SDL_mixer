@@ -575,7 +575,7 @@ Mix_Music *Mix_LoadMUS(const char *file)
     Mix_SetError("");
     music = Mix_LoadMUSType_RW(src, type, SDL_TRUE);
     if ( music == NULL && Mix_GetError()[0] == '\0' ) {
-        Mix_SetError("Couldn't open '%s'", file);
+        Mix_SetError("Unrecognized music format");
     }
     return music;
 }
