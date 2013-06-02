@@ -2,7 +2,7 @@
 #
 # Build Universal binaries on Mac OS X, thanks Ryan!
 #
-# Usage: ./configure CC="sh g++-fat.sh" && make && rm -rf x86 x64
+# Usage: ./configure CXX="sh g++-fat.sh" && make && rm -rf x86 x64
 
 DEVELOPER="`xcode-select -print-path`/Platforms/MacOSX.platform/Developer"
 

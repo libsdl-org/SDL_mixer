@@ -105,7 +105,6 @@ void IntHandler(int sig)
 
 int main(int argc, char *argv[])
 {
-    SDL_RWops *rwfp = NULL;
     int audio_rate;
     Uint16 audio_format;
     int audio_channels;
@@ -200,8 +199,7 @@ int main(int argc, char *argv[])
 
         /* Load the requested music file */
         if ( rwops ) {
-            rwfp = SDL_RWFromFile(argv[i], "rb");
-            music = Mix_LoadMUS_RW(rwfp);
+            music = Mix_LoadMUS_RW(SDL_RWFromFile(argv[i], "rb"), SDL_TRUE);
         } else {
             music = Mix_LoadMUS(argv[i]);
         }
@@ -221,9 +219,6 @@ int main(int argc, char *argv[])
                 SDL_Delay(100);
         }
         Mix_FreeMusic(music);
-        if ( rwops ) {
-            SDL_RWclose(rwfp);
-        }
         music = NULL;
 
         /* If the user presses Ctrl-C more than once, exit. */

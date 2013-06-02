@@ -561,7 +561,7 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
     /* Make sure audio has been opened */
     if ( ! audio_opened ) {
         SDL_SetError("Audio device hasn't been opened");
-        if ( freesrc && src ) {
+        if ( freesrc ) {
             SDL_RWclose(src);
         }
         return(NULL);

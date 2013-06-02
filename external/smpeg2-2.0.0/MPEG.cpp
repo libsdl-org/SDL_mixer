@@ -28,7 +28,7 @@ MPEG::MPEG(const char * name, bool SDLaudio) :
     SetError(SDL_GetError());
     return;
   }
-  Init(source, SDLaudio);
+  Init(source, SDL_TRUE, SDLaudio);
 }
 
 MPEG::MPEG(int Mpeg_FD, bool SDLaudio) :
@@ -47,13 +47,13 @@ MPEG::MPEG(int Mpeg_FD, bool SDLaudio) :
     return;
   }
 
-  source = SDL_RWFromFP(file,(SDL_bool) false);
+  source = SDL_RWFromFP(file, SDL_FALSE);
   if (!source) {
     InitErrorState();
     SetError(SDL_GetError());
     return;
   }
-  Init(source, SDLaudio);
+  Init(source, SDL_TRUE, SDLaudio);
 }
 
 MPEG::MPEG(void *data, int size, bool SDLaudio) :
@@ -72,19 +72,20 @@ MPEG::MPEG(void *data, int size, bool SDLaudio) :
     SetError(SDL_GetError());
     return;
   }
-  Init(source, SDLaudio);
+  Init(source, SDL_TRUE, SDLaudio);
 }
 
-MPEG::MPEG(SDL_RWops *mpeg_source, bool SDLaudio) :
+MPEG::MPEG(SDL_RWops *mpeg_source, int mpeg_freesrc, bool SDLaudio) :
   MPEGerror()
 {
   mpeg_mem = 0;
-  Init(mpeg_source, SDLaudio);
+  Init(mpeg_source, mpeg_freesrc, SDLaudio);
 }
 
-void MPEG::Init(SDL_RWops *mpeg_source, bool SDLaudio)
+void MPEG::Init(SDL_RWops *mpeg_source, int mpeg_freesrc, bool SDLaudio)
 {
     source = mpeg_source;
+    freesrc = mpeg_freesrc;
     sdlaudio = SDLaudio;
 
     /* Create the system that will parse the MPEG stream */
@@ -135,6 +136,7 @@ void MPEG::InitErrorState() {
     system = NULL;
     error = NULL;
     source = NULL;
+    freesrc = 0;
 
     audiostream = videostream = NULL;
     audioaction = NULL;
@@ -152,10 +154,8 @@ MPEG::~MPEG()
   if(video) delete video;
   if(audio) delete audio;
   if(system) delete system;
-  
-  if(source) SDL_RWclose(source);
-  if ( mpeg_mem )
-    delete[] mpeg_mem;
+  if(source && freesrc) SDL_RWclose(source);
+  if (mpeg_mem) delete[] mpeg_mem;
 }
 
 bool MPEG::AudioEnabled(void) {

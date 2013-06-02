@@ -75,45 +75,38 @@ void modplug_setvolume(modplug_data *music, int volume)
 }
 
 /* Load a modplug stream from an SDL_RWops object */
-modplug_data *modplug_new_RW(SDL_RWops *rw, int freerw)
+modplug_data *modplug_new_RW(SDL_RWops *src, int freesrc)
 {
-    modplug_data *music=NULL;
-    long offset,sz;
-    char *buf=NULL;
+    modplug_data *music = NULL;
+    Sint64 offset;
+    size_t sz;
+    char *buf;
 
-    offset = SDL_RWtell(rw);
-    SDL_RWseek(rw, 0, RW_SEEK_END);
-    sz = SDL_RWtell(rw)-offset;
-    SDL_RWseek(rw, offset, RW_SEEK_SET);
-    buf=(char*)SDL_malloc(sz);
-    if(buf)
-    {
-        if(SDL_RWread(rw, buf, sz, 1)==1)
-        {
-            music=(modplug_data*)SDL_malloc(sizeof(modplug_data));
-            if (music)
-            {
-                music->playing=0;
-                music->file=ModPlug_Load(buf,sz);
-                if(!music->file)
-                {
+    offset = SDL_RWtell(src);
+    SDL_RWseek(src, 0, RW_SEEK_END);
+    sz = (size_t)(SDL_RWtell(src) - offset);
+    SDL_RWseek(src, offset, RW_SEEK_SET);
+    buf = (char*)SDL_malloc(sz);
+    if (buf) {
+        if (SDL_RWread(src, buf, sz, 1) == 1) {
+            music = (modplug_data*)SDL_malloc(sizeof(modplug_data));
+            if (music) {
+                music->playing = 0;
+                music->file = ModPlug_Load(buf, sz);
+                if (!music->file) {
                     SDL_free(music);
-                    music=NULL;
+                    music = NULL;
                 }
-            }
-            else
-            {
+            } else {
                 SDL_OutOfMemory();
             }
         }
         SDL_free(buf);
-    }
-    else
-    {
+    } else {
         SDL_OutOfMemory();
     }
-    if (freerw) {
-        SDL_RWclose(rw);
+    if (music && freesrc) {
+        SDL_RWclose(src);
     }
     return music;
 }

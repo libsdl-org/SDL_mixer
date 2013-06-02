@@ -58,11 +58,11 @@ public:
     MPEG(const char * name, bool SDLaudio = true);
     MPEG(int Mpeg_FD, bool SDLaudio = true);
     MPEG(void *data, int size, bool SDLaudio = true);
-    MPEG(SDL_RWops *mpeg_source,bool SDLaudio = true);
+    MPEG(SDL_RWops *mpeg_source, int mpeg_freesrc, bool SDLaudio = true);
     virtual ~MPEG();
 
     /* Initialize the MPEG */
-    void Init(SDL_RWops *mpeg_source, bool SDLaudio);
+    void Init(SDL_RWops *mpeg_source, int mpeg_freesrc, bool SDLaudio);
     void InitErrorState();
 
     /* Enable/Disable audio and video */
@@ -108,6 +108,7 @@ public:
 protected:
     char *mpeg_mem;       // Used to copy MPEG passed in as memory
     SDL_RWops *source;
+    int freesrc;
     MPEGaudioaction *audioaction;
     MPEGvideoaction *videoaction;
 

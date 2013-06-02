@@ -67,15 +67,12 @@ static long sdl_tell_func(void *datasource)
 }
 
 /* Load an OGG stream from an SDL_RWops object */
-OGG_music *OGG_new_RW(SDL_RWops *rw, int freerw)
+OGG_music *OGG_new_RW(SDL_RWops *src, int freesrc)
 {
     OGG_music *music;
     ov_callbacks callbacks;
 
     if ( !Mix_Init(MIX_INIT_OGG) ) {
-        if ( freerw ) {
-            SDL_RWclose(rw);
-        }
         return(NULL);
     }
 
@@ -88,24 +85,18 @@ OGG_music *OGG_new_RW(SDL_RWops *rw, int freerw)
     if ( music ) {
         /* Initialize the music structure */
         SDL_memset(music, 0, (sizeof *music));
-        music->rw = rw;
-        music->freerw = freerw;
+        music->src = src;
+        music->freesrc = freesrc;
         OGG_stop(music);
         OGG_setvolume(music, MIX_MAX_VOLUME);
         music->section = -1;
 
-        if ( vorbis.ov_open_callbacks(rw, &music->vf, NULL, 0, callbacks) < 0 ) {
-            SDL_free(music);
-            if ( freerw ) {
-                SDL_RWclose(rw);
-            }
+        if ( vorbis.ov_open_callbacks(src, &music->vf, NULL, 0, callbacks) < 0 ) {
             SDL_SetError("Not an Ogg Vorbis audio stream");
+            SDL_free(music);
             return(NULL);
         }
     } else {
-        if ( freerw ) {
-            SDL_RWclose(rw);
-        }
         SDL_OutOfMemory();
         return(NULL);
     }
@@ -213,8 +204,8 @@ void OGG_delete(OGG_music *music)
         if ( music->cvt.buf ) {
             SDL_free(music->cvt.buf);
         }
-        if ( music->freerw ) {
-            SDL_RWclose(music->rw);
+        if ( music->freesrc ) {
+            SDL_RWclose(music->src);
         }
         vorbis.ov_clear(&music->vf);
         SDL_free(music);

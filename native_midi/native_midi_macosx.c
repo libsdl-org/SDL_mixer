@@ -154,26 +154,26 @@ int native_midi_detect()
     return 1;  /* always available. */
 }
 
-NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw, int freerw)
+NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *src, int freesrc)
 {
     NativeMidiSong *retval = NULL;
     void *buf = NULL;
-    int len = 0;
+    Sint64 len = 0;
     CFDataRef data = NULL;
 
-    if (SDL_RWseek(rw, 0, RW_SEEK_END) < 0)
+    if (SDL_RWseek(src, 0, RW_SEEK_END) < 0)
         goto fail;
-    len = SDL_RWtell(rw);
+    len = SDL_RWtell(src);
     if (len < 0)
         goto fail;
-    if (SDL_RWseek(rw, 0, RW_SEEK_SET) < 0)
+    if (SDL_RWseek(src, 0, RW_SEEK_SET) < 0)
         goto fail;
 
     buf = malloc(len);
     if (buf == NULL)
         goto fail;
 
-    if (SDL_RWread(rw, buf, len, 1) != 1)
+    if (SDL_RWread(src, buf, len, 1) != 1)
         goto fail;
 
     retval = malloc(sizeof(NativeMidiSong));
@@ -221,8 +221,8 @@ NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw, int freerw)
     if (MusicPlayerSetSequence(retval->player, retval->sequence) != noErr)
         goto fail;
 
-    if (freerw)
-        SDL_RWclose(rw);
+    if (freesrc)
+        SDL_RWclose(src);
 
     return retval;
 
@@ -240,9 +240,6 @@ fail:
 
     if (buf)
         free(buf);
-
-    if (freerw)
-        SDL_RWclose(rw);
 
     return NULL;
 }

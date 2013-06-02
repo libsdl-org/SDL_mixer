@@ -239,10 +239,10 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
     *audio_len &= ~((samplesize / 8) - 1);
 
 done:
-    if ( freesrc && src ) {
+    if (freesrc && src) {
         SDL_RWclose(src);
     }
-    if ( was_error ) {
+    if (was_error) {
         spec = NULL;
     }
     return(spec);

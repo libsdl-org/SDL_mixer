@@ -1676,7 +1676,7 @@ void Timidity_SetVolume(int volume)
   ctl->master_volume(amplification);
 }
 
-MidiSong *Timidity_LoadSong_RW(SDL_RWops *rw, int freerw)
+MidiSong *Timidity_LoadSong_RW(SDL_RWops *src, int freesrc)
 {
   MidiSong *song;
   int32 events;
@@ -1687,13 +1687,12 @@ MidiSong *Timidity_LoadSong_RW(SDL_RWops *rw, int freerw)
 
   strcpy(midi_name, "SDLrwops source");
 
-  song->events = read_midi_file(rw, &events, &song->samples);
-  if (freerw) {
-    SDL_RWclose(rw);
-  }
-
-  /* Make sure everything is okay */
-  if (!song->events) {
+  song->events = read_midi_file(src, &events, &song->samples);
+  if (song->events) {
+    if (freesrc) {
+      SDL_RWclose(src);
+    }
+  } else {
     free(song);
     song = NULL;
   }

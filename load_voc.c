@@ -445,16 +445,13 @@ SDL_AudioSpec *Mix_LoadVOC_RW (SDL_RWops *src, int freesrc,
     *audio_len &= ~(samplesize-1);
 
 done:
-    if (src)
-    {
-        if (freesrc)
-            SDL_RWclose(src);
-        else
-            SDL_RWseek(src, 0, RW_SEEK_SET);
+    if (freesrc && src) {
+        SDL_RWclose(src);
     }
 
-    if ( was_error )
+    if (was_error) {
         spec = NULL;
+    }
 
     return(spec);
 } /* Mix_LoadVOC_RW */

@@ -144,16 +144,13 @@ SDL_AudioSpec *Mix_LoadOGG_RW (SDL_RWops *src, int freesrc,
     *audio_len &= ~(samplesize-1);
 
 done:
-    if (src && must_close)
-    {
-        if (freesrc)
-            SDL_RWclose(src);
-        else
-            SDL_RWseek(src, 0, RW_SEEK_SET);
+    if (freesrc && src && must_close) {
+        SDL_RWclose(src);
     }
 
-    if ( was_error )
+    if (was_error) {
         spec = NULL;
+    }
 
     return(spec);
 } /* Mix_LoadOGG_RW */

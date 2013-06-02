@@ -111,18 +111,18 @@ static FluidSynthMidiSong *fluidsynth_loadsong_common(int (*function)(FluidSynth
 
 static int fluidsynth_loadsong_RW_internal(FluidSynthMidiSong *song, void *data)
 {
-    off_t offset;
+    Sint64 offset;
     size_t size;
     char *buffer;
-    SDL_RWops *rw = (SDL_RWops*) data;
+    SDL_RWops *src = (SDL_RWops*) data;
 
-    offset = SDL_RWtell(rw);
-    SDL_RWseek(rw, 0, RW_SEEK_END);
-    size = SDL_RWtell(rw) - offset;
-    SDL_RWseek(rw, offset, RW_SEEK_SET);
+    offset = SDL_RWtell(src);
+    SDL_RWseek(src, 0, RW_SEEK_END);
+    size = (size_t)(SDL_RWtell(src) - offset);
+    SDL_RWseek(src, offset, RW_SEEK_SET);
 
     if ((buffer = (char*) SDL_malloc(size))) {
-        if(SDL_RWread(rw, buffer, size, 1) == 1) {
+        if(SDL_RWread(src, buffer, size, 1) == 1) {
             if (fluidsynth.fluid_player_add_mem(song->player, buffer, size) == FLUID_OK) {
                 return 1;
             } else {
@@ -138,13 +138,13 @@ static int fluidsynth_loadsong_RW_internal(FluidSynthMidiSong *song, void *data)
     return 0;
 }
 
-FluidSynthMidiSong *fluidsynth_loadsong_RW(SDL_RWops *rw, int freerw)
+FluidSynthMidiSong *fluidsynth_loadsong_RW(SDL_RWops *src, int freesrc)
 {
     FluidSynthMidiSong *song;
 
-    song = fluidsynth_loadsong_common(fluidsynth_loadsong_RW_internal, (void*) rw);
-    if (freerw) {
-        SDL_RWclose(rw);
+    song = fluidsynth_loadsong_common(fluidsynth_loadsong_RW_internal, (void*) src);
+    if (song && freesrc) {
+        SDL_RWclose(src);
     }
     return song;
 }
