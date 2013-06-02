@@ -21,7 +21,7 @@
 
 #ifdef OGG_MUSIC
 #ifdef OGG_USE_TREMOR
-#include <tremor/ivorbisfile.h>
+#include <ivorbisfile.h>
 #else
 #include <vorbis/vorbisfile.h>
 #endif
