@@ -25,7 +25,7 @@
 #ifdef FLAC_MUSIC
 
 #include "SDL_loadso.h"
-
+#include "SDL_mixer.h"
 #include "dynamic_flac.h"
 
 flac_loader flac = {
@@ -142,6 +142,16 @@ void Mix_QuitFLAC()
 int Mix_InitFLAC()
 {
     if ( flac.loaded == 0 ) {
+#ifdef __MACOSX__
+        extern FLAC__StreamDecoder *FLAC__stream_decoder_new(void) __attribute__((weak_import));
+        if ( FLAC__stream_decoder_new == NULL )
+        {
+            /* Missing weakly linked framework */
+            Mix_SetError("Missing FLAC.framework");
+            return -1;
+        }
+#endif // __MACOSX__
+
         flac.FLAC__stream_decoder_new = FLAC__stream_decoder_new;
         flac.FLAC__stream_decoder_delete = FLAC__stream_decoder_delete;
         flac.FLAC__stream_decoder_init_stream =

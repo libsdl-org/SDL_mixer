@@ -22,7 +22,7 @@
 #ifdef MP3_MUSIC
 
 #include "SDL_loadso.h"
-
+#include "SDL_mixer.h"
 #include "dynamic_mp3.h"
 
 smpeg_loader smpeg = {
@@ -140,6 +140,16 @@ void Mix_QuitMP3()
 int Mix_InitMP3()
 {
     if ( smpeg.loaded == 0 ) {
+#ifdef __MACOSX__
+        extern SMPEG* SMPEG_new_rwops(SDL_RWops*, SMPEG_Info*, int, int) __attribute__((weak_import));
+        if ( SMPEG_new_rwops == NULL )
+        {
+            /* Missing weakly linked framework */
+            Mix_SetError("Missing smpeg2.framework");
+            return -1;
+        }
+#endif // __MACOSX__
+
         smpeg.SMPEG_actualSpec = SMPEG_actualSpec;
         smpeg.SMPEG_delete = SMPEG_delete;
         smpeg.SMPEG_enableaudio = SMPEG_enableaudio;

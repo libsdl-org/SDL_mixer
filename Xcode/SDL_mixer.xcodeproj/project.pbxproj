@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		00938E1C108A36520009CF19 /* mikmod.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00938E1B108A36520009CF19 /* mikmod.framework */; };
 		00938E33108A37800009CF19 /* load_flac.c in Sources */ = {isa = PBXBuildFile; fileRef = 00938E2B108A37800009CF19 /* load_flac.c */; };
 		00938E34108A37800009CF19 /* load_flac.h in Headers */ = {isa = PBXBuildFile; fileRef = 00938E2C108A37800009CF19 /* load_flac.h */; };
 		00938E35108A37800009CF19 /* music_flac.c in Sources */ = {isa = PBXBuildFile; fileRef = 00938E2D108A37800009CF19 /* music_flac.c */; };
@@ -32,11 +31,10 @@
 		04A8FCA70A19CAEC0046373F /* dynamic_mp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A8FCA40A19CAEC0046373F /* dynamic_mp3.c */; };
 		04A8FCAB0A19CB070046373F /* dynamic_ogg.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A8FCA90A19CB070046373F /* dynamic_ogg.c */; };
 		04A8FCAC0A19CB070046373F /* dynamic_ogg.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A8FCA90A19CB070046373F /* dynamic_ogg.c */; };
-		AA64428F175AA7A500A2125A /* smpeg2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA64428E175AA7A500A2125A /* smpeg2.framework */; };
 		AA644290175AA7C900A2125A /* smpeg2.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = AA64428E175AA7A500A2125A /* smpeg2.framework */; };
-		AA9F7DB514B15ADC00278D1E /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA9F7DB314B15ADC00278D1E /* Ogg.framework */; };
-		AA9F7DB614B15ADC00278D1E /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA9F7DB414B15ADC00278D1E /* Vorbis.framework */; };
-		AA9F7DB814B15AE700278D1E /* FLAC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA9F7DB714B15AE700278D1E /* FLAC.framework */; };
+		AA6442D1175B181300A2125A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA6442D0175B181300A2125A /* AudioToolbox.framework */; };
+		AA6442D3175B181D00A2125A /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA6442D2175B181D00A2125A /* AudioUnit.framework */; };
+		AA6442D5175B185800A2125A /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA6442D4175B185800A2125A /* CoreServices.framework */; };
 		AA9F7DB914B15D3300278D1E /* FLAC.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = AA9F7DB714B15AE700278D1E /* FLAC.framework */; };
 		AA9F7DBA14B15D4100278D1E /* mikmod.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 00938E1B108A36520009CF19 /* mikmod.framework */; };
 		AA9F7DBB14B15D4400278D1E /* Ogg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = AA9F7DB314B15ADC00278D1E /* Ogg.framework */; };
@@ -212,6 +210,9 @@
 		5CC1B89B012FB8CD7F000001 /* wavestream.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = wavestream.c; path = ../wavestream.c; sourceTree = "<group>"; };
 		5CC1B89C012FB8CD7F000001 /* wavestream.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = wavestream.h; path = ../wavestream.h; sourceTree = "<group>"; };
 		AA64428E175AA7A500A2125A /* smpeg2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = smpeg2.framework; path = Frameworks/smpeg2.framework; sourceTree = "<group>"; };
+		AA6442D0175B181300A2125A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		AA6442D2175B181D00A2125A /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
+		AA6442D4175B185800A2125A /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		AA9F7DB314B15ADC00278D1E /* Ogg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ogg.framework; path = Frameworks/Ogg.framework; sourceTree = "<group>"; };
 		AA9F7DB414B15ADC00278D1E /* Vorbis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Vorbis.framework; path = Frameworks/Vorbis.framework; sourceTree = "<group>"; };
 		AA9F7DB714B15AE700278D1E /* FLAC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FLAC.framework; path = Frameworks/FLAC.framework; sourceTree = "<group>"; };
@@ -241,12 +242,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA6442D3175B181D00A2125A /* AudioUnit.framework in Frameworks */,
+				AA6442D1175B181300A2125A /* AudioToolbox.framework in Frameworks */,
+				AA6442D5175B185800A2125A /* CoreServices.framework in Frameworks */,
 				BE1FA90207AF96B2004B6283 /* SDL2.framework in Frameworks */,
-				00938E1C108A36520009CF19 /* mikmod.framework in Frameworks */,
-				AA9F7DB514B15ADC00278D1E /* Ogg.framework in Frameworks */,
-				AA9F7DB614B15ADC00278D1E /* Vorbis.framework in Frameworks */,
-				AA9F7DB814B15AE700278D1E /* FLAC.framework in Frameworks */,
-				AA64428F175AA7A500A2125A /* smpeg2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -385,6 +384,9 @@
 		BE1FA8AD07AF95DC004B6283 /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				AA6442D0175B181300A2125A /* AudioToolbox.framework */,
+				AA6442D2175B181D00A2125A /* AudioUnit.framework */,
+				AA6442D4175B185800A2125A /* CoreServices.framework */,
 				AA9F7DB714B15AE700278D1E /* FLAC.framework */,
 				00938E1B108A36520009CF19 /* mikmod.framework */,
 				AA9F7DB314B15ADC00278D1E /* Ogg.framework */,
@@ -747,12 +749,14 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks";
 				OTHER_LDFLAGS = (
-					"-framework",
-					AudioToolbox,
-					"-framework",
-					AudioUnit,
-					"-framework",
-					CoreServices,
+					"-weak_framework",
+					FLAC,
+					"-weak_framework",
+					mikmod,
+					"-weak_framework",
+					smpeg2,
+					"-weak_framework",
+					Vorbis,
 				);
 				WRAPPER_EXTENSION = framework;
 			};
@@ -771,12 +775,14 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks";
 				OTHER_LDFLAGS = (
-					"-framework",
-					AudioToolbox,
-					"-framework",
-					AudioUnit,
-					"-framework",
-					CoreServices,
+					"-weak_framework",
+					FLAC,
+					"-weak_framework",
+					mikmod,
+					"-weak_framework",
+					smpeg2,
+					"-weak_framework",
+					Vorbis,
 				);
 				WRAPPER_EXTENSION = framework;
 			};
