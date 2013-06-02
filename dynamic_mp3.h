@@ -29,7 +29,7 @@ typedef struct {
     void (*SMPEG_delete)( SMPEG* mpeg );
     void (*SMPEG_enableaudio)( SMPEG* mpeg, int enable );
     void (*SMPEG_enablevideo)( SMPEG* mpeg, int enable );
-    SMPEG* (*SMPEG_new_rwops)(SDL_RWops *src, SMPEG_Info* info, int sdl_audio);
+    SMPEG* (*SMPEG_new_rwops)(SDL_RWops *src, SMPEG_Info* info, int freesrc, int sdl_audio);
     void (*SMPEG_play)( SMPEG* mpeg );
     int (*SMPEG_playAudio)( SMPEG *mpeg, Uint8 *stream, int len );
     void (*SMPEG_rewind)( SMPEG* mpeg );

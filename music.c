@@ -192,7 +192,7 @@ void Mix_HookMusicFinished(void (*music_finished)(void))
 
 
 /* If music isn't playing, halt it if no looping is required, restart it */
-/* otherwhise. NOP if the music is playing */
+/* othesrchise. NOP if the music is playing */
 static int music_halt_or_loop (void)
 {
     /* Restart music if it has to loop */
@@ -461,17 +461,17 @@ static int detect_mp3(Uint8 *magic)
  * actually be MOD-based.
  *
  * Returns MUS_NONE in case of errors. */
-static Mix_MusicType detect_music_type(SDL_RWops *rw)
+static Mix_MusicType detect_music_type(SDL_RWops *src)
 {
     Uint8 magic[5];
     Uint8 moremagic[9];
 
-    Sint64 start = SDL_RWtell(rw);
-    if (SDL_RWread(rw, magic, 1, 4) != 4 || SDL_RWread(rw, moremagic, 1, 8) != 8 ) {
+    Sint64 start = SDL_RWtell(src);
+    if (SDL_RWread(src, magic, 1, 4) != 4 || SDL_RWread(src, moremagic, 1, 8) != 8 ) {
         Mix_SetError("Couldn't read from RWops");
         return MUS_NONE;
     }
-    SDL_RWseek(rw, start, RW_SEEK_SET);
+    SDL_RWseek(src, start, RW_SEEK_SET);
     magic[4]='\0';
     moremagic[8] = '\0';
 
@@ -512,7 +512,7 @@ static Mix_MusicType detect_music_type(SDL_RWops *rw)
 /* Load a music file */
 Mix_Music *Mix_LoadMUS(const char *file)
 {
-    SDL_RWops *rw;
+    SDL_RWops *src;
     Mix_Music *music;
     Mix_MusicType type;
     char *ext = strrchr(file, '.');
@@ -536,8 +536,8 @@ Mix_Music *Mix_LoadMUS(const char *file)
     }
 #endif
 
-    rw = SDL_RWFromFile(file, "rb");
-    if ( rw == NULL ) {
+    src = SDL_RWFromFile(file, "rb");
+    if ( src == NULL ) {
         Mix_SetError("Couldn't open '%s'", file);
         return NULL;
     }
@@ -567,40 +567,44 @@ Mix_Music *Mix_LoadMUS(const char *file)
         }
     }
     if ( type == MUS_NONE ) {
-        type = detect_music_type(rw);
+        type = detect_music_type(src);
     }
 
     /* We need to know if a specific error occurs; if not, we'll set a
      * generic one, so we clear the current one. */
     Mix_SetError("");
-    music = Mix_LoadMUSType_RW(rw, type, SDL_TRUE);
+    music = Mix_LoadMUSType_RW(src, type, SDL_TRUE);
     if ( music == NULL && Mix_GetError()[0] == '\0' ) {
-        SDL_FreeRW(rw);
         Mix_SetError("Couldn't open '%s'", file);
     }
     return music;
 }
 
-Mix_Music *Mix_LoadMUS_RW(SDL_RWops *rw)
+Mix_Music *Mix_LoadMUS_RW(SDL_RWops *src, int freesrc)
 {
-    return Mix_LoadMUSType_RW(rw, MUS_NONE, SDL_FALSE);
+    return Mix_LoadMUSType_RW(src, MUS_NONE, freesrc);
 }
 
-Mix_Music *Mix_LoadMUSType_RW(SDL_RWops *rw, Mix_MusicType type, int freesrc)
+Mix_Music *Mix_LoadMUSType_RW(SDL_RWops *src, Mix_MusicType type, int freesrc)
 {
     Mix_Music *music;
+    Sint64 start;
 
-    if (!rw) {
+    if (!src) {
         Mix_SetError("RWops pointer is NULL");
         return NULL;
     }
+    start = SDL_RWtell(src);
 
     /* If the caller wants auto-detection, figure out what kind of file
      * this is. */
     if (type == MUS_NONE) {
-        if ((type = detect_music_type(rw)) == MUS_NONE) {
+        if ((type = detect_music_type(src)) == MUS_NONE) {
             /* Don't call Mix_SetError() here since detect_music_type()
              * does that. */
+            if (freesrc) {
+                SDL_RWclose(src);
+            }
             return NULL;
         }
     }
@@ -609,73 +613,66 @@ Mix_Music *Mix_LoadMUSType_RW(SDL_RWops *rw, Mix_MusicType type, int freesrc)
     music = (Mix_Music *)SDL_malloc(sizeof(Mix_Music));
     if (music == NULL ) {
         Mix_SetError("Out of memory");
+        if (freesrc) {
+            SDL_RWclose(src);
+        }
         return NULL;
     }
-    music->error = 0;
+    music->error = 1;
 
     switch (type) {
 #ifdef WAV_MUSIC
     case MUS_WAV:
-        /* The WAVE loader needs the first 4 bytes of the header */
-        {
-            Uint8 magic[5];
-            Sint64 start = SDL_RWtell(rw);
-            if (SDL_RWread(rw, magic, 1, 4) != 4) {
-                Mix_SetError("Couldn't read from RWops");
-                SDL_free(music);
-                return NULL;
-            }
-            SDL_RWseek(rw, start, RW_SEEK_SET);
-            magic[4] = '\0';
-            music->type = MUS_WAV;
-            music->data.wave = WAVStream_LoadSong_RW(rw, (char *)magic, freesrc);
-        }
-        if (music->data.wave == NULL) {
-            music->error = 1;
+        music->type = MUS_WAV;
+        music->data.wave = WAVStream_LoadSong_RW(src, freesrc);
+        if (music->data.wave) {
+            music->error = 0;
         }
         break;
 #endif
 #ifdef OGG_MUSIC
     case MUS_OGG:
         music->type = MUS_OGG;
-        music->data.ogg = OGG_new_RW(rw, freesrc);
-        if ( music->data.ogg == NULL ) {
-            music->error = 1;
+        music->data.ogg = OGG_new_RW(src, freesrc);
+        if (music->data.ogg) {
+            music->error = 0;
         }
         break;
 #endif
 #ifdef FLAC_MUSIC
     case MUS_FLAC:
         music->type = MUS_FLAC;
-        music->data.flac = FLAC_new_RW(rw, freesrc);
-        if ( music->data.flac == NULL ) {
-            music->error = 1;
+        music->data.flac = FLAC_new_RW(src, freesrc);
+        if (music->data.flac) {
+            music->error = 0;
         }
         break;
 #endif
 #ifdef MP3_MUSIC
     case MUS_MP3:
-        if ( Mix_Init(MIX_INIT_MP3) ) {
+        if (Mix_Init(MIX_INIT_MP3)) {
             SMPEG_Info info;
             music->type = MUS_MP3;
-            music->data.mp3 = smpeg.SMPEG_new_rwops(rw, &info, 0);
-            if ( !info.has_audio ) {
+            music->data.mp3 = smpeg.SMPEG_new_rwops(src, &info, freesrc, 0);
+            if (!info.has_audio) {
                 Mix_SetError("MPEG file does not have any audio stream.");
-                music->error = 1;
+                smpeg.SMPEG_delete(music->data.mp3);
+                /* Deleting the MP3 closed the source if desired */
+                freesrc = SDL_FALSE;
             } else {
                 smpeg.SMPEG_actualSpec(music->data.mp3, &used_mixer);
+                music->error = 0;
             }
-        } else {
-            music->error = 1;
         }
         break;
 #elif defined(MP3_MAD_MUSIC)
     case MUS_MP3:
         music->type = MUS_MP3_MAD;
-        music->data.mp3_mad = mad_openFileRW(rw, &used_mixer, freesrc);
-        if (music->data.mp3_mad == 0) {
+        music->data.mp3_mad = mad_openFileRW(src, &used_mixer, freesrc);
+        if (music->data.mp3_mad) {
+            music->error = 0;
+        } else {
             Mix_SetError("Could not initialize MPEG stream.");
-            music->error = 1;
         }
         break;
 #endif
@@ -683,55 +680,60 @@ Mix_Music *Mix_LoadMUSType_RW(SDL_RWops *rw, Mix_MusicType type, int freesrc)
     case MUS_MID:
         music->type = MUS_MID;
 #ifdef USE_NATIVE_MIDI
-        if ( native_midi_ok ) {
-            music->data.nativemidi = native_midi_loadsong_RW(rw, freesrc);
-            if ( music->data.nativemidi == NULL ) {
+        if (native_midi_ok) {
+            SDL_RWseek(src, start, RW_SEEK_SET);
+            music->data.nativemidi = native_midi_loadsong_RW(src, freesrc);
+            if (music->data.nativemidi) {
+                music->error = 0;
+            } else {
                 Mix_SetError("%s", native_midi_error());
-                music->error = 1;
             }
             break;
         }
 #endif
 #ifdef USE_FLUIDSYNTH_MIDI
-        if ( fluidsynth_ok ) {
-            music->data.fluidsynthmidi = fluidsynth_loadsong_RW(rw, freesrc);
-            if ( music->data.fluidsynthmidi == NULL ) {
-                music->error = 1;
+        if (fluidsynth_ok) {
+            SDL_RWseek(src, start, RW_SEEK_SET);
+            music->data.fluidsynthmidi = fluidsynth_loadsong_RW(src, freesrc);
+            if (music->data.fluidsynthmidi) {
+                music->error = 0;
             }
             break;
         }
 #endif
 #ifdef USE_TIMIDITY_MIDI
-        if ( timidity_ok ) {
-            music->data.midi = Timidity_LoadSong_RW(rw, freesrc);
-            if ( music->data.midi == NULL ) {
+        if (timidity_ok) {
+            SDL_RWseek(src, start, RW_SEEK_SET);
+            music->data.midi = Timidity_LoadSong_RW(src, freesrc);
+            if (music->data.midi) {
+                music->error = 0;
+            } else {
                 Mix_SetError("%s", Timidity_Error());
-                music->error = 1;
             }
         } else {
             Mix_SetError("%s", Timidity_Error());
-            music->error = 1;
         }
 #endif
         break;
 #endif
 #if defined(MODPLUG_MUSIC) || defined(MOD_MUSIC)
     case MUS_MOD:
-        music->error = 1;
 #ifdef MODPLUG_MUSIC
-        if ( music->error ) {
+        if (music->error) {
+            SDL_RWseek(src, start, RW_SEEK_SET);
             music->type = MUS_MODPLUG;
-            music->data.modplug = modplug_new_RW(rw, freesrc);
-            if ( music->data.modplug ) {
+            music->data.modplug = modplug_new_RW(src, freesrc);
+            if (music->data.modplug) {
                 music->error = 0;
             }
         }
 #endif
 #ifdef MOD_MUSIC
-        if ( music->error ) {
+        if (music->error) {
+            SDL_RWseek(src, start, RW_SEEK_SET);
             music->type = MUS_MOD;
-            music->data.module = MOD_new_RW(rw, freesrc);
-            if ( music->data.module ) {
+            music->data.module = MOD_new_RW(src, freesrc);
+            if (music->data.module) {
                 music->error = 0;
             }
         }
@@ -741,15 +743,19 @@ Mix_Music *Mix_LoadMUSType_RW(SDL_RWops *rw, Mix_MusicType type, int freesrc)
 
     default:
         Mix_SetError("Unrecognized music format");
-        music->error=1;
+        break;
     } /* switch (want) */
-
 
     if (music->error) {
         SDL_free(music);
-        music=NULL;
+        if (freesrc) {
+            SDL_RWclose(src);
+        } else {
+            SDL_RWseek(src, start, RW_SEEK_SET);
+        }
+        music = NULL;
     }
-    return(music);
+    return music;
 }
 
 /* Free a music chunk previously loaded */

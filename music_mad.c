@@ -26,14 +26,14 @@
 #include "music_mad.h"
 
 mad_data *
-mad_openFileRW(SDL_RWops *rw, SDL_AudioSpec *mixer, int freerw)
+mad_openFileRW(SDL_RWops *src, SDL_AudioSpec *mixer, int freesrc)
 {
   mad_data *mp3_mad;
 
   mp3_mad = (mad_data *)SDL_malloc(sizeof(mad_data));
   if (mp3_mad) {
-    mp3_mad->rw = rw;
-    mp3_mad->freerw = freerw;
+    mp3_mad->src = src;
+    mp3_mad->freesrc = freesrc;
     mad_stream_init(&mp3_mad->stream);
     mad_frame_init(&mp3_mad->frame);
     mad_synth_init(&mp3_mad->synth);
@@ -55,8 +55,8 @@ mad_closeFile(mad_data *mp3_mad)
   mad_frame_finish(&mp3_mad->frame);
   mad_synth_finish(&mp3_mad->synth);
 
-  if (mp3_mad->freerw) {
-    SDL_RWclose(mp3_mad->rw);
+  if (mp3_mad->freesrc) {
+    SDL_RWclose(mp3_mad->src);
   }
   SDL_free(mp3_mad);
 }

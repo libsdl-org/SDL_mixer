@@ -315,15 +315,13 @@ done:
         flac.FLAC__stream_decoder_delete (decoder);
     }
 
-    if (src) {
-        if (freesrc)
-            SDL_RWclose (src);
-        else
-            SDL_RWseek (src, 0, RW_SEEK_SET);
+    if (freesrc && src) {
+        SDL_RWclose (src);
     }
 
-    if (was_error)
+    if (was_error) {
         spec = NULL;
+    }
 
     return spec;
 }

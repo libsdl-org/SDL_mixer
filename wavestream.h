@@ -26,8 +26,8 @@
 #include <stdio.h>
 
 typedef struct {
-    SDL_RWops *rw;
-    SDL_bool freerw;
+    SDL_RWops *src;
+    SDL_bool freesrc;
     long  start;
     long  stop;
     SDL_AudioCVT cvt;
@@ -42,7 +42,7 @@ extern int WAVStream_Init(SDL_AudioSpec *mixer);
 extern void WAVStream_SetVolume(int volume);
 
 /* Load a WAV stream from an SDL_RWops object */
-extern WAVStream *WAVStream_LoadSong_RW(SDL_RWops *rw, const char *magic, int freerw);
+extern WAVStream *WAVStream_LoadSong_RW(SDL_RWops *src, int freesrc);
 
 /* Start playback of a given WAV stream */
 extern void WAVStream_Start(WAVStream *wave);

@@ -47,9 +47,9 @@ class MidiEventsStore : public BMidi
     fPlaying = false;
     fLoops = 0;
   }
-  virtual status_t Import(SDL_RWops *rw)
+  virtual status_t Import(SDL_RWops *src)
   {
-    fEvs = CreateMIDIEventList(rw, &fDivision);
+    fEvs = CreateMIDIEventList(src, &fDivision);
     if (!fEvs) {
       return B_BAD_MIDI_DATA;
     }
@@ -219,21 +219,24 @@ void native_midi_setvolume(int volume)
   synth.SetVolume(volume / 128.0);
 }
 
-NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw, int freerw)
+NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *src, int freesrc)
 {
   NativeMidiSong *song = new NativeMidiSong;
   song->store = new MidiEventsStore;
-  status_t res = song->store->Import(rw);
+  status_t res = song->store->Import(src);
 
-  if (freerw) {
-    SDL_RWclose(rw);
-  }
   if (res != B_OK)
   {
     snprintf(lasterr, sizeof lasterr, "Cannot Import() midi file: status_t=%d", res);
     delete song->store;
     delete song;
     return NULL;
+  }
+  else
+  {
+    if (freesrc) {
+      SDL_RWclose(src);
+    }
   }
   return song;
 }

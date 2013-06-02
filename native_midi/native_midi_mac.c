@@ -88,7 +88,7 @@ int native_midi_detect()
     return 1;
 }
 
-NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw, int freerw)
+NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *src, int freesrc)
 {
     NativeMidiSong  *song = NULL;
     MIDIEvent       *evntlist = NULL;
@@ -102,7 +102,7 @@ NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw, int freerw)
     memset(part_to_inst,-1,sizeof(part_to_inst));
 
     /* Attempt to load the midi file */
-    evntlist = CreateMIDIEventList(rw, &ppqn);
+    evntlist = CreateMIDIEventList(src, &ppqn);
     if (!evntlist)
         goto bail;
 
@@ -149,10 +149,6 @@ bail:
             DisposePtr((Ptr)song->tuneHeader);
 
         free(song);
-    }
-
-    if (freerw) {
-        SDL_RWclose(rw);
     }
     return NULL;
 }

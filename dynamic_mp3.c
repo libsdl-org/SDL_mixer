@@ -66,7 +66,7 @@ int Mix_InitMP3()
             return -1;
         }
         smpeg.SMPEG_new_rwops =
-            (SMPEG* (*)(SDL_RWops *, SMPEG_Info*, int))
+            (SMPEG* (*)(SDL_RWops *, SMPEG_Info*, int, int))
             SDL_LoadFunction(smpeg.handle, "SMPEG_new_rwops");
         if ( smpeg.SMPEG_new_rwops == NULL ) {
             SDL_UnloadObject(smpeg.handle);

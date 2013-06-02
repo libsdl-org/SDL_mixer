@@ -1,3 +1,8 @@
+2.0.0:
+Sam Lantinga - Sat Jun  1 19:11:08 PDT 2013
+ * Updated for SDL 2.0 release
+ * SDL_LoadMUS_RW() now takes an argument telling whether or not the data source should be freed when done.
+
 1.2.13:
 Paul P Komkoff Jr - Sun Jul 22 16:12:28 PDT 2012
  * Fixed malloc/free mismatch in the MikMod driver

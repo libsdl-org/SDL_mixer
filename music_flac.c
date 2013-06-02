@@ -60,7 +60,7 @@ static FLAC__StreamDecoderReadStatus flac_read_music_cb(
 
     // make sure there is something to be reading
     if (*bytes > 0) {
-        *bytes = SDL_RWread (data->rwops, buffer, sizeof (FLAC__byte), *bytes);
+        *bytes = SDL_RWread (data->src, buffer, sizeof (FLAC__byte), *bytes);
 
         if (*bytes == 0 ) { // error or no data was read (EOF)
             return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
@@ -79,7 +79,7 @@ static FLAC__StreamDecoderSeekStatus flac_seek_music_cb(
 {
     FLAC_music *data = (FLAC_music*)client_data;
 
-    if (SDL_RWseek (data->rwops, absolute_byte_offset, RW_SEEK_SET) < 0) {
+    if (SDL_RWseek (data->src, absolute_byte_offset, RW_SEEK_SET) < 0) {
         return FLAC__STREAM_DECODER_SEEK_STATUS_ERROR;
     } else {
         return FLAC__STREAM_DECODER_SEEK_STATUS_OK;
@@ -93,7 +93,7 @@ static FLAC__StreamDecoderTellStatus flac_tell_music_cb(
 {
     FLAC_music *data = (FLAC_music*)client_data;
 
-    Sint64 pos = SDL_RWtell (data->rwops);
+    Sint64 pos = SDL_RWtell (data->src);
 
     if (pos < 0) {
         return FLAC__STREAM_DECODER_TELL_STATUS_ERROR;
@@ -110,10 +110,10 @@ static FLAC__StreamDecoderLengthStatus flac_length_music_cb (
 {
     FLAC_music *data = (FLAC_music*)client_data;
 
-    Sint64 pos = SDL_RWtell (data->rwops);
-    Sint64 length = SDL_RWseek (data->rwops, 0, RW_SEEK_END);
+    Sint64 pos = SDL_RWtell (data->src);
+    Sint64 length = SDL_RWseek (data->src, 0, RW_SEEK_END);
 
-    if (SDL_RWseek (data->rwops, pos, RW_SEEK_SET) != pos || length < 0) {
+    if (SDL_RWseek (data->src, pos, RW_SEEK_SET) != pos || length < 0) {
         /* there was an error attempting to return the stream to the original
          * position, or the length was invalid. */
         return FLAC__STREAM_DECODER_LENGTH_STATUS_ERROR;
@@ -129,8 +129,8 @@ static FLAC__bool flac_eof_music_cb(
 {
     FLAC_music *data = (FLAC_music*)client_data;
 
-    Sint64 pos = SDL_RWtell (data->rwops);
-    Sint64 end = SDL_RWseek (data->rwops, 0, RW_SEEK_END);
+    Sint64 pos = SDL_RWtell (data->src);
+    Sint64 end = SDL_RWseek (data->src, 0, RW_SEEK_END);
 
     // was the original position equal to the end (a.k.a. the seek didn't move)?
     if (pos == end) {
@@ -138,7 +138,7 @@ static FLAC__bool flac_eof_music_cb(
         return true;
     } else {
         // not EOF, return to the original position
-        SDL_RWseek (data->rwops, pos, RW_SEEK_SET);
+        SDL_RWseek (data->src, pos, RW_SEEK_SET);
         return false;
     }
 }
@@ -290,16 +290,13 @@ static void flac_error_music_cb(
 }
 
 /* Load an FLAC stream from an SDL_RWops object */
-FLAC_music *FLAC_new_RW(SDL_RWops *rw, int freerw)
+FLAC_music *FLAC_new_RW(SDL_RWops *src, int freesrc)
 {
     FLAC_music *music;
     int init_stage = 0;
     int was_error = 1;
 
     if (!Mix_Init(MIX_INIT_FLAC)) {
-        if (freerw) {
-            SDL_RWclose(rw);
-        }
         return NULL;
     }
 
@@ -310,8 +307,8 @@ FLAC_music *FLAC_new_RW(SDL_RWops *rw, int freerw)
         FLAC_stop (music);
         FLAC_setvolume (music, MIX_MAX_VOLUME);
         music->section = -1;
-        music->rwops = rw;
-        music->freerw = freerw;
+        music->src = src;
+        music->freesrc = freesrc;
         music->flac_data.max_to_read = 0;
         music->flac_data.overflow = NULL;
         music->flac_data.overflow_len = 0;
@@ -358,18 +355,12 @@ FLAC_music *FLAC_new_RW(SDL_RWops *rw, int freerw)
                 case 1:
                 case 0:
                     SDL_free(music);
-                    if (freerw) {
-                        SDL_RWclose(rw);
-                    }
                     break;
             }
             return NULL;
         }
     } else {
         SDL_OutOfMemory();
-        if (freerw) {
-            SDL_RWclose(rw);
-        }
         return NULL;
     }
 
@@ -535,8 +526,8 @@ void FLAC_delete(FLAC_music *music)
             SDL_free (music->cvt.buf);
         }
 
-        if (music->freerw) {
-            SDL_RWclose(music->rwops);
+        if (music->freesrc) {
+            SDL_RWclose(music->src);
         }
         SDL_free (music);
     }
