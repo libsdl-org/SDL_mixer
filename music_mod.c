@@ -146,7 +146,7 @@ typedef struct
     MREADER mr;
     Sint64 offset;
     Sint64 eof;
-    SDL_RWops *rw;
+    SDL_RWops *src;
 } LMM_MREADER;
 
 BOOL LMM_Seek(struct MREADER *mr,long to,int dir)
@@ -156,35 +156,35 @@ BOOL LMM_Seek(struct MREADER *mr,long to,int dir)
     if ( dir == SEEK_SET ) {
         offset += lmmmr->offset;
     }
-    return (SDL_RWseek(lmmmr->rw, offset, dir) < lmmmr->offset);
+    return (SDL_RWseek(lmmmr->src, offset, dir) < lmmmr->offset);
 }
 long LMM_Tell(struct MREADER *mr)
 {
     LMM_MREADER* lmmmr = (LMM_MREADER*)mr;
-    return (long)(SDL_RWtell(lmmmr->rw) - lmmmr->offset);
+    return (long)(SDL_RWtell(lmmmr->src) - lmmmr->offset);
 }
 BOOL LMM_Read(struct MREADER *mr,void *buf,size_t sz)
 {
     LMM_MREADER* lmmmr = (LMM_MREADER*)mr;
-    return SDL_RWread(lmmmr->rw, buf, sz, 1);
+    return SDL_RWread(lmmmr->src, buf, sz, 1);
 }
 int LMM_Get(struct MREADER *mr)
 {
     unsigned char c;
     LMM_MREADER* lmmmr = (LMM_MREADER*)mr;
-    if ( SDL_RWread(lmmmr->rw, &c, 1, 1) ) {
+    if ( SDL_RWread(lmmmr->src, &c, 1, 1) ) {
         return c;
     }
     return EOF;
 }
 BOOL LMM_Eof(struct MREADER *mr)
 {
-    long offset;
+    Sint64 offset;
     LMM_MREADER* lmmmr = (LMM_MREADER*)mr;
     offset = LMM_Tell(mr);
     return offset >= lmmmr->eof;
 }
-MODULE *MikMod_LoadSongRW(SDL_RWops *rw, int maxchan)
+MODULE *MikMod_LoadSongRW(SDL_RWops *src, int maxchan)
 {
     LMM_MREADER lmmmr = {
         { LMM_Seek, LMM_Tell, LMM_Read, LMM_Get, LMM_Eof },
@@ -192,33 +192,27 @@ MODULE *MikMod_LoadSongRW(SDL_RWops *rw, int maxchan)
         0,
         0
     };
-    lmmmr.offset = SDL_RWtell(rw);
-    SDL_RWseek(rw, 0, RW_SEEK_END);
-    lmmmr.eof = SDL_RWtell(rw);
-    SDL_RWseek(rw, lmmmr.offset, RW_SEEK_SET);
-        lmmmr.rw = rw;
+    lmmmr.offset = SDL_RWtell(src);
+    SDL_RWseek(src, 0, RW_SEEK_END);
+    lmmmr.eof = SDL_RWtell(src);
+    SDL_RWseek(src, lmmmr.offset, RW_SEEK_SET);
+    lmmmr.src = src;
     return mikmod.Player_LoadGeneric((MREADER*)&lmmmr, maxchan, 0);
 }
 
 /* Load a MOD stream from an SDL_RWops object */
-MODULE *MOD_new_RW(SDL_RWops *rw, int freerw)
+MODULE *MOD_new_RW(SDL_RWops *src, int freesrc)
 {
     MODULE *module;
 
     /* Make sure the mikmod library is loaded */
     if ( !Mix_Init(MIX_INIT_MOD) ) {
-        if ( freerw ) {
-            SDL_RWclose(rw);
-        }
         return NULL;
     }
 
-    module = MikMod_LoadSongRW(rw,64);
+    module = MikMod_LoadSongRW(src, 64);
     if (!module) {
         Mix_SetError("%s", mikmod.MikMod_strerror(*mikmod.MikMod_errno));
-        if ( freerw ) {
-            SDL_RWclose(rw);
-        }
         return NULL;
     }
 
@@ -232,8 +226,8 @@ to query the status of the song or set trigger actions.  Hum. */
     module->fadeout = 1;
 #endif
 
-    if ( freerw ) {
-        SDL_RWclose(rw);
+    if ( freesrc ) {
+        SDL_RWclose(src);
     }
     return module;
 }
