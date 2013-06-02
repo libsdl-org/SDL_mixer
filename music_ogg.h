@@ -26,7 +26,7 @@
 /* This file supports Ogg Vorbis music streams */
 
 #ifdef OGG_USE_TREMOR
-#include <tremor/ivorbisfile.h>
+#include <ivorbisfile.h>
 #else
 #include <vorbis/vorbisfile.h>
 #endif

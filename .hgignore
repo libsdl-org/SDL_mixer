@@ -4,6 +4,15 @@ config.cache
 config.log
 config.status
 Makefile
-SDL2_mixer.pc
 libtool
+.deps
+.libs
+*.lo
+*.o
+*.la
+*.lai
+*.xcworkspacedata
+*.xcuserdatad
+.DS_Store
 build
+SDL2_mixer.pc

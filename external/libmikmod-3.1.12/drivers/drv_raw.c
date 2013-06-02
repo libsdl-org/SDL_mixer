@@ -50,6 +50,13 @@
 #ifndef O_BINARY
 #define O_BINARY 0
 #endif
+#ifndef S_IREAD
+#define S_IREAD S_IRUSR
+#endif
+#ifndef S_IWRITE
+#define S_IWRITE S_IWUSR
+#endif
+
 
 #if defined(WIN32) && !defined(__MWERKS__)
 #define open _open
