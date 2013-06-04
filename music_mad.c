@@ -105,7 +105,7 @@ read_next_frame(mad_data *mp3_mad) {
     }
 
     /* Now read additional bytes from the input file. */
-    read_size = SDL_RWread(mp3_mad->rw, read_start, 1, read_size);
+    read_size = SDL_RWread(mp3_mad->src, read_start, 1, read_size);
 
     if (read_size <= 0) {
       if ((mp3_mad->status & (MS_input_eof | MS_input_error)) == 0) {
@@ -296,7 +296,7 @@ mad_seek(mad_data *mp3_mad, double position) {
     mp3_mad->output_begin = 0;
     mp3_mad->output_end = 0;
 
-    SDL_RWseek(mp3_mad->rw, 0, RW_SEEK_SET);
+    SDL_RWseek(mp3_mad->src, 0, RW_SEEK_SET);
   }
 
   /* Now we have to skip frames until we come to the right one.
