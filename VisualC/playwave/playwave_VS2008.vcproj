@@ -4,6 +4,7 @@
 	Version="9.00"
 	Name="playwave"
 	ProjectGUID="{AC86CEAA-9908-476F-B15F-C7193CEF81BD}"
+	RootNamespace="playwave"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
@@ -19,8 +20,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\Release"
-			IntermediateDirectory=".\Release"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -99,11 +100,13 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="Copy DLLs"
+				CommandLine="copy $(SolutionDir)\external\lib\x86\*.* $(OutDir)"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
@@ -183,12 +186,14 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="Copy DLLs"
+				CommandLine="copy $(SolutionDir)\external\lib\x64\*.* $(OutDir)"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\Debug"
-			IntermediateDirectory=".\Debug"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -268,11 +273,13 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="Copy DLLs"
+				CommandLine="copy $(SolutionDir)\external\lib\x86\*.* $(OutDir)"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
@@ -353,6 +360,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="Copy DLLs"
+				CommandLine="copy $(SolutionDir)\external\lib\x64\*.* $(OutDir)"
 			/>
 		</Configuration>
 	</Configurations>
