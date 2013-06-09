@@ -11823,9 +11823,9 @@ if test "x$ac_cv_header_modplug_h" = xyes; then :
 fi
 
 
-            { $as_echo "$as_me:${as_lineno-$LINENO}: checking for have_libmodplug_hdr=yes in -lmodplug" >&5
-$as_echo_n "checking for have_libmodplug_hdr=yes in -lmodplug... " >&6; }
-if ${ac_cv_lib_modplug_have_libmodplug_hdr_yes+:} false; then :
+            { $as_echo "$as_me:${as_lineno-$LINENO}: checking for have_libmodplug_lib=yes in -lmodplug" >&5
+$as_echo_n "checking for have_libmodplug_lib=yes in -lmodplug... " >&6; }
+if ${ac_cv_lib_modplug_have_libmodplug_lib_yes+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
@@ -11839,27 +11839,27 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char have_libmodplug_hdr=yes ();
+char have_libmodplug_lib=yes ();
 int
 main ()
 {
-return have_libmodplug_hdr=yes ();
+return have_libmodplug_lib=yes ();
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_modplug_have_libmodplug_hdr_yes=yes
+  ac_cv_lib_modplug_have_libmodplug_lib_yes=yes
 else
-  ac_cv_lib_modplug_have_libmodplug_hdr_yes=no
+  ac_cv_lib_modplug_have_libmodplug_lib_yes=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_modplug_have_libmodplug_hdr_yes" >&5
-$as_echo "$ac_cv_lib_modplug_have_libmodplug_hdr_yes" >&6; }
-if test "x$ac_cv_lib_modplug_have_libmodplug_hdr_yes" = xyes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_modplug_have_libmodplug_lib_yes" >&5
+$as_echo "$ac_cv_lib_modplug_have_libmodplug_lib_yes" >&6; }
+if test "x$ac_cv_lib_modplug_have_libmodplug_lib_yes" = xyes; then :
   cat >>confdefs.h <<_ACEOF
 #define HAVE_LIBMODPLUG 1
 _ACEOF
@@ -11876,9 +11876,9 @@ if test "x$ac_cv_header_modplug_h" = xyes; then :
 fi
 
 
-            { $as_echo "$as_me:${as_lineno-$LINENO}: checking for have_libmodplug_hdr=yes in -lmodplug" >&5
-$as_echo_n "checking for have_libmodplug_hdr=yes in -lmodplug... " >&6; }
-if ${ac_cv_lib_modplug_have_libmodplug_hdr_yes+:} false; then :
+            { $as_echo "$as_me:${as_lineno-$LINENO}: checking for have_libmodplug_lib=yes in -lmodplug" >&5
+$as_echo_n "checking for have_libmodplug_lib=yes in -lmodplug... " >&6; }
+if ${ac_cv_lib_modplug_have_libmodplug_lib_yes+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
@@ -11892,27 +11892,27 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char have_libmodplug_hdr=yes ();
+char have_libmodplug_lib=yes ();
 int
 main ()
 {
-return have_libmodplug_hdr=yes ();
+return have_libmodplug_lib=yes ();
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_modplug_have_libmodplug_hdr_yes=yes
+  ac_cv_lib_modplug_have_libmodplug_lib_yes=yes
 else
-  ac_cv_lib_modplug_have_libmodplug_hdr_yes=no
+  ac_cv_lib_modplug_have_libmodplug_lib_yes=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_modplug_have_libmodplug_hdr_yes" >&5
-$as_echo "$ac_cv_lib_modplug_have_libmodplug_hdr_yes" >&6; }
-if test "x$ac_cv_lib_modplug_have_libmodplug_hdr_yes" = xyes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_modplug_have_libmodplug_lib_yes" >&5
+$as_echo "$ac_cv_lib_modplug_have_libmodplug_lib_yes" >&6; }
+if test "x$ac_cv_lib_modplug_have_libmodplug_lib_yes" = xyes; then :
   cat >>confdefs.h <<_ACEOF
 #define HAVE_LIBMODPLUG 1
 _ACEOF
