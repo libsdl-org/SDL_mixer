@@ -258,7 +258,7 @@ if test x$enable_music_mod = xyes -a x$enable_music_mod_modplug = xyes; then
             have_libmodplug_lib=yes
         ], [dnl
             AC_CHECK_HEADER([modplug.h], [have_libmodplug_hdr=yes])
-            AC_CHECK_LIB([modplug], [have_libmodplug_hdr=yes])
+            AC_CHECK_LIB([modplug], [have_libmodplug_lib=yes])
         ])
 
     if test x$have_libmodplug_hdr = xyes -a x$have_libmodplug_lib = xyes; then
