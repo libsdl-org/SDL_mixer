@@ -68,9 +68,10 @@ typedef enum
 {
     MIX_INIT_FLAC        = 0x00000001,
     MIX_INIT_MOD         = 0x00000002,
-    MIX_INIT_MP3         = 0x00000004,
-    MIX_INIT_OGG         = 0x00000008,
-    MIX_INIT_FLUIDSYNTH  = 0x00000010
+    MIX_INIT_MODPLUG     = 0x00000004,
+    MIX_INIT_MP3         = 0x00000008,
+    MIX_INIT_OGG         = 0x00000010,
+    MIX_INIT_FLUIDSYNTH  = 0x00000020
 } MIX_InitFlags;
 
 /* Loads dynamic libraries and prepares them for use.  Flags should be

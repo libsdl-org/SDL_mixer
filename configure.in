@@ -207,6 +207,9 @@ EXTRA_LDFLAGS="$EXTRA_LDFLAGS $SDL_LIBS"
 dnl Check for math library
 AC_CHECK_LIB(m, pow, [LIBM="-lm"])
 
+AC_CHECK_HEADERS([signal.h], [EXTRA_CFLAGS="$EXTRA_CFLAGS -DHAVE_SIGNAL_H"])
+AC_CHECK_FUNCS(setbuf, [EXTRA_CFLAGS="$EXTRA_CFLAGS -DHAVE_SETBUF"])
+
 dnl Check command-line options
 
 CheckVisibilityHidden
@@ -240,12 +243,60 @@ if test x$enable_music_wave = xyes; then
 fi
 
 AC_ARG_ENABLE([music-mod],
-AC_HELP_STRING([--enable-music-mod], [enable MOD music via mikmod [[default=yes]]]),
+AC_HELP_STRING([--enable-music-mod], [enable MOD music [[default=yes]]]),
               [], [enable_music_mod=yes])
-AC_ARG_ENABLE([music-mod-shared],
-AC_HELP_STRING([--enable-music-mod-shared], [dynamically load MOD support [[default=yes]]]),
-              [], [enable_music_mod_shared=yes])
-if test x$enable_music_mod = xyes; then
+
+AC_ARG_ENABLE([music-mod-modplug],
+AC_HELP_STRING([--enable-music-mod-modplug], [enable MOD music via modplug [[default=yes]]]),
+              [], [enable_music_mod_modplug=yes])
+AC_ARG_ENABLE([music-mod-modplug-shared],
+AC_HELP_STRING([--enable-music-mod-modplug-shared], [dynamically load modplug library [[default=yes]]]),
+              [], [enable_music_mod_modplug_shared=yes])
+if test x$enable_music_mod = xyes -a x$enable_music_mod_modplug = xyes; then
+    PKG_CHECK_MODULES([MODPLUG], [libmodplug >= 0.8.8], [dnl
+            have_libmodplug_hdr=yes
+            have_libmodplug_lib=yes
+        ], [dnl
+            AC_CHECK_HEADER([modplug.h], [have_libmodplug_hdr=yes])
+            AC_CHECK_LIB([modplug], [have_libmodplug_hdr=yes])
+        ])
+
+    if test x$have_libmodplug_hdr = xyes -a x$have_libmodplug_lib = xyes; then
+        have_libmodplug=yes
+        case "$host" in
+            *-*-darwin*)
+                modplug_lib=[`find_lib libmodplug.dylib`]
+                ;;
+            *-*-cygwin* | *-*-mingw32*)
+                modplug_lib=[`find_lib "libmodplug*.dll"`]
+                ;;
+            *)
+                modplug_lib=[`find_lib "libmodplug[0-9]*.so.*"`]
+                if test x$modplug_lib = x; then
+                    modplug_lib=[`find_lib "libmodplug.so.*"`]
+                fi
+                ;;
+        esac
+        SOURCES="$SOURCES $srcdir/*_modplug.c"
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMODPLUG_MUSIC $MODPLUG_CFLAGS"
+        if test x$enable_music_mod_modplug_shared = xyes && test x$modplug_lib != x; then
+            echo "-- dynamic libmodplug -> $modplug_lib"
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DMODPLUG_DYNAMIC=\\\"$modplug_lib\\\""
+        else
+	        EXTRA_LDFLAGS="$EXTRA_LDFLAGS $MODPLUG_LIBS"
+        fi
+    else
+        AC_MSG_WARN([*** Unable to find ModPlug library (http://modplug-xmms.sourceforge.net/)])
+    fi
+fi
+
+AC_ARG_ENABLE([music-mod-mikmod],
+AC_HELP_STRING([--enable-music-mod-mikmod], [enable MOD music via mikmod [[default=no]]]),
+              [], [enable_music_mod_mikmod=no])
+AC_ARG_ENABLE([music-mod-mikmod-shared],
+AC_HELP_STRING([--enable-music-mod-mikmod-shared], [dynamically load mikmod library [[default=yes]]]),
+              [], [enable_music_mod_mikmod_shared=yes])
+if test x$enable_music_mod = xyes -a x$enable_music_mod_mikmod = xyes; then
     have_libmikmod=no
     libmikmod_maj=3
     libmikmod_min=1
@@ -288,7 +339,7 @@ return 1;
                 mikmod_lib=[`find_lib "libmikmod*.dll"`]
                 ;;
             *)
-                mikmod_lib=[`find_lib "libmikmod[0-9].so.*"`]
+                mikmod_lib=[`find_lib "libmikmod[0-9]*.so.*"`]
                 if test x$mikmod_lib = x; then
                     mikmod_lib=[`find_lib "libmikmod.so.*"`]
                 fi
@@ -296,7 +347,7 @@ return 1;
         esac
         SOURCES="$SOURCES $srcdir/*_mod.c"
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMOD_MUSIC `$LIBMIKMOD_CONFIG --cflags`"
-        if test x$enable_music_mod_shared = xyes && test x$mikmod_lib != x; then
+        if test x$enable_music_mod_mikmod_shared = xyes && test x$mikmod_lib != x; then
             echo "-- dynamic libmikmod -> $mikmod_lib"
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DMOD_DYNAMIC=\\\"$mikmod_lib\\\""
         else
@@ -307,81 +358,64 @@ return 1;
     fi
 fi
 
-AC_ARG_ENABLE([music-mod-modplug],
-AC_HELP_STRING([--enable-music-mod-modplug], [enable MOD music via modplug [[default=no]]]),
-              [], [enable_music_mod_modplug=no])
-if test x$enable_music_mod_modplug = xyes; then
-	PKG_CHECK_MODULES([MODPLUG], [libmodplug >= 0.8.7])
-	EXTRA_CFLAGS="$EXTRA_CFLAGS -DMODPLUG_MUSIC  $MODPLUG_CFLAGS"
-	EXTRA_LDFLAGS="$EXTRA_LDFLAGS $MODPLUG_LIBS"
-dnl	AC_TRY_COMPILE([
-dnl     #include "modplug.h"
-dnl    ],[
-dnl    ],[
-    have_libmodplug=yes
-    SOURCES="$SOURCES $srcdir/music_modplug.c"
-dnl    ])
-else
-	have_libmodplug=no
-fi
-
-if test x$have_libmikmod != xyes -a x$have_libmodplug != xyes ; then
+if test x$have_libmodplug != xyes -a x$have_libmikmod != xyes ; then
 	AC_MSG_WARN([MOD support disabled])
 fi
 
 AC_ARG_ENABLE([music-midi],
-AC_HELP_STRING([--enable-music-midi], [enable MIDI music via timidity [[default=yes]]]),
+AC_HELP_STRING([--enable-music-midi], [enable MIDI music [[default=yes]]]),
               [], [enable_music_midi=yes])
 if test x$enable_music_midi = xyes; then
     EXTRA_CFLAGS="$EXTRA_CFLAGS -DMID_MUSIC"
-    AC_ARG_ENABLE([music-timidity-midi],
-AC_HELP_STRING([--enable-music-timidity-midi], [enable timidity MIDI output [[default=yes]]]),
-                  [], [enable_music_timidity_midi=yes])
-    if test x$enable_music_timidity_midi = xyes; then
+    AC_ARG_ENABLE([music-midi-timidity],
+AC_HELP_STRING([--enable-music-midi-timidity], [enable timidity MIDI output [[default=yes]]]),
+                  [], [enable_music_midi_timidity=yes])
+    if test x$enable_music_midi_timidity = xyes; then
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DUSE_TIMIDITY_MIDI -I\$(srcdir)/timidity"
         SOURCES="$SOURCES $srcdir/timidity/*.c"
     fi
-    AC_ARG_ENABLE([music-native-midi],
-AC_HELP_STRING([--enable-music-native-midi], [enable native MIDI music output [[default=yes]]]),
-                  [], [enable_music_native_midi=yes])
-    if test x$enable_music_native_midi = xyes; then
-        use_music_native_midi=no
+    AC_ARG_ENABLE([music-midi-native],
+AC_HELP_STRING([--enable-music-midi-native], [enable native MIDI music output [[default=yes]]]),
+                  [], [enable_music_midi_native=yes])
+    if test x$enable_music_midi_native = xyes; then
+        use_music_midi_native=no
         case "$host" in
             *mingw32ce*)
-                use_music_native_midi=no
+                use_music_midi_native=no
                 ;;
             *-*-cygwin* | *-*-mingw32*)
-                use_music_native_midi=yes
+                use_music_midi_native=yes
                 EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lwinmm"
                 ;;
             *-*-darwin*)
-                use_music_native_midi=yes
+                use_music_midi_native=yes
                 EXTRA_LDFLAGS="$EXTRA_LDFLAGS -Wl,-framework,AudioToolbox -Wl,-framework,AudioUnit -Wl,-framework,CoreServices"
                 ;;
             *-*-haiku*)
-                use_music_native_midi=yes_cpp
+                use_music_midi_native=yes_cpp
                 EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lmidi" 
                 ;;
         esac
-        if test x$use_music_native_midi = xyes; then
+        if test x$use_music_midi_native = xyes; then
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DUSE_NATIVE_MIDI -I\$(srcdir)/native_midi"
             SOURCES="$SOURCES $srcdir/native_midi/*.c"
-        elif test x$use_music_native_midi = xyes_cpp; then
+        elif test x$use_music_midi_native = xyes_cpp; then
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DUSE_NATIVE_MIDI -I\$(srcdir)/native_midi"
             SOURCES="$SOURCES $srcdir/native_midi/*.c"
             SOURCES_CXX="$SOURCES_CXX $srcdir/native_midi/*.cpp"
         fi
     fi
-    AC_ARG_ENABLE([music-fluidsynth-midi],
-AC_HELP_STRING([--enable-music-fluidsynth-midi], [enable FluidSynth MIDI output [[default=yes]]]),
-                  [], [enable_music_fluidsynth_midi=yes])
+    AC_ARG_ENABLE([music-midi-fluidsynth],
+AC_HELP_STRING([--enable-music-midi-fluidsynth], [enable FluidSynth MIDI output [[default=yes]]]),
+                  [], [enable_music_midi_fluidsynth=yes])
     AC_ARG_ENABLE([music-fluidsynth-shared],
-AC_HELP_STRING([--enable-music-fluidsynth-shared], [dynamically load FluidSynth support [[default=yes]]]),
-                  [], [enable_music_fluidsynth_shared=yes])
-    if test x$enable_music_fluidsynth_midi = xyes; then
+AC_HELP_STRING([--enable-music-midi-fluidsynth-shared], [dynamically load FluidSynth library [[default=yes]]]),
+                  [], [enable_music_midi_fluidsynth_shared=yes])
+    if test x$enable_music_midi_fluidsynth = xyes; then
         AC_CHECK_HEADER([fluidsynth.h], [have_fluidsynth_hdr=yes])
         AC_CHECK_LIB([fluidsynth], [fluid_player_add_mem], [have_fluidsynth_lib=yes])
         if test x$have_fluidsynth_hdr = xyes -a x$have_fluidsynth_lib = xyes; then
+            have_fluidsynth=yes
             case "$host" in
                 *-*-darwin*)
                     fluidsynth_lib=[`find_lib libfluidsynth.dylib`]
@@ -398,7 +432,7 @@ AC_HELP_STRING([--enable-music-fluidsynth-shared], [dynamically load FluidSynth 
             esac
             SOURCES="$SOURCES $srcdir/dynamic_fluidsynth.c $srcdir/fluidsynth.c"
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DUSE_FLUIDSYNTH_MIDI"
-            if test x$enable_music_fluidsynth_shared = xyes && test x$fluidsynth_lib != x; then
+            if test x$enable_music_midi_fluidsynth_shared = xyes && test x$fluidsynth_lib != x; then
                 echo "-- dynamic libfluidsyth -> $fluidsynth_lib"
                 EXTRA_CFLAGS="$EXTRA_CFLAGS -DFLUIDSYNTH_DYNAMIC=\\\"$fluidsynth_lib\\\""
             else
@@ -411,6 +445,12 @@ AC_HELP_STRING([--enable-music-fluidsynth-shared], [dynamically load FluidSynth 
     fi
 fi
 
+if test x$enable_music_midi_timidity != xyes -a \
+        x$use_music_midi_native != xyes -a x$use_music_midi_native != xyes_cpp -a \
+        x$have_fluidsynth != xyes; then
+	AC_MSG_WARN([MIDI support disabled])
+fi
+
 AC_ARG_ENABLE([music-ogg],
 AC_HELP_STRING([--enable-music-ogg], [enable Ogg Vorbis music [[default=yes]]]),
               [], [enable_music_ogg=yes])
@@ -418,7 +458,7 @@ AC_ARG_ENABLE(music-ogg-tremor,
 AC_HELP_STRING([--enable-music-ogg-tremor], [enable OGG Vorbis music via libtremor [[default=no]]]),
               [], enable_music_ogg_tremor=no)
 AC_ARG_ENABLE([music-ogg-shared],
-AC_HELP_STRING([--enable-music-ogg-shared], [dynamically load Ogg Vorbis support [[default=yes]]]),
+AC_HELP_STRING([--enable-music-ogg-shared], [dynamically load Ogg Vorbis library [[default=yes]]]),
               [], [enable_music_ogg_shared=yes])
 if test x$enable_music_ogg = xyes; then
     if test x$enable_music_ogg_tremor = xyes; then
@@ -490,7 +530,7 @@ AC_HELP_STRING([--enable-music-flac], [enable FLAC music [[default=yes]]]),
               [], [enable_music_flac=yes])
 AC_ARG_ENABLE([music-flac-shared],
 AC_HELP_STRING([--enable-music-flac-shared],
-              [dynamically load FLAC support [[default=yes]]]),
+              [dynamically load FLAC library [[default=yes]]]),
               [], [enable_music_flac_shared=yes])
 if test x$enable_music_flac = xyes; then
     AC_CHECK_HEADER([FLAC/export.h], [have_flac_export=yes])
@@ -544,16 +584,17 @@ if test x$enable_music_flac = xyes; then
     fi
 fi
 
-AC_CHECK_HEADERS([signal.h], [EXTRA_CFLAGS="$EXTRA_CFLAGS -DHAVE_SIGNAL_H"])
-AC_CHECK_FUNCS(setbuf, [EXTRA_CFLAGS="$EXTRA_CFLAGS -DHAVE_SETBUF"])
-
 AC_ARG_ENABLE(music-mp3,
-AC_HELP_STRING([--enable-music-mp3], [enable MP3 music via smpeg [[default=no]]]),
+AC_HELP_STRING([--enable-music-mp3], [enable MP3 music [[default=yes]]]),
               [], enable_music_mp3=yes)
-AC_ARG_ENABLE([music-mp3-shared],
-AC_HELP_STRING([--enable-music-mp3-shared], [dynamically load MP3 support [[default=yes]]]),
-              [], [enable_music_mp3_shared=yes])
-if test x$enable_music_mp3 = xyes; then
+
+AC_ARG_ENABLE(music-mp3-smpeg,
+AC_HELP_STRING([--enable-music-mp3-smpeg], [enable MP3 music via smpeg [[default=yes]]]),
+              [], enable_music_mp3_smpeg=yes)
+AC_ARG_ENABLE([music-mp3-smpeg-shared],
+AC_HELP_STRING([--enable-music-mp3-smpeg-shared], [dynamically load smpeg library [[default=yes]]]),
+              [], [enable_music_mp3_smpeg_shared=yes])
+if test x$enable_music_mp3 = xyes -a x$enable_music_mp3_smpeg = xyes; then
     SMPEG_VERSION=2.0.0
     AM_PATH_SMPEG2($SMPEG_VERSION, have_smpeg=yes, have_smpeg=no)
     if test x$have_smpeg = xyes; then
@@ -570,7 +611,7 @@ if test x$enable_music_mp3 = xyes; then
         esac
         SOURCES="$SOURCES $srcdir/*_mp3.c"
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMP3_MUSIC $SMPEG_CFLAGS"
-        if test x$enable_music_mp3_shared = xyes && test x$smpeg_lib != x; then
+        if test x$enable_music_mp3_smpeg_shared = xyes && test x$smpeg_lib != x; then
             echo "-- dynamic libsmpeg -> $smpeg_lib"
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DMP3_DYNAMIC=\\\"$smpeg_lib\\\""
         else
@@ -584,7 +625,7 @@ fi
 AC_ARG_ENABLE(music-mp3-mad-gpl,
 AC_HELP_STRING([--enable-music-mp3-mad-gpl], [enable MP3 music via libmad GPL code [[default=no]]]),
                   [], [enable_music_mp3_mad_gpl=no])
-if test x$enable_music_mp3_mad_gpl = xyes; then
+if test x$enable_music_mp3 = xyes -a x$enable_music_mp3_mad_gpl = xyes; then
     AC_MSG_CHECKING(for libmad headers)
     have_libmad=no
     AC_TRY_COMPILE([

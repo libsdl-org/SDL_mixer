@@ -1,5 +1,28 @@
+/*
+  SDL_mixer:  An audio mixer library based on the SDL library
+  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+*/
+
 #ifdef MODPLUG_MUSIC
 
+#include "SDL_mixer.h"
+#include "dynamic_modplug.h"
 #include "music_modplug.h"
 
 static int current_output_channels=0;
@@ -9,7 +32,11 @@ static ModPlug_Settings settings;
 
 int modplug_init(SDL_AudioSpec *spec)
 {
-    ModPlug_GetSettings(&settings);
+    if ( !Mix_Init(MIX_INIT_MODPLUG) ) {
+        return -1;
+    }
+
+    modplug.ModPlug_GetSettings(&settings);
     settings.mFlags=MODPLUG_ENABLE_OVERSAMPLING;
     current_output_channels=spec->channels;
     settings.mChannels=spec->channels>1?2:1;
@@ -59,7 +86,7 @@ int modplug_init(SDL_AudioSpec *spec)
     settings.mSurroundDepth=0;
     settings.mSurroundDelay=10;
     settings.mLoopCount=0;
-    ModPlug_SetSettings(&settings);
+    modplug.ModPlug_SetSettings(&settings);
     return 0;
 }
 
@@ -71,7 +98,7 @@ void modplug_exit()
 /* Set the volume for a modplug stream */
 void modplug_setvolume(modplug_data *music, int volume)
 {
-    ModPlug_SetMasterVolume(music->file, volume*4);
+    modplug.ModPlug_SetMasterVolume(music->file, volume*4);
 }
 
 /* Load a modplug stream from an SDL_RWops object */
@@ -81,6 +108,11 @@ modplug_data *modplug_new_RW(SDL_RWops *src, int freesrc)
     Sint64 offset;
     size_t sz;
     char *buf;
+
+    /* Make sure the modplug library is loaded */
+    if ( !Mix_Init(MIX_INIT_MODPLUG) ) {
+        return NULL;
+    }
 
     offset = SDL_RWtell(src);
     SDL_RWseek(src, 0, RW_SEEK_END);
@@ -92,7 +124,7 @@ modplug_data *modplug_new_RW(SDL_RWops *src, int freesrc)
             music = (modplug_data*)SDL_malloc(sizeof(modplug_data));
             if (music) {
                 music->playing = 0;
-                music->file = ModPlug_Load(buf, sz);
+                music->file = modplug.ModPlug_Load(buf, sz);
                 if (!music->file) {
                     SDL_free(music);
                     music = NULL;
@@ -114,7 +146,7 @@ modplug_data *modplug_new_RW(SDL_RWops *src, int freesrc)
 /* Start playback of a given modplug stream */
 void modplug_play(modplug_data *music)
 {
-    ModPlug_Seek(music->file,0);
+    modplug.ModPlug_Seek(music->file,0);
     music->playing=1;
 }
 
@@ -132,7 +164,7 @@ int modplug_playAudio(modplug_data *music, Uint8 *stream, int len)
         int i;
         Uint8 *src, *dst;
 
-        i=ModPlug_Read(music->file, stream, small_len);
+        i=modplug.ModPlug_Read(music->file, stream, small_len);
         if(i<small_len)
         {
             SDL_memset(stream+i,0,small_len-i);
@@ -179,7 +211,7 @@ int modplug_playAudio(modplug_data *music, Uint8 *stream, int len)
                 break;
         }
     } else {
-        int i=ModPlug_Read(music->file, stream, len);
+        int i=modplug.ModPlug_Read(music->file, stream, len);
         if(i<len)
         {
             SDL_memset(stream+i,0,len-i);
@@ -219,14 +251,14 @@ void modplug_stop(modplug_data *music)
 /* Close the given modplug stream */
 void modplug_delete(modplug_data *music)
 {
-    ModPlug_Unload(music->file);
+    modplug.ModPlug_Unload(music->file);
     SDL_free(music);
 }
 
 /* Jump (seek) to a given position (time is in seconds) */
 void modplug_jump_to_time(modplug_data *music, double time)
 {
-    ModPlug_Seek(music->file,(int)(time*1000));
+    modplug.ModPlug_Seek(music->file,(int)(time*1000));
 }
 
-#endif
+#endif /* MODPLUG_MUSIC */

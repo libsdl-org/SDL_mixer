@@ -10,17 +10,21 @@ export DEB_LDFLAGS_MAINT_APPEND = -Wl,--no-undefined -Wl,-Bsymbolic -Wl,--as-nee
 confflags = --enable-music-cmd
 
 # explicitly enable/disable all supported sound
-# MP3 support is disabled by default because SMPEG isn't updated for SDL 2.0 and libmad is GPL and not allowed to link with commercial closed-source programs
-confflags += --disable-music-mp3
+# For mp3 support, libmad disabled by default because it is GPL and not allowed to link with commercial closed-source programs
+# For mod support, modplug is the default because it is in the public domain and used across all platforms.
+confflags += --enable-music-mp3
+confflags += --enable-music-mp3-smpeg
 confflags += --disable-music-mp3-mad-gpl
 confflags += --enable-music-mod
-confflags += --enable-music-mod
+confflags += --enable-music-mod-modplug
+confflags += --disable-music-mod-mikmod
 confflags += --enable-music-ogg
 confflags += --enable-music-wave
 
 # MIDI: explicitly state that we use (an in-source copy of) timidity
-confflags += --enable-music-fluidsynth
-confflags += --enable-music-timidity-midi
+confflags += --enable-music-midi
+confflags += --enable-music-midi-fluidsynth
+confflags += --enable-music-midi-timidity
 
 # mafm 20111203: removed the "disable shared" support from previous versions, I
 # couldn't find any reason for it in the changelog
@@ -30,10 +34,11 @@ confflags += --enable-music-timidity-midi
 # SDL_LoadObject), and dpkg-shlibdeps doesn't seem to generate the needed
 # dependencies in the binary library package
 confflags += --disable-music-flac-shared
-confflags += --disable-music-fluidsynth-shared
-confflags += --disable-music-mod-shared
-confflags += --disable-music-mp3-shared
 confflags += --disable-music-ogg-shared
+confflags += --disable-music-mp3-smpeg-shared
+confflags += --disable-music-mod-mikmod-shared
+confflags += --disable-music-mod-modplug-shared
+confflags += --disable-music-fluidsynth-shared
 
 %:
 	dh $@ --with autoreconf --parallel

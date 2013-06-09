@@ -35,6 +35,7 @@
 #include "load_ogg.h"
 #include "load_flac.h"
 #include "dynamic_flac.h"
+#include "dynamic_modplug.h"
 #include "dynamic_mod.h"
 #include "dynamic_mp3.h"
 #include "dynamic_ogg.h"
@@ -166,13 +167,22 @@ int Mix_Init(int flags)
         Mix_SetError("Mixer not built with FLAC support");
 #endif
     }
+    if (flags & MIX_INIT_MODPLUG) {
+#ifdef MODPLUG_MUSIC
+        if ((initialized & MIX_INIT_MODPLUG) || Mix_InitModPlug() == 0) {
+            result |= MIX_INIT_MODPLUG;
+        }
+#else
+        Mix_SetError("Mixer not built with MOD modplug support");
+#endif
+    }
     if (flags & MIX_INIT_MOD) {
 #ifdef MOD_MUSIC
         if ((initialized & MIX_INIT_MOD) || Mix_InitMOD() == 0) {
             result |= MIX_INIT_MOD;
         }
 #else
-        Mix_SetError("Mixer not built with MOD support");
+        Mix_SetError("Mixer not built with MOD timidity support");
 #endif
     }
     if (flags & MIX_INIT_MP3) {
@@ -208,6 +218,11 @@ void Mix_Quit()
 #ifdef FLAC_MUSIC
     if (initialized & MIX_INIT_FLAC) {
         Mix_QuitFLAC();
+    }
+#endif
+#ifdef MODPLUG_MUSIC
+    if (initialized & MIX_INIT_MODPLUG) {
+        Mix_QuitModPlug();
     }
 #endif
 #ifdef MOD_MUSIC

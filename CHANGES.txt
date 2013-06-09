@@ -1,4 +1,6 @@
 2.0.0:
+Sam Lantinga - Sun Jun  9 14:45:30 PDT 2013
+ * Made libmodplug the default MOD player as it is now in the public domain
 Sam Lantinga - Sat Jun  1 19:11:08 PDT 2013
  * Updated for SDL 2.0 release
  * SDL_LoadMUS_RW() now takes an argument telling whether or not the data source should be freed when done.
