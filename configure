@@ -784,9 +784,9 @@ ac_aux_dir
 SMPEG_LIBS
 SMPEG_CFLAGS
 SMPEG_CONFIG
+LIBMIKMOD_CONFIG
 MODPLUG_LIBS
 MODPLUG_CFLAGS
-LIBMIKMOD_CONFIG
 SDL_CONFIG
 SDL_LIBS
 SDL_CFLAGS
@@ -898,12 +898,14 @@ enable_sdltest
 enable_music_cmd
 enable_music_wave
 enable_music_mod
-enable_music_mod_shared
 enable_music_mod_modplug
+enable_music_mod_modplug_shared
+enable_music_mod_mikmod
+enable_music_mod_mikmod_shared
 enable_music_midi
-enable_music_timidity_midi
-enable_music_native_midi
-enable_music_fluidsynth_midi
+enable_music_midi_timidity
+enable_music_midi_native
+enable_music_midi_fluidsynth
 enable_music_fluidsynth_shared
 enable_music_ogg
 enable_music_ogg_tremor
@@ -911,7 +913,8 @@ enable_music_ogg_shared
 enable_music_flac
 enable_music_flac_shared
 enable_music_mp3
-enable_music_mp3_shared
+enable_music_mp3_smpeg
+enable_music_mp3_smpeg_shared
 with_smpeg_prefix
 with_smpeg_exec_prefix
 enable_smpegtest
@@ -1552,31 +1555,37 @@ Optional Features:
   --disable-sdltest       Do not try to compile and run a test SDL program
   --enable-music-cmd      support an external music player [[default=yes]]
   --enable-music-wave     enable streaming WAVE music [[default=yes]]
-  --enable-music-mod      enable MOD music via mikmod [[default=yes]]
-  --enable-music-mod-shared
-                          dynamically load MOD support [[default=yes]]
+  --enable-music-mod      enable MOD music [[default=yes]]
   --enable-music-mod-modplug
-                          enable MOD music via modplug [[default=no]]
-  --enable-music-midi     enable MIDI music via timidity [[default=yes]]
-  --enable-music-timidity-midi
+                          enable MOD music via modplug [[default=yes]]
+  --enable-music-mod-modplug-shared
+                          dynamically load modplug library [[default=yes]]
+  --enable-music-mod-mikmod
+                          enable MOD music via mikmod [[default=no]]
+  --enable-music-mod-mikmod-shared
+                          dynamically load mikmod library [[default=yes]]
+  --enable-music-midi     enable MIDI music [[default=yes]]
+  --enable-music-midi-timidity
                           enable timidity MIDI output [[default=yes]]
-  --enable-music-native-midi
+  --enable-music-midi-native
                           enable native MIDI music output [[default=yes]]
-  --enable-music-fluidsynth-midi
+  --enable-music-midi-fluidsynth
                           enable FluidSynth MIDI output [[default=yes]]
-  --enable-music-fluidsynth-shared
-                          dynamically load FluidSynth support [[default=yes]]
+  --enable-music-midi-fluidsynth-shared
+                          dynamically load FluidSynth library [[default=yes]]
   --enable-music-ogg      enable Ogg Vorbis music [[default=yes]]
   --enable-music-ogg-tremor
                           enable OGG Vorbis music via libtremor [[default=no]]
   --enable-music-ogg-shared
-                          dynamically load Ogg Vorbis support [[default=yes]]
+                          dynamically load Ogg Vorbis library [[default=yes]]
   --enable-music-flac     enable FLAC music [[default=yes]]
   --enable-music-flac-shared
-                          dynamically load FLAC support [[default=yes]]
-  --enable-music-mp3      enable MP3 music via smpeg [[default=no]]
-  --enable-music-mp3-shared
-                          dynamically load MP3 support [[default=yes]]
+                          dynamically load FLAC library [[default=yes]]
+  --enable-music-mp3      enable MP3 music [[default=yes]]
+  --enable-music-mp3-smpeg
+                          enable MP3 music via smpeg [[default=yes]]
+  --enable-music-mp3-smpeg-shared
+                          dynamically load smpeg library [[default=yes]]
   --disable-smpegtest     Do not try to compile and run a test SMPEG program
   --enable-music-mp3-mad-gpl
                           enable MP3 music via libmad GPL code [[default=no]]
@@ -3912,13 +3921,13 @@ if ${lt_cv_nm_interface+:} false; then :
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:3915: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:3924: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:3918: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:3927: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:3921: output\"" >&5)
+  (eval echo "\"\$as_me:3930: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -5129,7 +5138,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 5132 "configure"' > conftest.$ac_ext
+  echo '#line 5141 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -6956,11 +6965,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:6959: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:6968: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:6963: \$? = $ac_status" >&5
+   echo "$as_me:6972: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7295,11 +7304,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7298: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7307: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7302: \$? = $ac_status" >&5
+   echo "$as_me:7311: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7400,11 +7409,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7403: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7412: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:7407: \$? = $ac_status" >&5
+   echo "$as_me:7416: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -7455,11 +7464,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7458: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7467: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:7462: \$? = $ac_status" >&5
+   echo "$as_me:7471: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -9824,7 +9833,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 9827 "configure"
+#line 9836 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -9920,7 +9929,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 9923 "configure"
+#line 9932 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -11650,6 +11659,30 @@ if test "x$ac_cv_lib_m_pow" = xyes; then :
 fi
 
 
+for ac_header in signal.h
+do :
+  ac_fn_c_check_header_mongrel "$LINENO" "signal.h" "ac_cv_header_signal_h" "$ac_includes_default"
+if test "x$ac_cv_header_signal_h" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_SIGNAL_H 1
+_ACEOF
+ EXTRA_CFLAGS="$EXTRA_CFLAGS -DHAVE_SIGNAL_H"
+fi
+
+done
+
+for ac_func in setbuf
+do :
+  ac_fn_c_check_func "$LINENO" "setbuf" "ac_cv_func_setbuf"
+if test "x$ac_cv_func_setbuf" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_SETBUF 1
+_ACEOF
+ EXTRA_CFLAGS="$EXTRA_CFLAGS -DHAVE_SETBUF"
+fi
+done
+
+
 
 CheckVisibilityHidden
 
@@ -11707,14 +11740,243 @@ else
   enable_music_mod=yes
 fi
 
-# Check whether --enable-music-mod-shared was given.
-if test "${enable_music_mod_shared+set}" = set; then :
-  enableval=$enable_music_mod_shared;
+
+# Check whether --enable-music-mod-modplug was given.
+if test "${enable_music_mod_modplug+set}" = set; then :
+  enableval=$enable_music_mod_modplug;
 else
-  enable_music_mod_shared=yes
+  enable_music_mod_modplug=yes
 fi
 
-if test x$enable_music_mod = xyes; then
+# Check whether --enable-music-mod-modplug-shared was given.
+if test "${enable_music_mod_modplug_shared+set}" = set; then :
+  enableval=$enable_music_mod_modplug_shared;
+else
+  enable_music_mod_modplug_shared=yes
+fi
+
+if test x$enable_music_mod = xyes -a x$enable_music_mod_modplug = xyes; then
+
+pkg_failed=no
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for MODPLUG" >&5
+$as_echo_n "checking for MODPLUG... " >&6; }
+
+if test -n "$PKG_CONFIG"; then
+    if test -n "$MODPLUG_CFLAGS"; then
+        pkg_cv_MODPLUG_CFLAGS="$MODPLUG_CFLAGS"
+    else
+        if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libmodplug >= 0.8.8\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "libmodplug >= 0.8.8") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_MODPLUG_CFLAGS=`$PKG_CONFIG --cflags "libmodplug >= 0.8.8" 2>/dev/null`
+else
+  pkg_failed=yes
+fi
+    fi
+else
+	pkg_failed=untried
+fi
+if test -n "$PKG_CONFIG"; then
+    if test -n "$MODPLUG_LIBS"; then
+        pkg_cv_MODPLUG_LIBS="$MODPLUG_LIBS"
+    else
+        if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libmodplug >= 0.8.8\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "libmodplug >= 0.8.8") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_MODPLUG_LIBS=`$PKG_CONFIG --libs "libmodplug >= 0.8.8" 2>/dev/null`
+else
+  pkg_failed=yes
+fi
+    fi
+else
+	pkg_failed=untried
+fi
+
+
+
+if test $pkg_failed = yes; then
+
+if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
+        _pkg_short_errors_supported=yes
+else
+        _pkg_short_errors_supported=no
+fi
+        if test $_pkg_short_errors_supported = yes; then
+	        MODPLUG_PKG_ERRORS=`$PKG_CONFIG --short-errors --errors-to-stdout --print-errors "libmodplug >= 0.8.8"`
+        else
+	        MODPLUG_PKG_ERRORS=`$PKG_CONFIG --errors-to-stdout --print-errors "libmodplug >= 0.8.8"`
+        fi
+	# Put the nasty error message in config.log where it belongs
+	echo "$MODPLUG_PKG_ERRORS" >&5
+
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+                            ac_fn_c_check_header_mongrel "$LINENO" "modplug.h" "ac_cv_header_modplug_h" "$ac_includes_default"
+if test "x$ac_cv_header_modplug_h" = xyes; then :
+  have_libmodplug_hdr=yes
+fi
+
+
+            { $as_echo "$as_me:${as_lineno-$LINENO}: checking for have_libmodplug_hdr=yes in -lmodplug" >&5
+$as_echo_n "checking for have_libmodplug_hdr=yes in -lmodplug... " >&6; }
+if ${ac_cv_lib_modplug_have_libmodplug_hdr_yes+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lmodplug  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char have_libmodplug_hdr=yes ();
+int
+main ()
+{
+return have_libmodplug_hdr=yes ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_modplug_have_libmodplug_hdr_yes=yes
+else
+  ac_cv_lib_modplug_have_libmodplug_hdr_yes=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_modplug_have_libmodplug_hdr_yes" >&5
+$as_echo "$ac_cv_lib_modplug_have_libmodplug_hdr_yes" >&6; }
+if test "x$ac_cv_lib_modplug_have_libmodplug_hdr_yes" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBMODPLUG 1
+_ACEOF
+
+  LIBS="-lmodplug $LIBS"
+
+fi
+
+
+elif test $pkg_failed = untried; then
+	            ac_fn_c_check_header_mongrel "$LINENO" "modplug.h" "ac_cv_header_modplug_h" "$ac_includes_default"
+if test "x$ac_cv_header_modplug_h" = xyes; then :
+  have_libmodplug_hdr=yes
+fi
+
+
+            { $as_echo "$as_me:${as_lineno-$LINENO}: checking for have_libmodplug_hdr=yes in -lmodplug" >&5
+$as_echo_n "checking for have_libmodplug_hdr=yes in -lmodplug... " >&6; }
+if ${ac_cv_lib_modplug_have_libmodplug_hdr_yes+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lmodplug  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char have_libmodplug_hdr=yes ();
+int
+main ()
+{
+return have_libmodplug_hdr=yes ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_modplug_have_libmodplug_hdr_yes=yes
+else
+  ac_cv_lib_modplug_have_libmodplug_hdr_yes=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_modplug_have_libmodplug_hdr_yes" >&5
+$as_echo "$ac_cv_lib_modplug_have_libmodplug_hdr_yes" >&6; }
+if test "x$ac_cv_lib_modplug_have_libmodplug_hdr_yes" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBMODPLUG 1
+_ACEOF
+
+  LIBS="-lmodplug $LIBS"
+
+fi
+
+
+else
+	MODPLUG_CFLAGS=$pkg_cv_MODPLUG_CFLAGS
+	MODPLUG_LIBS=$pkg_cv_MODPLUG_LIBS
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+	            have_libmodplug_hdr=yes
+            have_libmodplug_lib=yes
+
+fi
+
+    if test x$have_libmodplug_hdr = xyes -a x$have_libmodplug_lib = xyes; then
+        have_libmodplug=yes
+        case "$host" in
+            *-*-darwin*)
+                modplug_lib=`find_lib libmodplug.dylib`
+                ;;
+            *-*-cygwin* | *-*-mingw32*)
+                modplug_lib=`find_lib "libmodplug*.dll"`
+                ;;
+            *)
+                modplug_lib=`find_lib "libmodplug[0-9]*.so.*"`
+                if test x$modplug_lib = x; then
+                    modplug_lib=`find_lib "libmodplug.so.*"`
+                fi
+                ;;
+        esac
+        SOURCES="$SOURCES $srcdir/*_modplug.c"
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMODPLUG_MUSIC $MODPLUG_CFLAGS"
+        if test x$enable_music_mod_modplug_shared = xyes && test x$modplug_lib != x; then
+            echo "-- dynamic libmodplug -> $modplug_lib"
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DMODPLUG_DYNAMIC=\\\"$modplug_lib\\\""
+        else
+	        EXTRA_LDFLAGS="$EXTRA_LDFLAGS $MODPLUG_LIBS"
+        fi
+    else
+        { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: *** Unable to find ModPlug library (http://modplug-xmms.sourceforge.net/)" >&5
+$as_echo "$as_me: WARNING: *** Unable to find ModPlug library (http://modplug-xmms.sourceforge.net/)" >&2;}
+    fi
+fi
+
+# Check whether --enable-music-mod-mikmod was given.
+if test "${enable_music_mod_mikmod+set}" = set; then :
+  enableval=$enable_music_mod_mikmod;
+else
+  enable_music_mod_mikmod=no
+fi
+
+# Check whether --enable-music-mod-mikmod-shared was given.
+if test "${enable_music_mod_mikmod_shared+set}" = set; then :
+  enableval=$enable_music_mod_mikmod_shared;
+else
+  enable_music_mod_mikmod_shared=yes
+fi
+
+if test x$enable_music_mod = xyes -a x$enable_music_mod_mikmod = xyes; then
     have_libmikmod=no
     libmikmod_maj=3
     libmikmod_min=1
@@ -11812,7 +12074,7 @@ fi
                 mikmod_lib=`find_lib "libmikmod*.dll"`
                 ;;
             *)
-                mikmod_lib=`find_lib "libmikmod[0-9].so.*"`
+                mikmod_lib=`find_lib "libmikmod[0-9]*.so.*"`
                 if test x$mikmod_lib = x; then
                     mikmod_lib=`find_lib "libmikmod.so.*"`
                 fi
@@ -11820,7 +12082,7 @@ fi
         esac
         SOURCES="$SOURCES $srcdir/*_mod.c"
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMOD_MUSIC `$LIBMIKMOD_CONFIG --cflags`"
-        if test x$enable_music_mod_shared = xyes && test x$mikmod_lib != x; then
+        if test x$enable_music_mod_mikmod_shared = xyes && test x$mikmod_lib != x; then
             echo "-- dynamic libmikmod -> $mikmod_lib"
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DMOD_DYNAMIC=\\\"$mikmod_lib\\\""
         else
@@ -11832,113 +12094,7 @@ $as_echo "$as_me: WARNING: *** Unable to find MikMod library (http://mikmod.raph
     fi
 fi
 
-# Check whether --enable-music-mod-modplug was given.
-if test "${enable_music_mod_modplug+set}" = set; then :
-  enableval=$enable_music_mod_modplug;
-else
-  enable_music_mod_modplug=no
-fi
-
-if test x$enable_music_mod_modplug = xyes; then
-
-pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for MODPLUG" >&5
-$as_echo_n "checking for MODPLUG... " >&6; }
-
-if test -n "$PKG_CONFIG"; then
-    if test -n "$MODPLUG_CFLAGS"; then
-        pkg_cv_MODPLUG_CFLAGS="$MODPLUG_CFLAGS"
-    else
-        if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libmodplug >= 0.8.7\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "libmodplug >= 0.8.7") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_MODPLUG_CFLAGS=`$PKG_CONFIG --cflags "libmodplug >= 0.8.7" 2>/dev/null`
-else
-  pkg_failed=yes
-fi
-    fi
-else
-	pkg_failed=untried
-fi
-if test -n "$PKG_CONFIG"; then
-    if test -n "$MODPLUG_LIBS"; then
-        pkg_cv_MODPLUG_LIBS="$MODPLUG_LIBS"
-    else
-        if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libmodplug >= 0.8.7\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "libmodplug >= 0.8.7") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_MODPLUG_LIBS=`$PKG_CONFIG --libs "libmodplug >= 0.8.7" 2>/dev/null`
-else
-  pkg_failed=yes
-fi
-    fi
-else
-	pkg_failed=untried
-fi
-
-
-
-if test $pkg_failed = yes; then
-
-if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
-        _pkg_short_errors_supported=yes
-else
-        _pkg_short_errors_supported=no
-fi
-        if test $_pkg_short_errors_supported = yes; then
-	        MODPLUG_PKG_ERRORS=`$PKG_CONFIG --short-errors --errors-to-stdout --print-errors "libmodplug >= 0.8.7"`
-        else
-	        MODPLUG_PKG_ERRORS=`$PKG_CONFIG --errors-to-stdout --print-errors "libmodplug >= 0.8.7"`
-        fi
-	# Put the nasty error message in config.log where it belongs
-	echo "$MODPLUG_PKG_ERRORS" >&5
-
-	as_fn_error $? "Package requirements (libmodplug >= 0.8.7) were not met:
-
-$MODPLUG_PKG_ERRORS
-
-Consider adjusting the PKG_CONFIG_PATH environment variable if you
-installed software in a non-standard prefix.
-
-Alternatively, you may set the environment variables MODPLUG_CFLAGS
-and MODPLUG_LIBS to avoid the need to call pkg-config.
-See the pkg-config man page for more details.
-" "$LINENO" 5
-elif test $pkg_failed = untried; then
-	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
-$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error $? "The pkg-config script could not be found or is too old.  Make sure it
-is in your PATH or set the PKG_CONFIG environment variable to the full
-path to pkg-config.
-
-Alternatively, you may set the environment variables MODPLUG_CFLAGS
-and MODPLUG_LIBS to avoid the need to call pkg-config.
-See the pkg-config man page for more details.
-
-To get pkg-config, see <http://pkg-config.freedesktop.org/>.
-See \`config.log' for more details" "$LINENO" 5; }
-else
-	MODPLUG_CFLAGS=$pkg_cv_MODPLUG_CFLAGS
-	MODPLUG_LIBS=$pkg_cv_MODPLUG_LIBS
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-	:
-fi
-	EXTRA_CFLAGS="$EXTRA_CFLAGS -DMODPLUG_MUSIC  $MODPLUG_CFLAGS"
-	EXTRA_LDFLAGS="$EXTRA_LDFLAGS $MODPLUG_LIBS"
-    have_libmodplug=yes
-    SOURCES="$SOURCES $srcdir/music_modplug.c"
-else
-	have_libmodplug=no
-fi
-
-if test x$have_libmikmod != xyes -a x$have_libmodplug != xyes ; then
+if test x$have_libmodplug != xyes -a x$have_libmikmod != xyes ; then
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: MOD support disabled" >&5
 $as_echo "$as_me: WARNING: MOD support disabled" >&2;}
 fi
@@ -11952,67 +12108,67 @@ fi
 
 if test x$enable_music_midi = xyes; then
     EXTRA_CFLAGS="$EXTRA_CFLAGS -DMID_MUSIC"
-    # Check whether --enable-music-timidity-midi was given.
-if test "${enable_music_timidity_midi+set}" = set; then :
-  enableval=$enable_music_timidity_midi;
+    # Check whether --enable-music-midi-timidity was given.
+if test "${enable_music_midi_timidity+set}" = set; then :
+  enableval=$enable_music_midi_timidity;
 else
-  enable_music_timidity_midi=yes
+  enable_music_midi_timidity=yes
 fi
 
-    if test x$enable_music_timidity_midi = xyes; then
+    if test x$enable_music_midi_timidity = xyes; then
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DUSE_TIMIDITY_MIDI -I\$(srcdir)/timidity"
         SOURCES="$SOURCES $srcdir/timidity/*.c"
     fi
-    # Check whether --enable-music-native-midi was given.
-if test "${enable_music_native_midi+set}" = set; then :
-  enableval=$enable_music_native_midi;
+    # Check whether --enable-music-midi-native was given.
+if test "${enable_music_midi_native+set}" = set; then :
+  enableval=$enable_music_midi_native;
 else
-  enable_music_native_midi=yes
+  enable_music_midi_native=yes
 fi
 
-    if test x$enable_music_native_midi = xyes; then
-        use_music_native_midi=no
+    if test x$enable_music_midi_native = xyes; then
+        use_music_midi_native=no
         case "$host" in
             *mingw32ce*)
-                use_music_native_midi=no
+                use_music_midi_native=no
                 ;;
             *-*-cygwin* | *-*-mingw32*)
-                use_music_native_midi=yes
+                use_music_midi_native=yes
                 EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lwinmm"
                 ;;
             *-*-darwin*)
-                use_music_native_midi=yes
+                use_music_midi_native=yes
                 EXTRA_LDFLAGS="$EXTRA_LDFLAGS -Wl,-framework,AudioToolbox -Wl,-framework,AudioUnit -Wl,-framework,CoreServices"
                 ;;
             *-*-haiku*)
-                use_music_native_midi=yes_cpp
+                use_music_midi_native=yes_cpp
                 EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lmidi"
                 ;;
         esac
-        if test x$use_music_native_midi = xyes; then
+        if test x$use_music_midi_native = xyes; then
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DUSE_NATIVE_MIDI -I\$(srcdir)/native_midi"
             SOURCES="$SOURCES $srcdir/native_midi/*.c"
-        elif test x$use_music_native_midi = xyes_cpp; then
+        elif test x$use_music_midi_native = xyes_cpp; then
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DUSE_NATIVE_MIDI -I\$(srcdir)/native_midi"
             SOURCES="$SOURCES $srcdir/native_midi/*.c"
             SOURCES_CXX="$SOURCES_CXX $srcdir/native_midi/*.cpp"
         fi
     fi
-    # Check whether --enable-music-fluidsynth-midi was given.
-if test "${enable_music_fluidsynth_midi+set}" = set; then :
-  enableval=$enable_music_fluidsynth_midi;
+    # Check whether --enable-music-midi-fluidsynth was given.
+if test "${enable_music_midi_fluidsynth+set}" = set; then :
+  enableval=$enable_music_midi_fluidsynth;
 else
-  enable_music_fluidsynth_midi=yes
+  enable_music_midi_fluidsynth=yes
 fi
 
     # Check whether --enable-music-fluidsynth-shared was given.
 if test "${enable_music_fluidsynth_shared+set}" = set; then :
   enableval=$enable_music_fluidsynth_shared;
 else
-  enable_music_fluidsynth_shared=yes
+  enable_music_midi_fluidsynth_shared=yes
 fi
 
-    if test x$enable_music_fluidsynth_midi = xyes; then
+    if test x$enable_music_midi_fluidsynth = xyes; then
         ac_fn_c_check_header_mongrel "$LINENO" "fluidsynth.h" "ac_cv_header_fluidsynth_h" "$ac_includes_default"
 if test "x$ac_cv_header_fluidsynth_h" = xyes; then :
   have_fluidsynth_hdr=yes
@@ -12060,6 +12216,7 @@ if test "x$ac_cv_lib_fluidsynth_fluid_player_add_mem" = xyes; then :
 fi
 
         if test x$have_fluidsynth_hdr = xyes -a x$have_fluidsynth_lib = xyes; then
+            have_fluidsynth=yes
             case "$host" in
                 *-*-darwin*)
                     fluidsynth_lib=`find_lib libfluidsynth.dylib`
@@ -12076,7 +12233,7 @@ fi
             esac
             SOURCES="$SOURCES $srcdir/dynamic_fluidsynth.c $srcdir/fluidsynth.c"
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DUSE_FLUIDSYNTH_MIDI"
-            if test x$enable_music_fluidsynth_shared = xyes && test x$fluidsynth_lib != x; then
+            if test x$enable_music_midi_fluidsynth_shared = xyes && test x$fluidsynth_lib != x; then
                 echo "-- dynamic libfluidsyth -> $fluidsynth_lib"
                 EXTRA_CFLAGS="$EXTRA_CFLAGS -DFLUIDSYNTH_DYNAMIC=\\\"$fluidsynth_lib\\\""
             else
@@ -12089,6 +12246,13 @@ $as_echo "$as_me: WARNING: *** Unable to find FluidSynth library (http://www.flu
 $as_echo "$as_me: WARNING: FluidSynth support disabled" >&2;}
         fi
     fi
+fi
+
+if test x$enable_music_midi_timidity != xyes -a \
+        x$use_music_midi_native != xyes -a x$use_music_midi_native != xyes_cpp -a \
+        x$have_fluidsynth != xyes; then
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: MIDI support disabled" >&5
+$as_echo "$as_me: WARNING: MIDI support disabled" >&2;}
 fi
 
 # Check whether --enable-music-ogg was given.
@@ -12408,30 +12572,6 @@ $as_echo "$as_me: WARNING: FLAC support disabled" >&2;}
     fi
 fi
 
-for ac_header in signal.h
-do :
-  ac_fn_c_check_header_mongrel "$LINENO" "signal.h" "ac_cv_header_signal_h" "$ac_includes_default"
-if test "x$ac_cv_header_signal_h" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_SIGNAL_H 1
-_ACEOF
- EXTRA_CFLAGS="$EXTRA_CFLAGS -DHAVE_SIGNAL_H"
-fi
-
-done
-
-for ac_func in setbuf
-do :
-  ac_fn_c_check_func "$LINENO" "setbuf" "ac_cv_func_setbuf"
-if test "x$ac_cv_func_setbuf" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_SETBUF 1
-_ACEOF
- EXTRA_CFLAGS="$EXTRA_CFLAGS -DHAVE_SETBUF"
-fi
-done
-
-
 # Check whether --enable-music-mp3 was given.
 if test "${enable_music_mp3+set}" = set; then :
   enableval=$enable_music_mp3;
@@ -12439,14 +12579,22 @@ else
   enable_music_mp3=yes
 fi
 
-# Check whether --enable-music-mp3-shared was given.
-if test "${enable_music_mp3_shared+set}" = set; then :
-  enableval=$enable_music_mp3_shared;
+
+# Check whether --enable-music-mp3-smpeg was given.
+if test "${enable_music_mp3_smpeg+set}" = set; then :
+  enableval=$enable_music_mp3_smpeg;
 else
-  enable_music_mp3_shared=yes
+  enable_music_mp3_smpeg=yes
 fi
 
-if test x$enable_music_mp3 = xyes; then
+# Check whether --enable-music-mp3-smpeg-shared was given.
+if test "${enable_music_mp3_smpeg_shared+set}" = set; then :
+  enableval=$enable_music_mp3_smpeg_shared;
+else
+  enable_music_mp3_smpeg_shared=yes
+fi
+
+if test x$enable_music_mp3 = xyes -a x$enable_music_mp3_smpeg = xyes; then
     SMPEG_VERSION=2.0.0
 
 # Check whether --with-smpeg-prefix was given.
@@ -12702,7 +12850,7 @@ rm -f core conftest.err conftest.$ac_objext \
         esac
         SOURCES="$SOURCES $srcdir/*_mp3.c"
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMP3_MUSIC $SMPEG_CFLAGS"
-        if test x$enable_music_mp3_shared = xyes && test x$smpeg_lib != x; then
+        if test x$enable_music_mp3_smpeg_shared = xyes && test x$smpeg_lib != x; then
             echo "-- dynamic libsmpeg -> $smpeg_lib"
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DMP3_DYNAMIC=\\\"$smpeg_lib\\\""
         else
@@ -12721,7 +12869,7 @@ else
   enable_music_mp3_mad_gpl=no
 fi
 
-if test x$enable_music_mp3_mad_gpl = xyes; then
+if test x$enable_music_mp3 = xyes -a x$enable_music_mp3_mad_gpl = xyes; then
     { $as_echo "$as_me:${as_lineno-$LINENO}: checking for libmad headers" >&5
 $as_echo_n "checking for libmad headers... " >&6; }
     have_libmad=no

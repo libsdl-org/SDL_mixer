@@ -53,7 +53,7 @@
 				AdditionalOptions="/D OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\timidity;..\native_midi;external\include"
-				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WAV_MUSIC;MOD_MUSIC;MOD_DYNAMIC=\&quot;libmikmod-2.dll\&quot;;OGG_MUSIC;OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;;FLAC_MUSIC;FLAC_DYNAMIC=\&quot;libFLAC-8.dll\&quot;;MP3_MUSIC;MP3_DYNAMIC=\&quot;smpeg2.dll\&quot;;MID_MUSIC;USE_TIMIDITY_MIDI;USE_NATIVE_MIDI"
+				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WAV_MUSIC;MODPLUG_MUSIC;MODPLUG_DYNAMIC=\&quot;libmodplug-1.dll\&quot;;OGG_MUSIC;OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;;FLAC_MUSIC;FLAC_DYNAMIC=\&quot;libFLAC-8.dll\&quot;;MP3_MUSIC;MP3_DYNAMIC=\&quot;smpeg2.dll\&quot;;MID_MUSIC;USE_TIMIDITY_MIDI;USE_NATIVE_MIDI"
 				MinimalRebuild="true"
 				RuntimeLibrary="2"
 				PrecompiledHeaderFile=".\Debug/SDL2_mixer.pch"
@@ -140,7 +140,7 @@
 				AdditionalOptions="/D OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\timidity;..\native_midi;external\include"
-				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WAV_MUSIC;MOD_MUSIC;MOD_DYNAMIC=\&quot;libmikmod-2.dll\&quot;;OGG_MUSIC;OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;;FLAC_MUSIC;FLAC_DYNAMIC=\&quot;libFLAC-8.dll\&quot;;MP3_MUSIC;MP3_DYNAMIC=\&quot;smpeg2.dll\&quot;;MID_MUSIC;USE_TIMIDITY_MIDI;USE_NATIVE_MIDI"
+				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WAV_MUSIC;MODPLUG_MUSIC;MODPLUG_DYNAMIC=\&quot;libmodplug-1.dll\&quot;;OGG_MUSIC;OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;;FLAC_MUSIC;FLAC_DYNAMIC=\&quot;libFLAC-8.dll\&quot;;MP3_MUSIC;MP3_DYNAMIC=\&quot;smpeg2.dll\&quot;;MID_MUSIC;USE_TIMIDITY_MIDI;USE_NATIVE_MIDI"
 				MinimalRebuild="true"
 				RuntimeLibrary="2"
 				PrecompiledHeaderFile=".\Debug/SDL2_mixer.pch"
@@ -228,7 +228,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="..\timidity;..\native_midi;external\include"
-				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WAV_MUSIC;MOD_MUSIC;MOD_DYNAMIC=\&quot;libmikmod-2.dll\&quot;;OGG_MUSIC;OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;;FLAC_MUSIC;FLAC_DYNAMIC=\&quot;libFLAC-8.dll\&quot;;MP3_MUSIC;MP3_DYNAMIC=\&quot;smpeg2.dll\&quot;;MID_MUSIC;USE_TIMIDITY_MIDI;USE_NATIVE_MIDI"
+				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WAV_MUSIC;MODPLUG_MUSIC;MODPLUG_DYNAMIC=\&quot;libmodplug-1.dll\&quot;;OGG_MUSIC;OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;;FLAC_MUSIC;FLAC_DYNAMIC=\&quot;libFLAC-8.dll\&quot;;MP3_MUSIC;MP3_DYNAMIC=\&quot;smpeg2.dll\&quot;;MID_MUSIC;USE_TIMIDITY_MIDI;USE_NATIVE_MIDI"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -314,7 +314,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="..\timidity;..\native_midi;external\include"
-				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WAV_MUSIC;MOD_MUSIC;MOD_DYNAMIC=\&quot;libmikmod-2.dll\&quot;;OGG_MUSIC;OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;;FLAC_MUSIC;FLAC_DYNAMIC=\&quot;libFLAC-8.dll\&quot;;MP3_MUSIC;MP3_DYNAMIC=\&quot;smpeg2.dll\&quot;;MID_MUSIC;USE_TIMIDITY_MIDI;USE_NATIVE_MIDI"
+				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WAV_MUSIC;MODPLUG_MUSIC;MODPLUG_DYNAMIC=\&quot;libmodplug-1.dll\&quot;;OGG_MUSIC;OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;;FLAC_MUSIC;FLAC_DYNAMIC=\&quot;libFLAC-8.dll\&quot;;MP3_MUSIC;MP3_DYNAMIC=\&quot;smpeg2.dll\&quot;;MID_MUSIC;USE_TIMIDITY_MIDI;USE_NATIVE_MIDI"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -390,6 +390,14 @@
 		</File>
 		<File
 			RelativePath="..\dynamic_mod.h"
+			>
+		</File>
+		<File
+			RelativePath="..\dynamic_modplug.c"
+			>
+		</File>
+		<File
+			RelativePath="..\dynamic_modplug.h"
 			>
 		</File>
 		<File
@@ -898,6 +906,14 @@
 		</File>
 		<File
 			RelativePath="..\music_mod.h"
+			>
+		</File>
+		<File
+			RelativePath="..\music_modplug.c"
+			>
+		</File>
+		<File
+			RelativePath="..\music_modplug.h"
 			>
 		</File>
 		<File
