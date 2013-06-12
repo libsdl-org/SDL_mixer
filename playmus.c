@@ -19,6 +19,9 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
+/* Quiet windows compiler warnings */
+#define _CRT_SECURE_NO_WARNINGS
+
 /* $Id$ */
 
 #include <stdlib.h>

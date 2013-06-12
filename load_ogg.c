@@ -43,24 +43,24 @@ static size_t sdl_read_func(void *ptr, size_t size, size_t nmemb, void *datasour
     return SDL_RWread((SDL_RWops*)datasource, ptr, size, nmemb);
 }
 
-static int sdl_seek_func(void *datasource, ogg_int64_t offset, int whence)
+static Sint64 sdl_seek_func(void *datasource, ogg_int64_t offset, int whence)
 {
-    return (int)SDL_RWseek((SDL_RWops*)datasource, (int)offset, whence);
+    return SDL_RWseek((SDL_RWops*)datasource, offset, whence);
 }
 
-static int sdl_close_func_freesrc(void *datasource)
+static Sint64 sdl_close_func_freesrc(void *datasource)
 {
     return SDL_RWclose((SDL_RWops*)datasource);
 }
 
-static int sdl_close_func_nofreesrc(void *datasource)
+static Sint64 sdl_close_func_nofreesrc(void *datasource)
 {
-    return (int)SDL_RWseek((SDL_RWops*)datasource, 0, RW_SEEK_SET);
+    return SDL_RWseek((SDL_RWops*)datasource, 0, RW_SEEK_SET);
 }
 
-static long sdl_tell_func(void *datasource)
+static Sint64 sdl_tell_func(void *datasource)
 {
-    return (long)SDL_RWtell((SDL_RWops*)datasource);
+    return SDL_RWtell((SDL_RWops*)datasource);
 }
 
 
@@ -113,7 +113,7 @@ SDL_AudioSpec *Mix_LoadOGG_RW (SDL_RWops *src, int freesrc,
     samples = (long)vorbis.ov_pcm_total(&vf, -1);
 
     *audio_len = spec->size = samples * spec->channels * 2;
-    *audio_buf = SDL_malloc(*audio_len);
+    *audio_buf = (Uint8 *)SDL_malloc(*audio_len);
     if (*audio_buf == NULL)
         goto done;
 
