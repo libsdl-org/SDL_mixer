@@ -184,7 +184,7 @@ int WAVStream_PlaySome(Uint8 *stream, int len)
             }
             if ( (music->stop - pos) < original_len ) {
                 left = (original_len - (music->stop - pos));
-                original_len -= left;
+                original_len -= (int)left;
                 left = (int)((double)left*music->cvt.len_ratio);
             }
             original_len = SDL_RWread(music->src, music->cvt.buf,1,original_len);
@@ -204,7 +204,7 @@ int WAVStream_PlaySome(Uint8 *stream, int len)
             Uint8 *data;
             if ( (music->stop - pos) < len ) {
                 left = (len - (music->stop - pos));
-                len -= left;
+                len -= (int)left;
             }
             data = SDL_stack_alloc(Uint8, len);
             if (data)
@@ -215,7 +215,7 @@ int WAVStream_PlaySome(Uint8 *stream, int len)
             }
         }
     }
-    return left;
+    return (int)left;
 }
 
 /* Stop playback of a stream previously started with WAVStream_Start() */
@@ -343,14 +343,14 @@ static SDL_RWops *LoadWAVStream (SDL_RWops *src, SDL_AudioSpec *spec,
     /* Set the file offset to the DATA chunk data */
     chunk.data = NULL;
     do {
-        *start = SDL_RWtell(src) + 2*sizeof(Uint32);
+        *start = (long)SDL_RWtell(src) + 2*sizeof(Uint32);
         lenread = ReadChunk(src, &chunk, 0);
         if ( lenread < 0 ) {
             was_error = 1;
             goto done;
         }
     } while ( chunk.magic != DATA );
-    *stop = SDL_RWtell(src);
+    *stop = (long)SDL_RWtell(src);
 
 done:
     if ( format != NULL ) {
@@ -446,7 +446,7 @@ static SDL_RWops *LoadAIFFStream (SDL_RWops *src, SDL_AudioSpec *spec,
             found_SSND      = 1;
             offset      = SDL_ReadBE32(src);
             blocksize       = SDL_ReadBE32(src);
-            *start      = SDL_RWtell(src) + offset;
+            *start      = (long)SDL_RWtell(src) + offset;
             break;
 
         case COMM:

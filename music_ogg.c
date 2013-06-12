@@ -56,14 +56,14 @@ static size_t sdl_read_func(void *ptr, size_t size, size_t nmemb, void *datasour
     return SDL_RWread((SDL_RWops*)datasource, ptr, size, nmemb);
 }
 
-static int sdl_seek_func(void *datasource, ogg_int64_t offset, int whence)
+static Sint64 sdl_seek_func(void *datasource, ogg_int64_t offset, int whence)
 {
-    return (int)SDL_RWseek((SDL_RWops*)datasource, (int)offset, whence);
+    return SDL_RWseek((SDL_RWops*)datasource, offset, whence);
 }
 
-static long sdl_tell_func(void *datasource)
+static Sint64 sdl_tell_func(void *datasource)
 {
-    return (long)SDL_RWtell((SDL_RWops*)datasource);
+    return SDL_RWtell((SDL_RWops*)datasource);
 }
 
 /* Load an OGG stream from an SDL_RWops object */

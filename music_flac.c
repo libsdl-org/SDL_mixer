@@ -399,7 +399,7 @@ static void FLAC_getsome(FLAC_music *music)
         if (music->flac_data.overflow) {
             size_t overflow_len = music->flac_data.overflow_read;
 
-            if (overflow_len > music->flac_data.max_to_read) {
+            if (overflow_len > (size_t)music->flac_data.max_to_read) {
                 size_t overflow_extra_len = overflow_len -
                                                 music->flac_data.max_to_read;
 

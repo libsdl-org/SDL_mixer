@@ -70,6 +70,7 @@ int Mix_InitModPlug()
 
     return 0;
 }
+
 void Mix_QuitModPlug()
 {
     if ( modplug.loaded == 0 ) {
