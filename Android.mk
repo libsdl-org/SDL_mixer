@@ -26,7 +26,7 @@ OGG_LIBRARY_PATH := external/libogg-1.3.1
 VORBIS_LIBRARY_PATH := external/libvorbisidec-1.2.1
 
 
-LOCAL_C_INCLUDES := $(NDK_PROJECT_PATH)/jni/SDL/include
+LOCAL_C_INCLUDES := $(LOCAL_PATH)
 LOCAL_CFLAGS := -DWAV_MUSIC
 
 LOCAL_SRC_FILES := $(notdir $(filter-out %/playmus.c %/playwave.c, $(wildcard $(LOCAL_PATH)/*.c)))
@@ -107,5 +107,7 @@ ifeq ($(SUPPORT_OGG),true)
         $(OGG_LIBRARY_PATH)/src/framing.c \
         $(OGG_LIBRARY_PATH)/src/bitwise.c
 endif
+
+LOCAL_EXPORT_C_INCLUDES += $(LOCAL_C_INCLUDES)
 
 include $(BUILD_SHARED_LIBRARY)
