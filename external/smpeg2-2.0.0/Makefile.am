@@ -68,6 +68,7 @@ EXTRA_DIST =			\
 	README			\
 	README.SDL_mixer 	\
 	plaympeg.1		\
+	Android.mk		\
 	VisualC.zip		\
 	smpeg2.m4		\
 	smpeg2.spec		\
