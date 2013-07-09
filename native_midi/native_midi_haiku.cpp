@@ -71,7 +71,7 @@ class MidiEventsStore : public BMidi
     {
       if (!ev) {
         if (fLoops && fEvs) {
-          --fLoops;
+          if (fLoops > 0) --fLoops;
           fPos = 0;
           ev = fEvs;
         } else
