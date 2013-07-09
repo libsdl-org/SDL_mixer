@@ -385,13 +385,17 @@ static void mix_channels(void *udata, Uint8 *stream, int len)
                     if (mix_input != mix_channel[i].chunk->abuf)
                         SDL_free(mix_input);
 
-                    --mix_channel[i].looping;
+                    if (mix_channel[i].looping > 0) {
+                        --mix_channel[i].looping;
+                    }
                     mix_channel[i].samples = mix_channel[i].chunk->abuf + remaining;
                     mix_channel[i].playing = mix_channel[i].chunk->alen - remaining;
                     index += remaining;
                 }
                 if ( ! mix_channel[i].playing && mix_channel[i].looping ) {
-                    --mix_channel[i].looping;
+                    if (mix_channel[i].looping > 0) {
+                        --mix_channel[i].looping;
+                    }
                     mix_channel[i].samples = mix_channel[i].chunk->abuf;
                     mix_channel[i].playing = mix_channel[i].chunk->alen;
                 }
@@ -1111,14 +1115,14 @@ int Mix_Playing(int which)
 
         for ( i=0; i<num_channels; ++i ) {
             if ((mix_channel[i].playing > 0) ||
-                (mix_channel[i].looping > 0))
+                mix_channel[i].looping)
             {
                 ++status;
             }
         }
     } else if ( which < num_channels ) {
         if ( (mix_channel[which].playing > 0) ||
-             (mix_channel[which].looping > 0) )
+             mix_channel[which].looping )
         {
             ++status;
         }

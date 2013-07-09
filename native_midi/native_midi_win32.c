@@ -175,7 +175,8 @@ void CALLBACK MidiProc( HMIDIIN hMidi, UINT uMsg, DWORD_PTR dwInstance,
     case MOM_POSITIONCB:
       if ((currentsong->MusicLoaded) && (dwParam1 == (DWORD_PTR)&currentsong->MidiStreamHdr[currentsong->CurrentHdr])) {
         if (currentsong->Loops) {
-          --currentsong->Loops;
+          if (currentsong->Loops > 0)
+            --currentsong->Loops;
           currentsong->NewPos=0;
           BlockOut(currentsong);
         } else {
