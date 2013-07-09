@@ -24,7 +24,7 @@
 #ifndef _MPEGRING_H
 #define _MPEGRING_H
 
-#include "SDL_types.h"
+#include "SDL_stdinc.h"
 #include "SDL_thread.h"
 
 class MPEG_ring {
