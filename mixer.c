@@ -182,7 +182,7 @@ int Mix_Init(int flags)
             result |= MIX_INIT_MOD;
         }
 #else
-        Mix_SetError("Mixer not built with MOD timidity support");
+        Mix_SetError("Mixer not built with MOD mikmod support");
 #endif
     }
     if (flags & MIX_INIT_MP3) {
