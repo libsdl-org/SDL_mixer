@@ -245,7 +245,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SDL_mixer_VS2010.vcxproj">
+    <ProjectReference Include="..\SDL_mixer_VS2012.vcxproj">
       <Project>{f7e944b3-0815-40cd-b3e4-90b2a15b0e33}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>

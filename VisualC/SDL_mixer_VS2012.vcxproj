@@ -297,11 +297,11 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="native_midi\native_midi_VS2010.vcxproj">
+    <ProjectReference Include="native_midi\native_midi_VS2012.vcxproj">
       <Project>{ebda67ca-4a23-4f22-bfbc-b8dbe0580d4f}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="timidity\timidity_VS2010.vcxproj">
+    <ProjectReference Include="timidity\timidity_VS2012.vcxproj">
       <Project>{b162b6f1-e876-4d5f-a1f6-e3a6dc2f4a2c}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
