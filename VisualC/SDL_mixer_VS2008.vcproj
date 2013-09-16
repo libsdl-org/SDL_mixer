@@ -673,6 +673,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\load_mp3.c"
+			>
+		</File>
+		<File
+			RelativePath="..\load_mp3.h"
+			>
+		</File>
+		<File
 			RelativePath="..\load_ogg.c"
 			>
 			<FileConfiguration

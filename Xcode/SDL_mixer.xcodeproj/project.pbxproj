@@ -27,6 +27,10 @@
 		00938E57108A397A0009CF19 /* dynamic_ogg.h in Headers */ = {isa = PBXBuildFile; fileRef = 00938E4D108A397A0009CF19 /* dynamic_ogg.h */; };
 		0448E8AE108B937A00C9D3EA /* native_midi_macosx.c in Sources */ = {isa = PBXBuildFile; fileRef = 0448E8AD108B937A00C9D3EA /* native_midi_macosx.c */; };
 		0448E8AF108B937A00C9D3EA /* native_midi_macosx.c in Sources */ = {isa = PBXBuildFile; fileRef = 0448E8AD108B937A00C9D3EA /* native_midi_macosx.c */; };
+		04939B4E17E607F70015E4E3 /* load_mp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 04939B4C17E607F70015E4E3 /* load_mp3.c */; };
+		04939B4F17E607F70015E4E3 /* load_mp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 04939B4C17E607F70015E4E3 /* load_mp3.c */; };
+		04939B5017E607F70015E4E3 /* load_mp3.h in Headers */ = {isa = PBXBuildFile; fileRef = 04939B4D17E607F70015E4E3 /* load_mp3.h */; };
+		04939B5117E607F70015E4E3 /* load_mp3.h in Headers */ = {isa = PBXBuildFile; fileRef = 04939B4D17E607F70015E4E3 /* load_mp3.h */; };
 		04A8FCA60A19CAEC0046373F /* dynamic_mp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A8FCA40A19CAEC0046373F /* dynamic_mp3.c */; };
 		04A8FCA70A19CAEC0046373F /* dynamic_mp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A8FCA40A19CAEC0046373F /* dynamic_mp3.c */; };
 		04A8FCAB0A19CB070046373F /* dynamic_ogg.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A8FCA90A19CB070046373F /* dynamic_ogg.c */; };
@@ -190,6 +194,8 @@
 		00938E4C108A397A0009CF19 /* dynamic_mp3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dynamic_mp3.h; path = ../dynamic_mp3.h; sourceTree = SOURCE_ROOT; };
 		00938E4D108A397A0009CF19 /* dynamic_ogg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dynamic_ogg.h; path = ../dynamic_ogg.h; sourceTree = SOURCE_ROOT; };
 		0448E8AD108B937A00C9D3EA /* native_midi_macosx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = native_midi_macosx.c; sourceTree = "<group>"; };
+		04939B4C17E607F70015E4E3 /* load_mp3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = load_mp3.c; path = ../load_mp3.c; sourceTree = "<group>"; };
+		04939B4D17E607F70015E4E3 /* load_mp3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = load_mp3.h; path = ../load_mp3.h; sourceTree = "<group>"; };
 		04A8FCA40A19CAEC0046373F /* dynamic_mp3.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = dynamic_mp3.c; path = ../dynamic_mp3.c; sourceTree = SOURCE_ROOT; };
 		04A8FCA90A19CB070046373F /* dynamic_ogg.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = dynamic_ogg.c; path = ../dynamic_ogg.c; sourceTree = SOURCE_ROOT; };
 		1014BAEA010A4B677F000001 /* SDL_mixer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SDL_mixer.h; path = ../SDL_mixer.h; sourceTree = SOURCE_ROOT; };
@@ -352,6 +358,8 @@
 				F567D64801CD88A701F3E8B9 /* load_aiff.h */,
 				00938E2B108A37800009CF19 /* load_flac.c */,
 				00938E2C108A37800009CF19 /* load_flac.h */,
+				04939B4C17E607F70015E4E3 /* load_mp3.c */,
+				04939B4D17E607F70015E4E3 /* load_mp3.h */,
 				B2A42D0E03FAC6A400A8000A /* load_ogg.c */,
 				B2A42D0F03FAC6A400A8000A /* load_ogg.h */,
 				F567D64901CD88A701F3E8B9 /* load_voc.c */,
@@ -500,6 +508,7 @@
 				AA602142176538EB00662B9C /* dynamic_modplug.h in Headers */,
 				AA602146176538EB00662B9C /* fluidsynth.h in Headers */,
 				AA60214A176538EB00662B9C /* music_modplug.h in Headers */,
+				04939B5017E607F70015E4E3 /* load_mp3.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -534,6 +543,7 @@
 				AA602143176538EB00662B9C /* dynamic_modplug.h in Headers */,
 				AA602147176538EB00662B9C /* fluidsynth.h in Headers */,
 				AA60214B176538EB00662B9C /* music_modplug.h in Headers */,
+				04939B5117E607F70015E4E3 /* load_mp3.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -751,6 +761,7 @@
 				AA602140176538EB00662B9C /* dynamic_modplug.c in Sources */,
 				AA602144176538EB00662B9C /* fluidsynth.c in Sources */,
 				AA602148176538EB00662B9C /* music_modplug.c in Sources */,
+				04939B4E17E607F70015E4E3 /* load_mp3.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -791,6 +802,7 @@
 				AA602141176538EB00662B9C /* dynamic_modplug.c in Sources */,
 				AA602145176538EB00662B9C /* fluidsynth.c in Sources */,
 				AA602149176538EB00662B9C /* music_modplug.c in Sources */,
+				04939B4F17E607F70015E4E3 /* load_mp3.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

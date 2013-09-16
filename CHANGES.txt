@@ -1,3 +1,7 @@
+2.0.1:
+Isaac Burns - Sun Sep 15 21:50:27 PDT 2013
+ * Added support for loading MP3 files as sound chunks
+
 2.0.0:
 Sam Lantinga - Sun Jun  9 14:45:30 PDT 2013
  * Made libmodplug the default MOD player as it is now in the public domain

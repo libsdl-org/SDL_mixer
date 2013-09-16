@@ -254,6 +254,7 @@
     <ClCompile Include="..\fluidsynth.c" />
     <ClCompile Include="..\load_aiff.c" />
     <ClCompile Include="..\load_flac.c" />
+    <ClCompile Include="..\load_mp3.c" />
     <ClCompile Include="..\load_ogg.c" />
     <ClCompile Include="..\load_voc.c" />
     <ClCompile Include="..\mixer.c" />
@@ -277,6 +278,7 @@
     <ClInclude Include="..\fluidsynth.h" />
     <ClInclude Include="..\load_aiff.h" />
     <ClInclude Include="..\load_flac.h" />
+    <ClInclude Include="..\load_mp3.h" />
     <ClInclude Include="..\load_ogg.h" />
     <ClInclude Include="..\load_voc.h" />
     <ClInclude Include="..\music_cmd.h" />
