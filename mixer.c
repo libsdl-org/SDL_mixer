@@ -32,6 +32,7 @@
 #include "SDL_mixer.h"
 #include "load_aiff.h"
 #include "load_voc.h"
+#include "load_mp3.h"
 #include "load_ogg.h"
 #include "load_flac.h"
 #include "dynamic_flac.h"
@@ -493,6 +494,9 @@ int Mix_OpenAudio(int frequency, Uint16 format, int nchannels, int chunksize)
 #ifdef FLAC_MUSIC
     add_chunk_decoder("FLAC");
 #endif
+#if defined(MP3_MUSIC) || defined(MP3_MAD_MUSIC)
+    add_chunk_decoder("MP3");
+#endif
 
     audio_opened = 1;
     SDL_PauseAudio(0);
@@ -557,6 +561,23 @@ int Mix_QuerySpec(int *frequency, Uint16 *format, int *channels)
     return(audio_opened);
 }
 
+static int detect_mp3(Uint8 *magic)
+{
+    if ( strncmp((char *)magic, "ID3", 3) == 0 ) {
+        return 1;
+    }
+
+    /* Detection code lifted from SMPEG */
+    if(((magic[0] & 0xff) != 0xff) || // No sync bits
+       ((magic[1] & 0xf0) != 0xf0) || //
+       ((magic[2] & 0xf0) == 0x00) || // Bitrate is 0
+       ((magic[2] & 0xf0) == 0xf0) || // Bitrate is 15
+       ((magic[2] & 0x0c) == 0x0c) || // Frequency is 3
+       ((magic[1] & 0x06) == 0x00)) { // Layer is 4
+        return(0);
+    }
+    return 1;
+}
 
 /*
  * !!! FIXME: Ideally, we want a Mix_LoadSample_RW(), which will handle the
@@ -629,6 +650,16 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
                     (Uint8 **)&chunk->abuf, &chunk->alen);
             break;
         default:
+#if defined(MP3_MUSIC) || defined(MP3_MAD_MUSIC)
+			if (detect_mp3((Uint8*)&magic))
+			{
+				/* note: send a copy of the mixer spec */
+				wavespec = mixer;
+				loaded = Mix_LoadMP3_RW(src, freesrc, &wavespec,
+						(Uint8 **)&chunk->abuf, &chunk->alen);
+				break;
+			}
+#endif
             SDL_SetError("Unrecognized sound file type");
             if ( freesrc ) {
                 SDL_RWclose(src);
