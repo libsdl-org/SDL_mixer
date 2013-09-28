@@ -231,6 +231,9 @@ static MIDIEvent *MIDItoStream(MIDIFile *mididata)
 
     track = (MIDIEvent**) calloc(1, sizeof(MIDIEvent*) * mididata->nTracks);
 
+    if (NULL == track)
+        return NULL;
+
     /* First, convert all tracks to MIDIEvent lists */
     for (trackID = 0; trackID < mididata->nTracks; trackID++)
         track[trackID] = MIDITracktoStream(&mididata->track[trackID]);
