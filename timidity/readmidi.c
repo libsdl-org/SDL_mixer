@@ -673,15 +673,15 @@ static MidiEvent *groom_list(int32 divisions,int32 *eventsp,int32 *samplesp)
 		meep->event.time, meep->event.channel + 1,
 		meep->event.type, meep->event.a, meep->event.b);
 
-      if (meep->event.channel >= MAXCHAN)
-	skip_this_event=1;
-      else if (meep->event.type==ME_TEMPO)
+      if (meep->event.type==ME_TEMPO)
 	{
 	  tempo=
 	    meep->event.channel + meep->event.b * 256 + meep->event.a * 65536;
 	  compute_sample_increment(tempo, divisions);
 	  skip_this_event=1;
 	}
+      else if (meep->event.channel >= MAXCHAN)
+	skip_this_event=1;
       else if ((quietchannels & (1<<meep->event.channel)))
 	skip_this_event=1;
       else switch (meep->event.type)
