@@ -906,7 +906,7 @@ enable_music_midi
 enable_music_midi_timidity
 enable_music_midi_native
 enable_music_midi_fluidsynth
-enable_music_fluidsynth_shared
+enable_music_midi_fluidsynth_shared
 enable_music_ogg
 enable_music_ogg_tremor
 enable_music_ogg_shared
@@ -12161,9 +12161,9 @@ else
   enable_music_midi_fluidsynth=yes
 fi
 
-    # Check whether --enable-music-fluidsynth-shared was given.
-if test "${enable_music_fluidsynth_shared+set}" = set; then :
-  enableval=$enable_music_fluidsynth_shared;
+    # Check whether --enable-music-midi-fluidsynth-shared was given.
+if test "${enable_music_midi_fluidsynth_shared+set}" = set; then :
+  enableval=$enable_music_midi_fluidsynth_shared;
 else
   enable_music_midi_fluidsynth_shared=yes
 fi
