@@ -26,10 +26,11 @@ OGG_LIBRARY_PATH := external/libogg-1.3.1
 VORBIS_LIBRARY_PATH := external/libvorbisidec-1.2.1
 
 
-LOCAL_C_INCLUDES := $(LOCAL_PATH)
-LOCAL_CFLAGS := -DWAV_MUSIC
+LOCAL_C_INCLUDES := $(LOCAL_PATH) $(LOCAL_PATH)/timidity
+LOCAL_CFLAGS := -DWAV_MUSIC -DMID_MUSIC -DUSE_TIMIDITY_MIDI
 
-LOCAL_SRC_FILES := $(notdir $(filter-out %/playmus.c %/playwave.c, $(wildcard $(LOCAL_PATH)/*.c)))
+LOCAL_SRC_FILES := $(notdir $(filter-out %/playmus.c %/playwave.c, $(wildcard $(LOCAL_PATH)/*.c))) \
+  $(subst $(LOCAL_PATH)/,,$(wildcard $(LOCAL_PATH)/timidity/*.c))
 
 LOCAL_LDLIBS :=
 LOCAL_STATIC_LIBRARIES :=
