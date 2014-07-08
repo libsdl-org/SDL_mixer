@@ -50,6 +50,7 @@
 #define FACT        0x74636166      /* "fact" */
 #define LIST        0x5453494c      /* "LIST" */
 #define BEXT        0x74786562      /* "bext" */
+#define JUNK        0x4B4E554A      /* "JUNK" */
 #define FMT         0x20746D66      /* "fmt " */
 #define DATA        0x61746164      /* "data" */
 #define PCM_CODE    1
@@ -305,7 +306,7 @@ static SDL_RWops *LoadWAVStream (SDL_RWops *src, SDL_AudioSpec *spec,
             was_error = 1;
             goto done;
         }
-    } while ((chunk.magic == FACT) || (chunk.magic == LIST) || (chunk.magic == BEXT));
+    } while ((chunk.magic == FACT) || (chunk.magic == LIST) || (chunk.magic == BEXT) || (chunk.magic == JUNK));
 
     /* Decode the audio data format */
     format = (WaveFMT *)chunk.data;
