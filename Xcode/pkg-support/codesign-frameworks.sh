@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# WARNING: You may have to run Clean in Xcode after changing CODE_SIGN_IDENTITY! 
+# WARNING: You may have to run Clean in Xcode after changing CODE_SIGN_IDENTITY!
 
 # Verify that $CODE_SIGN_IDENTITY is set
 if [ -z "$CODE_SIGN_IDENTITY" ] ; then
@@ -14,30 +14,30 @@ if [ -z "$CODE_SIGN_IDENTITY" ] ; then
     fi
 fi
 
-SAVEIFS=$IFS
-IFS=$(echo -en "\n\b")
-
 FRAMEWORK_DIR="${TARGET_BUILD_DIR}"
 
 # Loop through all frameworks
-FRAMEWORKS=`find "${FRAMEWORK_DIR}" -type d -name "*.framework" | sed -e "s/\(.*\)/\1\/Versions\/A\//"`
+FRAMEWORKS=`find "${FRAMEWORK_DIR}" -type d -name "*.framework" | sort -r`
 RESULT=$?
 if [[ $RESULT != 0 ]] ; then
     exit 1
 fi
 
-echo "Found:"
-echo "${FRAMEWORKS}"
-
 for FRAMEWORK in $FRAMEWORKS;
 do
+    if [[ "$CONFIGURATION" = "Release" ]]; then
+        echo "Stripping '${FRAMEWORK}'"
+        NAME=$(basename "${FRAMEWORK}" .framework)
+        xcrun strip -x "${FRAMEWORK}/${NAME}"
+        RESULT=$?
+        if [[ $RESULT != 0 ]] ; then
+            exit 1
+        fi
+    fi
     echo "Signing '${FRAMEWORK}'"
-    `codesign -f -v -s "${CODE_SIGN_IDENTITY}" "${FRAMEWORK}"`
+    codesign -f -v -s "${CODE_SIGN_IDENTITY}" "${FRAMEWORK}"
     RESULT=$?
     if [[ $RESULT != 0 ]] ; then
         exit 1
     fi
 done
-
-# restore $IFS
-IFS=$SAVEIFS
