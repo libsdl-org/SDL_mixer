@@ -580,11 +580,6 @@ static int detect_mp3(Uint8 *magic)
     return 1;
 }
 
-/*
- * !!! FIXME: Ideally, we want a Mix_LoadSample_RW(), which will handle the
- *             generic setup, then call the correct file format loader.
- */
-
 /* Load a wave file */
 Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
 {
