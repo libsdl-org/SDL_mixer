@@ -740,9 +740,11 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					WAV_MUSIC,
 					MODPLUG_MUSIC,
+					"MODPLUG_HEADER=\"<modplug.h>\"",
 					MID_MUSIC,
 					OGG_MUSIC,
 					OGG_USE_TREMOR,
+					"OGG_HEADER=\"<ivorbisfile.h>\"",
 					HAVE_STDINT_H,
 					HAVE_SETENV,
 					HAVE_SINF,
@@ -768,9 +770,11 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					WAV_MUSIC,
 					MODPLUG_MUSIC,
+					"MODPLUG_HEADER=\"<modplug.h>\"",
 					MID_MUSIC,
 					OGG_MUSIC,
 					OGG_USE_TREMOR,
+					"OGG_HEADER=\"<ivorbisfile.h>\"",
 					HAVE_STDINT_H,
 					HAVE_SETENV,
 					HAVE_SINF,

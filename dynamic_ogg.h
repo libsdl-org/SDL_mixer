@@ -20,8 +20,10 @@
 */
 
 #ifdef OGG_MUSIC
-#ifdef OGG_USE_TREMOR
-#include <ivorbisfile.h>
+#if defined(OGG_HEADER)
+#include OGG_HEADER
+#elif defined(OGG_USE_TREMOR)
+#include <tremor/ivorbisfile.h>
 #else
 #include <vorbis/vorbisfile.h>
 #endif

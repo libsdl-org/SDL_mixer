@@ -11817,8 +11817,8 @@ fi
 
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
-                            ac_fn_c_check_header_mongrel "$LINENO" "modplug.h" "ac_cv_header_modplug_h" "$ac_includes_default"
-if test "x$ac_cv_header_modplug_h" = xyes; then :
+                            ac_fn_c_check_header_mongrel "$LINENO" "libmodplug/modplug.h" "ac_cv_header_libmodplug_modplug_h" "$ac_includes_default"
+if test "x$ac_cv_header_libmodplug_modplug_h" = xyes; then :
   have_libmodplug_hdr=yes
 fi
 
@@ -11870,8 +11870,8 @@ fi
 
 
 elif test $pkg_failed = untried; then
-	            ac_fn_c_check_header_mongrel "$LINENO" "modplug.h" "ac_cv_header_modplug_h" "$ac_includes_default"
-if test "x$ac_cv_header_modplug_h" = xyes; then :
+	            ac_fn_c_check_header_mongrel "$LINENO" "libmodplug/modplug.h" "ac_cv_header_libmodplug_modplug_h" "$ac_includes_default"
+if test "x$ac_cv_header_libmodplug_modplug_h" = xyes; then :
   have_libmodplug_hdr=yes
 fi
 
