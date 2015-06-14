@@ -20,8 +20,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\$(PlatformName)\$(ConfigurationName)\"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)\"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -50,13 +50,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
-				InlineFunctionExpansion="1"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
-				StringPooling="true"
 				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				PrecompiledHeaderFile=".\Release/playwave.pch"
 				WarningLevel="3"
 			/>
 			<Tool
@@ -73,8 +68,6 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="SDL2.lib SDL2main.lib"
-				LinkIncremental="1"
-				ProgramDatabaseFile=".\Release/playwave.pdb"
 				SubSystem="2"
 				TargetMachine="1"
 			/>
@@ -89,8 +82,6 @@
 			/>
 			<Tool
 				Name="VCBscMakeTool"
-				SuppressStartupBanner="true"
-				OutputFile=".\Release/playwave.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -100,14 +91,14 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Copy DLLs"
-				CommandLine="copy $(SolutionDir)\external\lib\x86\*.* $(OutDir)"
+				Description=""
+				CommandLine=""
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\$(PlatformName)\$(ConfigurationName)\"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)\"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -136,13 +127,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
-				InlineFunctionExpansion="1"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
-				StringPooling="true"
 				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				PrecompiledHeaderFile=".\Release/playwave.pch"
 				WarningLevel="3"
 			/>
 			<Tool
@@ -159,8 +145,6 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="SDL2.lib SDL2main.lib"
-				LinkIncremental="1"
-				ProgramDatabaseFile=".\Release/playwave.pdb"
 				SubSystem="2"
 				TargetMachine="17"
 			/>
@@ -175,8 +159,6 @@
 			/>
 			<Tool
 				Name="VCBscMakeTool"
-				SuppressStartupBanner="true"
-				OutputFile=".\Release/playwave.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -186,14 +168,14 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Copy DLLs"
-				CommandLine="copy $(SolutionDir)\external\lib\x64\*.* $(OutDir)"
+				Description=""
+				CommandLine=""
 			/>
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\$(PlatformName)\$(ConfigurationName)\"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)\"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -224,12 +206,9 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
-				MinimalRebuild="true"
 				RuntimeLibrary="2"
-				PrecompiledHeaderFile=".\Debug/playwave.pch"
 				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="4"
+				DebugInformationFormat="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -245,9 +224,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="SDL2.lib SDL2main.lib"
-				LinkIncremental="2"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/playwave.pdb"
 				SubSystem="2"
 				TargetMachine="1"
 			/>
@@ -262,8 +239,6 @@
 			/>
 			<Tool
 				Name="VCBscMakeTool"
-				SuppressStartupBanner="true"
-				OutputFile=".\Debug/playwave.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -273,14 +248,14 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Copy DLLs"
-				CommandLine="copy $(SolutionDir)\external\lib\x86\*.* $(OutDir)"
+				Description=""
+				CommandLine=""
 			/>
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\$(PlatformName)\$(ConfigurationName)\"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)\"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -311,12 +286,9 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
-				MinimalRebuild="true"
 				RuntimeLibrary="2"
-				PrecompiledHeaderFile=".\Debug/playwave.pch"
 				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
+				DebugInformationFormat="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -332,9 +304,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="SDL2.lib SDL2main.lib"
-				LinkIncremental="2"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\Debug/playwave.pdb"
 				SubSystem="2"
 				TargetMachine="17"
 			/>
@@ -349,8 +319,6 @@
 			/>
 			<Tool
 				Name="VCBscMakeTool"
-				SuppressStartupBanner="true"
-				OutputFile=".\Debug/playwave.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -360,12 +328,19 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Copy DLLs"
-				CommandLine="copy $(SolutionDir)\external\lib\x64\*.* $(OutDir)"
+				Description=""
+				CommandLine=""
 			/>
 		</Configuration>
 	</Configurations>
 	<References>
+		<ProjectReference
+			ReferencedProjectIdentifier="{F7E944B3-0815-40CD-B3E4-90B2A15B0E33}"
+			CopyLocal="false"
+			CopyLocalDependencies="false"
+			CopyLocalSatelliteAssemblies="false"
+			RelativePathToProject=".\SDL_mixer_VS2008.vcproj"
+		/>
 	</References>
 	<Files>
 		<File
