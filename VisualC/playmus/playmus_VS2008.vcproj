@@ -72,7 +72,6 @@
 				AdditionalDependencies="SDL2.lib SDL2main.lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
-				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -152,7 +151,6 @@
 				AdditionalDependencies="SDL2.lib SDL2main.lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
-				TargetMachine="17"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -229,7 +227,6 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="SDL2.lib SDL2main.lib"
 				SubSystem="2"
-				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -306,7 +303,6 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="SDL2.lib SDL2main.lib"
 				SubSystem="2"
-				TargetMachine="17"
 			/>
 			<Tool
 				Name="VCALinkTool"

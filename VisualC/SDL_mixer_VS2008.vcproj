@@ -73,7 +73,6 @@
 				AdditionalDependencies="winmm.lib SDL2.lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
-				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -152,7 +151,6 @@
 				AdditionalDependencies="winmm.lib SDL2.lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
-				TargetMachine="17"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -228,7 +226,6 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="winmm.lib SDL2.lib"
 				SubSystem="2"
-				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -304,7 +301,6 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="winmm.lib SDL2.lib"
 				SubSystem="2"
-				TargetMachine="17"
 			/>
 			<Tool
 				Name="VCALinkTool"
