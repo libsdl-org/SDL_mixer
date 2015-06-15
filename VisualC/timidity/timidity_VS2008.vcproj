@@ -46,6 +46,7 @@
 				Name="VCCLCompilerTool"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
+				EnableEnhancedInstructionSet="1"
 				WarningLevel="3"
 			/>
 			<Tool
@@ -106,6 +107,7 @@
 				Name="VCCLCompilerTool"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
+				EnableEnhancedInstructionSet="1"
 				WarningLevel="3"
 			/>
 			<Tool
@@ -166,6 +168,7 @@
 				Optimization="0"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
+				EnableEnhancedInstructionSet="1"
 				WarningLevel="3"
 				DebugInformationFormat="1"
 			/>
@@ -228,6 +231,7 @@
 				Optimization="0"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
+				EnableEnhancedInstructionSet="1"
 				WarningLevel="3"
 				DebugInformationFormat="1"
 			/>
