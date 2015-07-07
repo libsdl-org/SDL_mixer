@@ -21,16 +21,25 @@
 
 /* $Id$ */
 
-/* This file supports streaming WAV files, without volume adjustment */
+/* This file supports streaming WAV files */
 
-#include <stdio.h>
+typedef struct {
+    SDL_bool active;
+    Uint32 start;
+    Uint32 stop;
+    Uint32 initial_play_count;
+    Uint32 current_play_count;
+} WAVLoopPoint;
 
 typedef struct {
     SDL_RWops *src;
     SDL_bool freesrc;
-    long  start;
-    long  stop;
+    SDL_AudioSpec spec;
+    Sint64 start;
+    Sint64 stop;
     SDL_AudioCVT cvt;
+    int numloops;
+    WAVLoopPoint *loops;
 } WAVStream;
 
 /* Initialize the WAVStream player, with the given mixer settings
