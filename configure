@@ -11065,7 +11065,7 @@ case "$host" in
     *mingw32ce*)
         #VERSION_SOURCES="$srcdir/version.rc"
         EXE=".exe"
-	;;
+    ;;
     *-*-cygwin* | *-*-mingw32*)
         VERSION_SOURCES="$srcdir/version.rc"
         EXE=".exe"
@@ -11954,7 +11954,7 @@ fi
             echo "-- dynamic libmodplug -> $modplug_lib"
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DMODPLUG_DYNAMIC=\\\"$modplug_lib\\\""
         else
-	        EXTRA_LDFLAGS="$EXTRA_LDFLAGS $MODPLUG_LIBS"
+            EXTRA_LDFLAGS="$EXTRA_LDFLAGS $MODPLUG_LIBS"
         fi
     else
         { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: *** Unable to find ModPlug library (http://modplug-xmms.sourceforge.net/)" >&5
@@ -12095,7 +12095,7 @@ $as_echo "$as_me: WARNING: *** Unable to find MikMod library (http://mikmod.raph
 fi
 
 if test x$have_libmodplug != xyes -a x$have_libmikmod != xyes ; then
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: MOD support disabled" >&5
+    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: MOD support disabled" >&5
 $as_echo "$as_me: WARNING: MOD support disabled" >&2;}
 fi
 
@@ -12251,7 +12251,7 @@ fi
 if test x$enable_music_midi_timidity != xyes -a \
         x$use_music_midi_native != xyes -a x$use_music_midi_native != xyes_cpp -a \
         x$have_fluidsynth != xyes; then
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: MIDI support disabled" >&5
+    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: MIDI support disabled" >&5
 $as_echo "$as_me: WARNING: MIDI support disabled" >&2;}
 fi
 
@@ -12897,6 +12897,11 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 $as_echo "$have_libmad" >&6; }
     if test x$have_libmad = xyes; then
         SOURCES="$SOURCES $srcdir/music_mad.c"
+        if echo "$SOURCES" | grep "load_mp3.c" >/dev/null; then
+            :
+        else
+            SOURCES="$SOURCES $srcdir/load_mp3.c"
+        fi
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMP3_MAD_MUSIC"
         EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lmad"
     else

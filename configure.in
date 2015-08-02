@@ -115,7 +115,7 @@ case "$host" in
     *mingw32ce*)
         #VERSION_SOURCES="$srcdir/version.rc"
         EXE=".exe"
-	;;
+    ;;
     *-*-cygwin* | *-*-mingw32*)
         VERSION_SOURCES="$srcdir/version.rc"
         EXE=".exe"
@@ -283,7 +283,7 @@ if test x$enable_music_mod = xyes -a x$enable_music_mod_modplug = xyes; then
             echo "-- dynamic libmodplug -> $modplug_lib"
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DMODPLUG_DYNAMIC=\\\"$modplug_lib\\\""
         else
-	        EXTRA_LDFLAGS="$EXTRA_LDFLAGS $MODPLUG_LIBS"
+            EXTRA_LDFLAGS="$EXTRA_LDFLAGS $MODPLUG_LIBS"
         fi
     else
         AC_MSG_WARN([*** Unable to find ModPlug library (http://modplug-xmms.sourceforge.net/)])
@@ -359,7 +359,7 @@ return 1;
 fi
 
 if test x$have_libmodplug != xyes -a x$have_libmikmod != xyes ; then
-	AC_MSG_WARN([MOD support disabled])
+    AC_MSG_WARN([MOD support disabled])
 fi
 
 AC_ARG_ENABLE([music-midi],
@@ -448,7 +448,7 @@ fi
 if test x$enable_music_midi_timidity != xyes -a \
         x$use_music_midi_native != xyes -a x$use_music_midi_native != xyes_cpp -a \
         x$have_fluidsynth != xyes; then
-	AC_MSG_WARN([MIDI support disabled])
+    AC_MSG_WARN([MIDI support disabled])
 fi
 
 AC_ARG_ENABLE([music-ogg],
@@ -637,6 +637,11 @@ if test x$enable_music_mp3 = xyes -a x$enable_music_mp3_mad_gpl = xyes; then
     AC_MSG_RESULT($have_libmad)
     if test x$have_libmad = xyes; then
         SOURCES="$SOURCES $srcdir/music_mad.c"
+        if echo "$SOURCES" | grep "load_mp3.c" >/dev/null; then
+            :
+        else
+            SOURCES="$SOURCES $srcdir/load_mp3.c"
+        fi
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMP3_MAD_MUSIC"
         EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lmad"
     else
