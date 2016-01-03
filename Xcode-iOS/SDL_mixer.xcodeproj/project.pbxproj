@@ -710,7 +710,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1.1.0;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				LIBRARY_STYLE = STATIC;
 				OTHER_CFLAGS = "";
@@ -723,7 +723,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1.1.0;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				LIBRARY_STYLE = STATIC;
 				OTHER_CFLAGS = "";
