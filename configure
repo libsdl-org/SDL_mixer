@@ -12848,7 +12848,6 @@ rm -f core conftest.err conftest.$ac_objext \
                 smpeg_lib=`find_lib "libsmpeg2*.so.*"`
                 ;;
         esac
-        SOURCES="$SOURCES $srcdir/*_mp3.c"
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMP3_MUSIC $SMPEG_CFLAGS"
         if test x$enable_music_mp3_smpeg_shared = xyes && test x$smpeg_lib != x; then
             echo "-- dynamic libsmpeg -> $smpeg_lib"
@@ -12897,11 +12896,6 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 $as_echo "$have_libmad" >&6; }
     if test x$have_libmad = xyes; then
         SOURCES="$SOURCES $srcdir/music_mad.c"
-        if echo "$SOURCES" | grep "load_mp3.c" >/dev/null; then
-            :
-        else
-            SOURCES="$SOURCES $srcdir/load_mp3.c"
-        fi
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMP3_MAD_MUSIC"
         EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lmad"
     else
@@ -12910,7 +12904,9 @@ $as_echo "$as_me: WARNING: *** Unable to find MAD library (http://www.underbit.c
     fi
 fi
 
-if test x$have_smpeg != xyes -a x$have_libmad != xyes; then
+if test x$have_smpeg = xyes -o x$have_libmad = xyes; then
+	SOURCES="$SOURCES $srcdir/*_mp3.c"
+else
     { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: MP3 support disabled" >&5
 $as_echo "$as_me: WARNING: MP3 support disabled" >&2;}
 fi
