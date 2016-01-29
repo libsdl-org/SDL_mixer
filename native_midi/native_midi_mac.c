@@ -20,6 +20,7 @@
 */
 #include "SDL_config.h"
 #include "SDL_endian.h"
+#include "../mixer.h"
 
 #if __MACOS__ /*|| __MACOSX__ */
 
@@ -187,7 +188,7 @@ void native_midi_start(NativeMidiSong *song, int loops)
     assert (loops == 0);
 
     SDL_PauseAudio(1);
-    SDL_UnlockAudio();
+    Mix_UnlockAudio();
 
     /* First, stop the currently playing music */
     native_midi_stop();
@@ -237,7 +238,7 @@ void native_midi_start(NativeMidiSong *song, int loops)
     }
 
 done:
-    SDL_LockAudio();
+    Mix_LockAudio();
     SDL_PauseAudio(0);
 }
 
