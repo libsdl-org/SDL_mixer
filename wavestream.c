@@ -241,7 +241,7 @@ static int PlaySome(Uint8 *stream, int len)
         }
         music->cvt.len = original_len;
         SDL_ConvertAudio(&music->cvt);
-        SDL_MixAudio(stream, music->cvt.buf, music->cvt.len_cvt, wavestream_volume);
+        SDL_MixAudioFormat(stream, music->cvt.buf, mixer.format,music->cvt.len_cvt, wavestream_volume);
         consumed = music->cvt.len_cvt;
     } else {
         Uint8 *data;
@@ -251,7 +251,7 @@ static int PlaySome(Uint8 *stream, int len)
         data = SDL_stack_alloc(Uint8, len);
         if (data) {
             len = SDL_RWread(music->src, data, 1, len);
-            SDL_MixAudio(stream, data, len, wavestream_volume);
+            SDL_MixAudioFormat(stream, data, mixer.format, len, wavestream_volume);
             SDL_stack_free(data);
         }
         consumed = len;

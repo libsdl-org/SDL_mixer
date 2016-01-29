@@ -31,8 +31,9 @@
 #include <AudioToolbox/AudioToolbox.h>
 #include <AvailabilityMacros.h>
 
-#include "../SDL_mixer.h"
 #include "SDL_endian.h"
+#include "../SDL_mixer.h"
+#include "../mixer.h"
 #include "native_midi.h"
 
 /* Native Midi song */
@@ -264,7 +265,7 @@ void native_midi_start(NativeMidiSong *song, int loops)
         return;
 
     SDL_PauseAudio(1);
-    SDL_UnlockAudio();
+    Mix_UnlockAudio();
 
     if (currentsong)
         MusicPlayerStop(currentsong->player);
@@ -282,7 +283,7 @@ void native_midi_start(NativeMidiSong *song, int loops)
     latched_volume++;  /* just make this not match. */
     native_midi_setvolume(vol);
 
-    SDL_LockAudio();
+    Mix_LockAudio();
     SDL_PauseAudio(0);
 }
 
@@ -290,10 +291,10 @@ void native_midi_stop()
 {
     if (currentsong) {
         SDL_PauseAudio(1);
-        SDL_UnlockAudio();
+        Mix_UnlockAudio();
         MusicPlayerStop(currentsong->player);
         currentsong = NULL;
-        SDL_LockAudio();
+        Mix_LockAudio();
         SDL_PauseAudio(0);
     }
 }

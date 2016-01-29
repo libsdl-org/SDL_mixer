@@ -1,4 +1,8 @@
 2.0.1:
+Juha Kuikka - Fri Jan 29 12:44:01 PST 2016
+ * Added Mix_OpenAudioDevice() so you can specify the audio device to open
+
+2.0.1:
 Sam Lantinga - Tue Jul  7 11:40:33 PDT 2015
  * Added support for 'smpl' format loop points in music WAV files
 Sam Lantinga - Sat Aug 23 10:57:26 2014
