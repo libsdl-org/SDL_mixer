@@ -102,7 +102,7 @@
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{394CDAE6-49A9-4823-8B7B-6EDC3C3DF94B}</ProjectGuid>
+    <ProjectGuid>{6b6c1f59-6a82-4097-8907-04df5c95d014}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <ProjectName>libvorbis_dynamic-UWP</ProjectName>
     <RootNamespace>libvorbis_dynamic_UWP</RootNamespace>
