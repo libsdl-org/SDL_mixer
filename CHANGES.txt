@@ -1,4 +1,6 @@
 2.0.1:
+David Ludwig - Sun Apr 10 22:35:38 2016
+ * Added support for UWP / Windows 10 apps
 Juha Kuikka - Fri Jan 29 12:44:01 PST 2016
  * Added Mix_OpenAudioDevice() so you can specify the audio device to open
 
