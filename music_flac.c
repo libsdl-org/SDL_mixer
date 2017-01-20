@@ -488,7 +488,7 @@ int FLAC_playAudio(FLAC_music *music, Uint8 *snd, int len)
             SDL_memcpy (snd, music->snd_available, mixable);
         }
         else {
-            SDL_MixAudio (snd, music->snd_available, mixable, music->volume);
+            SDL_MixAudioFormat(snd, music->snd_available, mixer.format, mixable, music->volume);
         }
         music->len_available -= mixable;
         music->snd_available += mixable;
