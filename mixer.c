@@ -25,9 +25,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "SDL_mutex.h"
-#include "SDL_endian.h"
-#include "SDL_timer.h"
+#include "SDL.h"
 
 #include "SDL_mixer.h"
 #include "mixer.h"
@@ -434,6 +432,15 @@ int Mix_OpenAudioDevice(int frequency, Uint16 format, int nchannels, int chunksi
 {
     int i;
     SDL_AudioSpec desired;
+
+    /* This used to call SDL_OpenAudio(), which initializes the audio
+       subsystem if necessary. Since SDL_OpenAudioDevice() doesn't,
+       we have to handle this case here. */
+    if (!SDL_WasInit(SDL_INIT_AUDIO)) {
+        if (SDL_InitSubSystem(SDL_INIT_AUDIO) < 0) {
+            return -1;
+        }
+    }
 
     /* If the mixer is already opened, increment open count */
     if ( audio_opened ) {
