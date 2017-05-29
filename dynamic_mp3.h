@@ -20,6 +20,13 @@
 */
 
 #ifdef MP3_MUSIC
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+/* Forward declaration for SDL 2.0  because struct is not available there but
+   still used in a file included with smpeg.h. May not compile if missing. */
+typedef struct SDL_Overlay SDL_Overlay;
+#endif
+
 #include "smpeg.h"
 
 typedef struct {
