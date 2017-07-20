@@ -64,11 +64,14 @@
 #ifdef MP3_MAD_MUSIC
 #include "music_mad.h"
 #endif
+#ifdef MP3_MPG_MUSIC
+#include "music_mpg.h"
+#endif
 #ifdef FLAC_MUSIC
 #include "music_flac.h"
 #endif
 
-#if defined(MP3_MUSIC) || defined(MP3_MAD_MUSIC)
+#if defined(MP3_MUSIC) || defined(MP3_MAD_MUSIC) || defined(MP3_MPG_MUSIC)
 static SDL_AudioSpec used_mixer;
 #endif
 
@@ -114,6 +117,9 @@ struct _Mix_Music {
 #endif
 #ifdef MP3_MAD_MUSIC
         mad_data *mp3_mad;
+#endif
+#ifdef MP3_MPG_MUSIC
+        mpg_data *mp3_mpg;
 #endif
 #ifdef FLAC_MUSIC
         FLAC_music *flac;
@@ -333,6 +339,11 @@ void music_mixer(void *udata, Uint8 *stream, int len)
                 left = mad_getSamples(music_playing->data.mp3_mad, stream, len);
                 break;
 #endif
+#ifdef MP3_MPG_MUSIC
+            case MUS_MP3_MPG:
+                left = mpg_get_samples(music_playing->data.mp3_mpg, stream, len);
+                break;
+#endif
             default:
                 /* Unknown music type?? */
                 break;
@@ -412,7 +423,7 @@ int open_music(SDL_AudioSpec *mixer)
         add_music_decoder("FLAC");
     }
 #endif
-#if defined(MP3_MUSIC) || defined(MP3_MAD_MUSIC)
+#if defined(MP3_MUSIC) || defined(MP3_MAD_MUSIC) || defined(MP3_MPG_MUSIC)
     /* Keep a copy of the mixer */
     used_mixer = *mixer;
     add_music_decoder("MP3");
@@ -678,6 +689,16 @@ Mix_Music *Mix_LoadMUSType_RW(SDL_RWops *src, Mix_MusicType type, int freesrc)
             Mix_SetError("Could not initialize MPEG stream.");
         }
         break;
+#elif defined(MP3_MPG_MUSIC)
+    case MUS_MP3:
+        music->type = MUS_MP3_MPG;
+        music->data.mp3_mpg = mpg_new_rw(src, &used_mixer, freesrc);
+        if (music->data.mp3_mpg) {
+            music->error = 0;
+        } else {
+            Mix_SetError("Could not initialize MPEG stream.");
+        }
+        break;
 #endif
 #ifdef MID_MUSIC
     case MUS_MID:
@@ -842,6 +863,11 @@ void Mix_FreeMusic(Mix_Music *music)
                 mad_closeFile(music->data.mp3_mad);
                 break;
 #endif
+#ifdef MP3_MPG_MUSIC
+            case MUS_MP3_MPG:
+                mpg_delete(music->data.mp3_mpg);
+                break;
+#endif
             default:
                 /* Unknown music type?? */
                 break;
@@ -969,6 +995,11 @@ static int music_internal_play(Mix_Music *music, double position)
         mad_start(music->data.mp3_mad);
         break;
 #endif
+#ifdef MP3_MPG_MUSIC
+        case MUS_MP3_MPG:
+        mpg_start(music->data.mp3_mpg);
+        break;
+#endif
         default:
         Mix_SetError("Can't play unknown music type");
         retval = -1;
@@ -1086,6 +1117,11 @@ int music_internal_position(double position)
         mad_seek(music_playing->data.mp3_mad, position);
         break;
 #endif
+#ifdef MP3_MPG_MUSIC
+        case MUS_MP3_MPG:
+        mpg_seek(music_playing->data.mp3_mpg, position);
+        break;
+#endif
         default:
         /* TODO: Implement this for other music backends */
         retval = -1;
@@ -1188,6 +1224,11 @@ static void music_internal_volume(int volume)
         mad_setVolume(music_playing->data.mp3_mad, volume);
         break;
 #endif
+#ifdef MP3_MPG_MUSIC
+        case MUS_MP3_MPG:
+        mpg_volume(music_playing->data.mp3_mpg, volume);
+        break;
+#endif
         default:
         /* Unknown music type?? */
         break;
@@ -1277,6 +1318,11 @@ static void music_internal_halt(void)
 #ifdef MP3_MAD_MUSIC
         case MUS_MP3_MAD:
         mad_stop(music_playing->data.mp3_mad);
+        break;
+#endif
+#ifdef MP3_MPG_MUSIC
+        case MUS_MP3_MPG:
+        mpg_stop(music_playing->data.mp3_mpg);
         break;
 #endif
         default:
@@ -1463,6 +1509,13 @@ static int music_internal_playing()
 #ifdef MP3_MAD_MUSIC
         case MUS_MP3_MAD:
         if (!mad_isPlaying(music_playing->data.mp3_mad)) {
+            playing = 0;
+        }
+        break;
+#endif
+#ifdef MP3_MPG_MUSIC
+        case MUS_MP3_MPG:
+        if (!mpg_playing(music_playing->data.mp3_mpg)) {
             playing = 0;
         }
         break;

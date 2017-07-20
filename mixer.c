@@ -188,7 +188,7 @@ int Mix_Init(int flags)
 #endif
     }
     if (flags & MIX_INIT_MP3) {
-#ifdef MP3_MUSIC
+#if defined(MP3_MUSIC) || defined(MP3_MPG_MUSIC)
         if ((initialized & MIX_INIT_MP3) || Mix_InitMP3() == 0) {
             result |= MIX_INIT_MP3;
         }
@@ -234,7 +234,7 @@ void Mix_Quit()
         Mix_QuitMOD();
     }
 #endif
-#ifdef MP3_MUSIC
+#if defined(MP3_MUSIC) || defined(MP3_MPG_MUSIC)
     if (initialized & MIX_INIT_MP3) {
         Mix_QuitMP3();
     }
@@ -506,7 +506,7 @@ int Mix_OpenAudioDevice(int frequency, Uint16 format, int nchannels, int chunksi
 #ifdef FLAC_MUSIC
     add_chunk_decoder("FLAC");
 #endif
-#if defined(MP3_MUSIC) || defined(MP3_MAD_MUSIC)
+#if defined(MP3_MUSIC) || defined(MP3_MAD_MUSIC) || defined(MP3_MPG_MUSIC)
     add_chunk_decoder("MP3");
 #endif
 
@@ -665,7 +665,7 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
                     (Uint8 **)&chunk->abuf, &chunk->alen);
             break;
         default:
-#if defined(MP3_MUSIC) || defined(MP3_MAD_MUSIC)
+#if defined(MP3_MUSIC) || defined(MP3_MAD_MUSIC) || defined(MP3_MPG_MUSIC)
 			if (detect_mp3((Uint8*)&magic))
 			{
 				/* note: send a copy of the mixer spec */

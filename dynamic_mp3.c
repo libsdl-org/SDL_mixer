@@ -178,4 +178,23 @@ void Mix_QuitMP3()
 }
 #endif /* MP3_DYNAMIC */
 
+#elif defined(MP3_MPG_MUSIC)
+#include "mpg123.h"
+
+int Mix_InitMP3()
+{
+    int result;
+
+    result = mpg123_init();
+    if (result != MPG123_OK) {
+        return 1;
+    }
+
+    return 0;
+}
+
+void Mix_QuitMP3() {
+    mpg123_exit();
+}
+
 #endif /* MP3_MUSIC */
