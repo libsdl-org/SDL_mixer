@@ -48,6 +48,10 @@ typedef struct {
 
 extern smpeg_loader smpeg;
 
+#elif defined(MP3_MPG_MUSIC)
+
+#include "mpg123.h"
+
 #endif /* MUSIC_MP3 */
 
 extern int Mix_InitMP3();

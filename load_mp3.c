@@ -23,7 +23,7 @@
 
 /* $Id$ */
 
-#if defined(MP3_MUSIC) || defined(MP3_MAD_MUSIC)
+#if defined(MP3_MUSIC) || defined(MP3_MAD_MUSIC) || defined(MP3_MPG_MUSIC)
 
 #include "SDL_mixer.h"
 
@@ -33,6 +33,8 @@
 #include "dynamic_mp3.h"
 #elif defined(MP3_MAD_MUSIC)
 #include "music_mad.h"
+#elif defined(MP3_MPG_MUSIC)
+#include "music_mpg.h"
 #endif
 
 SDL_AudioSpec *Mix_LoadMP3_RW(SDL_RWops *src, int freesrc, SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
@@ -44,6 +46,8 @@ SDL_AudioSpec *Mix_LoadMP3_RW(SDL_RWops *src, int freesrc, SDL_AudioSpec *spec, 
 	SMPEG_Info info;
 #elif defined(MP3_MAD_MUSIC)
 	mad_data *mp3_mad;
+#elif defined(MP3_MPG_MUSIC)
+	mpg_data *mp3_mpg;
 #endif
 	long samplesize;
 	int read_len;
@@ -75,6 +79,9 @@ SDL_AudioSpec *Mix_LoadMP3_RW(SDL_RWops *src, int freesrc, SDL_AudioSpec *spec, 
 #elif defined(MP3_MAD_MUSIC)
         mp3_mad = mad_openFileRW(src, spec, freesrc);
 		err = (mp3_mad == NULL);
+#elif defined(MP3_MPG_MUSIC)
+		mp3_mpg = mpg_new_rw(src, spec, freesrc);
+        err = (mp3_mpg == NULL);
 #endif
 	}
 
@@ -116,6 +123,18 @@ SDL_AudioSpec *Mix_LoadMP3_RW(SDL_RWops *src, int freesrc, SDL_AudioSpec *spec, 
 
 		mad_stop(mp3_mad);
 
+#elif defined(MP3_MPG_MUSIC)
+
+		mpg_start(mp3_mpg);
+
+		/* read once for audio length */
+		while ((read_len = mpg_get_samples(mp3_mpg, *audio_buf, chunk_len)) > 0)
+		{
+			*audio_len += read_len;
+		}
+
+		mpg_stop(mp3_mpg);
+
 #endif
 
 		err = (read_len < 0);
@@ -146,6 +165,11 @@ SDL_AudioSpec *Mix_LoadMP3_RW(SDL_RWops *src, int freesrc, SDL_AudioSpec *spec, 
 			mad_start(mp3_mad);
 			err = (*audio_len != mad_getSamples(mp3_mad, *audio_buf, *audio_len));
 			mad_stop(mp3_mad);
+#elif defined(MP3_MPG_MUSIC)
+			mpg_seek(mp3_mpg, 0);
+			mpg_start(mp3_mpg);
+			err = (*audio_len != mpg_get_samples(mp3_mpg, *audio_buf, *audio_len));
+			mpg_stop(mp3_mpg);
 #endif
 		}
 	}
@@ -168,6 +192,13 @@ SDL_AudioSpec *Mix_LoadMP3_RW(SDL_RWops *src, int freesrc, SDL_AudioSpec *spec, 
 	if (mp3_mad)
 	{
 		mad_closeFile(mp3_mad); mp3_mad = NULL;
+		/* Deleting the MP3 closed the source if desired */
+		freesrc = SDL_FALSE;
+	}
+#elif defined(MP3_MPG_MUSIC)
+	if (mp3_mpg)
+	{
+		mpg_delete(mp3_mpg); mp3_mpg = NULL;
 		/* Deleting the MP3 closed the source if desired */
 		freesrc = SDL_FALSE;
 	}

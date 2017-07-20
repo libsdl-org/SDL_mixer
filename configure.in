@@ -643,7 +643,29 @@ if test x$enable_music_mp3 = xyes -a x$enable_music_mp3_mad_gpl = xyes; then
     fi
 fi
 
-if test x$have_smpeg = xyes -o x$have_libmad = xyes; then
+AC_ARG_ENABLE(music-mp3-mpg123,
+AC_HELP_STRING([--enable-music-mp3-mpg123], [enable MP3 music via libmpg123 [[default=no]]]),
+                  [], [enable_music_mp3_mpg123=no])
+if test x$enable_music_mp3 = xyes -a x$enable_music_mp3_mpg123 = xyes; then
+    AC_MSG_CHECKING(for libmpg123 headers)
+    have_libmpg123=no
+    AC_TRY_COMPILE([
+     #include "mpg123.h"
+    ],[
+    ],[
+    have_libmpg123=yes
+    ])
+    AC_MSG_RESULT($have_libmpg123)
+    if test x$have_libmpg123 = xyes; then
+        SOURCES="$SOURCES $srcdir/music_mpg.c"
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMP3_MPG_MUSIC"
+        EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lmpg123"
+    else
+        AC_MSG_WARN([*** Unable to find mpg123 library (https://www.mpg123.de)])
+    fi
+fi
+
+if test x$have_smpeg = xyes -o x$have_libmad = xyes -o x$have_libmpg123; then
 	SOURCES="$SOURCES $srcdir/*_mp3.c"
 else
     AC_MSG_WARN([MP3 support disabled])
