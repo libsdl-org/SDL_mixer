@@ -5210,7 +5210,10 @@ s390*-*linux*|s390*-*tpf*|sparc*-*linux*)
 	  x86_64-*linux*)
 	    LD="${LD-ld} -m elf_x86_64"
 	    ;;
-	  ppc*-*linux*|powerpc*-*linux*)
+	  powerpc64le-*linux*)
+	    LD="${LD-ld} -m elf64lppc"
+	    ;;
+	  powerpc64-*linux*)
 	    LD="${LD-ld} -m elf64ppc"
 	    ;;
 	  s390*-*linux*|s390*-*tpf*)
@@ -6965,11 +6968,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:6968: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:6971: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:6972: \$? = $ac_status" >&5
+   echo "$as_me:6975: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7304,11 +7307,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7307: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7310: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7311: \$? = $ac_status" >&5
+   echo "$as_me:7314: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7409,11 +7412,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7412: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7415: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:7416: \$? = $ac_status" >&5
+   echo "$as_me:7419: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -7464,11 +7467,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7467: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7470: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:7471: \$? = $ac_status" >&5
+   echo "$as_me:7474: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -9833,7 +9836,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 9836 "configure"
+#line 9839 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -9929,7 +9932,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 9932 "configure"
+#line 9935 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -11823,9 +11826,9 @@ if test "x$ac_cv_header_libmodplug_modplug_h" = xyes; then :
 fi
 
 
-            { $as_echo "$as_me:${as_lineno-$LINENO}: checking for have_libmodplug_lib=yes in -lmodplug" >&5
-$as_echo_n "checking for have_libmodplug_lib=yes in -lmodplug... " >&6; }
-if ${ac_cv_lib_modplug_have_libmodplug_lib_yes+:} false; then :
+            { $as_echo "$as_me:${as_lineno-$LINENO}: checking for ModPlug_Load in -lmodplug" >&5
+$as_echo_n "checking for ModPlug_Load in -lmodplug... " >&6; }
+if ${ac_cv_lib_modplug_ModPlug_Load+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
@@ -11839,33 +11842,28 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char have_libmodplug_lib=yes ();
+char ModPlug_Load ();
 int
 main ()
 {
-return have_libmodplug_lib=yes ();
+return ModPlug_Load ();
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_modplug_have_libmodplug_lib_yes=yes
+  ac_cv_lib_modplug_ModPlug_Load=yes
 else
-  ac_cv_lib_modplug_have_libmodplug_lib_yes=no
+  ac_cv_lib_modplug_ModPlug_Load=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_modplug_have_libmodplug_lib_yes" >&5
-$as_echo "$ac_cv_lib_modplug_have_libmodplug_lib_yes" >&6; }
-if test "x$ac_cv_lib_modplug_have_libmodplug_lib_yes" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBMODPLUG 1
-_ACEOF
-
-  LIBS="-lmodplug $LIBS"
-
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_modplug_ModPlug_Load" >&5
+$as_echo "$ac_cv_lib_modplug_ModPlug_Load" >&6; }
+if test "x$ac_cv_lib_modplug_ModPlug_Load" = xyes; then :
+  have_libmodplug_lib=yes
 fi
 
 
@@ -11876,9 +11874,9 @@ if test "x$ac_cv_header_libmodplug_modplug_h" = xyes; then :
 fi
 
 
-            { $as_echo "$as_me:${as_lineno-$LINENO}: checking for have_libmodplug_lib=yes in -lmodplug" >&5
-$as_echo_n "checking for have_libmodplug_lib=yes in -lmodplug... " >&6; }
-if ${ac_cv_lib_modplug_have_libmodplug_lib_yes+:} false; then :
+            { $as_echo "$as_me:${as_lineno-$LINENO}: checking for ModPlug_Load in -lmodplug" >&5
+$as_echo_n "checking for ModPlug_Load in -lmodplug... " >&6; }
+if ${ac_cv_lib_modplug_ModPlug_Load+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
@@ -11892,33 +11890,28 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char have_libmodplug_lib=yes ();
+char ModPlug_Load ();
 int
 main ()
 {
-return have_libmodplug_lib=yes ();
+return ModPlug_Load ();
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_modplug_have_libmodplug_lib_yes=yes
+  ac_cv_lib_modplug_ModPlug_Load=yes
 else
-  ac_cv_lib_modplug_have_libmodplug_lib_yes=no
+  ac_cv_lib_modplug_ModPlug_Load=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_modplug_have_libmodplug_lib_yes" >&5
-$as_echo "$ac_cv_lib_modplug_have_libmodplug_lib_yes" >&6; }
-if test "x$ac_cv_lib_modplug_have_libmodplug_lib_yes" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBMODPLUG 1
-_ACEOF
-
-  LIBS="-lmodplug $LIBS"
-
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_modplug_ModPlug_Load" >&5
+$as_echo "$ac_cv_lib_modplug_ModPlug_Load" >&6; }
+if test "x$ac_cv_lib_modplug_ModPlug_Load" = xyes; then :
+  have_libmodplug_lib=yes
 fi
 
 
