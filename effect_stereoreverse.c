@@ -55,6 +55,21 @@
  * Stereo reversal effect...this one's pretty straightforward...
  */
 
+static void _Eff_reversestereo32(int chan, void *stream, int len, void *udata)
+{
+    /* 16 bits * 2 channels. */
+    Uint32 *ptr = (Uint32 *) stream;
+	Uint32 tmp;
+    int i;
+
+    for (i = 0; i < len; i += 2 * sizeof (Uint32), ptr += 2) {
+		tmp = ptr[0];
+		ptr[0] = ptr[1];
+		ptr[1] = tmp;
+    }
+}
+
+
 static void _Eff_reversestereo16(int chan, void *stream, int len, void *udata)
 {
     /* 16 bits * 2 channels. */
@@ -96,11 +111,18 @@ int Mix_SetReverseStereo(int channel, int flip)
     Mix_QuerySpec(NULL, &format, &channels);
 
     if (channels == 2) {
-        if ((format & 0xFF) == 16)
-            f = _Eff_reversestereo16;
-        else if ((format & 0xFF) == 8)
+		int bits = (format & 0xFF);
+		switch (format & 0xFF) {
+		case 8:
             f = _Eff_reversestereo8;
-        else {
+			break;
+		case 16:
+            f = _Eff_reversestereo16;
+			break;
+		case 32:
+            f = _Eff_reversestereo32;
+			break;
+		default:
             Mix_SetError("Unsupported audio format");
             return(0);
         }
@@ -110,7 +132,10 @@ int Mix_SetReverseStereo(int channel, int flip)
         } else {
             return(Mix_RegisterEffect(channel, f, NULL, NULL));
         }
-    }
+    } else {
+		Mix_SetError("Trying to reverse stereo on a non-stereo stream");
+		return(0);
+	}
 
     return(1);
 }
