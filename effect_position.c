@@ -1196,96 +1196,115 @@ static Mix_EffectFunc_t get_position_effect_func(Uint16 format, int channels)
         switch (channels) {
             case 1:
             case 2:
-                    f = (_Eff_build_volume_table_u8()) ? _Eff_position_table_u8 :
+                f = (_Eff_build_volume_table_u8()) ? _Eff_position_table_u8 :
                                                         _Eff_position_u8;
                 break;
-                case 4:
-                        f = _Eff_position_u8_c4;
+            case 4:
+                f = _Eff_position_u8_c4;
                 break;
-                case 6:
-                        f = _Eff_position_u8_c6;
+            case 6:
+                f = _Eff_position_u8_c6;
+                break;
+            default:
+                Mix_SetError("Unsupported audio channels");
                 break;
         }
-            break;
+        break;
 
         case AUDIO_S8:
         switch (channels) {
             case 1:
             case 2:
-                    f = (_Eff_build_volume_table_s8()) ? _Eff_position_table_s8 :
+                f = (_Eff_build_volume_table_s8()) ? _Eff_position_table_s8 :
                                                         _Eff_position_s8;
                 break;
-                case 4:
-                        f = _Eff_position_s8_c4;
+            case 4:
+                f = _Eff_position_s8_c4;
                 break;
-                case 6:
-                        f = _Eff_position_s8_c6;
+            case 6:
+                f = _Eff_position_s8_c6;
+                break;
+            default:
+                Mix_SetError("Unsupported audio channels");
                 break;
         }
-            break;
+        break;
 
         case AUDIO_U16LSB:
         switch (channels) {
             case 1:
             case 2:
-                    f = _Eff_position_u16lsb;
+                f = _Eff_position_u16lsb;
                 break;
-                case 4:
-                    f = _Eff_position_u16lsb_c4;
+            case 4:
+                f = _Eff_position_u16lsb_c4;
                 break;
-                case 6:
-                    f = _Eff_position_u16lsb_c6;
+            case 6:
+                f = _Eff_position_u16lsb_c6;
+                break;
+            default:
+                Mix_SetError("Unsupported audio channels");
                 break;
         }
-            break;
+        break;
 
         case AUDIO_S16LSB:
         switch (channels) {
             case 1:
             case 2:
-                    f = _Eff_position_s16lsb;
+                f = _Eff_position_s16lsb;
                 break;
-                case 4:
-                    f = _Eff_position_s16lsb_c4;
+            case 4:
+                f = _Eff_position_s16lsb_c4;
                 break;
-                case 6:
-                    f = _Eff_position_s16lsb_c6;
+            case 6:
+                f = _Eff_position_s16lsb_c6;
+                break;
+            default:
+                Mix_SetError("Unsupported audio channels");
                 break;
         }
-            break;
+        break;
 
         case AUDIO_U16MSB:
         switch (channels) {
             case 1:
             case 2:
-                    f = _Eff_position_u16msb;
+                f = _Eff_position_u16msb;
                 break;
-                case 4:
-                    f = _Eff_position_u16msb_c4;
+            case 4:
+                f = _Eff_position_u16msb_c4;
                 break;
-                case 6:
-                    f = _Eff_position_u16msb_c6;
+            case 6:
+                f = _Eff_position_u16msb_c6;
+                break;
+            default:
+                Mix_SetError("Unsupported audio channels");
                 break;
         }
-            break;
+        break;
 
         case AUDIO_S16MSB:
         switch (channels) {
             case 1:
             case 2:
-                    f = _Eff_position_s16msb;
+                f = _Eff_position_s16msb;
                 break;
-                case 4:
-                    f = _Eff_position_s16msb_c4;
+            case 4:
+                f = _Eff_position_s16msb_c4;
                 break;
-                case 6:
-                    f = _Eff_position_s16msb_c6;
+            case 6:
+                f = _Eff_position_s16msb_c6;
+                break;
+            default:
+                Mix_SetError("Unsupported audio channels");
                 break;
         }
-            break;
+        break;
 
         default:
             Mix_SetError("Unsupported audio format");
+            break;
     }
 
     return(f);
