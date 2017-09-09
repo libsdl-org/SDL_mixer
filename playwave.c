@@ -396,6 +396,9 @@ int main(int argc, char *argv[])
         if ( strcmp(argv[i], "-8") == 0 ) {
             audio_format = AUDIO_U8;
         } else
+        if ( strcmp(argv[i], "-f32") == 0 ) {
+            audio_format = AUDIO_F32;
+        } else
         if ( strcmp(argv[i], "-f") == 0 ) { /* rcg06122001 flip stereo */
             reverse_stereo = 1;
         } else
