@@ -429,7 +429,7 @@ int Play_MPEGaudio(MPEGaudio *audio, Uint8 *stream, int len)
 	   quite right */
         copylen = audio->ring->NextReadBuffer(&rbuf);
         if ( copylen > len ) {
-            SDL_MixAudio(stream, rbuf, len, volume);
+	    SDL_MixAudioFormat(stream, rbuf, audio->format, len, volume);
             mixed += len;
             audio->ring->ReadSome(len);
             len = 0;
@@ -437,7 +437,7 @@ int Play_MPEGaudio(MPEGaudio *audio, Uint8 *stream, int len)
 		audio->timestamp[i] = audio->timestamp[i+1];
 	    audio->timestamp[N_TIMESTAMPS-1] = audio->ring->ReadTimeStamp();
         } else {
-            SDL_MixAudio(stream, rbuf, copylen, volume);
+	    SDL_MixAudioFormat(stream, rbuf, audio->format, copylen, volume);
             mixed += copylen;
             ++audio->currentframe;
             audio->ring->ReadDone();
@@ -477,14 +477,14 @@ int Play_MPEGaudio(MPEGaudio *audio, Uint8 *stream, int len)
         copylen = (audio->rawdatawriteoffset-audio->rawdatareadoffset);
         assert(copylen >= 0);
         if ( copylen >= len ) {
-            SDL_MixAudio(stream, (Uint8 *)&audio->spillover[audio->rawdatareadoffset],
-                                                       len*2, volume);
+            SDL_MixAudioFormat(stream, (Uint8 *)&audio->spillover[audio->rawdatareadoffset],
+                                                       audio->format, len*2, volume);
             mixed += len*2;
             audio->rawdatareadoffset += len;
             goto finished_mixing;
         }
-        SDL_MixAudio(stream, (Uint8 *)&audio->spillover[audio->rawdatareadoffset],
-                                                       copylen*2, volume);
+        SDL_MixAudioFormat(stream, (Uint8 *)&audio->spillover[audio->rawdatareadoffset],
+                                                       audio->format, copylen*2, volume);
         mixed += copylen*2;
         len -= copylen;
         stream += copylen*2;
@@ -503,7 +503,7 @@ int Play_MPEGaudio(MPEGaudio *audio, Uint8 *stream, int len)
     audio->rawdatawriteoffset = 0;
     if ( audio->run(1) ) {
         assert(audio->rawdatawriteoffset > len);
-        SDL_MixAudio(stream, (Uint8 *) audio->spillover, len*2, volume);
+        SDL_MixAudioFormat(stream, (Uint8 *) audio->spillover, audio->format, len*2, volume);
         mixed += len*2;
         audio->rawdatareadoffset = len;
     } else {

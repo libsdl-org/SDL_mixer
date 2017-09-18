@@ -186,6 +186,7 @@ protected:
     double rate_in_s;
     Uint32 frags_playing;
     Uint32 frag_time;
+    SDL_AudioFormat format;
 #ifdef THREADED_AUDIO
     bool decoding;
     SDL_Thread *decode_thread;
