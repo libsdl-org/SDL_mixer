@@ -34,6 +34,7 @@ MPEGaudio:: MPEGaudio(MPEGstream *stream, bool initSDL)
     , rate_in_s(0.0)
     , frags_playing(0)
     , frag_time(0)
+    , format(0)
 #ifdef THREADED_AUDIO
     , decoding(false)
     , decode_thread(NULL)
@@ -155,6 +156,8 @@ MPEGaudio:: ActualSpec(const SDL_AudioSpec *actual)
     }
     rate_in_s=((double)((actual->format&0xFF)/8)*actual->channels*actual->freq);
     stereo=((actual->channels-1) > 0);
+
+    format = actual->format;
 }
 
 #ifdef THREADED_AUDIO
