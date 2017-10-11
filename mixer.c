@@ -518,8 +518,9 @@ int Mix_OpenAudioDevice(int frequency, Uint16 format, int nchannels, int chunksi
 /* Open the mixer with a certain desired audio format */
 int Mix_OpenAudio(int frequency, Uint16 format, int nchannels, int chunksize)
 {
-    return Mix_OpenAudioDevice(frequency, format, nchannels, chunksize,
-			       NULL, SDL_AUDIO_ALLOW_ANY_CHANGE);
+    return Mix_OpenAudioDevice(frequency, format, nchannels, chunksize, NULL,
+                                SDL_AUDIO_ALLOW_FREQUENCY_CHANGE |
+                                SDL_AUDIO_ALLOW_CHANNELS_CHANGE);
 }
 
 /* Dynamically change the number of channels managed by the mixer.
