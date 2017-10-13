@@ -156,7 +156,7 @@ WAVStream *WAVStream_LoadSong_RW(SDL_RWops *src, int freesrc)
             Mix_SetError("Unknown WAVE format");
         }
         if (!loaded) {
-            WAVStream_FreeSong(wave);
+            SDL_free(wave);
             return(NULL);
         }
         SDL_BuildAudioCVT(&wave->cvt,
