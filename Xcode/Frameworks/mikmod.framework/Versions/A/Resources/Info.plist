@@ -5,20 +5,20 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>modplug</string>
+	<string>mikmod</string>
 	<key>CFBundleGetInfoString</key>
-	<string>libmodplug 0.8.9</string>
+	<string>libmikmod 3.1.21</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>modplug</string>
+	<string>mikmod</string>
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.8.9</string>
+	<string>3.1.21</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>0.8.9</string>
+	<string>3.1.21</string>
 </dict>
 </plist>
