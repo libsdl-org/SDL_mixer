@@ -61,7 +61,6 @@
 		AA9F7DBB14B15D4400278D1E /* Ogg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = AA9F7DB314B15ADC00278D1E /* Ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		AA9F7DBE14B15D5400278D1E /* Vorbis.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = AA9F7DB414B15ADC00278D1E /* Vorbis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		AAE2D4361F90416000057D25 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA6442D0175B181300A2125A /* AudioToolbox.framework */; };
-		AAE2D4371F90417600057D25 /* mikmod.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = AAE2D4341F9040BE00057D25 /* mikmod.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BE1FA8B907AF96B2004B6283 /* music_cmd.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC1B87B012FB8CD7F000001 /* music_cmd.h */; };
 		BE1FA8BA07AF96B2004B6283 /* music_ogg.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC1B87D012FB8CD7F000001 /* music_ogg.h */; };
 		BE1FA8BB07AF96B2004B6283 /* common.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC1B881012FB8CD7F000001 /* common.h */; };
@@ -170,7 +169,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				AA9F7DB914B15D3300278D1E /* FLAC.framework in Copy Frameworks */,
-				AAE2D4371F90417600057D25 /* mikmod.framework in Copy Frameworks */,
 				AA6021301765383B00662B9C /* modplug.framework in Copy Frameworks */,
 				AA644290175AA7C900A2125A /* smpeg2.framework in Copy Frameworks */,
 				AA9F7DBB14B15D4400278D1E /* Ogg.framework in Copy Frameworks */,
@@ -251,7 +249,6 @@
 		AA9F7DB314B15ADC00278D1E /* Ogg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ogg.framework; path = Frameworks/Ogg.framework; sourceTree = "<group>"; };
 		AA9F7DB414B15ADC00278D1E /* Vorbis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Vorbis.framework; path = Frameworks/Vorbis.framework; sourceTree = "<group>"; };
 		AA9F7DB714B15AE700278D1E /* FLAC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FLAC.framework; path = Frameworks/FLAC.framework; sourceTree = "<group>"; };
-		AAE2D4341F9040BE00057D25 /* mikmod.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = mikmod.framework; path = Frameworks/mikmod.framework; sourceTree = "<group>"; };
 		B2A42D0E03FAC6A400A8000A /* load_ogg.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = load_ogg.c; path = ../load_ogg.c; sourceTree = SOURCE_ROOT; };
 		B2A42D0F03FAC6A400A8000A /* load_ogg.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = load_ogg.h; path = ../load_ogg.h; sourceTree = SOURCE_ROOT; };
 		BE1FA8AE07AF95F7004B6283 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = /Library/Frameworks/SDL2.framework; sourceTree = "<absolute>"; };
@@ -435,7 +432,6 @@
 				AA6442D2175B181D00A2125A /* AudioUnit.framework */,
 				AA6442D4175B185800A2125A /* CoreServices.framework */,
 				AA9F7DB714B15AE700278D1E /* FLAC.framework */,
-				AAE2D4341F9040BE00057D25 /* mikmod.framework */,
 				AA60212F1765382200662B9C /* modplug.framework */,
 				AA9F7DB314B15ADC00278D1E /* Ogg.framework */,
 				BE1FA8AE07AF95F7004B6283 /* SDL2.framework */,
@@ -828,7 +824,6 @@
 					USE_NATIVE_MIDI,
 					OGG_MUSIC,
 					FLAC_MUSIC,
-					LIBMIKMOD_MUSIC,
 				);
 				INFOPLIST_FILE = "Info-Framework.plist";
 				INSTALL_PATH = "@rpath";
@@ -837,8 +832,6 @@
 				OTHER_LDFLAGS = (
 					"-weak_framework",
 					FLAC,
-					"-weak_framework",
-					mikmod,
 					"-weak_framework",
 					modplug,
 					"-weak_framework",
@@ -872,7 +865,6 @@
 					USE_NATIVE_MIDI,
 					OGG_MUSIC,
 					FLAC_MUSIC,
-					LIBMIKMOD_MUSIC,
 				);
 				INFOPLIST_FILE = "Info-Framework.plist";
 				INSTALL_PATH = "@rpath";
@@ -881,8 +873,6 @@
 				OTHER_LDFLAGS = (
 					"-weak_framework",
 					FLAC,
-					"-weak_framework",
-					mikmod,
 					"-weak_framework",
 					modplug,
 					"-weak_framework",
