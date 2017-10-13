@@ -17,3 +17,4 @@ libtool
 xcuserdata
 *.xcworkspace
 SDL2_mixer.pc
+SDL2_mixer.spec
