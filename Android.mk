@@ -4,25 +4,31 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := SDL2_mixer
 
+# Enable this if you want to support loading FLAC music via libFLAC
+# The library path should be a relative path to this directory.
+#
+# You need to symlink the FLAC_LIBRARY_PATH to your jni directory
+# so the shared library is built.
+SUPPORT_FLAC ?= true
+FLAC_LIBRARY_PATH := external/flac-1.3.2
+
 # Enable this if you want to support loading MOD music via modplug
 # The library path should be a relative path to this directory.
 SUPPORT_MOD_MODPLUG ?= true
-MODPLUG_LIBRARY_PATH := external/libmodplug-0.8.8.4
-
-# Enable this if you want to support loading MOD music via mikmod
-# The library path should be a relative path to this directory.
-SUPPORT_MOD_MIKMOD ?= true
-MIKMOD_LIBRARY_PATH := external/libmikmod-3.1.12
+MODPLUG_LIBRARY_PATH := external/libmodplug-0.8.9.0
 
 # Enable this if you want to support loading MP3 music via SMPEG
 # The library path should be a relative path to this directory.
+#
+# You need to symlink the SMPEG_LIBRARY_PATH to your jni directory
+# so the shared library is built.
 SUPPORT_MP3_SMPEG ?= true
 SMPEG_LIBRARY_PATH := external/smpeg2-2.0.0
 
 # Enable this if you want to support loading OGG Vorbis music via Tremor
 # The library path should be a relative path to this directory.
 SUPPORT_OGG ?= true
-OGG_LIBRARY_PATH := external/libogg-1.3.1
+OGG_LIBRARY_PATH := external/libogg-1.3.2
 VORBIS_LIBRARY_PATH := external/libvorbisidec-1.2.1
 
 
@@ -43,6 +49,12 @@ ifeq ($(SUPPORT_TIMIDITY),true)
 	LOCAL_C_INCLUDES += $(LOCAL_PATH)/timidity
 	LOCAL_CFLAGS += -DMID_MUSIC -DUSE_TIMIDITY_MIDI
 	LOCAL_SRC_FILES += $(subst $(LOCAL_PATH)/,,$(wildcard $(LOCAL_PATH)/timidity/*.c))
+endif
+
+ifeq ($(SUPPORT_FLAC),true)
+	LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(FLAC_LIBRARY_PATH)/include
+	LOCAL_CFLAGS += -DFLAC_MUSIC
+    LOCAL_SHARED_LIBRARIES += libFLAC
 endif
 
 ifeq ($(SUPPORT_MOD_MODPLUG),true)
@@ -85,12 +97,6 @@ ifeq ($(SUPPORT_MOD_MODPLUG),true)
         $(MODPLUG_LIBRARY_PATH)/src/sndmix.cpp
 endif
 
-ifeq ($(SUPPORT_MOD_MIKMOD),true)
-    LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(MIKMOD_LIBRARY_PATH)/include
-    LOCAL_CFLAGS += -DMOD_MUSIC
-    LOCAL_SHARED_LIBRARIES += mikmod
-endif
-
 ifeq ($(SUPPORT_MP3_SMPEG),true)
     LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(SMPEG_LIBRARY_PATH)
     LOCAL_CFLAGS += -DMP3_MUSIC
@@ -98,7 +104,9 @@ ifeq ($(SUPPORT_MP3_SMPEG),true)
 endif
 
 ifeq ($(SUPPORT_OGG),true)
-    LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(OGG_LIBRARY_PATH)/include $(LOCAL_PATH)/$(VORBIS_LIBRARY_PATH)
+    LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(OGG_LIBRARY_PATH)/android \
+                        $(LOCAL_PATH)/$(OGG_LIBRARY_PATH)/include \
+                        $(LOCAL_PATH)/$(VORBIS_LIBRARY_PATH)
     LOCAL_CFLAGS += -DOGG_MUSIC -DOGG_USE_TREMOR -DOGG_HEADER="<ivorbisfile.h>"
     ifeq ($(TARGET_ARCH_ABI),armeabi)
 	LOCAL_CFLAGS += -D_ARM_ASSEM_
