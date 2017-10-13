@@ -124,7 +124,7 @@ modplug_data *modplug_new_RW(SDL_RWops *src, int freesrc)
             music = (modplug_data*)SDL_malloc(sizeof(modplug_data));
             if (music) {
                 music->playing = 0;
-                music->file = modplug.ModPlug_Load(buf, sz);
+                music->file = modplug.ModPlug_Load(buf, (int)sz);
                 if (!music->file) {
                     SDL_free(music);
                     music = NULL;

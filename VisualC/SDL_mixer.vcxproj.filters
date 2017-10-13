@@ -186,9 +186,6 @@
     <CustomBuild Include="external\lib\x64\libmodplug-1.dll">
       <Filter>x64</Filter>
     </CustomBuild>
-    <CustomBuild Include="external\lib\x64\libmikmod-2.dll">
-      <Filter>x64</Filter>
-    </CustomBuild>
     <CustomBuild Include="external\lib\x64\smpeg2.dll">
       <Filter>x64</Filter>
     </CustomBuild>

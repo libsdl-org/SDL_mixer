@@ -233,7 +233,7 @@ static int PlaySome(Uint8 *stream, int len)
         if ((stop - pos) < original_len) {
             original_len = (int)(stop - pos);
         }
-        original_len = SDL_RWread(music->src, music->cvt.buf, 1, original_len);
+        original_len = (int)SDL_RWread(music->src, music->cvt.buf, 1, original_len);
         music->cvt.len = original_len;
         SDL_ConvertAudio(&music->cvt);
         SDL_MixAudioFormat(stream, music->cvt.buf, mixer.format,music->cvt.len_cvt, wavestream_volume);
@@ -245,7 +245,7 @@ static int PlaySome(Uint8 *stream, int len)
         }
         data = SDL_stack_alloc(Uint8, len);
         if (data) {
-            len = SDL_RWread(music->src, data, 1, len);
+            len = (int)SDL_RWread(music->src, data, 1, len);
             SDL_MixAudioFormat(stream, data, mixer.format, len, wavestream_volume);
             SDL_stack_free(data);
         }
@@ -404,7 +404,7 @@ static SDL_bool ParseSMPL(WAVStream *wave, Uint32 chunk_length)
 {
     SamplerChunk *chunk;
     Uint8 *data;
-    int i;
+    Uint32 i;
     SDL_bool loaded = SDL_FALSE;
 
     data = (Uint8 *)SDL_malloc(chunk_length);
@@ -427,8 +427,6 @@ static SDL_bool ParseSMPL(WAVStream *wave, Uint32 chunk_length)
     }
 
     loaded = SDL_TRUE;
-
-done:
     SDL_free(data);
     return loaded;
 }

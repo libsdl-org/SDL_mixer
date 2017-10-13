@@ -136,7 +136,7 @@ FILE *open_file(const char *name, int decompress, int noise_mode)
     while (plp)  /* Try along the path then */
       {
 	*current_filename=0;
-	l=strlen(plp->path);
+	l=(int)strlen(plp->path);
 	if(l)
 	  {
 	    strcpy(current_filename, plp->path);
