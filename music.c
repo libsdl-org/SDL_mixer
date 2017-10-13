@@ -1633,6 +1633,7 @@ int Mix_EachSoundFont(int (*function)(const char*, void*), void *data)
 {
     char *context, *path, *paths;
     const char* cpaths = Mix_GetSoundFonts();
+    int soundfonts_found = 0;
 
     if (!cpaths) {
         Mix_SetError("No SoundFonts have been requested");
@@ -1652,12 +1653,16 @@ int Mix_EachSoundFont(int (*function)(const char*, void*), void *data)
     for (path = strtok_r(paths, ":;", &context); path; path = strtok_r(NULL, ":;", &context)) {
 #endif
         if (!function(path, data)) {
-            SDL_free(paths);
-            return 0;
+            continue;
+        } else {
+            soundfonts_found++;
         }
     }
 
     SDL_free(paths);
-    return 1;
+    if (soundfonts_found > 0)
+        return 1;
+    else
+        return 0;
 }
 #endif

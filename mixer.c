@@ -151,6 +151,11 @@ int Mix_Init(int flags)
 {
     int result = 0;
 
+#ifdef MIX_INIT_SOUNDFONT_PATHS
+    if (!soundfont_paths)
+        soundfont_paths = SDL_strdup(MIX_INIT_SOUNDFONT_PATHS);
+#endif
+
     if (flags & MIX_INIT_FLUIDSYNTH) {
 #ifdef USE_FLUIDSYNTH_MIDI
         if ((initialized & MIX_INIT_FLUIDSYNTH) || Mix_InitFluidSynth() == 0) {
