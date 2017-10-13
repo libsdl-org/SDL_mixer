@@ -383,7 +383,11 @@ MIDIEvent *CreateMIDIEventList(SDL_RWops *src, Uint16 *division)
         *division = mididata->division;
 
     eventList = MIDItoStream(mididata);
-
+    if (eventList == NULL)
+    {
+        free(mididata);
+        return NULL;
+    }
     for(trackID = 0; trackID < mididata->nTracks; trackID++)
     {
         if (mididata->track[trackID].data)
