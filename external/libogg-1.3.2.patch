@@ -1,0 +1,62 @@
+diff -ru libogg-1.3.2.orig/macosx/Ogg.xcodeproj/project.pbxproj libogg-1.3.2/macosx/Ogg.xcodeproj/project.pbxproj
+--- libogg-1.3.2.orig/macosx/Ogg.xcodeproj/project.pbxproj	2017-10-12 15:31:59.000000000 -0700
++++ libogg-1.3.2/macosx/Ogg.xcodeproj/project.pbxproj	2017-10-12 16:22:51.000000000 -0700
+@@ -168,9 +168,11 @@
+ /* Begin PBXProject section */
+ 		0867D690FE84028FC02AAC07 /* Project object */ = {
+ 			isa = PBXProject;
++			attributes = {
++			};
+ 			buildConfigurationList = 730F235809181A3A00AB638C /* Build configuration list for PBXProject "Ogg" */;
+ 			compatibilityVersion = "Xcode 2.4";
+-			developmentRegion = English;
++			developmentRegion = en;
+ 			hasScannedForEncodings = 1;
+ 			knownRegions = (
+ 				en,
+@@ -243,11 +245,10 @@
+ 		730F235509181A3A00AB638C /* Debug */ = {
+ 			isa = XCBuildConfiguration;
+ 			buildSettings = {
+-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+-				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
++				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+ 				COPY_PHASE_STRIP = NO;
+ 				DYLIB_COMPATIBILITY_VERSION = 9.0.0;
+-				DYLIB_CURRENT_VERSION = 9.1.0;
++				DYLIB_CURRENT_VERSION = 9.2.0;
+ 				FRAMEWORK_VERSION = A;
+ 				GCC_DYNAMIC_NO_PIC = NO;
+ 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+@@ -257,7 +258,7 @@
+ 				INFOPLIST_FILE = Info.plist;
+ 				INSTALL_PATH = /Library/Frameworks;
+ 				LD_DYLIB_INSTALL_NAME = "@rpath/$(EXECUTABLE_PATH)";
+-				MACOSX_DEPLOYMENT_TARGET = 10.5;
++				MACOSX_DEPLOYMENT_TARGET = 10.6;
+ 				PRODUCT_NAME = Ogg;
+ 				SDKROOT = macosx;
+ 				WRAPPER_EXTENSION = framework;
+@@ -268,11 +269,10 @@
+ 		730F235609181A3A00AB638C /* Release */ = {
+ 			isa = XCBuildConfiguration;
+ 			buildSettings = {
+-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+-				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
++				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+ 				COPY_PHASE_STRIP = YES;
+ 				DYLIB_COMPATIBILITY_VERSION = 9.0.0;
+-				DYLIB_CURRENT_VERSION = 9.1.0;
++				DYLIB_CURRENT_VERSION = 9.2.0;
+ 				FRAMEWORK_VERSION = A;
+ 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+ 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+@@ -281,7 +281,7 @@
+ 				INFOPLIST_FILE = Info.plist;
+ 				INSTALL_PATH = /Library/Frameworks;
+ 				LD_DYLIB_INSTALL_NAME = "@rpath/$(EXECUTABLE_PATH)";
+-				MACOSX_DEPLOYMENT_TARGET = 10.5;
++				MACOSX_DEPLOYMENT_TARGET = 10.6;
+ 				PRODUCT_NAME = Ogg;
+ 				SDKROOT = macosx;
+ 				WRAPPER_EXTENSION = framework;
