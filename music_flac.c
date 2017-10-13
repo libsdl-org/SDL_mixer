@@ -211,8 +211,7 @@ static FLAC__StreamDecoderWriteStatus flac_write_music_cb(
         else {
             // we need to write to the overflow
             if (!data->flac_data.overflow) {
-                data->flac_data.overflow_len =
-                                            4 * (frame->header.blocksize - i);
+                data->flac_data.overflow_len = (int)(4 * (frame->header.blocksize - i));
                 data->flac_data.overflow_read = 0;
 
                 // make it big enough for the rest of the block
@@ -409,18 +408,18 @@ static void FLAC_getsome(FLAC_music *music)
                 SDL_memcpy (music->flac_data.overflow,
                     music->flac_data.overflow + music->flac_data.max_to_read,
                     overflow_extra_len);
-                music->flac_data.overflow_len = overflow_extra_len;
-                music->flac_data.overflow_read = overflow_extra_len;
+                music->flac_data.overflow_len = (int)overflow_extra_len;
+                music->flac_data.overflow_read = (int)overflow_extra_len;
                 music->flac_data.max_to_read = 0;
             } else {
                 SDL_memcpy (music->flac_data.data+music->flac_data.data_read,
                     music->flac_data.overflow, overflow_len);
-                music->flac_data.data_read += overflow_len;
+                music->flac_data.data_read += (int)overflow_len;
                 SDL_free (music->flac_data.overflow);
                 music->flac_data.overflow = NULL;
                 music->flac_data.overflow_len = 0;
                 music->flac_data.overflow_read = 0;
-                music->flac_data.max_to_read -= overflow_len;
+                music->flac_data.max_to_read -= (int)overflow_len;
             }
         }
         else {

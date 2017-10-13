@@ -329,7 +329,7 @@ static int voc_get_block(SDL_RWops *src, vs_t *v, SDL_AudioSpec *spec)
 
 static int voc_read(SDL_RWops *src, vs_t *v, Uint8 *buf, SDL_AudioSpec *spec)
 {
-    int done = 0;
+    Uint32 done = 0;
     Uint8 silence = 0x80;
 
     if (v->rest == 0)
@@ -354,7 +354,7 @@ static int voc_read(SDL_RWops *src, vs_t *v, Uint8 *buf, SDL_AudioSpec *spec)
 
     else
     {
-        done = SDL_RWread(src, buf, 1, v->rest);
+        done = (Uint32)SDL_RWread(src, buf, 1, v->rest);
         v->rest -= done;
         if (v->size == ST_SIZE_WORD)
         {
