@@ -151,9 +151,7 @@ static const char **music_decoders = NULL;
 static int num_decoders = 0;
 
 /* Semicolon-separated SoundFont paths */
-#ifdef MID_MUSIC
 char* soundfont_paths = NULL;
-#endif
 
 int Mix_GetNumMusicDecoders(void)
 {
@@ -1601,7 +1599,6 @@ void close_music(void)
 
 int Mix_SetSoundFonts(const char *paths)
 {
-#ifdef MID_MUSIC
     if (soundfont_paths) {
         SDL_free(soundfont_paths);
         soundfont_paths = NULL;
@@ -1613,11 +1610,9 @@ int Mix_SetSoundFonts(const char *paths)
             return 0;
         }
     }
-#endif
     return 1;
 }
 
-#ifdef MID_MUSIC
 const char* Mix_GetSoundFonts(void)
 {
     const char* force = getenv("SDL_FORCE_SOUNDFONTS");
@@ -1665,4 +1660,3 @@ int Mix_EachSoundFont(int (*function)(const char*, void*), void *data)
     else
         return 0;
 }
-#endif

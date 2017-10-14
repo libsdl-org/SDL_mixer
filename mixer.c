@@ -110,9 +110,7 @@ static const char **chunk_decoders = NULL;
 static int num_decoders = 0;
 
 /* Semicolon-separated SoundFont paths */
-#ifdef MID_MUSIC
 extern char* soundfont_paths;
-#endif
 
 int Mix_GetNumChunkDecoders(void)
 {
@@ -249,12 +247,10 @@ void Mix_Quit()
         Mix_QuitOgg();
     }
 #endif
-#ifdef MID_MUSIC
     if (soundfont_paths) {
         SDL_free(soundfont_paths);
         soundfont_paths = NULL;
     }
-#endif
     initialized = 0;
 }
 
