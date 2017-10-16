@@ -448,7 +448,7 @@ int Play_MPEGaudio(MPEGaudio *audio, Uint8 *stream, int len)
 	if (audio->timestamp[0] != -1){
 	    double timeshift = audio->Time() - audio->timestamp[0];
 	    double correction = 0;
-	    assert(audio->timestamp >= 0);
+	    assert(audio->timestamp[0] >= 0);
 	    if (fabs(timeshift) > 1.0){
 	        correction = -timeshift;
 #ifdef DEBUG_TIMESTAMP_SYNC
