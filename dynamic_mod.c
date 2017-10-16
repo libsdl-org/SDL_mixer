@@ -59,7 +59,7 @@ int Mix_InitMOD()
             return -1;
         }
         mikmod.MikMod_Init =
-            (BOOL (*)(CHAR*))
+            (int (*)(MIKMOD3_CONST CHAR*))
             SDL_LoadFunction(mikmod.handle, "MikMod_Init");
         if ( mikmod.MikMod_Init == NULL ) {
             SDL_UnloadObject(mikmod.handle);
@@ -87,7 +87,7 @@ int Mix_InitMOD()
             return -1;
         }
         mikmod.MikMod_strerror =
-            (char* (*)(int))
+            (MIKMOD3_CONST char* (*)(int))
             SDL_LoadFunction(mikmod.handle, "MikMod_strerror");
         if ( mikmod.MikMod_strerror == NULL ) {
             SDL_UnloadObject(mikmod.handle);
