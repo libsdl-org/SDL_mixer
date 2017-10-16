@@ -109,13 +109,10 @@ read_next_frame(mad_data *mp3_mad) {
     /* Now read additional bytes from the input file. */
     read_size = SDL_RWread(mp3_mad->src, read_start, 1, read_size);
 
-    if (read_size <= 0) {
+    if (read_size == 0) {
       if ((mp3_mad->status & (MS_input_eof | MS_input_error)) == 0) {
-        if (read_size == 0) {
-          mp3_mad->status |= MS_input_eof;
-        } else {
-          mp3_mad->status |= MS_input_error;
-        }
+        /* FIXME: how to detect error? */
+        mp3_mad->status |= MS_input_eof;
 
         /* At the end of the file, we must stuff MAD_BUFFER_GUARD
            number of 0 bytes. */
