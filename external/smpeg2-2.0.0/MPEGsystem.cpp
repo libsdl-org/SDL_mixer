@@ -1337,7 +1337,7 @@ bool MPEGsystem::SystemLoop(MPEGsystem *system)
   return(true);
 }
 
-int MPEGsystem::SystemThread(void * udata)
+int SDLCALL MPEGsystem::SystemThread(void * udata)
 {
   MPEGsystem * system = (MPEGsystem *) udata;
 

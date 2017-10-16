@@ -32,9 +32,9 @@
 #include "MPEGring.h"
 #endif
 
-void Play_MPEGaudioSDL(void *udata, Uint8 *stream, int len);
+void SDLCALL Play_MPEGaudioSDL(void *udata, Uint8 *stream, int len);
 #ifdef THREADED_AUDIO
-    int Decode_MPEGaudio(void *udata);
+int SDLCALL Decode_MPEGaudio(void *udata);
 #endif
 
 class MPEGstream;
@@ -369,18 +369,18 @@ public:
   double timestamp[N_TIMESTAMPS];
 
   /* Functions which access MPEGaudio internals */
-  friend void Play_MPEGaudioSDL(void *udata, Uint8 *stream, int len);
+  friend void SDLCALL Play_MPEGaudioSDL(void *udata, Uint8 *stream, int len);
   friend int Play_MPEGaudio(MPEGaudio *audio, Uint8 *stream, int len);
 #ifdef THREADED_AUDIO
-  friend int Decode_MPEGaudio(void *udata);
+  friend int SDLCALL Decode_MPEGaudio(void *udata);
 #endif
 };
 
 /* Need to duplicate the prototypes, this is not a typo :) */
-void Play_MPEGaudioSDL(void *udata, Uint8 *stream, int len);
+void SDLCALL Play_MPEGaudioSDL(void *udata, Uint8 *stream, int len);
 int Play_MPEGaudio(MPEGaudio *audio, Uint8 *stream, int len);
 #ifdef THREADED_AUDIO
-int Decode_MPEGaudio(void *udata);
+int SDLCALL Decode_MPEGaudio(void *udata);
 #endif
 
 #endif /* _MPEGAUDIO_H_ */

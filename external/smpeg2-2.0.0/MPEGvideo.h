@@ -42,7 +42,7 @@ typedef double TimeStamp;
 class MPEGvideo : public MPEGerror, public MPEGvideoaction {
 
     /* Thread to play the video asynchronously */
-    friend int Play_MPEGvideo(void *udata);
+    friend int SDLCALL Play_MPEGvideo(void *udata);
 
     /* Various mpeg_play functions that need our data */
     friend VidStream* mpegVidRsrc( TimeStamp time_stamp, VidStream* vid_stream, int first );
