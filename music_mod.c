@@ -149,14 +149,16 @@ typedef struct
     SDL_RWops *src;
 } LMM_MREADER;
 
-BOOL LMM_Seek(struct MREADER *mr,long to,int dir)
+int LMM_Seek(struct MREADER *mr,long to,int dir)
 {
 	Sint64 offset = to;
     LMM_MREADER* lmmmr = (LMM_MREADER*)mr;
     if ( dir == SEEK_SET ) {
         offset += lmmmr->offset;
+        if (offset < lmmmr->offset)
+            return -1;
     }
-    return (SDL_RWseek(lmmmr->src, offset, dir) < lmmmr->offset);
+    return (int)(SDL_RWseek(lmmmr->src, offset, dir));
 }
 long LMM_Tell(struct MREADER *mr)
 {
