@@ -144,6 +144,11 @@ void MOD_setvolume(MODULE *music, int volume)
 typedef struct
 {
     MREADER mr;
+    /* struct MREADER in libmikmod <= 3.2.0-beta2
+     * doesn't have iobase members. adding them here
+     * so that if we compile against 3.2.0-beta2, we
+     * can still run OK against 3.2.0b3 and newer. */
+    long iobase, prev_iobase;
     Sint64 offset;
     Sint64 eof;
     SDL_RWops *src;
