@@ -40,7 +40,7 @@
  * SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-#ifdef WIN32
+#if defined(WIN32) || defined(__WATCOMC__)
 #define __STDC__ 1
 #endif
 #ifdef __STDC__
