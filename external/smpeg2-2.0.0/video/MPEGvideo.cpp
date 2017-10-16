@@ -210,7 +210,7 @@ MPEGvideo:: ~MPEGvideo()
 }
 
 /* Simple thread play function */
-int Play_MPEGvideo( void *udata )
+int SDLCALL Play_MPEGvideo( void *udata )
 {
     MPEGvideo *mpeg = (MPEGvideo *)udata;
 

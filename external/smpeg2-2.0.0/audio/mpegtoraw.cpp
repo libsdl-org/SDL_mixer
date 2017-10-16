@@ -353,7 +353,7 @@ bool MPEGaudio::run( int frames, double *timestamp)
 }
 
 #ifdef THREADED_AUDIO
-int Decode_MPEGaudio(void *udata)
+int SDLCALL Decode_MPEGaudio(void *udata)
 {
     MPEGaudio *audio = (MPEGaudio *)udata;
     double timestamp;
@@ -513,7 +513,7 @@ finished_mixing:
 #endif
     return(mixed);
 }
-void Play_MPEGaudioSDL(void *udata, Uint8 *stream, int len)
+void SDLCALL Play_MPEGaudioSDL(void *udata, Uint8 *stream, int len)
 {
     MPEGaudio *audio = (MPEGaudio *)udata;
     Play_MPEGaudio(audio, stream, len);

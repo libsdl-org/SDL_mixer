@@ -82,7 +82,7 @@ protected:
     virtual void Read();
 
     /* The system thread which fills the FIFO */
-    static int SystemThread(void * udata);
+    static int SDLCALL SystemThread(void * udata);
 
     SDL_RWops *source;
 
