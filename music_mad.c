@@ -44,6 +44,7 @@ mad_openFileRW(SDL_RWops *src, SDL_AudioSpec *mixer, int freesrc)
     mp3_mad->output_begin = 0;
     mp3_mad->output_end = 0;
     mp3_mad->mixer = *mixer;
+    mp3_mad->output_buffer = NULL;
   }
   return mp3_mad;
 }
@@ -58,6 +59,7 @@ mad_closeFile(mad_data *mp3_mad)
   if (mp3_mad->freesrc) {
     SDL_RWclose(mp3_mad->src);
   }
+  SDL_free(mp3_mad->output_buffer);
   SDL_free(mp3_mad);
 }
 
@@ -177,7 +179,6 @@ decode_frame(mad_data *mp3_mad) {
 
   mad_synth_frame(&mp3_mad->synth, &mp3_mad->frame);
   pcm = &mp3_mad->synth.pcm;
-  out = mp3_mad->output_buffer + mp3_mad->output_end;
 
   if ((mp3_mad->status & MS_cvt_decoded) == 0) {
     mp3_mad->status |= MS_cvt_decoded;
@@ -187,6 +188,15 @@ decode_frame(mad_data *mp3_mad) {
        structure now. */
     SDL_BuildAudioCVT(&mp3_mad->cvt, AUDIO_S16, pcm->channels, mp3_mad->frame.header.samplerate, mp3_mad->mixer.format, mp3_mad->mixer.channels, mp3_mad->mixer.freq);
   }
+
+  if (!mp3_mad->output_buffer) {
+    size_t sz = MAD_OUTPUT_BUFFER_SIZE;
+    if (mp3_mad->cvt.len_mult > 1) {
+        sz *= mp3_mad->cvt.len_mult;
+    }
+    mp3_mad->output_buffer = (unsigned char *) SDL_malloc(sz);
+  }
+  out = mp3_mad->output_buffer + mp3_mad->output_end;
 
   /* pcm->samplerate contains the sampling frequency */
 
