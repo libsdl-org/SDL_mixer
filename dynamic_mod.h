@@ -23,6 +23,13 @@
 
 #include "mikmod.h"
 
+/* libmikmod >= 3.3.2 constified several funcs */
+#if (LIBMIKMOD_VERSION < 0x030302)
+#define MIKMOD3_CONST
+#else
+#define MIKMOD3_CONST const
+#endif
+
 typedef struct {
     int loaded;
     void *handle;
@@ -30,11 +37,11 @@ typedef struct {
     void (*MikMod_Exit)(void);
     CHAR* (*MikMod_InfoDriver)(void);
     CHAR* (*MikMod_InfoLoader)(void);
-    BOOL (*MikMod_Init)(CHAR*);
+    int (*MikMod_Init)(MIKMOD3_CONST CHAR*);
     void (*MikMod_RegisterAllLoaders)(void);
     void (*MikMod_RegisterDriver)(struct MDRIVER*);
     int* MikMod_errno;
-    char* (*MikMod_strerror)(int);
+    MIKMOD3_CONST char* (*MikMod_strerror)(int);
     void (*MikMod_free)(void*);
     BOOL (*Player_Active)(void);
     void (*Player_Free)(MODULE*);
