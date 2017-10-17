@@ -299,9 +299,11 @@ int open_music(const SDL_AudioSpec *spec)
     int i;
     SDL_bool use_native_midi = SDL_FALSE;
 
+#ifdef MUSIC_MID_NATIVE
     if (SDL_GetHintBoolean("SDL_NATIVE_MUSIC", SDL_FALSE) && native_midi_detect()) {
         use_native_midi = SDL_TRUE;
     }
+#endif
 
     music_spec = *spec;
     for (i = 0; i < SDL_arraysize(s_music_interfaces); ++i) {

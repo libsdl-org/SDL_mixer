@@ -11086,20 +11086,12 @@ case "$host" in
         fi
         ;;
     *)
-        SOURCES=""
         EXE=""
         ;;
 esac
 
 # Standard C sources
-SOURCES="$SOURCES \
-$srcdir/effect_position.c \
-$srcdir/effect_stereoreverse.c \
-$srcdir/effects_internal.c \
-$srcdir/load_aiff.c \
-$srcdir/load_voc.c \
-$srcdir/mixer.c \
-$srcdir/music.c"
+SOURCES=`ls $srcdir/*.c | fgrep -v playwave.c | fgrep -v playmus.c`
 
 base_libdir=`echo \${libdir} | sed 's/.*\/\(.*\)/\1/; q'`
 
@@ -11722,7 +11714,6 @@ done
         enable_music_cmd=no
     fi
     if test "x$enable_music_cmd" != xno; then
-        SOURCES="$SOURCES $srcdir/music_cmd.c"
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_CMD"
     fi
 fi
@@ -11735,7 +11726,6 @@ else
 fi
 
 if test x$enable_music_wave = xyes; then
-    SOURCES="$SOURCES $srcdir/wavestream.c"
     EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_WAV"
 fi
 
@@ -11944,7 +11934,6 @@ fi
                 fi
                 ;;
         esac
-        SOURCES="$SOURCES $srcdir/*_modplug.c"
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MOD_MODPLUG $MODPLUG_CFLAGS"
         if test x$enable_music_mod_modplug_shared = xyes && test x$modplug_lib != x; then
             echo "-- dynamic libmodplug -> $modplug_lib"
@@ -12076,7 +12065,6 @@ fi
                 fi
                 ;;
         esac
-        SOURCES="$SOURCES $srcdir/*_mikmod.c"
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MOD_MIKMOD `$LIBMIKMOD_CONFIG --cflags`"
         if test x$enable_music_mod_mikmod_shared = xyes && test x$mikmod_lib != x; then
             echo "-- dynamic libmikmod -> $mikmod_lib"
@@ -12227,7 +12215,6 @@ fi
                     fi
                     ;;
             esac
-            SOURCES="$SOURCES $srcdir/dynamic_fluidsynth.c $srcdir/fluidsynth.c"
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MID_FLUIDSYNTH"
             if test x$enable_music_midi_fluidsynth_shared = xyes && test x$fluidsynth_lib != x; then
                 echo "-- dynamic libfluidsyth -> $fluidsynth_lib"
@@ -12337,7 +12324,6 @@ fi
                     fi
                     ;;
             esac
-            SOURCES="$SOURCES $srcdir/*_ogg.c"
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_OGG -DOGG_USE_TREMOR"
             if test x$enable_music_ogg_shared = xyes && test x$ogg_lib != x; then
                 echo "-- dynamic libvorbisidec -> $ogg_lib"
@@ -12415,7 +12401,6 @@ fi
                     fi
                     ;;
             esac
-            SOURCES="$SOURCES $srcdir/*_ogg.c"
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_OGG"
             if test x$enable_music_ogg_shared = xyes && test x$ogg_lib != x; then
                 echo "-- dynamic libvorbisfile -> $ogg_lib"
@@ -12551,7 +12536,6 @@ fi
                     fi
                     ;;
             esac
-            SOURCES="$SOURCES $srcdir/*_flac.c"
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_FLAC"
             if test x$enable_music_flac_shared = xyes && test x$flac_lib != x; then
                 echo "-- dynamic libFLAC -> $flac_lib"
@@ -12891,7 +12875,6 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: $have_libmad" >&5
 $as_echo "$have_libmad" >&6; }
     if test x$have_libmad = xyes; then
-        SOURCES="$SOURCES $srcdir/music_mad.c"
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MP3_MAD"
         EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lmad"
     else
@@ -12934,7 +12917,6 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: $have_libmpg123" >&5
 $as_echo "$have_libmpg123" >&6; }
     if test x$have_libmpg123 = xyes; then
-        SOURCES="$SOURCES $srcdir/music_mpg.c"
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MP3_MPG123"
         EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lmpg123"
     else
@@ -12944,7 +12926,7 @@ $as_echo "$as_me: WARNING: *** Unable to find mpg123 library (https://www.mpg123
 fi
 
 if test x$have_smpeg = xyes -o x$have_libmad = xyes -o x$have_libmpg123; then
-    SOURCES="$SOURCES $srcdir/load_mp3.c"
+    :
 else
     { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: MP3 support disabled" >&5
 $as_echo "$as_me: WARNING: MP3 support disabled" >&2;}
