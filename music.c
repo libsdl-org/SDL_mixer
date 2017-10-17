@@ -149,7 +149,7 @@ static void music_internal_initialize_volume(void);
 static void music_internal_volume(int volume);
 static int  music_internal_play(Mix_Music *music, double position);
 static int  music_internal_position(double position);
-static SDL_bool music_internal_playing();
+static SDL_bool music_internal_playing(void);
 static void music_internal_halt(void);
 
 
@@ -370,7 +370,7 @@ Mix_MusicType detect_music_type_from_magic(const Uint8 *magic)
 
 static Mix_MusicType detect_music_type(SDL_RWops *src)
 {
-    char magic[12];
+    Uint8 magic[12];
 
     if (SDL_RWread(src, magic, 1, 12) != 12) {
         Mix_SetError("Couldn't read first 12 bytes of audio data");
@@ -859,7 +859,7 @@ int Mix_PausedMusic(void)
 }
 
 /* Check the status of the music */
-static SDL_bool music_internal_playing()
+static SDL_bool music_internal_playing(void)
 {
     if (music_playing == NULL) {
         return SDL_FALSE;

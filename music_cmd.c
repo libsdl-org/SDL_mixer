@@ -163,7 +163,6 @@ static int MusicCMD_Play(void *context)
 
     /* Child process - executes here */
     case 0: {
-        char *command;
         char **argv;
 
         /* Unblock signals in case we're called from a thread */
@@ -242,12 +241,11 @@ static void MusicCMD_Stop(void *context)
 }
 
 /* Close the given music stream */
-int MusicCMD_Delete(void *context)
+void MusicCMD_Delete(void *context)
 {
     MusicCMD *music = (MusicCMD *)context;
     SDL_free(music->file);
     SDL_free(music);
-    return 0;
 }
 
 Mix_MusicInterface Mix_MusicInterface_CMD =

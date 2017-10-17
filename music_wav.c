@@ -295,7 +295,6 @@ static void WAVStream_Delete(void *context)
 
 static SDL_bool ParseFMT(WAVStream *wave, Uint32 chunk_length)
 {
-    SDL_RWops *src = wave->src;
     SDL_AudioSpec *spec = &wave->spec;
     WaveFMT *format;
     Uint8 *data;

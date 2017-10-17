@@ -189,7 +189,7 @@ void CALLBACK MidiProc( HMIDIIN hMidi, UINT uMsg, DWORD_PTR dwInstance,
     }
 }
 
-int native_midi_detect()
+int native_midi_detect(void)
 {
   MMRESULT merr;
   HMIDISTRM MidiStream;
@@ -272,7 +272,7 @@ void native_midi_start(NativeMidiSong *song, int loops)
   }
 }
 
-void native_midi_stop()
+void native_midi_stop(void)
 {
   if (!hMidiStream)
     return;
@@ -282,7 +282,7 @@ void native_midi_stop()
   hMidiStream = NULL;
 }
 
-int native_midi_active()
+int native_midi_active(void)
 {
   return currentsong->MusicPlaying;
 }
