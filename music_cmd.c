@@ -42,6 +42,7 @@
 
 typedef struct {
     char *file;
+    char *cmd;
     pid_t pid;
 } MusicCMD;
 
@@ -51,6 +52,11 @@ static void *MusicCMD_CreateFromFile(const char *file)
 {
     MusicCMD *music;
 
+    if (!music_cmd) {
+        Mix_SetError("You must call Mix_SetMusicCMD() first");
+        return NULL;
+    }
+
     /* Allocate and fill the music structure */
     music = (MusicCMD *)SDL_calloc(1, sizeof *music);
     if (music == NULL) {
@@ -58,6 +64,7 @@ static void *MusicCMD_CreateFromFile(const char *file)
         return NULL;
     }
     music->file = SDL_strdup(file);
+    music->cmd = SDL_strdup(music_cmd);
     music->pid = 0;
 
     /* We're done */
@@ -145,11 +152,6 @@ static int MusicCMD_Play(void *context)
 {
     MusicCMD *music = (MusicCMD *)context;
 
-    if (!music_cmd) {
-        Mix_SetError("You must call Mix_SetMusicCMD() first");
-        return -1;
-    }
-
 #ifdef HAVE_FORK
     music->pid = fork();
 #else
@@ -173,7 +175,7 @@ static int MusicCMD_Play(void *context)
         }
 
         /* Execute the command */
-        argv = parse_args(music_cmd, music->file);
+        argv = parse_args(music->cmd, music->file);
         if (argv != NULL) {
             execvp(argv[0], argv);
 
