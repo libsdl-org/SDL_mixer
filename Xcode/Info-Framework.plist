@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>SDL2_mixer</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.libsdl.SDL2-mixer</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>

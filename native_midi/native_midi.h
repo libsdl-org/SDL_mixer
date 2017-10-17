@@ -26,12 +26,12 @@
 
 typedef struct _NativeMidiSong NativeMidiSong;
 
-int native_midi_detect();
+int native_midi_detect(void);
 NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *src, int freesrc);
 void native_midi_freesong(NativeMidiSong *song);
 void native_midi_start(NativeMidiSong *song, int loops);
-void native_midi_stop();
-int native_midi_active();
+void native_midi_stop(void);
+int native_midi_active(void);
 void native_midi_setvolume(int volume);
 const char *native_midi_error(void);
 

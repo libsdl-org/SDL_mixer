@@ -150,7 +150,7 @@ GetSequenceAudioUnit(MusicSequence sequence, AudioUnit *aunit)
 }
 
 
-int native_midi_detect()
+int native_midi_detect(void)
 {
     return 1;  /* always available. */
 }
@@ -287,7 +287,7 @@ void native_midi_start(NativeMidiSong *song, int loops)
     SDL_PauseAudio(0);
 }
 
-void native_midi_stop()
+void native_midi_stop(void)
 {
     if (currentsong) {
         SDL_PauseAudio(1);
@@ -299,7 +299,7 @@ void native_midi_stop()
     }
 }
 
-int native_midi_active()
+int native_midi_active(void)
 {
     MusicTimeStamp currentTime = 0;
     if (currentsong == NULL)

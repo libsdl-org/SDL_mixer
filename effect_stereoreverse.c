@@ -112,7 +112,7 @@ int Mix_SetReverseStereo(int channel, int flip)
 
     if (channels == 2) {
 		int bits = (format & 0xFF);
-		switch (format & 0xFF) {
+		switch (bits) {
 		case 8:
             f = _Eff_reversestereo8;
 			break;
