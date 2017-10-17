@@ -122,3 +122,4 @@ void *_Eff_build_volume_table_s8(void)
 
 /* end of effects.c ... */
 
+/* vi: set ts=4 sw=4 expandtab: */

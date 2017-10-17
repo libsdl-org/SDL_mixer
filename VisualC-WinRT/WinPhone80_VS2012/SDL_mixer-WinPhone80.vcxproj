@@ -78,7 +78,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>_USRDLL;WAV_MUSIC;OGG_MUSIC;OGG_DYNAMIC="libvorbisfile.dll";_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_USRDLL;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAsWinRT>false</CompileAsWinRT>
@@ -94,7 +94,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>_USRDLL;WAV_MUSIC;OGG_MUSIC;OGG_DYNAMIC="libvorbisfile.dll";_CRT_SECURE_NO_WARNINGS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_USRDLL;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";_CRT_SECURE_NO_WARNINGS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAsWinRT>false</CompileAsWinRT>
@@ -110,7 +110,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
-      <PreprocessorDefinitions>_USRDLL;WAV_MUSIC;OGG_MUSIC;OGG_DYNAMIC="libvorbisfile.dll";_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_USRDLL;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAsWinRT>false</CompileAsWinRT>
@@ -126,7 +126,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <ClCompile>
-      <PreprocessorDefinitions>_USRDLL;WAV_MUSIC;OGG_MUSIC;OGG_DYNAMIC="libvorbisfile.dll";_CRT_SECURE_NO_WARNINGS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_USRDLL;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";_CRT_SECURE_NO_WARNINGS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAsWinRT>false</CompileAsWinRT>
@@ -152,12 +152,12 @@
   <ItemGroup>
     <ClCompile Include="..\..\dynamic_flac.c" />
     <ClCompile Include="..\..\dynamic_fluidsynth.c" />
-    <ClCompile Include="..\..\dynamic_mod.c" />
-    <ClCompile Include="..\..\dynamic_mp3.c" />
+    <ClCompile Include="..\..\dynamic_mikmod.c" />
     <ClCompile Include="..\..\dynamic_ogg.c" />
-    <ClCompile Include="..\..\effects_internal.c" />
+    <ClCompile Include="..\..\dynamic_smpeg.c" />
     <ClCompile Include="..\..\effect_position.c" />
     <ClCompile Include="..\..\effect_stereoreverse.c" />
+    <ClCompile Include="..\..\effects_internal.c" />
     <ClCompile Include="..\..\fluidsynth.c" />
     <ClCompile Include="..\..\load_aiff.c" />
     <ClCompile Include="..\..\load_flac.c" />
@@ -168,16 +168,16 @@
     <ClCompile Include="..\..\music_cmd.c" />
     <ClCompile Include="..\..\music_flac.c" />
     <ClCompile Include="..\..\music_mad.c" />
-    <ClCompile Include="..\..\music_mod.c" />
+    <ClCompile Include="..\..\music_mikmod.c" />
     <ClCompile Include="..\..\music_ogg.c" />
     <ClCompile Include="..\..\wavestream.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\dynamic_flac.h" />
     <ClInclude Include="..\..\dynamic_fluidsynth.h" />
-    <ClInclude Include="..\..\dynamic_mod.h" />
-    <ClInclude Include="..\..\dynamic_mp3.h" />
+    <ClInclude Include="..\..\dynamic_mikmod.h" />
     <ClInclude Include="..\..\dynamic_ogg.h" />
+    <ClInclude Include="..\..\dynamic_smpeg.h" />
     <ClInclude Include="..\..\effects_internal.h" />
     <ClInclude Include="..\..\fluidsynth.h" />
     <ClInclude Include="..\..\load_aiff.h" />
@@ -187,7 +187,7 @@
     <ClInclude Include="..\..\music_cmd.h" />
     <ClInclude Include="..\..\music_flac.h" />
     <ClInclude Include="..\..\music_mad.h" />
-    <ClInclude Include="..\..\music_mod.h" />
+    <ClInclude Include="..\..\music_mikmod.h" />
     <ClInclude Include="..\..\music_ogg.h" />
     <ClInclude Include="..\..\SDL_mixer.h" />
     <ClInclude Include="..\..\wavestream.h" />

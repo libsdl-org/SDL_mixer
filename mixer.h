@@ -20,6 +20,7 @@
 */
 
 /* Locking wrapper functions */
-void Mix_LockAudio();
-void Mix_UnlockAudio();
+extern void Mix_LockAudio(void);
+extern void Mix_UnlockAudio(void);
 
+/* vi: set ts=4 sw=4 expandtab: */

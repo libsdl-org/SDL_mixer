@@ -17,15 +17,12 @@
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
-
-  This is the source needed to decode a FLAC into a waveform.
-    ~ Austen Dicken (admin@cvpcs.org).
 */
 
-/* $Id: $ */
+/* This file supports playing MP3 files with mpg123 */
 
-#ifdef FLAC_MUSIC
-/* Don't call this directly; use Mix_LoadWAV_RW() for now. */
-SDL_AudioSpec *Mix_LoadFLAC_RW (SDL_RWops *src, int freesrc,
-        SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len);
-#endif
+#include "music.h"
+
+extern Mix_MusicInterface Mix_MusicInterface_MPG123;
+
+/* vi: set ts=4 sw=4 expandtab: */

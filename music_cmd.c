@@ -22,7 +22,7 @@
 
 /* This file supports an external command for playing music */
 
-#ifdef CMD_MUSIC
+#ifdef MUSIC_CMD
 
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -32,33 +32,36 @@
 #include <string.h>
 #include <signal.h>
 #include <ctype.h>
+#include <limits.h>
+#if defined(__linux__) && defined(__arm__)
+# include <linux/limits.h>
+#endif
 
-#include "SDL_mixer.h"
 #include "music_cmd.h"
 
-/* Unimplemented */
-void MusicCMD_SetVolume(int volume)
-{
-    Mix_SetError("No way to modify external player volume");
-}
+
+typedef struct {
+    char *file;
+    pid_t pid;
+} MusicCMD;
+
 
 /* Load a music stream from the given file */
-MusicCMD *MusicCMD_LoadSong(const char *cmd, const char *file)
+static void *MusicCMD_CreateFromFile(const char *file)
 {
     MusicCMD *music;
 
     /* Allocate and fill the music structure */
-    music = (MusicCMD *)SDL_malloc(sizeof *music);
-    if ( music == NULL ) {
+    music = (MusicCMD *)SDL_calloc(1, sizeof *music);
+    if (music == NULL) {
         Mix_SetError("Out of memory");
-        return(NULL);
+        return NULL;
     }
     music->file = SDL_strdup(file);
-    music->cmd = SDL_strdup(cmd);
     music->pid = 0;
 
     /* We're done */
-    return(music);
+    return music;
 }
 
 /* Parse a command line buffer into arguments */
@@ -68,44 +71,44 @@ static int ParseCommandLine(char *cmdline, char **argv)
     int argc;
 
     argc = 0;
-    for ( bufp = cmdline; *bufp; ) {
+    for (bufp = cmdline; *bufp;) {
         /* Skip leading whitespace */
-        while ( isspace(*bufp) ) {
+        while (isspace(*bufp)) {
             ++bufp;
         }
         /* Skip over argument */
-        if ( *bufp == '"' ) {
+        if (*bufp == '"') {
             ++bufp;
-            if ( *bufp ) {
-                if ( argv ) {
+            if (*bufp) {
+                if (argv) {
                     argv[argc] = bufp;
                 }
                 ++argc;
             }
             /* Skip over word */
-            while ( *bufp && (*bufp != '"') ) {
+            while (*bufp && (*bufp != '"')) {
                 ++bufp;
             }
         } else {
-            if ( *bufp ) {
-                if ( argv ) {
+            if (*bufp) {
+                if (argv) {
                     argv[argc] = bufp;
                 }
                 ++argc;
             }
             /* Skip over word */
-            while ( *bufp && ! isspace(*bufp) ) {
+            while (*bufp && ! isspace(*bufp)) {
                 ++bufp;
             }
         }
-        if ( *bufp ) {
-            if ( argv ) {
+        if (*bufp) {
+            if (argv) {
                 *bufp = '\0';
             }
             ++bufp;
         }
     }
-    if ( argv ) {
+    if (argv) {
         argv[argc] = NULL;
     }
     return(argc);
@@ -118,17 +121,17 @@ static char **parse_args(char *command, char *last_arg)
 
     /* Parse the command line */
     argc = ParseCommandLine(command, NULL);
-    if ( last_arg ) {
+    if (last_arg) {
         ++argc;
     }
     argv = (char **)SDL_malloc((argc+1)*(sizeof *argv));
-    if ( argv == NULL ) {
+    if (argv == NULL) {
         return(NULL);
     }
     argc = ParseCommandLine(command, argv);
 
     /* Add last command line argument */
-    if ( last_arg ) {
+    if (last_arg) {
         argv[argc++] = last_arg;
     }
     argv[argc] = NULL;
@@ -138,59 +141,98 @@ static char **parse_args(char *command, char *last_arg)
 }
 
 /* Start playback of a given music stream */
-void MusicCMD_Start(MusicCMD *music)
+static int MusicCMD_Play(void *context)
 {
+    MusicCMD *music = (MusicCMD *)context;
+
+    if (!music_cmd) {
+        Mix_SetError("You must call Mix_SetMusicCMD() first");
+        return -1;
+    }
+
 #ifdef HAVE_FORK
     music->pid = fork();
 #else
     music->pid = vfork();
 #endif
     switch(music->pid) {
-        /* Failed fork() system call */
-        case -1:
+    /* Failed fork() system call */
+    case -1:
         Mix_SetError("fork() failed");
-        return;
+        return -1;
 
-        /* Child process - executes here */
-        case 0: {
-            char *command;
-            char **argv;
+    /* Child process - executes here */
+    case 0: {
+        char *command;
+        char **argv;
 
-            /* Unblock signals in case we're called from a thread */
-            {
-                sigset_t mask;
-                sigemptyset(&mask);
-                sigprocmask(SIG_SETMASK, &mask, NULL);
-            }
-
-            /* Execute the command */
-            command = SDL_strdup(music->cmd);
-            argv = parse_args(command, music->file);
-            if ( argv != NULL ) {
-                execvp(argv[0], argv);
-
-                /* exec() failed */
-                perror(argv[0]);
-            }
-            SDL_free(command);
-            _exit(-1);
+        /* Unblock signals in case we're called from a thread */
+        {
+            sigset_t mask;
+            sigemptyset(&mask);
+            sigprocmask(SIG_SETMASK, &mask, NULL);
         }
-        break;
 
-        /* Parent process - executes here */
-        default:
+        /* Execute the command */
+        argv = parse_args(music_cmd, music->file);
+        if (argv != NULL) {
+            execvp(argv[0], argv);
+
+            /* exec() failed */
+            perror(argv[0]);
+        }
+        _exit(-1);
+    }
+    break;
+
+    /* Parent process - executes here */
+    default:
         break;
     }
-    return;
+    return 0;
+}
+
+/* Return non-zero if a stream is currently playing */
+static SDL_bool MusicCMD_IsPlaying(void *context)
+{
+    MusicCMD *music = (MusicCMD *)context;
+    int status;
+
+    if (music->pid > 0) {
+        waitpid(music->pid, &status, WNOHANG);
+        if (kill(music->pid, 0) == 0) {
+            return SDL_TRUE;
+        }
+    }
+    return SDL_FALSE;
+}
+
+/* Pause playback of a given music stream */
+static void MusicCMD_Pause(void *context)
+{
+    MusicCMD *music = (MusicCMD *)context;
+    if (music->pid > 0) {
+        kill(music->pid, SIGSTOP);
+    }
+}
+
+/* Resume playback of a given music stream */
+static void MusicCMD_Resume(void *context)
+{
+    MusicCMD *music = (MusicCMD *)context;
+    if (music->pid > 0) {
+        kill(music->pid, SIGCONT);
+    }
 }
 
 /* Stop playback of a stream previously started with MusicCMD_Start() */
-void MusicCMD_Stop(MusicCMD *music)
+static void MusicCMD_Stop(void *context)
 {
+    MusicCMD *music = (MusicCMD *)context;
     int status;
 
-    if ( music->pid > 0 ) {
-        while ( kill(music->pid, 0) == 0 ) {
+    if (music->pid > 0) {
+        while (kill(music->pid, 0) == 0) {
             kill(music->pid, SIGTERM);
             sleep(1);
             waitpid(music->pid, &status, WNOHANG);
@@ -199,44 +241,40 @@ void MusicCMD_Stop(MusicCMD *music)
     }
 }
 
-/* Pause playback of a given music stream */
-void MusicCMD_Pause(MusicCMD *music)
-{
-    if ( music->pid > 0 ) {
-        kill(music->pid, SIGSTOP);
-    }
-}
-
-/* Resume playback of a given music stream */
-void MusicCMD_Resume(MusicCMD *music)
-{
-    if ( music->pid > 0 ) {
-        kill(music->pid, SIGCONT);
-    }
-}
-
 /* Close the given music stream */
-void MusicCMD_FreeSong(MusicCMD *music)
+int MusicCMD_Delete(void *context)
 {
+    MusicCMD *music = (MusicCMD *)context;
     SDL_free(music->file);
-    SDL_free(music->cmd);
     SDL_free(music);
+    return 0;
 }
 
-/* Return non-zero if a stream is currently playing */
-int MusicCMD_Active(MusicCMD *music)
+Mix_MusicInterface Mix_MusicInterface_CMD =
 {
-    int status;
-    int active;
+    "CMD",
+    MIX_MUSIC_CMD,
+    MUS_CMD,
+    SDL_FALSE,
+    SDL_FALSE,
 
-    active = 0;
-    if ( music->pid > 0 ) {
-        waitpid(music->pid, &status, WNOHANG);
-        if ( kill(music->pid, 0) == 0 ) {
-            active = 1;
-        }
-    }
-    return(active);
-}
+    NULL,   /* Load */
+    NULL,   /* Open */
+    NULL,   /* CreateFromRW */
+    MusicCMD_CreateFromFile,
+    NULL,   /* SetVolume */
+    MusicCMD_Play,
+    MusicCMD_IsPlaying,
+    NULL,   /* GetAudio */
+    NULL,   /* Seek */
+    MusicCMD_Pause,
+    MusicCMD_Resume,
+    MusicCMD_Stop,
+    MusicCMD_Delete,
+    NULL,   /* Close */
+    NULL,   /* Unload */
+};
 
-#endif /* CMD_MUSIC */
+#endif /* MUSIC_CMD */
+
+/* vi: set ts=4 sw=4 expandtab: */

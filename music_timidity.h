@@ -19,30 +19,10 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifdef MODPLUG_MUSIC
+/* This file supports playing MIDI files with timidity */
 
-#ifdef MODPLUG_HEADER
-#include MODPLUG_HEADER
-#else
-#include <libmodplug/modplug.h>
-#endif
+#include "music.h"
 
-typedef struct {
-    int loaded;
-    void *handle;
+extern Mix_MusicInterface Mix_MusicInterface_TIMIDITY;
 
-    ModPlugFile* (*ModPlug_Load)(const void* data, int size);
-    void (*ModPlug_Unload)(ModPlugFile* file);
-    int  (*ModPlug_Read)(ModPlugFile* file, void* buffer, int size);
-    void (*ModPlug_Seek)(ModPlugFile* file, int millisecond);
-    void (*ModPlug_GetSettings)(ModPlug_Settings* settings);
-    void (*ModPlug_SetSettings)(const ModPlug_Settings* settings);
-    void (*ModPlug_SetMasterVolume)(ModPlugFile* file,unsigned int cvol) ;
-} modplug_loader;
-
-extern modplug_loader modplug;
-
-#endif /* MODPLUG_MUSIC */
-
-extern int Mix_InitModPlug();
-extern void Mix_QuitModPlug();
+/* vi: set ts=4 sw=4 expandtab: */

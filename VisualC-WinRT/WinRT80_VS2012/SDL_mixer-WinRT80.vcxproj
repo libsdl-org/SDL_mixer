@@ -27,49 +27,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\dynamic_flac.c" />
-    <ClCompile Include="..\..\dynamic_fluidsynth.c" />
-    <ClCompile Include="..\..\dynamic_mod.c" />
-    <ClCompile Include="..\..\dynamic_mp3.c" />
-    <ClCompile Include="..\..\dynamic_ogg.c" />
-    <ClCompile Include="..\..\effects_internal.c" />
-    <ClCompile Include="..\..\effect_position.c" />
-    <ClCompile Include="..\..\effect_stereoreverse.c" />
-    <ClCompile Include="..\..\fluidsynth.c" />
-    <ClCompile Include="..\..\load_aiff.c" />
-    <ClCompile Include="..\..\load_flac.c" />
-    <ClCompile Include="..\..\load_ogg.c" />
-    <ClCompile Include="..\..\load_voc.c" />
-    <ClCompile Include="..\..\mixer.c" />
-    <ClCompile Include="..\..\music.c" />
-    <ClCompile Include="..\..\music_cmd.c" />
-    <ClCompile Include="..\..\music_flac.c" />
-    <ClCompile Include="..\..\music_mad.c" />
-    <ClCompile Include="..\..\music_mod.c" />
-    <ClCompile Include="..\..\music_ogg.c" />
-    <ClCompile Include="..\..\wavestream.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\dynamic_flac.h" />
-    <ClInclude Include="..\..\dynamic_fluidsynth.h" />
-    <ClInclude Include="..\..\dynamic_mod.h" />
-    <ClInclude Include="..\..\dynamic_mp3.h" />
-    <ClInclude Include="..\..\dynamic_ogg.h" />
-    <ClInclude Include="..\..\effects_internal.h" />
-    <ClInclude Include="..\..\fluidsynth.h" />
-    <ClInclude Include="..\..\load_aiff.h" />
-    <ClInclude Include="..\..\load_flac.h" />
-    <ClInclude Include="..\..\load_ogg.h" />
-    <ClInclude Include="..\..\load_voc.h" />
-    <ClInclude Include="..\..\music_cmd.h" />
-    <ClInclude Include="..\..\music_flac.h" />
-    <ClInclude Include="..\..\music_mad.h" />
-    <ClInclude Include="..\..\music_mod.h" />
-    <ClInclude Include="..\..\music_ogg.h" />
-    <ClInclude Include="..\..\SDL_mixer.h" />
-    <ClInclude Include="..\..\wavestream.h" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\..\SDL\VisualC-WinRT\WinRT80_VS2012\SDL-WinRT80.vcxproj">
       <Project>{aeaea3a2-d4e6-45b1-8ec6-53d84287fc14}</Project>
     </ProjectReference>
@@ -82,6 +39,47 @@
     <ProjectReference Include="libvorbis_dynamic-WinRT80.vcxproj">
       <Project>{3a214e06-b95e-4d61-a291-1f8df2ec10fd}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\effects_internal.c" />
+    <ClCompile Include="..\..\effect_position.c" />
+    <ClCompile Include="..\..\effect_stereoreverse.c" />
+    <ClCompile Include="..\..\load_aiff.c" />
+    <ClCompile Include="..\..\load_voc.c" />
+    <ClCompile Include="..\..\mixer.c" />
+    <ClCompile Include="..\..\music.c" />
+    <ClCompile Include="..\..\music_cmd.c" />
+    <ClCompile Include="..\..\music_flac.c" />
+    <ClCompile Include="..\..\music_fluidsynth.c" />
+    <ClCompile Include="..\..\music_mad.c" />
+    <ClCompile Include="..\..\music_mikmod.c" />
+    <ClCompile Include="..\..\music_modplug.c" />
+    <ClCompile Include="..\..\music_mpg123.c" />
+    <ClCompile Include="..\..\music_nativemidi.c" />
+    <ClCompile Include="..\..\music_ogg.c" />
+    <ClCompile Include="..\..\music_smpeg.c" />
+    <ClCompile Include="..\..\music_timidity.c" />
+    <ClCompile Include="..\..\music_wav.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\effects_internal.h" />
+    <ClInclude Include="..\..\load_aiff.h" />
+    <ClInclude Include="..\..\load_voc.h" />
+    <ClInclude Include="..\..\mixer.h" />
+    <ClInclude Include="..\..\music.h" />
+    <ClInclude Include="..\..\music_cmd.h" />
+    <ClInclude Include="..\..\music_flac.h" />
+    <ClInclude Include="..\..\music_fluidsynth.h" />
+    <ClInclude Include="..\..\music_mad.h" />
+    <ClInclude Include="..\..\music_mikmod.h" />
+    <ClInclude Include="..\..\music_modplug.h" />
+    <ClInclude Include="..\..\music_mpg123.h" />
+    <ClInclude Include="..\..\music_nativemidi.h" />
+    <ClInclude Include="..\..\music_ogg.h" />
+    <ClInclude Include="..\..\music_smpeg.h" />
+    <ClInclude Include="..\..\music_timidity.h" />
+    <ClInclude Include="..\..\music_wav.h" />
+    <ClInclude Include="..\..\SDL_mixer.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{06925935-b340-44e8-bddd-7c1b8d64ff76}</ProjectGuid>
@@ -187,8 +185,8 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
-      <AdditionalIncludeDirectories>..\..\external\libogg-1.3.1\include;..\..\external\libvorbis-1.3.3\include;..\..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WAV_MUSIC;OGG_MUSIC;OGG_DYNAMIC="libvorbisfile.dll";_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.5\include;..\..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -200,8 +198,8 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
-      <AdditionalIncludeDirectories>..\..\external\libogg-1.3.1\include;..\..\external\libvorbis-1.3.3\include;..\..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WAV_MUSIC;OGG_MUSIC;OGG_DYNAMIC="libvorbisfile.dll";_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.5\include;..\..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -213,8 +211,8 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
-      <AdditionalIncludeDirectories>..\..\external\libogg-1.3.1\include;..\..\external\libvorbis-1.3.3\include;..\..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WAV_MUSIC;OGG_MUSIC;OGG_DYNAMIC="libvorbisfile.dll";_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.5\include;..\..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -226,8 +224,8 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
-      <AdditionalIncludeDirectories>..\..\external\libogg-1.3.1\include;..\..\external\libvorbis-1.3.3\include;..\..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WAV_MUSIC;OGG_MUSIC;OGG_DYNAMIC="libvorbisfile.dll";_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.5\include;..\..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -239,8 +237,8 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
-      <AdditionalIncludeDirectories>..\..\external\libogg-1.3.1\include;..\..\external\libvorbis-1.3.3\include;..\..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WAV_MUSIC;OGG_MUSIC;OGG_DYNAMIC="libvorbisfile.dll";_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.5\include;..\..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -252,8 +250,8 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
-      <AdditionalIncludeDirectories>..\..\external\libogg-1.3.1\include;..\..\external\libvorbis-1.3.3\include;..\..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WAV_MUSIC;OGG_MUSIC;OGG_DYNAMIC="libvorbisfile.dll";_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.5\include;..\..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
