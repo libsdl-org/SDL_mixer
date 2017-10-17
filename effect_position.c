@@ -395,12 +395,12 @@ static void _Eff_position_table_u8(int chan, void *stream, int len, void *udata)
         *p = (d[l[(*p & 0xFF000000) >> 24]] << 24) |
              (d[r[(*p & 0x00FF0000) >> 16]] << 16) |
              (d[l[(*p & 0x0000FF00) >>  8]] <<  8) |
-             (d[r[(*p & 0x000000FF)      ]]      ) ;
+             (d[r[(*p & 0x000000FF)      ]]     ) ;
 #else
         *p = (d[r[(*p & 0xFF000000) >> 24]] << 24) |
              (d[l[(*p & 0x00FF0000) >> 16]] << 16) |
              (d[r[(*p & 0x0000FF00) >>  8]] <<  8) |
-             (d[l[(*p & 0x000000FF)      ]]      ) ;
+             (d[l[(*p & 0x000000FF)      ]]     ) ;
 #endif
         ++p;
     }
@@ -586,12 +586,12 @@ static void _Eff_position_table_s8(int chan, void *stream, int len, void *udata)
         *p = (d[l[((Sint16)(Sint8)((*p & 0xFF000000) >> 24))+128]] << 24) |
              (d[r[((Sint16)(Sint8)((*p & 0x00FF0000) >> 16))+128]] << 16) |
              (d[l[((Sint16)(Sint8)((*p & 0x0000FF00) >>  8))+128]] <<  8) |
-             (d[r[((Sint16)(Sint8)((*p & 0x000000FF)      ))+128]]      ) ;
+             (d[r[((Sint16)(Sint8)((*p & 0x000000FF)     ))+128]]     ) ;
 #else
         *p = (d[r[((Sint16)(Sint8)((*p & 0xFF000000) >> 24))+128]] << 24) |
              (d[l[((Sint16)(Sint8)((*p & 0x00FF0000) >> 16))+128]] << 16) |
              (d[r[((Sint16)(Sint8)((*p & 0x0000FF00) >>  8))+128]] <<  8) |
-             (d[l[((Sint16)(Sint8)((*p & 0x000000FF)      ))+128]]      ) ;
+             (d[l[((Sint16)(Sint8)((*p & 0x000000FF)     ))+128]]     ) ;
 #endif
         ++p;
     }
@@ -1875,7 +1875,7 @@ int Mix_SetPanning(int channel, Uint8 left, Uint8 right)
         angle = -angle;
             angle = angle * 90 / 128; /* Make it larger for more effect? */
         }
-        return( Mix_SetPosition(channel, angle, 0) );
+        return(Mix_SetPosition(channel, angle, 0));
     }
 
     f = get_position_effect_func(format, channels);
@@ -2046,3 +2046,4 @@ int Mix_SetPosition(int channel, Sint16 angle, Uint8 distance)
 
 /* end of effects_position.c ... */
 
+/* vi: set ts=4 sw=4 expandtab: */

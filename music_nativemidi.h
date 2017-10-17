@@ -19,10 +19,10 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-/* This file supports an external command for playing music */
+/* This file supports playing MIDI files with OS APIs */
 
 #include "music.h"
 
-extern Mix_MusicInterface Mix_MusicInterface_CMD;
+extern Mix_MusicInterface Mix_MusicInterface_NATIVEMIDI;
 
 /* vi: set ts=4 sw=4 expandtab: */

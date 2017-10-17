@@ -28,11 +28,6 @@
   in december 2002.
 */
 
-/* $Id$ */
-
-#include <stdlib.h>
-#include <string.h>
-
 #include "SDL_endian.h"
 #include "SDL_mixer.h"
 #include "load_aiff.h"
@@ -57,8 +52,8 @@
 static Uint32 SANE_to_Uint32 (Uint8 *sanebuf)
 {
     /* Is the frequency outside of what we can represent with Uint32? */
-    if ( (sanebuf[0] & 0x80) || (sanebuf[0] <= 0x3F) || (sanebuf[0] > 0x40)
-        || (sanebuf[0] == 0x40 && sanebuf[1] > 0x1C) )
+    if ((sanebuf[0] & 0x80) || (sanebuf[0] <= 0x3F) || (sanebuf[0] > 0x40)
+        || (sanebuf[0] == 0x40 && sanebuf[1] > 0x1C))
         return 0;
 
     return ((sanebuf[2] << 23) | (sanebuf[3] << 15) | (sanebuf[4] << 7)
@@ -98,21 +93,21 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
 
     /* Make sure we are passed a valid data source */
     was_error = 0;
-    if ( src == NULL ) {
+    if (src == NULL) {
         was_error = 1;
         goto done;
     }
 
     FORMchunk   = SDL_ReadLE32(src);
     chunk_length    = SDL_ReadBE32(src);
-    if ( chunk_length == AIFF ) { /* The FORMchunk has already been read */
+    if (chunk_length == AIFF) { /* The FORMchunk has already been read */
         AIFFmagic    = chunk_length;
         chunk_length = FORMchunk;
         FORMchunk    = FORM;
     } else {
         AIFFmagic    = SDL_ReadLE32(src);
     }
-    if ( (FORMchunk != FORM) || ( (AIFFmagic != AIFF) && (AIFFmagic != _8SVX) ) ) {
+    if ((FORMchunk != FORM) || ((AIFFmagic != AIFF) && (AIFFmagic != _8SVX))) {
         SDL_SetError("Unrecognized file type (not AIFF nor 8SVX)");
         was_error = 1;
         goto done;
@@ -177,29 +172,29 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
         /* a 0 pad byte can be stored for any odd-length chunk */
         if (chunk_length&1)
             next_chunk++;
-    } while ( ( ( (AIFFmagic == AIFF) && ( !found_SSND || !found_COMM ) )
-          || ( (AIFFmagic == _8SVX ) && ( !found_VHDR || !found_BODY ) ) )
-          && SDL_RWseek(src, next_chunk, RW_SEEK_SET) != 1 );
+    } while ((((AIFFmagic == AIFF) && (!found_SSND || !found_COMM))
+          || ((AIFFmagic == _8SVX) && (!found_VHDR || !found_BODY)))
+          && SDL_RWseek(src, next_chunk, RW_SEEK_SET) != 1);
 
-    if ( (AIFFmagic == AIFF) && !found_SSND ) {
+    if ((AIFFmagic == AIFF) && !found_SSND) {
         SDL_SetError("Bad AIFF (no SSND chunk)");
         was_error = 1;
         goto done;
     }
 
-    if ( (AIFFmagic == AIFF) && !found_COMM ) {
+    if ((AIFFmagic == AIFF) && !found_COMM) {
         SDL_SetError("Bad AIFF (no COMM chunk)");
         was_error = 1;
         goto done;
     }
 
-    if ( (AIFFmagic == _8SVX) && !found_VHDR ) {
+    if ((AIFFmagic == _8SVX) && !found_VHDR) {
         SDL_SetError("Bad 8SVX (no VHDR chunk)");
         was_error = 1;
         goto done;
     }
 
-    if ( (AIFFmagic == _8SVX) && !found_BODY ) {
+    if ((AIFFmagic == _8SVX) && !found_BODY) {
         SDL_SetError("Bad 8SVX (no BODY chunk)");
         was_error = 1;
         goto done;
@@ -225,12 +220,12 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
 
     *audio_len = channels * numsamples * (samplesize / 8);
     *audio_buf = (Uint8 *)SDL_malloc(*audio_len);
-    if ( *audio_buf == NULL ) {
+    if (*audio_buf == NULL) {
         SDL_SetError("Out of memory");
         return(NULL);
     }
     SDL_RWseek(src, start, RW_SEEK_SET);
-    if ( SDL_RWread(src, *audio_buf, *audio_len, 1) != 1 ) {
+    if (SDL_RWread(src, *audio_buf, *audio_len, 1) != 1) {
         SDL_SetError("Unable to read audio data");
         return(NULL);
     }
@@ -248,3 +243,4 @@ done:
     return(spec);
 }
 
+/* vi: set ts=4 sw=4 expandtab: */

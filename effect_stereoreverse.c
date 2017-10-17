@@ -143,3 +143,4 @@ int Mix_SetReverseStereo(int channel, int flip)
 
 /* end of effect_stereoreverse.c ... */
 
+/* vi: set ts=4 sw=4 expandtab: */

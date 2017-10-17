@@ -20,11 +20,11 @@ and finally it can load MP3 music using the SMPEG or libmad libraries.
 
 Tremor decoding is disabled by default; you can enable it by passing
 	--enable-music-ogg-tremor
-to configure, or by defining OGG_MUSIC and OGG_USE_TREMOR.
+to configure, or by defining MUSIC_OGG and OGG_USE_TREMOR.
 
 libmad decoding is disabled by default; you can enable it by passing
 	--enable-music-mp3-mad
-to configure, or by defining MP3_MAD_MUSIC
+to configure, or by defining MUSIC_MP3_MAD
 vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 WARNING: The license for libmad is GPL, which means that in order to
          use it your application must also be GPL!

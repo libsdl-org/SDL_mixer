@@ -18,13 +18,14 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 
-  This is the source needed to decode an MP3 into a waveform.
+  James Le Cuirot
+  chewi@aura-online.co.uk
 */
 
-/* $Id$ */
+/* This file supports playing MIDI files with FluidSynth */
 
-#if defined(MP3_MUSIC) || defined(MP3_MAD_MUSIC) || defined(MP3_MPG_MUSIC)
-/* Don't call this directly; use Mix_LoadWAV_RW() for now. */
-SDL_AudioSpec *Mix_LoadMP3_RW (SDL_RWops *src, int freesrc,
-        SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len);
-#endif
+#include "music.h"
+
+extern Mix_MusicInterface Mix_MusicInterface_FLUIDSYNTH;
+
+/* vi: set ts=4 sw=4 expandtab: */

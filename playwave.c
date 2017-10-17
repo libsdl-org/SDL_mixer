@@ -65,19 +65,19 @@
 static void output_test_warnings(void)
 {
 #if (defined TEST_MIX_CHANNELFINISHED)
-    fprintf(stderr, "Warning: TEST_MIX_CHANNELFINISHED is enabled in this binary...\n");
+    SDL_Log("Warning: TEST_MIX_CHANNELFINISHED is enabled in this binary...\n");
 #endif
 #if (defined TEST_MIX_PANNING)
-    fprintf(stderr, "Warning: TEST_MIX_PANNING is enabled in this binary...\n");
+    SDL_Log("Warning: TEST_MIX_PANNING is enabled in this binary...\n");
 #endif
 #if (defined TEST_MIX_VERSIONS)
-    fprintf(stderr, "Warning: TEST_MIX_VERSIONS is enabled in this binary...\n");
+    SDL_Log("Warning: TEST_MIX_VERSIONS is enabled in this binary...\n");
 #endif
 #if (defined TEST_MIX_DISTANCE)
-    fprintf(stderr, "Warning: TEST_MIX_DISTANCE is enabled in this binary...\n");
+    SDL_Log("Warning: TEST_MIX_DISTANCE is enabled in this binary...\n");
 #endif
 #if (defined TEST_MIX_POSITION)
-    fprintf(stderr, "Warning: TEST_MIX_POSITION is enabled in this binary...\n");
+    SDL_Log("Warning: TEST_MIX_POSITION is enabled in this binary...\n");
 #endif
 }
 
@@ -91,15 +91,15 @@ static void report_decoders(void)
 {
     int i, total;
 
-    printf("Supported decoders...\n");
+    SDL_Log("Supported decoders...\n");
     total = Mix_GetNumChunkDecoders();
     for (i = 0; i < total; i++) {
-        fprintf(stderr, " - chunk decoder: %s\n", Mix_GetChunkDecoder(i));
+        SDL_Log(" - chunk decoder: %s\n", Mix_GetChunkDecoder(i));
     }
 
     total = Mix_GetNumMusicDecoders();
     for (i = 0; i < total; i++) {
-        fprintf(stderr, " - music decoder: %s\n", Mix_GetMusicDecoder(i));
+        SDL_Log(" - music decoder: %s\n", Mix_GetMusicDecoder(i));
     }
 }
 #endif
@@ -109,8 +109,7 @@ static void report_decoders(void)
 static void output_versions(const char *libname, const SDL_version *compiled,
                             const SDL_version *linked)
 {
-    fprintf(stderr,
-            "This program was compiled against %s %d.%d.%d,\n"
+    SDL_Log("This program was compiled against %s %d.%d.%d,\n"
             " and is dynamically linked to %d.%d.%d.\n", libname,
             compiled->major, compiled->minor, compiled->patch,
             linked->major, linked->minor, linked->patch);
@@ -137,9 +136,9 @@ static volatile int channel_is_done = 0;
 static void channel_complete_callback(int chan)
 {
     Mix_Chunk *done_chunk = Mix_GetChunk(chan);
-    fprintf(stderr, "We were just alerted that Mixer channel #%d is done.\n", chan);
-    fprintf(stderr, "Channel's chunk pointer is (%p).\n", done_chunk);
-    fprintf(stderr, " Which %s correct.\n", (wave == done_chunk) ? "is" : "is NOT");
+    SDL_Log("We were just alerted that Mixer channel #%d is done.\n", chan);
+    SDL_Log("Channel's chunk pointer is (%p).\n", done_chunk);
+    SDL_Log(" Which %s correct.\n", (wave == done_chunk) ? "is" : "is NOT");
     channel_is_done = 1;
 }
 #endif
@@ -169,20 +168,20 @@ static void do_panning_update(void)
     if ((panningok) && (SDL_GetTicks() >= next_panning_update)) {
         panningok = Mix_SetPanning(0, leftvol, rightvol);
         if (!panningok) {
-            fprintf(stderr, "Mix_SetPanning(0, %d, %d) failed!\n",
+            SDL_Log("Mix_SetPanning(0, %d, %d) failed!\n",
                     (int) leftvol, (int) rightvol);
-            fprintf(stderr, "Reason: [%s].\n", Mix_GetError());
+            SDL_Log("Reason: [%s].\n", Mix_GetError());
         }
 
         if ((leftvol == 255) || (leftvol == 0)) {
             if (leftvol == 255)
-                printf("All the way in the left speaker.\n");
+                SDL_Log("All the way in the left speaker.\n");
                 leftincr *= -1;
         }
 
         if ((rightvol == 255) || (rightvol == 0)) {
             if (rightvol == 255)
-                printf("All the way in the right speaker.\n");
+                SDL_Log("All the way in the right speaker.\n");
             rightincr *= -1;
         }
 
@@ -205,16 +204,16 @@ static void do_distance_update(void)
     if ((distanceok) && (SDL_GetTicks() >= next_distance_update)) {
         distanceok = Mix_SetDistance(0, distance);
         if (!distanceok) {
-            fprintf(stderr, "Mix_SetDistance(0, %d) failed!\n", (int) distance);
-            fprintf(stderr, "Reason: [%s].\n", Mix_GetError());
+            SDL_Log("Mix_SetDistance(0, %d) failed!\n", (int) distance);
+            SDL_Log("Reason: [%s].\n", Mix_GetError());
         }
 
         if (distance == 0) {
-            printf("Distance at nearest point.\n");
+            SDL_Log("Distance at nearest point.\n");
             distincr *= -1;
         }
         else if (distance == 255) {
-            printf("Distance at furthest point.\n");
+            SDL_Log("Distance at furthest point.\n");
             distincr *= -1;
         }
 
@@ -238,18 +237,18 @@ static void do_position_update(void)
     if ((positionok) && (SDL_GetTicks() >= next_position_update)) {
         positionok = Mix_SetPosition(0, angle, distance);
         if (!positionok) {
-            fprintf(stderr, "Mix_SetPosition(0, %d, %d) failed!\n",
+            SDL_Log("Mix_SetPosition(0, %d, %d) failed!\n",
                     (int) angle, (int) distance);
-            fprintf(stderr, "Reason: [%s].\n", Mix_GetError());
+            SDL_Log("Reason: [%s].\n", Mix_GetError());
         }
 
         if (angle == 0) {
-            printf("Due north; now rotating clockwise...\n");
+            SDL_Log("Due north; now rotating clockwise...\n");
             angleincr = 1;
         }
 
         else if (angle == 360) {
-            printf("Due north; now rotating counter-clockwise...\n");
+            SDL_Log("Due north; now rotating counter-clockwise...\n");
             angleincr = -1;
         }
 
@@ -258,11 +257,11 @@ static void do_position_update(void)
         if (distance < 0) {
             distance = 0;
             distincr = 3;
-            printf("Distance is very, very near. Stepping away by threes...\n");
+            SDL_Log("Distance is very, very near. Stepping away by threes...\n");
         } else if (distance > 255) {
             distance = 255;
             distincr = -3;
-            printf("Distance is very, very far. Stepping towards by threes...\n");
+            SDL_Log("Distance is very, very far. Stepping towards by threes...\n");
         }
 
         angle += angleincr;
@@ -274,11 +273,11 @@ static void do_position_update(void)
 
 static void CleanUp(int exitcode)
 {
-    if ( wave ) {
+    if (wave) {
         Mix_FreeChunk(wave);
         wave = NULL;
     }
-    if ( audio_open ) {
+    if (audio_open) {
         Mix_CloseAudio();
         audio_open = 0;
     }
@@ -290,7 +289,7 @@ static void CleanUp(int exitcode)
 
 static void Usage(char *argv0)
 {
-    fprintf(stderr, "Usage: %s [-8] [-r rate] [-c channels] [-f] [-F] [-l] [-m] <wavefile>\n", argv0);
+    SDL_Log("Usage: %s [-8] [-r rate] [-c channels] [-f] [-F] [-l] [-m] <wavefile>\n", argv0);
 }
 
 
@@ -350,7 +349,7 @@ static void flip_sample(Mix_Chunk *wave)
             break;
 
         default:
-            fprintf(stderr, "Unhandled format in sample flipping.\n");
+            SDL_Log("Unhandled format in sample flipping.\n");
             return;
     }
 }
@@ -378,45 +377,45 @@ int main(int argc, char *argv[])
     audio_channels = 2;
 
     /* Check command line usage */
-    for ( i=1; argv[i] && (*argv[i] == '-'); ++i ) {
-        if ( (strcmp(argv[i], "-r") == 0) && argv[i+1] ) {
+    for (i=1; argv[i] && (*argv[i] == '-'); ++i) {
+        if ((strcmp(argv[i], "-r") == 0) && argv[i+1]) {
             ++i;
             audio_rate = atoi(argv[i]);
         } else
-        if ( strcmp(argv[i], "-m") == 0 ) {
+        if (strcmp(argv[i], "-m") == 0) {
             audio_channels = 1;
         } else
-        if ( (strcmp(argv[i], "-c") == 0) && argv[i+1] ) {
+        if ((strcmp(argv[i], "-c") == 0) && argv[i+1]) {
             ++i;
             audio_channels = atoi(argv[i]);
         } else
-        if ( strcmp(argv[i], "-l") == 0 ) {
+        if (strcmp(argv[i], "-l") == 0) {
             loops = -1;
         } else
-        if ( strcmp(argv[i], "-8") == 0 ) {
+        if (strcmp(argv[i], "-8") == 0) {
             audio_format = AUDIO_U8;
         } else
-        if ( strcmp(argv[i], "-f32") == 0 ) {
+        if (strcmp(argv[i], "-f32") == 0) {
             audio_format = AUDIO_F32;
         } else
-        if ( strcmp(argv[i], "-f") == 0 ) { /* rcg06122001 flip stereo */
+        if (strcmp(argv[i], "-f") == 0) { /* rcg06122001 flip stereo */
             reverse_stereo = 1;
         } else
-        if ( strcmp(argv[i], "-F") == 0 ) { /* rcg06172001 flip sample */
+        if (strcmp(argv[i], "-F") == 0) { /* rcg06172001 flip sample */
             reverse_sample = 1;
         } else {
             Usage(argv[0]);
             return(1);
         }
     }
-    if ( ! argv[i] ) {
+    if (! argv[i]) {
         Usage(argv[0]);
         return(1);
     }
 
     /* Initialize the SDL library */
-    if ( SDL_Init(SDL_INIT_AUDIO) < 0 ) {
-        fprintf(stderr, "Couldn't initialize SDL: %s\n",SDL_GetError());
+    if (SDL_Init(SDL_INIT_AUDIO) < 0) {
+        SDL_Log("Couldn't initialize SDL: %s\n",SDL_GetError());
         return(255);
     }
 #ifdef HAVE_SIGNAL_H
@@ -426,16 +425,16 @@ int main(int argc, char *argv[])
 
     /* Open the audio device */
     if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, 4096) < 0) {
-        fprintf(stderr, "Couldn't open audio: %s\n", SDL_GetError());
+        SDL_Log("Couldn't open audio: %s\n", SDL_GetError());
         CleanUp(2);
     } else {
         Mix_QuerySpec(&audio_rate, &audio_format, &audio_channels);
-        printf("Opened audio at %d Hz %d bit %s", audio_rate,
+        SDL_Log("Opened audio at %d Hz %d bit %s", audio_rate,
             (audio_format&0xFF),
             (audio_channels > 2) ? "surround" :
             (audio_channels > 1) ? "stereo" : "mono");
-        if ( loops ) {
-          printf(" (looping)\n");
+        if (loops) {
+          SDL_Log(" (looping)\n");
         } else {
           putchar('\n');
         }
@@ -452,8 +451,8 @@ int main(int argc, char *argv[])
 
     /* Load the requested wave file */
     wave = Mix_LoadWAV(argv[i]);
-    if ( wave == NULL ) {
-        fprintf(stderr, "Couldn't load %s: %s\n",
+    if (wave == NULL) {
+        SDL_Log("Couldn't load %s: %s\n",
                         argv[i], SDL_GetError());
         CleanUp(2);
     }
@@ -466,11 +465,11 @@ int main(int argc, char *argv[])
     Mix_ChannelFinished(channel_complete_callback);
 #endif
 
-    if ( (!Mix_SetReverseStereo(MIX_CHANNEL_POST, reverse_stereo)) &&
-         (reverse_stereo) )
+    if ((!Mix_SetReverseStereo(MIX_CHANNEL_POST, reverse_stereo)) &&
+         (reverse_stereo))
     {
-        printf("Failed to set up reverse stereo effect!\n");
-        printf("Reason: [%s].\n", Mix_GetError());
+        SDL_Log("Failed to set up reverse stereo effect!\n");
+        SDL_Log("Reason: [%s].\n", Mix_GetError());
     }
 
     /* Play and then exit */
@@ -502,3 +501,4 @@ int main(int argc, char *argv[])
 
 /* end of playwave.c ... */
 
+/* vi: set ts=4 sw=4 expandtab: */

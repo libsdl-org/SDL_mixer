@@ -19,10 +19,32 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifdef MP3_MPG_MUSIC
+/* This file supports playing MP3 files with mpg123 */
 
-#include "SDL_mixer.h"
-#include "music_mpg.h"
+#ifdef MUSIC_MP3_MPG123
+
+#include "music_mpg123.h"
+
+#include <mpg123.h>
+
+typedef struct
+{
+    SDL_RWops* src;
+    int freesrc;
+
+    SDL_AudioSpec mixer;
+
+    SDL_bool playing;
+    int volume;
+
+    mpg123_handle* handle;
+
+    int gotformat;
+    SDL_AudioCVT cvt;
+    Uint8 buf[8192];
+    size_t len_available;
+    Uint8* snd_available;
+} mpg_data;
 
 static
 int
@@ -108,23 +130,26 @@ void rwops_cleanup(void* p) {
 
 static int getsome(mpg_data* m);
 
-mpg_data*
-mpg_new_rw(SDL_RWops *src, SDL_AudioSpec* mixer, int freesrc)
+
+static int MPG123_Open(const SDL_AudioSpec *spec)
+{
+    if (mpg123_init() != MPG123_OK) {
+        Mix_SetError("mpg123_init() failed");
+        return -1;
+    }
+    return 0;
+}
+
+static void *MPG123_CreateFromRW(SDL_RWops *src, int freesrc)
 {
     mpg_data* m;
     int result;
     int fmt;
 
-    if (!Mix_Init(MIX_INIT_MP3)) {
-        return(NULL);
-    }
-
-    m = (mpg_data*)SDL_malloc(sizeof(mpg_data));
+    m = (mpg_data*)SDL_calloc(1, sizeof(mpg_data));
     if (!m) {
         return 0;
     }
-
-    SDL_memset(m, 0, sizeof(mpg_data));
 
     m->src = src;
     m->freesrc = freesrc;
@@ -137,7 +162,7 @@ mpg_new_rw(SDL_RWops *src, SDL_AudioSpec* mixer, int freesrc)
     result = mpg123_replace_reader_handle(
         m->handle,
         rwops_read, rwops_seek, rwops_cleanup
-    );
+   );
     if (result != MPG123_OK) {
         return 0;
     }
@@ -147,12 +172,12 @@ mpg_new_rw(SDL_RWops *src, SDL_AudioSpec* mixer, int freesrc)
         return 0;
     }
 
-    fmt = snd_format_to_mpg123(mixer->format);
+    fmt = snd_format_to_mpg123(music_spec.format);
     if (fmt == -1) {
         return 0;
     }
 
-    result =  mpg123_format(m->handle, mixer->freq, mixer->channels, fmt);
+    result =  mpg123_format(m->handle, music_spec.freq, music_spec.channels, fmt);
     if (result != MPG123_OK) {
         return 0;
     }
@@ -163,7 +188,7 @@ mpg_new_rw(SDL_RWops *src, SDL_AudioSpec* mixer, int freesrc)
     }
 
     m->volume = MIX_MAX_VOLUME;
-    m->mixer = *mixer;
+    m->mixer = music_spec;
 
     /* hacky: read until we can figure out the format then rewind */
     while (!m->gotformat)
@@ -182,38 +207,21 @@ mpg_new_rw(SDL_RWops *src, SDL_AudioSpec* mixer, int freesrc)
     return m;
 }
 
-void
-mpg_delete(mpg_data* m)
+static void MPG123_SetVolume(void *context, int volume) {
+    mpg_data* m = (mpg_data *)context;
+    m->volume = volume;
+}
+
+static int MPG123_Play(void *context)
 {
-    if (!m) {
-        return;
-    }
-
-    if (m->freesrc) {
-        SDL_RWclose(m->src);
-    }
-
-    if (m->cvt.buf) {
-        SDL_free(m->cvt.buf);
-    }
-
-    mpg123_close(m->handle);
-    mpg123_delete(m->handle);
-    SDL_free(m);
+    mpg_data* m = (mpg_data *)context;
+    m->playing = SDL_TRUE;
+    return 0;
 }
 
-void
-mpg_start(mpg_data* m) {
-    m->playing = 1;
-}
-
-void
-mpg_stop(mpg_data* m) {
-    m->playing = 0;
-}
-
-int
-mpg_playing(mpg_data* m) {
+static SDL_bool MPG123_IsPlaying(void *context)
+{
+    mpg_data* m = (mpg_data *)context;
     return m->playing;
 }
 
@@ -221,9 +229,7 @@ mpg_playing(mpg_data* m) {
     updates the convert struct and buffer to match the format queried from
     mpg123.
 */
-static
-int
-update_format(mpg_data* m)
+static int update_format(mpg_data* m)
 {
     int code;
     long rate;
@@ -237,7 +243,7 @@ update_format(mpg_data* m)
         mpg123_getformat(
             m->handle,
             &rate, &channels, &encoding
-        );
+       );
 
     if (code != MPG123_OK) {
         SDL_SetError("mpg123_getformat: %s", mpg_err(m->handle, code));
@@ -250,7 +256,7 @@ update_format(mpg_data* m)
         SDL_SetError(
             "Format %s is not supported by SDL",
             mpg123_format_str(encoding)
-        );
+       );
         return 0;
     }
 
@@ -260,7 +266,7 @@ update_format(mpg_data* m)
         m->mixer.format,
         m->mixer.channels,
         m->mixer.freq
-    );
+   );
 
     if (m->cvt.buf) {
         SDL_free(m->cvt.buf);
@@ -280,9 +286,7 @@ update_format(mpg_data* m)
 }
 
 /* read some mp3 stream data and convert it for output */
-static
-int
-getsome(mpg_data* m)
+static int getsome(mpg_data* m)
 {
     int code;
     size_t len;
@@ -332,9 +336,11 @@ getsome(mpg_data* m)
     return 1;
 }
 
-int
-mpg_get_samples(mpg_data* m, Uint8 *stream, int len)
+static int MPG123_GetAudio(void *context, void *data, int bytes)
 {
+    mpg_data* m = (mpg_data *)context;
+    Uint8 *stream = (Uint8 *)data;
+    int len = bytes;
     int mixable;
 
     while (len > 0 && m->playing)
@@ -342,7 +348,7 @@ mpg_get_samples(mpg_data* m, Uint8 *stream, int len)
         if (!m->len_available)
         {
             if (!getsome(m)) {
-                m->playing = 0;
+                m->playing = SDL_FALSE;
                 return len;
             }
         }
@@ -365,7 +371,7 @@ mpg_get_samples(mpg_data* m, Uint8 *stream, int len)
                 m->mixer.format,
                 mixable,
                 m->volume
-            );
+           );
         }
 
         m->len_available -= mixable;
@@ -377,20 +383,70 @@ mpg_get_samples(mpg_data* m, Uint8 *stream, int len)
     return len;
 }
 
-void
-mpg_seek(mpg_data* m, double secs)
+static int MPG123_Seek(void *context, double secs)
 {
+    mpg_data* m = (mpg_data *)context;
     off_t offset = m->mixer.freq * secs;
 
     if ((offset = mpg123_seek(m->handle, offset, SEEK_SET)) < 0) {
-        SDL_SetError("mpg123_seek: %s", mpg_err(m->handle, -offset));
+        return Mix_SetError("mpg123_seek: %s", mpg_err(m->handle, -offset));
     }
+    return 0;
 }
 
-void
-mpg_volume(mpg_data* m, int volume) {
-    m->volume = volume;
+static void MPG123_Stop(void *context)
+{
+    mpg_data* m = (mpg_data *)context;
+    m->playing = SDL_FALSE;
 }
 
+static void MPG123_Delete(void *context)
+{
+    mpg_data* m = (mpg_data *)context;
 
-#endif    /* MP3_MPG_MUSIC */
+    if (m->freesrc) {
+        SDL_RWclose(m->src);
+    }
+
+    if (m->cvt.buf) {
+        SDL_free(m->cvt.buf);
+    }
+
+    mpg123_close(m->handle);
+    mpg123_delete(m->handle);
+    SDL_free(m);
+}
+
+static void MPG123_Close(void)
+{
+    mpg123_exit();
+}
+
+Mix_MusicInterface Mix_MusicInterface_MPG123 =
+{
+    "MPG123",
+    MIX_MUSIC_MPG123,
+    MUS_MP3,
+    SDL_FALSE,
+    SDL_FALSE,
+
+    NULL,   /* Load */
+    MPG123_Open,
+    MPG123_CreateFromRW,
+    NULL,   /* CreateFromFile */
+    MPG123_SetVolume,
+    MPG123_Play,
+    MPG123_IsPlaying,
+    MPG123_GetAudio,
+    MPG123_Seek,
+    NULL,   /* Pause */
+    NULL,   /* Resume */
+    MPG123_Stop,
+    MPG123_Delete,
+    MPG123_Close,
+    NULL,   /* Unload */
+};
+
+#endif /* MUSIC_MP3_MPG123 */
+
+/* vi: set ts=4 sw=4 expandtab: */

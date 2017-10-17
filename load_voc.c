@@ -29,16 +29,6 @@
         (http://www.freshmeat.net/projects/sox/)
 */
 
-/* $Id$ */
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include "SDL_mutex.h"
-#include "SDL_endian.h"
-#include "SDL_timer.h"
-
 #include "SDL_mixer.h"
 #include "load_voc.h"
 
@@ -142,7 +132,7 @@ static int voc_get_block(SDL_RWops *src, vs_t *v, SDL_AudioSpec *spec)
             return 1;  /* assume that's the end of the file. */
 
         /* Size is an 24-bit value. Ugh. */
-        sblen = ( (bits24[0]) | (bits24[1] << 8) | (bits24[2] << 16) );
+        sblen = ((bits24[0]) | (bits24[1] << 8) | (bits24[2] << 16));
 
         switch(block)
         {
@@ -384,10 +374,10 @@ SDL_AudioSpec *Mix_LoadVOC_RW (SDL_RWops *src, int freesrc,
     Uint8 *fillptr;
     void *ptr;
 
-    if ( (!src) || (!audio_buf) || (!audio_len) )   /* sanity checks. */
+    if ((!src) || (!audio_buf) || (!audio_len))   /* sanity checks. */
         goto done;
 
-    if ( !voc_check_header(src) )
+    if (!voc_check_header(src))
         goto done;
 
     v.rate = -1;
@@ -457,3 +447,5 @@ done:
 } /* Mix_LoadVOC_RW */
 
 /* end of load_voc.c ... */
+
+/* vi: set ts=4 sw=4 expandtab: */

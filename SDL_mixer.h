@@ -66,12 +66,11 @@ extern DECLSPEC const SDL_version * SDLCALL Mix_Linked_Version(void);
 
 typedef enum
 {
-    MIX_INIT_FLAC        = 0x00000001,
-    MIX_INIT_MOD         = 0x00000002,
-    MIX_INIT_MODPLUG     = 0x00000004,
-    MIX_INIT_MP3         = 0x00000008,
-    MIX_INIT_OGG         = 0x00000010,
-    MIX_INIT_FLUIDSYNTH  = 0x00000020
+    MIX_INIT_FLAC   = 0x00000001,
+    MIX_INIT_MOD    = 0x00000002,
+    MIX_INIT_MP3    = 0x00000008,
+    MIX_INIT_OGG    = 0x00000010,
+    MIX_INIT_MID    = 0x00000020,
 } MIX_InitFlags;
 
 /* Loads dynamic libraries and prepares them for use.  Flags should be
@@ -97,7 +96,7 @@ extern DECLSPEC void SDLCALL Mix_Quit(void);
 #define MIX_DEFAULT_FORMAT  AUDIO_S16MSB
 #endif
 #define MIX_DEFAULT_CHANNELS    2
-#define MIX_MAX_VOLUME          128 /* Volume of a chunk */
+#define MIX_MAX_VOLUME          SDL_MIX_MAXVOLUME /* Volume of a chunk */
 
 /* The internal format for an audio chunk */
 typedef struct Mix_Chunk {
@@ -114,6 +113,7 @@ typedef enum {
     MIX_FADING_IN
 } Mix_Fading;
 
+/* These are types of music files (not libraries used to load them) */
 typedef enum {
     MUS_NONE,
     MUS_CMD,
@@ -122,10 +122,9 @@ typedef enum {
     MUS_MID,
     MUS_OGG,
     MUS_MP3,
-    MUS_MP3_MAD,
-    MUS_MP3_MPG,
+    MUS_MP3_MAD_UNUSED,
     MUS_FLAC,
-    MUS_MODPLUG
+    MUS_MODPLUG_UNUSED
 } Mix_MusicType;
 
 /* The internal format for a music chunk interpreted via mikmod */
@@ -192,8 +191,10 @@ extern DECLSPEC void SDLCALL Mix_FreeMusic(Mix_Music *music);
 */
 extern DECLSPEC int SDLCALL Mix_GetNumChunkDecoders(void);
 extern DECLSPEC const char * SDLCALL Mix_GetChunkDecoder(int index);
+extern DECLSPEC SDL_bool SDLCALL Mix_HasChunkDecoder(const char *name);
 extern DECLSPEC int SDLCALL Mix_GetNumMusicDecoders(void);
 extern DECLSPEC const char * SDLCALL Mix_GetMusicDecoder(int index);
+extern DECLSPEC SDL_bool SDLCALL Mix_HasMusicDecoder(const char *name);
 
 /* Find out the music format of a mixer music, or the currently playing
    music, if 'music' is NULL.
@@ -625,6 +626,7 @@ extern DECLSPEC void SDLCALL Mix_CloseAudio(void);
 /* We'll use SDL for reporting errors */
 #define Mix_SetError    SDL_SetError
 #define Mix_GetError    SDL_GetError
+#define Mix_ClearError  SDL_ClearError
 
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus
@@ -633,3 +635,5 @@ extern DECLSPEC void SDLCALL Mix_CloseAudio(void);
 #include "close_code.h"
 
 #endif /* SDL_MIXER_H_ */
+
+/* vi: set ts=4 sw=4 expandtab: */
