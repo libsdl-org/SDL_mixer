@@ -11723,7 +11723,7 @@ done
     fi
     if test "x$enable_music_cmd" != xno; then
         SOURCES="$SOURCES $srcdir/music_cmd.c"
-        EXTRA_CFLAGS="$EXTRA_CFLAGS -DCMD_MUSIC"
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_CMD"
     fi
 fi
 
@@ -11736,7 +11736,7 @@ fi
 
 if test x$enable_music_wave = xyes; then
     SOURCES="$SOURCES $srcdir/wavestream.c"
-    EXTRA_CFLAGS="$EXTRA_CFLAGS -DWAV_MUSIC"
+    EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_WAV"
 fi
 
 # Check whether --enable-music-mod was given.
@@ -11945,7 +11945,7 @@ fi
                 ;;
         esac
         SOURCES="$SOURCES $srcdir/*_modplug.c"
-        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMODPLUG_MUSIC $MODPLUG_CFLAGS"
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MOD_MODPLUG $MODPLUG_CFLAGS"
         if test x$enable_music_mod_modplug_shared = xyes && test x$modplug_lib != x; then
             echo "-- dynamic libmodplug -> $modplug_lib"
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DMODPLUG_DYNAMIC=\\\"$modplug_lib\\\""
@@ -12023,7 +12023,7 @@ fi
 
         CFLAGS_SAVED="$CFLAGS"
         LIBS_SAVED="$LIBS"
-        CFLAGS="$CFLAGS -DLIBMIKMOD_MUSIC `$LIBMIKMOD_CONFIG --cflags`"
+        CFLAGS="$CFLAGS `$LIBMIKMOD_CONFIG --cflags`"
         LIBS="$LIBS `$LIBMIKMOD_CONFIG --libs`"
         have_libmikmod=yes
         { $as_echo "$as_me:${as_lineno-$LINENO}: checking for libmikmod - version >= $libmikmod_ver" >&5
@@ -12076,8 +12076,8 @@ fi
                 fi
                 ;;
         esac
-        SOURCES="$SOURCES $srcdir/*_mod.c"
-        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMOD_MUSIC `$LIBMIKMOD_CONFIG --cflags`"
+        SOURCES="$SOURCES $srcdir/*_mikmod.c"
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MOD_MIKMOD `$LIBMIKMOD_CONFIG --cflags`"
         if test x$enable_music_mod_mikmod_shared = xyes && test x$mikmod_lib != x; then
             echo "-- dynamic libmikmod -> $mikmod_lib"
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DMOD_DYNAMIC=\\\"$mikmod_lib\\\""
@@ -12103,7 +12103,7 @@ else
 fi
 
 if test x$enable_music_midi = xyes; then
-    EXTRA_CFLAGS="$EXTRA_CFLAGS -DMID_MUSIC"
+    EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MID"
     # Check whether --enable-music-midi-timidity was given.
 if test "${enable_music_midi_timidity+set}" = set; then :
   enableval=$enable_music_midi_timidity;
@@ -12112,7 +12112,7 @@ else
 fi
 
     if test x$enable_music_midi_timidity = xyes; then
-        EXTRA_CFLAGS="$EXTRA_CFLAGS -DUSE_TIMIDITY_MIDI -I\$(srcdir)/timidity"
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MID_TIMIDITY -I\$(srcdir)/timidity"
         SOURCES="$SOURCES $srcdir/timidity/*.c"
     fi
     # Check whether --enable-music-midi-native was given.
@@ -12142,10 +12142,10 @@ fi
                 ;;
         esac
         if test x$use_music_midi_native = xyes; then
-            EXTRA_CFLAGS="$EXTRA_CFLAGS -DUSE_NATIVE_MIDI -I\$(srcdir)/native_midi"
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MID_NATIVE -I\$(srcdir)/native_midi"
             SOURCES="$SOURCES $srcdir/native_midi/*.c"
         elif test x$use_music_midi_native = xyes_cpp; then
-            EXTRA_CFLAGS="$EXTRA_CFLAGS -DUSE_NATIVE_MIDI -I\$(srcdir)/native_midi"
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MID_NATIVE -I\$(srcdir)/native_midi"
             SOURCES="$SOURCES $srcdir/native_midi/*.c"
             SOURCES_CXX="$SOURCES_CXX $srcdir/native_midi/*.cpp"
         fi
@@ -12228,7 +12228,7 @@ fi
                     ;;
             esac
             SOURCES="$SOURCES $srcdir/dynamic_fluidsynth.c $srcdir/fluidsynth.c"
-            EXTRA_CFLAGS="$EXTRA_CFLAGS -DUSE_FLUIDSYNTH_MIDI"
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MID_FLUIDSYNTH"
             if test x$enable_music_midi_fluidsynth_shared = xyes && test x$fluidsynth_lib != x; then
                 echo "-- dynamic libfluidsyth -> $fluidsynth_lib"
                 EXTRA_CFLAGS="$EXTRA_CFLAGS -DFLUIDSYNTH_DYNAMIC=\\\"$fluidsynth_lib\\\""
@@ -12338,7 +12338,7 @@ fi
                     ;;
             esac
             SOURCES="$SOURCES $srcdir/*_ogg.c"
-            EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_MUSIC -DOGG_USE_TREMOR"
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_OGG -DOGG_USE_TREMOR"
             if test x$enable_music_ogg_shared = xyes && test x$ogg_lib != x; then
                 echo "-- dynamic libvorbisidec -> $ogg_lib"
                 EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_DYNAMIC=\\\"$ogg_lib\\\""
@@ -12416,7 +12416,7 @@ fi
                     ;;
             esac
             SOURCES="$SOURCES $srcdir/*_ogg.c"
-            EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_MUSIC"
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_OGG"
             if test x$enable_music_ogg_shared = xyes && test x$ogg_lib != x; then
                 echo "-- dynamic libvorbisfile -> $ogg_lib"
                 EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_DYNAMIC=\\\"$ogg_lib\\\""
@@ -12552,7 +12552,7 @@ fi
                     ;;
             esac
             SOURCES="$SOURCES $srcdir/*_flac.c"
-            EXTRA_CFLAGS="$EXTRA_CFLAGS -DFLAC_MUSIC"
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_FLAC"
             if test x$enable_music_flac_shared = xyes && test x$flac_lib != x; then
                 echo "-- dynamic libFLAC -> $flac_lib"
                 EXTRA_CFLAGS="$EXTRA_CFLAGS -DFLAC_DYNAMIC=\\\"$flac_lib\\\""
@@ -12844,10 +12844,10 @@ rm -f core conftest.err conftest.$ac_objext \
                 smpeg_lib=`find_lib "libsmpeg2*.so.*"`
                 ;;
         esac
-        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMP3_MUSIC $SMPEG_CFLAGS"
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MP3_SMPEG $SMPEG_CFLAGS"
         if test x$enable_music_mp3_smpeg_shared = xyes && test x$smpeg_lib != x; then
             echo "-- dynamic libsmpeg -> $smpeg_lib"
-            EXTRA_CFLAGS="$EXTRA_CFLAGS -DMP3_DYNAMIC=\\\"$smpeg_lib\\\""
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DSMPEG_DYNAMIC=\\\"$smpeg_lib\\\""
         else
             EXTRA_LDFLAGS="$EXTRA_LDFLAGS $SMPEG_LIBS"
         fi
@@ -12892,7 +12892,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 $as_echo "$have_libmad" >&6; }
     if test x$have_libmad = xyes; then
         SOURCES="$SOURCES $srcdir/music_mad.c"
-        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMP3_MAD_MUSIC"
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MP3_MAD"
         EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lmad"
     else
         { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: *** Unable to find MAD library (http://www.underbit.com/products/mad/)" >&5
@@ -12935,7 +12935,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 $as_echo "$have_libmpg123" >&6; }
     if test x$have_libmpg123 = xyes; then
         SOURCES="$SOURCES $srcdir/music_mpg.c"
-        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMP3_MPG_MUSIC"
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MP3_MPG123"
         EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lmpg123"
     else
         { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: *** Unable to find mpg123 library (https://www.mpg123.de)" >&5
@@ -12944,7 +12944,7 @@ $as_echo "$as_me: WARNING: *** Unable to find mpg123 library (https://www.mpg123
 fi
 
 if test x$have_smpeg = xyes -o x$have_libmad = xyes -o x$have_libmpg123; then
-	SOURCES="$SOURCES $srcdir/*_mp3.c"
+    SOURCES="$SOURCES $srcdir/load_mp3.c"
 else
     { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: MP3 support disabled" >&5
 $as_echo "$as_me: WARNING: MP3 support disabled" >&2;}
