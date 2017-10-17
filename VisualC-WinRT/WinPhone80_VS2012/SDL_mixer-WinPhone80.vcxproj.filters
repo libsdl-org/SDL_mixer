@@ -21,7 +21,7 @@
     <ClCompile Include="..\..\music_mad.c" />
     <ClCompile Include="..\..\music_mikmod.c" />
     <ClCompile Include="..\..\music_ogg.c" />
-    <ClCompile Include="..\..\wavestream.c" />
+    <ClCompile Include="..\..\music_wav.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\dynamic_flac.h" />
@@ -41,6 +41,6 @@
     <ClInclude Include="..\..\music_mikmod.h" />
     <ClInclude Include="..\..\music_ogg.h" />
     <ClInclude Include="..\..\SDL_mixer.h" />
-    <ClInclude Include="..\..\wavestream.h" />
+    <ClInclude Include="..\..\music_wav.h" />
   </ItemGroup>
 </Project>

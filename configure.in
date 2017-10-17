@@ -130,20 +130,12 @@ case "$host" in
         fi
         ;;
     *)
-        SOURCES=""
         EXE=""
         ;;
 esac
 
 # Standard C sources
-SOURCES="$SOURCES \
-$srcdir/effect_position.c \
-$srcdir/effect_stereoreverse.c \
-$srcdir/effects_internal.c \
-$srcdir/load_aiff.c \
-$srcdir/load_voc.c \
-$srcdir/mixer.c \
-$srcdir/music.c"
+SOURCES=`ls $srcdir/*.c | fgrep -v playwave.c | fgrep -v playmus.c`
 
 dnl set this to use on systems that use lib64 instead of lib
 base_libdir=`echo \${libdir} | sed 's/.*\/\(.*\)/\1/; q'`
@@ -229,7 +221,6 @@ if test "x$enable_music_cmd" != xno; then
         enable_music_cmd=no
     fi
     if test "x$enable_music_cmd" != xno; then
-        SOURCES="$SOURCES $srcdir/music_cmd.c"
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_CMD"
     fi
 fi
@@ -238,7 +229,6 @@ AC_ARG_ENABLE([music-wave],
 AC_HELP_STRING([--enable-music-wave], [enable streaming WAVE music [[default=yes]]]),
               [], [enable_music_wave=yes])
 if test x$enable_music_wave = xyes; then
-    SOURCES="$SOURCES $srcdir/wavestream.c"
     EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_WAV"
 fi
 
@@ -277,7 +267,6 @@ if test x$enable_music_mod = xyes -a x$enable_music_mod_modplug = xyes; then
                 fi
                 ;;
         esac
-        SOURCES="$SOURCES $srcdir/*_modplug.c"
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MOD_MODPLUG $MODPLUG_CFLAGS"
         if test x$enable_music_mod_modplug_shared = xyes && test x$modplug_lib != x; then
             echo "-- dynamic libmodplug -> $modplug_lib"
@@ -345,7 +334,6 @@ return 1;
                 fi
                 ;;
         esac
-        SOURCES="$SOURCES $srcdir/*_mikmod.c"
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MOD_MIKMOD `$LIBMIKMOD_CONFIG --cflags`"
         if test x$enable_music_mod_mikmod_shared = xyes && test x$mikmod_lib != x; then
             echo "-- dynamic libmikmod -> $mikmod_lib"
@@ -430,7 +418,6 @@ AC_HELP_STRING([--enable-music-midi-fluidsynth-shared], [dynamically load FluidS
                     fi
                     ;;
             esac
-            SOURCES="$SOURCES $srcdir/dynamic_fluidsynth.c $srcdir/fluidsynth.c"
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MID_FLUIDSYNTH"
             if test x$enable_music_midi_fluidsynth_shared = xyes && test x$fluidsynth_lib != x; then
                 echo "-- dynamic libfluidsyth -> $fluidsynth_lib"
@@ -479,7 +466,6 @@ if test x$enable_music_ogg = xyes; then
                     fi
                     ;;
             esac
-            SOURCES="$SOURCES $srcdir/*_ogg.c"
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_OGG -DOGG_USE_TREMOR"
             if test x$enable_music_ogg_shared = xyes && test x$ogg_lib != x; then
                 echo "-- dynamic libvorbisidec -> $ogg_lib"
@@ -509,7 +495,6 @@ if test x$enable_music_ogg = xyes; then
                     fi
                     ;;
             esac
-            SOURCES="$SOURCES $srcdir/*_ogg.c"
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_OGG"
             if test x$enable_music_ogg_shared = xyes && test x$ogg_lib != x; then
                 echo "-- dynamic libvorbisfile -> $ogg_lib"
@@ -569,7 +554,6 @@ if test x$enable_music_flac = xyes; then
                     fi
                     ;;
             esac
-            SOURCES="$SOURCES $srcdir/*_flac.c"
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_FLAC"
             if test x$enable_music_flac_shared = xyes && test x$flac_lib != x; then
                 echo "-- dynamic libFLAC -> $flac_lib"
@@ -635,7 +619,6 @@ if test x$enable_music_mp3 = xyes -a x$enable_music_mp3_mad_gpl = xyes; then
     ])
     AC_MSG_RESULT($have_libmad)
     if test x$have_libmad = xyes; then
-        SOURCES="$SOURCES $srcdir/music_mad.c"
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MP3_MAD"
         EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lmad"
     else
@@ -657,7 +640,6 @@ if test x$enable_music_mp3 = xyes -a x$enable_music_mp3_mpg123 = xyes; then
     ])
     AC_MSG_RESULT($have_libmpg123)
     if test x$have_libmpg123 = xyes; then
-        SOURCES="$SOURCES $srcdir/music_mpg.c"
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MP3_MPG123"
         EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lmpg123"
     else
@@ -666,7 +648,7 @@ if test x$enable_music_mp3 = xyes -a x$enable_music_mp3_mpg123 = xyes; then
 fi
 
 if test x$have_smpeg = xyes -o x$have_libmad = xyes -o x$have_libmpg123; then
-    SOURCES="$SOURCES $srcdir/load_mp3.c"
+    :
 else
     AC_MSG_WARN([MP3 support disabled])
 fi
