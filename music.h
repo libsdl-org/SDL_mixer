@@ -105,7 +105,7 @@ typedef struct
 
 extern int load_music(void);
 extern Mix_MusicType detect_music_type_from_magic(const Uint8 *magic);
-extern int get_num_music_interfaces();
+extern int get_num_music_interfaces(void);
 extern Mix_MusicInterface *get_music_interface(int index);
 extern SDL_bool has_music(Mix_MusicType type);
 extern int open_music(const SDL_AudioSpec *spec);
