@@ -23,6 +23,8 @@
 
 #ifdef MUSIC_MP3_MPG123
 
+#include <stdio.h>      // For SEEK_SET
+
 #include "SDL_loadso.h"
 
 #include "music_mpg123.h"
@@ -63,7 +65,7 @@ static mpg123_loader mpg123 = {
     mpg123.FUNC = FUNC;
 #endif
 
-static int MPG123_Load()
+static int MPG123_Load(void)
 {
     if (mpg123.loaded == 0) {
 #ifdef MPG123_DYNAMIC
@@ -101,7 +103,7 @@ static int MPG123_Load()
     return 0;
 }
 
-static void MPG123_Unload()
+static void MPG123_Unload(void)
 {
     if (mpg123.loaded == 0) {
         return;
@@ -444,7 +446,7 @@ static int MPG123_GetAudio(void *context, void *data, int bytes)
 
         mixable = len;
 
-        if (mixable > m->len_available) {
+        if (mixable > (int)m->len_available) {
             mixable = (int)m->len_available;
         }
 
@@ -475,7 +477,7 @@ static int MPG123_GetAudio(void *context, void *data, int bytes)
 static int MPG123_Seek(void *context, double secs)
 {
     mpg_data* m = (mpg_data *)context;
-    off_t offset = m->mixer.freq * secs;
+    off_t offset = (off_t)(m->mixer.freq * secs);
 
     if ((offset = mpg123.mpg123_seek(m->handle, offset, SEEK_SET)) < 0) {
         return Mix_SetError("mpg123_seek: %s", mpg_err(m->handle, (int)-offset));

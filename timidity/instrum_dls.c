@@ -39,7 +39,6 @@ typedef struct _RIFF_Chunk {
 
 extern RIFF_Chunk* LoadRIFF(SDL_RWops *src);
 extern void FreeRIFF(RIFF_Chunk *chunk);
-extern void PrintRIFF(RIFF_Chunk *chunk, int level);
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /*-------------------------------------------------------------------------*/
@@ -202,6 +201,8 @@ void FreeRIFF(RIFF_Chunk *chunk)
     FreeRIFFChunk(chunk);
 }
 
+#ifdef TEST_MAIN_RIFF
+
 void PrintRIFF(RIFF_Chunk *chunk, int level)
 {
     static char prefix[128];
@@ -239,8 +240,6 @@ void PrintRIFF(RIFF_Chunk *chunk, int level)
         prefix[(level-1)*2] = '\0';
     }
 }
-
-#ifdef TEST_MAIN_RIFF
 
 main(int argc, char *argv[])
 {
@@ -898,6 +897,8 @@ static const char *DestinationToString(USHORT usDestination)
     }
 }
 
+#ifdef TEST_MAIN_DLS
+
 static void PrintArt(const char *type, CONNECTIONLIST *art, CONNECTION *artList)
 {
     Uint32 i;
@@ -1029,8 +1030,6 @@ void PrintDLS(DLS_Data *data)
         printf("Comments: %s\n", data->comments);
     }
 }
-
-#ifdef TEST_MAIN_DLS
 
 main(int argc, char *argv[])
 {

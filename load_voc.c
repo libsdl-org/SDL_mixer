@@ -89,7 +89,7 @@ static int voc_check_header(SDL_RWops *src)
     if (SDL_RWread(src, signature, sizeof (signature), 1) != 1)
         return(0);
 
-    if (memcmp(signature, "Creative Voice File\032", sizeof (signature)) != 0) {
+    if (SDL_memcmp(signature, "Creative Voice File\032", sizeof (signature)) != 0) {
         SDL_SetError("Unrecognized file type (not VOC)");
         return(0);
     }
