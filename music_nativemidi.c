@@ -53,6 +53,16 @@ static SDL_bool NATIVEMIDI_IsPlaying(void *context)
     return native_midi_active() ? SDL_TRUE : SDL_FALSE;
 }
 
+static void NATIVEMIDI_Pause(void *context)
+{
+    native_midi_pause();
+}
+
+static void NATIVEMIDI_Resume(void *context)
+{
+    native_midi_resume();
+}
+
 static void NATIVEMIDI_Stop(void *context)
 {
     native_midi_stop();
@@ -81,8 +91,8 @@ Mix_MusicInterface Mix_MusicInterface_NATIVEMIDI =
     NATIVEMIDI_IsPlaying,
     NULL,   /* GetAudio */
     NULL,   /* Seek */
-    NULL,   /* Pause */
-    NULL,   /* Resume */
+    NATIVEMIDI_Pause,
+    NATIVEMIDI_Resume,
     NATIVEMIDI_Stop,
     NATIVEMIDI_Delete,
     NULL,   /* Close */
