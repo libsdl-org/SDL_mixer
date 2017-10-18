@@ -1585,7 +1585,7 @@ Optional Features:
                           dynamically load FLAC library [[default=yes]]
   --enable-music-mp3      enable MP3 music [[default=yes]]
   --enable-music-mp3-smpeg
-                          enable MP3 music via smpeg [[default=yes]]
+                          enable MP3 music via smpeg [[default=no]]
   --enable-music-mp3-smpeg-shared
                           dynamically load smpeg library [[default=yes]]
   --disable-smpegtest     Do not try to compile and run a test SMPEG program
@@ -12567,7 +12567,7 @@ fi
 if test "${enable_music_mp3_smpeg+set}" = set; then :
   enableval=$enable_music_mp3_smpeg;
 else
-  enable_music_mp3_smpeg=yes
+  enable_music_mp3_smpeg=no
 fi
 
 # Check whether --enable-music-mp3-smpeg-shared was given.
