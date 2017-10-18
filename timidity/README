@@ -1,4 +1,5 @@
-[This version of timidity has been stripped for simplicity in porting to SDL]
+[This version of timidity has been stripped for simplicity in porting to SDL,
+and then even further for SDL_sound]
 ---------------------------------*-text-*---------------------------------
 
         From http://www.cgs.fi/~tt/discontinued.html :

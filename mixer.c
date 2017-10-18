@@ -568,7 +568,6 @@ static SDL_AudioSpec *Mix_LoadMusic_RW(Mix_MusicType music_type, SDL_RWops *src,
         /* These music interfaces are not safe to use while music is playing */
         if (interface->api == MIX_MUSIC_CMD ||
              interface->api == MIX_MUSIC_MIKMOD ||
-             interface->api == MIX_MUSIC_TIMIDITY ||
              interface->api == MIX_MUSIC_NATIVEMIDI) {
             continue;
         }
