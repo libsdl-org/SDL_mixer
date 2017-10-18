@@ -17,13 +17,13 @@ FLAC_LIBRARY_PATH := external/flac-1.3.2
 SUPPORT_MOD_MODPLUG ?= true
 MODPLUG_LIBRARY_PATH := external/libmodplug-0.8.9.0
 
-# Enable this if you want to support loading MP3 music via SMPEG
+# Enable this if you want to support loading MP3 music via mpg123
 # The library path should be a relative path to this directory.
 #
-# You need to symlink the SMPEG_LIBRARY_PATH to your jni directory
+# You need to symlink the MPG123_LIBRARY_PATH to your jni directory
 # so the shared library is built.
-SUPPORT_MP3_SMPEG ?= true
-SMPEG_LIBRARY_PATH := external/smpeg2-2.0.0
+SUPPORT_MP3_MPG123 ?= true
+MPG123_LIBRARY_PATH := external/mpg123-1.25.6
 
 # Enable this if you want to support loading OGG Vorbis music via Tremor
 # The library path should be a relative path to this directory.
@@ -97,9 +97,9 @@ ifeq ($(SUPPORT_MOD_MODPLUG),true)
         $(MODPLUG_LIBRARY_PATH)/src/sndmix.cpp
 endif
 
-ifeq ($(SUPPORT_MP3_SMPEG),true)
-    LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(SMPEG_LIBRARY_PATH)
-    LOCAL_CFLAGS += -DMUSIC_MP3_SMPEG
+ifeq ($(SUPPORT_MP3_MPG123),true)
+    LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(MPG123_LIBRARY_PATH)
+    LOCAL_CFLAGS += -DMUSIC_MP3_MPG123
     LOCAL_SHARED_LIBRARIES += smpeg2
 endif
 
