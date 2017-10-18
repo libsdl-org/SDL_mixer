@@ -68,7 +68,7 @@ static flac_loader flac = {
 
 #ifdef FLAC_DYNAMIC
 
-static FLAC_Load(void)
+static int FLAC_Load(void)
 {
     if (flac.loaded == 0) {
         flac.handle = SDL_LoadObject(FLAC_DYNAMIC);
