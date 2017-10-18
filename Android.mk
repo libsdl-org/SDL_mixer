@@ -1,4 +1,8 @@
-LOCAL_PATH := $(call my-dir)
+MY_LOCAL_PATH := $(call my-dir)
+
+include $(call all-subdir-makefiles)
+
+LOCAL_PATH := $(MY_LOCAL_PATH)
 
 include $(CLEAR_VARS)
 
@@ -6,9 +10,6 @@ LOCAL_MODULE := SDL2_mixer
 
 # Enable this if you want to support loading FLAC music via libFLAC
 # The library path should be a relative path to this directory.
-#
-# You need to symlink the FLAC_LIBRARY_PATH to your jni directory
-# so the shared library is built.
 SUPPORT_FLAC ?= true
 FLAC_LIBRARY_PATH := external/flac-1.3.2
 
@@ -19,9 +20,6 @@ MODPLUG_LIBRARY_PATH := external/libmodplug-0.8.9.0
 
 # Enable this if you want to support loading MP3 music via mpg123
 # The library path should be a relative path to this directory.
-#
-# You need to symlink the MPG123_LIBRARY_PATH to your jni directory
-# so the shared library is built.
 SUPPORT_MP3_MPG123 ?= true
 MPG123_LIBRARY_PATH := external/mpg123-1.25.6
 
@@ -30,7 +28,6 @@ MPG123_LIBRARY_PATH := external/mpg123-1.25.6
 SUPPORT_OGG ?= true
 OGG_LIBRARY_PATH := external/libogg-1.3.2
 VORBIS_LIBRARY_PATH := external/libvorbisidec-1.2.1
-
 
 # Enable this if you want to support TiMidity
 SUPPORT_TIMIDITY ?= true
@@ -100,7 +97,7 @@ endif
 ifeq ($(SUPPORT_MP3_MPG123),true)
     LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(MPG123_LIBRARY_PATH)
     LOCAL_CFLAGS += -DMUSIC_MP3_MPG123
-    LOCAL_SHARED_LIBRARIES += smpeg2
+    LOCAL_SHARED_LIBRARIES += mpg123
 endif
 
 ifeq ($(SUPPORT_OGG),true)

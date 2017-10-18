@@ -4,12 +4,12 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := libFLAC
 
-OGG_LIBRARY_PATH := $(LOCAL_PATH)/../libogg-1.3.2
+OGG_LIBRARY_PATH := ../libogg-1.3.2
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/include \
                     $(LOCAL_PATH)/src/libFLAC/include \
-                    $(OGG_LIBRARY_PATH)/include \
-                    $(OGG_LIBRARY_PATH)/android
+                    $(LOCAL_PATH)/$(OGG_LIBRARY_PATH)/include \
+                    $(LOCAL_PATH)/$(OGG_LIBRARY_PATH)/android
 LOCAL_CFLAGS := -include $(LOCAL_PATH)/android/config.h
 
 LOCAL_SRC_FILES := \
