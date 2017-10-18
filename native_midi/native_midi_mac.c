@@ -242,6 +242,14 @@ done:
     SDL_PauseAudio(0);
 }
 
+void native_midi_pause(void)
+{
+}
+
+void native_midi_resume(void)
+{
+}
+
 void native_midi_stop(void)
 {
     if (gTunePlayer == NULL)

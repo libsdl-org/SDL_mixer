@@ -30,6 +30,8 @@ int native_midi_detect(void);
 NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *src, int freesrc);
 void native_midi_freesong(NativeMidiSong *song);
 void native_midi_start(NativeMidiSong *song, int loops);
+void native_midi_pause(void);
+void native_midi_resume(void);
 void native_midi_stop(void);
 int native_midi_active(void);
 void native_midi_setvolume(int volume);

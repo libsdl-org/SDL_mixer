@@ -272,6 +272,20 @@ void native_midi_start(NativeMidiSong *song, int loops)
   }
 }
 
+void native_midi_pause(void)
+{
+  if (!hMidiStream)
+    return;
+  midiStreamPause(hMidiStream);
+}
+
+void native_midi_resume(void)
+{
+  if (!hMidiStream)
+    return;
+  midiStreamRestart(hMidiStream);
+}
+
 void native_midi_stop(void)
 {
   if (!hMidiStream)

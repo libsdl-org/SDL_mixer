@@ -287,6 +287,14 @@ void native_midi_start(NativeMidiSong *song, int loops)
     SDL_PauseAudio(0);
 }
 
+void native_midi_pause(void)
+{
+}
+
+void native_midi_resume(void)
+{
+}
+
 void native_midi_stop(void)
 {
     if (currentsong) {

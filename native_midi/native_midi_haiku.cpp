@@ -253,6 +253,7 @@ void native_midi_freesong(NativeMidiSong *song)
   delete song->store;
   delete song; song = 0;
 }
+
 void native_midi_start(NativeMidiSong *song, int loops)
 {
   native_midi_stop();
@@ -261,6 +262,15 @@ void native_midi_start(NativeMidiSong *song, int loops)
   song->store->Start();
   currentSong = song;
 }
+
+void native_midi_pause(void)
+{
+}
+
+void native_midi_resume(void)
+{
+}
+
 void native_midi_stop(void)
 {
   if (currentSong == NULL) return;
@@ -270,6 +280,7 @@ void native_midi_stop(void)
     usleep(1000);
   currentSong = NULL;
 }
+
 int native_midi_active(void)
 {
   if (currentSong == NULL) return 0;
