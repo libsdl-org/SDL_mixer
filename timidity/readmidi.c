@@ -540,9 +540,7 @@ MidiEvent *read_midi_file(MidiSong *song, Sint32 *count, Sint32 *sp)
 
   /* Put a do-nothing event first in the list for easier processing */
   song->evlist=safe_malloc(sizeof(MidiEventList));
-  song->evlist->event.time=0;
-  song->evlist->event.type=ME_NONE;
-  song->evlist->next=0;
+  memset(song->evlist, 0, sizeof(MidiEventList));
   song->event_count++;
 
   switch(format)
