@@ -23,6 +23,8 @@
 
 /* This file supports MOD tracker music streams */
 
+#include "SDL_loadso.h"
+
 #include "music_mikmod.h"
 
 #include "mikmod.h"
@@ -543,6 +545,7 @@ static int MIKMOD_Play(void *context)
     MODULE *music = (MODULE *)context;
     mikmod.Player_Start(music);
     mikmod.Player_SetVolume((SWORD)music_volume);
+    return 0;
 }
 
 /* Return non-zero if a stream is currently playing */
