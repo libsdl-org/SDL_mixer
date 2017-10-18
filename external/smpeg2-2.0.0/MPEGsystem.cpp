@@ -440,7 +440,7 @@ MPEGsystem::MPEGsystem(SDL_RWops *mpeg_source)
 
 #ifdef USE_SYSTEM_THREAD
   /* Start the system thread */
-  system_thread = SDL_CreateThread(SystemThread, this);
+  system_thread = SDL_CreateThread(SystemThread, "MPEG system", this);
 
   /* Wait for the thread to start */
   while(!system_thread_running && !Eof())
@@ -1248,7 +1248,7 @@ void MPEGsystem::Start()
   
 #ifdef USE_SYSTEM_THREAD
   /* Start the system thread */
-  system_thread = SDL_CreateThread(SystemThread, this);
+  system_thread = SDL_CreateThread(SystemThread, "MPEG system", this);
 
   /* Wait for the thread to start */
   while(!system_thread_running && !Eof())
