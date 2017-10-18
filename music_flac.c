@@ -34,7 +34,7 @@
 typedef struct {
     int loaded;
     void *handle;
-    FLAC__StreamDecoder *(*FLAC__stream_decoder_new)();
+    FLAC__StreamDecoder *(*FLAC__stream_decoder_new)(void);
     void (*FLAC__stream_decoder_delete)(FLAC__StreamDecoder *decoder);
     FLAC__StreamDecoderInitStatus (*FLAC__stream_decoder_init_stream)(
                         FLAC__StreamDecoder *decoder,
@@ -76,7 +76,7 @@ static int FLAC_Load(void)
             return -1;
         }
         flac.FLAC__stream_decoder_new =
-            (FLAC__StreamDecoder *(*)())
+            (FLAC__StreamDecoder *(*)(void))
             SDL_LoadFunction(flac.handle, "FLAC__stream_decoder_new");
         if (flac.FLAC__stream_decoder_new == NULL) {
             SDL_UnloadObject(flac.handle);

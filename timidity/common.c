@@ -46,7 +46,7 @@ SDL_RWops *open_file(const char *name)
   {
     char current_filename[1024];
     PathList *plp = pathlist;
-    int l;
+    size_t l;
 
     while (plp)  /* Try along the path then */
       {

@@ -350,7 +350,7 @@ static int update_format(mpg_data* m)
 
     SDL_BuildAudioCVT(
         &m->cvt,
-        sdlfmt, channels, rate,
+        sdlfmt, channels, (int)rate,
         m->mixer.format,
         m->mixer.channels,
         m->mixer.freq
@@ -410,13 +410,13 @@ static int getsome(mpg_data* m)
 
     if (cvt->needed) {
         /* we need to convert the audio to SDL's format */
-        cvt->len = len;
+        cvt->len = (int)len;
         SDL_ConvertAudio(cvt);
     }
 
     else {
         /* no conversion needed, just copy */
-        cvt->len_cvt = len;
+        cvt->len_cvt = (int)len;
     }
 
     m->len_available = cvt->len_cvt;
@@ -445,7 +445,7 @@ static int MPG123_GetAudio(void *context, void *data, int bytes)
         mixable = len;
 
         if (mixable > m->len_available) {
-            mixable = m->len_available;
+            mixable = (int)m->len_available;
         }
 
         if (m->volume == MIX_MAX_VOLUME) {
@@ -478,7 +478,7 @@ static int MPG123_Seek(void *context, double secs)
     off_t offset = m->mixer.freq * secs;
 
     if ((offset = mpg123.mpg123_seek(m->handle, offset, SEEK_SET)) < 0) {
-        return Mix_SetError("mpg123_seek: %s", mpg_err(m->handle, -offset));
+        return Mix_SetError("mpg123_seek: %s", mpg_err(m->handle, (int)-offset));
     }
     return 0;
 }
