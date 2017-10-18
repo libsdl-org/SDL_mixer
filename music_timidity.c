@@ -28,35 +28,29 @@
 #include "timidity/timidity.h"
 
 
-static int samplesize;
-
 static int TIMIDITY_Open(const SDL_AudioSpec *spec)
 {
-    samplesize = spec->size / spec->samples;
-    if (Timidity_Init(spec->freq, spec->format, spec->channels, spec->samples) != 0) {
-        Mix_SetError("%s", Timidity_Error());
-        return -1;
-    }
-    return 0;
+    return Timidity_Init();
 }
 
 static void TIMIDITY_Close(void)
 {
-    Timidity_Close();
+    Timidity_Exit();
 }
 
 void *TIMIDITY_CreateFromRW(SDL_RWops *src, int freesrc)
 {
-    MidiSong *music = Timidity_LoadSong_RW(src, freesrc);
-    if (!music) {
-        Mix_SetError("%s", Timidity_Error());
+    MidiSong *music = Timidity_LoadSong(src, &music_spec);
+    if (music && freesrc) {
+        SDL_RWclose(src);
     }
     return music;
 }
 
 static void TIMIDITY_SetVolume(void *context, int volume)
 {
-    Timidity_SetVolume(volume);
+    MidiSong *music = (MidiSong *)context;
+    Timidity_SetVolume(music, volume);
 }
 
 static int TIMIDITY_Play(void *context)
@@ -66,21 +60,21 @@ static int TIMIDITY_Play(void *context)
     return 0;
 }
 
-static SDL_bool TIMIDITY_IsPlaying(void *context)
-{
-    return Timidity_Active() ? SDL_TRUE : SDL_FALSE;
-}
-
 static int TIMIDITY_GetAudio(void *context, void *data, int bytes)
 {
-    int samples = (bytes / samplesize);
-    Timidity_PlaySome(data, samples);
+    MidiSong *music = (MidiSong *)context;
+    if (!Timidity_PlaySome(music, data, bytes)) {
+        /* Nothing consumed, everything left */
+        return bytes;
+    }
     return 0;
 }
 
-static void TIMIDITY_Stop(void *context)
+static int TIMIDITY_Seek(void *context, double position)
 {
-    Timidity_Stop();
+    MidiSong *music = (MidiSong *)context;
+    Timidity_Seek(music, (Uint32)(position * 1000));
+    return 0;
 }
 
 static void TIMIDITY_Delete(void *context)
@@ -103,9 +97,9 @@ Mix_MusicInterface Mix_MusicInterface_TIMIDITY =
     NULL,   /* CreateFromFile */
     TIMIDITY_SetVolume,
     TIMIDITY_Play,
-    TIMIDITY_IsPlaying,
+    NULL,   /* IsPlaying */
     TIMIDITY_GetAudio,
-    NULL,   /* Seek */
+    TIMIDITY_Seek,
     NULL,   /* Pause */
     NULL,   /* Resume */
     NULL,   /* Stop */

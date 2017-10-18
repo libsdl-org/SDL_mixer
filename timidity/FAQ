@@ -92,19 +92,7 @@ A: Here are some things to try:
 
    - Use a smaller number of simultaneous voices.
 
-   - Make sure you compiled with FAST_DECAY and PRECALC_LOOPS enabled
-     in config.h
-
-   - If you don't have hardware to compute sines, recompile with
-     LOOKUP_SINE enabled in config.h
-
-   - Recompile with LOOKUP_HACK enabled in config.h.
-
-   - Recompile with LINEAR_INTERPOLATION disabled in config.h.
-
-   - Recompile with DANGEROUS_RENICE enabled in config.h, and make
-     TiMidity setuid root. This will help only if you frequently play
-     music while other processes are running.
+   - Make sure you compiled with FAST_DECAY enabled in options.h
 
    - Recompile with an Intel-optimized gcc for a 5-15%
      performance increase.
