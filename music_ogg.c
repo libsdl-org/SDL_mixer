@@ -40,6 +40,7 @@ typedef struct {
     void *handle;
     int (*ov_clear)(OggVorbis_File *vf);
     vorbis_info *(*ov_info)(OggVorbis_File *vf,int link);
+    vorbis_comment *(*ov_comment)(OggVorbis_File *vf,int link);
     int (*ov_open_callbacks)(void *datasource, OggVorbis_File *vf, const char *initial, long ibytes, ov_callbacks callbacks);
     ogg_int64_t (*ov_pcm_total)(OggVorbis_File *vf,int i);
 #ifdef OGG_USE_TREMOR
@@ -52,6 +53,8 @@ typedef struct {
 #else
     int (*ov_time_seek)(OggVorbis_File *vf,double pos);
 #endif
+    int (*ov_pcm_seek)(OggVorbis_File *vf, ogg_int64_t pos);
+    ogg_int64_t (*ov_pcm_tell)(OggVorbis_File *vf);
 } vorbis_loader;
 
 static vorbis_loader vorbis = {
@@ -78,6 +81,13 @@ static int OGG_Load(void)
             (vorbis_info *(*)(OggVorbis_File *,int))
             SDL_LoadFunction(vorbis.handle, "ov_info");
         if (vorbis.ov_info == NULL) {
+            SDL_UnloadObject(vorbis.handle);
+            return -1;
+        }
+        vorbis.ov_comment =
+            (vorbis_comment *(*)(OggVorbis_File *,int))
+            SDL_LoadFunction(vorbis.handle, "ov_comment");
+        if (vorbis.ov_comment == NULL) {
             SDL_UnloadObject(vorbis.handle);
             return -1;
         }
@@ -117,6 +127,20 @@ static int OGG_Load(void)
             SDL_UnloadObject(vorbis.handle);
             return -1;
         }
+        vorbis.ov_pcm_seek =
+            (int (*)(OggVorbis_File *,ogg_int64_t))
+            SDL_LoadFunction(vorbis.handle, "ov_pcm_seek");
+        if (vorbis.ov_pcm_seek == NULL) {
+            SDL_UnloadObject(vorbis.handle);
+            return -1;
+        }
+        vorbis.ov_pcm_tell =
+            (ogg_int64_t (*)(OggVorbis_File *))
+            SDL_LoadFunction(vorbis.handle, "ov_pcm_tell");
+        if (vorbis.ov_pcm_tell == NULL) {
+            SDL_UnloadObject(vorbis.handle);
+            return -1;
+        }
     }
     ++vorbis.loaded;
 
@@ -151,10 +175,13 @@ static int OGG_Load(void)
 
         vorbis.ov_clear = ov_clear;
         vorbis.ov_info = ov_info;
+        vorbis.ov_comment = ov_comment;
         vorbis.ov_open_callbacks = ov_open_callbacks;
         vorbis.ov_pcm_total = ov_pcm_total;
         vorbis.ov_read = ov_read;
         vorbis.ov_time_seek = ov_time_seek;
+        vorbis.ov_pcm_seek = ov_pcm_seek;
+        vorbis.ov_pcm_tell = ov_pcm_tell;
     }
     ++vorbis.loaded;
 
@@ -184,6 +211,11 @@ typedef struct {
     SDL_AudioCVT cvt;
     int len_available;
     Uint8 *snd_available;
+    int loop;
+    ogg_int64_t loop_start;
+    ogg_int64_t loop_end;
+    ogg_int64_t loop_len;
+    ogg_int64_t channels;
 } OGG_music;
 
 static size_t sdl_read_func(void *ptr, size_t size, size_t nmemb, void *datasource)
@@ -214,17 +246,83 @@ static void *OGG_CreateFromRW(SDL_RWops *src, int freesrc)
 
     music = (OGG_music *)SDL_calloc(1, sizeof *music);
     if (music) {
+        vorbis_info *vi;
+        vorbis_comment *vc;
+        int isLoopLength = 0, i;
+        ogg_int64_t fullLength;
+
         /* Initialize the music structure */
         music->src = src;
         music->freesrc = freesrc;
         music->volume = MIX_MAX_VOLUME;
         music->section = -1;
 
+        music->loop         = -1;
+        music->loop_start   = -1;
+        music->loop_end     =  0;
+        music->loop_len     =  0;
+
         if (vorbis.ov_open_callbacks(src, &music->vf, NULL, 0, callbacks) < 0) {
             SDL_SetError("Not an Ogg Vorbis audio stream");
             SDL_free(music);
             return NULL;
         }
+
+        vi = vorbis.ov_info(&music->vf, -1);
+        music->channels = vi->channels;
+
+        vc = vorbis.ov_comment(&music->vf, -1);
+
+        for (i = 0; i < vc->comments; i++) {
+            int   paramLen = vc->comment_lengths[i] + 1;
+            char *param = (char *)SDL_malloc((size_t)paramLen);
+            char *argument  = param;
+            char *value     = param;
+            SDL_memset(param, 0, (size_t)paramLen);
+            SDL_memcpy(param, vc->user_comments[i], (size_t)vc->comment_lengths[i]);
+            value = SDL_strchr(param, '=');
+            if (value == NULL) {
+                value = param + paramLen - 1; /* set null */
+            } else {
+                *(value++) = '\0';
+            }
+
+            #ifdef __USE_ISOC99
+            #define A_TO_OGG64(x) (ogg_int64_t)atoll(x)
+            #else
+            #define A_TO_OGG64(x) (ogg_int64_t)atol(x)
+            #endif
+
+            if (SDL_strcasecmp(argument, "LOOPSTART") == 0)
+                music->loop_start = A_TO_OGG64(value);
+            else if (SDL_strcasecmp(argument, "LOOPLENGTH") == 0) {
+                music->loop_len = A_TO_OGG64(value);
+                isLoopLength = 1;
+            }
+            else if (SDL_strcasecmp(argument, "LOOPEND") == 0) {
+                isLoopLength = 0;
+                music->loop_end = A_TO_OGG64(value);
+            }
+
+            #undef A_TO_OGG64
+            SDL_free(param);
+        }
+
+        if (isLoopLength == 1)
+            music->loop_end = music->loop_start + music->loop_len;
+        else
+            music->loop_len = music->loop_end - music->loop_start;
+
+        fullLength = vorbis.ov_pcm_total(&music->vf, -1);
+        if (((music->loop_start >= 0) || (music->loop_end > 0)) &&
+            ((music->loop_start < music->loop_end) || (music->loop_end == 0)) &&
+             (music->loop_start < fullLength) &&
+             (music->loop_end <= fullLength)) {
+            if (music->loop_start < 0) music->loop_start = 0;
+            if (music->loop_end == 0)  music->loop_end = fullLength;
+            music->loop = 1;
+        }
+
     } else {
         SDL_OutOfMemory();
     }
@@ -259,6 +357,7 @@ static void OGG_getsome(OGG_music *music)
     int section;
     int len;
     char data[4096];
+    ogg_int64_t pcmPos;
     SDL_AudioCVT *cvt;
 
 #ifdef OGG_USE_TREMOR
@@ -266,6 +365,13 @@ static void OGG_getsome(OGG_music *music)
 #else
     len = (int)vorbis.ov_read(&music->vf, data, sizeof(data), 0, 2, 1, &section);
 #endif
+
+    pcmPos = vorbis.ov_pcm_tell(&music->vf);
+    if ((music->loop == 1) && (pcmPos >= music->loop_end)) {
+        len -= ((pcmPos - music->loop_end) * music->channels) * (long)sizeof(Uint16);
+        vorbis.ov_pcm_seek(&music->vf, music->loop_start);
+    }
+
     if (len <= 0) {
         if (len == 0) {
             music->playing = SDL_FALSE;
