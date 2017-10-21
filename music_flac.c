@@ -68,30 +68,35 @@ static flac_loader flac = {
 };
 
 #ifdef FLAC_DYNAMIC
+#define FUNCTION_LOADER(FUNC, SIG) \
+    flac.FUNC = (SIG) SDL_LoadFunction(flac.handle, #FUNC); \
+    if (flac.FUNC == NULL) { SDL_UnloadObject(flac.handle); return -1; }
+#else
+#define FUNCTION_LOADER(FUNC, SIG) \
+    flac.FUNC = FUNC;
+#endif
 
 static int FLAC_Load(void)
 {
     if (flac.loaded == 0) {
+#ifdef FLAC_DYNAMIC
         flac.handle = SDL_LoadObject(FLAC_DYNAMIC);
         if (flac.handle == NULL) {
             return -1;
         }
-        flac.FLAC__stream_decoder_new =
-            (FLAC__StreamDecoder *(*)(void))
-            SDL_LoadFunction(flac.handle, "FLAC__stream_decoder_new");
-        if (flac.FLAC__stream_decoder_new == NULL) {
-            SDL_UnloadObject(flac.handle);
+#elif defined(__MACOSX__)
+        extern FLAC__StreamDecoder *FLAC__stream_decoder_new(void) __attribute__((weak_import));
+        if (FLAC__stream_decoder_new == NULL)
+        {
+            /* Missing weakly linked framework */
+            Mix_SetError("Missing FLAC.framework");
             return -1;
         }
-        flac.FLAC__stream_decoder_delete =
-            (void (*)(FLAC__StreamDecoder *))
-            SDL_LoadFunction(flac.handle, "FLAC__stream_decoder_delete");
-        if (flac.FLAC__stream_decoder_delete == NULL) {
-            SDL_UnloadObject(flac.handle);
-            return -1;
-        }
-        flac.FLAC__stream_decoder_init_stream =
-            (FLAC__StreamDecoderInitStatus (*)(
+#endif
+
+        FUNCTION_LOADER(FLAC__stream_decoder_new, FLAC__StreamDecoder *(*)(void))
+        FUNCTION_LOADER(FLAC__stream_decoder_delete, void (*)(FLAC__StreamDecoder *))
+        FUNCTION_LOADER(FLAC__stream_decoder_init_stream, FLAC__StreamDecoderInitStatus (*)(
                         FLAC__StreamDecoder *,
                         FLAC__StreamDecoderReadCallback,
                         FLAC__StreamDecoderSeekCallback,
@@ -102,63 +107,13 @@ static int FLAC_Load(void)
                         FLAC__StreamDecoderMetadataCallback,
                         FLAC__StreamDecoderErrorCallback,
                         void *))
-            SDL_LoadFunction(flac.handle, "FLAC__stream_decoder_init_stream");
-        if (flac.FLAC__stream_decoder_init_stream == NULL) {
-            SDL_UnloadObject(flac.handle);
-            return -1;
-        }
-        flac.FLAC__stream_decoder_finish =
-            (FLAC__bool (*)(FLAC__StreamDecoder *))
-            SDL_LoadFunction(flac.handle, "FLAC__stream_decoder_finish");
-        if (flac.FLAC__stream_decoder_finish == NULL) {
-            SDL_UnloadObject(flac.handle);
-            return -1;
-        }
-        flac.FLAC__stream_decoder_flush =
-            (FLAC__bool (*)(FLAC__StreamDecoder *))
-            SDL_LoadFunction(flac.handle, "FLAC__stream_decoder_flush");
-        if (flac.FLAC__stream_decoder_flush == NULL) {
-            SDL_UnloadObject(flac.handle);
-            return -1;
-        }
-        flac.FLAC__stream_decoder_process_single =
-            (FLAC__bool (*)(FLAC__StreamDecoder *))
-            SDL_LoadFunction(flac.handle,
-                        "FLAC__stream_decoder_process_single");
-        if (flac.FLAC__stream_decoder_process_single == NULL) {
-            SDL_UnloadObject(flac.handle);
-            return -1;
-        }
-        flac.FLAC__stream_decoder_process_until_end_of_metadata =
-            (FLAC__bool (*)(FLAC__StreamDecoder *))
-            SDL_LoadFunction(flac.handle,
-                        "FLAC__stream_decoder_process_until_end_of_metadata");
-        if (flac.FLAC__stream_decoder_process_until_end_of_metadata == NULL) {
-            SDL_UnloadObject(flac.handle);
-            return -1;
-        }
-        flac.FLAC__stream_decoder_process_until_end_of_stream =
-            (FLAC__bool (*)(FLAC__StreamDecoder *))
-            SDL_LoadFunction(flac.handle,
-                        "FLAC__stream_decoder_process_until_end_of_stream");
-        if (flac.FLAC__stream_decoder_process_until_end_of_stream == NULL) {
-            SDL_UnloadObject(flac.handle);
-            return -1;
-        }
-        flac.FLAC__stream_decoder_seek_absolute =
-            (FLAC__bool (*)(FLAC__StreamDecoder *, FLAC__uint64))
-            SDL_LoadFunction(flac.handle, "FLAC__stream_decoder_seek_absolute");
-        if (flac.FLAC__stream_decoder_seek_absolute == NULL) {
-            SDL_UnloadObject(flac.handle);
-            return -1;
-        }
-        flac.FLAC__stream_decoder_get_state =
-            (FLAC__StreamDecoderState (*)(const FLAC__StreamDecoder *decoder))
-            SDL_LoadFunction(flac.handle, "FLAC__stream_decoder_get_state");
-        if (flac.FLAC__stream_decoder_get_state == NULL) {
-            SDL_UnloadObject(flac.handle);
-            return -1;
-        }
+        FUNCTION_LOADER(FLAC__stream_decoder_finish, FLAC__bool (*)(FLAC__StreamDecoder *))
+        FUNCTION_LOADER(FLAC__stream_decoder_flush, FLAC__bool (*)(FLAC__StreamDecoder *))
+        FUNCTION_LOADER(FLAC__stream_decoder_process_single, FLAC__bool (*)(FLAC__StreamDecoder *))
+        FUNCTION_LOADER(FLAC__stream_decoder_process_until_end_of_metadata, FLAC__bool (*)(FLAC__StreamDecoder *))
+        FUNCTION_LOADER(FLAC__stream_decoder_process_until_end_of_stream, FLAC__bool (*)(FLAC__StreamDecoder *))
+        FUNCTION_LOADER(FLAC__stream_decoder_seek_absolute, FLAC__bool (*)(FLAC__StreamDecoder *, FLAC__uint64))
+        FUNCTION_LOADER(FLAC__stream_decoder_get_state, FLAC__StreamDecoderState (*)(const FLAC__StreamDecoder *decoder))
     }
     ++flac.loaded;
 
@@ -171,59 +126,12 @@ static void FLAC_Unload(void)
         return;
     }
     if (flac.loaded == 1) {
+#ifdef FLAC_DYNAMIC
         SDL_UnloadObject(flac.handle);
+#endif
     }
     --flac.loaded;
 }
-
-#else /* !FLAC_DYNAMIC */
-
-static int FLAC_Load(void)
-{
-    if (flac.loaded == 0) {
-#ifdef __MACOSX__
-        extern FLAC__StreamDecoder *FLAC__stream_decoder_new(void) __attribute__((weak_import));
-        if (FLAC__stream_decoder_new == NULL)
-        {
-            /* Missing weakly linked framework */
-            Mix_SetError("Missing FLAC.framework");
-            return -1;
-        }
-#endif /* __MACOSX__ */
-
-        flac.FLAC__stream_decoder_new = FLAC__stream_decoder_new;
-        flac.FLAC__stream_decoder_delete = FLAC__stream_decoder_delete;
-        flac.FLAC__stream_decoder_init_stream =
-                            FLAC__stream_decoder_init_stream;
-        flac.FLAC__stream_decoder_finish = FLAC__stream_decoder_finish;
-        flac.FLAC__stream_decoder_flush = FLAC__stream_decoder_flush;
-        flac.FLAC__stream_decoder_process_single =
-                            FLAC__stream_decoder_process_single;
-        flac.FLAC__stream_decoder_process_until_end_of_metadata =
-                            FLAC__stream_decoder_process_until_end_of_metadata;
-        flac.FLAC__stream_decoder_process_until_end_of_stream =
-                            FLAC__stream_decoder_process_until_end_of_stream;
-        flac.FLAC__stream_decoder_seek_absolute =
-                            FLAC__stream_decoder_seek_absolute;
-        flac.FLAC__stream_decoder_get_state =
-                            FLAC__stream_decoder_get_state;
-    }
-    ++flac.loaded;
-
-    return 0;
-}
-
-static void FLAC_Unload(void)
-{
-    if (flac.loaded == 0) {
-        return;
-    }
-    if (flac.loaded == 1) {
-    }
-    --flac.loaded;
-}
-
-#endif /* FLAC_DYNAMIC */
 
 
 typedef struct {

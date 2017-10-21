@@ -337,7 +337,7 @@ return 1;
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MOD_MIKMOD `$LIBMIKMOD_CONFIG --cflags`"
         if test x$enable_music_mod_mikmod_shared = xyes && test x$mikmod_lib != x; then
             echo "-- dynamic libmikmod -> $mikmod_lib"
-            EXTRA_CFLAGS="$EXTRA_CFLAGS -DMOD_DYNAMIC=\\\"$mikmod_lib\\\""
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DMIKMOD_DYNAMIC=\\\"$mikmod_lib\\\""
         else
             EXTRA_LDFLAGS="$EXTRA_LDFLAGS `$LIBMIKMOD_CONFIG --libs`"
         fi

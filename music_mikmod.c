@@ -20,7 +20,6 @@
 */
 
 #ifdef MUSIC_MOD_MIKMOD
-#error Implement play_count and audio stream conversion
 
 /* This file supports MOD tracker music streams */
 
@@ -30,8 +29,6 @@
 
 #include "mikmod.h"
 
-
-#define MAX_OUTPUT_CHANNELS 6
 
 /* libmikmod >= 3.3.2 constified several funcs */
 #if (LIBMIKMOD_VERSION < 0x030302)
@@ -76,220 +73,29 @@ static mikmod_loader mikmod = {
     0, NULL
 };
 
-#ifdef MOD_DYNAMIC
+#ifdef MIKMOD_DYNAMIC
+#define FUNCTION_LOADER(FUNC, SIG) \
+    mikmod.FUNC = (SIG) SDL_LoadFunction(mikmod.handle, #FUNC); \
+    if (mikmod.FUNC == NULL) { SDL_UnloadObject(mikmod.handle); return -1; }
+#define VARIABLE_LOADER(NAME, SIG) \
+    mikmod.NAME = (SIG) SDL_LoadFunction(mikmod.handle, #NAME); \
+    if (mikmod.NAME == NULL) { SDL_UnloadObject(mikmod.handle); return -1; }
+#else
+#define FUNCTION_LOADER(FUNC, SIG) \
+    mikmod.FUNC = FUNC;
+#define VARIABLE_LOADER(NAME, SIG) \
+    mikmod.NAME = &NAME;
+#endif
 
 static int MIKMOD_Load()
 {
     if (mikmod.loaded == 0) {
-        mikmod.handle = SDL_LoadObject(MOD_DYNAMIC);
+#ifdef MIKMOD_DYNAMIC
+        mikmod.handle = SDL_LoadObject(MIKMOD_DYNAMIC);
         if (mikmod.handle == NULL) {
             return -1;
         }
-        mikmod.MikMod_Exit =
-            (void (*)(void))
-            SDL_LoadFunction(mikmod.handle, "MikMod_Exit");
-        if (mikmod.MikMod_Exit == NULL) {
-            SDL_UnloadObject(mikmod.handle);
-            return -1;
-        }
-        mikmod.MikMod_InfoDriver =
-            (CHAR* (*)(void))
-            SDL_LoadFunction(mikmod.handle, "MikMod_InfoDriver");
-        if (mikmod.MikMod_InfoDriver == NULL) {
-            SDL_UnloadObject(mikmod.handle);
-            return -1;
-        }
-        mikmod.MikMod_InfoLoader =
-            (CHAR* (*)(void))
-            SDL_LoadFunction(mikmod.handle, "MikMod_InfoLoader");
-        if (mikmod.MikMod_InfoLoader == NULL) {
-            SDL_UnloadObject(mikmod.handle);
-            return -1;
-        }
-        mikmod.MikMod_Init =
-            (int (*)(MIKMOD3_CONST CHAR*))
-            SDL_LoadFunction(mikmod.handle, "MikMod_Init");
-        if (mikmod.MikMod_Init == NULL) {
-            SDL_UnloadObject(mikmod.handle);
-            return -1;
-        }
-        mikmod.MikMod_RegisterAllLoaders =
-            (void (*)(void))
-            SDL_LoadFunction(mikmod.handle, "MikMod_RegisterAllLoaders");
-        if (mikmod.MikMod_RegisterAllLoaders == NULL) {
-            SDL_UnloadObject(mikmod.handle);
-            return -1;
-        }
-        mikmod.MikMod_RegisterDriver =
-            (void (*)(struct MDRIVER*))
-            SDL_LoadFunction(mikmod.handle, "MikMod_RegisterDriver");
-        if (mikmod.MikMod_RegisterDriver == NULL) {
-            SDL_UnloadObject(mikmod.handle);
-            return -1;
-        }
-        mikmod.MikMod_errno =
-            (int*)
-            SDL_LoadFunction(mikmod.handle, "MikMod_errno");
-        if (mikmod.MikMod_errno == NULL) {
-            SDL_UnloadObject(mikmod.handle);
-            return -1;
-        }
-        mikmod.MikMod_strerror =
-            (MIKMOD3_CONST char* (*)(int))
-            SDL_LoadFunction(mikmod.handle, "MikMod_strerror");
-        if (mikmod.MikMod_strerror == NULL) {
-            SDL_UnloadObject(mikmod.handle);
-            return -1;
-        }
-        mikmod.MikMod_free =
-            (void (*)(void*))
-            SDL_LoadFunction(mikmod.handle, "MikMod_free");
-        if (mikmod.MikMod_free == NULL) {
-            /* libmikmod 3.1 and earlier doesn't have it */
-            mikmod.MikMod_free = free;
-        }
-        mikmod.Player_Active =
-            (BOOL (*)(void))
-            SDL_LoadFunction(mikmod.handle, "Player_Active");
-        if (mikmod.Player_Active == NULL) {
-            SDL_UnloadObject(mikmod.handle);
-            return -1;
-        }
-        mikmod.Player_Free =
-            (void (*)(MODULE*))
-            SDL_LoadFunction(mikmod.handle, "Player_Free");
-        if (mikmod.Player_Free == NULL) {
-            SDL_UnloadObject(mikmod.handle);
-            return -1;
-        }
-        mikmod.Player_LoadGeneric =
-            (MODULE* (*)(MREADER*,int,BOOL))
-            SDL_LoadFunction(mikmod.handle, "Player_LoadGeneric");
-        if (mikmod.Player_LoadGeneric == NULL) {
-            SDL_UnloadObject(mikmod.handle);
-            return -1;
-        }
-        mikmod.Player_SetPosition =
-            (void (*)(UWORD))
-            SDL_LoadFunction(mikmod.handle, "Player_SetPosition");
-        if (mikmod.Player_SetPosition == NULL) {
-            SDL_UnloadObject(mikmod.handle);
-            return -1;
-        }
-        mikmod.Player_SetVolume =
-            (void (*)(SWORD))
-            SDL_LoadFunction(mikmod.handle, "Player_SetVolume");
-        if (mikmod.Player_SetVolume == NULL) {
-            SDL_UnloadObject(mikmod.handle);
-            return -1;
-        }
-        mikmod.Player_Start =
-            (void (*)(MODULE*))
-            SDL_LoadFunction(mikmod.handle, "Player_Start");
-        if (mikmod.Player_Start == NULL) {
-            SDL_UnloadObject(mikmod.handle);
-            return -1;
-        }
-        mikmod.Player_Stop =
-            (void (*)(void))
-            SDL_LoadFunction(mikmod.handle, "Player_Stop");
-        if (mikmod.Player_Stop == NULL) {
-            SDL_UnloadObject(mikmod.handle);
-            return -1;
-        }
-        mikmod.VC_WriteBytes =
-            (ULONG (*)(SBYTE*,ULONG))
-            SDL_LoadFunction(mikmod.handle, "VC_WriteBytes");
-        if (mikmod.VC_WriteBytes == NULL) {
-            SDL_UnloadObject(mikmod.handle);
-            return -1;
-        }
-        mikmod.drv_nos =
-            (MDRIVER*)
-            SDL_LoadFunction(mikmod.handle, "drv_nos");
-        if (mikmod.drv_nos == NULL) {
-            SDL_UnloadObject(mikmod.handle);
-            return -1;
-        }
-        mikmod.md_device =
-            (UWORD*)
-            SDL_LoadFunction(mikmod.handle, "md_device");
-        if (mikmod.md_device == NULL) {
-            SDL_UnloadObject(mikmod.handle);
-            return -1;
-        }
-        mikmod.md_mixfreq =
-            (UWORD*)
-            SDL_LoadFunction(mikmod.handle, "md_mixfreq");
-        if (mikmod.md_mixfreq == NULL) {
-            SDL_UnloadObject(mikmod.handle);
-            return -1;
-        }
-        mikmod.md_mode =
-            (UWORD*)
-            SDL_LoadFunction(mikmod.handle, "md_mode");
-        if (mikmod.md_mode == NULL) {
-            SDL_UnloadObject(mikmod.handle);
-            return -1;
-        }
-        mikmod.md_musicvolume =
-            (UBYTE*)
-            SDL_LoadFunction(mikmod.handle, "md_musicvolume");
-        if (mikmod.md_musicvolume == NULL) {
-            SDL_UnloadObject(mikmod.handle);
-            return -1;
-        }
-        mikmod.md_pansep =
-            (UBYTE*)
-            SDL_LoadFunction(mikmod.handle, "md_pansep");
-        if (mikmod.md_pansep == NULL) {
-            SDL_UnloadObject(mikmod.handle);
-            return -1;
-        }
-        mikmod.md_reverb =
-            (UBYTE*)
-            SDL_LoadFunction(mikmod.handle, "md_reverb");
-        if (mikmod.md_reverb == NULL) {
-            SDL_UnloadObject(mikmod.handle);
-            return -1;
-        }
-        mikmod.md_sndfxvolume =
-            (UBYTE*)
-            SDL_LoadFunction(mikmod.handle, "md_sndfxvolume");
-        if (mikmod.md_sndfxvolume == NULL) {
-            SDL_UnloadObject(mikmod.handle);
-            return -1;
-        }
-        mikmod.md_volume =
-            (UBYTE*)
-            SDL_LoadFunction(mikmod.handle, "md_volume");
-        if (mikmod.md_volume == NULL) {
-            SDL_UnloadObject(mikmod.handle);
-            return -1;
-        }
-    }
-    ++mikmod.loaded;
-
-    return 0;
-}
-
-static void MIKMOD_Unload()
-{
-    if (mikmod.loaded == 0) {
-        return;
-    }
-    if (mikmod.loaded == 1) {
-        SDL_UnloadObject(mikmod.handle);
-    }
-    --mikmod.loaded;
-}
-
-#else /* !MOD_DYNAMIC */
-
-static int MIKMOD_Load()
-{
-    if (mikmod.loaded == 0) {
-#ifdef __MACOSX__
+#elif defined(__MACOSX__)
         extern void Player_Start(MODULE*) __attribute__((weak_import));
         if (Player_Start == NULL)
         {
@@ -297,38 +103,45 @@ static int MIKMOD_Load()
             Mix_SetError("Missing mikmod.framework");
             return -1;
         }
-#endif // __MACOSX__
-
-        mikmod.MikMod_Exit = MikMod_Exit;
-        mikmod.MikMod_InfoDriver = MikMod_InfoDriver;
-        mikmod.MikMod_InfoLoader = MikMod_InfoLoader;
-        mikmod.MikMod_Init = MikMod_Init;
-        mikmod.MikMod_RegisterAllLoaders = MikMod_RegisterAllLoaders;
-        mikmod.MikMod_RegisterDriver = MikMod_RegisterDriver;
-        mikmod.MikMod_errno = &MikMod_errno;
-        mikmod.MikMod_strerror = MikMod_strerror;
+#endif
+        FUNCTION_LOADER(MikMod_Exit, void (*)(void))
+        FUNCTION_LOADER(MikMod_InfoDriver, CHAR* (*)(void))
+        FUNCTION_LOADER(MikMod_InfoLoader, CHAR* (*)(void))
+        FUNCTION_LOADER(MikMod_Init, int (*)(MIKMOD3_CONST CHAR*))
+        FUNCTION_LOADER(MikMod_RegisterAllLoaders, void (*)(void))
+        FUNCTION_LOADER(MikMod_RegisterDriver, void (*)(struct MDRIVER*))
+        VARIABLE_LOADER(MikMod_errno, int*)
+        FUNCTION_LOADER(MikMod_strerror, MIKMOD3_CONST char* (*)(int))
+#ifdef MIKMOD_DYNAMIC
+        mikmod.MikMod_free = (void (*)(void*)) SDL_LoadFunction(mikmod.handle, "MikMod_free");
+        if (!mikmod.MikMod_free) {
+            /* libmikmod 3.1 and earlier doesn't have it */
+            mikmod.MikMod_free = free;
+        }
+#else
 #if LIBMIKMOD_VERSION < ((3<<16)|(2<<8))
         mikmod.MikMod_free = free;
 #else
         mikmod.MikMod_free = MikMod_free;
 #endif
-        mikmod.Player_Active = Player_Active;
-        mikmod.Player_Free = Player_Free;
-        mikmod.Player_LoadGeneric = Player_LoadGeneric;
-        mikmod.Player_SetPosition = Player_SetPosition;
-        mikmod.Player_SetVolume = Player_SetVolume;
-        mikmod.Player_Start = Player_Start;
-        mikmod.Player_Stop = Player_Stop;
-        mikmod.VC_WriteBytes = VC_WriteBytes;
-        mikmod.drv_nos = &drv_nos;
-        mikmod.md_device = &md_device;
-        mikmod.md_mixfreq = &md_mixfreq;
-        mikmod.md_mode = &md_mode;
-        mikmod.md_musicvolume = &md_musicvolume;
-        mikmod.md_pansep = &md_pansep;
-        mikmod.md_reverb = &md_reverb;
-        mikmod.md_sndfxvolume = &md_sndfxvolume;
-        mikmod.md_volume = &md_volume;
+#endif /* MIKMOD_DYNAMIC */
+        FUNCTION_LOADER(Player_Active, BOOL (*)(void))
+        FUNCTION_LOADER(Player_Free, void (*)(MODULE*))
+        FUNCTION_LOADER(Player_LoadGeneric, MODULE* (*)(MREADER*,int,BOOL))
+        FUNCTION_LOADER(Player_SetPosition, void (*)(UWORD))
+        FUNCTION_LOADER(Player_SetVolume, void (*)(SWORD))
+        FUNCTION_LOADER(Player_Start, void (*)(MODULE*))
+        FUNCTION_LOADER(Player_Stop, void (*)(void))
+        FUNCTION_LOADER(VC_WriteBytes, ULONG (*)(SBYTE*,ULONG))
+        VARIABLE_LOADER(drv_nos, MDRIVER*)
+        VARIABLE_LOADER(md_device, UWORD*)
+        VARIABLE_LOADER(md_mixfreq, UWORD*)
+        VARIABLE_LOADER(md_mode, UWORD*)
+        VARIABLE_LOADER(md_musicvolume, UBYTE*)
+        VARIABLE_LOADER(md_pansep, UBYTE*)
+        VARIABLE_LOADER(md_reverb, UBYTE*)
+        VARIABLE_LOADER(md_sndfxvolume, UBYTE*)
+        VARIABLE_LOADER(md_volume, UBYTE*)
     }
     ++mikmod.loaded;
 
@@ -341,19 +154,27 @@ static void MIKMOD_Unload()
         return;
     }
     if (mikmod.loaded == 1) {
+#ifdef MIKMOD_DYNAMIC
+        SDL_UnloadObject(mikmod.handle);
+#endif
     }
     --mikmod.loaded;
 }
 
-#endif /* MOD_DYNAMIC */
+
+typedef struct
+{
+    int play_count;
+    int volume;
+    MODULE *module;
+    SDL_AudioStream *stream;
+    SBYTE *buffer;
+    ULONG buffer_size;
+} MIKMOD_Music;
 
 
-/* Reference for converting mikmod output to 4/6 channels */
-static int current_output_channels;
-static Uint16 current_output_format;
-
-static int music_swap8;
-static int music_swap16;
+static int MIKMOD_Seek(void *context, double position);
+static void MIKMOD_Delete(void *context);
 
 /* Initialize the MOD player, with the given mixer settings
    This function returns 0, or -1 if there was an error.
@@ -363,45 +184,14 @@ static int MIKMOD_Open(const SDL_AudioSpec *spec)
     CHAR *list;
 
     /* Set the MikMod music format */
-    music_swap8 = 0;
-    music_swap16 = 0;
-    switch (spec->format) {
-
-        case AUDIO_U8:
-        case AUDIO_S8: {
-            if (spec->format == AUDIO_S8) {
-                music_swap8 = 1;
-            }
-            *mikmod.md_mode = 0;
-        }
-        break;
-
-        case AUDIO_S16LSB:
-        case AUDIO_S16MSB: {
-            /* See if we need to correct MikMod mixing */
-#if SDL_BYTEORDER == SDL_LIL_ENDIAN
-            if (spec->format == AUDIO_S16MSB) {
-#else
-            if (spec->format == AUDIO_S16LSB) {
-#endif
-                music_swap16 = 1;
-            }
-            *mikmod.md_mode = DMODE_16BITS;
-        }
-        break;
-
-        default: {
-            Mix_SetError("Unknown hardware audio format");
-            return -1;
-        }
+    if (spec->format == AUDIO_S8 || spec->format == AUDIO_U8) {
+        /* MIKMOD audio format is AUDIO_U8 */
+        *mikmod.md_mode = 0;
+    } else {
+        /* MIKMOD audio format is AUDIO_S16SYS */
+        *mikmod.md_mode = DMODE_16BITS;
     }
-    current_output_channels = spec->channels;
-    current_output_format = spec->format;
     if (spec->channels > 1) {
-        if (spec->channels > MAX_OUTPUT_CHANNELS) {
-            Mix_SetError("Hardware uses more channels than supported");
-            return -1;
-        }
         *mikmod.md_mode |= DMODE_STEREO;
     }
     *mikmod.md_mixfreq = spec->freq;
@@ -414,22 +204,23 @@ static int MIKMOD_Open(const SDL_AudioSpec *spec)
     *mikmod.md_mode    |= DMODE_HQMIXER|DMODE_SOFT_MUSIC|DMODE_SURROUND;
 
     list = mikmod.MikMod_InfoDriver();
-    if (list)
+    if (list) {
       mikmod.MikMod_free(list);
-    else
+    } else {
       mikmod.MikMod_RegisterDriver(mikmod.drv_nos);
+    }
 
     list = mikmod.MikMod_InfoLoader();
-    if (list)
+    if (list) {
       mikmod.MikMod_free(list);
-    else
+    } else {
       mikmod.MikMod_RegisterAllLoaders();
+    }
 
     if (mikmod.MikMod_Init(NULL)) {
         Mix_SetError("%s", mikmod.MikMod_strerror(*mikmod.MikMod_errno));
         return -1;
     }
-
     return 0;
 }
 
@@ -510,43 +301,81 @@ MODULE *MikMod_LoadSongRW(SDL_RWops *src, int maxchan)
 /* Load a MOD stream from an SDL_RWops object */
 void *MIKMOD_CreateFromRW(SDL_RWops *src, int freesrc)
 {
-    MODULE *module;
+    MIKMOD_Music *music;
+    SDL_AudioFormat format;
+    Uint8 channels;
 
-    module = MikMod_LoadSongRW(src, 64);
-    if (!module) {
+    music = (MIKMOD_Music *)SDL_calloc(1, sizeof(*music));
+    if (!music) {
+        SDL_OutOfMemory();
+        return NULL;
+    }
+    music->volume = MIX_MAX_VOLUME;
+
+    music->module = MikMod_LoadSongRW(src, 64);
+    if (!music->module) {
         Mix_SetError("%s", mikmod.MikMod_strerror(*mikmod.MikMod_errno));
+        MIKMOD_Delete(music);
         return NULL;
     }
 
     /* Stop implicit looping, fade out and other flags. */
-    module->extspd  = 1;
-    module->panflag = 1;
-    module->wrap    = 0;
-    module->loop    = 0;
+    music->module->extspd  = 1;
+    music->module->panflag = 1;
+    music->module->wrap    = 0;
+    music->module->loop    = 0;
 #if 0 /* Don't set fade out by default - unfortunately there's no real way
 to query the status of the song or set trigger actions.  Hum. */
-    module->fadeout = 1;
+    music->module->fadeout = 1;
 #endif
 
+    if ((*mikmod.md_mode & DMODE_16BITS) == DMODE_16BITS) {
+        format = AUDIO_S16SYS;
+    } else {
+        format = AUDIO_U8;
+    }
+    if ((*mikmod.md_mode & DMODE_STEREO) == DMODE_STEREO) {
+        channels = 2;
+    } else {
+        channels = 1;
+    }
+    music->stream = SDL_NewAudioStream(format, channels, *mikmod.md_mixfreq,
+                                       music_spec.format, music_spec.channels, music_spec.freq);
+    if (!music->stream) {
+        MIKMOD_Delete(music);
+        return NULL;
+    }
+
+    music->buffer_size = music_spec.samples * (SDL_AUDIO_BITSIZE(format) / 8) * channels;
+    music->buffer = (SBYTE *)SDL_malloc(music->buffer_size);
+    if (!music->buffer) {
+        SDL_OutOfMemory();
+        MIKMOD_Delete(music);
+        return NULL;
+    }
+        
     if (freesrc) {
         SDL_RWclose(src);
     }
-    return module;
+    return music;
 }
 
 /* Set the volume for a MOD stream */
 static void MIKMOD_SetVolume(void *context, int volume)
 {
+    MIKMOD_Music *music = (MIKMOD_Music *)context;
+    music->volume = volume;
     mikmod.Player_SetVolume((SWORD)volume);
 }
 
 /* Start playback of a given MOD stream */
-static int MIKMOD_Play(void *context)
+static int MIKMOD_Play(void *context, int play_count)
 {
-    MODULE *music = (MODULE *)context;
-    mikmod.Player_Start(music);
-    mikmod.Player_SetVolume((SWORD)music_volume);
-    return 0;
+    MIKMOD_Music *music = (MIKMOD_Music *)context;
+    music->play_count = play_count;
+    mikmod.Player_Start(music->module);
+    mikmod.Player_SetVolume((SWORD)music->volume);
+    return MIKMOD_Seek(music, 0.0);
 }
 
 /* Return non-zero if a stream is currently playing */
@@ -556,83 +385,49 @@ static SDL_bool MIKMOD_IsPlaying(void *context)
 }
 
 /* Play some of a stream previously started with MOD_play() */
-static int MIKMOD_GetAudio(void *context, void *data, int bytes)
+static int MIKMOD_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 {
-    MODULE *music = (MODULE *)context;
-    Uint8 *stream = (Uint8 *)data;
-    int len = bytes;
+    MIKMOD_Music *music = (MIKMOD_Music *)context;
+    int filled;
 
-    if (current_output_channels > 2) {
-        int small_len = 2 * len / current_output_channels;
-        int i;
-        Uint8 *src, *dst;
-
-        mikmod.VC_WriteBytes((SBYTE *)stream, small_len);
-        /* and extend to len by copying channels */
-        src = stream + small_len;
-        dst = stream + len;
-
-        switch (current_output_format & 0xFF) {
-            case 8:
-                for (i=small_len/2; i; --i) {
-                    src -= 2;
-                    dst -= current_output_channels;
-                    dst[0] = src[0];
-                    dst[1] = src[1];
-                    dst[2] = src[0];
-                    dst[3] = src[1];
-                    if (current_output_channels == 6) {
-                        dst[4] = src[0];
-                        dst[5] = src[1];
-                    }
-                }
-                break;
-            case 16:
-                for (i=small_len/4; i; --i) {
-                    src -= 4;
-                    dst -= 2 * current_output_channels;
-                    dst[0] = src[0];
-                    dst[1] = src[1];
-                    dst[2] = src[2];
-                    dst[3] = src[3];
-                    dst[4] = src[0];
-                    dst[5] = src[1];
-                    dst[6] = src[2];
-                    dst[7] = src[3];
-                    if (current_output_channels == 6) {
-                        dst[8] = src[0];
-                        dst[9] = src[1];
-                        dst[10] = src[2];
-                        dst[11] = src[3];
-                    }
-                }
-                break;
-        }
-    } else {
-        mikmod.VC_WriteBytes((SBYTE *)stream, len);
+    filled = SDL_AudioStreamGet(music->stream, data, bytes);
+    if (filled != 0) {
+        return filled;
     }
-    if (music_swap8) {
-        Uint8 *dst;
-        int i;
 
-        dst = stream;
-        for (i=len; i; --i) {
-            *dst++ ^= 0x80;
-        }
-    } else
-    if (music_swap16) {
-        Uint8 *dst, tmp;
-        int i;
+    if (!music->play_count) {
+        /* All done */
+        *done = SDL_TRUE;
+        return 0;
+    }
 
-        dst = stream;
-        for (i=(len/2); i; --i) {
-            tmp = dst[0];
-            dst[0] = dst[1];
-            dst[1] = tmp;
-            dst += 2;
+    /* This never fails, and always writes a full buffer */
+    mikmod.VC_WriteBytes(music->buffer, music->buffer_size);
+
+    if (SDL_AudioStreamPut(music->stream, music->buffer, music->buffer_size) < 0) {
+        return -1;
+    }
+
+    /* Check to see if we're done now */
+    if (!mikmod.Player_Active()) {
+        if (music->play_count == 1) {
+            music->play_count = 0;
+            SDL_AudioStreamFlush(music->stream);
+        } else {
+            int play_count = -1;
+            if (music->play_count > 0) {
+                play_count = (music->play_count - 1);
+            }
+            if (MIKMOD_Play(music, play_count) < 0) {
+                return -1;
+            }
         }
     }
     return 0;
+}
+static int MIKMOD_GetAudio(void *context, void *data, int bytes)
+{
+    return music_pcm_getaudio(context, data, bytes, MIX_MAX_VOLUME, MIKMOD_GetSome);
 }
 
 /* Jump (seek) to a given position (time is in seconds) */
@@ -651,8 +446,18 @@ static void MIKMOD_Stop(void *context)
 /* Close the given MOD stream */
 static void MIKMOD_Delete(void *context)
 {
-    MODULE *music = (MODULE *)context;
-    mikmod.Player_Free(music);
+    MIKMOD_Music *music = (MIKMOD_Music *)context;
+
+    if (music->module) {
+        mikmod.Player_Free(music->module);
+    }
+    if (music->stream) {
+        SDL_FreeAudioStream(music->stream);
+    }
+    if (music->buffer) {
+        SDL_free(music->buffer);
+    }
+    SDL_free(music);
 }
 
 Mix_MusicInterface Mix_MusicInterface_MIKMOD =
@@ -674,7 +479,7 @@ Mix_MusicInterface Mix_MusicInterface_MIKMOD =
     MIKMOD_Seek,
     NULL,   /* Pause */
     NULL,   /* Resume */
-    NULL,   /* Stop */
+    MIKMOD_Stop,
     MIKMOD_Delete,
     MIKMOD_Close,
     MIKMOD_Unload,

@@ -55,121 +55,23 @@ static smpeg_loader smpeg = {
 };
 
 #ifdef SMPEG_DYNAMIC
+#define FUNCTION_LOADER(FUNC, SIG) \
+    smpeg.FUNC = (SIG) SDL_LoadFunction(smpeg.handle, #FUNC); \
+    if (smpeg.FUNC == NULL) { SDL_UnloadObject(smpeg.handle); return -1; }
+#else
+#define FUNCTION_LOADER(FUNC, SIG) \
+    smpeg.FUNC = FUNC;
+#endif
 
 static int SMPEG_Load(void)
 {
     if (smpeg.loaded == 0) {
+#ifdef SMPEG_DYNAMIC
         smpeg.handle = SDL_LoadObject(SMPEG_DYNAMIC);
         if (smpeg.handle == NULL) {
             return -1;
         }
-        smpeg.SMPEG_actualSpec =
-            (void (*)(SMPEG *, SDL_AudioSpec *))
-            SDL_LoadFunction(smpeg.handle, "SMPEG_actualSpec");
-        if (smpeg.SMPEG_actualSpec == NULL) {
-            SDL_UnloadObject(smpeg.handle);
-            return -1;
-        }
-        smpeg.SMPEG_delete =
-            (void (*)(SMPEG*))
-            SDL_LoadFunction(smpeg.handle, "SMPEG_delete");
-        if (smpeg.SMPEG_delete == NULL) {
-            SDL_UnloadObject(smpeg.handle);
-            return -1;
-        }
-        smpeg.SMPEG_enableaudio =
-            (void (*)(SMPEG*, int))
-            SDL_LoadFunction(smpeg.handle, "SMPEG_enableaudio");
-        if (smpeg.SMPEG_enableaudio == NULL) {
-            SDL_UnloadObject(smpeg.handle);
-            return -1;
-        }
-        smpeg.SMPEG_enablevideo =
-            (void (*)(SMPEG*, int))
-            SDL_LoadFunction(smpeg.handle, "SMPEG_enablevideo");
-        if (smpeg.SMPEG_enablevideo == NULL) {
-            SDL_UnloadObject(smpeg.handle);
-            return -1;
-        }
-        smpeg.SMPEG_new_rwops =
-            (SMPEG* (*)(SDL_RWops *, SMPEG_Info*, int, int))
-            SDL_LoadFunction(smpeg.handle, "SMPEG_new_rwops");
-        if (smpeg.SMPEG_new_rwops == NULL) {
-            SDL_UnloadObject(smpeg.handle);
-            return -1;
-        }
-        smpeg.SMPEG_play =
-            (void (*)(SMPEG*))
-            SDL_LoadFunction(smpeg.handle, "SMPEG_play");
-        if (smpeg.SMPEG_play == NULL) {
-            SDL_UnloadObject(smpeg.handle);
-            return -1;
-        }
-        smpeg.SMPEG_playAudio =
-            (int (*)(SMPEG *, Uint8 *, int))
-            SDL_LoadFunction(smpeg.handle, "SMPEG_playAudio");
-        if (smpeg.SMPEG_playAudio == NULL) {
-            SDL_UnloadObject(smpeg.handle);
-            return -1;
-        }
-        smpeg.SMPEG_rewind =
-            (void (*)(SMPEG*))
-            SDL_LoadFunction(smpeg.handle, "SMPEG_rewind");
-        if (smpeg.SMPEG_rewind == NULL) {
-            SDL_UnloadObject(smpeg.handle);
-            return -1;
-        }
-        smpeg.SMPEG_setvolume =
-            (void (*)(SMPEG*, int))
-            SDL_LoadFunction(smpeg.handle, "SMPEG_setvolume");
-        if (smpeg.SMPEG_setvolume == NULL) {
-            SDL_UnloadObject(smpeg.handle);
-            return -1;
-        }
-        smpeg.SMPEG_skip =
-            (void (*)(SMPEG*, float))
-            SDL_LoadFunction(smpeg.handle, "SMPEG_skip");
-        if (smpeg.SMPEG_skip == NULL) {
-            SDL_UnloadObject(smpeg.handle);
-            return -1;
-        }
-        smpeg.SMPEG_status =
-            (SMPEGstatus (*)(SMPEG*))
-            SDL_LoadFunction(smpeg.handle, "SMPEG_status");
-        if (smpeg.SMPEG_status == NULL) {
-            SDL_UnloadObject(smpeg.handle);
-            return -1;
-        }
-        smpeg.SMPEG_stop =
-            (void (*)(SMPEG*))
-            SDL_LoadFunction(smpeg.handle, "SMPEG_stop");
-        if (smpeg.SMPEG_stop == NULL) {
-            SDL_UnloadObject(smpeg.handle);
-            return -1;
-        }
-    }
-    ++smpeg.loaded;
-
-    return 0;
-}
-
-static void SMPEG_Unload(void)
-{
-    if (smpeg.loaded == 0) {
-        return;
-    }
-    if (smpeg.loaded == 1) {
-        SDL_UnloadObject(smpeg.handle);
-    }
-    --smpeg.loaded;
-}
-
-#else /* !SMPEG_DYNAMIC */
-
-static int SMPEG_Load(void)
-{
-    if (smpeg.loaded == 0) {
-#ifdef __MACOSX__
+#elif defined(__MACOSX__)
         extern SMPEG* SMPEG_new_rwops(SDL_RWops*, SMPEG_Info*, int, int) __attribute__((weak_import));
         if (SMPEG_new_rwops == NULL)
         {
@@ -177,20 +79,19 @@ static int SMPEG_Load(void)
             Mix_SetError("Missing smpeg2.framework");
             return -1;
         }
-#endif // __MACOSX__
-
-        smpeg.SMPEG_actualSpec = SMPEG_actualSpec;
-        smpeg.SMPEG_delete = SMPEG_delete;
-        smpeg.SMPEG_enableaudio = SMPEG_enableaudio;
-        smpeg.SMPEG_enablevideo = SMPEG_enablevideo;
-        smpeg.SMPEG_new_rwops = SMPEG_new_rwops;
-        smpeg.SMPEG_play = SMPEG_play;
-        smpeg.SMPEG_playAudio = SMPEG_playAudio;
-        smpeg.SMPEG_rewind = SMPEG_rewind;
-        smpeg.SMPEG_setvolume = SMPEG_setvolume;
-        smpeg.SMPEG_skip = SMPEG_skip;
-        smpeg.SMPEG_status = SMPEG_status;
-        smpeg.SMPEG_stop = SMPEG_stop;
+#endif
+        FUNCTION_LOADER(SMPEG_actualSpec, void (*)(SMPEG *, SDL_AudioSpec *))
+        FUNCTION_LOADER(SMPEG_delete, void (*)(SMPEG*))
+        FUNCTION_LOADER(SMPEG_enableaudio, void (*)(SMPEG*, int))
+        FUNCTION_LOADER(SMPEG_enablevideo, void (*)(SMPEG*, int))
+        FUNCTION_LOADER(SMPEG_new_rwops, SMPEG* (*)(SDL_RWops *, SMPEG_Info*, int, int))
+        FUNCTION_LOADER(SMPEG_play, void (*)(SMPEG*))
+        FUNCTION_LOADER(SMPEG_playAudio, int (*)(SMPEG *, Uint8 *, int))
+        FUNCTION_LOADER(SMPEG_rewind, void (*)(SMPEG*))
+        FUNCTION_LOADER(SMPEG_setvolume, void (*)(SMPEG*, int))
+        FUNCTION_LOADER(SMPEG_skip, void (*)(SMPEG*, float))
+        FUNCTION_LOADER(SMPEG_status, SMPEGstatus (*)(SMPEG*))
+        FUNCTION_LOADER(SMPEG_stop, void (*)(SMPEG*))
     }
     ++smpeg.loaded;
 
@@ -203,11 +104,12 @@ static void SMPEG_Unload(void)
         return;
     }
     if (smpeg.loaded == 1) {
+#ifdef SMPEG_DYNAMIC
+        SDL_UnloadObject(smpeg.handle);
+#endif
     }
     --smpeg.loaded;
 }
-
-#endif /* SMPEG_DYNAMIC */
 
 
 typedef struct

@@ -84,7 +84,6 @@ static int MPG123_Load(void)
             return -1;
         }
 #endif
-
         FUNCTION_LOADER(mpg123_close, int (*)(mpg123_handle *mh))
         FUNCTION_LOADER(mpg123_delete, void (*)(mpg123_handle *mh))
         FUNCTION_LOADER(mpg123_exit, void (*)(void))

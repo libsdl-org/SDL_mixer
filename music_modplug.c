@@ -52,65 +52,23 @@ static modplug_loader modplug = {
 static ModPlug_Settings settings;
 
 #ifdef MODPLUG_DYNAMIC
+#define FUNCTION_LOADER(FUNC, SIG) \
+    modplug.FUNC = (SIG) SDL_LoadFunction(modplug.handle, #FUNC); \
+    if (modplug.FUNC == NULL) { SDL_UnloadObject(modplug.handle); return -1; }
+#else
+#define FUNCTION_LOADER(FUNC, SIG) \
+    modplug.FUNC = FUNC;
+#endif
 
 static int MODPLUG_Load(void)
 {
     if (modplug.loaded == 0) {
+#ifdef MODPLUG_DYNAMIC
         modplug.handle = SDL_LoadObject(MODPLUG_DYNAMIC);
         if (modplug.handle == NULL) {
             return -1;
         }
-
-        modplug.ModPlug_Load =
-            (ModPlugFile* (*)(const void* data, int size))
-            SDL_LoadFunction(modplug.handle, "ModPlug_Load");
-
-        modplug.ModPlug_Unload =
-            (void (*)(ModPlugFile* file))
-            SDL_LoadFunction(modplug.handle, "ModPlug_Unload");
-
-        modplug.ModPlug_Read =
-            (int  (*)(ModPlugFile* file, void* buffer, int size))
-            SDL_LoadFunction(modplug.handle, "ModPlug_Read");
-
-        modplug.ModPlug_Seek =
-            (void (*)(ModPlugFile* file, int millisecond))
-            SDL_LoadFunction(modplug.handle, "ModPlug_Seek");
-
-        modplug.ModPlug_GetSettings =
-            (void (*)(ModPlug_Settings* settings))
-            SDL_LoadFunction(modplug.handle, "ModPlug_GetSettings");
-
-        modplug.ModPlug_SetSettings =
-            (void (*)(const ModPlug_Settings* settings))
-            SDL_LoadFunction(modplug.handle, "ModPlug_SetSettings");
-
-        modplug.ModPlug_SetMasterVolume =
-            (void (*)(ModPlugFile* file,unsigned int cvol))
-            SDL_LoadFunction(modplug.handle, "ModPlug_SetMasterVolume");
-    }
-    ++modplug.loaded;
-
-    return 0;
-}
-
-static void MODPLUG_Unload(void)
-{
-    if (modplug.loaded == 0) {
-        return;
-    }
-    if (modplug.loaded == 1) {
-        SDL_UnloadObject(modplug.handle);
-    }
-    --modplug.loaded;
-}
-
-#else /* !MODPLUG_DYNAMIC */
-
-int MODPLUG_Load(void)
-{
-    if (modplug.loaded == 0) {
-#ifdef __MACOSX__
+#elif defined(__MACOSX__)
         extern ModPlugFile* ModPlug_Load(const void* data, int size) __attribute__((weak_import));
         if (ModPlug_Load == NULL)
         {
@@ -118,15 +76,14 @@ int MODPLUG_Load(void)
             Mix_SetError("Missing modplug.framework");
             return -1;
         }
-#endif // __MACOSX__
-
-        modplug.ModPlug_Load = ModPlug_Load;
-        modplug.ModPlug_Unload = ModPlug_Unload;
-        modplug.ModPlug_Read = ModPlug_Read;
-        modplug.ModPlug_Seek = ModPlug_Seek;
-        modplug.ModPlug_GetSettings = ModPlug_GetSettings;
-        modplug.ModPlug_SetSettings = ModPlug_SetSettings;
-        modplug.ModPlug_SetMasterVolume = ModPlug_SetMasterVolume;
+#endif
+        FUNCTION_LOADER(ModPlug_Load, ModPlugFile* (*)(const void* data, int size))
+        FUNCTION_LOADER(ModPlug_Unload, void (*)(ModPlugFile* file))
+        FUNCTION_LOADER(ModPlug_Read, int  (*)(ModPlugFile* file, void* buffer, int size))
+        FUNCTION_LOADER(ModPlug_Seek, void (*)(ModPlugFile* file, int millisecond))
+        FUNCTION_LOADER(ModPlug_GetSettings, void (*)(ModPlug_Settings* settings))
+        FUNCTION_LOADER(ModPlug_SetSettings, void (*)(const ModPlug_Settings* settings))
+        FUNCTION_LOADER(ModPlug_SetMasterVolume, void (*)(ModPlugFile* file,unsigned int cvol))
     }
     ++modplug.loaded;
 
@@ -139,11 +96,13 @@ static void MODPLUG_Unload(void)
         return;
     }
     if (modplug.loaded == 1) {
+#ifdef MODPLUG_DYNAMIC
+        SDL_UnloadObject(modplug.handle);
+#endif
     }
     --modplug.loaded;
 }
 
-#endif /* MODPLUG_DYNAMIC */
 
 typedef struct
 {
