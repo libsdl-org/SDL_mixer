@@ -384,7 +384,7 @@ static Instrument *load_instrument(MidiSong *song, char *name, int percussion,
 	}
 
       /* Then read the sample data */
-      sp->data = safe_malloc(sp->data_length);
+      sp->data = (sample_t *) safe_malloc(sp->data_length+4);
       if (1 != SDL_RWread(rw, sp->data, sp->data_length, 1))
 	goto fail;
       
@@ -393,15 +393,14 @@ static Instrument *load_instrument(MidiSong *song, char *name, int percussion,
 	  Sint32 k=sp->data_length;
 	  Uint8 *cp=(Uint8 *)(sp->data);
 	  Uint16 *tmp16,*new16;
-	  tmp16 = new16 = (Uint16 *) safe_malloc(sp->data_length*2);
-	  while (k--)
-	    *tmp16++ = (Uint16)(*cp++) << 8;
-	  cp=(Uint8 *)(sp->data);
-	  sp->data = (sample_t *)new16;
-	  free(cp);
 	  sp->data_length *= 2;
 	  sp->loop_start *= 2;
 	  sp->loop_end *= 2;
+	  tmp16 = new16 = (Uint16 *) safe_malloc(sp->data_length+4);
+	  while (k--)
+	    *tmp16++ = (Uint16)(*cp++) << 8;
+	  free(sp->data);
+	  sp->data = (sample_t *)new16;
 	}
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
       else
@@ -474,6 +473,10 @@ static Instrument *load_instrument(MidiSong *song, char *name, int percussion,
       sp->data_length /= 2; /* These are in bytes. Convert into samples. */
       sp->loop_start /= 2;
       sp->loop_end /= 2;
+
+      /* initialize the added extra sample space (see the +4 bytes in
+	 allocation) using the last actual sample:  */
+      sp->data[sp->data_length] = sp->data[sp->data_length+1] = 0;
 
       /* Then fractional samples */
       sp->data_length <<= FRACTION_BITS;

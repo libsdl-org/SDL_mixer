@@ -171,7 +171,7 @@ static MidiEventList *read_midi_event(MidiSong *song)
 		  case 7: control=ME_MAINVOLUME; break;
 		  case 10: control=ME_PAN; break;
 		  case 11: control=ME_EXPRESSION; break;
-		  case 64: control=ME_SUSTAIN; break;
+		  case 64: control=ME_SUSTAIN; b = (b >= 64); break;
 		  case 120: control=ME_ALL_SOUNDS_OFF; break;
 		  case 121: control=ME_RESET_CONTROLLERS; break;
 		  case 123: control=ME_ALL_NOTES_OFF; break;
@@ -183,12 +183,14 @@ static MidiEventList *read_midi_event(MidiSong *song)
 		       continuous controller. This will cause lots of
 		       warnings about undefined tone banks. */
 		  case 0: control=ME_TONE_BANK; break;
-		  case 32: 
+		  case 32:
 		    if (b!=0) {
-		      SNDDBG(("(Strange: tone bank change 0x20%02x)\n", b));
+		      SNDDBG(("(Strange: tone bank change 0x%02x)\n", b));
 		    }
+#if 0	/* `Bank Select LSB' is not worked at GS. Please ignore it. */
 		    else
 		      control=ME_TONE_BANK;
+#endif
 		    break;
 
 		  case 100: nrpn=0; rpn_msb[lastchan]=b; break;
@@ -374,9 +376,6 @@ static MidiEvent *groom_list(MidiSong *song, Sint32 divisions,Sint32 *eventsp,
 
       if (meep->event.type==ME_TEMPO)
 	{
-	  tempo=
-	    meep->event.channel + meep->event.b * 256 + meep->event.a * 65536;
-	  compute_sample_increment(song, tempo, divisions);
 	  skip_this_event=1;
 	}
       else if (meep->event.channel >= MAXCHAN)
@@ -466,6 +465,12 @@ static MidiEvent *groom_list(MidiSong *song, Sint32 divisions,Sint32 *eventsp,
 	  st += samples_to_do;
 	}
       else if (counting_time==1) counting_time=0;
+      if (meep->event.type==ME_TEMPO)
+	{
+	  tempo=
+	    meep->event.channel + meep->event.b * 256 + meep->event.a * 65536;
+	  compute_sample_increment(song, tempo, divisions);
+	}
       if (!skip_this_event)
 	{
 	  /* Add the event to the list */

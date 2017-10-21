@@ -55,7 +55,9 @@ int recompute_envelope(MidiSong *song, int v)
     }
   song->voice[v].envelope_stage=stage+1;
 
-  if (song->voice[v].envelope_volume==song->voice[v].sample->envelope_offset[stage])
+  if (song->voice[v].envelope_volume==song->voice[v].sample->envelope_offset[stage] ||
+      (stage > 2 && song->voice[v].envelope_volume <
+       song->voice[v].sample->envelope_offset[stage]))
     return recompute_envelope(song, v);
   song->voice[v].envelope_target = song->voice[v].sample->envelope_offset[stage];
   song->voice[v].envelope_increment = song->voice[v].sample->envelope_rate[stage];
@@ -420,9 +422,6 @@ static void ramp_out(MidiSong *song, sample_t *sp, Sint32 *lp, int v, Sint32 c)
 
   sample_t s=0; /* silly warning about uninitialized s */
 
-  /* Fix by James Caldwell */
-  if ( c == 0 ) c = 1;
-  
   left=song->voice[v].left_mix;
   li=-(left/c);
   if (!li) li=-1;
@@ -511,7 +510,8 @@ void mix_voice(MidiSong *song, Sint32 *buf, int v, Sint32 c)
       if (c>=MAX_DIE_TIME)
 	c=MAX_DIE_TIME;
       sp=resample_voice(song, v, &c);
-      ramp_out(song, sp, buf, v, c);
+      if(c > 0)
+	ramp_out(song, sp, buf, v, c);
       vp->status=VOICE_FREE;
     }
   else
