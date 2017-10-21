@@ -247,7 +247,7 @@ typedef struct
 
 int LMM_Seek(struct MREADER *mr,long to,int dir)
 {
-	Sint64 offset = to;
+    Sint64 offset = to;
     LMM_MREADER* lmmmr = (LMM_MREADER*)mr;
     if (dir == SEEK_SET) {
         offset += lmmmr->offset;

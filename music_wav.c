@@ -184,7 +184,10 @@ static int WAV_Play(void *context, int play_count)
         loop->current_play_count = loop->initial_play_count;
     }
     music->play_count = play_count;
-    return SDL_RWseek(music->src, music->start, RW_SEEK_SET);
+    if (SDL_RWseek(music->src, music->start, RW_SEEK_SET) < 0) {
+        return -1;
+    }
+    return 0;
 }
 
 /* Play some of a stream previously started with WAV_Play() */

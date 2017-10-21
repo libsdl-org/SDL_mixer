@@ -1405,7 +1405,7 @@ static void _Eff_position_f32sys_c4(int chan, void *stream, int len, void *udata
         float swapr = ((*(ptr+1) * args->right_f) * args->distance_f);
         float swaplr = ((*(ptr+2) * args->left_rear_f) * args->distance_f);
         float swaprr = ((*(ptr+3) * args->right_rear_f) * args->distance_f);
-		switch (args->room_angle) {
+        switch (args->room_angle) {
         case 0:
                 *(ptr++) = swapl;
                 *(ptr++) = swapr;
@@ -1430,7 +1430,7 @@ static void _Eff_position_f32sys_c4(int chan, void *stream, int len, void *udata
                 *(ptr++) = swaprr;
                 *(ptr++) = swapr;
             break;
-		}
+        }
     }
 }
 static void _Eff_position_f32sys_c6(int chan, void *stream, int len, void *udata)
