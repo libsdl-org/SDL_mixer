@@ -541,6 +541,16 @@ MidiEvent *read_midi_file(MidiSong *song, Sint32 *count, Sint32 *sp)
       SNDDBG(("Unknown MIDI file format %d\n", format));
       return 0;
     }
+  if (tracks<1)
+    {
+      SNDDBG(("Bad number of tracks %d\n", tracks));
+      return 0;
+    }
+  if (format==0 && tracks!=1)
+    {
+      SNDDBG(("%d tracks with Type-0 MIDI (must be 1.)\n", tracks));
+      return 0;
+    }
   SNDDBG(("Format: %d  Tracks: %d  Divisions: %d\n",
 	  format, tracks, divisions));
 
