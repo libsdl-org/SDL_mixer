@@ -83,8 +83,7 @@ static void select_sample(MidiSong *song, int v, Instrument *ip, int vel)
   f=song->voice[v].orig_frequency;
   for (i=0; i<s; i++)
     {
-      if (sp->low_vel <= vel && sp->high_vel >= vel &&
-          sp->low_freq <= f && sp->high_freq >= f)
+      if (sp->low_freq <= f && sp->high_freq >= f)
 	{
 	  song->voice[v].sample=sp;
 	  return;
