@@ -58,19 +58,15 @@
 		AAE883771F97321E007B6569 /* timidity.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE883601F97321C007B6569 /* timidity.h */; };
 		AAE883781F97321E007B6569 /* playmidi.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE883611F97321C007B6569 /* playmidi.h */; };
 		AAE883791F97321E007B6569 /* resample.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE883621F97321C007B6569 /* resample.c */; };
-		AAE8837A1F97321E007B6569 /* instrum_dls.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE883631F97321C007B6569 /* instrum_dls.h */; };
 		AAE8837B1F97321E007B6569 /* mix.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE883641F97321C007B6569 /* mix.h */; };
 		AAE8837C1F97321E007B6569 /* options.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE883651F97321C007B6569 /* options.h */; };
 		AAE8837D1F97321E007B6569 /* timidity.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE883661F97321C007B6569 /* timidity.c */; };
 		AAE8837E1F97321E007B6569 /* instrum.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE883671F97321C007B6569 /* instrum.c */; };
 		AAE8837F1F97321E007B6569 /* common.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE883681F97321D007B6569 /* common.c */; };
-		AAE883801F97321E007B6569 /* dls1.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE883691F97321D007B6569 /* dls1.h */; };
 		AAE883811F97321E007B6569 /* output.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE8836A1F97321D007B6569 /* output.c */; };
-		AAE883821F97321E007B6569 /* dls2.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE8836B1F97321D007B6569 /* dls2.h */; };
 		AAE883831F97321E007B6569 /* playmidi.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE8836C1F97321D007B6569 /* playmidi.c */; };
 		AAE883841F97321E007B6569 /* readmidi.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE8836D1F97321D007B6569 /* readmidi.c */; };
 		AAE883851F97321E007B6569 /* readmidi.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE8836E1F97321D007B6569 /* readmidi.h */; };
-		AAE883861F97321E007B6569 /* instrum_dls.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE8836F1F97321D007B6569 /* instrum_dls.c */; };
 		AAE883871F97321E007B6569 /* output.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE883701F97321D007B6569 /* output.h */; };
 		AAE883881F97321E007B6569 /* resample.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE883711F97321E007B6569 /* resample.h */; };
 		AAE883891F97321E007B6569 /* tables.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE883721F97321E007B6569 /* tables.c */; };
@@ -160,19 +156,15 @@
 		AAE883601F97321C007B6569 /* timidity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timidity.h; sourceTree = "<group>"; };
 		AAE883611F97321C007B6569 /* playmidi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = playmidi.h; sourceTree = "<group>"; };
 		AAE883621F97321C007B6569 /* resample.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = resample.c; sourceTree = "<group>"; };
-		AAE883631F97321C007B6569 /* instrum_dls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = instrum_dls.h; sourceTree = "<group>"; };
 		AAE883641F97321C007B6569 /* mix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mix.h; sourceTree = "<group>"; };
 		AAE883651F97321C007B6569 /* options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = options.h; sourceTree = "<group>"; };
 		AAE883661F97321C007B6569 /* timidity.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = timidity.c; sourceTree = "<group>"; };
 		AAE883671F97321C007B6569 /* instrum.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = instrum.c; sourceTree = "<group>"; };
 		AAE883681F97321D007B6569 /* common.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = common.c; sourceTree = "<group>"; };
-		AAE883691F97321D007B6569 /* dls1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dls1.h; sourceTree = "<group>"; };
 		AAE8836A1F97321D007B6569 /* output.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = output.c; sourceTree = "<group>"; };
-		AAE8836B1F97321D007B6569 /* dls2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dls2.h; sourceTree = "<group>"; };
 		AAE8836C1F97321D007B6569 /* playmidi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = playmidi.c; sourceTree = "<group>"; };
 		AAE8836D1F97321D007B6569 /* readmidi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = readmidi.c; sourceTree = "<group>"; };
 		AAE8836E1F97321D007B6569 /* readmidi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = readmidi.h; sourceTree = "<group>"; };
-		AAE8836F1F97321D007B6569 /* instrum_dls.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = instrum_dls.c; sourceTree = "<group>"; };
 		AAE883701F97321D007B6569 /* output.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = output.h; sourceTree = "<group>"; };
 		AAE883711F97321E007B6569 /* resample.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resample.h; sourceTree = "<group>"; };
 		AAE883721F97321E007B6569 /* tables.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tables.c; sourceTree = "<group>"; };
@@ -300,10 +292,6 @@
 			children = (
 				AAE883681F97321D007B6569 /* common.c */,
 				AAE8835E1F97321C007B6569 /* common.h */,
-				AAE883691F97321D007B6569 /* dls1.h */,
-				AAE8836B1F97321D007B6569 /* dls2.h */,
-				AAE8836F1F97321D007B6569 /* instrum_dls.c */,
-				AAE883631F97321C007B6569 /* instrum_dls.h */,
 				AAE883671F97321C007B6569 /* instrum.c */,
 				AAE8835F1F97321C007B6569 /* instrum.h */,
 				AAE883741F97321E007B6569 /* mix.c */,
@@ -385,10 +373,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AAE883801F97321E007B6569 /* dls1.h in Headers */,
 				AAE405E31F9607C300EDAF53 /* music_fluidsynth.h in Headers */,
 				AAE405EF1F9607C300EDAF53 /* music_smpeg.h in Headers */,
-				AAE8837A1F97321E007B6569 /* instrum_dls.h in Headers */,
 				AAE405F31F9607C300EDAF53 /* music_mikmod.h in Headers */,
 				AAE883781F97321E007B6569 /* playmidi.h in Headers */,
 				AAE883771F97321E007B6569 /* timidity.h in Headers */,
@@ -415,7 +401,6 @@
 				AAE405E61F9607C300EDAF53 /* music.h in Headers */,
 				BE1FA8CD07AF96B2004B6283 /* SDL_mixer.h in Headers */,
 				AAE405F51F9607C300EDAF53 /* music_ogg.h in Headers */,
-				AAE883821F97321E007B6569 /* dls2.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -604,7 +589,6 @@
 				AAE406021F9607C300EDAF53 /* music_cmd.c in Sources */,
 				AAE405FB1F9607C300EDAF53 /* music_timidity.c in Sources */,
 				AAE405F11F9607C300EDAF53 /* music.c in Sources */,
-				AAE883861F97321E007B6569 /* instrum_dls.c in Sources */,
 				AAE8837E1F97321E007B6569 /* instrum.c in Sources */,
 				AAE405F91F9607C300EDAF53 /* music_nativemidi.c in Sources */,
 				AAE406031F9607C300EDAF53 /* music_mpg123.c in Sources */,

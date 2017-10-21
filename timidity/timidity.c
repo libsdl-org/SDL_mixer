@@ -452,7 +452,7 @@ int Timidity_Init()
   return 0;
 }
 
-MidiSong *Timidity_LoadDLSSong(SDL_RWops *rw, DLS_Patches *patches, SDL_AudioSpec *audio)
+MidiSong *Timidity_LoadSong(SDL_RWops *rw, SDL_AudioSpec *audio)
 {
   MidiSong *song;
   int i;
@@ -463,7 +463,6 @@ MidiSong *Timidity_LoadDLSSong(SDL_RWops *rw, DLS_Patches *patches, SDL_AudioSpe
   /* Allocate memory for the song */
   song = (MidiSong *)safe_malloc(sizeof(*song));
   memset(song, 0, sizeof(*song));
-  song->patches = patches;
 
   for (i = 0; i < MAXBANK; i++)
   {
@@ -552,11 +551,6 @@ MidiSong *Timidity_LoadDLSSong(SDL_RWops *rw, DLS_Patches *patches, SDL_AudioSpe
   load_missing_instruments(song);
 
   return(song);
-}
-
-MidiSong *Timidity_LoadSong(SDL_RWops *rw, SDL_AudioSpec *audio)
-{
-  return Timidity_LoadDLSSong(rw, NULL, audio);
 }
 
 void Timidity_FreeSong(MidiSong *song)

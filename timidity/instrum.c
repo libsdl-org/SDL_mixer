@@ -26,7 +26,6 @@
 #include "options.h"
 #include "common.h"
 #include "instrum.h"
-#include "instrum_dls.h"
 #include "resample.h"
 #include "tables.h"
 
@@ -260,8 +259,6 @@ static Instrument *load_instrument(MidiSong *song, char *name, int percussion,
       READ_LONG(sp->low_freq);
       READ_LONG(sp->high_freq);
       READ_LONG(sp->root_freq);
-      sp->low_vel = 0;
-      sp->high_vel = 127;
       SDL_RWseek(rw, 2, RW_SEEK_CUR); /* Why have a "root frequency" and then
 				    * "tuning"?? */
       
@@ -516,11 +513,6 @@ static int fill_bank(MidiSong *song, int dr, int b)
     {
       if (bank->instrument[i]==MAGIC_LOAD_INSTRUMENT)
 	{
-          bank->instrument[i]=load_instrument_dls(song, dr, b, i);
-          if (bank->instrument[i])
-            {
-              continue;
-            }
 	  if (!(bank->tone[i].name))
 	    {
 	      SNDDBG(("No instrument mapped to %s %d, program %d%s\n",

@@ -21,7 +21,6 @@
   <ItemGroup>
     <ClCompile Include="..\..\timidity\common.c" />
     <ClCompile Include="..\..\timidity\instrum.c" />
-    <ClCompile Include="..\..\timidity\instrum_dls.c" />
     <ClCompile Include="..\..\timidity\mix.c" />
     <ClCompile Include="..\..\timidity\output.c" />
     <ClCompile Include="..\..\timidity\playmidi.c" />
@@ -32,10 +31,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\timidity\common.h" />
-    <ClInclude Include="..\..\timidity\dls1.h" />
-    <ClInclude Include="..\..\timidity\dls2.h" />
     <ClInclude Include="..\..\timidity\instrum.h" />
-    <ClInclude Include="..\..\timidity\instrum_dls.h" />
     <ClInclude Include="..\..\timidity\mix.h" />
     <ClInclude Include="..\..\timidity\options.h" />
     <ClInclude Include="..\..\timidity\output.h" />
