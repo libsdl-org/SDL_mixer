@@ -494,26 +494,29 @@ MidiSong *Timidity_LoadSong(SDL_RWops *rw, SDL_AudioSpec *audio)
       song->encoding |= PE_SIGNED;
   if (audio->channels == 1)
       song->encoding |= PE_MONO;
+  else if (audio->channels > 2) {
+      SDL_SetError("Surround sound not supported");
+      return NULL;
+  }
   switch (audio->format) {
-      case AUDIO_S8:
+  case AUDIO_S8:
 	  song->write = s32tos8;
 	  break;
-      case AUDIO_U8:
+  case AUDIO_U8:
 	  song->write = s32tou8;
 	  break;
-      case AUDIO_S16LSB:
+  case AUDIO_S16LSB:
 	  song->write = s32tos16l;
 	  break;
-      case AUDIO_S16MSB:
+  case AUDIO_S16MSB:
 	  song->write = s32tos16b;
 	  break;
-      case AUDIO_U16LSB:
+  case AUDIO_U16LSB:
 	  song->write = s32tou16l;
 	  break;
-      default:
-	  SNDDBG(("Unsupported audio format"));
-	  song->write = s32tou16l;
-	  break;
+  default:
+	  SDL_SetError("Unsupported audio format");
+      return NULL;
   }
 
   song->buffer_size = audio->samples;
