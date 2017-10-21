@@ -80,8 +80,9 @@ void *safe_malloc(size_t count)
   void *p;
 
   p = malloc(count);
-  if (p == NULL)
+  if (p == NULL) {
     SNDDBG(("Sorry. Couldn't malloc %d bytes.\n", count));
+  }
 
   return p;
 }

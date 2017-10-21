@@ -342,8 +342,9 @@ static Instrument *load_instrument(MidiSong *song, char *name, int percussion,
 
       if (strip_envelope==1)
 	{
-	  if (sp->modes & MODES_ENVELOPE)
+	  if (sp->modes & MODES_ENVELOPE) {
 	    SNDDBG((" - Removing envelope\n"));
+	  }
 	  sp->modes &= ~MODES_ENVELOPE;
 	}
       else if (strip_envelope != 0)

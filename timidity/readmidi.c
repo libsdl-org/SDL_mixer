@@ -184,8 +184,9 @@ static MidiEventList *read_midi_event(MidiSong *song)
 		       warnings about undefined tone banks. */
 		  case 0: control=ME_TONE_BANK; break;
 		  case 32: 
-		    if (b!=0)
+		    if (b!=0) {
 		      SNDDBG(("(Strange: tone bank change 0x20%02x)\n", b));
+		    }
 		    else
 		      control=ME_TONE_BANK;
 		    break;
