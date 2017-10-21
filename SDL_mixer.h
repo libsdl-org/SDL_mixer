@@ -58,6 +58,18 @@ extern "C" {
 #define MIX_PATCHLEVEL      SDL_MIXER_PATCHLEVEL
 #define MIX_VERSION(X)      SDL_MIXER_VERSION(X)
 
+/**
+ *  This is the version number macro for the current SDL_mixer version.
+ */
+#define SDL_MIXER_COMPILEDVERSION \
+    SDL_VERSIONNUM(SDL_MIXER_MAJOR_VERSION, SDL_MIXER_MINOR_VERSION, SDL_MIXER_PATCHLEVEL)
+
+/**
+ *  This macro will evaluate to true if compiled with SDL_mixer at least X.Y.Z.
+ */
+#define SDL_MIXER_VERSION_ATLEAST(X, Y, Z) \
+    (SDL_MIXER_COMPILEDVERSION >= SDL_VERSIONNUM(X, Y, Z))
+
 /* This function gets the version of the dynamically linked SDL_mixer library.
    it should NOT be used to fill a version structure, instead you should
    use the SDL_MIXER_VERSION() macro.
