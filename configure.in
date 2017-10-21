@@ -188,7 +188,7 @@ find_lib()
 }
 
 dnl Check for SDL
-SDL_VERSION=2.0.0
+SDL_VERSION=2.0.7
 AM_PATH_SDL2($SDL_VERSION,
             :,
             AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])
@@ -608,6 +608,9 @@ fi
 AC_ARG_ENABLE(music-mp3-mad-gpl,
 AC_HELP_STRING([--enable-music-mp3-mad-gpl], [enable MP3 music via libmad GPL code [[default=no]]]),
                   [], [enable_music_mp3_mad_gpl=no])
+AC_ARG_ENABLE(music-mp3-mad-gpl-dithering,
+AC_HELP_STRING([--enable-music-mp3-mad-gpl-dithering], [enable MP3 music via libmad GPL code [[default=yes]]]),
+                  [], [enable_music_mp3_mad_gpl_dithering=yes])
 if test x$enable_music_mp3 = xyes -a x$enable_music_mp3_mad_gpl = xyes; then
     AC_MSG_CHECKING(for libmad headers)
     have_libmad=no
@@ -620,6 +623,10 @@ if test x$enable_music_mp3 = xyes -a x$enable_music_mp3_mad_gpl = xyes; then
     AC_MSG_RESULT($have_libmad)
     if test x$have_libmad = xyes; then
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MP3_MAD"
+		if test x$enable_music_mp3_mad_gpl_dithering = xyes; then
+            AC_MSG_WARN([*** Using GPL libmad and MP3 dithering routines, this build of SDL_mixer is now under the GPL])
+			EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MP3_MAD_GPL_DITHERING"
+        fi
         EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lmad"
     else
         AC_MSG_WARN([*** Unable to find MAD library (http://www.underbit.com/products/mad/)])

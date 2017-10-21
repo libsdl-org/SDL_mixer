@@ -259,9 +259,7 @@ mix_channels(void *udata, Uint8 *stream, int len)
 #endif
 
     /* Mix the music (must be done before the channels are added) */
-    if (music_active || (mix_music != music_mixer)) {
-        mix_music(music_data, stream, len);
-    }
+    mix_music(music_data, stream, len);
 
     /* Mix any playing channels... */
     sdl_ticks = SDL_GetTicks();
@@ -548,7 +546,6 @@ static SDL_AudioSpec *Mix_LoadMusic_RW(Mix_MusicType music_type, SDL_RWops *src,
     MusicFragment *first = NULL, *last = NULL, *fragment = NULL;
     int count = 0;
     int fragment_size;
-    int original_volume;
 
     *spec = mixer;
 
@@ -579,12 +576,6 @@ static SDL_AudioSpec *Mix_LoadMusic_RW(Mix_MusicType music_type, SDL_RWops *src,
             break;
         }
 
-        if (interface->api == MIX_MUSIC_SMPEG) {
-            /* Uh oh, if SMPEG couldn't create anything, it freed the src */
-            freesrc = SDL_FALSE;
-            break;
-        }
-
         /* Reset the stream for the next decoder */
         SDL_RWseek(src, start, RW_SEEK_SET);
     }
@@ -598,14 +589,9 @@ static SDL_AudioSpec *Mix_LoadMusic_RW(Mix_MusicType music_type, SDL_RWops *src,
     }
 
     Mix_LockAudio();
-    original_volume = music_volume;
- 
-    if (interface->SetVolume) {
-        interface->SetVolume(music, MIX_MAX_VOLUME);
-    }
 
     if (interface->Play) {
-        interface->Play(music);
+        interface->Play(music, 1);
 	}
     playing = SDL_TRUE;
 
@@ -645,10 +631,6 @@ static SDL_AudioSpec *Mix_LoadMusic_RW(Mix_MusicType music_type, SDL_RWops *src,
 
     if (interface->Stop) {
         interface->Stop(music);
-    }
-
-    if (interface->SetVolume) {
-        interface->SetVolume(music, original_volume);
     }
 
     if (music) {

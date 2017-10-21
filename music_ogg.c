@@ -204,19 +204,46 @@ static void OGG_Unload(void)
 typedef struct {
     SDL_RWops *src;
     int freesrc;
-    SDL_bool playing;
+    int play_count;
     int volume;
     OggVorbis_File vf;
+    vorbis_info vi;
     int section;
-    SDL_AudioCVT cvt;
-    int len_available;
-    Uint8 *snd_available;
+    SDL_AudioStream *stream;
+    char *buffer;
+    int buffer_size;
     int loop;
     ogg_int64_t loop_start;
     ogg_int64_t loop_end;
     ogg_int64_t loop_len;
     ogg_int64_t channels;
 } OGG_music;
+
+
+static int set_ov_error(const char *function, int error)
+{
+#define HANDLE_ERROR_CASE(X)    case X: Mix_SetError("%s: %s", function, #X); break;
+    switch (error) {
+    HANDLE_ERROR_CASE(OV_FALSE);
+    HANDLE_ERROR_CASE(OV_EOF);
+    HANDLE_ERROR_CASE(OV_HOLE);
+    HANDLE_ERROR_CASE(OV_EREAD);
+    HANDLE_ERROR_CASE(OV_EFAULT);
+    HANDLE_ERROR_CASE(OV_EIMPL);
+    HANDLE_ERROR_CASE(OV_EINVAL);
+    HANDLE_ERROR_CASE(OV_ENOTVORBIS);
+    HANDLE_ERROR_CASE(OV_EBADHEADER);
+    HANDLE_ERROR_CASE(OV_EVERSION);
+    HANDLE_ERROR_CASE(OV_ENOTAUDIO);
+    HANDLE_ERROR_CASE(OV_EBADPACKET);
+    HANDLE_ERROR_CASE(OV_EBADLINK);
+    HANDLE_ERROR_CASE(OV_ENOSEEK);
+    default:
+        Mix_SetError("%s: unknown error %d\n", function, error);
+        break;
+    }
+    return -1;
+}
 
 static size_t sdl_read_func(void *ptr, size_t size, size_t nmemb, void *datasource)
 {
@@ -233,99 +260,126 @@ static long sdl_tell_func(void *datasource)
     return (long)SDL_RWtell((SDL_RWops*)datasource);
 }
 
+static int OGG_Seek(void *context, double time);
+static void OGG_Delete(void *context);
+
+static int OGG_UpdateSection(OGG_music *music)
+{
+    vorbis_info *vi;
+
+    vi = vorbis.ov_info(&music->vf, -1);
+    if (!vi) {
+        Mix_SetError("ov_info returned NULL");
+        return -1;
+    }
+
+    if (vi->channels == music->vi.channels && vi->rate == music->vi.rate) {
+        return 0;
+    }
+    SDL_memcpy(&music->vi, vi, sizeof(*vi));
+
+    if (music->buffer) {
+        SDL_free(music->buffer);
+        music->buffer = NULL;
+    }
+
+    if (music->stream) {
+        SDL_FreeAudioStream(music->stream);
+        music->stream = NULL;
+    }
+
+    music->stream = SDL_NewAudioStream(AUDIO_S16, vi->channels, (int)vi->rate,
+                                       music_spec.format, music_spec.channels, music_spec.freq);
+    if (!music->stream) {
+        return -1;
+    }
+
+    music->buffer_size = music_spec.samples * sizeof(Sint16) * vi->channels;
+    music->buffer = (char *)SDL_malloc(music->buffer_size);
+    if (!music->buffer) {
+        return -1;
+    }
+    return 0;
+}
+
 /* Load an OGG stream from an SDL_RWops object */
 static void *OGG_CreateFromRW(SDL_RWops *src, int freesrc)
 {
     OGG_music *music;
     ov_callbacks callbacks;
+    vorbis_comment *vc;
+    int isLoopLength = 0, i;
+    ogg_int64_t fullLength;
 
-    SDL_memset(&callbacks, 0, sizeof(callbacks));
+    music = (OGG_music *)SDL_calloc(1, sizeof *music);
+    if (!music) {
+        SDL_OutOfMemory();
+        return NULL;
+    }
+    music->src = src;
+    music->volume = MIX_MAX_VOLUME;
+    music->section = -1;
+    music->loop = -1;
+    music->loop_start = -1;
+    music->loop_end = 0;
+    music->loop_len = 0;
+
+    SDL_zero(callbacks);
     callbacks.read_func = sdl_read_func;
     callbacks.seek_func = sdl_seek_func;
     callbacks.tell_func = sdl_tell_func;
 
-    music = (OGG_music *)SDL_calloc(1, sizeof *music);
-    if (music) {
-        vorbis_info *vi;
-        vorbis_comment *vc;
-        int isLoopLength = 0, i;
-        ogg_int64_t fullLength;
-
-        /* Initialize the music structure */
-        music->src = src;
-        music->freesrc = freesrc;
-        music->volume = MIX_MAX_VOLUME;
-        music->section = -1;
-
-        music->loop         = -1;
-        music->loop_start   = -1;
-        music->loop_end     =  0;
-        music->loop_len     =  0;
-
-        if (vorbis.ov_open_callbacks(src, &music->vf, NULL, 0, callbacks) < 0) {
-            SDL_SetError("Not an Ogg Vorbis audio stream");
-            SDL_free(music);
-            return NULL;
-        }
-
-        vi = vorbis.ov_info(&music->vf, -1);
-        music->channels = vi->channels;
-
-        vc = vorbis.ov_comment(&music->vf, -1);
-
-        for (i = 0; i < vc->comments; i++) {
-            int   paramLen = vc->comment_lengths[i] + 1;
-            char *param = (char *)SDL_malloc((size_t)paramLen);
-            char *argument  = param;
-            char *value     = param;
-            SDL_memset(param, 0, (size_t)paramLen);
-            SDL_memcpy(param, vc->user_comments[i], (size_t)vc->comment_lengths[i]);
-            value = SDL_strchr(param, '=');
-            if (value == NULL) {
-                value = param + paramLen - 1; /* set null */
-            } else {
-                *(value++) = '\0';
-            }
-
-            #ifdef __USE_ISOC99
-            #define A_TO_OGG64(x) (ogg_int64_t)atoll(x)
-            #else
-            #define A_TO_OGG64(x) (ogg_int64_t)atol(x)
-            #endif
-
-            if (SDL_strcasecmp(argument, "LOOPSTART") == 0)
-                music->loop_start = A_TO_OGG64(value);
-            else if (SDL_strcasecmp(argument, "LOOPLENGTH") == 0) {
-                music->loop_len = A_TO_OGG64(value);
-                isLoopLength = 1;
-            }
-            else if (SDL_strcasecmp(argument, "LOOPEND") == 0) {
-                isLoopLength = 0;
-                music->loop_end = A_TO_OGG64(value);
-            }
-
-            #undef A_TO_OGG64
-            SDL_free(param);
-        }
-
-        if (isLoopLength == 1)
-            music->loop_end = music->loop_start + music->loop_len;
-        else
-            music->loop_len = music->loop_end - music->loop_start;
-
-        fullLength = vorbis.ov_pcm_total(&music->vf, -1);
-        if (((music->loop_start >= 0) || (music->loop_end > 0)) &&
-            ((music->loop_start < music->loop_end) || (music->loop_end == 0)) &&
-             (music->loop_start < fullLength) &&
-             (music->loop_end <= fullLength)) {
-            if (music->loop_start < 0) music->loop_start = 0;
-            if (music->loop_end == 0)  music->loop_end = fullLength;
-            music->loop = 1;
-        }
-
-    } else {
-        SDL_OutOfMemory();
+    if (vorbis.ov_open_callbacks(src, &music->vf, NULL, 0, callbacks) < 0) {
+        SDL_SetError("Not an Ogg Vorbis audio stream");
+        SDL_free(music);
+        return NULL;
     }
+
+    if (OGG_UpdateSection(music) < 0) {
+        OGG_Delete(music);
+        return NULL;
+    }
+
+    vc = vorbis.ov_comment(&music->vf, -1);
+    for (i = 0; i < vc->comments; i++) {
+        char *param = SDL_strdup(vc->user_comments[i]);
+        char *argument = param;
+        char *value = SDL_strchr(param, '=');
+        if (value == NULL) {
+            value = param + SDL_strlen(param);
+        } else {
+            *(value++) = '\0';
+        }
+
+        if (SDL_strcasecmp(argument, "LOOPSTART") == 0)
+            music->loop_start = SDL_strtoull(value, NULL, 0);
+        else if (SDL_strcasecmp(argument, "LOOPLENGTH") == 0) {
+            music->loop_len = SDL_strtoull(value, NULL, 0);
+            isLoopLength = 1;
+        } else if (SDL_strcasecmp(argument, "LOOPEND") == 0) {
+            isLoopLength = 0;
+            music->loop_end = SDL_strtoull(value, NULL, 0);
+        }
+        SDL_free(param);
+    }
+
+    if (isLoopLength == 1) {
+        music->loop_end = music->loop_start + music->loop_len;
+    } else {
+        music->loop_len = music->loop_end - music->loop_start;
+    }
+
+    fullLength = vorbis.ov_pcm_total(&music->vf, -1);
+    if (((music->loop_start >= 0) || (music->loop_end > 0)) &&
+        ((music->loop_start < music->loop_end) || (music->loop_end == 0)) &&
+         (music->loop_start < fullLength) &&
+         (music->loop_end <= fullLength)) {
+        if (music->loop_start < 0) music->loop_start = 0;
+        if (music->loop_end == 0)  music->loop_end = fullLength;
+        music->loop = 1;
+    }
+
+    music->freesrc = freesrc;
     return music;
 }
 
@@ -337,139 +391,119 @@ static void OGG_SetVolume(void *context, int volume)
 }
 
 /* Start playback of a given OGG stream */
-static int OGG_Play(void *context)
+static int OGG_Play(void *context, int play_count)
 {
     OGG_music *music = (OGG_music *)context;
-    music->playing = SDL_TRUE;
-    return 0;
-}
-
-/* Return non-zero if a stream is currently playing */
-static SDL_bool OGG_IsPlaying(void *context)
-{
-    OGG_music *music = (OGG_music *)context;
-    return music->playing;
-}
-
-/* Read some Ogg stream data and convert it for output */
-static void OGG_getsome(OGG_music *music)
-{
-    int section;
-    int len;
-    char data[4096];
-    ogg_int64_t pcmPos;
-    SDL_AudioCVT *cvt;
-
-#ifdef OGG_USE_TREMOR
-    len = vorbis.ov_read(&music->vf, data, sizeof(data), &section);
-#else
-    len = (int)vorbis.ov_read(&music->vf, data, sizeof(data), 0, 2, 1, &section);
-#endif
-
-    pcmPos = vorbis.ov_pcm_tell(&music->vf);
-    if ((music->loop == 1) && (pcmPos >= music->loop_end)) {
-        len -= ((pcmPos - music->loop_end) * music->channels) * (long)sizeof(Uint16);
-        vorbis.ov_pcm_seek(&music->vf, music->loop_start);
-    }
-
-    if (len <= 0) {
-        if (len == 0) {
-            music->playing = SDL_FALSE;
-        }
-        return;
-    }
-    cvt = &music->cvt;
-    if (section != music->section) {
-        vorbis_info *vi;
-
-        vi = vorbis.ov_info(&music->vf, -1);
-        SDL_BuildAudioCVT(cvt, AUDIO_S16, vi->channels, (int)vi->rate,
-                               music_spec.format, music_spec.channels, music_spec.freq);
-        if (cvt->buf) {
-            SDL_free(cvt->buf);
-        }
-        cvt->buf = (Uint8 *)SDL_malloc(sizeof(data)*cvt->len_mult);
-        music->section = section;
-    }
-    if (cvt->buf) {
-        SDL_memcpy(cvt->buf, data, len);
-        if (cvt->needed) {
-            cvt->len = len;
-            SDL_ConvertAudio(cvt);
-        } else {
-            cvt->len_cvt = len;
-        }
-        music->len_available = music->cvt.len_cvt;
-        music->snd_available = music->cvt.buf;
-    } else {
-        SDL_SetError("Out of memory");
-        music->playing = SDL_FALSE;
-    }
+    music->play_count = play_count;
+    return OGG_Seek(music, 0.0);
 }
 
 /* Play some of a stream previously started with OGG_play() */
+static int OGG_GetSome(void *context, void *data, int bytes, SDL_bool *done)
+{
+    OGG_music *music = (OGG_music *)context;
+    SDL_bool looped = SDL_FALSE;
+    int filled, amount, result;
+    int section;
+    ogg_int64_t pcmPos;
+
+    filled = SDL_AudioStreamGet(music->stream, data, bytes);
+    if (filled != 0) {
+        return filled;
+    }
+
+    if (!music->play_count) {
+        /* All done */
+        *done = SDL_TRUE;
+        return 0;
+    }
+
+    section = music->section;
+#ifdef OGG_USE_TREMOR
+    amount = vorbis.ov_read(&music->vf, music->buffer, music->buffer_size, &section);
+#else
+    amount = (int)vorbis.ov_read(&music->vf, music->buffer, music->buffer_size, 0, 2, 1, &section);
+#endif
+    if (amount < 0) {
+        set_ov_error("ov_read", amount);
+        return -1;
+    }
+
+    if (section != music->section) {
+        music->section = section;
+        if (OGG_UpdateSection(music) < 0) {
+            return -1;
+        }
+    }
+
+    pcmPos = vorbis.ov_pcm_tell(&music->vf);
+    if ((music->loop == 1) && (pcmPos >= music->loop_end)) {
+        amount -= ((pcmPos - music->loop_end) * music->channels) * (long)sizeof(Sint16);
+        result = vorbis.ov_pcm_seek(&music->vf, music->loop_start);
+        if (result < 0) {
+            set_ov_error("ov_pcm_seek", result);
+            return -1;
+        }
+        looped = SDL_TRUE;
+    }
+
+    if (amount > 0) {
+        if (SDL_AudioStreamPut(music->stream, music->buffer, amount) < 0) {
+            return -1;
+        }
+    } else if (!looped) {
+        if (music->play_count == 1) {
+            music->play_count = 0;
+            SDL_AudioStreamFlush(music->stream);
+        } else {
+            int play_count = -1;
+            if (music->play_count > 0) {
+                play_count = (music->play_count - 1);
+            }
+            if (OGG_Play(music, play_count) < 0) {
+                return -1;
+            }
+        }
+    }
+    return 0;
+}
 static int OGG_GetAudio(void *context, void *data, int bytes)
 {
     OGG_music *music = (OGG_music *)context;
-    Uint8 *snd = (Uint8 *)data;
-    int len = bytes;
-    int mixable;
-
-    while ((len > 0) && music->playing) {
-        if (!music->len_available) {
-            OGG_getsome(music);
-        }
-        mixable = len;
-        if (mixable > music->len_available) {
-            mixable = music->len_available;
-        }
-        if (music->volume == MIX_MAX_VOLUME) {
-            SDL_memcpy(snd, music->snd_available, mixable);
-        } else {
-            SDL_MixAudioFormat(snd, music->snd_available, music_spec.format, mixable, music->volume);
-        }
-        music->len_available -= mixable;
-        music->snd_available += mixable;
-        len -= mixable;
-        snd += mixable;
-    }
-
-    return len;
+    return music_pcm_getaudio(context, data, bytes, music->volume, OGG_GetSome);
 }
 
 /* Jump (seek) to a given position (time is in seconds) */
 static int OGG_Seek(void *context, double time)
 {
     OGG_music *music = (OGG_music *)context;
+    int result;
 #ifdef OGG_USE_TREMOR
-    vorbis.ov_time_seek(&music->vf, (ogg_int64_t)(time * 1000.0));
+    result = vorbis.ov_time_seek(&music->vf, (ogg_int64_t)(time * 1000.0));
 #else
-    vorbis.ov_time_seek(&music->vf, time);
+    result = vorbis.ov_time_seek(&music->vf, time);
 #endif
+    if (result < 0) {
+        return set_ov_error("ov_time_seek", result);
+    }
     return 0;
-}
-
-/* Stop playback of a stream previously started with OGG_play() */
-static void OGG_Stop(void *context)
-{
-    OGG_music *music = (OGG_music *)context;
-    music->playing = SDL_FALSE;
 }
 
 /* Close the given OGG stream */
 static void OGG_Delete(void *context)
 {
     OGG_music *music = (OGG_music *)context;
-    if (music) {
-        if (music->cvt.buf) {
-            SDL_free(music->cvt.buf);
-        }
-        if (music->freesrc) {
-            SDL_RWclose(music->src);
-        }
-        vorbis.ov_clear(&music->vf);
-        SDL_free(music);
+    vorbis.ov_clear(&music->vf);
+    if (music->stream) {
+        SDL_FreeAudioStream(music->stream);
     }
+    if (music->buffer) {
+        SDL_free(music->buffer);
+    }
+    if (music->freesrc) {
+        SDL_RWclose(music->src);
+    }
+    SDL_free(music);
 }
 
 Mix_MusicInterface Mix_MusicInterface_OGG =
@@ -486,12 +520,12 @@ Mix_MusicInterface Mix_MusicInterface_OGG =
     NULL,   /* CreateFromFile */
     OGG_SetVolume,
     OGG_Play,
-    OGG_IsPlaying,
+    NULL,   /* IsPlaying */
     OGG_GetAudio,
     OGG_Seek,
     NULL,   /* Pause */
     NULL,   /* Resume */
-    OGG_Stop,
+    NULL,   /* Stop */
     OGG_Delete,
     NULL,   /* Close */
     OGG_Unload,

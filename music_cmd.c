@@ -44,6 +44,7 @@ typedef struct {
     char *file;
     char *cmd;
     pid_t pid;
+    int play_count;
 } MusicCMD;
 
 
@@ -148,10 +149,11 @@ static char **parse_args(char *command, char *last_arg)
 }
 
 /* Start playback of a given music stream */
-static int MusicCMD_Play(void *context)
+static int MusicCMD_Play(void *context, int play_count)
 {
     MusicCMD *music = (MusicCMD *)context;
 
+    music->play_count = play_count;
 #ifdef HAVE_FORK
     music->pid = fork();
 #else
@@ -202,6 +204,16 @@ static SDL_bool MusicCMD_IsPlaying(void *context)
     if (music->pid > 0) {
         waitpid(music->pid, &status, WNOHANG);
         if (kill(music->pid, 0) == 0) {
+            return SDL_TRUE;
+        }
+
+        /* We might want to loop */
+        if (music->play_count != 1) {
+            int play_count = -1;
+            if (music->play_count > 0) {
+                play_count = (music->play_count - 1);
+            }
+            MusicCMD_Play(music, play_count);
             return SDL_TRUE;
         }
     }

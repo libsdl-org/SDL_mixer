@@ -36,10 +36,14 @@ static void *NATIVEMIDI_CreateFromRW(SDL_RWops *src, int freesrc)
     return music;
 }
 
-static int NATIVEMIDI_Play(void *context)
+static int NATIVEMIDI_Play(void *context, int play_count)
 {
     NativeMidiSong *music = (NativeMidiSong *)context;
-    native_midi_start(music, music_loops);
+    int loops = play_count;
+    if (loops > 0) {
+        --loops;
+    }
+    native_midi_start(music, loops);
     return 0;
 }
 

@@ -210,70 +210,98 @@ static void SMPEG_Unload(void)
 #endif /* SMPEG_DYNAMIC */
 
 
+typedef struct
+{
+    SMPEG *mp3;
+    SDL_RWops *src;
+    int freesrc;
+} SMPEG_Music;
+
 static void *SMPEG_CreateFromRW(SDL_RWops *src, int freesrc)
 {
+    SMPEG_Music *music;
     SMPEG_Info info;
-    SMPEG *mp3 = smpeg.SMPEG_new_rwops(src, &info, freesrc, 0);
+
+    music = (SMPEG_Music *)SDL_calloc(1, sizeof(*music));
+    if (!music) {
+        SDL_OutOfMemory();
+        return NULL;
+    }
+    music->src = src;
+
+    music->mp3 = smpeg.SMPEG_new_rwops(src, &info, SDL_FALSE, 0);
     if (!info.has_audio) {
         Mix_SetError("MPEG file does not have any audio stream.");
-        smpeg.SMPEG_delete(mp3);
+        smpeg.SMPEG_delete(music->mp3);
+        SDL_free(music);
         return NULL;
     }
     smpeg.SMPEG_actualSpec(mp3, &music_spec);
-    return mp3;
+
+    music->freesrc = freesrc;
+    return music;
 }
 
 static void SMPEG_SetVolume(void *context, int volume)
 {
-    SMPEG *mp3 = (SMPEG *)context;
-    smpeg.SMPEG_setvolume(mp3,(int)(((float)volume/(float)MIX_MAX_VOLUME)*100.0));
+    SMPEG_Music *music = (SMPEG_Music *)context;
+    smpeg.SMPEG_setvolume(music->mp3,(int)(((float)volume/(float)MIX_MAX_VOLUME)*100.0));
 }
 
 static int SMPEG_Play(void *context)
 {
-    SMPEG *mp3 = (SMPEG *)context;
-    smpeg.SMPEG_enableaudio(mp3,1);
-    smpeg.SMPEG_enablevideo(mp3,0);
-    smpeg.SMPEG_play(mp3);
+    SMPEG_Music *music = (SMPEG_Music *)context;
+    smpeg.SMPEG_enableaudio(music->mp3, 1);
+    smpeg.SMPEG_enablevideo(music->mp3, 0);
+    smpeg.SMPEG_rewind(music->mp3);
+    smpeg.SMPEG_play(music->mp3);
     return 0;
 }
 
 static SDL_bool SMPEG_IsPlaying(void *context)
 {
-    SMPEG *mp3 = (SMPEG *)context;
-    return smpeg.SMPEG_status(mp3) == SMPEG_PLAYING ? SDL_TRUE : SDL_FALSE;
+    SMPEG_Music *music = (SMPEG_Music *)context;
+    return smpeg.SMPEG_status(music->mp3) == SMPEG_PLAYING ? SDL_TRUE : SDL_FALSE;
 }
 
 static int SMPEG_GetAudio(void *context, void *data, int bytes)
 {
-    SMPEG *mp3 = (SMPEG *)context;
+    SMPEG_Music *music = (SMPEG_Music *)context;
     Uint8 *stream = (Uint8 *)data;
     int len = bytes;
-    int left = (len - smpeg.SMPEG_playAudio(mp3, stream, len));
+    int left = (len - smpeg.SMPEG_playAudio(music->mp3, stream, len));
+    if (left > 0) {
+        stream += (len - left);
     return left;
 }
 
 static int SMPEG_Seek(void *context, double position)
 {
-    SMPEG *mp3 = (SMPEG *)context;
-    smpeg.SMPEG_rewind(mp3);
-    smpeg.SMPEG_play(mp3);
+    SMPEG_Music *music = (SMPEG_Music *)context;
+    smpeg.SMPEG_rewind(music->mp3);
+    smpeg.SMPEG_play(music->mp3);
     if (position > 0.0) {
-        smpeg.SMPEG_skip(mp3, (float)position);
+        smpeg.SMPEG_skip(music->mp3, (float)position);
     }
     return 0;
 }
 
 static void SMPEG_Stop(void *context)
 {
-    SMPEG *mp3 = (SMPEG *)context;
-    smpeg.SMPEG_stop(mp3);
+    SMPEG_Music *music = (SMPEG_Music *)context;
+    smpeg.SMPEG_stop(music->mp3);
 }
 
 static void SMPEG_Delete(void *context)
 {
-    SMPEG *mp3 = (SMPEG *)context;
-    smpeg.SMPEG_delete(mp3);
+    SMPEG_Music *music = (SMPEG_Music *)context;
+
+    smpeg.SMPEG_delete(music->mp3);
+
+    if (music->freesrc) {
+        SDL_RWclose(music->src);
+    }
+    SDL_free(music);
 }
 
 Mix_MusicInterface Mix_MusicInterface_SMPEG =
