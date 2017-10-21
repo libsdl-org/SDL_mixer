@@ -45,7 +45,7 @@ static Sint32 getvl(SDL_RWops *rw)
   Uint8 c;
   for (;;)
     {
-      SDL_RWread(rw, &c, 1, 1);
+      if (!SDL_RWread(rw, &c, 1, 1)) return l;
       l += (c & 0x7f);
       if (!(c & 0x80)) return l;
       l<<=7;
