@@ -767,6 +767,8 @@ void FreeDLS(DLS_Data *data)
     free(data);
 }
 
+#ifdef TEST_MAIN_DLS
+
 static const char *SourceToString(USHORT usSource)
 {
     switch(usSource) {
@@ -896,8 +898,6 @@ static const char *DestinationToString(USHORT usDestination)
             return "UNKOWN";
     }
 }
-
-#ifdef TEST_MAIN_DLS
 
 static void PrintArt(const char *type, CONNECTIONLIST *art, CONNECTION *artList)
 {
