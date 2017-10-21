@@ -20,7 +20,6 @@ distfile = $(distdir).tar.gz
 EXE	= @EXE@
 SHELL	= @SHELL@
 CC      = @CC@
-CXX     = g++
 CFLAGS  = @BUILD_CFLAGS@
 EXTRA_CFLAGS = @EXTRA_CFLAGS@
 LDFLAGS = @BUILD_LDFLAGS@
