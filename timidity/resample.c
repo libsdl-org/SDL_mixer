@@ -71,7 +71,7 @@ static sample_t *rs_plain(MidiSong *song, int v, Sint32 *countptr)
   if (ofs >= le) 
     {
       if (ofs == le)
-	*dest++ = src[ofs >> FRACTION_BITS];
+	*dest++ = src[(ofs>>FRACTION_BITS)-1]/2;
       vp->status=VOICE_FREE;
       *countptr-=count+1;
     }
@@ -98,8 +98,7 @@ static sample_t *rs_loop(MidiSong *song, Voice *vp, Sint32 count)
   
   while (count) 
     {
-      if (ofs >= le)
-	/* NOTE: Assumes that ll > incr and that incr > 0. */
+      while (ofs >= le)
 	ofs -= ll;
       /* Precalc how many times we should go through the loop */
       i = (le - ofs) / incr + 1;
@@ -310,7 +309,7 @@ static sample_t *rs_vib_plain(MidiSong *song, int v, Sint32 *countptr)
       if (ofs >= le)
 	{
 	  if (ofs == le)
-	    *dest++ = src[ofs >> FRACTION_BITS];
+	    *dest++ = src[(ofs>>FRACTION_BITS)-1]/2;
 	  vp->status=VOICE_FREE;
 	  *countptr-=count+1;
 	  break;
@@ -346,7 +345,7 @@ static sample_t *rs_vib_loop(MidiSong *song, Voice *vp, Sint32 count)
   while (count) 
     {
       /* Hopefully the loop is longer than an increment */
-      if(ofs >= le)
+      while(ofs >= le)
 	ofs -= ll;
       /* Precalc how many times to go through the loop, taking
 	 the vibrato control ratio into account this time. */
@@ -536,8 +535,8 @@ void pre_resample(MidiSong *song, Sample *sp)
 {
   double a, xdiff;
   Sint32 incr, ofs, newlen, count;
-  Sint16 *newdata, *dest, *src = (Sint16 *) sp->data;
-  Sint16 v1, v2, v3, v4, *vptr;
+  Sint16 *newdata, *dest, *src = (Sint16 *) sp->data, *vptr;
+  Sint32 v, v1, v2, v3, v4, v5, i;
 #ifdef DEBUG_CHATTER
   static const char note_name[12][3] =
   {
@@ -549,34 +548,44 @@ void pre_resample(MidiSong *song, Sample *sp)
 	  note_name[sp->note_to_use % 12], (sp->note_to_use & 0x7F) / 12));
 #endif
 
-  a = ((double) (sp->sample_rate) * freq_table[(int) (sp->note_to_use)]) /
-    ((double) (sp->root_freq) * song->rate);
-  newlen = (Sint32)(sp->data_length / a);
-  dest = newdata = safe_malloc(newlen >> (FRACTION_BITS - 1));
+  a = ((double) (sp->root_freq) * song->rate) /
+      ((double) (sp->sample_rate) * freq_table[(int) (sp->note_to_use)]);
+  if(sp->data_length * a >= 0x7fffffffL) { /* Too large to compute */
+    SNDDBG((" *** Can't pre-resampling for note %d\n", sp->note_to_use));
+    return;
+  }
 
+  newlen = (Sint32)(sp->data_length * a);
   count = (newlen >> FRACTION_BITS) - 1;
   ofs = incr = (sp->data_length - (1 << FRACTION_BITS)) / count;
+
+  if((double)newlen + incr >= 0x7fffffffL) { /* Too large to compute */
+    SNDDBG((" *** Can't pre-resampling for note %d\n", sp->note_to_use));
+    return;
+  }
+
+  dest = newdata = (Sint16 *) safe_malloc((newlen >> (FRACTION_BITS - 1)) + 2);
+  if (!dest)
+    return;
 
   if (--count)
     *dest++ = src[0];
 
   /* Since we're pre-processing and this doesn't have to be done in
      real-time, we go ahead and do the full sliding cubic interpolation. */
-  while (--count)
+  count--;
+  for(i = 0; i < count; i++)
     {
       vptr = src + (ofs >> FRACTION_BITS);
-          /*
-           * Electric Fence to the rescue: Accessing *(vptr - 1) is not a
-           * good thing to do when vptr <= src. (TiMidity++ has a similar
-           * safe-guard here.)
-           */
-      v1 = (vptr == src) ? *vptr : *(vptr - 1);
+      v1 = ((vptr>=src+1)? *(vptr - 1):0);
       v2 = *vptr;
       v3 = *(vptr + 1);
       v4 = *(vptr + 2);
+      v5 = v2 - v3;
       xdiff = FSCALENEG(ofs & FRACTION_MASK, FRACTION_BITS);
-      *dest++ = (Sint16)(v2 + (xdiff / 6.0) * (-2 * v1 - 3 * v2 + 6 * v3 - v4 +
-      xdiff * (3 * (v1 - 2 * v2 + v3) + xdiff * (-v1 + 3 * (v2 - v3) + v4))));
+      v = (Sint32)(v2 + xdiff * (1.0/6.0) * (3 * (v3 - v5) - 2 * v1 - v4 +
+		xdiff * (3 * (v1 - v2 - v5) + xdiff * (3 * v5 + v4 - v1))));
+      *dest++ = (Sint16)((v > 32767) ? 32767 : ((v < -32768) ? -32768 : v));
       ofs += incr;
     }
 
@@ -584,14 +593,18 @@ void pre_resample(MidiSong *song, Sample *sp)
     {
       v1 = src[ofs >> FRACTION_BITS];
       v2 = src[(ofs >> FRACTION_BITS) + 1];
-      *dest++ = v1 + (((v2 - v1) * (ofs & FRACTION_MASK)) >> FRACTION_BITS);
+      *dest++ = (Sint16)(v1 + (((v2 - v1) * (ofs & FRACTION_MASK)) >> FRACTION_BITS));
     }
   else
     *dest++ = src[ofs >> FRACTION_BITS];
 
+  *dest = *(dest - 1) / 2;
+ ++dest;
+  *dest = *(dest - 1) / 2;
+
   sp->data_length = newlen;
-  sp->loop_start = (Sint32)(sp->loop_start / a);
-  sp->loop_end = (Sint32)(sp->loop_end / a);
+  sp->loop_start = (Sint32)(sp->loop_start * a);
+  sp->loop_end = (Sint32)(sp->loop_end * a);
   free(sp->data);
   sp->data = (sample_t *) newdata;
   sp->sample_rate = 0;
