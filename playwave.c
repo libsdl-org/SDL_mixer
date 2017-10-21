@@ -133,7 +133,7 @@ static void test_versions(void)
 
 #ifdef TEST_MIX_CHANNELFINISHED  /* rcg06072001 */
 static volatile int channel_is_done = 0;
-static void channel_complete_callback(int chan)
+static void SDLCALL channel_complete_callback (int chan)
 {
     Mix_Chunk *done_chunk = Mix_GetChunk(chan);
     SDL_Log("We were just alerted that Mixer channel #%d is done.\n", chan);

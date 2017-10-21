@@ -124,7 +124,7 @@ typedef struct {
 } FLUIDSYNTH_Music;
 
 
-static int fluidsynth_check_soundfont(const char *path, void *data)
+static int SDLCALL fluidsynth_check_soundfont(const char *path, void *data)
 {
     FILE *file = fopen(path, "r");
 
@@ -137,7 +137,7 @@ static int fluidsynth_check_soundfont(const char *path, void *data)
     }
 }
 
-static int fluidsynth_load_soundfont(const char *path, void *data)
+static int SDLCALL fluidsynth_load_soundfont(const char *path, void *data)
 {
     /* If this fails, it's too late to try Timidity so pray that at least one works. */
     fluidsynth.fluid_synth_sfload((fluid_synth_t*) data, path, 1);
