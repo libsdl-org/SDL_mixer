@@ -45,6 +45,9 @@
 #include "private/macros.h"
 
 /* PACKAGE_VERSION should come from configure */
+#ifndef PACKAGE_VERSION
+#define PACKAGE_VERSION	"UNKNOWN"
+#endif
 FLAC_API const char *FLAC__VERSION_STRING = PACKAGE_VERSION;
 
 FLAC_API const char *FLAC__VENDOR_STRING = "reference libFLAC " PACKAGE_VERSION " 20170101";

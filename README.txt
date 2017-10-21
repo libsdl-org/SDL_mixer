@@ -39,11 +39,16 @@ environment variable to a Sound Font 2 (.sf2) file containing the musical
 instruments you want to use for MIDI playback.
 (On some Linux distributions you can install the fluid-soundfont-gm package)
 
-
 To play MIDI files using Timidity, you'll need to get a complete set of
 GUS patches from:
 http://www.libsdl.org/projects/mixer/timidity/timidity.tar.gz
 and unpack them in /usr/local/lib under UNIX, and C:\ under Win32.
+
+iOS:
+In order to use this library on iOS, you should include the SDL.xcodeproj
+and Xcode-iOS/SDL_mixer.xcodeproj in your application, add the SDL/include
+and SDL_mixer directories to your "Header Search Paths" setting, then add the
+libSDL2.a and libSDL2_mixer.a to your "Link Binary with Libraries" setting.
 
 This library is under the zlib license, see the file "COPYING.txt" for details.
 
