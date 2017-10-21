@@ -135,6 +135,7 @@ static void *WAV_CreateFromRW(SDL_RWops *src, int freesrc)
         SDL_OutOfMemory();
         return NULL;
     }
+    music->src = src;
     music->volume = MIX_MAX_VOLUME;
 
     magic = SDL_ReadLE32(src);
@@ -162,7 +163,6 @@ static void *WAV_CreateFromRW(SDL_RWops *src, int freesrc)
         return NULL;
     }
 
-    music->src = src;
     music->freesrc = freesrc;
     return music;
 }
