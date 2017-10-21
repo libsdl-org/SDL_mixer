@@ -289,7 +289,7 @@ static void CleanUp(int exitcode)
 
 static void Usage(char *argv0)
 {
-    SDL_Log("Usage: %s [-8] [-r rate] [-c channels] [-f] [-F] [-l] [-m] <wavefile>\n", argv0);
+    SDL_Log("Usage: %s [-8] [-f32] [-r rate] [-c channels] [-f] [-F] [-l] [-m] <wavefile>\n", argv0);
 }
 
 
@@ -429,8 +429,9 @@ int main(int argc, char *argv[])
         CleanUp(2);
     } else {
         Mix_QuerySpec(&audio_rate, &audio_format, &audio_channels);
-        SDL_Log("Opened audio at %d Hz %d bit %s", audio_rate,
+        SDL_Log("Opened audio at %d Hz %d bit%s %s", audio_rate,
             (audio_format&0xFF),
+            (SDL_AUDIO_ISFLOAT(audio_format) ? " (float)" : ""),
             (audio_channels > 2) ? "surround" :
             (audio_channels > 1) ? "stereo" : "mono");
         if (loops) {

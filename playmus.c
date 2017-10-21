@@ -64,7 +64,7 @@ void CleanUp(int exitcode)
 
 void Usage(char *argv0)
 {
-    SDL_Log("Usage: %s [-i] [-l] [-8] [-r rate] [-c channels] [-b buffers] [-v N] [-rwops] <musicfile>\n", argv0);
+    SDL_Log("Usage: %s [-i] [-l] [-8] [-f32] [-r rate] [-c channels] [-b buffers] [-v N] [-rwops] <musicfile>\n", argv0);
 }
 
 void Menu(void)
@@ -154,6 +154,9 @@ int main(int argc, char *argv[])
         if (strcmp(argv[i], "-8") == 0) {
             audio_format = AUDIO_U8;
         } else
+        if (strcmp(argv[i], "-f32") == 0) {
+            audio_format = AUDIO_F32;
+        } else
         if (strcmp(argv[i], "-rwops") == 0) {
             rwops = 1;
         } else {
@@ -183,10 +186,10 @@ int main(int argc, char *argv[])
         return(2);
     } else {
         Mix_QuerySpec(&audio_rate, &audio_format, &audio_channels);
-        SDL_Log("Opened audio at %d Hz %d bit %s (%s), %d bytes audio buffer\n", audio_rate,
+        SDL_Log("Opened audio at %d Hz %d bit%s %s %d bytes audio buffer\n", audio_rate,
             (audio_format&0xFF),
+            (SDL_AUDIO_ISFLOAT(audio_format) ? " (float)" : ""),
             (audio_channels > 2) ? "surround" : (audio_channels > 1) ? "stereo" : "mono",
-            (audio_format&0x1000) ? "BE" : "LE",
             audio_buffers);
     }
     audio_open = 1;
