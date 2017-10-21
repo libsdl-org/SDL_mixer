@@ -514,6 +514,9 @@ MidiSong *Timidity_LoadSong(SDL_RWops *rw, SDL_AudioSpec *audio)
   case AUDIO_U16LSB:
 	  song->write = s32tou16l;
 	  break;
+  case AUDIO_U16MSB:
+	  song->write = s32tou16b;
+	  break;
   default:
 	  SDL_SetError("Unsupported audio format");
       return NULL;
