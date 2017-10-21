@@ -242,6 +242,7 @@ static SDL_bool FLUIDSYNTH_IsPlaying(void *context)
 
 static int FLUIDSYNTH_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 {
+    FLUIDSYNTH_Music *music = (FLUIDSYNTH_Music *)context;
     int filled;
 
     filled = SDL_AudioStreamGet(music->stream, data, bytes);
@@ -249,8 +250,7 @@ static int FLUIDSYNTH_GetSome(void *context, void *data, int bytes, SDL_bool *do
         return filled;
     }
 
-    /* FIXME: What happens at end of song? */
-    if (fluidsynth.fluid_synth_write_s16(music->synth, mixer_spec.samples, music->buffer, 0, 2, music->buffer, 1, 2) != FLUID_OK) {
+    if (fluidsynth.fluid_synth_write_s16(music->synth, music_spec.samples, music->buffer, 0, 2, music->buffer, 1, 2) != FLUID_OK) {
         Mix_SetError("Error generating FluidSynth audio");
         return -1;
     }

@@ -117,7 +117,6 @@ extern void unload_music(void);
 
 extern char *music_cmd;
 extern SDL_AudioSpec music_spec;
-extern char *soundfont_paths;
 
 #endif /* MUSIC_H_ */
 
