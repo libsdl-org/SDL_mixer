@@ -111,7 +111,7 @@ extern SDL_bool has_music(Mix_MusicType type);
 extern int open_music(const SDL_AudioSpec *spec);
 extern int music_pcm_getaudio(void *context, void *data, int bytes, int volume,
                               int (*GetSome)(void *context, void *data, int bytes, SDL_bool *done));
-extern void music_mixer(void *udata, Uint8 *stream, int len);
+extern void SDLCALL music_mixer(void *udata, Uint8 *stream, int len);
 extern void close_music(void);
 extern void unload_music(void);
 

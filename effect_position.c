@@ -99,7 +99,7 @@ void _Eff_PositionDeinit(void)
 
 
 /* This just frees up the callback-specific data. */
-static void _Eff_PositionDone(int channel, void *udata)
+static void SDLCALL _Eff_PositionDone(int channel, void *udata)
 {
     if (channel < 0) {
         if (pos_args_global != NULL) {
@@ -115,7 +115,7 @@ static void _Eff_PositionDone(int channel, void *udata)
 }
 
 
-static void _Eff_position_u8(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_position_u8(int chan, void *stream, int len, void *udata)
 {
     volatile position_args *args = (volatile position_args *) udata;
     Uint8 *ptr = (Uint8 *) stream;
@@ -152,7 +152,7 @@ static void _Eff_position_u8(int chan, void *stream, int len, void *udata)
         ptr++;
     }
 }
-static void _Eff_position_u8_c4(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_position_u8_c4(int chan, void *stream, int len, void *udata)
 {
     volatile position_args *args = (volatile position_args *) udata;
     Uint8 *ptr = (Uint8 *) stream;
@@ -236,7 +236,7 @@ static void _Eff_position_u8_c4(int chan, void *stream, int len, void *udata)
 }
 
 
-static void _Eff_position_u8_c6(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_position_u8_c6(int chan, void *stream, int len, void *udata)
 {
     volatile position_args *args = (volatile position_args *) udata;
     Uint8 *ptr = (Uint8 *) stream;
@@ -358,7 +358,7 @@ static void _Eff_position_u8_c6(int chan, void *stream, int len, void *udata)
  *  in case the user has called Mix_SetPanning() or whatnot again while this
  *  callback is running.
  */
-static void _Eff_position_table_u8(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_position_table_u8(int chan, void *stream, int len, void *udata)
 {
     volatile position_args *args = (volatile position_args *) udata;
     Uint8 *ptr = (Uint8 *) stream;
@@ -407,7 +407,7 @@ static void _Eff_position_table_u8(int chan, void *stream, int len, void *udata)
 }
 
 
-static void _Eff_position_s8(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_position_s8(int chan, void *stream, int len, void *udata)
 {
     volatile position_args *args = (volatile position_args *) udata;
     Sint8 *ptr = (Sint8 *) stream;
@@ -439,7 +439,7 @@ static void _Eff_position_s8(int chan, void *stream, int len, void *udata)
         ptr++;
     }
 }
-static void _Eff_position_s8_c4(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_position_s8_c4(int chan, void *stream, int len, void *udata)
 {
     volatile position_args *args = (volatile position_args *) udata;
     Sint8 *ptr = (Sint8 *) stream;
@@ -485,7 +485,7 @@ static void _Eff_position_s8_c4(int chan, void *stream, int len, void *udata)
       }
     }
 }
-static void _Eff_position_s8_c6(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_position_s8_c6(int chan, void *stream, int len, void *udata)
 {
     volatile position_args *args = (volatile position_args *) udata;
     Sint8 *ptr = (Sint8 *) stream;
@@ -552,7 +552,7 @@ static void _Eff_position_s8_c6(int chan, void *stream, int len, void *udata)
  *  in case the user has called Mix_SetPanning() or whatnot again while this
  *  callback is running.
  */
-static void _Eff_position_table_s8(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_position_table_s8(int chan, void *stream, int len, void *udata)
 {
     volatile position_args *args = (volatile position_args *) udata;
     Sint8 *ptr = (Sint8 *) stream;
@@ -602,7 +602,7 @@ static void _Eff_position_table_s8(int chan, void *stream, int len, void *udata)
 
 /* !!! FIXME : Optimize the code for 16-bit samples? */
 
-static void _Eff_position_u16lsb(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_position_u16lsb(int chan, void *stream, int len, void *udata)
 {
     volatile position_args *args = (volatile position_args *) udata;
     Uint16 *ptr = (Uint16 *) stream;
@@ -627,7 +627,7 @@ static void _Eff_position_u16lsb(int chan, void *stream, int len, void *udata)
     }
     }
 }
-static void _Eff_position_u16lsb_c4(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_position_u16lsb_c4(int chan, void *stream, int len, void *udata)
 {
     volatile position_args *args = (volatile position_args *) udata;
     Uint16 *ptr = (Uint16 *) stream;
@@ -676,7 +676,7 @@ static void _Eff_position_u16lsb_c4(int chan, void *stream, int len, void *udata
     }
     }
 }
-static void _Eff_position_u16lsb_c6(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_position_u16lsb_c6(int chan, void *stream, int len, void *udata)
 {
     volatile position_args *args = (volatile position_args *) udata;
     Uint16 *ptr = (Uint16 *) stream;
@@ -740,7 +740,7 @@ static void _Eff_position_u16lsb_c6(int chan, void *stream, int len, void *udata
     }
 }
 
-static void _Eff_position_s16lsb(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_position_s16lsb(int chan, void *stream, int len, void *udata)
 {
     /* 16 signed bits (lsb) * 2 channels. */
     volatile position_args *args = (volatile position_args *) udata;
@@ -769,7 +769,7 @@ static void _Eff_position_s16lsb(int chan, void *stream, int len, void *udata)
     }
     }
 }
-static void _Eff_position_s16lsb_c4(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_position_s16lsb_c4(int chan, void *stream, int len, void *udata)
 {
     /* 16 signed bits (lsb) * 4 channels. */
     volatile position_args *args = (volatile position_args *) udata;
@@ -814,7 +814,7 @@ static void _Eff_position_s16lsb_c4(int chan, void *stream, int len, void *udata
     }
 }
 
-static void _Eff_position_s16lsb_c6(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_position_s16lsb_c6(int chan, void *stream, int len, void *udata)
 {
     /* 16 signed bits (lsb) * 6 channels. */
     volatile position_args *args = (volatile position_args *) udata;
@@ -871,7 +871,7 @@ static void _Eff_position_s16lsb_c6(int chan, void *stream, int len, void *udata
     }
 }
 
-static void _Eff_position_u16msb(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_position_u16msb(int chan, void *stream, int len, void *udata)
 {
     /* 16 signed bits (lsb) * 2 channels. */
     volatile position_args *args = (volatile position_args *) udata;
@@ -897,7 +897,7 @@ static void _Eff_position_u16msb(int chan, void *stream, int len, void *udata)
     }
     }
 }
-static void _Eff_position_u16msb_c4(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_position_u16msb_c4(int chan, void *stream, int len, void *udata)
 {
     /* 16 signed bits (lsb) * 4 channels. */
     volatile position_args *args = (volatile position_args *) udata;
@@ -947,7 +947,7 @@ static void _Eff_position_u16msb_c4(int chan, void *stream, int len, void *udata
     }
     }
 }
-static void _Eff_position_u16msb_c6(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_position_u16msb_c6(int chan, void *stream, int len, void *udata)
 {
     /* 16 signed bits (lsb) * 6 channels. */
     volatile position_args *args = (volatile position_args *) udata;
@@ -1012,7 +1012,7 @@ static void _Eff_position_u16msb_c6(int chan, void *stream, int len, void *udata
     }
 }
 
-static void _Eff_position_s16msb(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_position_s16msb(int chan, void *stream, int len, void *udata)
 {
     /* 16 signed bits (lsb) * 2 channels. */
     volatile position_args *args = (volatile position_args *) udata;
@@ -1028,7 +1028,7 @@ static void _Eff_position_s16msb(int chan, void *stream, int len, void *udata)
         *(ptr++) = (Sint16) SDL_SwapBE16(swapr);
     }
 }
-static void _Eff_position_s16msb_c4(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_position_s16msb_c4(int chan, void *stream, int len, void *udata)
 {
     /* 16 signed bits (lsb) * 4 channels. */
     volatile position_args *args = (volatile position_args *) udata;
@@ -1072,7 +1072,7 @@ static void _Eff_position_s16msb_c4(int chan, void *stream, int len, void *udata
     }
     }
 }
-static void _Eff_position_s16msb_c6(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_position_s16msb_c6(int chan, void *stream, int len, void *udata)
 {
     /* 16 signed bits (lsb) * 6 channels. */
     volatile position_args *args = (volatile position_args *) udata;
@@ -1130,7 +1130,7 @@ static void _Eff_position_s16msb_c6(int chan, void *stream, int len, void *udata
     }
 }
 
-static void _Eff_position_s32lsb(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_position_s32lsb(int chan, void *stream, int len, void *udata)
 {
     /* 32 signed bits (lsb) * 2 channels. */
     volatile position_args *args = (volatile position_args *) udata;
@@ -1159,7 +1159,7 @@ static void _Eff_position_s32lsb(int chan, void *stream, int len, void *udata)
     }
     }
 }
-static void _Eff_position_s32lsb_c4(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_position_s32lsb_c4(int chan, void *stream, int len, void *udata)
 {
     /* 32 signed bits (lsb) * 4 channels. */
     volatile position_args *args = (volatile position_args *) udata;
@@ -1204,7 +1204,7 @@ static void _Eff_position_s32lsb_c4(int chan, void *stream, int len, void *udata
     }
 }
 
-static void _Eff_position_s32lsb_c6(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_position_s32lsb_c6(int chan, void *stream, int len, void *udata)
 {
     /* 32 signed bits (lsb) * 6 channels. */
     volatile position_args *args = (volatile position_args *) udata;
@@ -1261,7 +1261,7 @@ static void _Eff_position_s32lsb_c6(int chan, void *stream, int len, void *udata
     }
 }
 
-static void _Eff_position_s32msb(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_position_s32msb(int chan, void *stream, int len, void *udata)
 {
     /* 32 signed bits (lsb) * 2 channels. */
     volatile position_args *args = (volatile position_args *) udata;
@@ -1277,7 +1277,7 @@ static void _Eff_position_s32msb(int chan, void *stream, int len, void *udata)
         *(ptr++) = (Sint32) SDL_SwapBE32(swapr);
     }
 }
-static void _Eff_position_s32msb_c4(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_position_s32msb_c4(int chan, void *stream, int len, void *udata)
 {
     /* 32 signed bits (lsb) * 4 channels. */
     volatile position_args *args = (volatile position_args *) udata;
@@ -1321,7 +1321,7 @@ static void _Eff_position_s32msb_c4(int chan, void *stream, int len, void *udata
     }
     }
 }
-static void _Eff_position_s32msb_c6(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_position_s32msb_c6(int chan, void *stream, int len, void *udata)
 {
     /* 32 signed bits (lsb) * 6 channels. */
     volatile position_args *args = (volatile position_args *) udata;
@@ -1379,7 +1379,7 @@ static void _Eff_position_s32msb_c6(int chan, void *stream, int len, void *udata
     }
 }
 
-static void _Eff_position_f32sys(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_position_f32sys(int chan, void *stream, int len, void *udata)
 {
     /* float * 2 channels. */
     volatile position_args *args = (volatile position_args *) udata;
@@ -1393,7 +1393,7 @@ static void _Eff_position_f32sys(int chan, void *stream, int len, void *udata)
         *(ptr++) = swapr;
     }
 }
-static void _Eff_position_f32sys_c4(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_position_f32sys_c4(int chan, void *stream, int len, void *udata)
 {
     /* float * 4 channels. */
     volatile position_args *args = (volatile position_args *) udata;
@@ -1433,7 +1433,7 @@ static void _Eff_position_f32sys_c4(int chan, void *stream, int len, void *udata
         }
     }
 }
-static void _Eff_position_f32sys_c6(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_position_f32sys_c6(int chan, void *stream, int len, void *udata)
 {
     /* float * 6 channels. */
     volatile position_args *args = (volatile position_args *) udata;
