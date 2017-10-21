@@ -200,6 +200,7 @@ static Instrument *load_instrument(MidiSong *song, char *name, int percussion,
 						      differences are */
     {
       SNDDBG(("%s: not an instrument\n", name));
+      SDL_RWclose(rw);
       return 0;
     }
   
@@ -207,12 +208,14 @@ static Instrument *load_instrument(MidiSong *song, char *name, int percussion,
 				       0 means 1 */
     {
       SNDDBG(("Can't handle patches with %d instruments\n", tmp[82]));
+      SDL_RWclose(rw);
       return 0;
     }
 
   if (tmp[151] != 1 && tmp[151] != 0) /* layers. What's a layer? */
     {
       SNDDBG(("Can't handle instruments with %d layers\n", tmp[151]));
+      SDL_RWclose(rw);
       return 0;
     }
   
@@ -247,6 +250,7 @@ static Instrument *load_instrument(MidiSong *song, char *name, int percussion,
 	    free(ip->sample[j].data);
 	  free(ip->sample);
 	  free(ip);
+	  SDL_RWclose(rw);
 	  return 0;
 	}
 
