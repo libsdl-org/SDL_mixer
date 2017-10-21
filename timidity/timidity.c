@@ -490,6 +490,8 @@ MidiSong *Timidity_LoadSong(SDL_RWops *rw, SDL_AudioSpec *audio)
   song->encoding = 0;
   if ((audio->format & 0xFF) == 16)
       song->encoding |= PE_16BIT;
+  else if ((audio->format & 0xFF) == 32)
+      song->encoding |= PE_32BIT;
   if (audio->format & 0x8000)
       song->encoding |= PE_SIGNED;
   if (audio->channels == 1)
@@ -516,6 +518,15 @@ MidiSong *Timidity_LoadSong(SDL_RWops *rw, SDL_AudioSpec *audio)
 	  break;
   case AUDIO_U16MSB:
 	  song->write = s32tou16b;
+	  break;
+  case AUDIO_S32LSB:
+	  song->write = s32tos32l;
+	  break;
+  case AUDIO_S32MSB:
+	  song->write = s32tos32b;
+	  break;
+  case AUDIO_F32SYS:
+	  song->write = s32tof32;
 	  break;
   default:
 	  SDL_SetError("Unsupported audio format");

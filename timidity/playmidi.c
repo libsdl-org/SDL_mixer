@@ -664,9 +664,9 @@ int Timidity_PlaySome(MidiSong *song, void *stream, Sint32 len)
   if (!song->playing)
     return 0;
   
-  bytes_per_sample =
-        ((song->encoding & PE_MONO) ? 1 : 2)
-      * ((song->encoding & PE_16BIT) ? 2 : 1);
+  bytes_per_sample = 1;
+  bytes_per_sample *= ((song->encoding & PE_32BIT) ? 4 : ((song->encoding & PE_16BIT) ? 2 : 1));
+  bytes_per_sample *= ((song->encoding & PE_MONO) ? 1 : 2);
   samples = len / bytes_per_sample;
   
   start_sample = song->current_sample;

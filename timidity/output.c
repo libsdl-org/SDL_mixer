@@ -100,3 +100,32 @@ void s32tou16x(void *dp, Sint32 *lp, Sint32 c)
       *sp++ = SDL_Swap16(0x8000 ^ (Uint16)(l));
     }
 }
+
+void s32tof32(void *dp, Sint32 *lp, Sint32 c)
+{
+  float *sp=(float *)(dp);
+  Sint32 l;
+  while (c--)
+    {
+      *sp++ = (float)(*lp++) / 2147483647.0f;
+    }
+}
+
+void s32tos32(void *dp, Sint32 *lp, Sint32 c)
+{
+  Sint32 *sp=(Sint32 *)(dp);
+  Sint32 l;
+  while (c--)
+    {
+      *sp++ = (*lp++);
+    }
+}
+
+void s32tos32x(void *dp, Sint32 *lp, Sint32 c)
+{
+  Sint32 *sp=(Sint32 *)(dp);
+  while (c--)
+    {
+      *sp++ = SDL_Swap32(*lp++);
+    }
+}
