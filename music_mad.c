@@ -350,19 +350,16 @@ static int MAD_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         if (!decode_frame(music)) {
             return -1;
         }
-    } else {
+    } else if (music->status & MS_input_eof) {
         int play_count = -1;
-
-        if (music->status & MS_decode_error) {
-            return -1;
-        }
-
         if (music->play_count > 0) {
             play_count = (music->play_count - 1);
         }
         if (MAD_Play(music, play_count) < 0) {
             return -1;
         }
+    } else if (music->status & MS_decode_error) {
+        return -1;
     }
     return 0;
 }
