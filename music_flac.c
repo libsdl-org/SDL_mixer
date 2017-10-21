@@ -250,7 +250,7 @@ static FLAC__StreamDecoderWriteStatus flac_write_music_cb(
 {
     FLAC_Music *music = (FLAC_Music *)client_data;
     Sint16 *data;
-    int i, j, channels;
+    unsigned int i, j, channels;
     int shift_amount = 0;
 
     if (!music->stream) {
