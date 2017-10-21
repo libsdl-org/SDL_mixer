@@ -66,7 +66,7 @@ static const char **music_decoders = NULL;
 static int num_decoders = 0;
 
 /* Semicolon-separated SoundFont paths */
-char* soundfont_paths = NULL;
+static char* soundfont_paths = NULL;
 
 /* Interfaces for the various music interfaces, ordered by priority */
 static Mix_MusicInterface *s_music_interfaces[] =
@@ -296,6 +296,13 @@ int open_music(const SDL_AudioSpec *spec)
 {
     int i;
     SDL_bool use_native_midi = SDL_FALSE;
+
+#ifdef MIX_INIT_SOUNDFONT_PATHS
+    if (!soundfont_paths) {
+        soundfont_paths = SDL_strdup(MIX_INIT_SOUNDFONT_PATHS);
+    }
+#endif
+
 
 #ifdef MUSIC_MID_NATIVE
     if (SDL_GetHintBoolean("SDL_NATIVE_MUSIC", SDL_FALSE) && native_midi_detect()) {
@@ -929,9 +936,16 @@ void close_music(void)
         interface->opened = SDL_FALSE;
     }
 
+    if (soundfont_paths) {
+        SDL_free(soundfont_paths);
+        soundfont_paths = NULL;
+    }
+
     /* rcg06042009 report available decoders at runtime. */
-    SDL_free((void *)music_decoders);
-    music_decoders = NULL;
+    if (music_decoders) {
+        SDL_free((void *)music_decoders);
+        music_decoders = NULL;
+    }
     num_decoders = 0;
 
     ms_per_step = 0;
@@ -972,11 +986,36 @@ int Mix_SetSoundFonts(const char *paths)
 
 const char* Mix_GetSoundFonts(void)
 {
-    if (!soundfont_paths || SDL_GetHintBoolean("SDL_FORCE_SOUNDFONTS", SDL_FALSE)) {
-        return SDL_getenv("SDL_SOUNDFONTS");
-    } else {
+    const char *env_paths = SDL_getenv("SDL_SOUNDFONTS");
+    SDL_bool force_env_paths = SDL_GetHintBoolean("SDL_FORCE_SOUNDFONTS", SDL_FALSE);
+    if (force_env_paths && (!env_paths || !*env_paths)) {
+        force_env_paths = SDL_FALSE;
+    }
+    if (soundfont_paths && *soundfont_paths && !force_env_paths) {
         return soundfont_paths;
     }
+    if (env_paths) {
+        return env_paths;
+    }
+
+    /* We don't have any sound fonts set programmatically or in the environment
+       Time to start guessing where they might be...
+     */
+    {
+        static char *s_soundfont_paths[] = {
+            "/usr/share/sounds/sf2/FluidR3_GM.sf2"  /* Remember to add ',' here */
+        };
+        unsigned i;
+
+        for (i = 0; i < SDL_arraysize(s_soundfont_paths); ++i) {
+            SDL_RWops *rwops = SDL_RWFromFile(s_soundfont_paths[i], "rb");
+            if (rwops) {
+                SDL_RWclose(rwops);
+                return s_soundfont_paths[i];
+            }
+        }
+    }
+    return NULL;
 }
 
 int Mix_EachSoundFont(int (*function)(const char*, void*), void *data)

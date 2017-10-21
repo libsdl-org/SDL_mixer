@@ -140,12 +140,6 @@ int Mix_Init(int flags)
 {
     int result = 0;
 
-#ifdef MIX_INIT_SOUNDFONT_PATHS
-    if (!soundfont_paths) {
-        soundfont_paths = SDL_strdup(MIX_INIT_SOUNDFONT_PATHS);
-    }
-#endif
-
     load_music();
 
     if (flags & MIX_INIT_FLAC) {
@@ -189,11 +183,6 @@ int Mix_Init(int flags)
 void Mix_Quit()
 {
     unload_music();
-
-    if (soundfont_paths) {
-        SDL_free(soundfont_paths);
-        soundfont_paths = NULL;
-    }
 }
 
 static int _Mix_remove_all_effects(int channel, effect_info **e);
