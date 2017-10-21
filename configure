@@ -919,6 +919,7 @@ with_smpeg_prefix
 with_smpeg_exec_prefix
 enable_smpegtest
 enable_music_mp3_mad_gpl
+enable_music_mp3_mad_gpl_dithering
 enable_music_mp3_mpg123
 enable_music_mp3_mpg123_shared
 '
@@ -1591,6 +1592,8 @@ Optional Features:
   --disable-smpegtest     Do not try to compile and run a test SMPEG program
   --enable-music-mp3-mad-gpl
                           enable MP3 music via libmad GPL code [[default=no]]
+  --enable-music-mp3-mad-gpl-dithering
+                          enable MP3 music via libmad GPL code [[default=yes]]
   --enable-music-mp3-mpg123
                           enable MP3 music via libmpg123 [[default=yes]]
   --enable-music-mp3-mpg123-shared
@@ -3927,13 +3930,13 @@ if ${lt_cv_nm_interface+:} false; then :
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:3930: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:3933: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:3933: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:3936: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:3936: output\"" >&5)
+  (eval echo "\"\$as_me:3939: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -5144,7 +5147,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 5147 "configure"' > conftest.$ac_ext
+  echo '#line 5150 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -6974,11 +6977,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:6977: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:6980: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:6981: \$? = $ac_status" >&5
+   echo "$as_me:6984: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7313,11 +7316,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7316: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7319: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7320: \$? = $ac_status" >&5
+   echo "$as_me:7323: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7418,11 +7421,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7421: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7424: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:7425: \$? = $ac_status" >&5
+   echo "$as_me:7428: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -7473,11 +7476,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7476: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7479: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:7480: \$? = $ac_status" >&5
+   echo "$as_me:7483: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -9842,7 +9845,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 9845 "configure"
+#line 9848 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -9938,7 +9941,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 9941 "configure"
+#line 9944 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -11158,7 +11161,7 @@ find_lib()
     done
 }
 
-SDL_VERSION=2.0.0
+SDL_VERSION=2.0.7
 
 
 if test "x$ac_cv_env_PKG_CONFIG_set" != "xset"; then
@@ -12851,6 +12854,13 @@ else
   enable_music_mp3_mad_gpl=no
 fi
 
+# Check whether --enable-music-mp3-mad-gpl-dithering was given.
+if test "${enable_music_mp3_mad_gpl_dithering+set}" = set; then :
+  enableval=$enable_music_mp3_mad_gpl_dithering;
+else
+  enable_music_mp3_mad_gpl_dithering=yes
+fi
+
 if test x$enable_music_mp3 = xyes -a x$enable_music_mp3_mad_gpl = xyes; then
     { $as_echo "$as_me:${as_lineno-$LINENO}: checking for libmad headers" >&5
 $as_echo_n "checking for libmad headers... " >&6; }
@@ -12879,6 +12889,11 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 $as_echo "$have_libmad" >&6; }
     if test x$have_libmad = xyes; then
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MP3_MAD"
+		if test x$enable_music_mp3_mad_gpl_dithering = xyes; then
+            { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: *** Using GPL libmad and MP3 dithering routines, this build of SDL_mixer is now under the GPL" >&5
+$as_echo "$as_me: WARNING: *** Using GPL libmad and MP3 dithering routines, this build of SDL_mixer is now under the GPL" >&2;}
+			EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MP3_MAD_GPL_DITHERING"
+        fi
         EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lmad"
     else
         { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: *** Unable to find MAD library (http://www.underbit.com/products/mad/)" >&5

@@ -70,8 +70,8 @@ typedef struct
     /* Set the volume */
     void (*SetVolume)(void *music, int volume);
 
-    /* Start playing music */
-    int (*Play)(void *music);
+    /* Start playing music from the beginning with an optional loop count */
+    int (*Play)(void *music, int play_count);
 
     /* Returns SDL_TRUE if music is still playing */
     SDL_bool (*IsPlaying)(void *music);
@@ -109,14 +109,13 @@ extern int get_num_music_interfaces(void);
 extern Mix_MusicInterface *get_music_interface(int index);
 extern SDL_bool has_music(Mix_MusicType type);
 extern int open_music(const SDL_AudioSpec *spec);
+extern int music_pcm_getaudio(void *context, void *data, int bytes, int volume,
+                              int (*GetSome)(void *context, void *data, int bytes, SDL_bool *done));
 extern void music_mixer(void *udata, Uint8 *stream, int len);
 extern void close_music(void);
 extern void unload_music(void);
 
 extern char *music_cmd;
-extern int volatile music_active;
-extern int music_loops;
-extern int music_volume;
 extern SDL_AudioSpec music_spec;
 extern char *soundfont_paths;
 

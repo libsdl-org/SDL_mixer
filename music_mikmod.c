@@ -20,6 +20,7 @@
 */
 
 #ifdef MUSIC_MOD_MIKMOD
+#error Implement play_count and audio stream conversion
 
 /* This file supports MOD tracker music streams */
 

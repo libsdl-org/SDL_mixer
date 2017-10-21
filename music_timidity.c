@@ -28,6 +28,15 @@
 #include "timidity/timidity.h"
 
 
+typedef struct
+{
+    int play_count;
+    MidiSong *song;
+} TIMIDITY_Music;
+
+
+static int TIMIDITY_Seek(void *context, double position);
+
 static int TIMIDITY_Open(const SDL_AudioSpec *spec)
 {
     return Timidity_Init();
@@ -40,8 +49,21 @@ static void TIMIDITY_Close(void)
 
 void *TIMIDITY_CreateFromRW(SDL_RWops *src, int freesrc)
 {
-    MidiSong *music = Timidity_LoadSong(src, &music_spec);
-    if (music && freesrc) {
+    TIMIDITY_Music *music;
+
+    music = (TIMIDITY_Music *)SDL_calloc(1, sizeof(*music));
+    if (!music) {
+        SDL_OutOfMemory();
+        return NULL;
+    }
+
+    music->song = Timidity_LoadSong(src, &music_spec);
+    if (!music->song) {
+        SDL_free(music);
+        return NULL;
+    }
+
+    if (freesrc) {
         SDL_RWclose(src);
     }
     return music;
@@ -49,38 +71,51 @@ void *TIMIDITY_CreateFromRW(SDL_RWops *src, int freesrc)
 
 static void TIMIDITY_SetVolume(void *context, int volume)
 {
-    MidiSong *music = (MidiSong *)context;
-    Timidity_SetVolume(music, volume);
+    TIMIDITY_Music *music = (TIMIDITY_Music *)context;
+    Timidity_SetVolume(music->song, volume);
 }
 
-static int TIMIDITY_Play(void *context)
+static int TIMIDITY_Play(void *context, int play_count)
 {
-    MidiSong *music = (MidiSong *)context;
-    Timidity_Start(music);
-    return 0;
+    TIMIDITY_Music *music = (TIMIDITY_Music *)context;
+    music->play_count = play_count;
+    Timidity_Start(music->song);
+    return TIMIDITY_Seek(music, 0.0);
 }
 
 static int TIMIDITY_GetAudio(void *context, void *data, int bytes)
 {
-    MidiSong *music = (MidiSong *)context;
-    if (!Timidity_PlaySome(music, data, bytes)) {
-        /* Nothing consumed, everything left */
-        return bytes;
+    TIMIDITY_Music *music = (TIMIDITY_Music *)context;
+    if (!Timidity_PlaySome(music->song, data, bytes)) {
+        if (music->play_count == 1) {
+            /* We didn't consume anything and we're done */
+            music->play_count = 0;
+            return bytes;
+        } else {
+            int play_count = -1;
+            if (music->play_count > 0) {
+                play_count = (music->play_count - 1);
+            }
+            if (TIMIDITY_Play(music, play_count) < 0) {
+                return -1;
+            }
+        }
     }
     return 0;
 }
 
 static int TIMIDITY_Seek(void *context, double position)
 {
-    MidiSong *music = (MidiSong *)context;
-    Timidity_Seek(music, (Uint32)(position * 1000));
+    TIMIDITY_Music *music = (TIMIDITY_Music *)context;
+    Timidity_Seek(music->song, (Uint32)(position * 1000));
     return 0;
 }
 
 static void TIMIDITY_Delete(void *context)
 {
-    MidiSong *music = (MidiSong *)context;
-    Timidity_FreeSong(music);
+    TIMIDITY_Music *music = (TIMIDITY_Music *)context;
+    Timidity_FreeSong(music->song);
+    SDL_free(music);
 }
 
 Mix_MusicInterface Mix_MusicInterface_TIMIDITY =
