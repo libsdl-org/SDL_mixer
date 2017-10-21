@@ -390,14 +390,14 @@ static Instrument *load_instrument(MidiSong *song, char *name, int percussion,
       
       if (!(sp->modes & MODES_16BIT)) /* convert to 16-bit data */
 	{
-	  Sint32 i=sp->data_length;
+	  Sint32 k=sp->data_length;
 	  Uint8 *cp=(Uint8 *)(sp->data);
-	  Uint16 *tmp,*new;
-	  tmp=new=safe_malloc(sp->data_length*2);
-	  while (i--)
-	    *tmp++ = (Uint16)(*cp++) << 8;
+	  Uint16 *tmp16,*new16;
+	  tmp16 = new16 = (Uint16 *) safe_malloc(sp->data_length*2);
+	  while (k--)
+	    *tmp16++ = (Uint16)(*cp++) << 8;
 	  cp=(Uint8 *)(sp->data);
-	  sp->data = (sample_t *)new;
+	  sp->data = (sample_t *)new16;
 	  free(cp);
 	  sp->data_length *= 2;
 	  sp->loop_start *= 2;
@@ -407,22 +407,22 @@ static Instrument *load_instrument(MidiSong *song, char *name, int percussion,
       else
 	/* convert to machine byte order */
 	{
-	  Sint32 i=sp->data_length/2;
-	  Sint16 *tmp=(Sint16 *)sp->data,s;
-	  while (i--)
-	    { 
-	      s=SDL_SwapLE16(*tmp);
-	      *tmp++=s;
+	  Sint32 k=sp->data_length/2;
+	  Sint16 *tmp16=(Sint16 *)sp->data,s;
+	  while (k--)
+	    {
+	      s=SDL_SwapLE16(*tmp16);
+	      *tmp16++=s;
 	    }
 	}
 #endif
       
       if (sp->modes & MODES_UNSIGNED) /* convert to signed data */
 	{
-	  Sint32 i=sp->data_length/2;
-	  Sint16 *tmp=(Sint16 *)sp->data;
-	  while (i--)
-	    *tmp++ ^= 0x8000;
+	  Sint32 k=sp->data_length/2;
+	  Sint16 *tmp16=(Sint16 *)sp->data;
+	  while (k--)
+	    *tmp16++ ^= 0x8000;
 	}
 
       /* Reverse reverse loops and pass them off as normal loops */
@@ -451,12 +451,12 @@ static Instrument *load_instrument(MidiSong *song, char *name, int percussion,
 	  /* Try to determine a volume scaling factor for the sample.
 	     This is a very crude adjustment, but things sound more
 	     balanced with it. Still, this should be a runtime option. */
-	  Sint32 i=sp->data_length/2;
+	  Sint32 k=sp->data_length/2;
 	  Sint16 maxamp=0,a;
-	  Sint16 *tmp=(Sint16 *)sp->data;
-	  while (i--)
+	  Sint16 *tmp16=(Sint16 *)sp->data;
+	  while (k--)
 	    {
-	      a=*tmp++;
+	      a=*tmp16++;
 	      if (a<0) a=-a;
 	      if (a>maxamp)
 		maxamp=a;
