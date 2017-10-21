@@ -105,7 +105,7 @@ typedef struct {
     Uint32  SMTPE_offset;
     Uint32  sample_loops;
     Uint32  sampler_data;
-    SampleLoop loops[];
+    SampleLoop loops[0];
 } SamplerChunk;
 
 /*********************************************/
