@@ -32,10 +32,14 @@ typedef struct
 {
     int play_count;
     MidiSong *song;
+    SDL_AudioStream *stream;
+    void *buffer;
+    Sint32 buffer_size;
 } TIMIDITY_Music;
 
 
 static int TIMIDITY_Seek(void *context, double position);
+static void TIMIDITY_Delete(void *context);
 
 static int TIMIDITY_Open(const SDL_AudioSpec *spec)
 {
@@ -50,6 +54,8 @@ static void TIMIDITY_Close(void)
 void *TIMIDITY_CreateFromRW(SDL_RWops *src, int freesrc)
 {
     TIMIDITY_Music *music;
+    SDL_AudioSpec spec;
+    SDL_bool need_stream = SDL_FALSE;
 
     music = (TIMIDITY_Music *)SDL_calloc(1, sizeof(*music));
     if (!music) {
@@ -57,10 +63,32 @@ void *TIMIDITY_CreateFromRW(SDL_RWops *src, int freesrc)
         return NULL;
     }
 
-    music->song = Timidity_LoadSong(src, &music_spec);
+    SDL_memcpy(&spec, &music_spec, sizeof(spec));
+    if (spec.channels > 2) {
+        need_stream = SDL_TRUE;
+        spec.channels = 2;
+    }
+    music->song = Timidity_LoadSong(src, &spec);
     if (!music->song) {
-        SDL_free(music);
+        TIMIDITY_Delete(music);
         return NULL;
+    }
+
+    if (need_stream) {
+        music->stream = SDL_NewAudioStream(spec.format, spec.channels, spec.freq,
+                                           music_spec.format, music_spec.channels, music_spec.freq);
+        if (!music->stream) {
+            TIMIDITY_Delete(music);
+            return NULL;
+        }
+
+        music->buffer_size = spec.samples * (SDL_AUDIO_BITSIZE(spec.format) / 8) * spec.channels;
+        music->buffer = SDL_malloc(music->buffer_size);
+        if (!music->buffer) {
+            SDL_OutOfMemory();
+            TIMIDITY_Delete(music);
+            return NULL;
+        }
     }
 
     if (freesrc) {
@@ -83,14 +111,39 @@ static int TIMIDITY_Play(void *context, int play_count)
     return TIMIDITY_Seek(music, 0.0);
 }
 
-static int TIMIDITY_GetAudio(void *context, void *data, int bytes)
+static int TIMIDITY_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 {
     TIMIDITY_Music *music = (TIMIDITY_Music *)context;
-    if (!Timidity_PlaySome(music->song, data, bytes)) {
+    int filled, amount, expected;
+
+    if (music->stream) {
+        filled = SDL_AudioStreamGet(music->stream, data, bytes);
+        if (filled != 0) {
+            return filled;
+        }
+    }
+
+    if (!music->play_count) {
+        /* All done */
+        *done = SDL_TRUE;
+        return 0;
+    }
+
+    if (music->stream) {
+        expected = music->buffer_size;
+        amount = Timidity_PlaySome(music->song, music->buffer, music->buffer_size);
+        if (SDL_AudioStreamPut(music->stream, music->buffer, amount) < 0) {
+            return -1;
+        }
+    } else {
+        expected = bytes;
+        amount = Timidity_PlaySome(music->song, data, bytes);
+    }
+        
+    if (amount < expected) {
         if (music->play_count == 1) {
             /* We didn't consume anything and we're done */
             music->play_count = 0;
-            return bytes;
         } else {
             int play_count = -1;
             if (music->play_count > 0) {
@@ -101,7 +154,17 @@ static int TIMIDITY_GetAudio(void *context, void *data, int bytes)
             }
         }
     }
-    return 0;
+    if (music->stream) {
+        /* We'll pick it up from the stream next time around */
+        return 0;
+    } else {
+        /* We wrote output data */
+        return amount;
+    }
+}
+static int TIMIDITY_GetAudio(void *context, void *data, int bytes)
+{
+    return music_pcm_getaudio(context, data, bytes, MIX_MAX_VOLUME, TIMIDITY_GetSome);
 }
 
 static int TIMIDITY_Seek(void *context, double position)
@@ -114,7 +177,16 @@ static int TIMIDITY_Seek(void *context, double position)
 static void TIMIDITY_Delete(void *context)
 {
     TIMIDITY_Music *music = (TIMIDITY_Music *)context;
-    Timidity_FreeSong(music->song);
+
+    if (music->song) {
+        Timidity_FreeSong(music->song);
+    }
+    if (music->stream) {
+        SDL_FreeAudioStream(music->stream);
+    }
+    if (music->buffer) {
+        SDL_free(music->buffer);
+    }
     SDL_free(music);
 }
 
