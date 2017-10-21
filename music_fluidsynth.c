@@ -78,7 +78,6 @@ static int FLUIDSYNTH_Load()
             return -1;
         }
 #endif
-
         FUNCTION_LOADER(delete_fluid_player, int (*)(fluid_player_t*))
         FUNCTION_LOADER(delete_fluid_settings, void (*)(fluid_settings_t*))
         FUNCTION_LOADER(delete_fluid_synth, int (*)(fluid_synth_t*))
