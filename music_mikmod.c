@@ -319,15 +319,12 @@ void *MIKMOD_CreateFromRW(SDL_RWops *src, int freesrc)
         return NULL;
     }
 
-    /* Stop implicit looping, fade out and other flags. */
+    /* Allow implicit looping, disable fade out and other flags. */
     music->module->extspd  = 1;
     music->module->panflag = 1;
     music->module->wrap    = 0;
-    music->module->loop    = 0;
-#if 0 /* Don't set fade out by default - unfortunately there's no real way
-to query the status of the song or set trigger actions.  Hum. */
-    music->module->fadeout = 1;
-#endif
+    music->module->loop    = 1;
+    music->module->fadeout = 0;
 
     if ((*mikmod.md_mode & DMODE_16BITS) == DMODE_16BITS) {
         format = AUDIO_S16SYS;
@@ -373,8 +370,8 @@ static int MIKMOD_Play(void *context, int play_count)
 {
     MIKMOD_Music *music = (MIKMOD_Music *)context;
     music->play_count = play_count;
+    music->module->initvolume = music->volume;
     mikmod.Player_Start(music->module);
-    mikmod.Player_SetVolume((SWORD)music->volume);
     return MIKMOD_Seek(music, 0.0);
 }
 
