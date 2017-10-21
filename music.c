@@ -525,6 +525,10 @@ Mix_Music *Mix_LoadMUSType_RW(SDL_RWops *src, Mix_MusicType type, int freesrc)
             }
             music->interface = interface;
             music->context = context;
+#ifdef DEBUG_MUSIC
+            /* This would be useful to expose via an API */
+            SDL_Log("Music playing with %s\n", interface->tag);
+#endif
             return music;
         }
 
