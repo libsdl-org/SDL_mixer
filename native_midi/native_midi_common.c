@@ -28,10 +28,8 @@
 #include <string.h>
 #include <limits.h>
 
-
-/* The maximum number of midi tracks that we can handle
-#define MIDI_TRACKS 32 */
-
+/* The constant 'MThd' */
+#define MIDI_MAGIC	0x4d546864
 
 /* A single midi track as read from the midi file */
 typedef struct
@@ -295,7 +293,7 @@ static int ReadMIDIFile(MIDIFile *mididata, SDL_RWops *src)
 
     /* Make sure this is really a MIDI file */
     SDL_RWread(src, &ID, 1, 4);
-    if (BE_LONG(ID) != 'MThd')
+    if (BE_LONG(ID) != MIDI_MAGIC)
         return 0;
 
     /* Header size must be 6 */
