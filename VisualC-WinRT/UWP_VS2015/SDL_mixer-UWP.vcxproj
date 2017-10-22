@@ -47,27 +47,21 @@
     <ClCompile Include="..\..\music_timidity.c" />
     <ClCompile Include="..\..\music_wav.c" />
     <ClCompile Include="..\..\timidity\common.c" />
-    <ClCompile Include="..\..\timidity\ctrlmode.c" />
-    <ClCompile Include="..\..\timidity\filter.c" />
     <ClCompile Include="..\..\timidity\instrum.c" />
     <ClCompile Include="..\..\timidity\mix.c" />
     <ClCompile Include="..\..\timidity\output.c" />
     <ClCompile Include="..\..\timidity\playmidi.c" />
     <ClCompile Include="..\..\timidity\readmidi.c" />
     <ClCompile Include="..\..\timidity\resample.c" />
-    <ClCompile Include="..\..\timidity\sdl_a.c" />
-    <ClCompile Include="..\..\timidity\sdl_c.c" />
     <ClCompile Include="..\..\timidity\tables.c" />
     <ClCompile Include="..\..\timidity\timidity.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\SDL_mixer.h" />
     <ClInclude Include="..\..\timidity\common.h" />
-    <ClInclude Include="..\..\timidity\config.h" />
-    <ClInclude Include="..\..\timidity\ctrlmode.h" />
-    <ClInclude Include="..\..\timidity\filter.h" />
     <ClInclude Include="..\..\timidity\instrum.h" />
     <ClInclude Include="..\..\timidity\mix.h" />
+    <ClInclude Include="..\..\timidity\options.h" />
     <ClInclude Include="..\..\timidity\output.h" />
     <ClInclude Include="..\..\timidity\playmidi.h" />
     <ClInclude Include="..\..\timidity\readmidi.h" />
@@ -200,7 +194,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>..\..\timidity;..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.5\include;..\..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>getenv=SDL_getenv;MUSIC_MID;USE_TIMIDITY_MIDI;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -213,7 +207,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>..\..\timidity;..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.5\include;..\..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>getenv=SDL_getenv;MUSIC_MID;USE_TIMIDITY_MIDI;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";_CRT_SECURE_NO_WARNINGS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";MUSIC_MID_TIMIDITY;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -226,7 +220,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>..\..\timidity;..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.5\include;..\..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>getenv=SDL_getenv;MUSIC_MID;USE_TIMIDITY_MIDI;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -239,7 +233,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>..\..\timidity;..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.5\include;..\..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>getenv=SDL_getenv;MUSIC_MID;USE_TIMIDITY_MIDI;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";_CRT_SECURE_NO_WARNINGS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";MUSIC_MID_TIMIDITY;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -252,7 +246,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>..\..\timidity;..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.5\include;..\..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>getenv=SDL_getenv;MUSIC_MID;USE_TIMIDITY_MIDI;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -265,7 +259,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>..\..\timidity;..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.5\include;..\..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>getenv=SDL_getenv;MUSIC_MID;USE_TIMIDITY_MIDI;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";_CRT_SECURE_NO_WARNINGS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";MUSIC_MID_TIMIDITY;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

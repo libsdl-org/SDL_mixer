@@ -13,6 +13,12 @@ libtool
 *.o
 *.la
 *.lai
+Debug
+Release
+*.user
+*.ncb
+*.suo
+*.sdf
 .DS_Store
 xcuserdata
 *.xcworkspace

@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <ClCompile Include="..\..\effects_internal.c" />
     <ClCompile Include="..\..\effect_position.c" />
     <ClCompile Include="..\..\effect_stereoreverse.c" />
-    <ClCompile Include="..\..\effects_internal.c" />
     <ClCompile Include="..\..\load_aiff.c" />
     <ClCompile Include="..\..\load_voc.c" />
     <ClCompile Include="..\..\mixer.c" />
@@ -49,6 +49,23 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\effects_internal.h" />
+    <ClInclude Include="..\..\load_aiff.h" />
+    <ClInclude Include="..\..\load_voc.h" />
+    <ClInclude Include="..\..\mixer.h" />
+    <ClInclude Include="..\..\music.h" />
+    <ClInclude Include="..\..\music_cmd.h" />
+    <ClInclude Include="..\..\music_flac.h" />
+    <ClInclude Include="..\..\music_fluidsynth.h" />
+    <ClInclude Include="..\..\music_mad.h" />
+    <ClInclude Include="..\..\music_mikmod.h" />
+    <ClInclude Include="..\..\music_modplug.h" />
+    <ClInclude Include="..\..\music_mpg123.h" />
+    <ClInclude Include="..\..\music_nativemidi.h" />
+    <ClInclude Include="..\..\music_ogg.h" />
+    <ClInclude Include="..\..\music_smpeg.h" />
+    <ClInclude Include="..\..\music_timidity.h" />
+    <ClInclude Include="..\..\music_wav.h" />
     <ClInclude Include="..\..\SDL_mixer.h" />
     <ClInclude Include="..\..\timidity\common.h">
       <Filter>Timidity</Filter>
@@ -83,7 +100,7 @@
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Timidity">
-      <UniqueIdentifier>{660dbe57-4c07-417e-9609-12b312726942}</UniqueIdentifier>
+      <UniqueIdentifier>{76edff39-58d9-4391-b729-e34269a68b5a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
