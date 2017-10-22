@@ -78,6 +78,21 @@ static Mix_MusicInterface *s_music_interfaces[] =
 #ifdef MUSIC_WAV
     &Mix_MusicInterface_WAV,
 #endif
+#ifdef MUSIC_FLAC
+    &Mix_MusicInterface_FLAC,
+#endif
+#ifdef MUSIC_OGG
+    &Mix_MusicInterface_OGG,
+#endif
+#ifdef MUSIC_MP3_MPG123
+    &Mix_MusicInterface_MPG123,
+#endif
+#ifdef MUSIC_MP3_MAD
+    &Mix_MusicInterface_MAD,
+#endif
+#ifdef MUSIC_MP3_SMPEG
+    &Mix_MusicInterface_SMPEG,
+#endif
 #ifdef MUSIC_MOD_MODPLUG
     &Mix_MusicInterface_MODPLUG,
 #endif
@@ -92,21 +107,6 @@ static Mix_MusicInterface *s_music_interfaces[] =
 #endif
 #ifdef MUSIC_MID_NATIVE
     &Mix_MusicInterface_NATIVEMIDI,
-#endif
-#ifdef MUSIC_OGG
-    &Mix_MusicInterface_OGG,
-#endif
-#ifdef MUSIC_MP3_MPG123
-    &Mix_MusicInterface_MPG123,
-#endif
-#ifdef MUSIC_MP3_MAD
-    &Mix_MusicInterface_MAD,
-#endif
-#ifdef MUSIC_MP3_SMPEG
-    &Mix_MusicInterface_SMPEG,
-#endif
-#ifdef MUSIC_FLAC
-    &Mix_MusicInterface_FLAC,
 #endif
 };
 
