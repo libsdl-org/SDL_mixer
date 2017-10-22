@@ -4,12 +4,12 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := libFLAC
 
-OGG_LIBRARY_PATH := ../libogg-1.3.2
+FLAC_OGG_LIBRARY_PATH := ../libogg-1.3.2
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/include \
                     $(LOCAL_PATH)/src/libFLAC/include \
-                    $(LOCAL_PATH)/$(OGG_LIBRARY_PATH)/include \
-                    $(LOCAL_PATH)/$(OGG_LIBRARY_PATH)/android
+                    $(LOCAL_PATH)/$(FLAC_OGG_LIBRARY_PATH)/include \
+                    $(LOCAL_PATH)/$(FLAC_OGG_LIBRARY_PATH)/android
 LOCAL_CFLAGS := -include $(LOCAL_PATH)/android/config.h
 
 LOCAL_SRC_FILES := \
@@ -42,10 +42,8 @@ LOCAL_SRC_FILES := \
 	src/libFLAC/ogg_decoder_aspect.c \
 	src/libFLAC/ogg_encoder_aspect.c \
 	src/libFLAC/ogg_helper.c \
-	src/libFLAC/ogg_mapping.c \
-    $(OGG_LIBRARY_PATH)/src/framing.c \
-    $(OGG_LIBRARY_PATH)/src/bitwise.c
+	src/libFLAC/ogg_mapping.c
 
 LOCAL_EXPORT_C_INCLUDES += $(LOCAL_C_INCLUDES)
 
-include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_STATIC_LIBRARY)
