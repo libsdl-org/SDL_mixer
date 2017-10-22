@@ -12922,9 +12922,9 @@ if test "x$ac_cv_header_mpg123_h" = xyes; then :
 fi
 
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for mpg123_init in -lmpg123" >&5
-$as_echo_n "checking for mpg123_init in -lmpg123... " >&6; }
-if ${ac_cv_lib_mpg123_mpg123_init+:} false; then :
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for mpg123_replace_reader_handle in -lmpg123" >&5
+$as_echo_n "checking for mpg123_replace_reader_handle in -lmpg123... " >&6; }
+if ${ac_cv_lib_mpg123_mpg123_replace_reader_handle+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
@@ -12938,27 +12938,27 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char mpg123_init ();
+char mpg123_replace_reader_handle ();
 int
 main ()
 {
-return mpg123_init ();
+return mpg123_replace_reader_handle ();
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_mpg123_mpg123_init=yes
+  ac_cv_lib_mpg123_mpg123_replace_reader_handle=yes
 else
-  ac_cv_lib_mpg123_mpg123_init=no
+  ac_cv_lib_mpg123_mpg123_replace_reader_handle=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_mpg123_mpg123_init" >&5
-$as_echo "$ac_cv_lib_mpg123_mpg123_init" >&6; }
-if test "x$ac_cv_lib_mpg123_mpg123_init" = xyes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_mpg123_mpg123_replace_reader_handle" >&5
+$as_echo "$ac_cv_lib_mpg123_mpg123_replace_reader_handle" >&6; }
+if test "x$ac_cv_lib_mpg123_mpg123_replace_reader_handle" = xyes; then :
   have_mpg123_lib=yes
 fi
 

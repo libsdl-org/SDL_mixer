@@ -641,7 +641,7 @@ AC_HELP_STRING([--enable-music-mp3-mpg123-shared], [dynamically load libmpg123 l
               [], [enable_music_mp3_mpg123_shared=yes])
 if test x$enable_music_mp3_mpg123 = xyes; then
     AC_CHECK_HEADER([mpg123.h], [have_mpg123_hdr=yes])
-    AC_CHECK_LIB([mpg123], [mpg123_init], [have_mpg123_lib=yes])
+    AC_CHECK_LIB([mpg123], [mpg123_replace_reader_handle], [have_mpg123_lib=yes])
     if test x$have_mpg123_hdr = xyes -a x$have_mpg123_lib = xyes; then
         have_mpg123=yes
         case "$host" in
