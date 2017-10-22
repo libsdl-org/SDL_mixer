@@ -19,8 +19,6 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-/* $Id$ */
-
 #ifndef SDL_MIXER_H_
 #define SDL_MIXER_H_
 
