@@ -416,7 +416,7 @@ int Timidity_Init_NoConfig()
 
 int Timidity_Init()
 {
-  const char *env = getenv("TIMIDITY_CFG");
+  const char *env = SDL_getenv("TIMIDITY_CFG");
 
   /* !!! FIXME: This may be ugly, but slightly less so than requiring the
    *            default search path to have only one element. I think.

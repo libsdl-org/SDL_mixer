@@ -20,6 +20,33 @@
     <ClCompile Include="..\..\music_smpeg.c" />
     <ClCompile Include="..\..\music_timidity.c" />
     <ClCompile Include="..\..\music_wav.c" />
+    <ClCompile Include="..\..\timidity\common.c">
+      <Filter>Timidity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\timidity\instrum.c">
+      <Filter>Timidity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\timidity\mix.c">
+      <Filter>Timidity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\timidity\output.c">
+      <Filter>Timidity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\timidity\playmidi.c">
+      <Filter>Timidity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\timidity\readmidi.c">
+      <Filter>Timidity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\timidity\resample.c">
+      <Filter>Timidity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\timidity\tables.c">
+      <Filter>Timidity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\timidity\timidity.c">
+      <Filter>Timidity</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\effects_internal.h" />
@@ -40,5 +67,40 @@
     <ClInclude Include="..\..\music_timidity.h" />
     <ClInclude Include="..\..\music_wav.h" />
     <ClInclude Include="..\..\SDL_mixer.h" />
+    <ClInclude Include="..\..\timidity\common.h">
+      <Filter>Timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\timidity\instrum.h">
+      <Filter>Timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\timidity\mix.h">
+      <Filter>Timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\timidity\options.h">
+      <Filter>Timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\timidity\output.h">
+      <Filter>Timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\timidity\playmidi.h">
+      <Filter>Timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\timidity\readmidi.h">
+      <Filter>Timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\timidity\resample.h">
+      <Filter>Timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\timidity\tables.h">
+      <Filter>Timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\timidity\timidity.h">
+      <Filter>Timidity</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Timidity">
+      <UniqueIdentifier>{1a42c048-3a89-4691-8289-2eb5b280596f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
