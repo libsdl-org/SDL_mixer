@@ -13,19 +13,19 @@ ifeq ($(TARGET_ARCH),arm)
 endif
 
 LOCAL_SRC_FILES += \
-    mdct.c \
+    mdct.c.arm \
     block.c \
-    window.c \
+    window.c.arm \
     synthesis.c \
     info.c \
-    floor1.c \
+    floor1.c.arm \
     floor0.c.arm \
     vorbisfile.c.arm \
     res012.c \
     mapping0.c \
     registry.c \
     codebook.c \
-    sharedbook.c \
+    sharedbook.c.arm \
 
 LOCAL_SHARED_LIBRARIES := ogg
 
