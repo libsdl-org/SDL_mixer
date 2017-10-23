@@ -39,10 +39,10 @@ LOCAL_SRC_FILES := \
     src/libFLAC/stream_encoder_intrin_avx2.c \
     src/libFLAC/stream_encoder_framing.c \
     src/libFLAC/window.c \
-	src/libFLAC/ogg_decoder_aspect.c \
-	src/libFLAC/ogg_encoder_aspect.c \
-	src/libFLAC/ogg_helper.c \
-	src/libFLAC/ogg_mapping.c
+    src/libFLAC/ogg_decoder_aspect.c \
+    src/libFLAC/ogg_encoder_aspect.c \
+    src/libFLAC/ogg_helper.c \
+    src/libFLAC/ogg_mapping.c
 
 LOCAL_EXPORT_C_INCLUDES += $(LOCAL_C_INCLUDES)
 
