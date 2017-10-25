@@ -118,9 +118,19 @@ SDL_bool Mix_HasChunkDecoder(const char *name)
     return SDL_FALSE;
 }
 
-static void add_chunk_decoder(const char *decoder)
+void add_chunk_decoder(const char *decoder)
 {
-    void *ptr = SDL_realloc((void *)chunk_decoders, (num_decoders + 1) * sizeof (const char *));
+    int i;
+    void *ptr;
+
+    /* Check to see if we already have this decoder */
+    for (i = 0; i < num_decoders; ++i) {
+        if (SDL_strcmp(chunk_decoders[i], decoder) == 0) {
+            return;
+        }
+    }
+
+    ptr = SDL_realloc((void *)chunk_decoders, (num_decoders + 1) * sizeof (const char *));
     if (ptr == NULL) {
         return;  /* oh well, go on without it. */
     }
@@ -140,44 +150,47 @@ int Mix_Init(int flags)
 {
     int result = 0;
 
-    load_music();
-
     if (flags & MIX_INIT_FLAC) {
-        if (has_music(MUS_FLAC)) {
+        if (load_music_type(MUS_FLAC)) {
+            open_music_type(MUS_FLAC);
             result |= MIX_INIT_FLAC;
         } else {
             Mix_SetError("FLAC support not available");
         }
     }
     if (flags & MIX_INIT_MOD) {
-        if (has_music(MUS_MOD)) {
+        if (load_music_type(MUS_MOD)) {
+            open_music_type(MUS_MOD);
             result |= MIX_INIT_MOD;
         } else {
             Mix_SetError("MOD support not available");
         }
     }
     if (flags & MIX_INIT_MP3) {
-        if (has_music(MUS_MP3)) {
+        if (load_music_type(MUS_MP3)) {
+            open_music_type(MUS_MP3);
             result |= MIX_INIT_MP3;
         } else {
             Mix_SetError("MP3 support not available");
         }
     }
     if (flags & MIX_INIT_OGG) {
-        if (has_music(MUS_OGG)) {
+        if (load_music_type(MUS_OGG)) {
+            open_music_type(MUS_OGG);
             result |= MIX_INIT_OGG;
         } else {
             Mix_SetError("OGG support not available");
         }
     }
     if (flags & MIX_INIT_MID) {
-        if (has_music(MUS_MID)) {
+        if (load_music_type(MUS_MID)) {
+            open_music_type(MUS_MID);
             result |= MIX_INIT_MID;
         } else {
             Mix_SetError("MIDI support not available");
         }
     }
-    return (result);
+    return result;
 }
 
 void Mix_Quit()
@@ -400,13 +413,6 @@ int Mix_OpenAudioDevice(int frequency, Uint16 format, int nchannels, int chunksi
     PrintFormat("Audio device", &mixer);
 #endif
 
-    /* Initialize the music players */
-    load_music();
-    if (open_music(&mixer) < 0) {
-        SDL_CloseAudioDevice(audio_device);
-        return(-1);
-    }
-
     num_channels = MIX_CHANNELS;
     mix_channel = (struct _Mix_Channel *) SDL_malloc(num_channels * sizeof(struct _Mix_Channel));
 
@@ -431,21 +437,9 @@ int Mix_OpenAudioDevice(int frequency, Uint16 format, int nchannels, int chunksi
     add_chunk_decoder("WAVE");
     add_chunk_decoder("AIFF");
     add_chunk_decoder("VOC");
-    if (has_music(MUS_MOD)) {
-        add_chunk_decoder("MOD");
-    }
-    if (has_music(MUS_MID)) {
-        add_chunk_decoder("MID");
-    }
-    if (has_music(MUS_OGG)) {
-        add_chunk_decoder("OGG");
-    }
-    if (has_music(MUS_MP3)) {
-        add_chunk_decoder("MP3");
-    }
-    if (has_music(MUS_FLAC)) {
-        add_chunk_decoder("FLAC");
-    }
+
+    /* Initialize the music players */
+    open_music(&mixer);
 
     audio_opened = 1;
     SDL_PauseAudioDevice(audio_device, 0);
@@ -536,6 +530,10 @@ static SDL_AudioSpec *Mix_LoadMusic_RW(Mix_MusicType music_type, SDL_RWops *src,
     int count = 0;
     int fragment_size;
 
+    if (!load_music_type(music_type) || !open_music_type(music_type)) {
+        return NULL;
+    }
+
     *spec = mixer;
 
     /* Use fragments sized on full audio frame boundaries - this'll do */
@@ -544,6 +542,9 @@ static SDL_AudioSpec *Mix_LoadMusic_RW(Mix_MusicType music_type, SDL_RWops *src,
     start = SDL_RWtell(src);
     for (i = 0; i < get_num_music_interfaces(); ++i) {
         interface = get_music_interface(i);
+        if (!interface->opened) {
+            continue;
+        }
         if (interface->type != music_type) {
             continue;
         }

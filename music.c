@@ -42,6 +42,9 @@
 #include "music_flac.h"
 #include "native_midi/native_midi.h"
 
+/* Set this hint to true if you want verbose logging of music interfaces */
+#define SDL_MIXER_HINT_DEBUG_MUSIC_INTERFACES \
+    "SDL_MIXER_DEBUG_MUSIC_INTERFACES"
 
 char *music_cmd = NULL;
 static SDL_bool music_active = SDL_TRUE;
@@ -135,7 +138,17 @@ const char *Mix_GetMusicDecoder(int index)
 
 static void add_music_decoder(const char *decoder)
 {
-    void *ptr = SDL_realloc((void *)music_decoders, (num_decoders + 1) * sizeof (const char *));
+    void *ptr;
+    int i;
+
+    /* Check to see if we already have this decoder */
+    for (i = 0; i < num_decoders; ++i) {
+        if (SDL_strcmp(music_decoders[i], decoder) == 0) {
+            return;
+        }
+    }
+
+    ptr = SDL_realloc((void *)music_decoders, (num_decoders + 1) * sizeof (const char *));
     if (ptr == NULL) {
         return;  /* oh well, go on without it. */
     }
@@ -252,28 +265,123 @@ void SDLCALL music_mixer(void *udata, Uint8 *stream, int len)
     }
 }
 
-/* Load the music interface libraries */
-int load_music(void)
+/* Load the music interface libraries for a given music type */
+SDL_bool load_music_type(Mix_MusicType type)
 {
-    char hint[128];
-
-    int i;
+    int i, loaded = 0;
     for (i = 0; i < SDL_arraysize(s_music_interfaces); ++i) {
         Mix_MusicInterface *interface = s_music_interfaces[i];
-        if (interface->loaded) {
+        if (interface->type != type) {
             continue;
         }
+        if (!interface->loaded) {
+            char hint[64];
+            SDL_snprintf(hint, sizeof(hint), "SDL_MIXER_DISABLE_%s", interface->tag);
+            if (SDL_GetHintBoolean(hint, SDL_FALSE)) {
+                continue;
+            }
 
-        SDL_snprintf(hint, sizeof(hint), "SDL_MIXER_DISABLE_%s", interface->tag);
-        if (SDL_GetHintBoolean(hint, SDL_FALSE)) {
-            continue;
-        }
-
-        if (!interface->Load || interface->Load() == 0) {
+            if (interface->Load && interface->Load() < 0) {
+                if (SDL_GetHintBoolean(SDL_MIXER_HINT_DEBUG_MUSIC_INTERFACES, SDL_FALSE)) {
+                    SDL_Log("Couldn't load %s: %s\n", interface->tag, Mix_GetError());
+                }
+                continue;
+            }
             interface->loaded = SDL_TRUE;
         }
+        ++loaded;
     }
-    return 0;
+    return (loaded > 0) ? SDL_TRUE : SDL_FALSE;
+}
+
+/* Open the music interfaces for a given music type */
+SDL_bool open_music_type(Mix_MusicType type)
+{
+    int i, opened = 0;
+    SDL_bool use_native_midi = SDL_FALSE;
+
+    if (!music_spec.format) {
+        /* Music isn't opened yet */
+        return SDL_FALSE;
+    }
+
+#ifdef MUSIC_MID_NATIVE
+    if (type == MUS_MID && SDL_GetHintBoolean("SDL_NATIVE_MUSIC", SDL_FALSE) && native_midi_detect()) {
+        use_native_midi = SDL_TRUE;
+    }
+#endif
+
+    for (i = 0; i < SDL_arraysize(s_music_interfaces); ++i) {
+        Mix_MusicInterface *interface = s_music_interfaces[i];
+        if (!interface->loaded) {
+            continue;
+        }
+        if (type != MUS_NONE && interface->type != type) {
+            continue;
+        }
+
+        if (interface->type == MUS_MID && use_native_midi && interface->api != MIX_MUSIC_NATIVEMIDI) {
+            continue;
+        }
+
+        if (!interface->opened) {
+            if (interface->Open && interface->Open(&music_spec) < 0) {
+                if (SDL_GetHintBoolean(SDL_MIXER_HINT_DEBUG_MUSIC_INTERFACES, SDL_FALSE)) {
+                    SDL_Log("Couldn't open %s: %s\n", interface->tag, Mix_GetError());
+                }
+                continue;
+            }
+            interface->opened = SDL_TRUE;
+            add_music_decoder(interface->tag);
+        }
+        ++opened;
+    }
+
+    if (has_music(MUS_MOD)) {
+        add_music_decoder("MOD");
+        add_chunk_decoder("MOD");
+    }
+    if (has_music(MUS_MID)) {
+        add_music_decoder("MIDI");
+        add_chunk_decoder("MID");
+    }
+    if (has_music(MUS_OGG)) {
+        add_music_decoder("OGG");
+        add_chunk_decoder("OGG");
+    }
+    if (has_music(MUS_MP3)) {
+        add_music_decoder("MP3");
+        add_chunk_decoder("MP3");
+    }
+    if (has_music(MUS_FLAC)) {
+        add_music_decoder("FLAC");
+        add_chunk_decoder("FLAC");
+    }
+
+    return (opened > 0) ? SDL_TRUE : SDL_FALSE;
+}
+
+/* Initialize the music interfaces with a certain desired audio format */
+void open_music(const SDL_AudioSpec *spec)
+{
+#ifdef MIX_INIT_SOUNDFONT_PATHS
+    if (!soundfont_paths) {
+        soundfont_paths = SDL_strdup(MIX_INIT_SOUNDFONT_PATHS);
+    }
+#endif
+
+    /* Load the music interfaces that don't have explicit initialization */
+    load_music_type(MUS_CMD);
+    load_music_type(MUS_WAV);
+
+    /* Open all the interfaces that are loaded */
+    music_spec = *spec;
+    open_music_type(MUS_NONE);
+
+    Mix_VolumeMusic(MIX_MAX_VOLUME);
+
+    /* Calculate the number of ms for each callback */
+    ms_per_step = (int) (((float)spec->samples * 1000.0) / spec->freq);
 }
 
 /* Return SDL_TRUE if the music type is available */
@@ -290,60 +398,6 @@ SDL_bool has_music(Mix_MusicType type)
         }
     }
     return SDL_FALSE;
-}
-
-/* Initialize the music interfaces with a certain desired audio format */
-int open_music(const SDL_AudioSpec *spec)
-{
-    int i;
-    SDL_bool use_native_midi = SDL_FALSE;
-
-#ifdef MIX_INIT_SOUNDFONT_PATHS
-    if (!soundfont_paths) {
-        soundfont_paths = SDL_strdup(MIX_INIT_SOUNDFONT_PATHS);
-    }
-#endif
-
-
-#ifdef MUSIC_MID_NATIVE
-    if (SDL_GetHintBoolean("SDL_NATIVE_MUSIC", SDL_FALSE) && native_midi_detect()) {
-        use_native_midi = SDL_TRUE;
-    }
-#endif
-
-    music_spec = *spec;
-    for (i = 0; i < SDL_arraysize(s_music_interfaces); ++i) {
-        Mix_MusicInterface *interface = s_music_interfaces[i];
-        if (!interface->loaded) {
-            continue;
-        }
-
-        if (interface->type == MUS_MID && use_native_midi && interface->api != MIX_MUSIC_NATIVEMIDI) {
-            continue;
-        }
-
-        if (!interface->Open || interface->Open(spec) == 0) {
-            interface->opened = SDL_TRUE;
-            add_music_decoder(interface->tag);
-        }
-    }
-
-    if (has_music(MUS_MOD)) {
-        add_music_decoder("MOD");
-    }
-    if (has_music(MUS_MID)) {
-        add_music_decoder("MIDI");
-    }
-    if (has_music(MUS_MP3)) {
-        add_music_decoder("MP3");
-    }
-
-    Mix_VolumeMusic(MIX_MAX_VOLUME);
-
-    /* Calculate the number of ms for each callback */
-    ms_per_step = (int) (((float)spec->samples * 1000.0) / spec->freq);
-
-    return 0;
 }
 
 Mix_MusicType detect_music_type_from_magic(const Uint8 *magic)
@@ -509,32 +563,34 @@ Mix_Music *Mix_LoadMUSType_RW(SDL_RWops *src, Mix_MusicType type, int freesrc)
 
     Mix_ClearError();
 
-    for (i = 0; i < SDL_arraysize(s_music_interfaces); ++i) {
-        Mix_MusicInterface *interface = s_music_interfaces[i];
-        if (!interface->opened || type != interface->type || !interface->CreateFromRW) {
-            continue;
-        }
-
-        context = interface->CreateFromRW(src, freesrc);
-        if (context) {
-            /* Allocate memory for the music structure */
-            Mix_Music *music = (Mix_Music *)SDL_calloc(1, sizeof(Mix_Music));
-            if (music == NULL) {
-                interface->Delete(context);
-                Mix_SetError("Out of memory");
-                return NULL;
+    if (load_music_type(type) && open_music_type(type)) {
+        for (i = 0; i < SDL_arraysize(s_music_interfaces); ++i) {
+            Mix_MusicInterface *interface = s_music_interfaces[i];
+            if (!interface->opened || type != interface->type || !interface->CreateFromRW) {
+                continue;
             }
-            music->interface = interface;
-            music->context = context;
-#ifdef DEBUG_MUSIC
-            /* This would be useful to expose via an API */
-            SDL_Log("Music playing with %s\n", interface->tag);
-#endif
-            return music;
-        }
 
-        /* Reset the stream for the next decoder */
-        SDL_RWseek(src, start, RW_SEEK_SET);
+            context = interface->CreateFromRW(src, freesrc);
+            if (context) {
+                /* Allocate memory for the music structure */
+                Mix_Music *music = (Mix_Music *)SDL_calloc(1, sizeof(Mix_Music));
+                if (music == NULL) {
+                    interface->Delete(context);
+                    Mix_SetError("Out of memory");
+                    return NULL;
+                }
+                music->interface = interface;
+                music->context = context;
+
+                if (SDL_GetHintBoolean(SDL_MIXER_HINT_DEBUG_MUSIC_INTERFACES, SDL_FALSE)) {
+                    SDL_Log("Loaded music with %s\n", interface->tag);
+                }
+                return music;
+            }
+
+            /* Reset the stream for the next decoder */
+            SDL_RWseek(src, start, RW_SEEK_SET);
+        }
     }
 
     if (!*Mix_GetError()) {
