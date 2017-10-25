@@ -42,6 +42,11 @@
 #include "music_flac.h"
 #include "native_midi/native_midi.h"
 
+/* Check to make sure we are building with a new enough SDL */
+#if SDL_COMPILEDVERSION < SDL_VERSIONNUM(2, 0, 7)
+#error You need SDL 2.0.7 or newer from http://www.libsdl.org
+#endif
+
 /* Set this hint to true if you want verbose logging of music interfaces */
 #define SDL_MIXER_HINT_DEBUG_MUSIC_INTERFACES \
     "SDL_MIXER_DEBUG_MUSIC_INTERFACES"
