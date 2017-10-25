@@ -23,4 +23,6 @@
 extern void Mix_LockAudio(void);
 extern void Mix_UnlockAudio(void);
 
+extern void add_chunk_decoder(const char *decoder);
+
 /* vi: set ts=4 sw=4 expandtab: */

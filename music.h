@@ -103,12 +103,13 @@ typedef struct
 } Mix_MusicInterface;
 
 
-extern int load_music(void);
-extern Mix_MusicType detect_music_type_from_magic(const Uint8 *magic);
 extern int get_num_music_interfaces(void);
 extern Mix_MusicInterface *get_music_interface(int index);
+extern Mix_MusicType detect_music_type_from_magic(const Uint8 *magic);
+extern SDL_bool load_music_type(Mix_MusicType type);
+extern SDL_bool open_music_type(Mix_MusicType type);
 extern SDL_bool has_music(Mix_MusicType type);
-extern int open_music(const SDL_AudioSpec *spec);
+extern void open_music(const SDL_AudioSpec *spec);
 extern int music_pcm_getaudio(void *context, void *data, int bytes, int volume,
                               int (*GetSome)(void *context, void *data, int bytes, SDL_bool *done));
 extern void SDLCALL music_mixer(void *udata, Uint8 *stream, int len);
