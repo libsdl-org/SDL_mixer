@@ -20,7 +20,7 @@ SUPPORT_MOD_MODPLUG ?= true
 MODPLUG_LIBRARY_PATH := external/libmodplug-0.8.9.0
 
 # Enable this if you want to support TiMidity
-SUPPORT_TIMIDITY ?= true
+SUPPORT_MID_TIMIDITY ?= true
 TIMIDITY_LIBRARY_PATH := timidity
 
 
@@ -46,7 +46,7 @@ ifeq ($(SUPPORT_MOD_MODPLUG),true)
 endif
 
 # Build the library
-ifeq ($(SUPPORT_TIMIDITY),true)
+ifeq ($(SUPPORT_MID_TIMIDITY),true)
     include $(MY_LOCAL_PATH)/$(TIMIDITY_LIBRARY_PATH)/Android.mk
 endif
 
@@ -92,7 +92,7 @@ ifeq ($(SUPPORT_MOD_MODPLUG),true)
     LOCAL_STATIC_LIBRARIES += modplug
 endif
 
-ifeq ($(SUPPORT_TIMIDITY),true)
+ifeq ($(SUPPORT_MID_TIMIDITY),true)
     LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(TIMIDITY_LIBRARY_PATH)
     LOCAL_CFLAGS += -DMUSIC_MID_TIMIDITY
     LOCAL_STATIC_LIBRARIES += timidity
