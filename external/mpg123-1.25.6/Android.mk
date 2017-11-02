@@ -88,6 +88,11 @@ endif
 
 LOCAL_CFLAGS := $(DECODER_CFLAGS)
 
+# This disables the following warning:
+#   warning: shared library text segment is not shareable
+# However, the library still has PIC unaware assembly!
+LOCAL_DISABLE_FATAL_LINKER_WARNINGS = true
+
 LOCAL_SRC_FILES := \
     src/libmpg123/parse.c \
     src/libmpg123/frame.c \
