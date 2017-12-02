@@ -34,6 +34,34 @@ DECODER_SRC_NEON := \
     src/libmpg123/synth_real.c \
     src/libmpg123/feature.c \
 
+DECODER_CFLAGS_NEON64 := -DOPT_MULTI -DOPT_GENERIC -DOPT_GENERIC_DITHER -DOPT_NEON64 -DREAL_IS_FLOAT
+
+DECODER_SRC_NEON64 := \
+    src/libmpg123/stringbuf.c \
+    src/libmpg123/icy.c \
+    src/libmpg123/icy2utf8.c \
+    src/libmpg123/ntom.c \
+    src/libmpg123/synth.c \
+    src/libmpg123/synth_8bit.c \
+    src/libmpg123/layer1.c \
+    src/libmpg123/layer2.c \
+    src/libmpg123/layer3.c \
+    src/libmpg123/dct36_neon64.S \
+    src/libmpg123/dct64_neon64_float.S \
+    src/libmpg123/synth_neon64_float.S \
+    src/libmpg123/synth_neon64_s32.S \
+    src/libmpg123/synth_stereo_neon64_float.S \
+    src/libmpg123/synth_stereo_neon64_s32.S \
+    src/libmpg123/dct64_neon64.S \
+    src/libmpg123/synth_neon64.S \
+    src/libmpg123/synth_stereo_neon64.S \
+    src/libmpg123/synth_s32.c \
+    src/libmpg123/synth_real.c \
+    src/libmpg123/dither.c \
+    src/libmpg123/getcpuflags_arm.c \
+    src/libmpg123/check_neon.S \
+    src/libmpg123/feature.c \
+
 DECODER_CFLAGS_X86 := -DOPT_MULTI -DOPT_GENERIC -DOPT_GENERIC_DITHER -DOPT_I386 -DOPT_I586 -DOPT_I586_DITHER -DOPT_MMX -DOPT_3DNOW -DOPT_3DNOW_VINTAGE -DOPT_3DNOWEXT -DOPT_3DNOWEXT_VINTAGE -DOPT_SSE -DOPT_SSE_VINTAGE -DREAL_IS_FLOAT
 
 DECODER_SRC_X86 := \
@@ -134,6 +162,10 @@ endif
 ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
 DECODER_CFLAGS := $(DECODER_CFLAGS_NEON)
 DECODER_SRC := $(DECODER_SRC_NEON)
+endif
+ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
+DECODER_CFLAGS := $(DECODER_CFLAGS_NEON64)
+DECODER_SRC := $(DECODER_SRC_NEON64)
 endif
 ifeq ($(TARGET_ARCH_ABI),x86)
 DECODER_CFLAGS := $(DECODER_CFLAGS_X86)
