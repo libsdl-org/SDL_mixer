@@ -62,9 +62,27 @@ DECODER_SRC_NEON64 := \
     src/libmpg123/check_neon.S \
     src/libmpg123/feature.c \
 
-DECODER_CFLAGS_X86 := -DOPT_MULTI -DOPT_GENERIC -DOPT_GENERIC_DITHER -DOPT_I386 -DOPT_I586 -DOPT_I586_DITHER -DOPT_MMX -DOPT_3DNOW -DOPT_3DNOW_VINTAGE -DOPT_3DNOWEXT -DOPT_3DNOWEXT_VINTAGE -DOPT_SSE -DOPT_SSE_VINTAGE -DREAL_IS_FLOAT
+# Unfortunately the assembly isn't relocatable so doesn't work on modern
+# Android devices
+DECODER_CFLAGS_X86 := -DOPT_GENERIC -DREAL_IS_FLOAT
+DECODER_CFLAGS_X86_ASM := -DOPT_MULTI -DOPT_GENERIC -DOPT_GENERIC_DITHER -DOPT_I386 -DOPT_I586 -DOPT_I586_DITHER -DOPT_MMX -DOPT_3DNOW -DOPT_3DNOW_VINTAGE -DOPT_3DNOWEXT -DOPT_3DNOWEXT_VINTAGE -DOPT_SSE -DOPT_SSE_VINTAGE -DREAL_IS_FLOAT
 
 DECODER_SRC_X86 := \
+    src/libmpg123/feature.c \
+    src/libmpg123/icy2utf8.c \
+    src/libmpg123/icy.c \
+    src/libmpg123/layer1.c \
+    src/libmpg123/layer2.c \
+    src/libmpg123/layer3.c \
+    src/libmpg123/ntom.c \
+    src/libmpg123/stringbuf.c \
+    src/libmpg123/synth_8bit.c \
+    src/libmpg123/synth.c \
+    src/libmpg123/synth_real.c \
+    src/libmpg123/synth_s32.c \
+    src/libmpg123/dither.c \
+
+DECODER_SRC_X86_ASM := \
     src/libmpg123/stringbuf.c \
     src/libmpg123/icy.c \
     src/libmpg123/icy2utf8.c \
@@ -185,11 +203,6 @@ DECODER_SRC := $(DECODER_SRC_MIPS)
 endif
 
 LOCAL_CFLAGS := $(DECODER_CFLAGS)
-
-# This disables the following warning:
-#   warning: shared library text segment is not shareable
-# However, the library still has PIC unaware assembly!
-LOCAL_DISABLE_FATAL_LINKER_WARNINGS = true
 
 LOCAL_SRC_FILES := \
     src/libmpg123/parse.c \
