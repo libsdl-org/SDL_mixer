@@ -25,7 +25,7 @@ BEGIN
             VALUE "FileDescription", "SDL_mixer\0"
             VALUE "FileVersion", "2, 0, 2, 0\0"
             VALUE "InternalName", "SDL_mixer\0"
-            VALUE "LegalCopyright", "Copyright © 2017 Sam Lantinga\0"
+            VALUE "LegalCopyright", "Copyright © 2018 Sam Lantinga\0"
             VALUE "OriginalFilename", "SDL_mixer.dll\0"
             VALUE "ProductName", "Simple DirectMedia Layer\0"
             VALUE "ProductVersion", "2, 0, 2, 0\0"
