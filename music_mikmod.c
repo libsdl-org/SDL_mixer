@@ -254,7 +254,7 @@ int LMM_Seek(struct MREADER *mr,long to,int dir)
         if (offset < lmmmr->offset)
             return -1;
     }
-    return (int)(SDL_RWseek(lmmmr->src, offset, dir));
+    return (SDL_RWseek(lmmmr->src, offset, dir) < 0) ? -1 : 0;
 }
 long LMM_Tell(struct MREADER *mr)
 {
