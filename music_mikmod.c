@@ -119,7 +119,8 @@ static int MIKMOD_Load()
             mikmod.MikMod_free = free;
         }
 #else
-#if LIBMIKMOD_VERSION < ((3<<16)|(2<<8))
+#if (LIBMIKMOD_VERSION < 0x030200) || !defined(DMODE_NOISEREDUCTION)
+        /* libmikmod 3.2.0-beta2 or older */
         mikmod.MikMod_free = free;
 #else
         mikmod.MikMod_free = MikMod_free;
