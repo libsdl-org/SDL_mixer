@@ -674,6 +674,50 @@ else
     AC_MSG_WARN([MP3 support disabled])
 fi
 
+AC_ARG_ENABLE([music-opus],
+AC_HELP_STRING([--enable-music-opus], [enable Opus music [[default=yes]]]),
+              [], [enable_music_opus=yes])
+
+AC_ARG_ENABLE([music-opus-shared],
+AC_HELP_STRING([--enable-music-opus-shared], [dynamically load opusfile library [[default=yes]]]),
+              [], [enable_music_opus_shared=yes])
+if test x$enable_music_opus = xyes; then
+    PKG_CHECK_MODULES([OPUSFILE], [opusfile >= 0.2], [dnl
+            have_opusfile_hdr=yes
+            have_opusfile_lib=yes
+        ], [dnl
+            AC_CHECK_HEADER([opus/opusfile.h], [have_opusfile_hdr=yes])
+            AC_CHECK_LIB([opusfile], [op_open_callbacks], [have_opusfile_lib=yes])
+        ])
+
+    if test x$have_opusfile_hdr = xyes -a x$have_opusfile_lib = xyes; then
+        have_opusfile=yes
+        case "$host" in
+            *-*-darwin*)
+                opusfile_lib=[`find_lib libopusfile.dylib`]
+                ;;
+            *-*-cygwin* | *-*-mingw32*)
+                opusfile_lib=[`find_lib "libopusfile*.dll"`]
+                ;;
+            *)
+                opusfile_lib=[`find_lib "libopusfile[0-9]*.so.*"`]
+                if test x$opusfile_lib = x; then
+                    opusfile_lib=[`find_lib "libopusfile.so.*"`]
+                fi
+                ;;
+        esac
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_OPUS $OPUSFILE_CFLAGS"
+        if test x$enable_music_opus_shared = xyes && test x$opusfile_lib != x; then
+            echo "-- dynamic opusfile -> $opusfile_lib"
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DOPUS_DYNAMIC=\\\"$opusfile_lib\\\""
+        else
+            EXTRA_LDFLAGS="$EXTRA_LDFLAGS $OPUSFILE_LIBS"
+        fi
+    else
+        AC_MSG_WARN([*** Unable to find opusfile library (http://opus-codec.org/)])
+    fi
+fi
+
 EXTRA_LDFLAGS="$EXTRA_LDFLAGS $LIBM"
 
 OBJECTS=`echo $SOURCES`
