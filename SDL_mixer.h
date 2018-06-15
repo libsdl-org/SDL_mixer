@@ -80,7 +80,8 @@ typedef enum
     MIX_INIT_MOD    = 0x00000002,
     MIX_INIT_MP3    = 0x00000008,
     MIX_INIT_OGG    = 0x00000010,
-    MIX_INIT_MID    = 0x00000020
+    MIX_INIT_MID    = 0x00000020,
+    MIX_INIT_OPUS   = 0x00000040
 } MIX_InitFlags;
 
 /* Loads dynamic libraries and prepares them for use.  Flags should be
@@ -134,7 +135,8 @@ typedef enum {
     MUS_MP3,
     MUS_MP3_MAD_UNUSED,
     MUS_FLAC,
-    MUS_MODPLUG_UNUSED
+    MUS_MODPLUG_UNUSED,
+    MUS_OPUS
 } Mix_MusicType;
 
 /* The internal format for a music chunk interpreted via mikmod */

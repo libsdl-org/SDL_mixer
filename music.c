@@ -36,6 +36,7 @@
 #include "music_fluidsynth.h"
 #include "music_timidity.h"
 #include "music_ogg.h"
+#include "music_opus.h"
 #include "music_mpg123.h"
 #include "music_mad.h"
 #include "music_smpeg.h"
@@ -91,6 +92,9 @@ static Mix_MusicInterface *s_music_interfaces[] =
 #endif
 #ifdef MUSIC_OGG
     &Mix_MusicInterface_OGG,
+#endif
+#ifdef MUSIC_OPUS
+    &Mix_MusicInterface_Opus,
 #endif
 #ifdef MUSIC_MP3_MPG123
     &Mix_MusicInterface_MPG123,
@@ -354,6 +358,10 @@ SDL_bool open_music_type(Mix_MusicType type)
         add_music_decoder("OGG");
         add_chunk_decoder("OGG");
     }
+    if (has_music(MUS_OPUS)) {
+        add_music_decoder("OPUS");
+        add_chunk_decoder("OPUS");
+    }
     if (has_music(MUS_MP3)) {
         add_music_decoder("MP3");
         add_chunk_decoder("MP3");
@@ -438,6 +446,7 @@ Mix_MusicType detect_music_type_from_magic(const Uint8 *magic)
 static Mix_MusicType detect_music_type(SDL_RWops *src)
 {
     Uint8 magic[12];
+    Mix_MusicType t;
 
     if (SDL_RWread(src, magic, 1, 12) != 12) {
         Mix_SetError("Couldn't read first 12 bytes of audio data");
@@ -451,8 +460,17 @@ static Mix_MusicType detect_music_type(SDL_RWops *src)
         (SDL_memcmp(magic, "FORM", 4) == 0)) {
         return MUS_WAV;
     }
-
-    return detect_music_type_from_magic(magic);
+    t = detect_music_type_from_magic(magic);
+    if (t == MUS_OGG) {
+        Sint64 pos = SDL_RWtell(src);
+        SDL_RWseek(src, 28, RW_SEEK_CUR);
+        SDL_RWread(src, magic, 1, 8);
+        SDL_RWseek(src, pos, RW_SEEK_SET);
+        if (SDL_memcmp(magic, "OpusHead", 8) == 0) {
+            return MUS_OPUS;
+        }
+    }
+    return t;
 }
 
 /* Load a music file */
@@ -503,6 +521,8 @@ Mix_Music *Mix_LoadMUS(const char *file)
             type = MUS_MID;
         } else if (SDL_strcasecmp(ext, "OGG") == 0) {
             type = MUS_OGG;
+        } else if (SDL_strcasecmp(ext, "OPUS") == 0) {
+            type = MUS_OPUS;
         } else if (SDL_strcasecmp(ext, "FLAC") == 0) {
             type = MUS_FLAC;
         } else  if (SDL_strcasecmp(ext, "MPG") == 0 ||

@@ -182,6 +182,14 @@ int Mix_Init(int flags)
             Mix_SetError("OGG support not available");
         }
     }
+    if (flags & MIX_INIT_OPUS) {
+        if (load_music_type(MUS_OPUS)) {
+            open_music_type(MUS_OPUS);
+            result |= MIX_INIT_OPUS;
+        } else {
+            Mix_SetError("OPUS support not available");
+        }
+    }
     if (flags & MIX_INIT_MID) {
         if (load_music_type(MUS_MID)) {
             open_music_type(MUS_MID);
