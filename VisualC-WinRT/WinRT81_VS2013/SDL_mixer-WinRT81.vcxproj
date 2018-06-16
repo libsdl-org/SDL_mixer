@@ -57,6 +57,7 @@
     <ClCompile Include="..\..\music_mpg123.c" />
     <ClCompile Include="..\..\music_nativemidi.c" />
     <ClCompile Include="..\..\music_ogg.c" />
+    <ClCompile Include="..\..\music_opus.c" />
     <ClCompile Include="..\..\music_smpeg.c" />
     <ClCompile Include="..\..\music_timidity.c" />
     <ClCompile Include="..\..\music_wav.c" />
@@ -85,6 +86,7 @@
     <ClInclude Include="..\..\music_mpg123.h" />
     <ClInclude Include="..\..\music_nativemidi.h" />
     <ClInclude Include="..\..\music_ogg.h" />
+    <ClInclude Include="..\..\music_opus.h" />
     <ClInclude Include="..\..\music_smpeg.h" />
     <ClInclude Include="..\..\music_timidity.h" />
     <ClInclude Include="..\..\music_wav.h" />
