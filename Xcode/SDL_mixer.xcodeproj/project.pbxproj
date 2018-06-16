@@ -9,6 +9,12 @@
 /* Begin PBXBuildFile section */
 		0448E8AE108B937A00C9D3EA /* native_midi_macosx.c in Sources */ = {isa = PBXBuildFile; fileRef = 0448E8AD108B937A00C9D3EA /* native_midi_macosx.c */; };
 		0448E8AF108B937A00C9D3EA /* native_midi_macosx.c in Sources */ = {isa = PBXBuildFile; fileRef = 0448E8AD108B937A00C9D3EA /* native_midi_macosx.c */; };
+		630FBD7720D52063009867AB /* Opus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 630FBD7620D52063009867AB /* Opus.framework */; };
+		630FBD7D20D5206E009867AB /* OpusFile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 630FBD7C20D5206E009867AB /* OpusFile.framework */; };
+		630FBD8320D52105009867AB /* music_opus.c in Sources */ = {isa = PBXBuildFile; fileRef = 630FBD8220D52105009867AB /* music_opus.c */; };
+		630FBD8520D5211F009867AB /* music_opus.h in Headers */ = {isa = PBXBuildFile; fileRef = 630FBD8420D5211F009867AB /* music_opus.h */; };
+		63CD6ADC20D52DE20096FB34 /* Opus.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 630FBD7620D52063009867AB /* Opus.framework */; };
+		63CD6ADD20D52DE90096FB34 /* OpusFile.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 630FBD7C20D5206E009867AB /* OpusFile.framework */; };
 		AA6021301765383B00662B9C /* modplug.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = AA60212F1765382200662B9C /* modplug.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		AA644290175AA7C900A2125A /* mpg123.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = AA64428E175AA7A500A2125A /* mpg123.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		AA6442D3175B181D00A2125A /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA6442D2175B181D00A2125A /* AudioUnit.framework */; };
@@ -93,6 +99,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				63CD6ADC20D52DE20096FB34 /* Opus.framework in Copy Frameworks */,
+				63CD6ADD20D52DE90096FB34 /* OpusFile.framework in Copy Frameworks */,
 				AA9F7DB914B15D3300278D1E /* FLAC.framework in Copy Frameworks */,
 				AA6021301765383B00662B9C /* modplug.framework in Copy Frameworks */,
 				AA644290175AA7C900A2125A /* mpg123.framework in Copy Frameworks */,
@@ -107,6 +115,10 @@
 /* Begin PBXFileReference section */
 		0448E8AD108B937A00C9D3EA /* native_midi_macosx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = native_midi_macosx.c; sourceTree = "<group>"; };
 		1014BAEA010A4B677F000001 /* SDL_mixer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SDL_mixer.h; path = ../SDL_mixer.h; sourceTree = SOURCE_ROOT; };
+		630FBD7620D52063009867AB /* Opus.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Opus.framework; path = Frameworks/Opus.framework; sourceTree = "<group>"; };
+		630FBD7C20D5206E009867AB /* OpusFile.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpusFile.framework; path = Frameworks/OpusFile.framework; sourceTree = "<group>"; };
+		630FBD8220D52105009867AB /* music_opus.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = music_opus.c; path = ../music_opus.c; sourceTree = SOURCE_ROOT; };
+		630FBD8420D5211F009867AB /* music_opus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = music_opus.h; path = ../music_opus.h; sourceTree = SOURCE_ROOT; };
 		AA60212F1765382200662B9C /* modplug.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = modplug.framework; path = Frameworks/modplug.framework; sourceTree = "<group>"; };
 		AA64428E175AA7A500A2125A /* mpg123.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = mpg123.framework; path = Frameworks/mpg123.framework; sourceTree = "<group>"; };
 		AA6442D0175B181300A2125A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
@@ -190,6 +202,8 @@
 				AA6442D3175B181D00A2125A /* AudioUnit.framework in Frameworks */,
 				AA6442D5175B185800A2125A /* CoreServices.framework in Frameworks */,
 				BE1FA90207AF96B2004B6283 /* SDL2.framework in Frameworks */,
+				630FBD7720D52063009867AB /* Opus.framework in Frameworks */,
+				630FBD7D20D5206E009867AB /* OpusFile.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -245,6 +259,8 @@
 		08FB77ACFE841707C02AAC07 /* Library Source */ = {
 			isa = PBXGroup;
 			children = (
+				630FBD8420D5211F009867AB /* music_opus.h */,
+				630FBD8220D52105009867AB /* music_opus.c */,
 				F51BFAFD01F724BE01D3D55B /* native_midi */,
 				5CC1B87F012FB8CD7F000001 /* timidity */,
 				AAE405D01F9607C100EDAF53 /* effect_position.c */,
@@ -334,6 +350,8 @@
 				AA9F7DB314B15ADC00278D1E /* Ogg.framework */,
 				BE1FA8AE07AF95F7004B6283 /* SDL2.framework */,
 				AA9F7DB414B15ADC00278D1E /* Vorbis.framework */,
+				630FBD7620D52063009867AB /* Opus.framework */,
+				630FBD7C20D5206E009867AB /* OpusFile.framework */,
 			);
 			name = "Linked Frameworks";
 			sourceTree = "<group>";
@@ -401,6 +419,7 @@
 				AAE405E61F9607C300EDAF53 /* music.h in Headers */,
 				BE1FA8CD07AF96B2004B6283 /* SDL_mixer.h in Headers */,
 				AAE405F51F9607C300EDAF53 /* music_ogg.h in Headers */,
+				630FBD8520D5211F009867AB /* music_opus.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -602,6 +621,7 @@
 				AAE405E81F9607C300EDAF53 /* music_modplug.c in Sources */,
 				AAE405E51F9607C300EDAF53 /* mixer.c in Sources */,
 				0448E8AE108B937A00C9D3EA /* native_midi_macosx.c in Sources */,
+				630FBD8320D52105009867AB /* music_opus.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -645,6 +665,7 @@
 					MUSIC_MID_NATIVE,
 					MUSIC_OGG,
 					MUSIC_FLAC,
+					MUSIC_OPUS,
 				);
 				INFOPLIST_FILE = "Info-Framework.plist";
 				INSTALL_PATH = "@rpath";
@@ -686,6 +707,7 @@
 					MUSIC_MID_NATIVE,
 					MUSIC_OGG,
 					MUSIC_FLAC,
+					MUSIC_OPUS,
 				);
 				INFOPLIST_FILE = "Info-Framework.plist";
 				INSTALL_PATH = "@rpath";
@@ -825,6 +847,7 @@
 					MUSIC_MID_NATIVE,
 					MUSIC_OGG,
 					MUSIC_FLAC,
+					MUSIC_OPUS,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -838,7 +861,7 @@
 					"$(HOME)/Library/Frameworks/SDL2.framework/Headers",
 					/Library/Frameworks/SDL2.framework/Headers,
 				);
-				HEADER_SEARCH_PATHS_QUOTED = "\"$(SRCROOT)/Frameworks/modplug.framework/Headers\" \"$(SRCROOT)/Frameworks/Ogg.framework/Headers\" \"$(SRCROOT)/Frameworks/Vorbis.framework/Headers\" \"$(SRCROOT)/Frameworks/FLAC.framework/Headers\" \"$(SRCROOT)/Frameworks/mpg123.framework/Headers\"";
+				HEADER_SEARCH_PATHS_QUOTED = "\"$(SRCROOT)/Frameworks/modplug.framework/Headers\" \"$(SRCROOT)/Frameworks/Ogg.framework/Headers\" \"$(SRCROOT)/Frameworks/Vorbis.framework/Headers\" \"$(SRCROOT)/Frameworks/Opus.framework/Headers\" \"$(SRCROOT)/Frameworks/OpusFile.framework/Headers\" \"$(SRCROOT)/Frameworks/FLAC.framework/Headers\" \"$(SRCROOT)/Frameworks/mpg123.framework/Headers\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_NAME = SDL2_mixer;
 				SDKROOT = macosx;
@@ -884,6 +907,7 @@
 					MUSIC_MID_NATIVE,
 					MUSIC_OGG,
 					MUSIC_FLAC,
+					MUSIC_OPUS,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -897,7 +921,7 @@
 					"$(HOME)/Library/Frameworks/SDL2.framework/Headers",
 					/Library/Frameworks/SDL2.framework/Headers,
 				);
-				HEADER_SEARCH_PATHS_QUOTED = "\"$(SRCROOT)/Frameworks/modplug.framework/Headers\" \"$(SRCROOT)/Frameworks/Ogg.framework/Headers\" \"$(SRCROOT)/Frameworks/Vorbis.framework/Headers\" \"$(SRCROOT)/Frameworks/FLAC.framework/Headers\" \"$(SRCROOT)/Frameworks/mpg123.framework/Headers\"";
+				HEADER_SEARCH_PATHS_QUOTED = "\"$(SRCROOT)/Frameworks/modplug.framework/Headers\" \"$(SRCROOT)/Frameworks/Ogg.framework/Headers\" \"$(SRCROOT)/Frameworks/Vorbis.framework/Headers\" \"$(SRCROOT)/Frameworks/Opus.framework/Headers\" \"$(SRCROOT)/Frameworks/OpusFile.framework/Headers\" \"$(SRCROOT)/Frameworks/FLAC.framework/Headers\" \"$(SRCROOT)/Frameworks/mpg123.framework/Headers\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = SDL2_mixer;
