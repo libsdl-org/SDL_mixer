@@ -17,6 +17,7 @@
     <ClCompile Include="..\..\music_mpg123.c" />
     <ClCompile Include="..\..\music_nativemidi.c" />
     <ClCompile Include="..\..\music_ogg.c" />
+    <ClCompile Include="..\..\music_opus.c" />
     <ClCompile Include="..\..\music_smpeg.c" />
     <ClCompile Include="..\..\music_timidity.c" />
     <ClCompile Include="..\..\music_wav.c" />

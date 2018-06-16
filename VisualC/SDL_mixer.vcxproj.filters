@@ -46,6 +46,9 @@
     <ClInclude Include="..\music_ogg.h">
       <Filter>Sources</Filter>
     </ClInclude>
+    <ClInclude Include="..\music_opus.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
     <ClInclude Include="..\music_smpeg.h">
       <Filter>Sources</Filter>
     </ClInclude>
@@ -81,6 +84,12 @@
     <CustomBuild Include="external\lib\x64\LICENSE.ogg-vorbis.txt">
       <Filter>x64</Filter>
     </CustomBuild>
+    <CustomBuild Include="external\lib\x64\LICENSE.opus.txt">
+      <Filter>x64</Filter>
+    </CustomBuild>
+    <CustomBuild Include="external\lib\x64\LICENSE.opusfile.txt">
+      <Filter>x64</Filter>
+    </CustomBuild>
     <CustomBuild Include="external\lib\x64\LICENSE.modplug.txt">
       <Filter>x64</Filter>
     </CustomBuild>
@@ -99,6 +108,12 @@
     <CustomBuild Include="external\lib\x64\libogg-0.dll">
       <Filter>x64</Filter>
     </CustomBuild>
+    <CustomBuild Include="external\lib\x64\libopus-0.dll">
+      <Filter>x64</Filter>
+    </CustomBuild>
+    <CustomBuild Include="external\lib\x64\libopusfile-0.dll">
+      <Filter>x64</Filter>
+    </CustomBuild>
     <CustomBuild Include="external\lib\x64\libmodplug-1.dll">
       <Filter>x64</Filter>
     </CustomBuild>
@@ -106,6 +121,12 @@
       <Filter>x64</Filter>
     </CustomBuild>
     <CustomBuild Include="external\lib\x86\LICENSE.ogg-vorbis.txt">
+      <Filter>x86</Filter>
+    </CustomBuild>
+    <CustomBuild Include="external\lib\x86\LICENSE.opus.txt">
+      <Filter>x86</Filter>
+    </CustomBuild>
+    <CustomBuild Include="external\lib\x86\LICENSE.opusfile.txt">
       <Filter>x86</Filter>
     </CustomBuild>
     <CustomBuild Include="external\lib\x86\LICENSE.modplug.txt">
@@ -121,6 +142,12 @@
       <Filter>x86</Filter>
     </CustomBuild>
     <CustomBuild Include="external\lib\x86\libogg-0.dll">
+      <Filter>x86</Filter>
+    </CustomBuild>
+    <CustomBuild Include="external\lib\x86\libopus-0.dll">
+      <Filter>x86</Filter>
+    </CustomBuild>
+    <CustomBuild Include="external\lib\x86\libopusfile-0.dll">
       <Filter>x86</Filter>
     </CustomBuild>
     <CustomBuild Include="external\lib\x86\libmodplug-1.dll">
@@ -189,6 +216,9 @@
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\music_ogg.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\music_opus.c">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\music_smpeg.c">
