@@ -759,6 +759,7 @@ int Mix_FadeInMusicPos(Mix_Music *music, int loops, int ms, double position)
         loops = 1;
     }
     retval = music_internal_play(music, loops, position);
+    music_active = (retval == 0);
     Mix_UnlockAudio();
 
     return(retval);
