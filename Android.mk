@@ -1,5 +1,5 @@
 # Save the local path
-MY_LOCAL_PATH := $(call my-dir)
+SDL_MIXER_LOCAL_PATH := $(call my-dir)
 
 
 # Enable this if you want to support loading FLAC music with libFLAC
@@ -26,33 +26,33 @@ TIMIDITY_LIBRARY_PATH := timidity
 
 # Build the library
 ifeq ($(SUPPORT_FLAC),true)
-    include $(MY_LOCAL_PATH)/$(FLAC_LIBRARY_PATH)/Android.mk
+    include $(SDL_MIXER_LOCAL_PATH)/$(FLAC_LIBRARY_PATH)/Android.mk
 endif
 
 # Build the library
 ifeq ($(SUPPORT_OGG),true)
-    include $(MY_LOCAL_PATH)/$(OGG_LIBRARY_PATH)/Android.mk
-    include $(MY_LOCAL_PATH)/$(VORBIS_LIBRARY_PATH)/Android.mk
+    include $(SDL_MIXER_LOCAL_PATH)/$(OGG_LIBRARY_PATH)/Android.mk
+    include $(SDL_MIXER_LOCAL_PATH)/$(VORBIS_LIBRARY_PATH)/Android.mk
 endif
 
 # Build the library
 ifeq ($(SUPPORT_MP3_MPG123),true)
-    include $(MY_LOCAL_PATH)/$(MPG123_LIBRARY_PATH)/Android.mk
+    include $(SDL_MIXER_LOCAL_PATH)/$(MPG123_LIBRARY_PATH)/Android.mk
 endif
 
 # Build the library
 ifeq ($(SUPPORT_MOD_MODPLUG),true)
-    include $(MY_LOCAL_PATH)/$(MODPLUG_LIBRARY_PATH)/Android.mk
+    include $(SDL_MIXER_LOCAL_PATH)/$(MODPLUG_LIBRARY_PATH)/Android.mk
 endif
 
 # Build the library
 ifeq ($(SUPPORT_MID_TIMIDITY),true)
-    include $(MY_LOCAL_PATH)/$(TIMIDITY_LIBRARY_PATH)/Android.mk
+    include $(SDL_MIXER_LOCAL_PATH)/$(TIMIDITY_LIBRARY_PATH)/Android.mk
 endif
 
 
 # Restore local path
-LOCAL_PATH := $(MY_LOCAL_PATH)
+LOCAL_PATH := $(SDL_MIXER_LOCAL_PATH)
 
 include $(CLEAR_VARS)
 
