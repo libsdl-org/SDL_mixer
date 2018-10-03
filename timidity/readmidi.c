@@ -97,7 +97,7 @@ static MidiEventList *read_midi_event(MidiSong *song)
       if (SDL_RWread(song->rw, &me, 1, 1) != 1)
 	{
 	  SNDDBG(("read_midi_event: SDL_RWread() failure\n"));
-	  return 0;
+	  return NULL;
 	}
       
       if(me==0xF0 || me == 0xF7) /* SysEx event */
@@ -455,12 +455,23 @@ static MidiEvent *groom_list(MidiSong *song, Sint32 divisions,Sint32 *eventsp,
       /* Recompute time in samples*/
       if ((dt=meep->event.time - at) && !counting_time)
 	{
+	  if (song->sample_increment  > 2147483647/dt ||
+	      song->sample_correction > 2147483647/dt) {
+	      goto _overflow;
+	    }
 	  samples_to_do = song->sample_increment * dt;
 	  sample_cum += song->sample_correction * dt;
 	  if (sample_cum & 0xFFFF0000)
 	    {
 	      samples_to_do += ((sample_cum >> 16) & 0xFFFF);
 	      sample_cum &= 0x0000FFFF;
+	    }
+	  if (st >= 2147483647 - samples_to_do) {
+	  _overflow:
+	      SNDDBG(("Overflow in sample counter\n"));
+	      free_midi_list(song);
+	      free(groomed_list);
+	      return NULL;
 	    }
 	  st += samples_to_do;
 	}
@@ -502,7 +513,7 @@ MidiEvent *read_midi_file(MidiSong *song, Sint32 *count, Sint32 *sp)
 
   song->event_count=0;
   song->at=0;
-  song->evlist=0;
+  song->evlist = NULL;
 
   if (SDL_RWread(song->rw, tmp, 1, 4) != 4 || SDL_RWread(song->rw, &len, 4, 1) != 1)
     {
@@ -598,5 +609,6 @@ MidiEvent *read_midi_file(MidiSong *song, Sint32 *count, Sint32 *sp)
 	  }
       break;
     }
+
   return groom_list(song, divisions, count, sp);
 }
