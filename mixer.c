@@ -313,8 +313,8 @@ static void mix_channels(void *udata, Uint8 *stream, int len)
 				_Mix_channel_done_playing(i);
 			} else if ( mix_channel[i].fading != MIX_NO_FADING ) {
 				Uint32 ticks = sdl_ticks - mix_channel[i].ticks_fade;
-				if( ticks > mix_channel[i].fade_length ) {
-				    Mix_Volume(i, mix_channel[i].fade_volume_reset); /* Restore the volume */
+				if ( ticks >= mix_channel[i].fade_length ) {
+					Mix_Volume(i, mix_channel[i].fade_volume_reset); /* Restore the volume */
 					if( mix_channel[i].fading == MIX_FADING_OUT ) {
 						mix_channel[i].playing = 0;
 						mix_channel[i].looping = 0;
@@ -1048,7 +1048,7 @@ int Mix_FadeOutChannel(int which, int ms)
 			    (mix_channel[which].fading != MIX_FADING_OUT) ) {
 				mix_channel[which].fade_volume = mix_channel[which].volume;
 				mix_channel[which].fading = MIX_FADING_OUT;
-				mix_channel[which].fade_length = ms;
+				mix_channel[which].fade_length = (Uint32)ms;
 				mix_channel[which].ticks_fade = SDL_GetTicks();
 
 				/* only change fade_volume_reset if we're not fading. */
