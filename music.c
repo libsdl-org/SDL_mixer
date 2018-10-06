@@ -163,7 +163,7 @@ const char *Mix_GetMusicDecoder(int index)
 
 static void add_music_decoder(const char *decoder)
 {
-	void *ptr = SDL_realloc(music_decoders, (num_decoders + 1) * sizeof (const char **));
+	void *ptr = SDL_realloc(music_decoders, (num_decoders + 1) * sizeof (const char *));
 	if (ptr == NULL) {
 		return;  /* oh well, go on without it. */
 	}
