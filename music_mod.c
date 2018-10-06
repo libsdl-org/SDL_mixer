@@ -109,13 +109,13 @@ int MOD_init(SDL_AudioSpec *mixerfmt)
 
 	list = mikmod.MikMod_InfoDriver();
 	if ( list )
-	  free(list);
+	  mikmod.MikMod_free(list);
 	else
 	  mikmod.MikMod_RegisterDriver(mikmod.drv_nos);
 
 	list = mikmod.MikMod_InfoLoader();
 	if ( list )
-	  free(list);
+	  mikmod.MikMod_free(list);
 	else
 	  mikmod.MikMod_RegisterAllLoaders();
 
@@ -144,18 +144,25 @@ void MOD_setvolume(MODULE *music, int volume)
 typedef struct
 {
 	MREADER mr;
+	/* struct MREADER in libmikmod <= 3.2.0-beta2
+	 * doesn't have iobase members. adding them here
+	 * so that if we compile against 3.2.0-beta2, we
+	 * can still run OK against 3.2.0b3 and newer. */
+	long iobase, prev_iobase;
 	long offset;
 	long eof;
 	SDL_RWops *rw;
 } LMM_MREADER;
 
-BOOL LMM_Seek(struct MREADER *mr,long to,int dir)
+int LMM_Seek(struct MREADER *mr,long to,int dir)
 {
 	LMM_MREADER* lmmmr = (LMM_MREADER*)mr;
 	if ( dir == SEEK_SET ) {
 		to += lmmmr->offset;
+		if (to < lmmmr->offset)
+			return -1;
 	}
-	return (SDL_RWseek(lmmmr->rw, to, dir) < lmmmr->offset);
+	return (SDL_RWseek(lmmmr->rw, to, dir) < lmmmr->offset)? -1 : 0;
 }
 long LMM_Tell(struct MREADER *mr)
 {

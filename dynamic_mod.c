@@ -59,7 +59,7 @@ int Mix_InitMOD()
 			return -1;
 		}
 		mikmod.MikMod_Init =
-			(BOOL (*)(CHAR*))
+			(int (*)(MIKMOD3_CONST CHAR*))
 			SDL_LoadFunction(mikmod.handle, "MikMod_Init");
 		if ( mikmod.MikMod_Init == NULL ) {
 			SDL_UnloadObject(mikmod.handle);
@@ -87,11 +87,18 @@ int Mix_InitMOD()
 			return -1;
 		}
 		mikmod.MikMod_strerror =
-			(char* (*)(int))
+			(MIKMOD3_CONST char* (*)(int))
 			SDL_LoadFunction(mikmod.handle, "MikMod_strerror");
 		if ( mikmod.MikMod_strerror == NULL ) {
 			SDL_UnloadObject(mikmod.handle);
 			return -1;
+		}
+		mikmod.MikMod_free =
+			(void (*)(void*))
+			SDL_LoadFunction(mikmod.handle, "MikMod_free");
+		if ( mikmod.MikMod_free == NULL ) {
+			/* libmikmod 3.1 and earlier doesn't have it */
+			mikmod.MikMod_free = free;
 		}
 		mikmod.Player_Active =
 			(BOOL (*)(void))
@@ -239,6 +246,12 @@ int Mix_InitMOD()
 		mikmod.MikMod_RegisterDriver = MikMod_RegisterDriver;
 		mikmod.MikMod_errno = &MikMod_errno;
 		mikmod.MikMod_strerror = MikMod_strerror;
+#if (LIBMIKMOD_VERSION < 0x030200) || !defined(DMODE_NOISEREDUCTION)
+		/* libmikmod 3.2.0-beta2 or older */
+		mikmod.MikMod_free = free;
+#else
+		mikmod.MikMod_free = MikMod_free;
+#endif
 		mikmod.Player_Active = Player_Active;
 		mikmod.Player_Free = Player_Free;
 		mikmod.Player_LoadGeneric = Player_LoadGeneric;
