@@ -622,6 +622,7 @@ Mix_Music *Mix_LoadMUSType_RW(SDL_RWops *rw, Mix_MusicType type, int freesrc)
 			int start = SDL_RWtell(rw);
 			if (SDL_RWread(rw, magic, 1, 4) != 4) {
 				Mix_SetError("Couldn't read from RWops");
+				SDL_free(music);
 				return MUS_NONE;
 			}
 			SDL_RWseek(rw, start, RW_SEEK_SET);
