@@ -224,7 +224,7 @@ mad_getSamples(mad_data *mp3_mad, Uint8 *stream, int len) {
   if ((mp3_mad->status & MS_playing) == 0) {
 	/* We're not supposed to be playing, so send silence instead. */
 	memset(stream, 0, len);
-	return;
+	return 0;
   }
 
   out = stream;
