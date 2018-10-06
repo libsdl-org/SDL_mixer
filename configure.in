@@ -429,7 +429,7 @@ AC_HELP_STRING([--enable-music-ogg-shared], [dynamically load Ogg Vorbis support
 if test x$enable_music_ogg = xyes; then
     if test x$enable_music_ogg_tremor = xyes; then
         AC_CHECK_HEADER([tremor/ivorbisfile.h], [have_tremor_hdr=yes])
-        AC_CHECK_LIB([vorbisidec], [ov_open_callbacks], [have_tremor_lib=yes])
+        AC_CHECK_LIB([vorbisidec -logg], [ov_open_callbacks], [have_tremor_lib=yes])
         if test x$have_tremor_hdr = xyes -a x$have_tremor_lib = xyes; then
             case "$host" in
                 *-*-darwin*)
@@ -465,7 +465,7 @@ if test x$enable_music_ogg = xyes; then
         fi
     else
         AC_CHECK_HEADER([vorbis/vorbisfile.h], [have_ogg_hdr=yes])
-        AC_CHECK_LIB([vorbisfile], [ov_open_callbacks], [have_ogg_lib=yes])
+        AC_CHECK_LIB([vorbisfile -lvorbis -logg -lm], [ov_open_callbacks], [have_ogg_lib=yes])
         if test x$have_ogg_hdr = xyes -a x$have_ogg_lib = xyes; then
             case "$host" in
                 *-*-darwin*)
@@ -487,7 +487,7 @@ if test x$enable_music_ogg = xyes; then
                 echo "-- dynamic libvorbisfile -> $ogg_lib"
                 EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_DYNAMIC=\\\"$ogg_lib\\\""
             else
-                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lvorbisfile -lvorbis"
+                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lvorbisfile -lvorbis -logg -lm"
             fi
         else
             AC_MSG_WARN([*** Unable to find Ogg Vorbis library (http://www.xiph.org/)])
