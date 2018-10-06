@@ -326,7 +326,7 @@ static void recompute_amp(int v)
    {
     int note = voice[v].sample->note_to_use;
     if (note>0 && drumvolume[chan][note]>=0) vol = drumvolume[chan][note];
-    if (note>0 && drumpanpot[chan][note]>=0) panning = drumvolume[chan][note];
+    if (note>0 && drumpanpot[chan][note]>=0) panning = drumpanpot[chan][note];
    }
 
   if (opt_expression_curve == 2) curved_expression = 127.0 * vol_table[expr];
