@@ -1016,13 +1016,13 @@ int Mix_FadeInMusicPos(Mix_Music *music, int loops, int ms, double position)
 		SDL_Delay(100);
 		SDL_LockAudio();
 	}
-	music_active = 1;
 	if (loops == 1) {
 		/* Loop is the number of times to play the audio */
 		loops = 0;
 	}
 	music_loops = loops;
 	retval = music_internal_play(music, position);
+	music_active = (retval == 0);
 	SDL_UnlockAudio();
 
 	return(retval);
