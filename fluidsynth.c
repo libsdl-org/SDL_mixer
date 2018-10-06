@@ -124,6 +124,7 @@ static int fluidsynth_loadsong_RW_internal(FluidSynthMidiSong *song, void *data)
 	if ((buffer = (char*) SDL_malloc(size))) {
 		if(SDL_RWread(rw, buffer, size, 1) == 1) {
 			if (fluidsynth.fluid_player_add_mem(song->player, buffer, size) == FLUID_OK) {
+				SDL_free(buffer);
 				return 1;
 			} else {
 				Mix_SetError("FluidSynth failed to load in-memory song");
