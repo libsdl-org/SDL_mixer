@@ -56,7 +56,7 @@ static int read_config_file(const char *name)
     line++;
     w[words=0]=strtok(tmp, " \t\r\n\240");
     if (!w[0] || (*w[0]=='#')) continue;
-    while (w[words] && (words < MAXWORDS))
+    while (w[words] && (words < (MAXWORDS-1)))
       {
         w[++words]=strtok(0," \t\r\n\240");
         if (w[words] && w[words][0]=='#') break;
