@@ -530,7 +530,7 @@ Mix_Music *Mix_LoadMUS(const char *file)
 		music->data.cmd = MusicCMD_LoadSong(music_cmd, file);
 		if ( music->data.cmd == NULL ) {
 			SDL_free(music);
-			music == NULL;
+			music = NULL;
 		}
 		return music;
 	}
