@@ -68,6 +68,7 @@ static int read_config_file(const char *name)
        {
         ctl->cmsg(CMSG_ERROR, VERB_NORMAL,
           "%s: line %d: No directory given\n", name, line);
+        close_file(fp);
         return -2;
        }
       for (i=1; i<words; i++)
@@ -79,6 +80,7 @@ static int read_config_file(const char *name)
       {
         ctl->cmsg(CMSG_ERROR, VERB_NORMAL,
           "%s: line %d: No file name given\n", name, line);
+        close_file(fp);
         return -2;
      }
     for (i=1; i<words; i++)
@@ -95,6 +97,7 @@ static int read_config_file(const char *name)
         ctl->cmsg(CMSG_ERROR, VERB_NORMAL, 
         "%s: line %d: Must specify exactly one patch name\n",
           name, line);
+        close_file(fp);
         return -2;
       }
     strncpy(def_instr_name, w[1], 255);
@@ -107,6 +110,7 @@ static int read_config_file(const char *name)
         ctl->cmsg(CMSG_ERROR, VERB_NORMAL,
           "%s: line %d: No drum set number given\n", 
           name, line);
+      close_file(fp);
       return -2;
       }
     i=atoi(w[1]);
@@ -115,6 +119,7 @@ static int read_config_file(const char *name)
         ctl->cmsg(CMSG_ERROR, VERB_NORMAL, 
           "%s: line %d: Drum set must be between 0 and 127\n",
         name, line);
+        close_file(fp);
         return -2;
      }
     if (!drumset[i])
@@ -131,6 +136,7 @@ static int read_config_file(const char *name)
         ctl->cmsg(CMSG_ERROR, VERB_NORMAL,
           "%s: line %d: No bank number given\n", 
         name, line);
+        close_file(fp);
         return -2;
      }
     i=atoi(w[1]);
@@ -139,6 +145,7 @@ static int read_config_file(const char *name)
         ctl->cmsg(CMSG_ERROR, VERB_NORMAL, 
           "%s: line %d: Tone bank must be between 0 and 127\n",
         name, line);
+        close_file(fp);
         return -2;
       }
     if (!tonebank[i])
@@ -161,6 +168,7 @@ static int read_config_file(const char *name)
       ctl->cmsg(CMSG_ERROR, VERB_NORMAL,
         "%s: line %d: Program must be between 0 and 127\n",
         name, line);
+      close_file(fp);
       return -2;
     }
   if (!bank)
@@ -169,6 +177,7 @@ static int read_config_file(const char *name)
        "%s: line %d: Must specify tone bank or drum set "
         "before assignment\n",
         name, line);
+     close_file(fp);
      return -2;
     }
   if (bank->tone[i].name)
@@ -184,6 +193,7 @@ static int read_config_file(const char *name)
         {
     ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "%s: line %d: bad patch option %s\n",
       name, line, w[j]);
+    close_file(fp);
     return -2;
         }
       *cp++=0;
@@ -195,6 +205,7 @@ static int read_config_file(const char *name)
        ctl->cmsg(CMSG_ERROR, VERB_NORMAL, 
           "%s: line %d: amplification must be between "
          "0 and %d\n", name, line, MAX_AMPLIFICATION);
+       close_file(fp);
        return -2;
       }
     bank->tone[i].amp=k;
@@ -207,6 +218,7 @@ static int read_config_file(const char *name)
        ctl->cmsg(CMSG_ERROR, VERB_NORMAL, 
          "%s: line %d: note must be between 0 and 127\n",
           name, line);
+        close_file(fp);
         return -2;
       }
     bank->tone[i].note=k;
@@ -228,6 +240,7 @@ static int read_config_file(const char *name)
          "%s: line %d: panning must be left, right, "
          "center, or between -100 and 100\n",
          name, line);
+       close_file(fp);
        return -2;
       }
     bank->tone[i].pan=k;
@@ -242,6 +255,7 @@ static int read_config_file(const char *name)
       {
         ctl->cmsg(CMSG_ERROR, VERB_NORMAL,
           "%s: line %d: keep must be env or loop\n", name, line);
+       close_file(fp);
        return -2;
       }
       }
@@ -258,6 +272,7 @@ static int read_config_file(const char *name)
        ctl->cmsg(CMSG_ERROR, VERB_NORMAL,
          "%s: line %d: strip must be env, loop, or tail\n",
          name, line);
+       close_file(fp);
        return -2;
       }
       }
@@ -265,6 +280,7 @@ static int read_config_file(const char *name)
       {
     ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "%s: line %d: bad patch option %s\n",
       name, line, w[j]);
+    close_file(fp);
     return -2;
       }
     }
