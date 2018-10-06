@@ -228,6 +228,7 @@ void Mix_Quit()
 #ifdef MID_MUSIC
 	if (soundfont_paths) {
 		SDL_free(soundfont_paths);
+		soundfont_paths=NULL;
 	}
 #endif
 	initialized = 0;
