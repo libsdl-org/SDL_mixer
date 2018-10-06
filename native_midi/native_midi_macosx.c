@@ -26,7 +26,8 @@
 
 #if __MACOSX__
 
-#include <Carbon/Carbon.h>
+#include <CoreServices/CoreServices.h>		/* ComponentDescription */
+#include <AudioUnit/AudioUnit.h>
 #include <AudioToolbox/AudioToolbox.h>
 #include <AvailabilityMacros.h>
 
@@ -107,7 +108,7 @@ GetSequenceAudioUnit(MusicSequence sequence, AudioUnit *aunit)
         if (AUGraphGetIndNode(graph, i, &node) != noErr)
             continue;  /* better luck next time. */
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED < 1060 /* this is deprecated, but works back to 10.0 */
+#if MAC_OS_X_VERSION_MIN_REQUIRED < 1050 /* this is deprecated, but works back to 10.0 */
         {
             struct ComponentDescription desc;
             UInt32 classdatasize = 0;
@@ -123,6 +124,14 @@ GetSequenceAudioUnit(MusicSequence sequence, AudioUnit *aunit)
         }
         #else  /* not deprecated, but requires 10.5 or later */
         {
+        # if !defined(AUDIO_UNIT_VERSION) || ((AUDIO_UNIT_VERSION + 0) < 1060)
+         /* AUGraphAddNode () is changed to take an AudioComponentDescription*
+          * desc parameter instead of a ComponentDescription* in the 10.6 SDK.
+          * AudioComponentDescription is in 10.6 or newer, but it is actually
+          * the same as struct ComponentDescription with 20 bytes of size and
+          * the same offsets of all members, therefore, is binary compatible. */
+        #   define AudioComponentDescription ComponentDescription
+        # endif
             AudioComponentDescription desc;
             if (AUGraphNodeInfo(graph, node, &desc, aunit) != noErr)
                 continue;
@@ -185,10 +194,20 @@ NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw, int freerw)
     free(buf);
     buf = NULL;
 
-    #if MAC_OS_X_VERSION_MIN_REQUIRED <= MAC_OS_X_VERSION_10_4 /* this is deprecated, but works back to 10.3 */
+    #if MAC_OS_X_VERSION_MIN_REQUIRED < 1050
+    /* MusicSequenceLoadSMFData() (avail. in 10.2, no 64 bit) is
+     * equivalent to calling MusicSequenceLoadSMFDataWithFlags()
+     * with a flags value of 0 (avail. in 10.3, avail. 64 bit).
+     * So, we use MusicSequenceLoadSMFData() for powerpc versions
+     * but the *WithFlags() on intel which require 10.4 anyway. */
+    # if defined(__ppc__) || defined(__POWERPC__)
+    if (MusicSequenceLoadSMFData(song->sequence, data) != noErr)
+        goto fail;
+    # else
     if (MusicSequenceLoadSMFDataWithFlags(retval->sequence, data, 0) != noErr)
         goto fail;
-    #else  /* not deprecated, but requires 10.5 or later */
+    # endif
+    #else  /* MusicSequenceFileLoadData() requires 10.5 or later.  */
     if (MusicSequenceFileLoadData(retval->sequence, data, 0, 0) != noErr)
         goto fail;
     #endif
