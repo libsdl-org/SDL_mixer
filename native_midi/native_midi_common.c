@@ -226,13 +226,15 @@ static MIDIEvent *MIDItoStream(MIDIFile *mididata)
 	MIDIEvent *currentEvent = head;
 	int trackID;
 
-    if (NULL == head)
-		return NULL;
-        
-    track = (MIDIEvent**) calloc(1, sizeof(MIDIEvent*) * mididata->nTracks);
 	if (NULL == head)
-        return NULL;
-	
+		return NULL;
+
+	track = (MIDIEvent**) calloc(1, sizeof(MIDIEvent*) * mididata->nTracks);
+	if (NULL == track)
+	{
+		free(head);
+		return NULL;
+	}
 	/* First, convert all tracks to MIDIEvent lists */
 	for (trackID = 0; trackID < mididata->nTracks; trackID++)
 		track[trackID] = MIDITracktoStream(&mididata->track[trackID]);
@@ -380,14 +382,18 @@ MIDIEvent *CreateMIDIEventList(SDL_RWops *rw, Uint16 *division)
 		*division = mididata->division;
 	
 	eventList = MIDItoStream(mididata);
-	
+	if (eventList == NULL)
+	{
+		free(mididata);
+		return NULL;
+	}
 	for(trackID = 0; trackID < mididata->nTracks; trackID++)
 	{
 		if (mididata->track[trackID].data)
 			free(mididata->track[trackID].data);
 	}
 	free(mididata->track);
-    free(mididata);
+	free(mididata);
 	
 	return eventList;
 }
