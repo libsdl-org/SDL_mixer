@@ -289,10 +289,10 @@ void SDLCALL music_mixer(void *udata, Uint8 *stream, int len)
 #ifdef MID_MUSIC
 			case MUS_MID:
 #ifdef USE_NATIVE_MIDI
-  				if ( native_midi_ok ) {
+				if ( native_midi_ok ) {
 					/* Native midi is handled asynchronously */
 					goto skip;
-	  			}
+				}
 #endif
 #ifdef USE_FLUIDSYNTH_MIDI
 				if ( fluidsynth_ok ) {
@@ -303,7 +303,7 @@ void SDLCALL music_mixer(void *udata, Uint8 *stream, int len)
 #ifdef USE_TIMIDITY_MIDI
 				if ( timidity_ok ) {
 					int samples = len / samplesize;
-  					Timidity_PlaySome(stream, samples);
+					Timidity_PlaySome(stream, samples);
 					goto skip;
 				}
 #endif
@@ -623,7 +623,7 @@ Mix_Music *Mix_LoadMUSType_RW(SDL_RWops *rw, Mix_MusicType type, int freesrc)
 			if (SDL_RWread(rw, magic, 1, 4) != 4) {
 				Mix_SetError("Couldn't read from RWops");
 				SDL_free(music);
-				return MUS_NONE;
+				return NULL;
 			}
 			SDL_RWseek(rw, start, RW_SEEK_SET);
 			magic[4] = '\0';
@@ -685,9 +685,9 @@ Mix_Music *Mix_LoadMUSType_RW(SDL_RWops *rw, Mix_MusicType type, int freesrc)
 #ifdef USE_NATIVE_MIDI
 		if ( native_midi_ok ) {
 			music->data.nativemidi = native_midi_loadsong_RW(rw, freesrc);
-	  		if ( music->data.nativemidi == NULL ) {
-		  		Mix_SetError("%s", native_midi_error());
-			  	music->error = 1;
+			if ( music->data.nativemidi == NULL ) {
+				Mix_SetError("%s", native_midi_error());
+				music->error = 1;
 			}
 			break;
 		}
@@ -744,10 +744,9 @@ Mix_Music *Mix_LoadMUSType_RW(SDL_RWops *rw, Mix_MusicType type, int freesrc)
 		music->error=1;
 	} /* switch (want) */
 
-
 	if (music->error) {
 		SDL_free(music);
-		music=NULL;
+		music = NULL;
 	}
 	return(music);
 }
@@ -1310,21 +1309,21 @@ int Mix_FadeOutMusic(int ms)
 
 	SDL_LockAudio();
 	if ( music_playing) {
-                int fade_steps = (ms + ms_per_step - 1)/ms_per_step;
-                if ( music_playing->fading == MIX_NO_FADING ) {
-	        	music_playing->fade_step = 0;
-                } else {
-                        int step;
-                        int old_fade_steps = music_playing->fade_steps;
-                        if ( music_playing->fading == MIX_FADING_OUT ) {
-                                step = music_playing->fade_step;
-                        } else {
-                                step = old_fade_steps
-                                        - music_playing->fade_step + 1;
-                        }
-                        music_playing->fade_step = (step * fade_steps)
-                                / old_fade_steps;
-                }
+		int fade_steps = (ms + ms_per_step - 1)/ms_per_step;
+		if ( music_playing->fading == MIX_NO_FADING ) {
+			music_playing->fade_step = 0;
+		} else {
+			int step;
+			int old_fade_steps = music_playing->fade_steps;
+			if ( music_playing->fading == MIX_FADING_OUT ) {
+				step = music_playing->fade_step;
+			} else {
+				step = old_fade_steps
+					 - music_playing->fade_step + 1;
+			}
+			music_playing->fade_step = (step * fade_steps)
+							 / old_fade_steps;
+		}
 		music_playing->fading = MIX_FADING_OUT;
 		music_playing->fade_steps = fade_steps;
 		retval = 1;
