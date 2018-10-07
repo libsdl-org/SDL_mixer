@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>mikmod</string>
 	<key>CFBundleGetInfoString</key>
-	<string>libmikmod 3.1.12</string>
+	<string>libmikmod 3.1.21</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -15,10 +15,10 @@
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.1.12</string>
+	<string>3.1.21</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>3.1.12</string>
+	<string>3.1.21</string>
 </dict>
 </plist>
