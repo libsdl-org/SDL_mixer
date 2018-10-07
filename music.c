@@ -181,9 +181,9 @@ static void music_internal_halt(void);
 
 
 /* Support for hooking when the music has finished */
-static void (*music_finished_hook)(void) = NULL;
+static void (SDLCALL *music_finished_hook)(void) = NULL;
 
-void Mix_HookMusicFinished(void (*music_finished)(void))
+void Mix_HookMusicFinished(void (SDLCALL *music_finished)(void))
 {
 	SDL_LockAudio();
 	music_finished_hook = music_finished;
@@ -231,7 +231,7 @@ static int music_halt_or_loop (void)
 
 
 /* Mixing function */
-void music_mixer(void *udata, Uint8 *stream, int len)
+void SDLCALL music_mixer(void *udata, Uint8 *stream, int len)
 {
 	int left = 0;
 
@@ -1567,7 +1567,7 @@ const char* Mix_GetSoundFonts(void)
 	}
 }
 
-int Mix_EachSoundFont(int (*function)(const char*, void*), void *data)
+int Mix_EachSoundFont(int (SDLCALL *function)(const char*, void*), void *data)
 {
 	char *context, *path, *paths;
 	const char* cpaths = Mix_GetSoundFonts();
