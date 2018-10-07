@@ -170,10 +170,10 @@ void MusicCMD_Start(MusicCMD *music)
 		    argv = parse_args(command, music->file);
 		    if ( argv != NULL ) {
 			execvp(argv[0], argv);
-		    }
 
-		    /* exec() failed */
-		    perror(argv[0]);
+			/* exec() failed */
+			perror(argv[0]);
+		    }
 		    _exit(-1);
 		}
 		break;
