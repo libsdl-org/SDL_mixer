@@ -29,9 +29,12 @@
 #if defined(__linux__) && defined(__arm__)
 # include <linux/limits.h>
 #endif
+#ifndef PATH_MAX /* GNU/Hurd? */
+# define PATH_MAX 4096
+#endif
 typedef struct {
-	char *file;
-	char *cmd;
+	char file[PATH_MAX];
+	char cmd[PATH_MAX];
 	pid_t pid;
 } MusicCMD;
 
