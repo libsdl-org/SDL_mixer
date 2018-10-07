@@ -52,7 +52,7 @@ int Mix_InitOgg()
 			return -1;
 		}
 		vorbis.ov_open_callbacks =
-			(int (*)(void *, OggVorbis_File *, char *, long, ov_callbacks))
+			(int (*)(void *, OggVorbis_File *, const char *, long, ov_callbacks))
 			SDL_LoadFunction(vorbis.handle, "ov_open_callbacks");
 		if ( vorbis.ov_open_callbacks == NULL ) {
 			SDL_UnloadObject(vorbis.handle);
