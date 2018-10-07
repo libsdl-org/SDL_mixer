@@ -86,11 +86,11 @@ static int reserved_channels = 0;
 
 
 /* Support for hooking into the mixer callback system */
-static void (*mix_postmix)(void *udata, Uint8 *stream, int len) = NULL;
+static void (SDLCALL *mix_postmix)(void *udata, Uint8 *stream, int len) = NULL;
 static void *mix_postmix_data = NULL;
 
 /* rcg07062001 callback to alert when channels are done playing. */
-static void (*channel_done_callback)(int channel) = NULL;
+static void (SDLCALL *channel_done_callback)(int channel) = NULL;
 
 /* Music function declarations */
 extern int open_music(SDL_AudioSpec *mixer);
@@ -98,8 +98,8 @@ extern void close_music(void);
 
 /* Support for user defined music functions, plus the default one */
 extern int volatile music_active;
-extern void music_mixer(void *udata, Uint8 *stream, int len);
-static void (*mix_music)(void *udata, Uint8 *stream, int len) = music_mixer;
+extern void SDLCALL music_mixer(void *udata, Uint8 *stream, int len);
+static void (SDLCALL *mix_music)(void *udata, Uint8 *stream, int len) = music_mixer;
 static void *music_data = NULL;
 
 /* rcg06042009 report available decoders at runtime. */
@@ -760,7 +760,7 @@ void Mix_FreeChunk(Mix_Chunk *chunk)
    This can be used to provide real-time visual display of the audio stream
    or add a custom mixer filter for the stream data.
 */
-void Mix_SetPostMix(void (*mix_func)
+void Mix_SetPostMix(void (SDLCALL *mix_func)
                     (void *udata, Uint8 *stream, int len), void *arg)
 {
 	SDL_LockAudio();
@@ -772,7 +772,7 @@ void Mix_SetPostMix(void (*mix_func)
 /* Add your own music player or mixer function.
    If 'mix_func' is NULL, the default music player is re-enabled.
  */
-void Mix_HookMusic(void (*mix_func)(void *udata, Uint8 *stream, int len),
+void Mix_HookMusic(void (SDLCALL *mix_func)(void *udata, Uint8 *stream, int len),
                                                                 void *arg)
 {
 	SDL_LockAudio();
@@ -791,7 +791,7 @@ void *Mix_GetMusicHookData(void)
 	return(music_data);
 }
 
-void Mix_ChannelFinished(void (*channel_finished)(int channel))
+void Mix_ChannelFinished(void (SDLCALL *channel_finished)(int channel))
 {
 	SDL_LockAudio();
 	channel_done_callback = channel_finished;

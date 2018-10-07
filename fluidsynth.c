@@ -34,7 +34,7 @@ static Uint16 format;
 static Uint8 channels;
 static int freq;
 
-int fluidsynth_check_soundfont(const char *path, void *data)
+int SDLCALL fluidsynth_check_soundfont(const char *path, void *data)
 {
 	FILE *file = fopen(path, "r");
 
@@ -47,7 +47,7 @@ int fluidsynth_check_soundfont(const char *path, void *data)
 	}
 }
 
-int fluidsynth_load_soundfont(const char *path, void *data)
+int SDLCALL fluidsynth_load_soundfont(const char *path, void *data)
 {
 	/* If this fails, it's too late to try Timidity so pray that at least one works. */
 	fluidsynth.fluid_synth_sfload((fluid_synth_t*) data, path, 1);

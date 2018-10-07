@@ -55,7 +55,7 @@
  * Stereo reversal effect...this one's pretty straightforward...
  */
 
-static void _Eff_reversestereo16(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_reversestereo16(int chan, void *stream, int len, void *udata)
 {
     /* 16 bits * 2 channels. */
     Uint32 *ptr = (Uint32 *) stream;
@@ -67,7 +67,7 @@ static void _Eff_reversestereo16(int chan, void *stream, int len, void *udata)
 }
 
 
-static void _Eff_reversestereo8(int chan, void *stream, int len, void *udata)
+static void SDLCALL _Eff_reversestereo8(int chan, void *stream, int len, void *udata)
 {
     /* 8 bits * 2 channels. */
     Uint32 *ptr = (Uint32 *) stream;

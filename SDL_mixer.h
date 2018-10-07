@@ -200,19 +200,19 @@ extern DECLSPEC Mix_MusicType SDLCALL Mix_GetMusicType(const Mix_Music *music);
    This can be used to provide real-time visual display of the audio stream
    or add a custom mixer filter for the stream data.
 */
-extern DECLSPEC void SDLCALL Mix_SetPostMix(void (*mix_func)
+extern DECLSPEC void SDLCALL Mix_SetPostMix(void (SDLCALL *mix_func)
                              (void *udata, Uint8 *stream, int len), void *arg);
 
 /* Add your own music player or additional mixer function.
    If 'mix_func' is NULL, the default music player is re-enabled.
  */
-extern DECLSPEC void SDLCALL Mix_HookMusic(void (*mix_func)
+extern DECLSPEC void SDLCALL Mix_HookMusic(void (SDLCALL *mix_func)
                           (void *udata, Uint8 *stream, int len), void *arg);
 
 /* Add your own callback when the music has finished playing.
    This callback is only called if the music finishes naturally.
  */
-extern DECLSPEC void SDLCALL Mix_HookMusicFinished(void (*music_finished)(void));
+extern DECLSPEC void SDLCALL Mix_HookMusicFinished(void (SDLCALL *music_finished)(void));
 
 /* Get a pointer to the user data for the current music hook */
 extern DECLSPEC void * SDLCALL Mix_GetMusicHookData(void);
@@ -225,7 +225,7 @@ extern DECLSPEC void * SDLCALL Mix_GetMusicHookData(void);
  *  inside the audio callback, or SDL_mixer will explicitly lock the audio
  *  before calling your callback.
  */
-extern DECLSPEC void SDLCALL Mix_ChannelFinished(void (*channel_finished)(int channel));
+extern DECLSPEC void SDLCALL Mix_ChannelFinished(void (SDLCALL *channel_finished)(int channel));
 
 
 /* Special Effects API by ryan c. gordon. (icculus@icculus.org) */
@@ -249,7 +249,7 @@ extern DECLSPEC void SDLCALL Mix_ChannelFinished(void (*channel_finished)(int ch
  *
  * DO NOT EVER call SDL_LockAudio() from your callback function!
  */
-typedef void (*Mix_EffectFunc_t)(int chan, void *stream, int len, void *udata);
+typedef void (SDLCALL *Mix_EffectFunc_t)(int chan, void *stream, int len, void *udata);
 
 /*
  * This is a callback that signifies that a channel has finished all its
@@ -260,7 +260,7 @@ typedef void (*Mix_EffectFunc_t)(int chan, void *stream, int len, void *udata);
  *
  * DO NOT EVER call SDL_LockAudio() from your callback function!
  */
-typedef void (*Mix_EffectDone_t)(int chan, void *udata);
+typedef void (SDLCALL *Mix_EffectDone_t)(int chan, void *udata);
 
 
 /* Register a special effect function. At mixing time, the channel data is
@@ -611,7 +611,7 @@ extern DECLSPEC int SDLCALL Mix_GetSynchroValue(void);
 /* Set/Get/Iterate SoundFonts paths to use by supported MIDI backends */
 extern DECLSPEC int SDLCALL Mix_SetSoundFonts(const char *paths);
 extern DECLSPEC const char* SDLCALL Mix_GetSoundFonts(void);
-extern DECLSPEC int SDLCALL Mix_EachSoundFont(int (*function)(const char*, void*), void *data);
+extern DECLSPEC int SDLCALL Mix_EachSoundFont(int (SDLCALL *function)(const char*, void*), void *data);
 
 /* Get the Mix_Chunk currently associated with a mixer channel
     Returns NULL if it's an invalid channel, or there's no chunk associated.
