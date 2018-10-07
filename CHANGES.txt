@@ -1,4 +1,6 @@
 2.0.3:
+Ozkan Sezer - Sun, 07 Oct 2018 08:50:02
+ * Fixed mp3 mad decoder to skip tags, which otherwise would lead to crashes
 Sam Lantinga - Thu, Mar  1, 2018  9:06:58 AM
  * Fixed regression where Mix_Init() would return 0 for available music formats
 
