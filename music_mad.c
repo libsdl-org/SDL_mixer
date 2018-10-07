@@ -79,6 +79,101 @@ mad_isPlaying(mad_data *mp3_mad) {
   return ((mp3_mad->status & MS_playing) != 0);
 }
 
+
+/*************************** TAG HANDLING: ******************************/
+
+static __inline__ SDL_bool is_id3v1(const Uint8 *data, size_t length)
+{
+    /* http://id3.org/ID3v1 :  3 bytes "TAG" identifier and 125 bytes tag data */
+    if (length < 3 || SDL_memcmp(data,"TAG",3) != 0) {
+        return SDL_FALSE;
+    }
+    return SDL_TRUE;
+}
+static __inline__ SDL_bool is_id3v2(const Uint8 *data, size_t length)
+{
+    /* ID3v2 header is 10 bytes:  http://id3.org/id3v2.4.0-structure */
+    /* bytes 0-2: "ID3" identifier */
+    if (length < 10 || SDL_memcmp(data,"ID3",3) != 0) {
+        return SDL_FALSE;
+    }
+    /* bytes 3-4: version num (major,revision), each byte always less than 0xff. */
+    if (data[3] == 0xff || data[4] == 0xff) {
+        return SDL_FALSE;
+    }
+    /* bytes 6-9 are the ID3v2 tag size: a 32 bit 'synchsafe' integer, i.e. the
+     * highest bit 7 in each byte zeroed.  i.e.: 7 bit information in each byte ->
+     * effectively a 28 bit value.  */
+    if (data[6] >= 0x80 || data[7] >= 0x80 || data[8] >= 0x80 || data[9] >= 0x80) {
+        return SDL_FALSE;
+    }
+    return SDL_TRUE;
+}
+static __inline__ SDL_bool is_apetag(const Uint8 *data, size_t length)
+{
+   /* http://wiki.hydrogenaud.io/index.php?title=APEv2_specification
+    * APEv2 header is 32 bytes: bytes 0-7 ident, bytes 8-11 version,
+    * bytes 12-17 size.  bytes 24-31 are reserved: must be all zeroes.
+    * APEv1 has no header, so no luck.  */
+    Uint32 v;
+
+    if (length < 32 || SDL_memcmp(data,"APETAGEX",8) != 0) {
+        return SDL_FALSE;
+    }
+    v = (data[11]<<24) | (data[10]<<16) | (data[9]<<8) | data[8]; /* version */
+    if (v != 2000U) {
+        return SDL_FALSE;
+    }
+    v = 0; /* reserved bits : */
+    if (SDL_memcmp(&data[24],&v,4) != 0 || SDL_memcmp(&data[28],&v,4) != 0) {
+        return SDL_FALSE;
+    }
+    return SDL_TRUE;
+}
+
+static size_t get_tagsize(const Uint8 *data, size_t length)
+{
+    size_t size;
+
+    if (is_id3v1(data, length)) {
+        return 128; /* fixed length */
+    }
+    if (is_id3v2(data, length)) {
+        /* size is a 'synchsafe' integer (see above) */
+        size = (data[6]<<21) + (data[7]<<14) + (data[8]<<7) + data[9];
+        size += 10; /* header size */
+        /* ID3v2 header[5] is flags (bits 4-7 only, 0-3 are zero).
+         * bit 4 set: footer is present (a copy of the header but
+         * with "3DI" as ident.)  */
+        if (data[5] & 0x10) {
+            size += 10; /* footer size */
+        }
+        /* optional padding (always zeroes) */
+        while (size < length && data[size] == 0) {
+            ++size;
+        }
+        return size;
+    }
+    if (is_apetag(data, length)) {
+        size = (data[15]<<24) | (data[14]<<16) | (data[13]<<8) | data[12];
+        size += 32; /* header size */
+        return size;
+    }
+    return 0;
+}
+
+static int consume_tag(struct mad_stream *stream)
+{
+    /* FIXME: what if the buffer doesn't have the full tag ??? */
+    size_t remaining = stream->bufend - stream->next_frame;
+    size_t tagsize = get_tagsize(stream->this_frame, remaining);
+    if (tagsize != 0) {
+        mad_stream_skip(stream, tagsize);
+        return 0;
+    }
+    return -1;
+}
+
 /* Reads the next frame from the file.  Returns true on success or
    false on failure. */
 static int
@@ -132,6 +227,8 @@ read_next_frame(mad_data *mp3_mad) {
 	 its buffer. */
   if (mad_frame_decode(&mp3_mad->frame, &mp3_mad->stream)) {
 	if (MAD_RECOVERABLE(mp3_mad->stream.error)) {
+	  consume_tag(&mp3_mad->stream); /* consume any ID3 tags */
+	  mad_stream_sync(&mp3_mad->stream); /* to frame seek mode */
 	  return 0;
 	  
 	} else if (mp3_mad->stream.error == MAD_ERROR_BUFLEN) {
