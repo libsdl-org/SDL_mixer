@@ -138,7 +138,7 @@ static void *SMPEG_CreateFromRW(SDL_RWops *src, int freesrc)
         SDL_free(music);
         return NULL;
     }
-    smpeg.SMPEG_actualSpec(mp3, &music_spec);
+    smpeg.SMPEG_actualSpec(music->mp3, &music_spec);
 
     music->freesrc = freesrc;
     return music;
@@ -174,6 +174,7 @@ static int SMPEG_GetAudio(void *context, void *data, int bytes)
     int left = (len - smpeg.SMPEG_playAudio(music->mp3, stream, len));
     if (left > 0) {
         stream += (len - left);
+    }
     return left;
 }
 
