@@ -49,9 +49,6 @@
     <ClInclude Include="..\music_opus.h">
       <Filter>Sources</Filter>
     </ClInclude>
-    <ClInclude Include="..\music_smpeg.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
     <ClInclude Include="..\music_timidity.h">
       <Filter>Sources</Filter>
     </ClInclude>
@@ -219,9 +216,6 @@
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\music_opus.c">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\music_smpeg.c">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\music_timidity.c">

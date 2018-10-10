@@ -39,7 +39,6 @@
 #include "music_opus.h"
 #include "music_mpg123.h"
 #include "music_mad.h"
-#include "music_smpeg.h"
 #include "music_flac.h"
 #include "native_midi/native_midi.h"
 
@@ -101,9 +100,6 @@ static Mix_MusicInterface *s_music_interfaces[] =
 #endif
 #ifdef MUSIC_MP3_MAD
     &Mix_MusicInterface_MAD,
-#endif
-#ifdef MUSIC_MP3_SMPEG
-    &Mix_MusicInterface_SMPEG,
 #endif
 #ifdef MUSIC_MOD_MODPLUG
     &Mix_MusicInterface_MODPLUG,
