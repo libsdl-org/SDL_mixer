@@ -1,4 +1,6 @@
 2.0.3:
+Ozkan Sezer - Wed, 10 Oct 2018 14:56:10
+ * Removed smpeg support for mp3 music, now that it's replaced by libmpg123
 Ozkan Sezer - Sun, 07 Oct 2018 08:50:02
  * Fixed mp3 mad decoder to skip tags, which otherwise would lead to crashes
 Ozkan Sezer - Fri, 15 Jun 2018 05:32:56
