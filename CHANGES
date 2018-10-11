@@ -1,10 +1,14 @@
 1.2.13:
+Ozkan Sezer - Wed, 10 Oct 2018 14:56:10
+ * Removed smpeg support for mp3 music, now that it's replaced by libmpg123
 Ozkan Sezer - Sun, 07 Oct 2018 14:00:02
- * Backports of fixes from SDL_mixer-2.0.x
+ * Backports of several fixes from SDL_mixer-2.0.x
 Ozkan Sezer - Sun, 07 Oct 2018 08:50:02
  * Fixed mp3 mad decoder to skip tags, which otherwise would lead to crashes
+Franc[e]sco - Thu, 20 Jul 2017 20:03:19
+ * Added support for MP3 playback using mpg123
 Sam Lantinga - Sat Aug 23 10:57:26 2014
-* Fixed floating point exception in Mix_Volume()
+ * Fixed floating point exception in Mix_Volume()
 Paul P Komkoff Jr - Sun Jul 22 16:12:28 PDT 2012
  * Fixed malloc/free mismatch in the MikMod driver
 

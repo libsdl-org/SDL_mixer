@@ -26,20 +26,24 @@
 		00938E55108A397A0009CF19 /* dynamic_mod.c in Sources */ = {isa = PBXBuildFile; fileRef = 00938E4B108A397A0009CF19 /* dynamic_mod.c */; };
 		00938E56108A397A0009CF19 /* dynamic_mp3.h in Headers */ = {isa = PBXBuildFile; fileRef = 00938E4C108A397A0009CF19 /* dynamic_mp3.h */; };
 		00938E57108A397A0009CF19 /* dynamic_ogg.h in Headers */ = {isa = PBXBuildFile; fileRef = 00938E4D108A397A0009CF19 /* dynamic_ogg.h */; };
-		00939015108A5C470009CF19 /* smpeg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00939014108A5C470009CF19 /* smpeg.framework */; };
 		0448E8AE108B937A00C9D3EA /* native_midi_macosx.c in Sources */ = {isa = PBXBuildFile; fileRef = 0448E8AD108B937A00C9D3EA /* native_midi_macosx.c */; };
 		0448E8AF108B937A00C9D3EA /* native_midi_macosx.c in Sources */ = {isa = PBXBuildFile; fileRef = 0448E8AD108B937A00C9D3EA /* native_midi_macosx.c */; };
 		04A8FCA60A19CAEC0046373F /* dynamic_mp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A8FCA40A19CAEC0046373F /* dynamic_mp3.c */; };
 		04A8FCA70A19CAEC0046373F /* dynamic_mp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A8FCA40A19CAEC0046373F /* dynamic_mp3.c */; };
 		04A8FCAB0A19CB070046373F /* dynamic_ogg.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A8FCA90A19CB070046373F /* dynamic_ogg.c */; };
 		04A8FCAC0A19CB070046373F /* dynamic_ogg.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A8FCA90A19CB070046373F /* dynamic_ogg.c */; };
+		639076A4216EC3E200ED9E54 /* mpg123.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 639076A3216EC3E200ED9E54 /* mpg123.framework */; };
+		639076AB216EC43000ED9E54 /* music_mpg.c in Sources */ = {isa = PBXBuildFile; fileRef = 639076AA216EC43000ED9E54 /* music_mpg.c */; };
+		639076AC216EC43000ED9E54 /* music_mpg.c in Sources */ = {isa = PBXBuildFile; fileRef = 639076AA216EC43000ED9E54 /* music_mpg.c */; };
+		639076AE216EC49000ED9E54 /* music_mpg.h in Headers */ = {isa = PBXBuildFile; fileRef = 639076AD216EC49000ED9E54 /* music_mpg.h */; };
+		639076AF216EC49000ED9E54 /* music_mpg.h in Headers */ = {isa = PBXBuildFile; fileRef = 639076AD216EC49000ED9E54 /* music_mpg.h */; };
+		63CB2527216EC68100928244 /* mpg123.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 639076A3216EC3E200ED9E54 /* mpg123.framework */; };
 		AA9F7DB514B15ADC00278D1E /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA9F7DB314B15ADC00278D1E /* Ogg.framework */; };
 		AA9F7DB614B15ADC00278D1E /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA9F7DB414B15ADC00278D1E /* Vorbis.framework */; };
 		AA9F7DB814B15AE700278D1E /* FLAC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA9F7DB714B15AE700278D1E /* FLAC.framework */; };
 		AA9F7DB914B15D3300278D1E /* FLAC.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = AA9F7DB714B15AE700278D1E /* FLAC.framework */; };
 		AA9F7DBA14B15D4100278D1E /* mikmod.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 00938E1B108A36520009CF19 /* mikmod.framework */; };
 		AA9F7DBB14B15D4400278D1E /* Ogg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = AA9F7DB314B15ADC00278D1E /* Ogg.framework */; };
-		AA9F7DBC14B15D4A00278D1E /* smpeg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 00939014108A5C470009CF19 /* smpeg.framework */; };
 		AA9F7DBE14B15D5400278D1E /* Vorbis.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = AA9F7DB414B15ADC00278D1E /* Vorbis.framework */; };
 		BE1FA8B907AF96B2004B6283 /* music_cmd.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC1B87B012FB8CD7F000001 /* music_cmd.h */; };
 		BE1FA8BA07AF96B2004B6283 /* music_ogg.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC1B87D012FB8CD7F000001 /* music_ogg.h */; };
@@ -148,10 +152,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				63CB2527216EC68100928244 /* mpg123.framework in Copy Frameworks */,
 				AA9F7DB914B15D3300278D1E /* FLAC.framework in Copy Frameworks */,
 				AA9F7DBA14B15D4100278D1E /* mikmod.framework in Copy Frameworks */,
 				AA9F7DBB14B15D4400278D1E /* Ogg.framework in Copy Frameworks */,
-				AA9F7DBC14B15D4A00278D1E /* smpeg.framework in Copy Frameworks */,
 				AA9F7DBE14B15D5400278D1E /* Vorbis.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
@@ -174,7 +178,6 @@
 		00938E4B108A397A0009CF19 /* dynamic_mod.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dynamic_mod.c; path = ../dynamic_mod.c; sourceTree = SOURCE_ROOT; };
 		00938E4C108A397A0009CF19 /* dynamic_mp3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dynamic_mp3.h; path = ../dynamic_mp3.h; sourceTree = SOURCE_ROOT; };
 		00938E4D108A397A0009CF19 /* dynamic_ogg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dynamic_ogg.h; path = ../dynamic_ogg.h; sourceTree = SOURCE_ROOT; };
-		00939014108A5C470009CF19 /* smpeg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = smpeg.framework; path = Frameworks/smpeg.framework; sourceTree = "<group>"; };
 		0448E8AD108B937A00C9D3EA /* native_midi_macosx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = native_midi_macosx.c; sourceTree = "<group>"; };
 		04A8FCA40A19CAEC0046373F /* dynamic_mp3.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = dynamic_mp3.c; path = ../dynamic_mp3.c; sourceTree = SOURCE_ROOT; };
 		04A8FCA90A19CB070046373F /* dynamic_ogg.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = dynamic_ogg.c; path = ../dynamic_ogg.c; sourceTree = SOURCE_ROOT; };
@@ -212,6 +215,9 @@
 		5CC1B898012FB8CD7F000001 /* timidity.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = timidity.h; sourceTree = "<group>"; };
 		5CC1B89B012FB8CD7F000001 /* wavestream.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = wavestream.c; path = ../wavestream.c; sourceTree = "<group>"; };
 		5CC1B89C012FB8CD7F000001 /* wavestream.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = wavestream.h; path = ../wavestream.h; sourceTree = "<group>"; };
+		639076A3216EC3E200ED9E54 /* mpg123.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = mpg123.framework; path = Frameworks/mpg123.framework; sourceTree = "<group>"; };
+		639076AA216EC43000ED9E54 /* music_mpg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = music_mpg.c; path = ../music_mpg.c; sourceTree = SOURCE_ROOT; };
+		639076AD216EC49000ED9E54 /* music_mpg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = music_mpg.h; path = ../music_mpg.h; sourceTree = SOURCE_ROOT; };
 		AA9F7DB314B15ADC00278D1E /* Ogg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ogg.framework; path = Frameworks/Ogg.framework; sourceTree = "<group>"; };
 		AA9F7DB414B15ADC00278D1E /* Vorbis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Vorbis.framework; path = Frameworks/Vorbis.framework; sourceTree = "<group>"; };
 		AA9F7DB714B15AE700278D1E /* FLAC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FLAC.framework; path = Frameworks/FLAC.framework; sourceTree = "<group>"; };
@@ -243,10 +249,10 @@
 			files = (
 				BE1FA90207AF96B2004B6283 /* SDL.framework in Frameworks */,
 				00938E1C108A36520009CF19 /* mikmod.framework in Frameworks */,
-				00939015108A5C470009CF19 /* smpeg.framework in Frameworks */,
 				AA9F7DB514B15ADC00278D1E /* Ogg.framework in Frameworks */,
 				AA9F7DB614B15ADC00278D1E /* Vorbis.framework in Frameworks */,
 				AA9F7DB814B15AE700278D1E /* FLAC.framework in Frameworks */,
+				639076A4216EC3E200ED9E54 /* mpg123.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -302,6 +308,8 @@
 		08FB77ACFE841707C02AAC07 /* Library Source */ = {
 			isa = PBXGroup;
 			children = (
+				639076AD216EC49000ED9E54 /* music_mpg.h */,
+				639076AA216EC43000ED9E54 /* music_mpg.c */,
 				00938E49108A397A0009CF19 /* dynamic_flac.c */,
 				00938E4A108A397A0009CF19 /* dynamic_flac.h */,
 				00938E4B108A397A0009CF19 /* dynamic_mod.c */,
@@ -389,8 +397,8 @@
 				00938E1B108A36520009CF19 /* mikmod.framework */,
 				AA9F7DB314B15ADC00278D1E /* Ogg.framework */,
 				BE1FA8AE07AF95F7004B6283 /* SDL.framework */,
-				00939014108A5C470009CF19 /* smpeg.framework */,
 				AA9F7DB414B15ADC00278D1E /* Vorbis.framework */,
+				639076A3216EC3E200ED9E54 /* mpg123.framework */,
 			);
 			name = "Linked Frameworks";
 			sourceTree = "<group>";
@@ -457,6 +465,7 @@
 				00938E4F108A397A0009CF19 /* dynamic_flac.h in Headers */,
 				00938E51108A397A0009CF19 /* dynamic_mp3.h in Headers */,
 				00938E52108A397A0009CF19 /* dynamic_ogg.h in Headers */,
+				639076AE216EC49000ED9E54 /* music_mpg.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -486,6 +495,7 @@
 				00938E54108A397A0009CF19 /* dynamic_flac.h in Headers */,
 				00938E56108A397A0009CF19 /* dynamic_mp3.h in Headers */,
 				00938E57108A397A0009CF19 /* dynamic_ogg.h in Headers */,
+				639076AF216EC49000ED9E54 /* music_mpg.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -684,6 +694,7 @@
 				00938E4E108A397A0009CF19 /* dynamic_flac.c in Sources */,
 				00938E50108A397A0009CF19 /* dynamic_mod.c in Sources */,
 				0448E8AE108B937A00C9D3EA /* native_midi_macosx.c in Sources */,
+				639076AB216EC43000ED9E54 /* music_mpg.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -720,6 +731,7 @@
 				00938E53108A397A0009CF19 /* dynamic_flac.c in Sources */,
 				00938E55108A397A0009CF19 /* dynamic_mod.c in Sources */,
 				0448E8AF108B937A00C9D3EA /* native_midi_macosx.c in Sources */,
+				639076AC216EC43000ED9E54 /* music_mpg.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -866,7 +878,7 @@
 					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
 					/Library/Frameworks/SDL.framework/Headers,
 				);
-				HEADER_SEARCH_PATHS_QUOTED = "\"$(SRCROOT)/Frameworks/mikmod.framework/Headers\" \"$(SRCROOT)/Frameworks/smpeg.framework/Headers\" \"$(SRCROOT)/Frameworks/Ogg.framework/Headers\" \"$(SRCROOT)/Frameworks/Vorbis.framework/Headers\" \"$(SRCROOT)/Frameworks/FLAC.framework/Headers\"";
+				HEADER_SEARCH_PATHS_QUOTED = "\"$(SRCROOT)/Frameworks/mikmod.framework/Headers\" \"$(SRCROOT)/Frameworks/mpg123.framework/Headers\" \"$(SRCROOT)/Frameworks/Ogg.framework/Headers\" \"$(SRCROOT)/Frameworks/Vorbis.framework/Headers\" \"$(SRCROOT)/Frameworks/FLAC.framework/Headers\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				PRODUCT_NAME = SDL_mixer;
 				SDKROOT = macosx;
@@ -902,7 +914,7 @@
 					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
 					/Library/Frameworks/SDL.framework/Headers,
 				);
-				HEADER_SEARCH_PATHS_QUOTED = "\"$(SRCROOT)/Frameworks/mikmod.framework/Headers\" \"$(SRCROOT)/Frameworks/smpeg.framework/Headers\" \"$(SRCROOT)/Frameworks/Ogg.framework/Headers\" \"$(SRCROOT)/Frameworks/Vorbis.framework/Headers\" \"$(SRCROOT)/Frameworks/FLAC.framework/Headers\"";
+				HEADER_SEARCH_PATHS_QUOTED = "\"$(SRCROOT)/Frameworks/mikmod.framework/Headers\" \"$(SRCROOT)/Frameworks/mpg123.framework/Headers\" \"$(SRCROOT)/Frameworks/Ogg.framework/Headers\" \"$(SRCROOT)/Frameworks/Vorbis.framework/Headers\" \"$(SRCROOT)/Frameworks/FLAC.framework/Headers\"";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				PRODUCT_NAME = SDL_mixer;
 				SDKROOT = macosx;
