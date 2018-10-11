@@ -610,7 +610,7 @@ if test x$enable_music_mp3_mpg123 = xyes; then
     AC_CHECK_HEADER([mpg123.h], [have_mpg123_hdr=yes])
     AC_CHECK_LIB([mpg123], [mpg123_replace_reader_handle], [have_mpg123_lib=yes])
     if test x$have_mpg123_hdr = xyes -a x$have_mpg123_lib = xyes; then
-        have_mpg123=yes
+        have_libmpg123=yes
         case "$host" in
             *-*-darwin*)
                 mpg123_lib=[`find_lib libmpg123.dylib`]
@@ -635,7 +635,7 @@ if test x$enable_music_mp3_mpg123 = xyes; then
     fi
 fi
 
-if test x$have_libmad = xyes -o x$have_libmpg123; then
+if test x$have_libmad = xyes -o x$have_libmpg123 = xyes; then
     :
 else
     AC_MSG_WARN([MP3 support disabled])

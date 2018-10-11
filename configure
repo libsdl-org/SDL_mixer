@@ -12679,7 +12679,7 @@ if test "x$ac_cv_lib_mpg123_mpg123_replace_reader_handle" = xyes; then :
 fi
 
     if test x$have_mpg123_hdr = xyes -a x$have_mpg123_lib = xyes; then
-        have_mpg123=yes
+        have_libmpg123=yes
         case "$host" in
             *-*-darwin*)
                 mpg123_lib=`find_lib libmpg123.dylib`
@@ -12706,7 +12706,7 @@ $as_echo "$as_me: WARNING: mpg123 support disabled" >&2;}
     fi
 fi
 
-if test x$have_libmad = xyes -o x$have_libmpg123; then
+if test x$have_libmad = xyes -o x$have_libmpg123 = xyes; then
     :
 else
     { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: MP3 support disabled" >&5
