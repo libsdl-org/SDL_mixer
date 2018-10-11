@@ -180,6 +180,8 @@ int Mix_Init(int flags)
 		if ((initialized & MIX_INIT_MP3) || Mix_InitMP3() == 0) {
 			result |= MIX_INIT_MP3;
 		}
+#elif defined(MP3_MAD_MUSIC)
+		result |= MIX_INIT_MP3;
 #else
 		Mix_SetError("Mixer not built with MP3 support");
 #endif

@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="8.00"
 	Name="timidity"
 	ProjectGUID="{B162B6F1-E876-4D5F-A1F6-E3A6DC2F4A2C}"
 	RootNamespace="timidity"
-	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform

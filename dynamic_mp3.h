@@ -20,28 +20,33 @@
 */
 
 #ifdef MP3_MUSIC
-#include "smpeg.h"
+
+#include <mpg123.h>
 
 typedef struct {
 	int loaded;
 	void *handle;
-	void (*SMPEG_actualSpec)( SMPEG *mpeg, SDL_AudioSpec *spec );
-	void (*SMPEG_delete)( SMPEG* mpeg );
-	void (*SMPEG_enableaudio)( SMPEG* mpeg, int enable );
-	void (*SMPEG_enablevideo)( SMPEG* mpeg, int enable );
-	SMPEG* (*SMPEG_new_rwops)(SDL_RWops *src, SMPEG_Info* info, int sdl_audio);
-	void (*SMPEG_play)( SMPEG* mpeg );
-	int (*SMPEG_playAudio)( SMPEG *mpeg, Uint8 *stream, int len );
-	void (*SMPEG_rewind)( SMPEG* mpeg );
-	void (*SMPEG_setvolume)( SMPEG* mpeg, int volume );
-	void (*SMPEG_skip)( SMPEG* mpeg, float seconds );
-	SMPEGstatus (*SMPEG_status)( SMPEG* mpeg );
-	void (*SMPEG_stop)( SMPEG* mpeg );
-} smpeg_loader;
 
-extern smpeg_loader smpeg;
+	int (*mpg123_close)(mpg123_handle *mh);
+	void (*mpg123_delete)(mpg123_handle *mh);
+	void (*mpg123_exit)(void);
+	int (*mpg123_format)( mpg123_handle *mh, long rate, int channels, int encodings );
+	int (*mpg123_format_none)(mpg123_handle *mh);
+	int (*mpg123_getformat)( mpg123_handle *mh, long *rate, int *channels, int *encoding );
+	int (*mpg123_init)(void);
+	mpg123_handle *(*mpg123_new)(const char* decoder, int *error);
+	int (*mpg123_open_handle)(mpg123_handle *mh, void *iohandle);
+	const char* (*mpg123_plain_strerror)(int errcode);
+	void (*mpg123_rates)(const long **list, size_t *number);
+	int (*mpg123_read)(mpg123_handle *mh, unsigned char *outmemory, size_t outmemsize, size_t *done );
+	int (*mpg123_replace_reader_handle)( mpg123_handle *mh, ssize_t (*r_read) (void *, void *, size_t), off_t (*r_lseek)(void *, off_t, int), void (*cleanup)(void*) );
+	off_t (*mpg123_seek)( mpg123_handle *mh, off_t sampleoff, int whence );
+	const char* (*mpg123_strerror)(mpg123_handle *mh);
+} mpg123_loader;
+
+extern mpg123_loader mpg123;
+
+extern int Mix_InitMP3 (void);
+extern void Mix_QuitMP3 (void);
 
 #endif /* MUSIC_MP3 */
-
-extern int Mix_InitMP3();
-extern void Mix_QuitMP3();

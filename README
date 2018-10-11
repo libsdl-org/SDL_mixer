@@ -6,7 +6,7 @@ http://www.libsdl.org/projects/SDL_mixer/
 
 Due to popular demand, here is a simple multi-channel audio mixer.
 It supports 8 channels of 16 bit stereo audio, plus a single channel
-of music, mixed by the popular MikMod MOD, Timidity MIDI and SMPEG MP3
+of music, mixed by the popular MikMod MOD, Timidity MIDI, and mpg123 MP3
 libraries.
 
 See the header file SDL_mixer.h and the examples playwave.c and playmus.c
@@ -16,7 +16,7 @@ The mixer can currently load Microsoft WAVE files and Creative Labs VOC
 files as audio samples, and can load MIDI files via Timidity and the
 following music formats via MikMod:  .MOD .S3M .IT .XM. It can load
 Ogg Vorbis streams as music if built with Ogg Vorbis or Tremor libraries,
-and finally it can load MP3 music using the SMPEG or libmad libraries.
+and finally it can load MP3 music using the libmpeg123 or libmad libraries.
 
 Tremor decoding is disabled by default; you can enable it by passing
 	--enable-music-ogg-tremor

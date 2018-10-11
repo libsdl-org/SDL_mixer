@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="8.00"
 	Name="SDL_mixer"
 	ProjectGUID="{F7E944B3-0815-40CD-B3E4-90B2A15B0E33}"
 	RootNamespace="SDL_mixer"
-	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -53,7 +52,7 @@
 				AdditionalOptions="/D OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\timidity;..\native_midi;external\include"
-				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WAV_MUSIC;MOD_MUSIC;MOD_DYNAMIC=\&quot;libmikmod-2.dll\&quot;;OGG_MUSIC;OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;;FLAC_MUSIC;FLAC_DYNAMIC=\&quot;libFLAC-8.dll\&quot;;MP3_MUSIC;MP3_DYNAMIC=\&quot;smpeg.dll\&quot;;MID_MUSIC;USE_TIMIDITY_MIDI;USE_NATIVE_MIDI"
+				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WAV_MUSIC;MOD_MUSIC;MOD_DYNAMIC=\&quot;libmikmod-2.dll\&quot;;OGG_MUSIC;OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;;FLAC_MUSIC;FLAC_DYNAMIC=\&quot;libFLAC-8.dll\&quot;;MP3_MUSIC;MPG123_DYNAMIC=\&quot;libmpg123-0.dll\&quot;;MID_MUSIC;USE_TIMIDITY_MIDI;USE_NATIVE_MIDI"
 				MinimalRebuild="true"
 				RuntimeLibrary="2"
 				PrecompiledHeaderFile=".\Debug/SDL_mixer.pch"
@@ -140,7 +139,7 @@
 				AdditionalOptions="/D OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\timidity;..\native_midi;external\include"
-				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WAV_MUSIC;MOD_MUSIC;MOD_DYNAMIC=\&quot;libmikmod-2.dll\&quot;;OGG_MUSIC;OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;;FLAC_MUSIC;FLAC_DYNAMIC=\&quot;libFLAC-8.dll\&quot;;MP3_MUSIC;MP3_DYNAMIC=\&quot;smpeg.dll\&quot;;MID_MUSIC;USE_TIMIDITY_MIDI;USE_NATIVE_MIDI"
+				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WAV_MUSIC;MOD_MUSIC;MOD_DYNAMIC=\&quot;libmikmod-2.dll\&quot;;OGG_MUSIC;OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;;FLAC_MUSIC;FLAC_DYNAMIC=\&quot;libFLAC-8.dll\&quot;;MP3_MUSIC;MPG123_DYNAMIC=\&quot;libmpg123-0.dll\&quot;;MID_MUSIC;USE_TIMIDITY_MIDI;USE_NATIVE_MIDI"
 				MinimalRebuild="true"
 				RuntimeLibrary="2"
 				PrecompiledHeaderFile=".\Debug/SDL_mixer.pch"
@@ -228,7 +227,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="..\timidity;..\native_midi;external\include"
-				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WAV_MUSIC;MOD_MUSIC;MOD_DYNAMIC=\&quot;libmikmod-2.dll\&quot;;OGG_MUSIC;OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;;FLAC_MUSIC;FLAC_DYNAMIC=\&quot;libFLAC-8.dll\&quot;;MP3_MUSIC;MP3_DYNAMIC=\&quot;smpeg.dll\&quot;;MID_MUSIC;USE_TIMIDITY_MIDI;USE_NATIVE_MIDI"
+				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WAV_MUSIC;MOD_MUSIC;MOD_DYNAMIC=\&quot;libmikmod-2.dll\&quot;;OGG_MUSIC;OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;;FLAC_MUSIC;FLAC_DYNAMIC=\&quot;libFLAC-8.dll\&quot;;MP3_MUSIC;MPG123_DYNAMIC=\&quot;libmpg123-0.dll\&quot;;MID_MUSIC;USE_TIMIDITY_MIDI;USE_NATIVE_MIDI"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -314,7 +313,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="..\timidity;..\native_midi;external\include"
-				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WAV_MUSIC;MOD_MUSIC;MOD_DYNAMIC=\&quot;libmikmod-2.dll\&quot;;OGG_MUSIC;OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;;FLAC_MUSIC;FLAC_DYNAMIC=\&quot;libFLAC-8.dll\&quot;;MP3_MUSIC;MP3_DYNAMIC=\&quot;smpeg.dll\&quot;;MID_MUSIC;USE_TIMIDITY_MIDI;USE_NATIVE_MIDI"
+				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WAV_MUSIC;MOD_MUSIC;MOD_DYNAMIC=\&quot;libmikmod-2.dll\&quot;;OGG_MUSIC;OGG_DYNAMIC=\&quot;libvorbisfile-3.dll\&quot;;FLAC_MUSIC;FLAC_DYNAMIC=\&quot;libFLAC-8.dll\&quot;;MP3_MUSIC;MPG123_DYNAMIC=\&quot;libmpg123-0.dll\&quot;;MID_MUSIC;USE_TIMIDITY_MIDI;USE_NATIVE_MIDI"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -898,6 +897,14 @@
 		</File>
 		<File
 			RelativePath="..\music_mod.h"
+			>
+		</File>
+		<File
+			RelativePath="..\music_mpg.c"
+			>
+		</File>
+		<File
+			RelativePath="..\music_mpg.h"
 			>
 		</File>
 		<File
