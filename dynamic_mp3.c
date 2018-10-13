@@ -32,7 +32,7 @@ mpg123_loader mpg123 = {
 #ifdef MPG123_DYNAMIC
 #define FUNCTION_LOADER(FUNC, SIG) \
 	mpg123.FUNC = (SIG) SDL_LoadFunction(mpg123.handle, #FUNC); \
-	if (mpg123.FUNC == NULL) { SDL_UnloadObject(mpg123.handle); return -1; }
+	if (mpg123.FUNC == NULL) { goto initerr; }
 #else
 #define FUNCTION_LOADER(FUNC, SIG) \
 	mpg123.FUNC = FUNC;
@@ -63,6 +63,10 @@ int Mix_InitMP3(void)
 		FUNCTION_LOADER(mpg123_seek, off_t (*)( mpg123_handle *mh, off_t sampleoff, int whence ))
 		FUNCTION_LOADER(mpg123_strerror, const char* (*)(mpg123_handle *mh))
 		if (mpg123.mpg123_init() != MPG123_OK) {
+#ifdef MPG123_DYNAMIC
+			initerr:
+			SDL_UnloadObject(mpg123.handle);
+#endif
 			return -1;
 		}
 	}
