@@ -619,7 +619,7 @@ if test x$enable_music_mp3_mpg123 = xyes; then
                 mpg123_lib=[`find_lib "libmpg123*.dll"`]
                 ;;
             *)
-		mpg123_lib=[`find_lib "libmpg123.so.*"`]
+                mpg123_lib=[`find_lib "libmpg123.so.*"`]
                 ;;
         esac
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MP3_MPG123"
