@@ -187,7 +187,7 @@ find_lib()
         host_lib_path="/usr/$base_libdir /usr/local/$base_libdir"
     fi
     for path in $env_lib_path $gcc_bin_path $gcc_lib_path $host_lib_path; do
-        lib=[`ls -- $path/$1 2>/dev/null | sort | sed 's/.*\/\(.*\)/\1/; q'`]
+        lib=[`ls -- $path/$1 2>/dev/null | sed -e '/\.so\..*\./d' -e 's,.*/,,' | sort | tail -1`]
         if test x$lib != x; then
             echo $lib
             return
@@ -288,9 +288,9 @@ return 1;
                 mikmod_lib=[`find_lib "libmikmod*.dll"`]
                 ;;
             *)
-                mikmod_lib=[`find_lib "libmikmod*.so.[0-9]"`]
+                mikmod_lib=[`find_lib "libmikmod[0-9]*.so.*"`]
                 if test x$mikmod_lib = x; then
-                    mikmod_lib=[`find_lib "libmikmod*.so.[0-9]*"`]
+                    mikmod_lib=[`find_lib "libmikmod.so.*"`]
                 fi
                 ;;
         esac
@@ -385,20 +385,14 @@ AC_HELP_STRING([--enable-music-fluidsynth-shared], [dynamically load FluidSynth 
             case "$host" in
                 *-*-darwin*)
                     fluidsynth_lib=[`find_lib libfluidsynth.dylib`]
-                    if test x$fluidsynth_lib = x; then
-                        fluidsynth_lib=[`find_lib libfluidsynth.[0-9]`]
-                    fi
-                    if test x$fluidsynth_lib = x; then
-                        fluidsynth_lib=[`find_lib libfluidsynth.[0-9]*`]
-                    fi
                     ;;
                 *-*-cygwin* | *-*-mingw32*)
                     fluidsynth_lib=[`find_lib "fluidsynth*.dll"`]
                     ;;
                 *)
-                    fluidsynth_lib=[`find_lib "libfluidsynth.so.[0-9]"`]
+                    fluidsynth_lib=[`find_lib "libfluidsynth[0-9]*.so.*"`]
                     if test x$fluidsynth_lib = x; then
-                        fluidsynth_lib=[`find_lib "libfluidsynth.so.[0-9]*"`]
+                        fluidsynth_lib=[`find_lib "libfluidsynth.so.*"`]
                     fi
                     ;;
             esac
@@ -434,20 +428,14 @@ if test x$enable_music_ogg = xyes; then
             case "$host" in
                 *-*-darwin*)
                     ogg_lib=[`find_lib libvorbisidec.dylib`]
-                    if test x$ogg_lib = x; then
-                        ogg_lib=[`find_lib libvorbisidec.[0-9]`]
-                    fi
-                    if test x$ogg_lib = x; then
-                        ogg_lib=[`find_lib libvorbisidec.[0-9]*`]
-                    fi
                     ;;
                 *-*-cygwin* | *-*-mingw32*)
                     ogg_lib=[`find_lib "vorbisidec*.dll"`]
                     ;;
                 *)
-                    ogg_lib=[`find_lib "libvorbisidec.so.[0-9]"`]
+                    ogg_lib=[`find_lib "libvorbisidec[0-9]*.so.*"`]
                     if test x$ogg_lib = x; then
-                        ogg_lib=[`find_lib "libvorbisidec.so.[0-9]*"`]
+                        ogg_lib=[`find_lib "libvorbisidec.so.*"`]
                     fi
                     ;;
             esac
@@ -475,9 +463,9 @@ if test x$enable_music_ogg = xyes; then
                     ogg_lib=[`find_lib "libvorbisfile*.dll"`]
                     ;;
                 *)
-                    ogg_lib=[`find_lib "libvorbisfile.so.[0-9]"`]
+                    ogg_lib=[`find_lib "libvorbisfile[0-9]*.so.*"`]
                     if test x$ogg_lib = x; then
-                        ogg_lib=[`find_lib "libvorbisfile.so.[0-9]*"`]
+                        ogg_lib=[`find_lib "libvorbisfile.so.*"`]
                     fi
                     ;;
             esac
@@ -532,12 +520,12 @@ if test x$enable_music_flac = xyes; then
                     flac_lib=[`find_lib libFLAC.dylib`]
                     ;;
                 *-*-cygwin* | *-*-mingw32*)
-                    flac_lib=[`find_lib "libFLAC*.dll"`]
+                    flac_lib=[`find_lib "libFLAC-*.dll"`]
                     ;;
                 *)
-                    flac_lib=[`find_lib "libFLAC.so.[0-9]"`]
+                    flac_lib=[`find_lib "libFLAC[0-9]*.so.*"`]
                     if test x$flac_lib = x; then
-                        flac_lib=[`find_lib "libFLAC.so.[0-9]*"`]
+                        flac_lib=[`find_lib "libFLAC.so.*"`]
                     fi
                     ;;
             esac
@@ -578,10 +566,7 @@ if test x$enable_music_mp3 = xyes; then
                 mpg123_lib=[`find_lib "libmpg123*.dll"`]
                 ;;
             *)
-                mpg123_lib=[`find_lib "libmpg123*.so.[0-9]"`]
-                if test x$mpg123_lib = x; then
-                    mpg123_lib=[`find_lib "libmpg123*.so.[0-9]*"`]
-                fi
+                mpg123_lib=[`find_lib "libmpg123.so.*"`]
                 ;;
         esac
         SOURCES="$SOURCES $srcdir/*_mp3.c $srcdir/*_mpg.c"
