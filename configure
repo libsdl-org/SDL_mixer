@@ -12743,6 +12743,8 @@ if test x$enable_music_mod = xyes; then
     libmikmod_min=1
     libmikmod_rev=10
     libmikmod_ver="$libmikmod_maj.$libmikmod_min.$libmikmod_rev"
+    CFLAGS_SAVED="$CFLAGS"
+    LIBS_SAVED="$LIBS"
     # Extract the first word of "libmikmod-config", so it can be a program name with args.
 set dummy libmikmod-config; ac_word=$2
 { $as_echo "$as_me:$LINENO: checking for $ac_word" >&5
@@ -12785,9 +12787,7 @@ fi
 
 
     if test "$LIBMIKMOD_CONFIG" != "no" ; then
-        CFLAGS_SAVED="$CFLAGS"
-        LIBS_SAVED="$LIBS"
-        CFLAGS="$CFLAGS -DLIBMIKMOD_MUSIC `$LIBMIKMOD_CONFIG --cflags`"
+        CFLAGS="$CFLAGS `$LIBMIKMOD_CONFIG --cflags`"
         LIBS="$LIBS `$LIBMIKMOD_CONFIG --libs`"
         have_libmikmod=yes
         { $as_echo "$as_me:$LINENO: checking for libmikmod - version >= $libmikmod_ver" >&5
@@ -12847,7 +12847,7 @@ $as_echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
 ( exit $ac_status )
-have_libmikmod=no; CFLAGS="$CFLAGS_SAVED"; LIBS="$LIBS_SAVED"
+have_libmikmod=no
 fi
 rm -rf conftest.dSYM
 rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
@@ -12883,6 +12883,8 @@ fi
         { $as_echo "$as_me:$LINENO: WARNING: *** Unable to find MikMod library (http://mikmod.raphnet.net/)" >&5
 $as_echo "$as_me: WARNING: *** Unable to find MikMod library (http://mikmod.raphnet.net/)" >&2;}
     fi
+    LIBS="$LIBS_SAVED"
+    CFLAGS="$CFLAGS_SAVED"
 fi
 
 # Check whether --enable-music-mod-modplug was given.
@@ -13152,7 +13154,7 @@ fi
 { $as_echo "$as_me:$LINENO: result: $ac_cv_lib_modplug_ModPlug_Load" >&5
 $as_echo "$ac_cv_lib_modplug_ModPlug_Load" >&6; }
 if test "x$ac_cv_lib_modplug_ModPlug_Load" = x""yes; then
-  have_libmodplug_lib=yes
+  have_libmodplug_lib=yes;MODPLUG_LIBS="-lmodplug"
 fi
 
 
@@ -13355,7 +13357,7 @@ fi
 { $as_echo "$as_me:$LINENO: result: $ac_cv_lib_modplug_ModPlug_Load" >&5
 $as_echo "$ac_cv_lib_modplug_ModPlug_Load" >&6; }
 if test "x$ac_cv_lib_modplug_ModPlug_Load" = x""yes; then
-  have_libmodplug_lib=yes
+  have_libmodplug_lib=yes;MODPLUG_LIBS="-lmodplug"
 fi
 
 
@@ -13710,6 +13712,7 @@ else
 fi
 
 if test x$enable_music_ogg = xyes; then
+    LIBS_SAVED="$LIBS"
     if test x$enable_music_ogg_tremor = xyes; then
         if test "${ac_cv_header_tremor_ivorbisfile_h+set}" = set; then
   { $as_echo "$as_me:$LINENO: checking for tremor/ivorbisfile.h" >&5
@@ -13843,13 +13846,13 @@ if test "x$ac_cv_header_tremor_ivorbisfile_h" = x""yes; then
 fi
 
 
-        { $as_echo "$as_me:$LINENO: checking for ov_open_callbacks in -lvorbisidec -logg" >&5
-$as_echo_n "checking for ov_open_callbacks in -lvorbisidec -logg... " >&6; }
-if test "${ac_cv_lib_vorbisidec__logg_ov_open_callbacks+set}" = set; then
+        { $as_echo "$as_me:$LINENO: checking for ov_open_callbacks in -lvorbisidec" >&5
+$as_echo_n "checking for ov_open_callbacks in -lvorbisidec... " >&6; }
+if test "${ac_cv_lib_vorbisidec_ov_open_callbacks+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-lvorbisidec -logg  $LIBS"
+LIBS="-lvorbisidec -logg $LIBS"
 cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
@@ -13893,12 +13896,12 @@ $as_echo "$ac_try_echo") >&5
 	 test "$cross_compiling" = yes ||
 	 $as_test_x conftest$ac_exeext
        }; then
-  ac_cv_lib_vorbisidec__logg_ov_open_callbacks=yes
+  ac_cv_lib_vorbisidec_ov_open_callbacks=yes
 else
   $as_echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-	ac_cv_lib_vorbisidec__logg_ov_open_callbacks=no
+	ac_cv_lib_vorbisidec_ov_open_callbacks=no
 fi
 
 rm -rf conftest.dSYM
@@ -13906,9 +13909,9 @@ rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
       conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:$LINENO: result: $ac_cv_lib_vorbisidec__logg_ov_open_callbacks" >&5
-$as_echo "$ac_cv_lib_vorbisidec__logg_ov_open_callbacks" >&6; }
-if test "x$ac_cv_lib_vorbisidec__logg_ov_open_callbacks" = x""yes; then
+{ $as_echo "$as_me:$LINENO: result: $ac_cv_lib_vorbisidec_ov_open_callbacks" >&5
+$as_echo "$ac_cv_lib_vorbisidec_ov_open_callbacks" >&6; }
+if test "x$ac_cv_lib_vorbisidec_ov_open_callbacks" = x""yes; then
   have_tremor_lib=yes
 fi
 
@@ -14074,13 +14077,13 @@ if test "x$ac_cv_header_vorbis_vorbisfile_h" = x""yes; then
 fi
 
 
-        { $as_echo "$as_me:$LINENO: checking for ov_open_callbacks in -lvorbisfile -lvorbis -logg -lm" >&5
-$as_echo_n "checking for ov_open_callbacks in -lvorbisfile -lvorbis -logg -lm... " >&6; }
-if test "${ac_cv_lib_vorbisfile__lvorbis__logg__lm_ov_open_callbacks+set}" = set; then
+        { $as_echo "$as_me:$LINENO: checking for ov_open_callbacks in -lvorbisfile" >&5
+$as_echo_n "checking for ov_open_callbacks in -lvorbisfile... " >&6; }
+if test "${ac_cv_lib_vorbisfile_ov_open_callbacks+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-lvorbisfile -lvorbis -logg -lm  $LIBS"
+LIBS="-lvorbisfile -lvorbis -logg -lm $LIBS"
 cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
@@ -14124,12 +14127,12 @@ $as_echo "$ac_try_echo") >&5
 	 test "$cross_compiling" = yes ||
 	 $as_test_x conftest$ac_exeext
        }; then
-  ac_cv_lib_vorbisfile__lvorbis__logg__lm_ov_open_callbacks=yes
+  ac_cv_lib_vorbisfile_ov_open_callbacks=yes
 else
   $as_echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-	ac_cv_lib_vorbisfile__lvorbis__logg__lm_ov_open_callbacks=no
+	ac_cv_lib_vorbisfile_ov_open_callbacks=no
 fi
 
 rm -rf conftest.dSYM
@@ -14137,9 +14140,9 @@ rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
       conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:$LINENO: result: $ac_cv_lib_vorbisfile__lvorbis__logg__lm_ov_open_callbacks" >&5
-$as_echo "$ac_cv_lib_vorbisfile__lvorbis__logg__lm_ov_open_callbacks" >&6; }
-if test "x$ac_cv_lib_vorbisfile__lvorbis__logg__lm_ov_open_callbacks" = x""yes; then
+{ $as_echo "$as_me:$LINENO: result: $ac_cv_lib_vorbisfile_ov_open_callbacks" >&5
+$as_echo "$ac_cv_lib_vorbisfile_ov_open_callbacks" >&6; }
+if test "x$ac_cv_lib_vorbisfile_ov_open_callbacks" = x""yes; then
   have_ogg_lib=yes
 fi
 
@@ -14173,6 +14176,7 @@ $as_echo "$as_me: WARNING: *** Unable to find Ogg Vorbis library (http://www.xip
 $as_echo "$as_me: WARNING: Ogg Vorbis support disabled" >&2;}
         fi
     fi
+    LIBS="$LIBS_SAVED"
 fi
 
 libflac_ver=8
