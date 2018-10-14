@@ -11859,7 +11859,7 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_modplug_ModPlug_Load" >&5
 $as_echo "$ac_cv_lib_modplug_ModPlug_Load" >&6; }
 if test "x$ac_cv_lib_modplug_ModPlug_Load" = xyes; then :
-  have_libmodplug_lib=yes
+  have_libmodplug_lib=yes;MODPLUG_LIBS="-lmodplug"
 fi
 
 
@@ -11907,7 +11907,7 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_modplug_ModPlug_Load" >&5
 $as_echo "$ac_cv_lib_modplug_ModPlug_Load" >&6; }
 if test "x$ac_cv_lib_modplug_ModPlug_Load" = xyes; then :
-  have_libmodplug_lib=yes
+  have_libmodplug_lib=yes;MODPLUG_LIBS="-lmodplug"
 fi
 
 
@@ -11970,6 +11970,8 @@ if test x$enable_music_mod = xyes -a x$enable_music_mod_mikmod = xyes; then
     libmikmod_min=1
     libmikmod_rev=10
     libmikmod_ver="$libmikmod_maj.$libmikmod_min.$libmikmod_rev"
+    CFLAGS_SAVED="$CFLAGS"
+    LIBS_SAVED="$LIBS"
     # Extract the first word of "libmikmod-config", so it can be a program name with args.
 set dummy libmikmod-config; ac_word=$2
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
@@ -12012,9 +12014,6 @@ fi
 
 
     if test "$LIBMIKMOD_CONFIG" != "no" ; then
-
-        CFLAGS_SAVED="$CFLAGS"
-        LIBS_SAVED="$LIBS"
         CFLAGS="$CFLAGS `$LIBMIKMOD_CONFIG --cflags`"
         LIBS="$LIBS `$LIBMIKMOD_CONFIG --libs`"
         have_libmikmod=yes
@@ -12045,7 +12044,7 @@ _ACEOF
 if ac_fn_c_try_run "$LINENO"; then :
 
 else
-  have_libmikmod=no; CFLAGS="$CFLAGS_SAVED"; LIBS="$LIBS_SAVED"
+  have_libmikmod=no
 fi
 rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
   conftest.$ac_objext conftest.beam conftest.$ac_ext
@@ -12079,6 +12078,8 @@ fi
         { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: *** Unable to find MikMod library (http://mikmod.raphnet.net/)" >&5
 $as_echo "$as_me: WARNING: *** Unable to find MikMod library (http://mikmod.raphnet.net/)" >&2;}
     fi
+    LIBS="$LIBS_SAVED"
+    CFLAGS="$CFLAGS_SAVED"
 fi
 
 if test x$have_libmodplug != xyes -a x$have_libmikmod != xyes ; then
@@ -12263,6 +12264,7 @@ else
 fi
 
 if test x$enable_music_ogg = xyes; then
+    LIBS_SAVED="$LIBS"
     if test x$enable_music_ogg_tremor = xyes; then
         ac_fn_c_check_header_mongrel "$LINENO" "tremor/ivorbisfile.h" "ac_cv_header_tremor_ivorbisfile_h" "$ac_includes_default"
 if test "x$ac_cv_header_tremor_ivorbisfile_h" = xyes; then :
@@ -12270,14 +12272,13 @@ if test "x$ac_cv_header_tremor_ivorbisfile_h" = xyes; then :
 fi
 
 
-        as_ac_Lib=`$as_echo "ac_cv_lib_vorbisidec -logg''_ov_open_callbacks" | $as_tr_sh`
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for ov_open_callbacks in -lvorbisidec -logg" >&5
-$as_echo_n "checking for ov_open_callbacks in -lvorbisidec -logg... " >&6; }
-if eval \${$as_ac_Lib+:} false; then :
+        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for ov_open_callbacks in -lvorbisidec" >&5
+$as_echo_n "checking for ov_open_callbacks in -lvorbisidec... " >&6; }
+if ${ac_cv_lib_vorbisidec_ov_open_callbacks+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-lvorbisidec -logg  $LIBS"
+LIBS="-lvorbisidec -logg $LIBS"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -12297,18 +12298,17 @@ return ov_open_callbacks ();
 }
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
-  eval "$as_ac_Lib=yes"
+  ac_cv_lib_vorbisidec_ov_open_callbacks=yes
 else
-  eval "$as_ac_Lib=no"
+  ac_cv_lib_vorbisidec_ov_open_callbacks=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-eval ac_res=\$$as_ac_Lib
-	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
-$as_echo "$ac_res" >&6; }
-if eval test \"x\$"$as_ac_Lib"\" = x"yes"; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_vorbisidec_ov_open_callbacks" >&5
+$as_echo "$ac_cv_lib_vorbisidec_ov_open_callbacks" >&6; }
+if test "x$ac_cv_lib_vorbisidec_ov_open_callbacks" = xyes; then :
   have_tremor_lib=yes
 fi
 
@@ -12347,14 +12347,13 @@ if test "x$ac_cv_header_vorbis_vorbisfile_h" = xyes; then :
 fi
 
 
-        as_ac_Lib=`$as_echo "ac_cv_lib_vorbisfile -lvorbis -logg -lm''_ov_open_callbacks" | $as_tr_sh`
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for ov_open_callbacks in -lvorbisfile -lvorbis -logg -lm" >&5
-$as_echo_n "checking for ov_open_callbacks in -lvorbisfile -lvorbis -logg -lm... " >&6; }
-if eval \${$as_ac_Lib+:} false; then :
+        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for ov_open_callbacks in -lvorbisfile" >&5
+$as_echo_n "checking for ov_open_callbacks in -lvorbisfile... " >&6; }
+if ${ac_cv_lib_vorbisfile_ov_open_callbacks+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-lvorbisfile -lvorbis -logg -lm  $LIBS"
+LIBS="-lvorbisfile -lvorbis -logg -lm $LIBS"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -12374,18 +12373,17 @@ return ov_open_callbacks ();
 }
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
-  eval "$as_ac_Lib=yes"
+  ac_cv_lib_vorbisfile_ov_open_callbacks=yes
 else
-  eval "$as_ac_Lib=no"
+  ac_cv_lib_vorbisfile_ov_open_callbacks=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-eval ac_res=\$$as_ac_Lib
-	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
-$as_echo "$ac_res" >&6; }
-if eval test \"x\$"$as_ac_Lib"\" = x"yes"; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_vorbisfile_ov_open_callbacks" >&5
+$as_echo "$ac_cv_lib_vorbisfile_ov_open_callbacks" >&6; }
+if test "x$ac_cv_lib_vorbisfile_ov_open_callbacks" = xyes; then :
   have_ogg_lib=yes
 fi
 
@@ -12418,6 +12416,7 @@ $as_echo "$as_me: WARNING: *** Unable to find Ogg Vorbis library (http://www.xip
 $as_echo "$as_me: WARNING: Ogg Vorbis support disabled" >&2;}
         fi
     fi
+    LIBS="$LIBS_SAVED"
 fi
 
 libflac_ver=8
@@ -12605,10 +12604,10 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 $as_echo "$have_libmad" >&6; }
     if test x$have_libmad = xyes; then
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MP3_MAD"
-		if test x$enable_music_mp3_mad_gpl_dithering = xyes; then
+        if test x$enable_music_mp3_mad_gpl_dithering = xyes; then
             { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: *** Using GPL libmad and MP3 dithering routines, this build of SDL_mixer is now under the GPL" >&5
 $as_echo "$as_me: WARNING: *** Using GPL libmad and MP3 dithering routines, this build of SDL_mixer is now under the GPL" >&2;}
-			EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MP3_MAD_GPL_DITHERING"
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MP3_MAD_GPL_DITHERING"
         fi
         EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lmad"
     else
@@ -12729,6 +12728,7 @@ else
 fi
 
 if test x$enable_music_opus = xyes; then
+    LIBS_SAVED="$LIBS"
 
 pkg_failed=no
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for OPUSFILE" >&5
@@ -12802,7 +12802,7 @@ if ${ac_cv_lib_opusfile_op_open_callbacks+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-lopusfile  $LIBS"
+LIBS="-lopusfile -lopus -logg -lm $LIBS"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -12833,7 +12833,7 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_opusfile_op_open_callbacks" >&5
 $as_echo "$ac_cv_lib_opusfile_op_open_callbacks" >&6; }
 if test "x$ac_cv_lib_opusfile_op_open_callbacks" = xyes; then :
-  have_opusfile_lib=yes
+  have_opusfile_lib=yes;OPUSFILE_LIBS="-lopusfile -lopus"
 fi
 
 
@@ -12850,7 +12850,7 @@ if ${ac_cv_lib_opusfile_op_open_callbacks+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-lopusfile  $LIBS"
+LIBS="-lopusfile -lopus -logg -lm $LIBS"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -12881,7 +12881,7 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_opusfile_op_open_callbacks" >&5
 $as_echo "$ac_cv_lib_opusfile_op_open_callbacks" >&6; }
 if test "x$ac_cv_lib_opusfile_op_open_callbacks" = xyes; then :
-  have_opusfile_lib=yes
+  have_opusfile_lib=yes;OPUSFILE_LIBS="-lopusfile -lopus"
 fi
 
 
@@ -12894,6 +12894,7 @@ $as_echo "yes" >&6; }
             have_opusfile_lib=yes
 
 fi
+    LIBS="$LIBS_SAVED"
 
     if test x$have_opusfile_hdr = xyes -a x$have_opusfile_lib = xyes; then
         have_opusfile=yes
