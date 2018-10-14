@@ -250,11 +250,11 @@ if test x$enable_music_mod = xyes; then
     libmikmod_min=1
     libmikmod_rev=10
     libmikmod_ver="$libmikmod_maj.$libmikmod_min.$libmikmod_rev"
+    CFLAGS_SAVED="$CFLAGS"
+    LIBS_SAVED="$LIBS"
     AC_PATH_PROG(LIBMIKMOD_CONFIG, libmikmod-config, no, [$PATH])
     if test "$LIBMIKMOD_CONFIG" != "no" ; then
-        CFLAGS_SAVED="$CFLAGS"
-        LIBS_SAVED="$LIBS"
-        CFLAGS="$CFLAGS -DLIBMIKMOD_MUSIC `$LIBMIKMOD_CONFIG --cflags`"
+        CFLAGS="$CFLAGS `$LIBMIKMOD_CONFIG --cflags`"
         LIBS="$LIBS `$LIBMIKMOD_CONFIG --libs`"
         have_libmikmod=yes
         AC_MSG_CHECKING([for libmikmod - version >= $libmikmod_ver])
@@ -273,8 +273,7 @@ if(ver>=((maj<<16)|(min<<8)|(rev))) {
 printf("no\n*** libmikmod is older than %d.%d.%d, not using.\n",maj,min,rev);
 return 1;
 }
-], [], have_libmikmod=no; CFLAGS="$CFLAGS_SAVED"; LIBS="$LIBS_SAVED",
-        [echo $ac_n "cross compiling; assumed OK... $ac_c"])
+], [], [have_libmikmod=no], [echo $ac_n "cross compiling; assumed OK... $ac_c"])
     fi
 
     if test x$have_libmikmod = xyes; then
@@ -303,6 +302,8 @@ return 1;
     else
         AC_MSG_WARN([*** Unable to find MikMod library (http://mikmod.raphnet.net/)])
     fi
+    LIBS="$LIBS_SAVED"
+    CFLAGS="$CFLAGS_SAVED"
 fi
 
 AC_ARG_ENABLE([music-mod-modplug],
@@ -314,7 +315,7 @@ if test x$enable_music_mod_modplug = xyes; then
             have_libmodplug_lib=yes
         ], [dnl
             AC_CHECK_HEADER([libmodplug/modplug.h], [have_libmodplug_hdr=yes])
-            AC_CHECK_LIB([modplug], [ModPlug_Load], [have_libmodplug_lib=yes])
+            AC_CHECK_LIB([modplug], [ModPlug_Load], [have_libmodplug_lib=yes;MODPLUG_LIBS="-lmodplug"])
         ])
 
     if test x$have_libmodplug_hdr = xyes -a x$have_libmodplug_lib = xyes; then
@@ -423,9 +424,10 @@ AC_ARG_ENABLE([music-ogg-shared],
 AC_HELP_STRING([--enable-music-ogg-shared], [dynamically load Ogg Vorbis support [[default=yes]]]),
               [], [enable_music_ogg_shared=yes])
 if test x$enable_music_ogg = xyes; then
+    LIBS_SAVED="$LIBS"
     if test x$enable_music_ogg_tremor = xyes; then
         AC_CHECK_HEADER([tremor/ivorbisfile.h], [have_tremor_hdr=yes])
-        AC_CHECK_LIB([vorbisidec -logg], [ov_open_callbacks], [have_tremor_lib=yes])
+        AC_CHECK_LIB([vorbisidec], [ov_open_callbacks], [have_tremor_lib=yes], [], [-logg])
         if test x$have_tremor_hdr = xyes -a x$have_tremor_lib = xyes; then
             case "$host" in
                 *-*-darwin*)
@@ -455,7 +457,7 @@ if test x$enable_music_ogg = xyes; then
         fi
     else
         AC_CHECK_HEADER([vorbis/vorbisfile.h], [have_ogg_hdr=yes])
-        AC_CHECK_LIB([vorbisfile -lvorbis -logg -lm], [ov_open_callbacks], [have_ogg_lib=yes])
+        AC_CHECK_LIB([vorbisfile], [ov_open_callbacks], [have_ogg_lib=yes], [], [-lvorbis -logg -lm])
         if test x$have_ogg_hdr = xyes -a x$have_ogg_lib = xyes; then
             case "$host" in
                 *-*-darwin*)
@@ -484,6 +486,7 @@ if test x$enable_music_ogg = xyes; then
             AC_MSG_WARN([Ogg Vorbis support disabled])
         fi
     fi
+    LIBS="$LIBS_SAVED"
 fi
 
 libflac_ver=8
