@@ -7,6 +7,8 @@
 #include "stdafx.h"
 #include "sndfile.h"
 
+#ifndef NO_WAVFORMAT
+
 #ifndef WAVE_FORMAT_EXTENSIBLE
 #define WAVE_FORMAT_EXTENSIBLE	0xFFFE
 #endif
@@ -170,7 +172,6 @@ static const int gIMAUnpackTable[90] =
   32767, 0
 };
 
-
 BOOL IMAADPCMUnpack16(signed short *pdest, UINT nLen, LPBYTE psrc, DWORD dwBytes, UINT pkBlkAlign)
 //------------------------------------------------------------------------------------------------
 {
@@ -215,3 +216,4 @@ BOOL IMAADPCMUnpack16(signed short *pdest, UINT nLen, LPBYTE psrc, DWORD dwBytes
 	}
 	return TRUE;
 }
+#endif // NO_WAVFORMAT

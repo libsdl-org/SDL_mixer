@@ -128,7 +128,9 @@ typedef struct ITSAMPLESTRUCT
 
 #pragma pack()
 
-extern BYTE autovibit2xm[8];
-extern BYTE autovibxm2it[8];
+#if 0/* made these two static to load_it.cpp */
+extern const BYTE autovibit2xm[8];
+extern const BYTE autovibxm2it[8];
+#endif
 
 #endif

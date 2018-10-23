@@ -17,7 +17,7 @@
 typedef struct tagFILEHEADER669
 {
 	WORD sig;				// 'if' or 'JN'
-        signed char songmessage[108];	// Song Message
+	signed char songmessage[108];	// Song Message
 	BYTE samples;			// number of samples (1-64)
 	BYTE patterns;			// number of patterns (1-128)
 	BYTE restartpos;
@@ -35,7 +35,7 @@ typedef struct tagSAMPLE669
 	BYTE loopend[4];
 } SAMPLE669;
 
-DWORD lengthArrayToDWORD(const BYTE length[4]) {
+static DWORD lengthArrayToDWORD(const BYTE length[4]) {
 	DWORD len = (length[3] << 24) +
 		(length[2] << 16) +
 		(length[1] << 8) +

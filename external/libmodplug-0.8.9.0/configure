@@ -16702,13 +16702,12 @@ fi
 
 done
 
-for ac_func in setenv sinf
+for ac_func in sinf
 do :
-  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
-ac_fn_cxx_check_func "$LINENO" "$ac_func" "$as_ac_var"
-if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
+  ac_fn_cxx_check_func "$LINENO" "sinf" "ac_cv_func_sinf"
+if test "x$ac_cv_func_sinf" = xyes; then :
   cat >>confdefs.h <<_ACEOF
-#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
+#define HAVE_SINF 1
 _ACEOF
 
 fi

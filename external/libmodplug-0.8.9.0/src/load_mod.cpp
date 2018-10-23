@@ -60,6 +60,7 @@ void CSoundFile::ConvertModCommand(MODCOMMAND *m) const
 }
 
 
+#ifndef MODPLUG_NO_FILESAVE
 WORD CSoundFile::ModSaveCommand(const MODCOMMAND *m, BOOL bXM) const
 //------------------------------------------------------------------
 {
@@ -144,6 +145,7 @@ WORD CSoundFile::ModSaveCommand(const MODCOMMAND *m, BOOL bXM) const
 	}
 	return (WORD)((command << 8) | (param));
 }
+#endif // MODPLUG_NO_FILESAVE
 
 
 #pragma pack(1)
@@ -184,7 +186,7 @@ static BOOL IsValidName(LPCSTR s, int length, CHAR minChar)
 	return TRUE;
 }
 
-BOOL IsMagic(LPCSTR s1, LPCSTR s2)
+static BOOL IsMagic(LPCSTR s1, LPCSTR s2)
 {
 	return ((*(DWORD *)s1) == (*(DWORD *)s2)) ? TRUE : FALSE;
 }

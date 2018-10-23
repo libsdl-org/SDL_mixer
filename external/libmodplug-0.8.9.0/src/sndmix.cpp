@@ -60,7 +60,7 @@ UINT gnReverbSend;
 
 // Log tables for pre-amp
 // We don't want the tracker to get too loud
-const UINT PreAmpTable[16] =
+static const UINT PreAmpTable[16] =
 {
 	0x60, 0x60, 0x60, 0x70,	// 0-7
 	0x80, 0x88, 0x90, 0x98,	// 8-15
@@ -68,7 +68,7 @@ const UINT PreAmpTable[16] =
 	0xB4, 0xB8, 0xBC, 0xC0,	// 24-31
 };
 
-const UINT PreAmpAGCTable[16] =
+static const UINT PreAmpAGCTable[16] =
 {
 	0x60, 0x60, 0x60, 0x60,
 	0x68, 0x70, 0x78, 0x80,

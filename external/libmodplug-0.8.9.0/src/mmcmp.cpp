@@ -8,6 +8,7 @@
 #include "stdafx.h"
 #include "sndfile.h"
 
+#ifdef MMCMP_SUPPORT
 BOOL PP20_Unpack(LPCBYTE *ppMemFile, LPDWORD pdwMemLength);
 
 #pragma pack(1)
@@ -501,3 +502,4 @@ BOOL PP20_Unpack(LPCBYTE *ppMemFile, LPDWORD pdwMemLength)
 	*pdwMemLength = dwDstLen;
 	return TRUE;
 }
+#endif /* MMCMP_SUPPORT */

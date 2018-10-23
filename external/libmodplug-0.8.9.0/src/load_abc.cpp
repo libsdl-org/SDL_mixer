@@ -37,9 +37,11 @@
 #include "stdafx.h"
 #include "sndfile.h"
 
+#ifndef NO_MIDIFORMATS
+
 #include "load_pat.h"
 
-#if _MSC_VER >= 1600
+#if defined(_MSC_VER) && (_MSC_VER >= 1300)
 #define putenv _putenv
 #define strdup _strdup
 #endif
@@ -256,16 +258,6 @@ static void abc_add_setjumploop(ABCHANDLE *h, ABCTRACK *tp, uint32_t tracktime, 
 static uint32_t abc_pattracktime(ABCHANDLE *h, uint32_t tracktime);
 static int abc_patno(ABCHANDLE *h, uint32_t tracktime);
 
-#ifndef HAVE_SETENV
-static void setenv(const char *name, const char *value, int overwrite)
-{
-	int len = strlen(name)+1+strlen(value)+1;
-	char *str = (char *)malloc(len);
-	sprintf(str, "%s=%s", name, value);
-	putenv(str);
-	free(str);
-}
-#endif
 
 static int abc_isvalidchar(char c) {
 	return(isalpha(c) || isdigit(c) || isspace(c) || c == '%' || c == ':');
@@ -2345,9 +2337,9 @@ BOOL CSoundFile::TestABC(const BYTE *lpStream, DWORD dwMemLength)
 // =====================================================================================
 static ABCHANDLE *ABC_Init(void)
 {
+	static char buf[40];
 	ABCHANDLE   *retval;
 	char *p;
-	char buf[10];
 	retval = (ABCHANDLE *)calloc(1,sizeof(ABCHANDLE));
 	if( !retval ) return NULL;
 	retval->track       = NULL;
@@ -2365,16 +2357,16 @@ static ABCHANDLE *ABC_Init(void)
 			retval->pickrandom = atoi(p);
 		if( *p == '-' ) {
 			retval->pickrandom = atoi(p+1)-1; // xmms preloads the file
-			sprintf(buf,"-%ld",retval->pickrandom+2);
-			setenv(ABC_ENV_NORANDOMPICK, buf, 1);
+			sprintf(buf,"%s=-%ld",ABC_ENV_NORANDOMPICK,retval->pickrandom+2);
+			putenv(buf);
 		}
 	}
 	else {
 		srandom((uint32_t)time(0));	// initialize random generator with seed
 		retval->pickrandom = 1+(int)(10000.0*random()/(RAND_MAX+1.0));
 		// can handle pickin' from songbooks with 10.000 songs
-		sprintf(buf,"-%ld",retval->pickrandom); // xmms preloads the file
-		setenv(ABC_ENV_NORANDOMPICK, buf, 1);
+		sprintf(buf,"%s=-%ld",ABC_ENV_NORANDOMPICK,retval->pickrandom); // xmms preloads the file
+		putenv(buf);
 	}
 	return retval;
 }
@@ -4878,3 +4870,4 @@ BOOL CSoundFile::ReadABC(const uint8_t *lpStream, DWORD dwMemLength)
 	ABC_Cleanup(h);	// we dont need it anymore
 	return 1;
 }
+#endif // NO_MIDIFORMATS

@@ -42,7 +42,7 @@ typedef struct MDLPATTERNDATA
 } MDLPATTERNDATA;
 
 
-void ConvertMDLCommand(MODCOMMAND *m, UINT eff, UINT data)
+static void ConvertMDLCommand(MODCOMMAND *m, UINT eff, UINT data)
 //--------------------------------------------------------
 {
 	UINT command = 0, param = data;
@@ -91,7 +91,7 @@ void ConvertMDLCommand(MODCOMMAND *m, UINT eff, UINT data)
 }
 
 
-void UnpackMDLTrack(MODCOMMAND *pat, UINT nChannels, UINT nRows, UINT nTrack, const BYTE *lpTracks, UINT len)
+static void UnpackMDLTrack(MODCOMMAND *pat, UINT nChannels, UINT nRows, UINT nTrack, const BYTE *lpTracks, UINT len)
 //-------------------------------------------------------------------------------------------------
 {
 	MODCOMMAND cmd, *m = pat;
@@ -166,7 +166,6 @@ void UnpackMDLTrack(MODCOMMAND *pat, UINT nChannels, UINT nRows, UINT nTrack, co
 		}
 	}
 }
-
 
 
 BOOL CSoundFile::ReadMDL(const BYTE *lpStream, DWORD dwMemLength)
@@ -429,12 +428,13 @@ BOOL CSoundFile::ReadMDL(const BYTE *lpStream, DWORD dwMemLength)
 		for (UINT ipat=0; ipat<npatterns; ipat++)
 		{
 			if ((Patterns[ipat] = AllocatePattern(PatternSize[ipat], m_nChannels)) == NULL) break;
-			for (UINT chn=0; chn<m_nChannels; chn++) if ((patterntracks[ipat*32+chn]) && (patterntracks[ipat*32+chn] <= ntracks) && (*(WORD *)lpStream+dwTrackPos) < dwMemLength-dwTrackPos)
+			for (UINT chn=0; chn<m_nChannels; chn++) if ((patterntracks[ipat*32+chn]) && (patterntracks[ipat*32+chn] <= ntracks))
 			{
+			    const BYTE *lpTracks = lpStream + dwTrackPos;
+			    UINT len = lpTracks[0] | (lpTracks[1] << 8);
+			    if (len < dwMemLength-dwTrackPos) {
 				MODCOMMAND *m = Patterns[ipat] + chn;
 				UINT nTrack = patterntracks[ipat*32+chn];
-				const BYTE *lpTracks = lpStream + dwTrackPos;
-				UINT len = lpTracks[0] | (lpTracks[1] << 8);
 
 				lpTracks += 2;
 				for (UINT ntrk=1; ntrk<nTrack && lpTracks < (dwMemLength + lpStream - len); ntrk++)
@@ -447,6 +447,7 @@ BOOL CSoundFile::ReadMDL(const BYTE *lpStream, DWORD dwMemLength)
 				if ( len > dwMemLength - dwTrackPos ) len = 0;
 
 				UnpackMDLTrack(m, m_nChannels, PatternSize[ipat], nTrack, lpTracks, len);
+			    }
 			}
 		}
 	}
