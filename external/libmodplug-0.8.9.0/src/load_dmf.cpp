@@ -509,7 +509,7 @@ typedef struct DMF_HTREE
 
 
 // DMF Huffman ReadBits
-BYTE DMFReadBits(DMF_HTREE *tree, UINT nbits)
+static BYTE DMFReadBits(DMF_HTREE *tree, UINT nbits)
 //-------------------------------------------
 {
 	BYTE x = 0, bitv = 1;
@@ -534,7 +534,7 @@ BYTE DMFReadBits(DMF_HTREE *tree, UINT nbits)
 // tree: [8-bit value][12-bit index][12-bit index] = 32-bit
 //
 
-void DMFNewNode(DMF_HTREE *tree)
+static void DMFNewNode(DMF_HTREE *tree)
 //------------------------------
 {
 	BYTE isleft, isright;

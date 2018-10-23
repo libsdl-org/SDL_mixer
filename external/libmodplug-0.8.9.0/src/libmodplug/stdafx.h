@@ -21,9 +21,15 @@
 # include <stdint.h>
 #endif
 
+/*#define MMCMP_SUPPORT*/
+
 /* disable AGC and FILESAVE for all targets for uniformity. */
 #define NO_AGC
 #define MODPLUG_NO_FILESAVE
+/*#define NO_PACKING*/
+/*#define NO_FILTER */
+#define NO_MIDIFORMATS
+#define NO_WAVFORMAT
 
 #ifdef _WIN32
 
@@ -87,12 +93,6 @@ typedef uint16_t* LPWORD;
 typedef const char* LPCSTR;
 typedef void* PVOID;
 typedef void VOID;
-
-inline LONG MulDiv (long a, long b, long c)
-{
-/*if (!c) return 0;*/
-  return ((uint64_t) a * (uint64_t) b ) / c;
-}
 
 #define LPCTSTR LPCSTR
 #define lstrcpyn strncpy

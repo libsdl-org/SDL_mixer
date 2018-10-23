@@ -456,7 +456,7 @@ typedef struct _MODCOMMAND
 // Mix Plugins
 #define MIXPLUG_MIXREADY			0x01	// Set when cleared
 
-class MODPLUG_EXPORT IMixPlugin
+class /*MODPLUG_EXPORT*/ IMixPlugin
 {
 public:
 	virtual ~IMixPlugin() {};
@@ -535,7 +535,7 @@ typedef VOID (* LPSNDMIXHOOKPROC)(int *, unsigned long, unsigned long); // buffe
 
 
 //==============
-class MODPLUG_EXPORT CSoundFile
+class /*MODPLUG_EXPORT*/ CSoundFile
 //==============
 {
 public:	// Static Members
@@ -638,7 +638,9 @@ public:
 	BOOL ReadIT(LPCBYTE lpStream, DWORD dwMemLength);
 	BOOL Read669(LPCBYTE lpStream, DWORD dwMemLength);
 	BOOL ReadUlt(LPCBYTE lpStream, DWORD dwMemLength);
+#ifndef NO_WAVFORMAT
 	BOOL ReadWav(LPCBYTE lpStream, DWORD dwMemLength);
+#endif
 	BOOL ReadDSM(LPCBYTE lpStream, DWORD dwMemLength);
 	BOOL ReadFAR(LPCBYTE lpStream, DWORD dwMemLength);
 	BOOL ReadAMS(LPCBYTE lpStream, DWORD dwMemLength);
@@ -653,12 +655,14 @@ public:
 	BOOL ReadPSM(LPCBYTE lpStream, DWORD dwMemLength);
 	BOOL ReadJ2B(LPCBYTE lpStream, DWORD dwMemLength);
 	BOOL ReadUMX(LPCBYTE lpStream, DWORD dwMemLength);
+#ifndef NO_MIDIFORMATS
 	BOOL ReadABC(LPCBYTE lpStream, DWORD dwMemLength);
 	BOOL TestABC(LPCBYTE lpStream, DWORD dwMemLength);
 	BOOL ReadMID(LPCBYTE lpStream, DWORD dwMemLength);
 	BOOL TestMID(LPCBYTE lpStream, DWORD dwMemLength);
 	BOOL ReadPAT(LPCBYTE lpStream, DWORD dwMemLength);
 	BOOL TestPAT(LPCBYTE lpStream, DWORD dwMemLength);
+#endif
 	// Save Functions
 #ifndef MODPLUG_NO_FILESAVE
 	UINT WriteSample(FILE *f, MODINSTRUMENT *pins, UINT nFlags, UINT nMaxLen=0);
@@ -666,14 +670,16 @@ public:
 	BOOL SaveS3M(LPCSTR lpszFileName, UINT nPacking=0);
 	BOOL SaveMod(LPCSTR lpszFileName, UINT nPacking=0);
 	BOOL SaveIT(LPCSTR lpszFileName, UINT nPacking=0);
-#endif // MODPLUG_NO_FILESAVE
-	// MOD Convert function
 	UINT GetBestSaveFormat() const;
 	UINT GetSaveFormats() const;
+#endif
+	// MOD Convert function
 	void ConvertModCommand(MODCOMMAND *) const;
 	void S3MConvert(MODCOMMAND *m, BOOL bIT) const;
+#ifndef MODPLUG_NO_FILESAVE
 	void S3MSaveConvert(UINT *pcmd, UINT *pprm, BOOL bIT) const;
 	WORD ModSaveCommand(const MODCOMMAND *m, BOOL bXM) const;
+#endif
 
 public:
 	// Real-time sound functions
@@ -759,8 +765,11 @@ public:
 	BOOL IsValidBackwardJump(UINT nStartOrder, UINT nStartRow, UINT nJumpOrder, UINT nJumpRow) const;
 	// Read/Write sample functions
 	signed char GetDeltaValue(signed char prev, UINT n) const { return (signed char)(prev + CompressionTable[n & 0x0F]); }
+#if !(defined(MODPLUG_NO_FILESAVE)||defined(NO_PACKING))
 	UINT PackSample(int &sample, int next);
 	BOOL CanPackSample(LPSTR pSample, UINT nLen, UINT nPacking, BYTE *result=NULL);
+#endif // NO_FILESAVE, NO_PACKING
+
 	UINT ReadSample(MODINSTRUMENT *pIns, UINT nFlags, LPCSTR pMemFile, DWORD dwMemLength);
 	BOOL DestroySample(UINT nSample);
 	BOOL DestroyInstrument(UINT nInstr);

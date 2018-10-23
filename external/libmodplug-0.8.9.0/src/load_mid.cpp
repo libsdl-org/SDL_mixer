@@ -35,6 +35,9 @@
 
 #include "stdafx.h"
 #include "sndfile.h"
+
+#ifndef NO_MIDIFORMATS
+
 #define PAN_LEFT    0x30
 #define PAN_RIGHT   0xD0
 #define MAX_POLYPHONY 16  // max notes in one midi channel
@@ -92,7 +95,7 @@ typedef struct _MIDTRACK
 #undef _mm_free
 #endif
 
-#define MMSTREAM										FILE
+#define MMSTREAM				FILE
 #define _mm_fseek(f,pos,whence)			fseek(f,pos,whence)
 #define _mm_read_UBYTES(buf,sz,f)		fread(buf,sz,1,f)
 #define _mm_read_SBYTES(buf,sz,f)		fread(buf,sz,1,f)
@@ -1582,3 +1585,4 @@ BOOL CSoundFile::ReadMID(const BYTE *lpStream, DWORD dwMemLength)
 	avoid_reentry = 0; // it is safe now, I'm finished
 	return TRUE;
 }
+#endif // NO_MIDIFORMATS
