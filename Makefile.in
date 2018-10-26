@@ -38,7 +38,7 @@ VERSION_OBJECTS = @VERSION_OBJECTS@
 PLAYWAVE_OBJECTS = @PLAYWAVE_OBJECTS@
 PLAYMUS_OBJECTS = @PLAYMUS_OBJECTS@
 
-DIST = *.txt Android.mk Makefile.in SDL2_mixer.pc.in SDL2_mixer.spec.in SDL_mixer.h VisualC VisualC-WinRT Xcode Xcode-iOS acinclude aclocal.m4 autogen.sh build-scripts configure configure.in debian effect_position.c effect_stereoreverse.c effects_internal.c effects_internal.h external gcc-fat.sh load_aiff.c load_aiff.h load_voc.c load_voc.h mixer.c mixer.h music.c music.h music_cmd.c music_cmd.h music_flac.c music_flac.h music_fluidsynth.c music_fluidsynth.h music_mad.c music_mad.h music_mikmod.c music_mikmod.h music_modplug.c music_modplug.h music_mpg123.c music_mpg123.h music_nativemidi.c music_nativemidi.h music_ogg.c music_ogg.h music_timidity.c music_timidity.h music_wav.c music_wav.h native_midi playmus.c playwave.c timidity version.rc
+DIST = *.txt Android.mk Makefile.in SDL2_mixer.pc.in SDL2_mixer.spec.in SDL_mixer.h VisualC VisualC-WinRT Xcode Xcode-iOS acinclude aclocal.m4 autogen.sh build-scripts configure configure.in debian effect_position.c effect_stereoreverse.c effects_internal.c effects_internal.h external gcc-fat.sh load_aiff.c load_aiff.h load_voc.c load_voc.h mixer.c mixer.h music.c music.h music_cmd.c music_cmd.h music_flac.c music_flac.h music_fluidsynth.c music_fluidsynth.h music_mad.c music_mad.h music_mikmod.c music_mikmod.h music_modplug.c music_modplug.h music_mpg123.c music_mpg123.h music_nativemidi.c music_nativemidi.h music_ogg.c music_ogg.h music_opus.c music_opus.h music_timidity.c music_timidity.h music_wav.c music_wav.h native_midi playmus.c playwave.c timidity version.rc
 
 LT_AGE      = @LT_AGE@
 LT_CURRENT  = @LT_CURRENT@
