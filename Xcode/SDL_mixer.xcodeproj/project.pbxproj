@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		0448E8AE108B937A00C9D3EA /* native_midi_macosx.c in Sources */ = {isa = PBXBuildFile; fileRef = 0448E8AD108B937A00C9D3EA /* native_midi_macosx.c */; };
 		0448E8AF108B937A00C9D3EA /* native_midi_macosx.c in Sources */ = {isa = PBXBuildFile; fileRef = 0448E8AD108B937A00C9D3EA /* native_midi_macosx.c */; };
-		630FBD7720D52063009867AB /* Opus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 630FBD7620D52063009867AB /* Opus.framework */; };
-		630FBD7D20D5206E009867AB /* OpusFile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 630FBD7C20D5206E009867AB /* OpusFile.framework */; };
 		630FBD8320D52105009867AB /* music_opus.c in Sources */ = {isa = PBXBuildFile; fileRef = 630FBD8220D52105009867AB /* music_opus.c */; };
 		630FBD8520D5211F009867AB /* music_opus.h in Headers */ = {isa = PBXBuildFile; fileRef = 630FBD8420D5211F009867AB /* music_opus.h */; };
 		63CD6ADC20D52DE20096FB34 /* Opus.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 630FBD7620D52063009867AB /* Opus.framework */; };
@@ -198,8 +196,6 @@
 				AA6442D3175B181D00A2125A /* AudioUnit.framework in Frameworks */,
 				AA6442D5175B185800A2125A /* CoreServices.framework in Frameworks */,
 				BE1FA90207AF96B2004B6283 /* SDL2.framework in Frameworks */,
-				630FBD7720D52063009867AB /* Opus.framework in Frameworks */,
-				630FBD7D20D5206E009867AB /* OpusFile.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -658,6 +654,7 @@
 					MUSIC_OGG,
 					MUSIC_FLAC,
 					MUSIC_OPUS,
+					"OPUS_HEADER=\"<opusfile.h>\"",
 				);
 				INFOPLIST_FILE = "Info-Framework.plist";
 				INSTALL_PATH = "@rpath";
@@ -672,6 +669,8 @@
 					mpg123,
 					"-weak_framework",
 					Vorbis,
+					"-weak_framework",
+					OpusFile,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.libsdl.SDL2-mixer";
 				WRAPPER_EXTENSION = framework;
@@ -700,6 +699,7 @@
 					MUSIC_OGG,
 					MUSIC_FLAC,
 					MUSIC_OPUS,
+					"OPUS_HEADER=\"<opusfile.h>\"",
 				);
 				INFOPLIST_FILE = "Info-Framework.plist";
 				INSTALL_PATH = "@rpath";
@@ -714,6 +714,8 @@
 					mpg123,
 					"-weak_framework",
 					Vorbis,
+					"-weak_framework",
+					OpusFile,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.libsdl.SDL2-mixer";
 				WRAPPER_EXTENSION = framework;

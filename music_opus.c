@@ -27,7 +27,11 @@
 
 #include "music_opus.h"
 
+#if defined(OPUS_HEADER)
+#include OPUS_HEADER
+#else
 #include <opus/opusfile.h>
+#endif
 
 typedef struct {
     int loaded;
@@ -65,7 +69,7 @@ static int OPUS_Load(void)
         extern OggOpusFile *op_open_callbacks(void *,const OpusFileCallbacks *,const unsigned char *,size_t,int *) __attribute__((weak_import));
         if (op_open_callbacks == NULL) {
             /* Missing weakly linked framework */
-            Mix_SetError("Missing Opus.framework");
+            Mix_SetError("Missing OpusFile.framework");
             return -1;
         }
 #endif
