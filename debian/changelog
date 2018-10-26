@@ -1,3 +1,9 @@
+libsdl2-mixer (2.0.4) UNRELEASED; urgency=medium
+
+  * Updated to version 2.0.4
+
+ -- Sam Lantinga <slouken@libsdl.org>  Fri, 26 Oct 2018 11:01:42 -0800
+
 libsdl2-mixer (2.0.3) UNRELEASED; urgency=medium
 
   * Updated to version 2.0.3
