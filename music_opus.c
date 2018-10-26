@@ -27,7 +27,7 @@
 
 #include "music_opus.h"
 
-#include <opusfile.h>
+#include <opus/opusfile.h>
 
 typedef struct {
     int loaded;
