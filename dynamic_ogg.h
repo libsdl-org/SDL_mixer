@@ -20,6 +20,10 @@
 */
 
 #ifdef OGG_MUSIC
+
+#ifndef OV_EXCLUDE_STATIC_CALLBACKS
+#define OV_EXCLUDE_STATIC_CALLBACKS
+#endif
 #ifdef OGG_USE_TREMOR
 #include <tremor/ivorbisfile.h>
 #else
