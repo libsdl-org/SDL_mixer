@@ -27,6 +27,7 @@
 
 #include "music_ogg.h"
 
+#define OV_EXCLUDE_STATIC_CALLBACKS
 #if defined(OGG_HEADER)
 #include OGG_HEADER
 #elif defined(OGG_USE_TREMOR)
