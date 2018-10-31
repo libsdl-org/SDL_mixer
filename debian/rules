@@ -12,12 +12,15 @@ confflags = --enable-music-cmd
 # explicitly enable/disable all supported sound
 # For mp3 support, libmad disabled by default because it is GPL and not allowed to link with commercial closed-source programs
 # For mod support, modplug is the default because it is in the public domain and used across all platforms.
-confflags += --enable-music-mp3
-confflags += --disable-music-mp3-mad-gpl
+confflags += --enable-music-flac
 confflags += --enable-music-mod
 confflags += --enable-music-mod-modplug
 confflags += --disable-music-mod-mikmod
+confflags += --enable-music-mp3
+confflags += --enable-music-mp3-mpg123
+confflags += --disable-music-mp3-mad-gpl
 confflags += --enable-music-ogg
+confflags += --enable-music-opus
 confflags += --enable-music-wave
 
 # MIDI: explicitly state that we use (an in-source copy of) timidity
@@ -33,10 +36,12 @@ confflags += --enable-music-midi-timidity
 # SDL_LoadObject), and dpkg-shlibdeps doesn't seem to generate the needed
 # dependencies in the binary library package
 confflags += --disable-music-flac-shared
-confflags += --disable-music-ogg-shared
+confflags += --disable-music-midi-fluidsynth-shared
 confflags += --disable-music-mod-mikmod-shared
 confflags += --disable-music-mod-modplug-shared
-confflags += --disable-music-fluidsynth-shared
+confflags += --disable-music-mp3-mpg123-shared
+confflags += --disable-music-ogg-shared
+confflags += --disable-music-opus-shared
 
 %:
 	dh $@ --with autoreconf --parallel
