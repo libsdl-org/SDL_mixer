@@ -35,13 +35,15 @@ confflags += --enable-music-midi-timidity
 # SDL_mixer library opens those libraries in a plugin-like way (with
 # SDL_LoadObject), and dpkg-shlibdeps doesn't seem to generate the needed
 # dependencies in the binary library package
-confflags += --disable-music-flac-shared
-confflags += --disable-music-midi-fluidsynth-shared
-confflags += --disable-music-mod-mikmod-shared
-confflags += --disable-music-mod-modplug-shared
-confflags += --disable-music-mp3-mpg123-shared
-confflags += --disable-music-ogg-shared
-confflags += --disable-music-opus-shared
+#
+# The Debian maintainers aren't using these rules, so enable dynamic loading of shared libraries by default for the Steam Linux Runtime
+#confflags += --disable-music-flac-shared
+#confflags += --disable-music-midi-fluidsynth-shared
+#confflags += --disable-music-mod-mikmod-shared
+#confflags += --disable-music-mod-modplug-shared
+#confflags += --disable-music-mp3-mpg123-shared
+#confflags += --disable-music-ogg-shared
+#confflags += --disable-music-opus-shared
 
 %:
 	dh $@ --with autoreconf --parallel
