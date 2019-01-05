@@ -4,7 +4,7 @@ Upstream-Contact: Sam Lantinga <slouken@libsdl.org>
 Source: http://www.libsdl.org/projects/SDL_mixer/
 
 Files: *
-Copyright: 1997-2018 Sam Lantinga
+Copyright: 1997-2019 Sam Lantinga
 License: zlib/libpng
 
 Files: native_midi/*
