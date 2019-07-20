@@ -42,6 +42,7 @@ enum {
 
 typedef struct {
   SDL_RWops *rw;
+  int start, length, pos;
   int freerw;
   struct mad_stream stream;
   struct mad_frame frame;
