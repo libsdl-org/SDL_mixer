@@ -138,6 +138,7 @@ enum {
 typedef struct {
     int play_count;
     SDL_RWops *src;
+    Sint64 start, length, pos;
     int freesrc;
     struct mad_stream stream;
     struct mad_frame frame;
@@ -151,7 +152,38 @@ typedef struct {
 } MAD_Music;
 
 
+static size_t MAD_RWread(MAD_Music *music, void *ptr, size_t size, size_t maxnum) {
+    size_t remaining = (size_t)(music->length - music->pos);
+    size_t ret;
+    maxnum *= size;
+    if (maxnum > remaining) maxnum = remaining;
+    ret = SDL_RWread(music->src, ptr, 1, maxnum);
+    music->pos += (Sint64)ret;
+    return ret;
+}
+
+static Sint64 MAD_RWseek(MAD_Music *music, Sint64 offset, int whence) {
+    Sint64 ret;
+    switch (whence) { /* assumes a legal whence value */
+    case RW_SEEK_CUR:
+        offset += music->pos;
+        break;
+    case RW_SEEK_END:
+        offset = music->length + offset;
+        break;
+    }
+    if (offset < 0) return -1;
+    if (offset > music->length)
+        offset = music->length;
+    ret = SDL_RWseek(music->src, music->start + offset, RW_SEEK_SET);
+    if (ret < 0) return ret;
+    music->pos = offset;
+    return (music->pos - music->start);
+}
+
+
 static int MAD_Seek(void *context, double position);
+static int skip_tags(MAD_Music *music);
 
 static void *MAD_CreateFromRW(SDL_RWops *src, int freesrc)
 {
@@ -164,6 +196,13 @@ static void *MAD_CreateFromRW(SDL_RWops *src, int freesrc)
     }
     music->src = src;
     music->volume = MIX_MAX_VOLUME;
+
+    music->length = SDL_RWsize(src);
+    if (skip_tags(music) < 0) {
+        SDL_free(music);
+        Mix_SetError("music_mad: corrupt mp3 file.");
+        return NULL;
+    }
 
     mad_stream_init(&music->stream);
     mad_frame_init(&music->frame);
@@ -191,7 +230,7 @@ static int MAD_Play(void *context, int play_count)
 
 /*************************** TAG HANDLING: ******************************/
 
-static SDL_INLINE SDL_bool is_id3v1(const Uint8 *data, size_t length)
+static SDL_INLINE SDL_bool is_id3v1(const unsigned char *data, size_t length)
 {
     /* http://id3.org/ID3v1 :  3 bytes "TAG" identifier and 125 bytes tag data */
     if (length < 3 || SDL_memcmp(data,"TAG",3) != 0) {
@@ -199,7 +238,18 @@ static SDL_INLINE SDL_bool is_id3v1(const Uint8 *data, size_t length)
     }
     return SDL_TRUE;
 }
-static SDL_INLINE SDL_bool is_id3v2(const Uint8 *data, size_t length)
+static SDL_INLINE SDL_bool is_id3v1ext(const unsigned char *data, size_t length)
+{
+    /* ID3v1 extended tag: just before ID3v1, always 227 bytes.
+     * https://www.getid3.org/phpBB3/viewtopic.php?t=1202
+     * https://en.wikipedia.org/wiki/ID3v1#Enhanced_tag
+     * Not an official standard, is only supported by few programs. */
+    if (length < 4 || SDL_memcmp(data,"TAG+",4) != 0) {
+        return SDL_FALSE;
+    }
+    return SDL_TRUE;
+}
+static SDL_INLINE SDL_bool is_id3v2(const unsigned char *data, size_t length)
 {
     /* ID3v2 header is 10 bytes:  http://id3.org/id3v2.4.0-structure */
     /* bytes 0-2: "ID3" identifier */
@@ -218,19 +268,35 @@ static SDL_INLINE SDL_bool is_id3v2(const Uint8 *data, size_t length)
     }
     return SDL_TRUE;
 }
-static SDL_INLINE SDL_bool is_apetag(const Uint8 *data, size_t length)
+static SDL_INLINE long get_id3v2_len(const unsigned char *data, long length)
+{
+    /* size is a 'synchsafe' integer (see above) */
+    long size = (long)((data[6]<<21) + (data[7]<<14) + (data[8]<<7) + data[9]);
+    size += 10; /* header size */
+    /* ID3v2 header[5] is flags (bits 4-7 only, 0-3 are zero).
+     * bit 4 set: footer is present (a copy of the header but
+     * with "3DI" as ident.)  */
+    if (data[5] & 0x10) {
+        size += 10; /* footer size */
+    }
+    /* optional padding (always zeroes) */
+    while (size < length && data[size] == 0) {
+        ++size;
+    }
+    return size;
+}
+static SDL_INLINE SDL_bool is_apetag(const unsigned char *data, size_t length)
 {
    /* http://wiki.hydrogenaud.io/index.php?title=APEv2_specification
-    * APEv2 header is 32 bytes: bytes 0-7 ident, bytes 8-11 version,
-    * bytes 12-17 size.  bytes 24-31 are reserved: must be all zeroes.
-    * APEv1 has no header, so no luck.  */
+    * Header/footer is 32 bytes: bytes 0-7 ident, bytes 8-11 version,
+    * bytes 12-17 size. bytes 24-31 are reserved: must be all zeroes. */
     Uint32 v;
 
     if (length < 32 || SDL_memcmp(data,"APETAGEX",8) != 0) {
         return SDL_FALSE;
     }
     v = (data[11]<<24) | (data[10]<<16) | (data[9]<<8) | data[8]; /* version */
-    if (v != 2000U) {
+    if (v != 2000U && v != 1000U) {
         return SDL_FALSE;
     }
     v = 0; /* reserved bits : */
@@ -239,48 +305,104 @@ static SDL_INLINE SDL_bool is_apetag(const Uint8 *data, size_t length)
     }
     return SDL_TRUE;
 }
-
-static size_t get_tagsize(const Uint8 *data, size_t length)
+static SDL_INLINE long get_ape_len(const unsigned char *data, long datalen, Uint32 *version)
 {
-    size_t size;
-
-    if (is_id3v1(data, length)) {
-        return 128; /* fixed length */
-    }
-    if (is_id3v2(data, length)) {
-        /* size is a 'synchsafe' integer (see above) */
-        size = (data[6]<<21) + (data[7]<<14) + (data[8]<<7) + data[9];
-        size += 10; /* header size */
-        /* ID3v2 header[5] is flags (bits 4-7 only, 0-3 are zero).
-         * bit 4 set: footer is present (a copy of the header but
-         * with "3DI" as ident.)  */
-        if (data[5] & 0x10) {
-            size += 10; /* footer size */
-        }
-        /* optional padding (always zeroes) */
-        while (size < length && data[size] == 0) {
-            ++size;
-        }
-        return size;
-    }
-    if (is_apetag(data, length)) {
-        size = (data[15]<<24) | (data[14]<<16) | (data[13]<<8) | data[12];
-        size += 32; /* header size */
-        return size;
-    }
-    return 0;
+    long size = (long)((data[15]<<24) | (data[14]<<16) | (data[13]<<8) | data[12]);
+    *version = (data[11]<<24) | (data[10]<<16) | (data[9]<<8) | data[8];
+    return size; /* caller will handle the additional v2 header length */
 }
 
-static int consume_tag(struct mad_stream *stream)
+static int skip_tags(MAD_Music *music)
 {
-    /* FIXME: what if the buffer doesn't have the full tag ??? */
-    size_t remaining = stream->bufend - stream->next_frame;
-    size_t tagsize = get_tagsize(stream->this_frame, remaining);
-    if (tagsize != 0) {
-        mad_stream_skip(stream, tagsize);
-        return 0;
+    long len; size_t readsize;
+
+    readsize = MAD_RWread(music, music->input_buffer, 1, MAD_INPUT_BUFFER_SIZE);
+    if (!readsize) return -1;
+
+    /* ID3v2 tag is at the start */
+    if (is_id3v2(music->input_buffer, readsize)) {
+        len = get_id3v2_len(music->input_buffer, (long)readsize);
+        if (len >= music->length) return -1;
+        music->start += len;
+        music->length -= len;
+        MAD_RWseek(music, 0, RW_SEEK_SET);
     }
-    return -1;
+    /* APE tag _might_ be at the start: read the header */
+    else if (is_apetag(music->input_buffer, readsize)) {
+        Uint32 v;
+        len = get_ape_len(music->input_buffer, (long)readsize, &v);
+        len += 32; /* we're at top: have a header. */
+        if (len >= music->length) return -1;
+        music->start += len;
+        music->length -= len;
+        MAD_RWseek(music, 0, RW_SEEK_SET);
+    }
+
+    /* ID3v1 tag is at the end */
+    if (music->length < 128) goto ape;
+    MAD_RWseek(music, -128, RW_SEEK_END);
+    readsize = MAD_RWread(music, music->input_buffer, 1, 128);
+    MAD_RWseek(music, 0, RW_SEEK_SET);
+    if (readsize != 128) return -1;
+    if (is_id3v1(music->input_buffer, 128)) {
+        music->length -= 128;
+
+        /* APE tag may be before the ID3v1: read the footer */
+        if (music->length < 32) goto end;
+        MAD_RWseek(music, -32, RW_SEEK_END);
+        readsize = MAD_RWread(music, music->input_buffer, 1, 32);
+        MAD_RWseek(music, 0, RW_SEEK_SET);
+        if (readsize != 32) return -1;
+        if (is_apetag(music->input_buffer, 32)) {
+            Uint32 v;
+            len = get_ape_len(music->input_buffer, (long)readsize, &v);
+            if (v == 2000U) len += 32; /* header */
+            if (len >= music->length) return -1;
+            if (v == 2000U) { /* verify header : */
+                MAD_RWseek(music, -len, RW_SEEK_END);
+                readsize = MAD_RWread(music, music->input_buffer, 1, 32);
+                MAD_RWseek(music, 0, RW_SEEK_SET);
+                if (readsize != 32) return -1;
+                if (!is_apetag(music->input_buffer, 32)) return -1;
+            }
+            music->length -= len;
+            goto end;
+        }
+        /* extended ID3v1 just before the ID3v1 tag? (unlikely)  */
+        if (music->length < 227) goto end;
+        MAD_RWseek(music, -227, RW_SEEK_END);
+        readsize = MAD_RWread(music, music->input_buffer, 1, 227);
+        MAD_RWseek(music, 0, RW_SEEK_SET);
+        if (readsize != 227) return -1;
+        if (is_id3v1ext(music->input_buffer, 227)) {
+            music->length -= 227;
+            goto end;
+        }
+    }
+    ape: /* APE tag may be at the end: read the footer */
+    if (music->length >= 32) {
+        MAD_RWseek(music, -32, RW_SEEK_END);
+        readsize = MAD_RWread(music, music->input_buffer, 1, 32);
+        MAD_RWseek(music, 0, RW_SEEK_SET);
+        if (readsize != 32) return -1;
+        if (is_apetag(music->input_buffer, 32)) {
+            Uint32 v;
+            len = get_ape_len(music->input_buffer, (long)readsize, &v);
+            if (v == 2000U) len += 32; /* header */
+            if (len >= music->length) return -1;
+            if (v == 2000U) { /* verify header : */
+                MAD_RWseek(music, -len, RW_SEEK_END);
+                readsize = MAD_RWread(music, music->input_buffer, 1, 32);
+                MAD_RWseek(music, 0, RW_SEEK_SET);
+                if (readsize != 32) return -1;
+                if (!is_apetag(music->input_buffer, 32)) return -1;
+            }
+            music->length -= len;
+        }
+    }
+
+    end:
+    return (music->length > 0)? 0: -1;
 }
 
 /* Reads the next frame from the file.
@@ -310,7 +432,7 @@ static SDL_bool read_next_frame(MAD_Music *music)
         }
 
         /* Now read additional bytes from the input file. */
-        read_size = SDL_RWread(music->src, read_start, 1, read_size);
+        read_size = MAD_RWread(music, read_start, 1, read_size);
 
         if (read_size == 0) {
             if ((music->status & (MS_input_eof | MS_input_error)) == 0) {
@@ -334,7 +456,6 @@ static SDL_bool read_next_frame(MAD_Music *music)
        its buffer. */
     if (mad_frame_decode(&music->frame, &music->stream)) {
         if (MAD_RECOVERABLE(music->stream.error)) {
-            consume_tag(&music->stream); /* consume any ID3 tags */
             mad_stream_sync(&music->stream); /* to frame seek mode */
             return SDL_FALSE;
 
@@ -485,7 +606,7 @@ static int MAD_Seek(void *context, double position)
         mad_timer_reset(&music->next_frame_start);
         music->status &= ~MS_error_flags;
 
-        SDL_RWseek(music->src, 0, RW_SEEK_SET);
+        MAD_RWseek(music, 0, RW_SEEK_SET);
     }
 
     /* Now we have to skip frames until we come to the right one.
