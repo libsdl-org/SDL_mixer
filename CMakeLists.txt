@@ -4,7 +4,10 @@ project(SDL_mixer C)
 
 if (ANDROID)
 
-    # FIXME: there are missing CMakeLists.txt 
+
+    # FIXME: missing CMakeLists.txt for MPG123
+    set(SUPPORT_MP3_MPG123 OFF CACHE BOOL "" FORCE)
+
     option(SUPPORT_FLAC "Support loading FLAC music with libFLAC" OFF)
     option(SUPPORT_OGG "Support loading OGG Vorbis music via Tremor" OFF)
     option(SUPPORT_MP3_MPG123 "Support loading MP3 music via MPG123" OFF)
@@ -23,14 +26,16 @@ if (ANDROID)
     if (SUPPORT_FLAC)
         add_definitions(-DMUSIC_FLAC)
         add_subdirectory(external/flac-1.3.2)
-        target_link_libraries(SDL_mixer PRIVATE libFLAC)
+        include_directories(external/flac-1.3.2/include)
+        target_link_libraries(SDL_mixer PRIVATE FLAC)
     endif()
 
     if (SUPPORT_OGG)
-        add_definitions(-DMUSIC_OGG -DOGG_USE_TREMOR -DOGG_HEADER="<ivorbisfile.h>")
+        add_definitions(-DMUSIC_OGG -DOGG_USE_TREMOR -DOGG_HEADER=<ivorbisfile.h>)
         add_subdirectory(external/libogg-1.3.2)
         add_subdirectory(external/libvorbisidec-1.2.1)
-        target_link_libraries(SDL_mixer PRIVATE ogg vorbisidec)
+        include_directories(external/libvorbisidec-1.2.1)
+        target_link_libraries(SDL_mixer PRIVATE vorbisfile vorbisidec ogg)
     endif()
 
     if (SUPPORT_MP3_MPG123)
@@ -40,8 +45,9 @@ if (ANDROID)
     endif()
 
     if (SUPPORT_MOD_MODPLUG)
-        add_definitions(-DMUSIC_MOD_MODPLUG -DMODPLUG_HEADER="<modplug.h>")
+        add_definitions(-DMUSIC_MOD_MODPLUG -DMODPLUG_HEADER=<modplug.h>)
         add_subdirectory(external/libmodplug-0.8.9.0)
+        include_directories(external/libmodplug-0.8.9.0/src)
         target_link_libraries(SDL_mixer PRIVATE modplug)
     endif()
 
