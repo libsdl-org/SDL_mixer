@@ -1,5 +1,6 @@
 /* libFLAC - Free Lossless Audio Codec library
- * Copyright (C) 2000,2001,2002,2003,2004,2005,2006,2007  Josh Coalson
+ * Copyright (C) 2000-2009  Josh Coalson
+ * Copyright (C) 2011-2013  Xiph.Org Foundation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -227,7 +228,7 @@ typedef enum {
 	 */
 
 	FLAC__STREAM_DECODER_ABORTED,
-	/**< The decoder was aborted by the read callback. */
+	/**< The decoder was aborted by the read or write callback. */
 
 	FLAC__STREAM_DECODER_MEMORY_ALLOCATION_ERROR,
 	/**< An error occurred allocating memory.  The decoder is in an invalid
@@ -1183,7 +1184,7 @@ FLAC_API FLAC__StreamDecoderInitStatus FLAC__stream_decoder_init_ogg_stream(
  *                            Unless \a file is \c stdin, it will be closed
  *                            when FLAC__stream_decoder_finish() is called.
  *                            Note however that seeking will not work when
- *                            decoding from \c stdout since it is not seekable.
+ *                            decoding from \c stdin since it is not seekable.
  * \param  write_callback     See FLAC__StreamDecoderWriteCallback.  This
  *                            pointer must not be \c NULL.
  * \param  metadata_callback  See FLAC__StreamDecoderMetadataCallback.  This
@@ -1233,7 +1234,7 @@ FLAC_API FLAC__StreamDecoderInitStatus FLAC__stream_decoder_init_FILE(
  *                            Unless \a file is \c stdin, it will be closed
  *                            when FLAC__stream_decoder_finish() is called.
  *                            Note however that seeking will not work when
- *                            decoding from \c stdout since it is not seekable.
+ *                            decoding from \c stdin since it is not seekable.
  * \param  write_callback     See FLAC__StreamDecoderWriteCallback.  This
  *                            pointer must not be \c NULL.
  * \param  metadata_callback  See FLAC__StreamDecoderMetadataCallback.  This
@@ -1402,8 +1403,7 @@ FLAC_API FLAC__bool FLAC__stream_decoder_flush(FLAC__StreamDecoder *decoder);
  *  and is not seekable (i.e. no seek callback was provided or the seek
  *  callback returns \c FLAC__STREAM_DECODER_SEEK_STATUS_UNSUPPORTED), it
  *  is the duty of the client to start feeding data from the beginning of
- *  the stream on the next FLAC__stream_decoder_process() or
- *  FLAC__stream_decoder_process_interleaved() call.
+ *  the stream on the next FLAC__stream_decoder_process_*() call.
  *
  * \param  decoder  A decoder instance.
  * \assert
