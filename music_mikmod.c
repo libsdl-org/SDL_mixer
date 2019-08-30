@@ -87,7 +87,7 @@ static mikmod_loader mikmod = {
     mikmod.NAME = &NAME;
 #endif
 
-static int MIKMOD_Load()
+static int MIKMOD_Load(void)
 {
     if (mikmod.loaded == 0) {
 #ifdef MIKMOD_DYNAMIC
@@ -115,12 +115,12 @@ static int MIKMOD_Load()
 #ifdef MIKMOD_DYNAMIC
         mikmod.MikMod_free = (void (*)(void*)) SDL_LoadFunction(mikmod.handle, "MikMod_free");
         if (!mikmod.MikMod_free) {
-            /* libmikmod 3.1 and earlier doesn't have it */
+            /* libmikmod-3.2.0-beta2 and earlier doesn't have it. */
             mikmod.MikMod_free = free;
         }
 #else
-#if (LIBMIKMOD_VERSION < 0x030200) || !defined(DMODE_NOISEREDUCTION)
-        /* libmikmod 3.2.0-beta2 or older */
+#if (LIBMIKMOD_VERSION < 0x030200) || (LIBMIKMOD_VERSION == 0x030200 && !defined(DMODE_NOISEREDUCTION))
+        /* libmikmod 3.2.0-beta2 or earlier */
         mikmod.MikMod_free = free;
 #else
         mikmod.MikMod_free = MikMod_free;
@@ -149,7 +149,7 @@ static int MIKMOD_Load()
     return 0;
 }
 
-static void MIKMOD_Unload()
+static void MIKMOD_Unload(void)
 {
     if (mikmod.loaded == 0) {
         return;
@@ -351,10 +351,11 @@ void *MIKMOD_CreateFromRW(SDL_RWops *src, int freesrc)
         MIKMOD_Delete(music);
         return NULL;
     }
-        
+
     if (freesrc) {
         SDL_RWclose(src);
     }
+
     return music;
 }
 
