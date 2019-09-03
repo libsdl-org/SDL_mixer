@@ -650,7 +650,7 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
 			SDL_free(chunk);
 			return(NULL);
 		}
-		memcpy(wavecvt.buf, chunk->abuf, chunk->alen);
+		memcpy(wavecvt.buf, chunk->abuf, wavecvt.len);
 		SDL_free(chunk->abuf);
 
 		/* Run the audio converter */
