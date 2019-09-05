@@ -211,7 +211,9 @@ static int music_halt_or_loop (void)
 		if (music_loops)
 		{
 			Mix_Fading current_fade;
-			--music_loops;
+			if (music_loops > 0) {
+				--music_loops;
+			}
 			current_fade = music_playing->fading;
 			music_internal_play(music_playing, 0.0);
 			music_playing->fading = current_fade;
