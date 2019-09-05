@@ -197,9 +197,7 @@ void Mix_HookMusicFinished(void (SDLCALL *music_finished)(void))
 static int music_halt_or_loop (void)
 {
 	/* Restart music if it has to loop */
-	
-	if (!music_internal_playing()) 
-	{
+	if (!music_internal_playing()) {
 #ifdef USE_NATIVE_MIDI
 		/* Native MIDI handles looping internally */
 		if (music_playing->type == MUS_MID && native_midi_ok) {
@@ -208,8 +206,7 @@ static int music_halt_or_loop (void)
 #endif
 
 		/* Restart music if it has to loop at a high level */
-		if (music_loops)
-		{
+		if (music_loops) {
 			Mix_Fading current_fade;
 			if (music_loops > 0) {
 				--music_loops;
@@ -217,20 +214,17 @@ static int music_halt_or_loop (void)
 			current_fade = music_playing->fading;
 			music_internal_play(music_playing, 0.0);
 			music_playing->fading = current_fade;
-		} 
-		else 
-		{
+		} else {
 			music_internal_halt();
-			if (music_finished_hook)
+			if (music_finished_hook) {
 				music_finished_hook();
-			
+			}
 			return 0;
 		}
 	}
-	
+
 	return 1;
 }
-
 
 
 /* Mixing function */
@@ -263,7 +257,7 @@ void SDLCALL music_mixer(void *udata, Uint8 *stream, int len)
 				music_playing->fading = MIX_NO_FADING;
 			}
 		}
-		
+
 		music_halt_or_loop();
 		if (!music_internal_playing())
 			return;
@@ -741,7 +735,7 @@ Mix_Music *Mix_LoadMUSType_RW(SDL_RWops *rw, Mix_MusicType type, int freesrc)
 
 	default:
 		Mix_SetError("Unrecognized music format");
-		music->error=1;
+		music->error = 1;
 	} /* switch (want) */
 
 	if (music->error) {
@@ -793,7 +787,7 @@ void Mix_FreeMusic(Mix_Music *music)
 #ifdef MID_MUSIC
 			case MUS_MID:
 #ifdef USE_NATIVE_MIDI
-  				if ( native_midi_ok ) {
+				if ( native_midi_ok ) {
 					native_midi_freesong(music->data.nativemidi);
 					goto skip;
 				}
