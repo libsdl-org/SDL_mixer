@@ -57,14 +57,13 @@ static FLAC__StreamDecoderReadStatus flac_read_load_cb(
 	// make sure there is something to be reading
 	if (*bytes > 0) {
 		FLAC_SDL_Data *data = (FLAC_SDL_Data *)client_data;
+		int nbytes = SDL_RWread (data->sdl_src, buffer, sizeof (FLAC__byte), *bytes);
 
-		*bytes = SDL_RWread (data->sdl_src, buffer, sizeof (FLAC__byte),
-								*bytes);
-
-		if(*bytes < 0) { // error in read
+		if(nbytes < 0) { // error in read
 			return FLAC__STREAM_DECODER_READ_STATUS_ABORT;
 		}
-		else if(*bytes == 0) { // no data was read (EOF)
+		*bytes = nbytes;
+		if(nbytes == 0) { // no data was read (EOF)
 			return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
 		}
 		else { // data was read, continue
@@ -97,7 +96,6 @@ static FLAC__StreamDecoderTellStatus flac_tell_load_cb(
 									void *client_data)
 {
 	FLAC_SDL_Data *data = (FLAC_SDL_Data *)client_data;
-
 	int pos = SDL_RWtell (data->sdl_src);
 
 	if (pos < 0) {
@@ -115,7 +113,6 @@ static FLAC__StreamDecoderLengthStatus flac_length_load_cb(
 									void *client_data)
 {
 	FLAC_SDL_Data *data = (FLAC_SDL_Data *)client_data;
-
 	int pos = SDL_RWtell (data->sdl_src);
 	int length = SDL_RWseek (data->sdl_src, 0, RW_SEEK_END);
 
@@ -134,7 +131,6 @@ static FLAC__bool flac_eof_load_cb(const FLAC__StreamDecoder *decoder,
 									void *client_data)
 {
 	FLAC_SDL_Data *data = (FLAC_SDL_Data *)client_data;
-
 	int pos = SDL_RWtell (data->sdl_src);
 	int end = SDL_RWseek (data->sdl_src, 0, RW_SEEK_END);
 
@@ -176,13 +172,12 @@ static FLAC__StreamDecoderWriteStatus flac_write_load_cb(
 	if (frame->header.number.sample_number == 0) {
 		*(data->sdl_audio_len) = data->sdl_spec->size;
 		data->sdl_audio_read = 0;
-    	*(data->sdl_audio_buf) = SDL_malloc (*(data->sdl_audio_len));
+		*(data->sdl_audio_buf) = SDL_malloc (*(data->sdl_audio_len));
 
-    	if (*(data->sdl_audio_buf) == NULL) {
-    		SDL_SetError
-					("Unable to allocate memory to store the FLAC stream.");
-    		return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
-    	}
+		if (*(data->sdl_audio_buf) == NULL) {
+			SDL_SetError("Unable to allocate memory to store the FLAC stream.");
+			return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
+		}
 	}
 
 	buf = *(data->sdl_audio_buf);
@@ -336,7 +331,7 @@ done:
 	if (was_error)
 		spec = NULL;
 
-    return spec;
+	return spec;
 }
 
-#endif // FLAC_MUSIC
+#endif /* FLAC_MUSIC */

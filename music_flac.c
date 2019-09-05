@@ -60,12 +60,13 @@ static FLAC__StreamDecoderReadStatus flac_read_music_cb(
 
 	// make sure there is something to be reading
 	if (*bytes > 0) {
-		*bytes = SDL_RWread (data->rwops, buffer, sizeof (FLAC__byte), *bytes);
+		int nbytes = SDL_RWread (data->rwops, buffer, sizeof (FLAC__byte), *bytes);
 
-		if (*bytes < 0) { // error in read
+		if (nbytes < 0) { // error in read
 			return FLAC__STREAM_DECODER_READ_STATUS_ABORT;
 		}
-		else if (*bytes == 0 ) { // no data was read (EOF)
+		*bytes = nbytes;
+		if (nbytes == 0) { // no data was read (EOF)
 			return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
 		}
 		else { // data was read, continue
@@ -98,7 +99,6 @@ static FLAC__StreamDecoderTellStatus flac_tell_music_cb(
 									void *client_data )
 {
 	FLAC_music *data = (FLAC_music*)client_data;
-
 	int pos = SDL_RWtell (data->rwops);
 
 	if (pos < 0) {
@@ -116,7 +116,6 @@ static FLAC__StreamDecoderLengthStatus flac_length_music_cb (
 									void *client_data)
 {
 	FLAC_music *data = (FLAC_music*)client_data;
-
 	int pos = SDL_RWtell (data->rwops);
 	int length = SDL_RWseek (data->rwops, 0, RW_SEEK_END);
 
@@ -136,7 +135,6 @@ static FLAC__bool flac_eof_music_cb(
 								void *client_data )
 {
 	FLAC_music *data = (FLAC_music*)client_data;
-
 	int pos = SDL_RWtell (data->rwops);
 	int end = SDL_RWseek (data->rwops, 0, RW_SEEK_END);
 
@@ -464,10 +462,9 @@ static void FLAC_getsome(FLAC_music *music)
 	}
 	cvt = &music->cvt;
 	if (music->section < 0) {
-
 		SDL_BuildAudioCVT (cvt, AUDIO_S16, (Uint8)music->flac_data.channels,
 						(int)music->flac_data.sample_rate, mixer.format,
-		                mixer.channels, mixer.freq);
+						mixer.channels, mixer.freq);
 		if (cvt->buf) {
 			free (cvt->buf);
 		}
@@ -580,13 +577,11 @@ void FLAC_jump_to_time(FLAC_music *music, double time)
 					flac.FLAC__stream_decoder_flush (music->flac_decoder);
 				}
 
-				SDL_SetError
-					("Seeking of FLAC stream failed: libFLAC seek failed.");
+				SDL_SetError("Seeking of FLAC stream failed: libFLAC seek failed.");
 			}
 		}
 		else {
-			SDL_SetError
-				("Seeking of FLAC stream failed: FLAC decoder was NULL.");
+			SDL_SetError("Seeking of FLAC stream failed: FLAC decoder was NULL.");
 		}
 	}
 	else {
