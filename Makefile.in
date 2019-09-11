@@ -49,9 +49,7 @@ LT_LDFLAGS  = -no-undefined -rpath $(libdir) -release $(LT_RELEASE) -version-inf
 all: $(srcdir)/configure Makefile $(objects) $(objects)/$(TARGET) $(objects)/playwave$(EXE) $(objects)/playmus$(EXE)
 
 $(srcdir)/configure: $(srcdir)/configure.in
-	@echo "Warning, configure.in is out of date"
-	#(cd $(srcdir) && sh autogen.sh && sh configure)
-	@sleep 3
+	@echo "Warning, configure is out of date, please re-run autogen.sh"
 
 Makefile: $(srcdir)/Makefile.in
 	$(SHELL) config.status $@
