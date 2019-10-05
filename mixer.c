@@ -720,8 +720,7 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
     } else if (SDL_memcmp(magic, "Crea", 4) == 0) {
         loaded = Mix_LoadVOC_RW(src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
     } else {
-        Mix_MusicType music_type = detect_music_type_from_magic(magic);
-        loaded = Mix_LoadMusic_RW(music_type, src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
+        loaded = Mix_LoadMusic_RW(detect_music_type(src), src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
     }
     if (!loaded) {
         /* The individual loaders have closed src if needed */
