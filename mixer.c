@@ -527,9 +527,10 @@ typedef struct _MusicFragment
     struct _MusicFragment *next;
 } MusicFragment;
 
-static SDL_AudioSpec *Mix_LoadMusic_RW(Mix_MusicType music_type, SDL_RWops *src, int freesrc, SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
+static SDL_AudioSpec *Mix_LoadMusic_RW(SDL_RWops *src, int freesrc, SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
 {
     int i;
+	Mix_MusicType music_type;
     Mix_MusicInterface *interface = NULL;
     void *music = NULL;
     Sint64 start;
@@ -538,6 +539,7 @@ static SDL_AudioSpec *Mix_LoadMusic_RW(Mix_MusicType music_type, SDL_RWops *src,
     int count = 0;
     int fragment_size;
 
+	music_type = detect_music_type(src);
     if (!load_music_type(music_type) || !open_music_type(music_type)) {
         return NULL;
     }
@@ -720,7 +722,7 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
     } else if (SDL_memcmp(magic, "Crea", 4) == 0) {
         loaded = Mix_LoadVOC_RW(src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
     } else {
-        loaded = Mix_LoadMusic_RW(detect_music_type(src), src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
+        loaded = Mix_LoadMusic_RW(src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
     }
     if (!loaded) {
         /* The individual loaders have closed src if needed */
