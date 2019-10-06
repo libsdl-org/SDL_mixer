@@ -1,0 +1,30 @@
+From: sezero <sezero@users.sourceforge.net>
+Date: Sun, 11 Nov 2018 05:01:10 +0000 (+0300)
+Subject: os.h: make vorbis_ftoi() static inline if !VORBIS_FPU_CONTROL
+X-Git-Url: http://git.xiph.org/?p=vorbis.git;a=commitdiff_plain;h=f0761cde7af9ee803b76ccac920675f333afc321
+
+os.h: make vorbis_ftoi() static inline if !VORBIS_FPU_CONTROL
+---
+
+diff --git a/lib/os.h b/lib/os.h
+index 6ac6771..4e9b280 100644
+--- a/lib/os.h
++++ b/lib/os.h
+@@ -60,7 +60,7 @@ void *_alloca(size_t size);
+ #  define FAST_HYPOT hypot
+ #endif
+ 
+-#endif
++#endif /* _V_IFDEFJAIL_H_ */
+ 
+ #ifdef HAVE_ALLOCA_H
+ #  include <alloca.h>
+@@ -173,7 +173,7 @@ static __inline void vorbis_fpu_restore(vorbis_fpu_control fpu){
+ 
+ typedef int vorbis_fpu_control;
+ 
+-static int vorbis_ftoi(double f){
++STIN int vorbis_ftoi(double f){
+         /* Note: MSVC and GCC (at least on some systems) round towards zero, thus,
+            the floor() call is required to ensure correct roudning of
+            negative numbers */

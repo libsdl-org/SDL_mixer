@@ -1,0 +1,27 @@
+From: Erik de Castro Lopo <erikd@mega-nerd.com>
+Date: Mon, 2 Jan 2017 17:46:20 +0000 (+1100)
+Subject: libFLAC/cpu.c: Fix CPU detecton
+X-Git-Tag: 1.3.3~131
+X-Git-Url: http://git.xiph.org/?p=flac.git;a=commitdiff_plain;h=230cffe08ff0c965de2ce111afe4513286bfda89
+
+libFLAC/cpu.c: Fix CPU detecton
+
+Patch-from: Janne Hyvärinen <cse@sci.fi>
+---
+
+diff --git a/src/libFLAC/cpu.c b/src/libFLAC/cpu.c
+index b9df19a9..808d55d7 100644
+--- a/src/libFLAC/cpu.c
++++ b/src/libFLAC/cpu.c
+@@ -269,9 +269,9 @@ void FLAC__cpu_info_x86(FLAC__uint32 level, FLAC__uint32 *eax, FLAC__uint32 *ebx
+ 	__cpuid(cpuinfo, ext);
+ 	if((unsigned)cpuinfo[0] >= level) {
+ #if FLAC__AVX_SUPPORTED
+-		__cpuidex(cpuinfo, ext, 0); /* for AVX2 detection */
++		__cpuidex(cpuinfo, level, 0); /* for AVX2 detection */
+ #else
+-		__cpuid(cpuinfo, ext); /* some old compilers don't support __cpuidex */
++		__cpuid(cpuinfo, level); /* some old compilers don't support __cpuidex */
+ #endif
+ 
+ 		*eax = cpuinfo[0]; *ebx = cpuinfo[1]; *ecx = cpuinfo[2]; *edx = cpuinfo[3];

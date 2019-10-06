@@ -1,0 +1,44 @@
+From: Thomas Daede <daede003@umn.edu>
+Date: Mon, 28 Jan 2019 22:59:52 +0000 (-0800)
+Subject: Remove C99-style comments.
+X-Git-Url: http://git.xiph.org/?p=vorbis.git;a=commitdiff_plain;h=7e89d68b46200519edfd09196f672c29147c8d33
+
+Remove C99-style comments.
+---
+
+diff --git a/lib/res0.c b/lib/res0.c
+index 6d623d7..206494f 100644
+--- a/lib/res0.c
++++ b/lib/res0.c
+@@ -30,9 +30,6 @@
+ #include "misc.h"
+ #include "os.h"
+ 
+-//#define TRAIN_RES 1
+-//#define TRAIN_RESAUX 1
+-
+ #if defined(TRAIN_RES) || defined (TRAIN_RESAUX)
+ #include <stdio.h>
+ #endif
+diff --git a/lib/sharedbook.c b/lib/sharedbook.c
+index 8d73daa..3c93d2d 100644
+--- a/lib/sharedbook.c
++++ b/lib/sharedbook.c
+@@ -50,7 +50,7 @@ long _float32_pack(float val){
+     sign=0x80000000;
+     val= -val;
+   }
+-  exp= floor(log(val)/log(2.f)+.001); //+epsilon
++  exp= floor(log(val)/log(2.f)+.001); /* +epsilon */
+   mant=rint(ldexp(val,(VQ_FMAN-1)-exp));
+   exp=(exp+VQ_FEXP_BIAS)<<VQ_FMAN;
+ 
+@@ -302,7 +302,7 @@ int vorbis_book_init_encode(codebook *c,const static_codebook *s){
+   c->used_entries=s->entries;
+   c->dim=s->dim;
+   c->codelist=_make_words(s->lengthlist,s->entries,0);
+-  //c->valuelist=_book_unquantize(s,s->entries,NULL);
++  /* c->valuelist=_book_unquantize(s,s->entries,NULL); */
+   c->quantvals=_book_maptype1_quantvals(s);
+   c->minval=(int)rint(_float32_unpack(s->q_min));
+   c->delta=(int)rint(_float32_unpack(s->q_delta));

@@ -1,0 +1,21 @@
+From: Minmin Gong <gongminmin@msn.com>
+Date: Thu, 5 Jul 2018 04:37:54 +0000 (-0700)
+Subject: Fix the compiling errors on msvc ARM64 configuration.
+X-Git-Url: http://git.xiph.org/?p=vorbis.git;a=commitdiff_plain;h=46e70fa6573e206c2555cd99a53204ffd6bf58fd
+
+Fix the compiling errors on msvc ARM64 configuration.
+---
+
+diff --git a/lib/os.h b/lib/os.h
+index 416a401..e098926 100644
+--- a/lib/os.h
++++ b/lib/os.h
+@@ -120,7 +120,7 @@ static inline int vorbis_ftoi(double f){  /* yes, double!  Otherwise,
+ /* MSVC inline assembly. 32 bit only; inline ASM isn't implemented in the
+  * 64 bit compiler and doesn't work on arm. */
+ #if defined(_MSC_VER) && !defined(_WIN64) && \
+-      !defined(_WIN32_WCE) && !defined(_M_ARM)
++      !defined(_WIN32_WCE) && !defined(_M_ARM) && !defined(_M_ARM64)
+ #  define VORBIS_FPU_CONTROL
+ 
+ typedef ogg_int16_t vorbis_fpu_control;

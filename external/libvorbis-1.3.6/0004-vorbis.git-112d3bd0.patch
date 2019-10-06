@@ -1,0 +1,22 @@
+From: Thomas Daede <daede003@umn.edu>
+Date: Thu, 17 May 2018 23:19:19 +0000 (-0700)
+Subject: Sanity check number of channels in setup.
+X-Git-Url: http://git.xiph.org/?p=vorbis.git;a=commitdiff_plain;h=112d3bd0aaacad51305e1464d4b381dabad0e88b
+
+Sanity check number of channels in setup.
+
+Fixes #2335.
+---
+
+diff --git a/lib/vorbisenc.c b/lib/vorbisenc.c
+index 4fc7b62..64a51b5 100644
+--- a/lib/vorbisenc.c
++++ b/lib/vorbisenc.c
+@@ -684,6 +684,7 @@ int vorbis_encode_setup_init(vorbis_info *vi){
+   highlevel_encode_setup *hi=&ci->hi;
+ 
+   if(ci==NULL)return(OV_EINVAL);
++  if(vi->channels<1||vi->channels>255)return(OV_EINVAL);
+   if(!hi->impulse_block_p)i0=1;
+ 
+   /* too low/high an ATH floater is nonsensical, but doesn't break anything */

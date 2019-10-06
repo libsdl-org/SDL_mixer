@@ -1,0 +1,23 @@
+From: Thomas Daede <daede003@umn.edu>
+Date: Mon, 28 Jan 2019 23:33:32 +0000 (-0800)
+Subject: Port opus-tools check to see if underlying file was overwritten.
+X-Git-Url: http://git.xiph.org/?p=vorbis.git;a=commitdiff_plain;h=603cd941ea32576bdbca33c9d5625d878cd0d1c9
+
+Port opus-tools check to see if underlying file was overwritten.
+---
+
+diff --git a/lib/vorbisfile.c b/lib/vorbisfile.c
+index 831cb39..6b7bbee 100644
+--- a/lib/vorbisfile.c
++++ b/lib/vorbisfile.c
+@@ -264,6 +264,10 @@ static ogg_int64_t _get_prev_page_serial(OggVorbis_File *vf, ogg_int64_t begin,
+         }
+       }
+     }
++    /*We started from the beginning of the stream and found nothing.
++      This should be impossible unless the contents of the stream changed out
++      from under us after we read from it.*/
++    if(!begin&&vf->offset<0)return OV_EBADLINK;
+   }
+ 
+   /* we're not interested in the page... just the serialno and granpos. */

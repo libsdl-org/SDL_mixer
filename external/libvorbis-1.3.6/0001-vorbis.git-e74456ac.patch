@@ -1,0 +1,23 @@
+From: Tristan Matthews <tmatth@videolan.org>
+Date: Mon, 9 Apr 2018 15:15:07 +0000 (-0400)
+Subject: vorbisenc: detect if new_template is NULL
+X-Git-Url: http://git.xiph.org/?p=vorbis.git;a=commitdiff_plain;h=e74456acc879665f80d3b9092e5afb4e8335d3a1
+
+vorbisenc: detect if new_template is NULL
+
+Fixes #1975
+---
+
+diff --git a/lib/vorbisenc.c b/lib/vorbisenc.c
+index 4a4607c..4fc7b62 100644
+--- a/lib/vorbisenc.c
++++ b/lib/vorbisenc.c
+@@ -1210,7 +1210,7 @@ int vorbis_encode_ctl(vorbis_info *vi,int number,void *arg){
+                                           hi->req,
+                                           hi->managed,
+                                           &new_base);
+-        if(!hi->setup)return OV_EIMPL;
++        if(!new_template)return OV_EIMPL;
+         hi->setup=new_template;
+         hi->base_setting=new_base;
+         vorbis_encode_setup_setting(vi,vi->channels,vi->rate);
