@@ -1,0 +1,69 @@
+From a76e41f6ece93d10deac5f9ef3a84dce5b9c2a84 Mon Sep 17 00:00:00 2001
+From: James Cowgill <jcowgill@debian.org>
+Date: Tue, 13 Jun 2017 13:39:52 +0100
+Subject: [PATCH] Fix free of uninitialized memory if seek fails in ov_raw_seek
+
+If _seek_helper fails in ov_raw_seek, control jumps to the seek_error
+label which calls ogg_stream_clear on work_os. However, at this point
+in the function, work_os is not initialized so we end up attempting to
+free some uninitialized memory and crashing.
+
+Fix by removing the call to ogg_stream_clear. This is safe because the
+only code path to seek_error happens before work_os is initialized (so
+there is never anything to free anyway).
+
+I also refactor the code a bit:
+- Remove the ret variable which is unnessesary since we can just pass
+  the result of _seek_helper directly to the if.
+- Since seek_error is only used once, move the contents of that block
+  to the if statement so we can remove a goto.
+
+(vorbis.git commit 128f0f812b39185d884c67c5f1c780b19aca34ac)
+---
+ vorbisfile.c |   16 ++++++----------
+ 1 files changed, 6 insertions(+), 10 deletions(-)
+
+diff --git a/vorbisfile.c b/vorbisfile.c
+index ca583c8..afb4f05 100644
+--- a/vorbisfile.c
++++ b/vorbisfile.c
+@@ -1185,7 +1185,6 @@ ogg_int64_t ov_time_total(OggVorbis_File *vf,int i){
+ 
+ int ov_raw_seek(OggVorbis_File *vf,ogg_int64_t pos){
+   ogg_stream_state work_os;
+-  int ret;
+ 
+   if(vf->ready_state<OPENED)return(OV_EINVAL);
+   if(!vf->seekable)
+@@ -1208,8 +1207,12 @@ int ov_raw_seek(OggVorbis_File *vf,ogg_int64_t pos){
+                             vf->current_serialno); /* must set serialno */
+   vorbis_synthesis_restart(&vf->vd);
+ 
+-  ret=_seek_helper(vf,pos);
+-  if(ret)goto seek_error;
++  if(_seek_helper(vf,pos)) {
++    /* dump the machine so we're in a known state */
++    vf->pcm_offset=-1;
++    _decode_clear(vf);
++    return OV_EBADLINK;
++  }
+ 
+   /* we need to make sure the pcm_offset is set, but we don't want to
+      advance the raw cursor past good packets just to get to the first
+@@ -1343,13 +1346,6 @@ int ov_raw_seek(OggVorbis_File *vf,ogg_int64_t pos){
+   vf->bittrack=0;
+   vf->samptrack=0;
+   return(0);
+-
+- seek_error:
+-  /* dump the machine so we're in a known state */
+-  vf->pcm_offset=-1;
+-  ogg_stream_clear(&work_os);
+-  _decode_clear(vf);
+-  return OV_EBADLINK;
+ }
+ 
+ /* rescales the number x from the range of [0,from] to [0,to]
+-- 
+1.7.1
+

@@ -145,7 +145,7 @@ void vorbis_lsp_to_curve(ogg_int32_t *curve,int *map,int n,int ln,
   int i;
   int ampoffseti=ampoffset*4096;
   int ampi=amp;
-  ogg_int32_t *ilsp=(ogg_int32_t *)alloca(m*sizeof(*ilsp));
+  VAR_STACK(ogg_int32_t, ilsp, m);
   /* lsp is in 8.24, range 0 to PI; coslook wants it in .16 0 to 1*/
   for(i=0;i<m;i++){
 #ifndef _LOW_ACCURACY_

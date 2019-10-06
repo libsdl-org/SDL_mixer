@@ -1,0 +1,33 @@
+From 35994da5e574e7e0c256ca1fc3cb903a9afe7eff Mon Sep 17 00:00:00 2001
+From: sezero <sezero@users.sourceforge.net>
+Date: Tue, 20 Mar 2018 11:29:10 +0300
+Subject: [PATCH] configury: add -no-undefined to libvorbisidec_la_LDFLAGS
+
+---
+ Makefile.am |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index 0a4bb2c..60c39fa 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -1,6 +1,6 @@
+ AUTOMAKE_OPTIONS = foreign
+ 
+-INCLUDES = -I./ @OGG_CFLAGS@
++INCLUDES = -I. @OGG_CFLAGS@
+ 
+ pkgconfigdir = $(libdir)/pkgconfig
+ pkgconfig_DATA = vorbisidec.pc
+@@ -17,7 +17,7 @@ libvorbisidec_la_SOURCES = mdct.c block.c window.c \
+                         registry.h window.h window_lookup.h\
+                         codec_internal.h backends.h \
+ 			asm_arm.h ivorbiscodec.h
+-libvorbisidec_la_LDFLAGS = -version-info @V_LIB_CURRENT@:@V_LIB_REVISION@:@V_LIB_AGE@
++libvorbisidec_la_LDFLAGS = -no-undefined -version-info @V_LIB_CURRENT@:@V_LIB_REVISION@:@V_LIB_AGE@
+ libvorbisidec_la_LIBADD = @OGG_LIBS@
+ 
+ EXTRA_PROGRAMS = ivorbisfile_example iseeking_example
+-- 
+1.7.1
+

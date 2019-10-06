@@ -22,10 +22,10 @@
 
 #ifdef _LOW_ACCURACY_
 #  define X(n) (((((n)>>22)+1)>>1) - ((((n)>>22)+1)>>9))
-#  define LOOKUP_T const unsigned char
+#  define LOOKUP_T unsigned char
 #else
 #  define X(n) (n)
-#  define LOOKUP_T const ogg_int32_t
+#  define LOOKUP_T ogg_int32_t
 #endif
 
 #include "asm_arm.h"

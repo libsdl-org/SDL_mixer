@@ -1,0 +1,25 @@
+From f8920f6f9e95de012885ba40f55b4c9d0e382f0e Mon Sep 17 00:00:00 2001
+From: sezero <sezero@users.sourceforge.net>
+Date: Tue, 20 Mar 2018 11:40:28 +0300
+Subject: [PATCH] remove an unused local variable.
+
+---
+ codebook.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/codebook.c b/codebook.c
+index 271a52a..1bbba8f 100644
+--- a/codebook.c
++++ b/codebook.c
+@@ -336,7 +336,7 @@ long vorbis_book_decodev_set(codebook *book,ogg_int32_t *a,
+     }
+   }else{
+ 
+-    int i,j;
++    int i;
+     for(i=0;i<n;){
+       a[i++]=0;
+     }
+-- 
+1.7.1
+

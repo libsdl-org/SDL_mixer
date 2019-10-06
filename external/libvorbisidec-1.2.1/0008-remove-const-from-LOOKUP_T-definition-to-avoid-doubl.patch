@@ -1,0 +1,89 @@
+From b9773c676623706fcd1a9446b97662821c62f83c Mon Sep 17 00:00:00 2001
+From: sezero <sezero@users.sourceforge.net>
+Date: Tue, 20 Mar 2018 11:33:28 +0300
+Subject: [PATCH] remove const from LOOKUP_T definition to avoid 'double const' warnings
+
+---
+ mdct.c   |   10 +++++-----
+ misc.h   |    4 ++--
+ window.c |    5 ++++-
+ 3 files changed, 11 insertions(+), 8 deletions(-)
+
+diff --git a/mdct.c b/mdct.c
+index 2aed62c..3ad4483 100644
+--- a/mdct.c
++++ b/mdct.c
+@@ -147,7 +147,7 @@ STIN void mdct_butterfly_32(DATA_TYPE *x){
+ /* N/stage point generic N stage butterfly (in place, 2 register) */
+ STIN void mdct_butterfly_generic(DATA_TYPE *x,int points,int step){
+ 
+-  LOOKUP_T *T   = sincos_lookup0;
++  const LOOKUP_T *T   = sincos_lookup0;
+   DATA_TYPE *x1        = x + points      - 8;
+   DATA_TYPE *x2        = x + (points>>1) - 8;
+   REG_TYPE   r0;
+@@ -257,8 +257,8 @@ STIN void mdct_bitreverse(DATA_TYPE *x,int n,int step,int shift){
+   int          bit   = 0;
+   DATA_TYPE   *w0    = x;
+   DATA_TYPE   *w1    = x = w0+(n>>1);
+-  LOOKUP_T    *T = (step>=4)?(sincos_lookup0+(step>>1)):sincos_lookup1;
+-  LOOKUP_T    *Ttop  = T+1024;
++  const LOOKUP_T *T = (step>=4)?(sincos_lookup0+(step>>1)):sincos_lookup1;
++  const LOOKUP_T *Ttop  = T+1024;
+   DATA_TYPE    r2;
+ 
+   do{
+@@ -342,8 +342,8 @@ void mdct_backward(int n, DATA_TYPE *in, DATA_TYPE *out){
+   int n4=n>>2;
+   DATA_TYPE *iX;
+   DATA_TYPE *oX;
+-  LOOKUP_T *T;
+-  LOOKUP_T *V;
++  const LOOKUP_T *T;
++  const LOOKUP_T *V;
+   int shift;
+   int step;
+ 
+diff --git a/misc.h b/misc.h
+index 1ae4d2e..ee5660d 100644
+--- a/misc.h
++++ b/misc.h
+@@ -22,10 +22,10 @@
+ 
+ #ifdef _LOW_ACCURACY_
+ #  define X(n) (((((n)>>22)+1)>>1) - ((((n)>>22)+1)>>9))
+-#  define LOOKUP_T const unsigned char
++#  define LOOKUP_T unsigned char
+ #else
+ #  define X(n) (n)
+-#  define LOOKUP_T const ogg_int32_t
++#  define LOOKUP_T ogg_int32_t
+ #endif
+ 
+ #include "asm_arm.h"
+diff --git a/window.c b/window.c
+index 006a1ee..3f2917f 100644
+--- a/window.c
++++ b/window.c
+@@ -56,7 +56,7 @@ void _vorbis_apply_window(ogg_int32_t *d,const void *window_p[2],
+ 			  long *blocksizes,
+ 			  int lW,int W,int nW){
+   
+-  LOOKUP_T *window[2]={window_p[0],window_p[1]};
++  const LOOKUP_T *window[2];
+   long n=blocksizes[W];
+   long ln=blocksizes[lW];
+   long rn=blocksizes[nW];
+@@ -69,6 +69,9 @@ void _vorbis_apply_window(ogg_int32_t *d,const void *window_p[2],
+   
+   int i,p;
+ 
++  window[0] = (const LOOKUP_T *)window_p[0];
++  window[1] = (const LOOKUP_T *)window_p[1];
++
+   for(i=0;i<leftbegin;i++)
+     d[i]=0;
+ 
+-- 
+1.7.1
+

@@ -226,7 +226,7 @@ static int _01inverse(vorbis_block *vb,vorbis_look_residue *vl,
   if(n>0){
     int partvals=n/samples_per_partition;
     int partwords=(partvals+partitions_per_word-1)/partitions_per_word;
-    int ***partword=(int ***)alloca(ch*sizeof(*partword));
+    VAR_STACK(int **, partword, ch);
     
     for(j=0;j<ch;j++)
       partword[j]=(int **)_vorbis_block_alloc(vb,partwords*sizeof(*partword[j]));

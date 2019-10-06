@@ -1,0 +1,203 @@
+From 82765a73afc63fd87464f1fc9791ea2b2c82c4d1 Mon Sep 17 00:00:00 2001
+From: sezero <sezero@users.sourceforge.net>
+Date: Tue, 20 Mar 2018 11:35:40 +0300
+Subject: [PATCH] make Tremor to build with compilers which doesn't have alloca() but has VAR_ARRAYS
+
+alloca() is still the default, so there is no behavior change.
+---
+ codebook.c   |    6 +++---
+ configure.in |    9 +++++++++
+ floor0.c     |    2 +-
+ info.c       |    8 ++++----
+ mapping0.c   |    8 ++++----
+ os.h         |   23 +++++++++++++++++++++--
+ res012.c     |    2 +-
+ sharedbook.c |    8 ++++----
+ 8 files changed, 47 insertions(+), 19 deletions(-)
+
+diff --git a/codebook.c b/codebook.c
+index 1e1ae8a..271a52a 100644
+--- a/codebook.c
++++ b/codebook.c
+@@ -245,9 +245,9 @@ long vorbis_book_decode(codebook *book, oggpack_buffer *b){
+ long vorbis_book_decodevs_add(codebook *book,ogg_int32_t *a,
+ 			      oggpack_buffer *b,int n,int point){
+   if(book->used_entries>0){  
+-    int step=n/book->dim;
+-    long *entry = (long *)alloca(sizeof(*entry)*step);
+-    ogg_int32_t **t = (ogg_int32_t **)alloca(sizeof(*t)*step);
++    const int step=n/book->dim;
++    VAR_STACK(long, entry, step);
++    VAR_STACK(ogg_int32_t *, t, step);
+     int i,j,o;
+     int shift=point-book->binarypoint;
+     
+diff --git a/configure.in b/configure.in
+index 98d5395..4e853dc 100644
+--- a/configure.in
++++ b/configure.in
+@@ -130,6 +130,15 @@ dnl --------------------------------------------------
+ AC_FUNC_ALLOCA
+ AC_FUNC_MEMCMP
+ 
++AC_MSG_CHECKING(for C99 variable-size arrays)
++AC_TRY_COMPILE( [], [static int x; char a[++x]; a[sizeof a - 1] = 0; int N; return a[0];],
++[has_var_arrays=yes;AC_DEFINE([VAR_ARRAYS], [], [Use C99 variable-size arrays])
++],
++has_var_arrays=no
++)
++AC_MSG_RESULT($has_var_arrays)
++
++
+ # do this last after all checks, because Version_script is not generated yet.
+ if test "x$lt_cv_prog_gnu_ld" = "xyes"; then
+    SHLIB_VERSION_ARG="-Wl,--version-script=Version_script"
+diff --git a/floor0.c b/floor0.c
+index 964383e..3380df4 100644
+--- a/floor0.c
++++ b/floor0.c
+@@ -145,7 +145,7 @@ void vorbis_lsp_to_curve(ogg_int32_t *curve,int *map,int n,int ln,
+   int i;
+   int ampoffseti=ampoffset*4096;
+   int ampi=amp;
+-  ogg_int32_t *ilsp=(ogg_int32_t *)alloca(m*sizeof(*ilsp));
++  VAR_STACK(ogg_int32_t, ilsp, m);
+   /* lsp is in 8.24, range 0 to PI; coslook wants it in .16 0 to 1*/
+   for(i=0;i<m;i++){
+ #ifndef _LOW_ACCURACY_
+diff --git a/info.c b/info.c
+index 24e24ac..71e879a 100644
+--- a/info.c
++++ b/info.c
+@@ -56,8 +56,8 @@ static int tagcompare(const char *s1, const char *s2, int n){
+ char *vorbis_comment_query(vorbis_comment *vc, char *tag, int count){
+   long i;
+   int found = 0;
+-  int taglen = strlen(tag)+1; /* +1 for the = we append */
+-  char *fulltag = (char *)alloca(taglen+ 1);
++  const int taglen = strlen(tag)+1; /* +1 for the = we append */
++  VAR_STACK(char, fulltag, taglen+1);
+ 
+   strcpy(fulltag, tag);
+   strcat(fulltag, "=");
+@@ -76,8 +76,8 @@ char *vorbis_comment_query(vorbis_comment *vc, char *tag, int count){
+ 
+ int vorbis_comment_query_count(vorbis_comment *vc, char *tag){
+   int i,count=0;
+-  int taglen = strlen(tag)+1; /* +1 for the = we append */
+-  char *fulltag = (char *)alloca(taglen+1);
++  const int taglen = strlen(tag)+1; /* +1 for the = we append */
++  VAR_STACK(char, fulltag, taglen+1);
+   strcpy(fulltag,tag);
+   strcat(fulltag, "=");
+ 
+diff --git a/mapping0.c b/mapping0.c
+index 17aa60b..631ab90 100644
+--- a/mapping0.c
++++ b/mapping0.c
+@@ -193,11 +193,11 @@ static int mapping0_inverse(vorbis_block *vb,vorbis_look_mapping *l){
+   int                   i,j;
+   long                  n=vb->pcmend=ci->blocksizes[vb->W];
+ 
+-  ogg_int32_t **pcmbundle=(ogg_int32_t **)alloca(sizeof(*pcmbundle)*vi->channels);
+-  int    *zerobundle=(int *)alloca(sizeof(*zerobundle)*vi->channels);
++  VAR_STACK(ogg_int32_t *, pcmbundle, vi->channels);
++  VAR_STACK(int, zerobundle, vi->channels);
+   
+-  int   *nonzero  =(int *)alloca(sizeof(*nonzero)*vi->channels);
+-  void **floormemo=(void **)alloca(sizeof(*floormemo)*vi->channels);
++  VAR_STACK(int, nonzero, vi->channels);
++  VAR_STACK(void *, floormemo, vi->channels);
+   
+   /* time domain information decode (note that applying the
+      information would have to happen later; we'll probably add a
+diff --git a/os.h b/os.h
+index 69dc200..2fdbe08 100644
+--- a/os.h
++++ b/os.h
+@@ -49,8 +49,27 @@
+ #  define BYTE_ORDER LITTLE_ENDIAN
+ #endif
+ 
+-#ifdef HAVE_ALLOCA_H
+-#  include <alloca.h>
++#if defined HAVE_ALLOCA
++
++# ifdef _WIN32
++#  include <malloc.h>
++#  define VAR_STACK(type, var, size) type *var = ((type*)_alloca(sizeof(type)*(size)))
++# else
++#  ifdef HAVE_ALLOCA_H
++#   include <alloca.h>
++#  else
++#   include <stdlib.h>
++#  endif
++#  define VAR_STACK(type, var, size) type *var = ((type*) alloca(sizeof(type)*(size)))
++# endif
++
++#elif defined VAR_ARRAYS
++
++#  define VAR_STACK(type, var, size) type var[size]
++
++#else
++
++#error "Either VAR_ARRAYS or HAVE_ALLOCA must be defined to select the stack allocation mode"
+ #endif
+ 
+ #ifdef USE_MEMORY_H
+diff --git a/res012.c b/res012.c
+index f036caa..5afdf84 100644
+--- a/res012.c
++++ b/res012.c
+@@ -226,7 +226,7 @@ static int _01inverse(vorbis_block *vb,vorbis_look_residue *vl,
+   if(n>0){
+     int partvals=n/samples_per_partition;
+     int partwords=(partvals+partitions_per_word-1)/partitions_per_word;
+-    int ***partword=(int ***)alloca(ch*sizeof(*partword));
++    VAR_STACK(int **, partword, ch);
+     
+     for(j=0;j<ch;j++)
+       partword[j]=(int **)_vorbis_block_alloc(vb,partwords*sizeof(*partword[j]));
+diff --git a/sharedbook.c b/sharedbook.c
+index 188485e..a35aef5 100644
+--- a/sharedbook.c
++++ b/sharedbook.c
+@@ -330,7 +330,7 @@ static int sort32a(const void *a,const void *b){
+ /* decode codebook arrangement is more heavily optimized than encode */
+ int vorbis_book_init_decode(codebook *c,const static_codebook *s){
+   int i,j,n=0,tabn;
+-  int *sortindex;
++
+   memset(c,0,sizeof(*c));
+   
+   /* count actually used entries */
+@@ -355,7 +355,7 @@ int vorbis_book_init_decode(codebook *c,const static_codebook *s){
+     
+     /* perform sort */
+     ogg_uint32_t *codes=_make_words(s->lengthlist,s->entries,c->used_entries);
+-    ogg_uint32_t **codep=(ogg_uint32_t **)alloca(sizeof(*codep)*n);
++    VAR_STACK(ogg_uint32_t *, codep, n);
+     
+     if(codes==NULL)goto err_out;
+ 
+@@ -366,7 +366,7 @@ int vorbis_book_init_decode(codebook *c,const static_codebook *s){
+ 
+     qsort(codep,n,sizeof(*codep),sort32a);
+ 
+-    sortindex=(int *)alloca(n*sizeof(*sortindex));
++  { VAR_STACK(int, sortindex, n);
+     c->codelist=(ogg_uint32_t *)_ogg_malloc(n*sizeof(*c->codelist));
+     /* the index is a reverse index */
+     for(i=0;i<n;i++){
+@@ -391,7 +391,7 @@ int vorbis_book_init_decode(codebook *c,const static_codebook *s){
+     for(n=0,i=0;i<s->entries;i++)
+       if(s->lengthlist[i]>0)
+ 	c->dec_codelengths[sortindex[n++]]=s->lengthlist[i];
+-    
++  }
+     c->dec_firsttablen=_ilog(c->used_entries)-4; /* this is magic */
+     if(c->dec_firsttablen<5)c->dec_firsttablen=5;
+     if(c->dec_firsttablen>8)c->dec_firsttablen=8;
+-- 
+1.7.1
+

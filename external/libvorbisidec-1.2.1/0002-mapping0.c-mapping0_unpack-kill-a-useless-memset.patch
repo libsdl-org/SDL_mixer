@@ -1,0 +1,29 @@
+From 8fea0414f6a754f31221ff3fa291f20ba85a9907 Mon Sep 17 00:00:00 2001
+From: sezero <sezero@users.sourceforge.net>
+Date: Tue, 20 Mar 2018 11:20:10 +0300
+Subject: [PATCH] mapping0.c (mapping0_unpack): kill a useless memset()
+
+info is allocated with calloc() already.
+
+(vorbis.git commit 8a8f8589e19c5016f6548d877a8fda231fce4f93)
+
+Signed-off-by: Ralph Giles <giles@thaumas.net>
+---
+ mapping0.c |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
+
+diff --git a/mapping0.c b/mapping0.c
+index aa03e85..17aa60b 100644
+--- a/mapping0.c
++++ b/mapping0.c
+@@ -129,7 +129,6 @@ static vorbis_info_mapping *mapping0_unpack(vorbis_info *vi,oggpack_buffer *opb)
+   int i,b;
+   vorbis_info_mapping0 *info=(vorbis_info_mapping0 *)_ogg_calloc(1,sizeof(*info));
+   codec_setup_info     *ci=(codec_setup_info *)vi->codec_setup;
+-  memset(info,0,sizeof(*info));
+ 
+   b=oggpack_read(opb,1);
+   if(b<0)goto err_out;
+-- 
+1.7.1
+

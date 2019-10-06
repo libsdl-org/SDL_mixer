@@ -1,0 +1,32 @@
+From 45de67aa9d15102546d1956bbf2c0e770072e595 Mon Sep 17 00:00:00 2001
+From: Monty <xiphmont@xiph.org>
+Date: Tue, 20 Mar 2018 11:21:50 +0300
+Subject: [PATCH] Add return code check to _initial_pcmoffset as vorbis_packet_blocksize can fail. Closes Trac #2142
+
+(backport from vorbis svn r19434)
+---
+ vorbisfile.c |    8 +++++---
+ 1 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/vorbisfile.c b/vorbisfile.c
+index cd4814d..ca583c8 100644
+--- a/vorbisfile.c
++++ b/vorbisfile.c
+@@ -433,9 +433,11 @@ static ogg_int64_t _initial_pcmoffset(OggVorbis_File *vf, vorbis_info *vi){
+     while((result=ogg_stream_packetout(&vf->os,&op))){
+       if(result>0){ /* ignore holes */
+         long thisblock=vorbis_packet_blocksize(vi,&op);
+-        if(lastblock!=-1)
+-          accumulated+=(lastblock+thisblock)>>2;
+-        lastblock=thisblock;
++        if(thisblock>=0){
++          if(lastblock!=-1)
++            accumulated+=(lastblock+thisblock)>>2;
++          lastblock=thisblock;
++        }
+       }
+     }
+ 
+-- 
+1.7.1
+

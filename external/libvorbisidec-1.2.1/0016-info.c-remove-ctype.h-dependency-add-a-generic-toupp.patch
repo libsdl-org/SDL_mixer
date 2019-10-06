@@ -1,0 +1,47 @@
+From 94d91cd1b67eadbd0cb2bad23af6fc79487d2cc1 Mon Sep 17 00:00:00 2001
+From: sezero <sezero@users.sourceforge.net>
+Date: Sat, 10 Nov 2018 00:58:02 +0300
+Subject: [PATCH] info.c (tagcompare): use a locale-insensitive toupper()
+
+see: https://gitlab.xiph.org/xiph/vorbis/issues/2079
+
+(vorbis.git commit 3a1344bc67ca006c102c4ca891aba9b5100e3e30)
+---
+ info.c |    7 +++++--
+ 1 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/info.c b/info.c
+index 11cfbb6..dd5b7ad 100644
+--- a/info.c
++++ b/info.c
+@@ -20,7 +20,6 @@
+ 
+ #include <stdlib.h>
+ #include <string.h>
+-#include <ctype.h>
+ #include <limits.h>
+ #include <ogg/ogg.h>
+ #include "ivorbiscodec.h"
+@@ -37,6 +36,10 @@ static void _v_readstring(oggpack_buffer *o,char *buf,int bytes){
+   }
+ }
+ 
++static int _v_toupper(int c) {
++  return (c >= 'a' && c <= 'z') ? (c & ~('a' - 'A')) : c;
++}
++
+ void vorbis_comment_init(vorbis_comment *vc){
+   memset(vc,0,sizeof(*vc));
+ }
+@@ -46,7 +49,7 @@ void vorbis_comment_init(vorbis_comment *vc){
+ static int tagcompare(const char *s1, const char *s2, int n){
+   int c=0;
+   while(c < n){
+-    if(toupper(s1[c]) != toupper(s2[c]))
++    if(_v_toupper(s1[c]) != _v_toupper(s2[c]))
+       return !0;
+     c++;
+   }
+-- 
+1.7.1
+

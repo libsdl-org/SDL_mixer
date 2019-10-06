@@ -1,0 +1,40 @@
+From ab95d17c021abc7f1752b6eb50e5947ceb65bcf1 Mon Sep 17 00:00:00 2001
+From: sezero <sezero@users.sourceforge.net>
+Date: Tue, 20 Mar 2018 11:37:04 +0300
+Subject: [PATCH] remove non-existing vorbis_comment_add and vorbis_comment_add_tag
+
+---
+ Version_script.in |    2 --
+ ivorbiscodec.h    |    3 ---
+ 2 files changed, 0 insertions(+), 5 deletions(-)
+
+diff --git a/Version_script.in b/Version_script.in
+index 7f22f2f..3f9f093 100644
+--- a/Version_script.in
++++ b/Version_script.in
+@@ -38,8 +38,6 @@
+ 		vorbis_info_clear;
+ 		vorbis_info_blocksize;
+ 		vorbis_comment_init;
+-		vorbis_comment_add;
+-		vorbis_comment_add_tag;
+ 		vorbis_comment_query;
+ 		vorbis_comment_query_count;
+ 		vorbis_comment_clear;
+diff --git a/ivorbiscodec.h b/ivorbiscodec.h
+index 17eab58..46d1c4d 100644
+--- a/ivorbiscodec.h
++++ b/ivorbiscodec.h
+@@ -153,9 +153,6 @@ extern void     vorbis_info_init(vorbis_info *vi);
+ extern void     vorbis_info_clear(vorbis_info *vi);
+ extern int      vorbis_info_blocksize(vorbis_info *vi,int zo);
+ extern void     vorbis_comment_init(vorbis_comment *vc);
+-extern void     vorbis_comment_add(vorbis_comment *vc, char *comment); 
+-extern void     vorbis_comment_add_tag(vorbis_comment *vc, 
+-				       char *tag, char *contents);
+ extern char    *vorbis_comment_query(vorbis_comment *vc, char *tag, int count);
+ extern int      vorbis_comment_query_count(vorbis_comment *vc, char *tag);
+ extern void     vorbis_comment_clear(vorbis_comment *vc);
+-- 
+1.7.1
+

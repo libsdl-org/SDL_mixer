@@ -20,7 +20,6 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 #include <limits.h>
 #include <ogg/ogg.h>
 #include "ivorbiscodec.h"
@@ -37,6 +36,10 @@ static void _v_readstring(oggpack_buffer *o,char *buf,int bytes){
   }
 }
 
+static int _v_toupper(int c) {
+  return (c >= 'a' && c <= 'z') ? (c & ~('a' - 'A')) : c;
+}
+
 void vorbis_comment_init(vorbis_comment *vc){
   memset(vc,0,sizeof(*vc));
 }
@@ -46,7 +49,7 @@ void vorbis_comment_init(vorbis_comment *vc){
 static int tagcompare(const char *s1, const char *s2, int n){
   int c=0;
   while(c < n){
-    if(toupper(s1[c]) != toupper(s2[c]))
+    if(_v_toupper(s1[c]) != _v_toupper(s2[c]))
       return !0;
     c++;
   }
@@ -56,8 +59,8 @@ static int tagcompare(const char *s1, const char *s2, int n){
 char *vorbis_comment_query(vorbis_comment *vc, char *tag, int count){
   long i;
   int found = 0;
-  int taglen = strlen(tag)+1; /* +1 for the = we append */
-  char *fulltag = (char *)alloca(taglen+ 1);
+  const int taglen = strlen(tag)+1; /* +1 for the = we append */
+  VAR_STACK(char, fulltag, taglen+1);
 
   strcpy(fulltag, tag);
   strcat(fulltag, "=");
@@ -76,8 +79,8 @@ char *vorbis_comment_query(vorbis_comment *vc, char *tag, int count){
 
 int vorbis_comment_query_count(vorbis_comment *vc, char *tag){
   int i,count=0;
-  int taglen = strlen(tag)+1; /* +1 for the = we append */
-  char *fulltag = (char *)alloca(taglen+1);
+  const int taglen = strlen(tag)+1; /* +1 for the = we append */
+  VAR_STACK(char, fulltag, taglen+1);
   strcpy(fulltag,tag);
   strcat(fulltag, "=");
 
@@ -166,9 +169,9 @@ static int _vorbis_unpack_info(vorbis_info *vi,oggpack_buffer *opb){
   vi->channels=oggpack_read(opb,8);
   vi->rate=oggpack_read(opb,32);
 
-  vi->bitrate_upper=oggpack_read(opb,32);
-  vi->bitrate_nominal=oggpack_read(opb,32);
-  vi->bitrate_lower=oggpack_read(opb,32);
+  vi->bitrate_upper=(ogg_int32_t)oggpack_read(opb,32);
+  vi->bitrate_nominal=(ogg_int32_t)oggpack_read(opb,32);
+  vi->bitrate_lower=(ogg_int32_t)oggpack_read(opb,32);
 
   ci->blocksizes[0]=1<<oggpack_read(opb,4);
   ci->blocksizes[1]=1<<oggpack_read(opb,4);
