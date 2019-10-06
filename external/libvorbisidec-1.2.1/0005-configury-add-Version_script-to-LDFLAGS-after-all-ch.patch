@@ -1,0 +1,41 @@
+From f016bee5e8682cdb387434c1ff83c8274a8e4578 Mon Sep 17 00:00:00 2001
+From: sezero <sezero@users.sourceforge.net>
+Date: Tue, 20 Mar 2018 11:27:00 +0300
+Subject: [PATCH] configury: add Version_script to LDFLAGS after all checks
+
+because Version_script won't be generated yet.
+---
+ configure.in |   10 ++++++----
+ 1 files changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/configure.in b/configure.in
+index 152cb04..98d5395 100644
+--- a/configure.in
++++ b/configure.in
+@@ -79,10 +79,6 @@ LDFLAGS="$LDFLAGS $ldflags_save"
+ # Test whenever ld supports -version-script
+ AC_PROG_LD
+ AC_PROG_LD_GNU
+-if test "x$lt_cv_prog_gnu_ld" = "xyes"; then
+-   SHLIB_VERSION_ARG="-Wl,--version-script=Version_script"
+-   LDFLAGS="$LDFLAGS $SHLIB_VERSION_ARG"
+-fi
+ 
+ dnl --------------------------------------------------
+ dnl Options 
+@@ -134,6 +130,12 @@ dnl --------------------------------------------------
+ AC_FUNC_ALLOCA
+ AC_FUNC_MEMCMP
+ 
++# do this last after all checks, because Version_script is not generated yet.
++if test "x$lt_cv_prog_gnu_ld" = "xyes"; then
++   SHLIB_VERSION_ARG="-Wl,--version-script=Version_script"
++   LDFLAGS="$LDFLAGS $SHLIB_VERSION_ARG"
++fi
++
+ dnl --------------------------------------------------
+ dnl Do substitutions
+ dnl --------------------------------------------------
+-- 
+1.7.1
+

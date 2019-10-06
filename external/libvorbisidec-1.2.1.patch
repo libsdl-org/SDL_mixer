@@ -1,6 +1,6 @@
-diff -ruN libvorbisidec-1.2.1.orig/Android.mk libvorbisidec-1.2.1/Android.mk
---- libvorbisidec-1.2.1.orig/Android.mk	1969-12-31 16:00:00.000000000 -0800
-+++ libvorbisidec-1.2.1/Android.mk	2017-10-22 17:27:12.176911197 -0700
+diff -u /dev/null libvorbisidec-1.2.1/Android.mk
+--- /dev/null
++++ libvorbisidec-1.2.1/Android.mk
 @@ -0,0 +1,32 @@
 +LOCAL_PATH := $(call my-dir)
 +
@@ -10,7 +10,7 @@ diff -ruN libvorbisidec-1.2.1.orig/Android.mk libvorbisidec-1.2.1/Android.mk
 +
 +LOCAL_C_INCLUDES :=
 +
-+LOCAL_CFLAGS :=
++LOCAL_CFLAGS := -DHAVE_ALLOCA -DVAR_ARRAYS
 +
 +ifeq ($(TARGET_ARCH),arm)
 +	LOCAL_CFLAGS += -D_ARM_ASSEM_
@@ -34,9 +34,9 @@ diff -ruN libvorbisidec-1.2.1.orig/Android.mk libvorbisidec-1.2.1/Android.mk
 +LOCAL_SHARED_LIBRARIES := ogg
 +
 +include $(BUILD_STATIC_LIBRARY)
-diff -ruN libvorbisidec-1.2.1.orig/misc.h libvorbisidec-1.2.1/misc.h
---- libvorbisidec-1.2.1.orig/misc.h	2017-10-22 17:26:08.725205666 -0700
-+++ libvorbisidec-1.2.1/misc.h	2017-10-12 20:05:06.719770194 -0700
+diff -u libvorbisidec-1.2.1/misc.h~ libvorbisidec-1.2.1/misc.h
+--- libvorbisidec-1.2.1/misc.h~
++++ libvorbisidec-1.2.1/misc.h
 @@ -30,6 +30,7 @@
  
  #include "asm_arm.h"

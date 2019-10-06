@@ -1,0 +1,48 @@
+From e5c7aca046394f605c0749c78a7b0e24499324c9 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?J=C3=B6rn=20Heusipp?= <osmanx@problemloesungsmaschine.de>
+Date: Tue, 20 Mar 2018 17:55:10 +0300
+Subject: [PATCH] Fix reading maximum, nominal, minimum bitrate in _vorbis_unpack_info().
+
+(vorbis.git commit 68ebc894325f56ae1d860d49626419cf66ea171b)
+
+https://xiph.org/vorbis/doc/Vorbis_I_spec.html#x1-630004.2.2 specifies
+these fields as 32bit signed. oggpack_read(opb,32), which is used to
+read these fields, returns 32 bits stored in a long. On architectures
+where long is 64bit, this results in a positive value being returned.
+This value is then stored in struct vorbis_info in bitrate_upper,
+bitrate_nominal and bitrate_lower, also as long. ogginfo relies on
+these values in order to display the respective header fields and thus
+misrepresented the stored value -1 (which has the intended meaning of
+"bitrate not set") as 2**32-1 on architectures where long is 64bit.
+
+Explicitly cast the return value of oggpack_read() to a signed 32bit
+integer type.
+
+A nominal bitrate value of -1 is valid as per specification, and is
+written by libvorbis for VBR files with samplerate >= 50000Hz.
+
+Signed-off-by: Timothy B. Terriberry <tterribe@xiph.org>
+---
+ info.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/info.c b/info.c
+index 71e879a..11cfbb6 100644
+--- a/info.c
++++ b/info.c
+@@ -166,9 +166,9 @@ static int _vorbis_unpack_info(vorbis_info *vi,oggpack_buffer *opb){
+   vi->channels=oggpack_read(opb,8);
+   vi->rate=oggpack_read(opb,32);
+ 
+-  vi->bitrate_upper=oggpack_read(opb,32);
+-  vi->bitrate_nominal=oggpack_read(opb,32);
+-  vi->bitrate_lower=oggpack_read(opb,32);
++  vi->bitrate_upper=(ogg_int32_t)oggpack_read(opb,32);
++  vi->bitrate_nominal=(ogg_int32_t)oggpack_read(opb,32);
++  vi->bitrate_lower=(ogg_int32_t)oggpack_read(opb,32);
+ 
+   ci->blocksizes[0]=1<<oggpack_read(opb,4);
+   ci->blocksizes[1]=1<<oggpack_read(opb,4);
+-- 
+1.7.1
+

@@ -129,7 +129,6 @@ static vorbis_info_mapping *mapping0_unpack(vorbis_info *vi,oggpack_buffer *opb)
   int i,b;
   vorbis_info_mapping0 *info=(vorbis_info_mapping0 *)_ogg_calloc(1,sizeof(*info));
   codec_setup_info     *ci=(codec_setup_info *)vi->codec_setup;
-  memset(info,0,sizeof(*info));
 
   b=oggpack_read(opb,1);
   if(b<0)goto err_out;
@@ -194,11 +193,11 @@ static int mapping0_inverse(vorbis_block *vb,vorbis_look_mapping *l){
   int                   i,j;
   long                  n=vb->pcmend=ci->blocksizes[vb->W];
 
-  ogg_int32_t **pcmbundle=(ogg_int32_t **)alloca(sizeof(*pcmbundle)*vi->channels);
-  int    *zerobundle=(int *)alloca(sizeof(*zerobundle)*vi->channels);
+  VAR_STACK(ogg_int32_t *, pcmbundle, vi->channels);
+  VAR_STACK(int, zerobundle, vi->channels);
   
-  int   *nonzero  =(int *)alloca(sizeof(*nonzero)*vi->channels);
-  void **floormemo=(void **)alloca(sizeof(*floormemo)*vi->channels);
+  VAR_STACK(int, nonzero, vi->channels);
+  VAR_STACK(void *, floormemo, vi->channels);
   
   /* time domain information decode (note that applying the
      information would have to happen later; we'll probably add a

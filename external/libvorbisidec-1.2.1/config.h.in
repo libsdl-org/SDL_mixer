@@ -11,8 +11,7 @@
 /* Define to 1 if you have `alloca', as a function or macro. */
 #undef HAVE_ALLOCA
 
-/* Define to 1 if you have <alloca.h> and it should be used (not on Ultrix).
-   */
+/* Define to 1 if <alloca.h> works. */
 #undef HAVE_ALLOCA_H
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
@@ -80,6 +79,9 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
+
+/* Use C99 variable-size arrays */
+#undef VAR_ARRAYS
 
 /* Version number of package */
 #undef VERSION

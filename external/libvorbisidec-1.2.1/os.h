@@ -17,6 +17,10 @@
 
  ********************************************************************/
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <math.h>
 #include <ogg/os_types.h>
 
@@ -25,28 +29,40 @@
 
 #  ifdef __GNUC__
 #    define STIN static __inline__
-#  elif _WIN32
+#  elif defined(_WIN32)
 #    define STIN static __inline
+#  else
+#    define STIN static
 #  endif
-#else
-#  define STIN static
-#endif
-
-#ifndef M_PI
-#  define M_PI (3.1415926536f)
 #endif
 
 #ifdef _WIN32
 #  include <malloc.h>
-#  define rint(x)   (floor((x)+0.5f)) 
-#  define NO_FLOAT_MATH_LIB
-#  define FAST_HYPOT(a, b) sqrt((a)*(a) + (b)*(b))
 #  define LITTLE_ENDIAN 1
 #  define BYTE_ORDER LITTLE_ENDIAN
 #endif
 
-#ifdef HAVE_ALLOCA_H
-#  include <alloca.h>
+#if defined HAVE_ALLOCA
+
+# ifdef _WIN32
+#  include <malloc.h>
+#  define VAR_STACK(type, var, size) type *var = ((type*)_alloca(sizeof(type)*(size)))
+# else
+#  ifdef HAVE_ALLOCA_H
+#   include <alloca.h>
+#  else
+#   include <stdlib.h>
+#  endif
+#  define VAR_STACK(type, var, size) type *var = ((type*) alloca(sizeof(type)*(size)))
+# endif
+
+#elif defined VAR_ARRAYS
+
+#  define VAR_STACK(type, var, size) type var[size]
+
+#else
+
+#error "Either VAR_ARRAYS or HAVE_ALLOCA must be defined to select the stack allocation mode"
 #endif
 
 #ifdef USE_MEMORY_H

@@ -5,6 +5,7 @@ dnl Initialization and Versioning
 dnl ------------------------------------------------
 
 AC_INIT(mdct.c)
+AC_CONFIG_MACRO_DIR([m4])
 
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
@@ -36,7 +37,8 @@ AC_PROG_CC
 AC_PROG_CPP
 CFLAGS="$cflags_save"
 
-AM_PROG_LIBTOOL
+AC_LIBTOOL_WIN32_DLL
+AC_PROG_LIBTOOL
 
 dnl --------------------------------------------------
 dnl Set build flags based on environment
@@ -78,10 +80,6 @@ LDFLAGS="$LDFLAGS $ldflags_save"
 # Test whenever ld supports -version-script
 AC_PROG_LD
 AC_PROG_LD_GNU
-if test "x$lt_cv_prog_gnu_ld" = "xyes"; then
-   SHLIB_VERSION_ARG="-Wl,--version-script=Version_script"
-   LDFLAGS="$LDFLAGS $SHLIB_VERSION_ARG"
-fi
 
 dnl --------------------------------------------------
 dnl Options 
@@ -130,6 +128,21 @@ dnl --------------------------------------------------
 
 AC_FUNC_ALLOCA
 AC_FUNC_MEMCMP
+
+AC_MSG_CHECKING(for C99 variable-size arrays)
+AC_TRY_COMPILE( [], [static int x; char a[++x]; a[sizeof a - 1] = 0; int N; return a[0];],
+[has_var_arrays=yes;AC_DEFINE([VAR_ARRAYS], [], [Use C99 variable-size arrays])
+],
+has_var_arrays=no
+)
+AC_MSG_RESULT($has_var_arrays)
+
+
+# do this last after all checks, because Version_script is not generated yet.
+if test "x$lt_cv_prog_gnu_ld" = "xyes"; then
+   SHLIB_VERSION_ARG="-Wl,--version-script=Version_script"
+   LDFLAGS="$LDFLAGS $SHLIB_VERSION_ARG"
+fi
 
 dnl --------------------------------------------------
 dnl Do substitutions
