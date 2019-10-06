@@ -1,0 +1,26 @@
+From: sezero <sezero@users.sourceforge.net>
+Date: Sat, 14 Jan 2017 22:56:56 +0000 (+0300)
+Subject: libFLAC/cpu.c: Replace memory.h include with string.h
+X-Git-Tag: 1.3.3~117
+X-Git-Url: http://git.xiph.org/?p=flac.git;a=commitdiff_plain;h=d178058028050aeec649c85644cc9eed08f0aa37
+
+libFLAC/cpu.c: Replace memory.h include with string.h
+
+cpu.c was the only source to use memory.h instead of string.h.
+
+Signed-off-by: Erik de Castro Lopo <erikd@mega-nerd.com>
+---
+
+diff --git a/src/libFLAC/cpu.c b/src/libFLAC/cpu.c
+index 1c80a728..6629fb95 100644
+--- a/src/libFLAC/cpu.c
++++ b/src/libFLAC/cpu.c
+@@ -37,7 +37,7 @@
+ #include "private/cpu.h"
+ #include "share/compat.h"
+ #include <stdlib.h>
+-#include <memory.h>
++#include <string.h>
+ 
+ #if defined(_MSC_VER)
+ #  include <intrin.h> /* for __cpuid() and _xgetbv() */

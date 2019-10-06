@@ -1,0 +1,35 @@
+From: Timothy B. Terriberry <tterribe@xiph.org>
+Date: Fri, 16 Jun 2017 21:12:12 +0000 (-0700)
+Subject: Make false continued packet handling consistent
+X-Git-Url: http://git.xiph.org/?p=ogg.git;a=commitdiff_plain;h=14920bae036a56166b3289afd18d67739f015495
+
+Make false continued packet handling consistent
+
+A false continued packet occurs if the previous page ended at the
+ end of a packet, with no sequence number gap and no continued data
+ on that page, while the current page has the continued packet flag
+ set.
+Previously, if you drained all of the buffered packet data by
+ repeatedly calling ogg_stream_packetout() after submitting the
+ previous page but before submitting the current page, libogg would
+ discard the continued data at the beggining of the current page.
+However, if you left the previous page's data in the buffer, then
+ libogg would happily return the continued data at the start of the
+ current page as a separate packet when you eventually did call
+ ogg_stream_packetout().
+
+This patch makes libogg consistently discard this data.
+---
+
+diff --git a/src/framing.c b/src/framing.c
+index 506cf8a..6f63ab2 100644
+--- a/src/framing.c
++++ b/src/framing.c
+@@ -875,6 +875,7 @@ int ogg_stream_pagein(ogg_stream_state *os, ogg_page *og){
+      some segments */
+   if(continued){
+     if(os->lacing_fill<1 ||
++       (os->lacing_vals[os->lacing_fill-1]&0xff)<255 ||
+        os->lacing_vals[os->lacing_fill-1]==0x400){
+       bos=0;
+       for(;segptr<segments;segptr++){

@@ -1,0 +1,21 @@
+From: sezero <sezero@users.sourceforge.net>
+Date: Sat, 10 Nov 2018 13:51:01 +0000 (+0300)
+Subject: fix typo introduced in commit 8d73daa
+X-Git-Url: http://git.xiph.org/?p=vorbis.git;a=commitdiff_plain;h=74556072244b743d658a1105b539bc773e3ed26f
+
+fix typo introduced in commit 8d73daa
+---
+
+diff --git a/lib/sharedbook.c b/lib/sharedbook.c
+index 3c93d2d..3e04b66 100644
+--- a/lib/sharedbook.c
++++ b/lib/sharedbook.c
+@@ -68,7 +68,7 @@ float _float32_unpack(long val){
+     exp=63;
+   }
+   if (exp<-63){
+-    exp-63;
++    exp=-63;
+   }
+   return(ldexp(mant,exp));
+ }

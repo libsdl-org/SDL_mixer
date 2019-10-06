@@ -1,0 +1,20 @@
+From: Thomas Daede <daede003@umn.edu>
+Date: Tue, 29 Jan 2019 01:39:24 +0000 (-0800)
+Subject: Don't leak memory in test_sharedbook to please asan.
+X-Git-Url: http://git.xiph.org/?p=vorbis.git;a=commitdiff_plain;h=9eadeccdc4247127d91ac70555074239f5ce3529
+
+Don't leak memory in test_sharedbook to please asan.
+---
+
+diff --git a/lib/sharedbook.c b/lib/sharedbook.c
+index 3e04b66..cecfcbc 100644
+--- a/lib/sharedbook.c
++++ b/lib/sharedbook.c
+@@ -581,6 +581,7 @@ void run_test(static_codebook *b,float *comp){
+       exit(1);
+     }
+   }
++  free(out);
+ }
+ 
+ int main(){

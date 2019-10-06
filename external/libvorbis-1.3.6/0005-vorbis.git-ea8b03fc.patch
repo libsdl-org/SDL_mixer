@@ -1,0 +1,35 @@
+From: Thomas Daede <daede003@umn.edu>
+Date: Wed, 23 May 2018 22:23:09 +0000 (-0700)
+Subject: Fix shift by negative value when reading blocksize.
+X-Git-Url: http://git.xiph.org/?p=vorbis.git;a=commitdiff_plain;h=ea8b03fce93444cb3cf0131909e15b4f8856e863
+
+Fix shift by negative value when reading blocksize.
+---
+
+diff --git a/lib/info.c b/lib/info.c
+index 3fbb7c7..23efa25 100644
+--- a/lib/info.c
++++ b/lib/info.c
+@@ -203,6 +203,7 @@ void vorbis_info_clear(vorbis_info *vi){
+ 
+ static int _vorbis_unpack_info(vorbis_info *vi,oggpack_buffer *opb){
+   codec_setup_info     *ci=vi->codec_setup;
++  int bs;
+   if(!ci)return(OV_EFAULT);
+ 
+   vi->version=oggpack_read(opb,32);
+@@ -215,8 +216,12 @@ static int _vorbis_unpack_info(vorbis_info *vi,oggpack_buffer *opb){
+   vi->bitrate_nominal=(ogg_int32_t)oggpack_read(opb,32);
+   vi->bitrate_lower=(ogg_int32_t)oggpack_read(opb,32);
+ 
+-  ci->blocksizes[0]=1<<oggpack_read(opb,4);
+-  ci->blocksizes[1]=1<<oggpack_read(opb,4);
++  bs = oggpack_read(opb,4);
++  if(bs<0)goto err_out;
++  ci->blocksizes[0]=1<<bs;
++  bs = oggpack_read(opb,4);
++  if(bs<0)goto err_out;
++  ci->blocksizes[1]=1<<bs;
+ 
+   if(vi->rate<1)goto err_out;
+   if(vi->channels<1)goto err_out;

@@ -1,0 +1,24 @@
+From: Michael Fink <michael.fink@asamnet.de>
+Date: Sun, 1 Oct 2017 15:38:15 +0000 (+0200)
+Subject: added missing exported functions ogg_stream_pageout_fill and ogg_stream_flush_fill... 
+X-Git-Tag: v1.3.3~1
+X-Git-Url: http://git.xiph.org/?p=ogg.git;a=commitdiff_plain;h=facdf03524b098058f6ca86dcf8f7a4696171913
+
+added missing exported functions ogg_stream_pageout_fill and ogg_stream_flush_fill to compile and use libogg under Visual Studio
+
+Signed-off-by: Ralph Giles <giles@thaumas.net>
+---
+
+diff --git a/win32/ogg.def b/win32/ogg.def
+index 744d6be..250e4ba 100644
+--- a/win32/ogg.def
++++ b/win32/ogg.def
+@@ -63,6 +63,8 @@ ogg_stream_reset
+ ogg_stream_reset_serialno
+ ogg_stream_destroy
+ ogg_stream_eos
++ogg_stream_pageout_fill
++ogg_stream_flush_fill
+ ;
+ ogg_page_checksum_set
+ ogg_page_version

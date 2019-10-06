@@ -1,0 +1,42 @@
+From: sezero <sezero@users.sourceforge.net>
+Date: Sat, 10 Nov 2018 21:51:10 +0000 (+0300)
+Subject: info.c (tagcompare): use a locale-insensitive toupper()
+X-Git-Url: http://git.xiph.org/?p=vorbis.git;a=commitdiff_plain;h=3a1344bc67ca006c102c4ca891aba9b5100e3e30
+
+info.c (tagcompare): use a locale-insensitive toupper()
+
+see: https://gitlab.xiph.org/xiph/vorbis/issues/2079
+---
+
+diff --git a/lib/info.c b/lib/info.c
+index 23efa25..4a5e2b3 100644
+--- a/lib/info.c
++++ b/lib/info.c
+@@ -19,7 +19,6 @@
+ 
+ #include <stdlib.h>
+ #include <string.h>
+-#include <ctype.h>
+ #include <ogg/ogg.h>
+ #include "vorbis/codec.h"
+ #include "codec_internal.h"
+@@ -47,6 +46,10 @@ static void _v_readstring(oggpack_buffer *o,char *buf,int bytes){
+   }
+ }
+ 
++static int _v_toupper(int c) {
++  return (c >= 'a' && c <= 'z') ? (c & ~('a' - 'A')) : c;
++}
++
+ void vorbis_comment_init(vorbis_comment *vc){
+   memset(vc,0,sizeof(*vc));
+ }
+@@ -78,7 +81,7 @@ void vorbis_comment_add_tag(vorbis_comment *vc, const char *tag, const char *con
+ static int tagcompare(const char *s1, const char *s2, int n){
+   int c=0;
+   while(c < n){
+-    if(toupper(s1[c]) != toupper(s2[c]))
++    if(_v_toupper(s1[c]) != _v_toupper(s2[c]))
+       return !0;
+     c++;
+   }

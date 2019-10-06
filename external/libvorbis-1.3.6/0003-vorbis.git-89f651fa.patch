@@ -1,0 +1,29 @@
+From: Thomas Daede <daede003@umn.edu>
+Date: Mon, 14 May 2018 22:45:00 +0000 (-0700)
+Subject: Clamp large exponents in float32_unpack.
+X-Git-Url: http://git.xiph.org/?p=vorbis.git;a=commitdiff_plain;h=89f651faa20731cd5315e41e8920a32ebf8b87ff
+
+Clamp large exponents in float32_unpack.
+---
+
+diff --git a/lib/sharedbook.c b/lib/sharedbook.c
+index 4545d4f..8d73daa 100644
+--- a/lib/sharedbook.c
++++ b/lib/sharedbook.c
+@@ -62,7 +62,15 @@ float _float32_unpack(long val){
+   int    sign=val&0x80000000;
+   long   exp =(val&0x7fe00000L)>>VQ_FMAN;
+   if(sign)mant= -mant;
+-  return(ldexp(mant,exp-(VQ_FMAN-1)-VQ_FEXP_BIAS));
++  exp=exp-(VQ_FMAN-1)-VQ_FEXP_BIAS;
++  /* clamp excessive exponent values */
++  if (exp>63){
++    exp=63;
++  }
++  if (exp<-63){
++    exp-63;
++  }
++  return(ldexp(mant,exp));
+ }
+ 
+ /* given a list of word lengths, generate a list of codewords.  Works

@@ -1,0 +1,31 @@
+From: sezero <sezero@users.sourceforge.net>
+Date: Sat, 10 Nov 2018 14:00:02 +0000 (+0300)
+Subject: os.h: cleanup the _MSC_VER cpp checks mess.
+X-Git-Url: http://git.xiph.org/?p=vorbis.git;a=commitdiff_plain;h=506a1b32cc4e83f41df8c6e7ca5bdc4bb3dec002
+
+os.h: cleanup the _MSC_VER cpp checks mess.
+---
+
+diff --git a/lib/os.h b/lib/os.h
+index e589a33..6ac6771 100644
+--- a/lib/os.h
++++ b/lib/os.h
+@@ -119,8 +119,7 @@ static inline int vorbis_ftoi(double f){  /* yes, double!  Otherwise,
+ 
+ /* MSVC inline assembly. 32 bit only; inline ASM isn't implemented in the
+  * 64 bit compiler and doesn't work on arm. */
+-#if defined(_MSC_VER) && !defined(_WIN64) && \
+-      !defined(_WIN32_WCE) && !defined(_M_ARM) && !defined(_M_ARM64)
++#if defined(_MSC_VER) && defined(_M_IX86) && !defined(_WIN32_WCE)
+ #  define VORBIS_FPU_CONTROL
+ 
+ typedef ogg_int16_t vorbis_fpu_control;
+@@ -147,7 +146,7 @@ static __inline void vorbis_fpu_restore(vorbis_fpu_control fpu){
+ 
+ /* Optimized code path for x86_64 builds. Uses SSE2 intrinsics. This can be
+    done safely because all x86_64 CPUs supports SSE2. */
+-#if (defined(_MSC_VER) && defined(_WIN64)) || (defined(__GNUC__) && defined (__SSE2_MATH__))
++#if (defined(_MSC_VER) && defined(_M_X64)) || (defined(__GNUC__) && defined (__SSE2_MATH__))
+ #  define VORBIS_FPU_CONTROL
+ 
+ typedef ogg_int16_t vorbis_fpu_control;

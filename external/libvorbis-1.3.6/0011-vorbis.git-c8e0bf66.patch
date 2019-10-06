@@ -1,0 +1,30 @@
+From: tico-tico <sergei.ivn@gmx.com>
+Date: Fri, 25 Jan 2019 13:40:16 +0000 (+0300)
+Subject: Check for sse2 math before using it.
+X-Git-Url: http://git.xiph.org/?p=vorbis.git;a=commitdiff_plain;h=c8e0bf6620499100402ddd823c1dc07d339808a0
+
+Check for sse2 math before using it.
+---
+
+diff --git a/lib/os.h b/lib/os.h
+index e098926..e589a33 100644
+--- a/lib/os.h
++++ b/lib/os.h
+@@ -80,7 +80,7 @@ void *_alloca(size_t size);
+ 
+ 
+ /* Special i386 GCC implementation */
+-#if defined(__i386__) && defined(__GNUC__) && !defined(__BEOS__)
++#if defined(__i386__) && defined(__GNUC__) && !defined(__BEOS__) && !defined(__SSE2_MATH__)
+ #  define VORBIS_FPU_CONTROL
+ /* both GCC and MSVC are kinda stupid about rounding/casting to int.
+    Because of encapsulation constraints (GCC can't see inside the asm
+@@ -147,7 +147,7 @@ static __inline void vorbis_fpu_restore(vorbis_fpu_control fpu){
+ 
+ /* Optimized code path for x86_64 builds. Uses SSE2 intrinsics. This can be
+    done safely because all x86_64 CPUs supports SSE2. */
+-#if (defined(_MSC_VER) && defined(_WIN64)) || (defined(__GNUC__) && defined (__x86_64__))
++#if (defined(_MSC_VER) && defined(_WIN64)) || (defined(__GNUC__) && defined (__SSE2_MATH__))
+ #  define VORBIS_FPU_CONTROL
+ 
+ typedef ogg_int16_t vorbis_fpu_control;

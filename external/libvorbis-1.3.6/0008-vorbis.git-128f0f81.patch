@@ -1,0 +1,64 @@
+From: James Cowgill <jcowgill@debian.org>
+Date: Tue, 13 Jun 2017 12:39:52 +0000 (+0100)
+Subject: Fix free of uninitialized memory if seek fails in ov_raw_seek
+X-Git-Url: http://git.xiph.org/?p=vorbis.git;a=commitdiff_plain;h=128f0f812b39185d884c67c5f1c780b19aca34ac
+
+Fix free of uninitialized memory if seek fails in ov_raw_seek
+
+If _seek_helper fails in ov_raw_seek, control jumps to the seek_error
+label which calls ogg_stream_clear on work_os. However, at this point
+in the function, work_os is not initialized so we end up attempting to
+free some uninitialized memory and crashing.
+
+Fix by removing the call to ogg_stream_clear. This is safe because the
+only code path to seek_error happens before work_os is initialized (so
+there is never anything to free anyway).
+
+I also refactor the code a bit:
+- Remove the ret variable which is unnessesary since we can just pass
+  the result of _seek_helper directly to the if.
+- Since seek_error is only used once, move the contents of that block
+  to the if statement so we can remove a goto.
+---
+
+diff --git a/lib/vorbisfile.c b/lib/vorbisfile.c
+index b570c3c..831cb39 100644
+--- a/lib/vorbisfile.c
++++ b/lib/vorbisfile.c
+@@ -1230,7 +1230,6 @@ double ov_time_total(OggVorbis_File *vf,int i){
+ 
+ int ov_raw_seek(OggVorbis_File *vf,ogg_int64_t pos){
+   ogg_stream_state work_os;
+-  int ret;
+ 
+   if(vf->ready_state<OPENED)return(OV_EINVAL);
+   if(!vf->seekable)
+@@ -1253,8 +1252,12 @@ int ov_raw_seek(OggVorbis_File *vf,ogg_int64_t pos){
+                             vf->current_serialno); /* must set serialno */
+   vorbis_synthesis_restart(&vf->vd);
+ 
+-  ret=_seek_helper(vf,pos);
+-  if(ret)goto seek_error;
++  if(_seek_helper(vf,pos)) {
++    /* dump the machine so we're in a known state */
++    vf->pcm_offset=-1;
++    _decode_clear(vf);
++    return OV_EBADLINK;
++  }
+ 
+   /* we need to make sure the pcm_offset is set, but we don't want to
+      advance the raw cursor past good packets just to get to the first
+@@ -1388,13 +1391,6 @@ int ov_raw_seek(OggVorbis_File *vf,ogg_int64_t pos){
+   vf->bittrack=0.f;
+   vf->samptrack=0.f;
+   return(0);
+-
+- seek_error:
+-  /* dump the machine so we're in a known state */
+-  vf->pcm_offset=-1;
+-  ogg_stream_clear(&work_os);
+-  _decode_clear(vf);
+-  return OV_EBADLINK;
+ }
+ 
+ /* Page granularity seek (faster than sample granularity because we
