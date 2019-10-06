@@ -1,0 +1,26 @@
+From: Tim Terriberry <tterribe@xiph.org>
+Date: Sun, 4 Jan 2015 19:11:49 +0000 (+0000)
+Subject: Port r19419 to Tremor.
+X-Git-Url: http://git.xiph.org/?p=tremor.git;a=commitdiff_plain;h=b56ffce0c0773ec5ca04c466bc00b1bbcaf65aef
+
+Port r19419 to Tremor.
+
+Fix crash on corrupt input file (invalid mode index)
+
+
+git-svn-id: https://svn.xiph.org/trunk/Tremor@19420 0101bb08-14d6-0310-b084-bc0e0c8e3800
+---
+
+diff --git a/synthesis.c b/synthesis.c
+index fe63924..d22cb82 100644
+--- a/synthesis.c
++++ b/synthesis.c
+@@ -124,7 +124,7 @@ long vorbis_packet_blocksize(vorbis_info *vi,ogg_packet *op){
+     /* read our mode and pre/post windowsize */
+     mode=oggpack_read(&opb,modebits);
+   }
+-  if(mode==-1)return(OV_EBADPACKET);
++  if(mode==-1 || !ci->mode_param[mode])return(OV_EBADPACKET);
+   return(ci->blocksizes[ci->mode_param[mode]->blockflag]);
+ }
+ 

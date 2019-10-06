@@ -1,0 +1,102 @@
+From: Monty <xiphmont@xiph.org>
+Date: Tue, 24 Jun 2014 14:44:34 +0000 (+0000)
+Subject: Commit suggested fix for #2021 Backport additional #1486 -n -r 19164 set keyword... 
+X-Git-Url: http://git.xiph.org/?p=tremor.git;a=commitdiff_plain;h=2e87629fb56cb23f969fb5862e721fc1a53f9725
+
+Commit suggested fix for #2021 Backport additional #1486 -n -r 19164 set keyword property on source files
+
+git-svn-id: https://svn.xiph.org/trunk/Tremor@19172 0101bb08-14d6-0310-b084-bc0e0c8e3800
+---
+
+diff --git a/iseeking_example.c b/iseeking_example.c
+index e3bf883..dc971ba 100644
+--- a/iseeking_example.c
++++ b/iseeking_example.c
+@@ -12,7 +12,7 @@
+  ********************************************************************
+ 
+  function: illustrate seeking, and test it too
+- last mod: $Id: iseeking_example.c 16037 2009-05-26 21:10:58Z xiphmont $
++ last mod: $Id$
+ 
+  ********************************************************************/
+ 
+diff --git a/mdct.c b/mdct.c
+index 4f39e7d..2aed62c 100644
+--- a/mdct.c
++++ b/mdct.c
+@@ -13,7 +13,7 @@
+ 
+  function: normalized modified discrete cosine transform
+            power of two length transform only [64 <= n ]
+- last mod: $Id: mdct.c,v 1.9 2002/10/16 09:17:39 xiphmont Exp $
++ last mod: $Id$
+ 
+  Original algorithm adapted long ago from _The use of multirate filter
+  banks for coding of high quality digital audio_, by T. Sporer,
+diff --git a/synthesis.c b/synthesis.c
+index 38c3eb8..fe63924 100644
+--- a/synthesis.c
++++ b/synthesis.c
+@@ -67,7 +67,7 @@ static int _vorbis_synthesis1(vorbis_block *vb,ogg_packet *op,int decodep){
+   
+   /* more setup */
+   vb->granulepos=op->granulepos;
+-  vb->sequence=op->packetno-3; /* first block is third packet */
++  vb->sequence=op->packetno; /* first block is third packet */
+   vb->eofflag=op->e_o_s;
+ 
+   if(decodep){
+diff --git a/vorbisfile.c b/vorbisfile.c
+index 9413289..cd4814d 100644
+--- a/vorbisfile.c
++++ b/vorbisfile.c
+@@ -12,7 +12,7 @@
+  ********************************************************************
+ 
+  function: stdio-based convenience library for opening/seeking/decoding
+- last mod: $Id: vorbisfile.c,v 1.6 2003/03/30 23:40:56 xiphmont Exp $
++ last mod: $Id$
+ 
+  ********************************************************************/
+ 
+@@ -1421,8 +1421,21 @@ int ov_pcm_seek_page(OggVorbis_File *vf,ogg_int64_t pos){
+     ogg_int64_t endtime = vf->pcmlengths[link*2+1]+begintime;
+     ogg_int64_t target=pos-total+begintime;
+     ogg_int64_t best=-1;
++    int         got_page=0;
+ 
+     ogg_page og;
++
++    /* if we have only one page, there will be no bisection.  Grab the page here */
++    if(begin==end){
++      result=_seek_helper(vf,begin);
++      if(result) goto seek_error;
++
++      result=_get_next_page(vf,&og,1);
++      if(result<0) goto seek_error;
++
++      got_page=1;
++    }
++
+     /* bisection loop */
+     while(begin<end){
+       ogg_int64_t bisect;
+@@ -1466,6 +1479,7 @@ int ov_pcm_seek_page(OggVorbis_File *vf,ogg_int64_t pos){
+           }
+         }else{
+           ogg_int64_t granulepos;
++          got_page=1;
+ 
+           /* got a page. analyze it */
+           /* only consider pages from primary vorbis stream */
+@@ -1528,7 +1542,8 @@ int ov_pcm_seek_page(OggVorbis_File *vf,ogg_int64_t pos){
+          bisection would 'fail' because our search target was before the
+          first PCM granule position fencepost. */
+ 
+-      if(begin == vf->dataoffsets[link] &&
++      if(got_page &&
++         begin == vf->dataoffsets[link] &&
+          ogg_page_serialno(&og)==vf->serialnos[link]){
+ 
+         /* Yes, this is the beginning-of-stream case. We already have

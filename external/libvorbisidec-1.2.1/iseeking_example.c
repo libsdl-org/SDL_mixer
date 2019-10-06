@@ -12,7 +12,7 @@
  ********************************************************************
 
  function: illustrate seeking, and test it too
- last mod: $Id: iseeking_example.c 16037 2009-05-26 21:10:58Z xiphmont $
+ last mod: $Id$
 
  ********************************************************************/
 
@@ -160,7 +160,7 @@ int main(){
              (long)pcmlength);
     
       for(i=0;i<1000;i++){
-        ogg_int64_t val=(double)rand()*pcmlength/RAND_MAX;
+        ogg_int64_t val=i==0?0:(double)rand()*pcmlength/RAND_MAX;
         fprintf(stderr,"\r\t%d [pcm position %ld]...     ",i,(long)val);
         ret=ov_pcm_seek_page(&ov,val);
         if(ret<0){
@@ -179,7 +179,7 @@ int main(){
              (long)pcmlength);
     
       for(i=0;i<1000;i++){
-        ogg_int64_t val=(double)rand()*pcmlength/RAND_MAX;
+        ogg_int64_t val=i==0?0:(double)rand()*pcmlength/RAND_MAX;
         fprintf(stderr,"\r\t%d [pcm position %ld]...     ",i,(long)val);
         ret=ov_pcm_seek(&ov,val);
         if(ret<0){
