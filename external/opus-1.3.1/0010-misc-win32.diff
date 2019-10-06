@@ -1,0 +1,73 @@
+https://github.com/xiph/opus/pull/104
+
+diff --git a/celt/stack_alloc.h b/celt/stack_alloc.h
+index 2b51c8d..ae40e2a 100644
+--- a/celt/stack_alloc.h
++++ b/celt/stack_alloc.h
+@@ -40,7 +40,7 @@
+ #endif
+ 
+ #ifdef USE_ALLOCA
+-# ifdef WIN32
++# ifdef _WIN32
+ #  include <malloc.h>
+ # else
+ #  ifdef HAVE_ALLOCA_H
+@@ -102,7 +102,7 @@
+ 
+ #define VARDECL(type, var) type *var
+ 
+-# ifdef WIN32
++# ifdef _WIN32
+ #  define ALLOC(var, size, type) var = ((type*)_alloca(sizeof(type)*(size)))
+ # else
+ #  define ALLOC(var, size, type) var = ((type*)alloca(sizeof(type)*(size)))
+diff --git a/include/opus_defines.h b/include/opus_defines.h
+index d141418..ceee5b8 100644
+--- a/include/opus_defines.h
++++ b/include/opus_defines.h
+@@ -64,7 +64,7 @@ extern "C" {
+ /**Export control for opus functions */
+ 
+ #ifndef OPUS_EXPORT
+-# if defined(WIN32)
++# if defined(_WIN32)
+ #  if defined(OPUS_BUILD) && defined(DLL_EXPORT)
+ #   define OPUS_EXPORT __declspec(dllexport)
+ #  else
+diff --git a/silk/debug.c b/silk/debug.c
+index 9253faf..52f1bb6 100644
+--- a/silk/debug.c
++++ b/silk/debug.c
+@@ -35,13 +35,6 @@ POSSIBILITY OF SUCH DAMAGE.
+ #if SILK_TIC_TOC
+ 
+ #ifdef _WIN32
+-
+-#if (defined(_WIN32) || defined(_WINCE))
+-#include <windows.h>    /* timer */
+-#else   /* Linux or Mac*/
+-#include <sys/time.h>
+-#endif
+-
+ unsigned long silk_GetHighResolutionTime(void) /* O  time in usec*/
+ {
+     /* Returns a time counter in microsec   */
+@@ -65,7 +58,7 @@ unsigned long GetHighResolutionTime(void) /* O  time in usec*/
+ int           silk_Timer_nTimers = 0;
+ int           silk_Timer_depth_ctr = 0;
+ char          silk_Timer_tags[silk_NUM_TIMERS_MAX][silk_NUM_TIMERS_MAX_TAG_LEN];
+-#ifdef WIN32
++#ifdef _WIN32
+ LARGE_INTEGER silk_Timer_start[silk_NUM_TIMERS_MAX];
+ #else
+ unsigned long silk_Timer_start[silk_NUM_TIMERS_MAX];
+@@ -76,7 +69,7 @@ opus_int64     silk_Timer_sum[silk_NUM_TIMERS_MAX];
+ opus_int64     silk_Timer_max[silk_NUM_TIMERS_MAX];
+ opus_int64     silk_Timer_depth[silk_NUM_TIMERS_MAX];
+ 
+-#ifdef WIN32
++#ifdef _WIN32
+ void silk_TimerSave(char *file_name)
+ {
+     if( silk_Timer_nTimers > 0 )
