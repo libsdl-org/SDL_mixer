@@ -224,8 +224,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
 					/Library/Frameworks/SDL.framework/Headers,
-					"$(HOME)/Library/Frameworks/SDLmixer.framework/Headers",
-					/Library/Frameworks/SDLmixer.framework/Headers,
+					"$(HOME)/Library/Frameworks/SDL_mixer.framework/Headers",
+					/Library/Frameworks/SDL_mixer.framework/Headers,
 				);
 				INFOPLIST_FILE = "Info-playwave__Upgraded_.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -254,8 +254,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
 					/Library/Frameworks/SDL.framework/Headers,
-					"$(HOME)/Library/Frameworks/SDLmixer.framework/Headers",
-					/Library/Frameworks/SDLmixer.framework/Headers,
+					"$(HOME)/Library/Frameworks/SDL_mixer.framework/Headers",
+					/Library/Frameworks/SDL_mixer.framework/Headers,
 				);
 				INFOPLIST_FILE = "Info-playwave__Upgraded_.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -283,8 +283,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(HOME)/Library/Frameworks/SDL.framework/Headers",
 					/Library/Frameworks/SDL.framework/Headers,
-					"$(HOME)/Library/Frameworks/SDLmixer.framework/Headers",
-					/Library/Frameworks/SDLmixer.framework/Headers,
+					"$(HOME)/Library/Frameworks/SDL_mixer.framework/Headers",
+					/Library/Frameworks/SDL_mixer.framework/Headers,
 				);
 				INFOPLIST_FILE = "Info-playwave__Upgraded_.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
