@@ -1,0 +1,26 @@
+From ad8fe90db79b7d2a135e3dfd2ed6631b0c5662ab Mon Sep 17 00:00:00 2001
+From: Marcus Asteborg <maastebo@microsoft.com>
+Date: Tue, 23 Apr 2019 13:41:14 -0700
+Subject: [PATCH] Fix typo in _FORTIFY_SOURCE define.
+
+Signed-off-by: Ralph Giles <giles@thaumas.net>
+---
+ CMakeLists.txt |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 17ee3fc..c01ec57 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -186,7 +186,7 @@ target_link_libraries(opus PRIVATE ${OPUS_REQUIRED_LIBRARIES})
+ target_compile_definitions(opus PRIVATE OPUS_BUILD ENABLE_HARDENING)
+ 
+ if(NOT MSVC)
+-  target_compile_definitions(opus PRIVATE FORTIFY_SOURCE=2)
++  target_compile_definitions(opus PRIVATE _FORTIFY_SOURCE=2)
+ endif()
+ 
+ # It is strongly recommended to uncomment one of these VAR_ARRAYS: Use C99
+-- 
+1.7.1
+

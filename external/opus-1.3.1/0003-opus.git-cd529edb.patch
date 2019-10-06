@@ -1,0 +1,47 @@
+From cd529edb3363b0be6aebdefa09c4188629f45e2c Mon Sep 17 00:00:00 2001
+From: Felicia Lim <flim@google.com>
+Date: Tue, 3 Sep 2019 09:56:25 -0700
+Subject: [PATCH] Fix NEON optimizations buffer read overrun
+
+Thanks to Ray Essick
+---
+ .../arm/warped_autocorrelation_FIX_neon_intr.c     |    9 +++++++--
+ 1 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/silk/fixed/arm/warped_autocorrelation_FIX_neon_intr.c b/silk/fixed/arm/warped_autocorrelation_FIX_neon_intr.c
+index 00a70cb..6f3be02 100644
+--- a/silk/fixed/arm/warped_autocorrelation_FIX_neon_intr.c
++++ b/silk/fixed/arm/warped_autocorrelation_FIX_neon_intr.c
+@@ -84,7 +84,9 @@ void silk_warped_autocorrelation_FIX_neon(
+         silk_assert( ( order & 1 ) == 0 );
+         silk_assert( 2 * QS - QC >= 0 );
+ 
+-        ALLOC( input_QST, length + 2 * MAX_SHAPE_LPC_ORDER, opus_int32 );
++        /* The additional +4 is to ensure a later vld1q_s32 call does not overflow.               */
++        /* Strictly, only +3 is needed but +4 simplifies initialization using the 4x32 neon load. */
++        ALLOC( input_QST, length + 2 * MAX_SHAPE_LPC_ORDER + 4, opus_int32 );
+ 
+         input_QS = input_QST;
+         /* input_QS has zero paddings in the beginning and end. */
+@@ -121,6 +123,8 @@ void silk_warped_autocorrelation_FIX_neon(
+         vst1q_s32( input_QS, vdupq_n_s32( 0 ) );
+         input_QS += 4;
+         vst1q_s32( input_QS, vdupq_n_s32( 0 ) );
++        input_QS += 4;
++        vst1q_s32( input_QS, vdupq_n_s32( 0 ) );
+         input_QS = input_QST + MAX_SHAPE_LPC_ORDER - orderT;
+ 
+         /* The following loop runs ( length + order ) times, with ( order ) extra epilogues.                  */
+@@ -153,7 +157,8 @@ void silk_warped_autocorrelation_FIX_neon(
+             opus_int o = orderT;
+             int32x4_t state_QS_s32x4[ 3 ][ 2 ];
+ 
+-            ALLOC( state, length + orderT, opus_int32 );
++            /* The additional +4 is to ensure a later vld1q_s32 call does not overflow. */
++            ALLOC( state, length + order + 4, opus_int32 );
+             state_QS_s32x4[ 2 ][ 1 ] = vdupq_n_s32( 0 );
+ 
+             /* Calculate 8 taps of all inputs in each loop. */
+-- 
+1.7.1
+

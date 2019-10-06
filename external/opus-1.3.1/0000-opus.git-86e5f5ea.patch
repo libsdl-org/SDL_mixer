@@ -1,0 +1,63 @@
+From 86e5f5ea56529d688568929d036574a93311e82a Mon Sep 17 00:00:00 2001
+From: Jean-Marc Valin <jmvalin@jmvalin.ca>
+Date: Fri, 26 Apr 2019 11:16:52 -0400
+Subject: [PATCH] Add mising cmake file from make dist
+
+Thanks to theislander on HA for reporting this.
+---
+ Makefile.am |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index 4e3f183..7f905b0 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -212,6 +212,7 @@ EXTRA_DIST = opus.pc.in \
+              Makefile.unix \
+              CMakeLists.txt \
+              config.h.cmake.in \
++             opus_buildtype.cmake \
+              opus_config.cmake \
+              opus_functions.cmake \
+              opus_sources.cmake \
+-- 
+1.7.1
+
+diff -u opus-1.3.1/Makefile.in~ opus-1.3.1/Makefile.in
+--- opus-1.3.1/Makefile.in~	2019-04-13 01:03:37.000000000 +0300
++++ opus-1.3.1/Makefile.in	2019-04-28 08:02:04.000000000 +0300
+@@ -1569,6 +1569,7 @@
+              Makefile.unix \
+              CMakeLists.txt \
+              config.h.cmake.in \
++             opus_buildtype.cmake \
+              opus_config.cmake \
+              opus_functions.cmake \
+              opus_sources.cmake \
+diff -u /dev/null opus-1.3.1/opus_buildtype.cmake
+--- /dev/null
++++ opus-1.3.1/opus_buildtype.cmake	2019-04-28 08:02:04.000000000 +0300
+@@ -0,0 +1,23 @@
++# Set a default build type if none was specified
++
++if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
++  if(CMAKE_C_FLAGS)
++    message(STATUS "CMAKE_C_FLAGS: " ${CMAKE_C_FLAGS})
++  else()
++    set(default_build_type "Release")
++    message(
++      STATUS
++        "Setting build type to '${default_build_type}' as none was specified and no CFLAGS was exported."
++      )
++    set(CMAKE_BUILD_TYPE "${default_build_type}"
++        CACHE STRING "Choose the type of build."
++        FORCE)
++    # Set the possible values of build type for cmake-gui
++    set_property(CACHE CMAKE_BUILD_TYPE
++                 PROPERTY STRINGS
++                          "Debug"
++                          "Release"
++                          "MinSizeRel"
++                          "RelWithDebInfo")
++  endif()
++endif()
