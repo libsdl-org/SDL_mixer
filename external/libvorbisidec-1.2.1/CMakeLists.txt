@@ -4,7 +4,7 @@ project(libVorbis VERSION 1.3.6 LANGUAGES C)
 include(${CMAKE_CURRENT_SOURCE_DIR}/../audio_codec_common.cmake)
 
 add_definitions(
-    -DHAVE_CONFIG_H
+    -DHAVE_CONFIG_H -DHAVE_ALLOCA
 )
 
 add_definitions(-DFLOAT_LOOKUP -DINT_LOOKUP)
