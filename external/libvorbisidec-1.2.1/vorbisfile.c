@@ -6,13 +6,13 @@
  * GOVERNED BY A BSD-STYLE SOURCE LICENSE INCLUDED WITH THIS SOURCE *
  * IN 'COPYING'. PLEASE READ THESE TERMS BEFORE DISTRIBUTING.       *
  *                                                                  *
- * THE OggVorbis 'TREMOR' SOURCE CODE IS (C) COPYRIGHT 1994-2009    *
+ * THE OggVorbis 'TREMOR' SOURCE CODE IS (C) COPYRIGHT 1994-2014    *
  * BY THE Xiph.Org FOUNDATION http://www.xiph.org/                  *
  *                                                                  *
  ********************************************************************
 
  function: stdio-based convenience library for opening/seeking/decoding
- last mod: $Id: vorbisfile.c,v 1.6 2003/03/30 23:40:56 xiphmont Exp $
+ last mod: $Id$
 
  ********************************************************************/
 
@@ -63,8 +63,8 @@ static long _get_data(OggVorbis_File *vf){
   errno=0;
   if(!(vf->callbacks.read_func))return(-1);
   if(vf->datasource){
-    char *buffer=ogg_sync_buffer(&vf->oy,CHUNKSIZE);
-    long bytes=(vf->callbacks.read_func)(buffer,1,CHUNKSIZE,vf->datasource);
+    char *buffer=ogg_sync_buffer(&vf->oy,READSIZE);
+    long bytes=(vf->callbacks.read_func)(buffer,1,READSIZE,vf->datasource);
     if(bytes>0)ogg_sync_wrote(&vf->oy,bytes);
     if(bytes==0 && errno)return(-1);
     return(bytes);
@@ -75,11 +75,14 @@ static long _get_data(OggVorbis_File *vf){
 /* save a tiny smidge of verbosity to make the code more readable */
 static int _seek_helper(OggVorbis_File *vf,ogg_int64_t offset){
   if(vf->datasource){
-    if(!(vf->callbacks.seek_func)||
-       (vf->callbacks.seek_func)(vf->datasource, offset, SEEK_SET) == -1)
-      return OV_EREAD;
-    vf->offset=offset;
-    ogg_sync_reset(&vf->oy);
+    /* only seek if the file position isn't already there */
+    if(vf->offset != offset){
+      if(!(vf->callbacks.seek_func)||
+         (vf->callbacks.seek_func)(vf->datasource, offset, SEEK_SET) == -1)
+        return OV_EREAD;
+      vf->offset=offset;
+      ogg_sync_reset(&vf->oy);
+    }
   }else{
     /* shouldn't happen unless someone writes a broken callback */
     return OV_EFAULT;
@@ -133,14 +136,12 @@ static ogg_int64_t _get_next_page(OggVorbis_File *vf,ogg_page *og,
   }
 }
 
-/* find the latest page beginning before the current stream cursor
-   position. Much dirtier than the above as Ogg doesn't have any
-   backward search linkage.  no 'readp' as it will certainly have to
-   read. */
+/* find the latest page beginning before the passed in position. Much
+   dirtier than the above as Ogg doesn't have any backward search
+   linkage.  no 'readp' as it will certainly have to read. */
 /* returns offset or OV_EREAD, OV_FAULT */
-static ogg_int64_t _get_prev_page(OggVorbis_File *vf,ogg_page *og){
-  ogg_int64_t begin=vf->offset;
-  ogg_int64_t end=begin;
+static ogg_int64_t _get_prev_page(OggVorbis_File *vf,ogg_int64_t begin,ogg_page *og){
+  ogg_int64_t end = begin;
   ogg_int64_t ret;
   ogg_int64_t offset=-1;
 
@@ -215,11 +216,10 @@ static int _lookup_page_serialno(ogg_page *og, ogg_uint32_t *serialno_list, int 
    info of last page of the matching serial number instead of the very
    last page.  If no page of the specified serialno is seen, it will
    return the info of last page and alter *serialno.  */
-static ogg_int64_t _get_prev_page_serial(OggVorbis_File *vf,
+static ogg_int64_t _get_prev_page_serial(OggVorbis_File *vf, ogg_int64_t begin,
                                          ogg_uint32_t *serial_list, int serial_n,
                                          int *serialno, ogg_int64_t *granpos){
   ogg_page og;
-  ogg_int64_t begin=vf->offset;
   ogg_int64_t end=begin;
   ogg_int64_t ret;
 
@@ -490,10 +490,10 @@ static int _bisect_forward_serialno(OggVorbis_File *vf,
        down to (or just started with) a single link.  Now we need to
        find the last vorbis page belonging to the first vorbis stream
        for this link. */
-
+    searched = end;
     while(endserial != serialno){
       endserial = serialno;
-      vf->offset=_get_prev_page_serial(vf,currentno_list,currentnos,&endserial,&endgran);
+      searched=_get_prev_page_serial(vf,searched,currentno_list,currentnos,&endserial,&endgran);
     }
 
     vf->links=m+1;
@@ -510,14 +510,19 @@ static int _bisect_forward_serialno(OggVorbis_File *vf,
 
     vf->offsets[m+1]=end;
     vf->offsets[m]=begin;
-    vf->pcmlengths[m*2+1]=endgran;
+    vf->pcmlengths[m*2+1]=(endgran<0?0:endgran);
 
   }else{
+
+    /* last page is not in the starting stream's serial number list,
+       so we have multiple links.  Find where the stream that begins
+       our bisection ends. */
 
     ogg_uint32_t *next_serialno_list=NULL;
     int next_serialnos=0;
     vorbis_info vi;
     vorbis_comment vc;
+    int testserial = serialno+1;
 
     /* the below guards against garbage seperating the last and
        first pages of two links. */
@@ -530,10 +535,8 @@ static int _bisect_forward_serialno(OggVorbis_File *vf,
         bisect=(searched+endsearched)/2;
       }
 
-      if(bisect != vf->offset){
-        ret=_seek_helper(vf,bisect);
-        if(ret)return(ret);
-      }
+      ret=_seek_helper(vf,bisect);
+      if(ret)return(ret);
 
       last=_get_next_page(vf,&og,-1);
       if(last==OV_EREAD)return(OV_EREAD);
@@ -546,28 +549,22 @@ static int _bisect_forward_serialno(OggVorbis_File *vf,
     }
 
     /* Bisection point found */
-
     /* for the time being, fetch end PCM offset the simple way */
-    {
-      int testserial = serialno+1;
-      vf->offset = next;
-      while(testserial != serialno){
-        testserial = serialno;
-        vf->offset=_get_prev_page_serial(vf,currentno_list,currentnos,&testserial,&searchgran);
-      }
+    searched = next;
+    while(testserial != serialno){
+      testserial = serialno;
+      searched = _get_prev_page_serial(vf,searched,currentno_list,currentnos,&testserial,&searchgran);
     }
 
-    if(vf->offset!=next){
-      ret=_seek_helper(vf,next);
-      if(ret)return(ret);
-    }
+    ret=_seek_helper(vf,next);
+    if(ret)return(ret);
 
     ret=_fetch_headers(vf,&vi,&vc,&next_serialno_list,&next_serialnos,NULL);
     if(ret)return(ret);
     serialno = vf->os.serialno;
     dataoffset = vf->offset;
 
-    /* this will consume a page, however the next bistection always
+    /* this will consume a page, however the next bisection always
        starts with a raw seek */
     pcmoffset = _initial_pcmoffset(vf,&vi);
 
@@ -587,6 +584,7 @@ static int _bisect_forward_serialno(OggVorbis_File *vf,
     vf->pcmlengths[m*2+1]=searchgran;
     vf->pcmlengths[m*2+2]=pcmoffset;
     vf->pcmlengths[m*2+3]-=pcmoffset;
+    if(vf->pcmlengths[m*2+3]<0)vf->pcmlengths[m*2+3]=0;
 
   }
   return(0);
@@ -634,11 +632,11 @@ static int _open_seekable2(OggVorbis_File *vf){
   /* Get the offset of the last page of the physical bitstream, or, if
      we're lucky the last vorbis page of this link as most OggVorbis
      files will contain a single logical bitstream */
-  end=_get_prev_page_serial(vf,vf->serialnos+2,vf->serialnos[1],&endserial,&endgran);
+  end=_get_prev_page_serial(vf,vf->end,vf->serialnos+2,vf->serialnos[1],&endserial,&endgran);
   if(end<0)return(end);
 
   /* now determine bitstream structure recursively */
-  if(_bisect_forward_serialno(vf,0,dataoffset,vf->offset,endgran,endserial,
+  if(_bisect_forward_serialno(vf,0,dataoffset,end,endgran,endserial,
                               vf->serialnos+2,vf->serialnos[1],0)<0)return(OV_EREAD);
 
   vf->offsets[0]=0;
@@ -646,6 +644,7 @@ static int _open_seekable2(OggVorbis_File *vf){
   vf->dataoffsets[0]=dataoffset;
   vf->pcmlengths[0]=pcmoffset;
   vf->pcmlengths[1]-=pcmoffset;
+  if(vf->pcmlengths[1]<0)vf->pcmlengths[1]=0;
 
   return(ov_raw_seek(vf,dataoffset));
 }
@@ -713,7 +712,7 @@ static int _fetch_and_process_packet(OggVorbis_File *vf,
               if(oldsamples)return(OV_EFAULT);
 
               vorbis_synthesis_blockin(&vf->vd,&vf->vb);
-              vf->samptrack+=vorbis_synthesis_pcmout(&vf->vd,NULL)-oldsamples;
+              vf->samptrack+=vorbis_synthesis_pcmout(&vf->vd,NULL);
               vf->bittrack+=op_ptr->bytes*8;
             }
 
@@ -1401,22 +1400,41 @@ int ov_pcm_seek_page(OggVorbis_File *vf,ogg_int64_t pos){
     if(pos>=total)break;
   }
 
-  /* search within the logical bitstream for the page with the highest
-     pcm_pos preceding (or equal to) pos.  There is a danger here;
-     missing pages or incorrect frame number information in the
-     bitstream could make our task impossible.  Account for that (it
-     would be an error condition) */
+  /* Search within the logical bitstream for the page with the highest
+     pcm_pos preceding pos.  If we're looking for a position on the
+     first page, bisection will halt without finding our position as
+     it's before the first explicit granulepos fencepost. That case is
+     handled separately below.
 
-  /* new search algorithm by HB (Nicholas Vinen) */
+     There is a danger here; missing pages or incorrect frame number
+     information in the bitstream could make our task impossible.
+     Account for that (it would be an error condition) */
+
+  /* new search algorithm originally by HB (Nicholas Vinen) */
+
   {
     ogg_int64_t end=vf->offsets[link+1];
-    ogg_int64_t begin=vf->offsets[link];
+    ogg_int64_t begin=vf->dataoffsets[link];
     ogg_int64_t begintime = vf->pcmlengths[link*2];
     ogg_int64_t endtime = vf->pcmlengths[link*2+1]+begintime;
     ogg_int64_t target=pos-total+begintime;
-    ogg_int64_t best=begin;
+    ogg_int64_t best=-1;
+    int         got_page=0;
 
     ogg_page og;
+
+    /* if we have only one page, there will be no bisection.  Grab the page here */
+    if(begin==end){
+      result=_seek_helper(vf,begin);
+      if(result) goto seek_error;
+
+      result=_get_next_page(vf,&og,1);
+      if(result<0) goto seek_error;
+
+      got_page=1;
+    }
+
+    /* bisection loop */
     while(begin<end){
       ogg_int64_t bisect;
 
@@ -1431,51 +1449,80 @@ int ov_pcm_seek_page(OggVorbis_File *vf,ogg_int64_t pos){
           bisect=begin;
       }
 
-      if(bisect!=vf->offset){
-        result=_seek_helper(vf,bisect);
-        if(result) goto seek_error;
-      }
+      result=_seek_helper(vf,bisect);
+      if(result) goto seek_error;
 
+      /* read loop within the bisection loop */
       while(begin<end){
         result=_get_next_page(vf,&og,end-vf->offset);
         if(result==OV_EREAD) goto seek_error;
         if(result<0){
+          /* there is no next page! */
           if(bisect<=begin+1)
-            end=begin; /* found it */
+            /* No bisection left to perform.  We've either found the
+               best candidate already or failed. Exit loop. */
+            end=begin;
           else{
+            /* We tried to load a fraction of the last page; back up a
+               bit and try to get the whole last page */
             if(bisect==0) goto seek_error;
             bisect-=CHUNKSIZE;
+
+            /* don't repeat/loop on a read we've already performed */
             if(bisect<=begin)bisect=begin+1;
+
+            /* seek and continue bisection */
             result=_seek_helper(vf,bisect);
             if(result) goto seek_error;
           }
         }else{
           ogg_int64_t granulepos;
+          got_page=1;
 
+          /* got a page. analyze it */
+          /* only consider pages from primary vorbis stream */
           if(ogg_page_serialno(&og)!=vf->serialnos[link])
             continue;
 
+          /* only consider pages with the granulepos set */
           granulepos=ogg_page_granulepos(&og);
           if(granulepos==-1)continue;
 
           if(granulepos<target){
+            /* this page is a successful candidate! Set state */
+
             best=result;  /* raw offset of packet with granulepos */
             begin=vf->offset; /* raw offset of next page */
             begintime=granulepos;
 
+            /* if we're before our target but within a short distance,
+               don't bisect; read forward */
             if(target-begintime>44100)break;
-            bisect=begin; /* *not* begin + 1 */
+
+            bisect=begin; /* *not* begin + 1 as above */
           }else{
-            if(bisect<=begin+1)
-              end=begin;  /* found it */
-            else{
-              if(end==vf->offset){ /* we're pretty close - we'd be stuck in */
+
+            /* This is one of our pages, but the granpos is
+               post-target; it is not a bisection return
+               candidate. (The only way we'd use it is if it's the
+               first page in the stream; we handle that case later
+               outside the bisection) */
+            if(bisect<=begin+1){
+              /* No bisection left to perform.  We've either found the
+                 best candidate already or failed. Exit loop. */
+              end=begin;
+            }else{
+              if(end==vf->offset){
+                /* bisection read to the end; use the known page
+                   boundary (result) to update bisection, back up a
+                   little bit, and try again */
                 end=result;
-                bisect-=CHUNKSIZE; /* an endless loop otherwise. */
+                bisect-=CHUNKSIZE;
                 if(bisect<=begin)bisect=begin+1;
                 result=_seek_helper(vf,bisect);
                 if(result) goto seek_error;
               }else{
+                /* Normal bisection */
                 end=bisect;
                 endtime=granulepos;
                 break;
@@ -1486,9 +1533,46 @@ int ov_pcm_seek_page(OggVorbis_File *vf,ogg_int64_t pos){
       }
     }
 
-    /* found our page. seek to it, update pcm offset. Easier case than
-       raw_seek, don't keep packets preceding granulepos. */
-    {
+    /* Out of bisection: did it 'fail?' */
+    if(best == -1){
+
+      /* Check the 'looking for data in first page' special case;
+         bisection would 'fail' because our search target was before the
+         first PCM granule position fencepost. */
+
+      if(got_page &&
+         begin == vf->dataoffsets[link] &&
+         ogg_page_serialno(&og)==vf->serialnos[link]){
+
+        /* Yes, this is the beginning-of-stream case. We already have
+           our page, right at the beginning of PCM data.  Set state
+           and return. */
+
+        vf->pcm_offset=total;
+
+        if(link!=vf->current_link){
+          /* Different link; dump entire decode machine */
+          _decode_clear(vf);
+
+          vf->current_link=link;
+          vf->current_serialno=vf->serialnos[link];
+          vf->ready_state=STREAMSET;
+
+        }else{
+          vorbis_synthesis_restart(&vf->vd);
+        }
+
+        ogg_stream_reset_serialno(&vf->os,vf->current_serialno);
+        ogg_stream_pagein(&vf->os,&og);
+
+      }else
+        goto seek_error;
+
+    }else{
+
+      /* Bisection found our page. seek to it, update pcm offset. Easier case than
+         raw_seek, don't keep packets preceding granulepos. */
+
       ogg_page og;
       ogg_packet op;
 
@@ -1518,23 +1602,23 @@ int ov_pcm_seek_page(OggVorbis_File *vf,ogg_int64_t pos){
       while(1){
         result=ogg_stream_packetpeek(&vf->os,&op);
         if(result==0){
-          /* !!! the packet finishing this page originated on a
-             preceding page. Keep fetching previous pages until we
-             get one with a granulepos or without the 'continued' flag
-             set.  Then just use raw_seek for simplicity. */
-
-          result=_seek_helper(vf,best);
-          if(result<0) goto seek_error;
-
-          while(1){
-            result=_get_prev_page(vf,&og);
+          /* No packet returned; we exited the bisection with 'best'
+             pointing to a page with a granule position, so the packet
+             finishing this page ('best') originated on a preceding
+             page. Keep fetching previous pages until we get one with
+             a granulepos or without the 'continued' flag set.  Then
+             just use raw_seek for simplicity. */
+          /* Do not rewind past the beginning of link data; if we do,
+             it's either a bug or a broken stream */
+          result=best;
+          while(result>vf->dataoffsets[link]){
+            result=_get_prev_page(vf,result,&og);
             if(result<0) goto seek_error;
             if(ogg_page_serialno(&og)==vf->current_serialno &&
                (ogg_page_granulepos(&og)>-1 ||
                 !ogg_page_continued(&og))){
               return ov_raw_seek(vf,result);
             }
-            vf->offset=result;
           }
         }
         if(result<0){

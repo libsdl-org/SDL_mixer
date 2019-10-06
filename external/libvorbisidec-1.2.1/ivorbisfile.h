@@ -26,7 +26,8 @@ extern "C"
 #include <stdio.h>
 #include "ivorbiscodec.h"
 
-#define CHUNKSIZE 1024
+#define CHUNKSIZE 65535
+#define READSIZE  1024
 /* The function prototypes for the callbacks are basically the same as for
  * the stdio functions fread, fseek, fclose, ftell. 
  * The one difference is that the FILE * arguments have been replaced with
