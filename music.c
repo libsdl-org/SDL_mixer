@@ -412,7 +412,6 @@ SDL_bool has_music(Mix_MusicType type)
 Mix_MusicType detect_music_type(SDL_RWops *src)
 {
     Uint8 magic[12];
-    Mix_MusicType t;
 
     if (SDL_RWread(src, magic, 1, 12) != 12) {
         Mix_SetError("Couldn't read first 12 bytes of audio data");
@@ -429,10 +428,9 @@ Mix_MusicType detect_music_type(SDL_RWops *src)
 
     /* Ogg Vorbis files have the magic four bytes "OggS" */
     if (SDL_memcmp(magic, "OggS", 4) == 0) {
-        Sint64 pos = SDL_RWtell(src);
         SDL_RWseek(src, 28, RW_SEEK_CUR);
         SDL_RWread(src, magic, 1, 8);
-        SDL_RWseek(src, pos, RW_SEEK_SET);
+        SDL_RWseek(src,-36, RW_SEEK_CUR);
         if (SDL_memcmp(magic, "OpusHead", 8) == 0) {
             return MUS_OPUS;
         }
