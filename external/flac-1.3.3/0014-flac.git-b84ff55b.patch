@@ -1,0 +1,23 @@
+From: Hakan Kvist <hakan.kvist@sony.com>
+Date: Tue, 22 Oct 2019 18:44:58 +0000 (+0200)
+Subject: libFLAC/stream_decoder.c: fix integer overflow on corrupt file
+X-Git-Url: http://git.xiph.org/?p=flac.git;a=commitdiff_plain;h=b84ff55b032def9e38277f5efd249f4930a3dae1
+
+libFLAC/stream_decoder.c: fix integer overflow on corrupt file
+
+Corrupt metadata could make the length calculation overflow.
+---
+
+diff --git a/src/libFLAC/stream_decoder.c b/src/libFLAC/stream_decoder.c
+index 5b96086c..7034cce6 100644
+--- a/src/libFLAC/stream_decoder.c
++++ b/src/libFLAC/stream_decoder.c
+@@ -1628,6 +1628,8 @@ FLAC__bool read_metadata_streaminfo_(FLAC__StreamDecoder *decoder, FLAC__bool is
+ 
+ 	/* skip the rest of the block */
+ 	FLAC__ASSERT(used_bits % 8 == 0);
++	if (length < (used_bits / 8))
++		return false; /* read_callback_ sets the state for us */
+ 	length -= (used_bits / 8);
+ 	if(!FLAC__bitreader_skip_byte_block_aligned_no_crc(decoder->private_->input, length))
+ 		return false; /* read_callback_ sets the state for us */

@@ -1,0 +1,93 @@
+From d4a1b345dd16591ff6f17c67ee519afebe2f9792 Mon Sep 17 00:00:00 2001
+From: sezero <sezero@users.sourceforge.net>
+Date: Tue, 8 Oct 2019 20:25:55 +0300
+Subject: [PATCH] configure.ac: allow several compiler flags for clang
+
+The flac configury marked clang as 'not being gcc' and excluded
+a lot of compiler switches, most importantly the visibility flags,
+from being used with it. This was done possibly after a problem
+reported at: https://github.com/erikd/libsndfile/issues/49 .
+
+This patch does the following:
+
+- m4/gcc_version.m4 (XIPH_GCC_VERSION): set GCC_MAJOR_VERSION and
+  GCC_MINOR_VERSION to 0 for non-gcc. Previously, they were left
+  unset.
+
+- configure: the gcc version checks are, naturally, against non-
+  zero values, so, allow many compiler switches to be used with
+  clang without affecting real-gcc cases.
+
+- configure: When setting CFLAGS="-O3 -funroll-loops", also set
+  CXXFLAGS="-O3".  Prevents g++ warnings with _FORTIFY_SOURCE, i.e.:
+ '_FORTIFY_SOURCE requires compiling with optimization (-O)'
+
+Tested compilation using gcc-7.3.1 and clang-5.0.2 on x86_64-linux,
+and gcc-4.4.7 and clang-3.4.2 on an i686-linux.  Also tested cross-
+compiling for Mac OS X using clang-5.0.2.
+---
+ configure.ac      |   18 ++++++++++++++----
+ m4/gcc_version.m4 |    3 +++
+ 2 files changed, 17 insertions(+), 4 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 6efefaf..88f89a9 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -429,11 +429,12 @@ dnl If debugging is disabled AND no CFLAGS/CXXFLAGS/CPPFLAGS/LDFLAGS
+ dnl are provided, we can set defaults to our liking
+ AS_IF([test "x${ax_enable_debug}" = "xno" && test "x${enable_flags_setting}" = "xyes"], [
+ 	CFLAGS="-O3 -funroll-loops"
++	CXXFLAGS="-O3"
+ ])
+ 
+-XIPH_GCC_VERSION
++XIPH_GCC_VERSION dnl Sets a non-zero GCC_XXX_VERSION for gcc, not clang. checks below rely on that..
+ 
+-if test x$ac_cv_c_compiler_gnu = xyes ; then
++if test x$ac_cv_c_compiler_gnu = xyes -o x$xiph_cv_c_compiler_clang = xyes ; then
+ 	CFLAGS="$CFLAGS -Wall -Wextra -Wstrict-prototypes -Wmissing-prototypes -Waggregate-return -Wcast-align -Wnested-externs -Wshadow -Wundef -Wmissing-declarations -Winline " # -Wcast-qual -Wbad-function-cast -Wwrite-strings -Wconversion
+ 	CXXFLAGS="$CXXFLAGS -Wall -Wextra -Wcast-align -Wshadow -Wwrite-strings -Wctor-dtor-privacy -Wnon-virtual-dtor -Wreorder -Wsign-promo -Wundef " # -Wcast-qual -Wbad-function-cast -Wwrite-strings -Woverloaded-virtual -Wmissing-declarations
+ 
+@@ -448,13 +449,22 @@ if test x$ac_cv_c_compiler_gnu = xyes ; then
+ 	XIPH_ADD_CXXFLAGS([-Weffc++])
+ 	AC_LANG_POP([C++])
+ 
+-	if test "$GCC_MAJOR_VERSION" -ge 4 && test "$OBJ_FORMAT" = elf; then
++	if test x$xiph_cv_c_compiler_clang = xyes -a "$OBJ_FORMAT" = elf; then
++		CPPFLAGS="$CPPFLAGS -DFLAC__USE_VISIBILITY_ATTR"
++		CFLAGS="$CFLAGS -fvisibility=hidden"
++		CXXFLAGS="$CXXFLAGS -fvisibility=hidden"
++	elif test "$GCC_MAJOR_VERSION" -ge 4 && test "$OBJ_FORMAT" = elf; then
+ 		CPPFLAGS="$CPPFLAGS -DFLAC__USE_VISIBILITY_ATTR"
+ 		CFLAGS="$CFLAGS -fvisibility=hidden"
+ 		CXXFLAGS="$CXXFLAGS -fvisibility=hidden"
+ 		fi
+ 
+-	if test "$GCC_MAJOR_VERSION" -ge 4 && test "$OBJ_FORMAT" = macho; then
++
++	if test x$xiph_cv_c_compiler_clang = xyes -a "$OBJ_FORMAT" = macho; then
++		CPPFLAGS="$CPPFLAGS -DFLAC__USE_VISIBILITY_ATTR"
++		CFLAGS="$CFLAGS -fvisibility=hidden"
++		CXXFLAGS="$CXXFLAGS -fvisibility=hidden"
++	elif test "$GCC_MAJOR_VERSION" -ge 4 && test "$OBJ_FORMAT" = macho; then
+ 		CPPFLAGS="$CPPFLAGS -DFLAC__USE_VISIBILITY_ATTR"
+ 		CFLAGS="$CFLAGS -fvisibility=hidden"
+ 		CXXFLAGS="$CXXFLAGS -fvisibility=hidden"
+diff --git a/m4/gcc_version.m4 b/m4/gcc_version.m4
+index 1c53086..e6aaa60 100644
+--- a/m4/gcc_version.m4
++++ b/m4/gcc_version.m4
+@@ -22,6 +22,9 @@ if test "x$ac_cv_c_compiler_gnu" = "xyes" ; then
+ 
+ 	GCC_MAJOR_VERSION=`echo $GCC_VERSION | cut -d. -f 1`
+ 	GCC_MINOR_VERSION=`echo $GCC_VERSION | cut -d. -f 2`
++else
++	GCC_MAJOR_VERSION=0
++	GCC_MINOR_VERSION=0
+ 	fi
+ 
+ AC_SUBST(GCC_VERSION)
+-- 
+1.7.1
+

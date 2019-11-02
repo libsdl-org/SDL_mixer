@@ -1,0 +1,91 @@
+From 7bc7aebc7c7f10e3e5252162b668095845cd509a Mon Sep 17 00:00:00 2001
+From: NY00123 <ny00@outlook.com>
+Date: Mon, 14 Oct 2019 22:15:18 +0300
+Subject: [PATCH] Replace unsigned with uint32_t in prototypes; Fixes DJGPP builds.
+
+---
+ include/test_libs_common/file_utils_flac.h |    2 +-
+ include/test_libs_common/metadata_utils.h  |    6 +++---
+ src/flac/analyze.h                         |    2 +-
+ src/flac/encode.h                          |    2 +-
+ src/flac/utils.h                           |    2 +-
+ 5 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/include/test_libs_common/file_utils_flac.h b/include/test_libs_common/file_utils_flac.h
+index 8b809b8..7687c8f 100644
+--- a/include/test_libs_common/file_utils_flac.h
++++ b/include/test_libs_common/file_utils_flac.h
+@@ -31,6 +31,6 @@
+ 
+ extern const long file_utils__ogg_serial_number;
+ 
+-FLAC__bool file_utils__generate_flacfile(FLAC__bool is_ogg, const char *output_filename, FLAC__off_t *output_filesize, unsigned length, const FLAC__StreamMetadata *streaminfo, FLAC__StreamMetadata **metadata, unsigned num_metadata);
++FLAC__bool file_utils__generate_flacfile(FLAC__bool is_ogg, const char *output_filename, FLAC__off_t *output_filesize, uint32_t length, const FLAC__StreamMetadata *streaminfo, FLAC__StreamMetadata **metadata, uint32_t num_metadata);
+ 
+ #endif
+diff --git a/include/test_libs_common/metadata_utils.h b/include/test_libs_common/metadata_utils.h
+index ad0f6f5..6bd4e8f 100644
+--- a/include/test_libs_common/metadata_utils.h
++++ b/include/test_libs_common/metadata_utils.h
+@@ -28,9 +28,9 @@
+ 
+ FLAC__bool mutils__compare_block_data_streaminfo(const FLAC__StreamMetadata_StreamInfo *block, const FLAC__StreamMetadata_StreamInfo *blockcopy);
+ 
+-FLAC__bool mutils__compare_block_data_padding(const FLAC__StreamMetadata_Padding *block, const FLAC__StreamMetadata_Padding *blockcopy, unsigned block_length);
++FLAC__bool mutils__compare_block_data_padding(const FLAC__StreamMetadata_Padding *block, const FLAC__StreamMetadata_Padding *blockcopy, uint32_t block_length);
+ 
+-FLAC__bool mutils__compare_block_data_application(const FLAC__StreamMetadata_Application *block, const FLAC__StreamMetadata_Application *blockcopy, unsigned block_length);
++FLAC__bool mutils__compare_block_data_application(const FLAC__StreamMetadata_Application *block, const FLAC__StreamMetadata_Application *blockcopy, uint32_t block_length);
+ 
+ FLAC__bool mutils__compare_block_data_seektable(const FLAC__StreamMetadata_SeekTable *block, const FLAC__StreamMetadata_SeekTable *blockcopy);
+ 
+@@ -40,7 +40,7 @@ FLAC__bool mutils__compare_block_data_cuesheet(const FLAC__StreamMetadata_CueShe
+ 
+ FLAC__bool mutils__compare_block_data_picture(const FLAC__StreamMetadata_Picture *block, const FLAC__StreamMetadata_Picture *blockcopy);
+ 
+-FLAC__bool mutils__compare_block_data_unknown(const FLAC__StreamMetadata_Unknown *block, const FLAC__StreamMetadata_Unknown *blockcopy, unsigned block_length);
++FLAC__bool mutils__compare_block_data_unknown(const FLAC__StreamMetadata_Unknown *block, const FLAC__StreamMetadata_Unknown *blockcopy, uint32_t block_length);
+ 
+ FLAC__bool mutils__compare_block(const FLAC__StreamMetadata *block, const FLAC__StreamMetadata *blockcopy);
+ 
+diff --git a/src/flac/analyze.h b/src/flac/analyze.h
+index 7c7ec23..44798c7 100644
+--- a/src/flac/analyze.h
++++ b/src/flac/analyze.h
+@@ -26,7 +26,7 @@ typedef struct {
+ } analysis_options;
+ 
+ void flac__analyze_init(analysis_options aopts);
+-void flac__analyze_frame(const FLAC__Frame *frame, unsigned frame_number, FLAC__uint64 frame_offset, unsigned frame_bytes, analysis_options aopts, FILE *fout);
++void flac__analyze_frame(const FLAC__Frame *frame, uint32_t frame_number, FLAC__uint64 frame_offset, uint32_t frame_bytes, analysis_options aopts, FILE *fout);
+ void flac__analyze_finish(analysis_options aopts);
+ 
+ #endif
+diff --git a/src/flac/encode.h b/src/flac/encode.h
+index 51c68a4..b98bef6 100644
+--- a/src/flac/encode.h
++++ b/src/flac/encode.h
+@@ -112,6 +112,6 @@ typedef struct {
+ 	} debug;
+ } encode_options_t;
+ 
+-int flac__encode_file(FILE *infile, FLAC__off_t infilesize, const char *infilename, const char *outfilename, const FLAC__byte *lookahead, unsigned lookahead_length, encode_options_t options);
++int flac__encode_file(FILE *infile, FLAC__off_t infilesize, const char *infilename, const char *outfilename, const FLAC__byte *lookahead, uint32_t lookahead_length, encode_options_t options);
+ 
+ #endif
+diff --git a/src/flac/utils.h b/src/flac/utils.h
+index 6932d3e..36ceb37 100644
+--- a/src/flac/utils.h
++++ b/src/flac/utils.h
+@@ -62,7 +62,7 @@ void stats_print_name(int level, const char *name);
+ void stats_print_info(int level, const char *format, ...);
+ 
+ FLAC__bool flac__utils_parse_skip_until_specification(const char *s, utils__SkipUntilSpecification *spec);
+-void flac__utils_canonicalize_skip_until_specification(utils__SkipUntilSpecification *spec, unsigned sample_rate);
++void flac__utils_canonicalize_skip_until_specification(utils__SkipUntilSpecification *spec, uint32_t sample_rate);
+ 
+ FLAC__bool flac__utils_parse_cue_specification(const char *s, utils__CueSpecification *spec);
+ void flac__utils_canonicalize_cue_specification(const utils__CueSpecification *cue_spec, const FLAC__StreamMetadata_CueSheet *cuesheet, FLAC__uint64 total_samples, utils__SkipUntilSpecification *skip_spec, utils__SkipUntilSpecification *until_spec);
+-- 
+1.7.1
+

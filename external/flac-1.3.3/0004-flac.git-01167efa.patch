@@ -1,0 +1,80 @@
+From: oreo639 <oreo6391@gmail.com>
+Date: Mon, 2 Sep 2019 17:48:47 +0000 (-0700)
+Subject: Fix function redefinition on arm-none-eabi compilers
+X-Git-Url: http://git.xiph.org/?p=flac.git;a=commitdiff_plain;h=01167efa6a7cb6aa6aa8865594cd58c6db06471b
+
+Fix function redefinition on arm-none-eabi compilers
+---
+
+diff --git a/include/share/grabbag/cuesheet.h b/include/share/grabbag/cuesheet.h
+index b465ae6a..1e669255 100644
+--- a/include/share/grabbag/cuesheet.h
++++ b/include/share/grabbag/cuesheet.h
+@@ -29,10 +29,10 @@
+ extern "C" {
+ #endif
+ 
+-unsigned grabbag__cuesheet_msf_to_frame(unsigned minutes, unsigned seconds, unsigned frames);
+-void grabbag__cuesheet_frame_to_msf(unsigned frame, unsigned *minutes, unsigned *seconds, unsigned *frames);
++uint32_t grabbag__cuesheet_msf_to_frame(uint32_t minutes, uint32_t seconds, uint32_t frames);
++void grabbag__cuesheet_frame_to_msf(uint32_t frame, uint32_t *minutes, uint32_t *seconds, uint32_t *frames);
+ 
+-FLAC__StreamMetadata *grabbag__cuesheet_parse(FILE *file, const char **error_message, unsigned *last_line_read, unsigned sample_rate, FLAC__bool is_cdda, FLAC__uint64 lead_out_offset);
++FLAC__StreamMetadata *grabbag__cuesheet_parse(FILE *file, const char **error_message, uint32_t *last_line_read, uint32_t sample_rate, FLAC__bool is_cdda, FLAC__uint64 lead_out_offset);
+ 
+ void grabbag__cuesheet_emit(FILE *file, const FLAC__StreamMetadata *cuesheet, const char *file_reference);
+ 
+diff --git a/include/share/grabbag/replaygain.h b/include/share/grabbag/replaygain.h
+index faa32720..fdf63acc 100644
+--- a/include/share/grabbag/replaygain.h
++++ b/include/share/grabbag/replaygain.h
+@@ -34,7 +34,7 @@
+ extern "C" {
+ #endif
+ 
+-extern const unsigned GRABBAG__REPLAYGAIN_MAX_TAG_SPACE_REQUIRED;
++extern const uint32_t GRABBAG__REPLAYGAIN_MAX_TAG_SPACE_REQUIRED;
+ 
+ extern const FLAC__byte * const GRABBAG__REPLAYGAIN_TAG_REFERENCE_LOUDNESS; /* = "REPLAYGAIN_REFERENCE_LOUDNESS" */
+ extern const FLAC__byte * const GRABBAG__REPLAYGAIN_TAG_TITLE_GAIN; /* = "REPLAYGAIN_TRACK_GAIN" */
+@@ -42,12 +42,12 @@ extern const FLAC__byte * const GRABBAG__REPLAYGAIN_TAG_TITLE_PEAK; /* = "REPLAY
+ extern const FLAC__byte * const GRABBAG__REPLAYGAIN_TAG_ALBUM_GAIN; /* = "REPLAYGAIN_ALBUM_GAIN" */
+ extern const FLAC__byte * const GRABBAG__REPLAYGAIN_TAG_ALBUM_PEAK; /* = "REPLAYGAIN_ALBUM_PEAK" */
+ 
+-FLAC__bool grabbag__replaygain_is_valid_sample_frequency(unsigned sample_frequency);
++FLAC__bool grabbag__replaygain_is_valid_sample_frequency(uint32_t sample_frequency);
+ 
+-FLAC__bool grabbag__replaygain_init(unsigned sample_frequency);
++FLAC__bool grabbag__replaygain_init(uint32_t sample_frequency);
+ 
+ /* 'bps' must be valid for FLAC, i.e. >=4 and <= 32 */
+-FLAC__bool grabbag__replaygain_analyze(const FLAC__int32 * const input[], FLAC__bool is_stereo, unsigned bps, unsigned samples);
++FLAC__bool grabbag__replaygain_analyze(const FLAC__int32 * const input[], FLAC__bool is_stereo, uint32_t bps, uint32_t samples);
+ 
+ void grabbag__replaygain_get_album(float *gain, float *peak);
+ void grabbag__replaygain_get_title(float *gain, float *peak);
+diff --git a/include/share/grabbag/seektable.h b/include/share/grabbag/seektable.h
+index ac294a3e..191a1c48 100644
+--- a/include/share/grabbag/seektable.h
++++ b/include/share/grabbag/seektable.h
+@@ -30,7 +30,7 @@
+ extern "C" {
+ #endif
+ 
+-FLAC__bool grabbag__seektable_convert_specification_to_template(const char *spec, FLAC__bool only_explicit_placeholders, FLAC__uint64 total_samples_to_encode, unsigned sample_rate, FLAC__StreamMetadata *seektable_template, FLAC__bool *spec_has_real_points);
++FLAC__bool grabbag__seektable_convert_specification_to_template(const char *spec, FLAC__bool only_explicit_placeholders, FLAC__uint64 total_samples_to_encode, uint32_t sample_rate, FLAC__StreamMetadata *seektable_template, FLAC__bool *spec_has_real_points);
+ 
+ #ifdef __cplusplus
+ }
+diff --git a/include/share/replaygain_synthesis.h b/include/share/replaygain_synthesis.h
+index 5f4c3ffb..9bec5e50 100644
+--- a/include/share/replaygain_synthesis.h
++++ b/include/share/replaygain_synthesis.h
+@@ -47,6 +47,6 @@ typedef struct {
+ void FLAC__replaygain_synthesis__init_dither_context(DitherContext *dither, int bits, int shapingtype);
+ 
+ /* scale = (float) pow(10., (double)replaygain * 0.05); */
+-size_t FLAC__replaygain_synthesis__apply_gain(FLAC__byte *data_out, FLAC__bool little_endian_data_out, FLAC__bool unsigned_data_out, const FLAC__int32 * const input[], unsigned wide_samples, unsigned channels, const unsigned source_bps, const unsigned target_bps, const double scale, const FLAC__bool hard_limit, FLAC__bool do_dithering, DitherContext *dither_context);
++size_t FLAC__replaygain_synthesis__apply_gain(FLAC__byte *data_out, FLAC__bool little_endian_data_out, FLAC__bool unsigned_data_out, const FLAC__int32 * const input[], uint32_t wide_samples, uint32_t channels, const uint32_t source_bps, const uint32_t target_bps, const double scale, const FLAC__bool hard_limit, FLAC__bool do_dithering, DitherContext *dither_context);
+ 
+ #endif
