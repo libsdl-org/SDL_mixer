@@ -1,0 +1,63 @@
+From 25305d685b52979295064a9b566e697372a9878a Mon Sep 17 00:00:00 2001
+From: sezero <sezero@users.sourceforge.net>
+Date: Fri, 18 Oct 2019 08:11:10 +0300
+Subject: [PATCH] Fix msvc build after commit b917d456
+
+Closes: https://github.com/xiph/flac/issues/152
+---
+ include/share/windows_unicode_filenames.h |   19 +++++++++++--------
+ src/libFLAC/windows_unicode_filenames.c   |    1 -
+ 2 files changed, 11 insertions(+), 9 deletions(-)
+
+diff --git a/include/share/windows_unicode_filenames.h b/include/share/windows_unicode_filenames.h
+index 526b30d..94cbeb6 100644
+--- a/include/share/windows_unicode_filenames.h
++++ b/include/share/windows_unicode_filenames.h
+@@ -39,21 +39,24 @@
+ #include <sys/utime.h>
+ #include "FLAC/ordinals.h"
+ 
++/***** FIXME: KLUDGE: export these syms for flac.exe, metaflac.exe, etc. *****/
++#include "FLAC/export.h"
++
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
+ 
+-void flac_internal_set_utf8_filenames(FLAC__bool flag);
+-FLAC__bool flac_internal_get_utf8_filenames(void);
++FLAC_API void flac_internal_set_utf8_filenames(FLAC__bool flag);
++FLAC_API FLAC__bool flac_internal_get_utf8_filenames(void);
+ #define flac_set_utf8_filenames flac_internal_set_utf8_filenames
+ #define flac_get_utf8_filenames flac_internal_get_utf8_filenames
+ 
+-FILE* flac_internal_fopen_utf8(const char *filename, const char *mode);
+-int flac_internal_stat64_utf8(const char *path, struct __stat64 *buffer);
+-int flac_internal_chmod_utf8(const char *filename, int pmode);
+-int flac_internal_utime_utf8(const char *filename, struct utimbuf *times);
+-int flac_internal_unlink_utf8(const char *filename);
+-int flac_internal_rename_utf8(const char *oldname, const char *newname);
++FLAC_API FILE* flac_internal_fopen_utf8(const char *filename, const char *mode);
++FLAC_API int flac_internal_stat64_utf8(const char *path, struct __stat64 *buffer);
++FLAC_API int flac_internal_chmod_utf8(const char *filename, int pmode);
++FLAC_API int flac_internal_utime_utf8(const char *filename, struct utimbuf *times);
++FLAC_API int flac_internal_unlink_utf8(const char *filename);
++FLAC_API int flac_internal_rename_utf8(const char *oldname, const char *newname);
+ 
+ #ifdef __cplusplus
+ } /* extern "C" */
+diff --git a/src/libFLAC/windows_unicode_filenames.c b/src/libFLAC/windows_unicode_filenames.c
+index 7f59ebe..bf3bfe1 100644
+--- a/src/libFLAC/windows_unicode_filenames.c
++++ b/src/libFLAC/windows_unicode_filenames.c
+@@ -38,7 +38,6 @@
+ #include "share/windows_unicode_filenames.h"
+ 
+ /*** FIXME: KLUDGE: export these syms for flac.exe, metaflac.exe, etc. ***/
+-#include "FLAC/export.h"
+ 
+ /* convert UTF-8 back to WCHAR. Caller is responsible for freeing memory */
+ static wchar_t *wchar_from_utf8(const char *str)
+-- 
+1.7.1
+

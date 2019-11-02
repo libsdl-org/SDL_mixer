@@ -1,0 +1,25 @@
+From: Erik de Castro Lopo <erikd@mega-nerd.com>
+Date: Sun, 25 Aug 2019 07:24:47 +0000 (+1000)
+Subject: libFLAC/bitreader.c: Fix shift invoking undefined behaviour
+X-Git-Url: http://git.xiph.org/?p=flac.git;a=commitdiff_plain;h=09f47c00e18a77390acfc2e725564542756effaf
+
+libFLAC/bitreader.c: Fix shift invoking undefined behaviour
+
+Credit: Oss-Fuzz
+Issue: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=16458
+Testcase: fuzzer_decoder-5649174900506624
+---
+
+diff --git a/src/libFLAC/bitreader.c b/src/libFLAC/bitreader.c
+index 90507435..62e11991 100644
+--- a/src/libFLAC/bitreader.c
++++ b/src/libFLAC/bitreader.c
+@@ -456,7 +456,7 @@ FLAC__bool FLAC__bitreader_read_raw_int32(FLAC__BitReader *br, FLAC__int32 *val,
+ {
+ 	FLAC__uint32 uval, mask;
+ 	/* OPT: inline raw uint32 code here, or make into a macro if possible in the .h file */
+-	if(!FLAC__bitreader_read_raw_uint32(br, &uval, bits))
++	if (bits < 1 || ! FLAC__bitreader_read_raw_uint32(br, &uval, bits))
+ 		return false;
+ 	/* sign-extend *val assuming it is currently bits wide. */
+ 	/* From: https://graphics.stanford.edu/~seander/bithacks.html#FixedSignExtend */

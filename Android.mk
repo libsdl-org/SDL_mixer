@@ -3,7 +3,7 @@ SDL_MIXER_LOCAL_PATH := $(call my-dir)
 
 # Enable this if you want to support loading FLAC music with libFLAC
 SUPPORT_FLAC ?= true
-FLAC_LIBRARY_PATH := external/flac-1.3.2
+FLAC_LIBRARY_PATH := external/flac-1.3.3
 
 # Enable this if you want to support loading OGG Vorbis music via Tremor
 SUPPORT_OGG ?= true

@@ -1,0 +1,187 @@
+From: Erik de Castro Lopo <erikd@mega-nerd.com>
+Date: Sun, 15 Sep 2019 02:03:56 +0000 (+1000)
+Subject: Fix a number of gcc 9.2 compiler warnings
+X-Git-Url: http://git.xiph.org/?p=flac.git;a=commitdiff_plain;h=04974d271531d429384a6f124919ff64fbbefd81
+
+Fix a number of gcc 9.2 compiler warnings
+---
+
+diff --git a/include/share/safe_str.h b/include/share/safe_str.h
+index eb974c51..6709334e 100644
+--- a/include/share/safe_str.h
++++ b/include/share/safe_str.h
+@@ -46,7 +46,9 @@ safe_strncat(char *dest, const char *src, size_t dest_size)
+ 	if (dest_size < 1)
+ 		return dest;
+ 
++	/* Assume dist has space for a term character .. */
+ 	ret = strncat(dest, src, dest_size - strlen (dest));
++	/* .. but set it explicitly. */
+ 	dest [dest_size - 1] = 0;
+ 
+ 	return ret;
+@@ -60,7 +62,7 @@ safe_strncpy(char *dest, const char *src, size_t dest_size)
+ 	if (dest_size < 1)
+ 		return dest;
+ 
+-	ret = strncpy(dest, src, dest_size);
++	ret = strncpy(dest, src, dest_size - 1);
+ 	dest [dest_size - 1] = 0;
+ 
+ 	return ret;
+diff --git a/src/flac/main.c b/src/flac/main.c
+index be072a3d..780ccc50 100644
+--- a/src/flac/main.c
++++ b/src/flac/main.c
+@@ -1928,13 +1928,12 @@ int encode_file(const char *infilename, FLAC__bool is_first_file, FLAC__bool is_
+ 		static const char *tmp_suffix = ".tmp,fl-ac+en'c";
+ 		size_t dest_len = strlen(outfilename) + strlen(tmp_suffix) + 1;
+ 		/*@@@@ still a remote possibility that a file with this filename exists */
+-		if(0 == (internal_outfilename = safe_malloc_(dest_len))) {
++		if((internal_outfilename = safe_malloc_(dest_len)) == NULL) {
+ 			flac__utils_printf(stderr, 1, "ERROR allocating memory for tempfile name\n");
+ 			conditional_fclose(encode_infile);
+ 			return 1;
+ 		}
+-		safe_strncpy(internal_outfilename, outfilename, dest_len);
+-		safe_strncat(internal_outfilename, tmp_suffix, dest_len);
++		snprintf(internal_outfilename, dest_len, "%s%s", outfilename, tmp_suffix);
+ 	}
+ 
+ 	if(input_format == FORMAT_RAW) {
+#diff --git a/src/libFLAC/metadata_iterators.c b/src/libFLAC/metadata_iterators.c
+#index fca2c15e..17f25cd6 100644
+#--- a/src/libFLAC/metadata_iterators.c
+#+++ b/src/libFLAC/metadata_iterators.c
+#@@ -3422,9 +3422,6 @@ FLAC__bool get_file_stats_(const char *filename, struct flac_stat_s *stats)
+# 
+# void set_file_stats_(const char *filename, struct flac_stat_s *stats)
+# {
+#-	FLAC__ASSERT(0 != filename);
+#-	FLAC__ASSERT(0 != stats);
+#-
+# #if defined(_POSIX_C_SOURCE) && (_POSIX_C_SOURCE >= 200809L)
+# 	struct timespec srctime[2] = {};
+# 	srctime[0].tv_sec = stats->st_atime;
+#@@ -3434,6 +3431,10 @@ void set_file_stats_(const char *filename, struct flac_stat_s *stats)
+# 	srctime.actime = stats->st_atime;
+# 	srctime.modtime = stats->st_mtime;
+# #endif
+#+
+#+	FLAC__ASSERT(0 != filename);
+#+	FLAC__ASSERT(0 != stats);
+#+
+# 	(void)flac_chmod(filename, stats->st_mode);
+# 	(void)flac_utime(filename, &srctime);
+# #if !defined _MSC_VER && !defined __BORLANDC__ && !defined __MINGW32__
+diff --git a/src/metaflac/utils.c b/src/metaflac/utils.c
+index a653118e..75f42bbd 100644
+--- a/src/metaflac/utils.c
++++ b/src/metaflac/utils.c
+@@ -61,21 +61,22 @@ char *local_strdup(const char *source)
+ 
+ void local_strcat(char **dest, const char *source)
+ {
+-	size_t ndest, nsource;
++	size_t ndest, nsource, outlen;
+ 
+ 	FLAC__ASSERT(0 != dest);
+ 	FLAC__ASSERT(0 != source);
+ 
+-	ndest = *dest? strlen(*dest) : 0;
++	ndest = *dest ? strlen(*dest) : 0;
+ 	nsource = strlen(source);
++	outlen = ndest + nsource + 1;
+ 
+ 	if(nsource == 0)
+ 		return;
+ 
+ 	*dest = safe_realloc_add_3op_(*dest, ndest, /*+*/nsource, /*+*/1);
+-	if(0 == *dest)
++	if(*dest == NULL)
+ 		die("out of memory growing string");
+-	safe_strncpy((*dest)+ndest, source, nsource + 1);
++	safe_strncat(*dest, source, outlen);
+ }
+ 
+ static inline int local_isprint(int c)
+diff --git a/src/share/utf8/iconvert.c b/src/share/utf8/iconvert.c
+index 472ca876..8ab53c10 100644
+--- a/src/share/utf8/iconvert.c
++++ b/src/share/utf8/iconvert.c
+@@ -25,6 +25,7 @@
+ #include <assert.h>
+ #include <errno.h>
+ #include <iconv.h>
++#include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+ 
+@@ -77,18 +78,17 @@ int iconvert(const char *fromcode, const char *tocode,
+       tocode[4] != '8' ||
+       tocode[5] != '\0') {
+     char *tocode1;
+-	size_t dest_len = strlen(tocode) + 11;
++    int rc;
+     /*
+      * Try using this non-standard feature of glibc and libiconv.
+      * This is deliberately not a config option as people often
+      * change their iconv library without rebuilding applications.
+      */
+-    tocode1 = safe_malloc_(dest_len);
+-    if (!tocode1)
++
++    rc = asprintf(&tocode1, "%s//TRANSLIT", tocode);
++    if (rc < 0 || ! tocode1)
+       goto fail;
+ 
+-    safe_strncpy(tocode1, tocode, dest_len);
+-    safe_strncat(tocode1, "//TRANSLIT", dest_len);
+     cd2 = iconv_open(tocode1, "UTF-8");
+     free(tocode1);
+ 
+diff --git a/src/share/utf8/utf8.c b/src/share/utf8/utf8.c
+index 98a0b648..34af187b 100644
+--- a/src/share/utf8/utf8.c
++++ b/src/share/utf8/utf8.c
+@@ -29,6 +29,7 @@
+ #  include <config.h>
+ #endif
+ 
++#include <stdio.h>
+ #include <stdlib.h>
+ 
+ #include "share/alloc.h"
+@@ -180,7 +181,7 @@ static int convert_string(const char *fromcode, const char *tocode,
+   s = safe_malloc_add_2op_(fromlen, /*+*/1);
+   if (!s)
+     return -1;
+-  safe_strncpy(s, from, fromlen + 1);
++  snprintf(s, fromlen + 1, "%s", from);
+   *to = s;
+   for (; *s; s++)
+     if (*s & ~0x7f)
+#diff --git a/src/test_libFLAC/metadata_manip.c b/src/test_libFLAC/metadata_manip.c
+#index da10d855..f72c20ca 100644
+#--- a/src/test_libFLAC/metadata_manip.c
+#+++ b/src/test_libFLAC/metadata_manip.c
+#@@ -255,9 +255,6 @@ static FLAC__bool get_file_stats_(const char *filename, struct flac_stat_s *stat
+# 
+# static void set_file_stats_(const char *filename, struct flac_stat_s *stats)
+# {
+#-	FLAC__ASSERT(0 != filename);
+#-	FLAC__ASSERT(0 != stats);
+#-
+# #if defined(_POSIX_C_SOURCE) && (_POSIX_C_SOURCE >= 200809L)
+# 	struct timespec srctime[2] = {};
+# 	srctime[0].tv_sec = stats->st_atime;
+#@@ -267,6 +264,9 @@ static void set_file_stats_(const char *filename, struct flac_stat_s *stats)
+# 	srctime.actime = stats->st_atime;
+# 	srctime.modtime = stats->st_mtime;
+# #endif
+#+	FLAC__ASSERT(0 != filename);
+#+	FLAC__ASSERT(0 != stats);
+#+
+# 	(void)flac_chmod(filename, stats->st_mode);
+# 	(void)flac_utime(filename, &srctime);
+# #if !defined _MSC_VER && !defined __MINGW32__

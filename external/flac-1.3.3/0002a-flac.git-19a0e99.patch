@@ -1,0 +1,48 @@
+From 19a0e99ac3ac5f1fc24d66612668a277ceba8195 Mon Sep 17 00:00:00 2001
+From: sezero <sezero@users.sourceforge.net>
+Date: Wed, 9 Oct 2019 10:39:11 +0300
+Subject: [PATCH] move the new public get_decoder_client_data function to public header.
+
+---
+ include/FLAC/stream_decoder.h                  |   10 ++++++++++
+ src/libFLAC/include/protected/stream_decoder.h |    5 -----
+ 2 files changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/include/FLAC/stream_decoder.h b/include/FLAC/stream_decoder.h
+index 57215c5..50ebfa8 100644
+--- a/include/FLAC/stream_decoder.h
++++ b/include/FLAC/stream_decoder.h
+@@ -1550,6 +1550,16 @@ FLAC_API FLAC__bool FLAC__stream_decoder_skip_single_frame(FLAC__StreamDecoder *
+  */
+ FLAC_API FLAC__bool FLAC__stream_decoder_seek_absolute(FLAC__StreamDecoder *decoder, FLAC__uint64 sample);
+ 
++/** Return client_data from decoder.
++ *  The data pointed to by the pointer should not be modified.
++ *
++ * \param  decoder  A decoder instance.
++ * \retval const void *
++ *    The callee's client data set through FLAC__stream_decoder_init_*().
++ *    Do not modify the contents.
++ */
++FLAC_API const void *FLAC__get_decoder_client_data(FLAC__StreamDecoder *decoder);
++
+ /* \} */
+ 
+ #ifdef __cplusplus
+diff --git a/src/libFLAC/include/protected/stream_decoder.h b/src/libFLAC/include/protected/stream_decoder.h
+index 9909275..2f3996b 100644
+--- a/src/libFLAC/include/protected/stream_decoder.h
++++ b/src/libFLAC/include/protected/stream_decoder.h
+@@ -57,9 +57,4 @@ typedef struct FLAC__StreamDecoderProtected {
+  */
+ uint32_t FLAC__stream_decoder_get_input_bytes_unconsumed(const FLAC__StreamDecoder *decoder);
+ 
+-/*
+- * Return client_data from decoder. The data pointed to by the pointer should not be modified.
+- */
+-FLAC_API const void *FLAC__get_decoder_client_data(FLAC__StreamDecoder *decoder);
+-
+ #endif
+-- 
+1.7.1
+

@@ -1,0 +1,155 @@
+From b917d456d23c3268cc6f466d720605b713d7b9ff Mon Sep 17 00:00:00 2001
+From: sezero <sezero@users.sourceforge.net>
+Date: Tue, 8 Oct 2019 15:10:20 +0300
+Subject: [PATCH] make dllexport work with compilers other than MSVC
+
+the issue is, flac and metaflac exes rely on flac_internal_???_utf8()
+procedures from windows_unicode_filenames.c and there is no easy way
+to exclude them from exports without breaking things. So export them
+explicitly (they are exported anyway w/o this patch), but add a FIXME
+note about the kludge in windows_unicode_filenames.c.
+---
+ configure.ac                            |   16 ++++++++++++++++
+ include/FLAC++/export.h                 |    2 +-
+ include/FLAC/export.h                   |    2 +-
+ src/libFLAC/windows_unicode_filenames.c |   19 +++++++++++--------
+ 4 files changed, 29 insertions(+), 10 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 14e2205..6efefaf 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -493,6 +493,22 @@ if test x$enable_stack_smash_protection = "xyes" ; then
+ 	XIPH_GXX_STACK_PROTECTOR
+ 	fi
+ 
++AH_VERBATIM([FLAC_API_EXPORTS],
++[/* libtool defines DLL_EXPORT for windows dll builds,
++   but flac code relies on FLAC_API_EXPORTS instead. */
++#ifdef DLL_EXPORT
++#ifdef __cplusplus
++# define FLACPP_API_EXPORTS
++#else
++# define FLAC_API_EXPORTS
++#endif
++#endif])
++
++if test x$enable_shared != "xyes" ; then
++dnl for correct FLAC_API
++	CPPFLAGS="-DFLAC__NO_DLL $CPPFLAGS"
++	fi
++
+ AC_CONFIG_FILES([ \
+ 	Makefile \
+ 	src/Makefile \
+diff --git a/include/FLAC++/export.h b/include/FLAC++/export.h
+index 1645362..6776b29 100644
+--- a/include/FLAC++/export.h
++++ b/include/FLAC++/export.h
+@@ -59,7 +59,7 @@
+ #if defined(FLAC__NO_DLL)
+ #define FLACPP_API
+ 
+-#elif defined(_MSC_VER)
++#elif defined(_WIN32)
+ #ifdef FLACPP_API_EXPORTS
+ #define	FLACPP_API __declspec(dllexport)
+ #else
+diff --git a/include/FLAC/export.h b/include/FLAC/export.h
+index d52f0bb..628fe5f 100644
+--- a/include/FLAC/export.h
++++ b/include/FLAC/export.h
+@@ -59,7 +59,7 @@
+ #if defined(FLAC__NO_DLL)
+ #define FLAC_API
+ 
+-#elif defined(_MSC_VER)
++#elif defined(_WIN32)
+ #ifdef FLAC_API_EXPORTS
+ #define	FLAC_API __declspec(dllexport)
+ #else
+diff --git a/src/libFLAC/windows_unicode_filenames.c b/src/libFLAC/windows_unicode_filenames.c
+index 7855008..7f59ebe 100644
+--- a/src/libFLAC/windows_unicode_filenames.c
++++ b/src/libFLAC/windows_unicode_filenames.c
+@@ -37,6 +37,9 @@
+ #include <windows.h>
+ #include "share/windows_unicode_filenames.h"
+ 
++/*** FIXME: KLUDGE: export these syms for flac.exe, metaflac.exe, etc. ***/
++#include "FLAC/export.h"
++
+ /* convert UTF-8 back to WCHAR. Caller is responsible for freeing memory */
+ static wchar_t *wchar_from_utf8(const char *str)
+ {
+@@ -61,19 +64,19 @@ static wchar_t *wchar_from_utf8(const char *str)
+ static FLAC__bool utf8_filenames = false;
+ 
+ 
+-void flac_internal_set_utf8_filenames(FLAC__bool flag)
++FLAC_API void flac_internal_set_utf8_filenames(FLAC__bool flag)
+ {
+ 	utf8_filenames = flag ? true : false;
+ }
+ 
+-FLAC__bool flac_internal_get_utf8_filenames(void)
++FLAC_API FLAC__bool flac_internal_get_utf8_filenames(void)
+ {
+ 	return utf8_filenames;
+ }
+ 
+ /* file functions */
+ 
+-FILE* flac_internal_fopen_utf8(const char *filename, const char *mode)
++FLAC_API FILE* flac_internal_fopen_utf8(const char *filename, const char *mode)
+ {
+ 	if (!utf8_filenames) {
+ 		return fopen(filename, mode);
+@@ -95,7 +98,7 @@ FILE* flac_internal_fopen_utf8(const char *filename, const char *mode)
+ 	}
+ }
+ 
+-int flac_internal_stat64_utf8(const char *path, struct __stat64 *buffer)
++FLAC_API int flac_internal_stat64_utf8(const char *path, struct __stat64 *buffer)
+ {
+ 	if (!utf8_filenames) {
+ 		return _stat64(path, buffer);
+@@ -111,7 +114,7 @@ int flac_internal_stat64_utf8(const char *path, struct __stat64 *buffer)
+ 	}
+ }
+ 
+-int flac_internal_chmod_utf8(const char *filename, int pmode)
++FLAC_API int flac_internal_chmod_utf8(const char *filename, int pmode)
+ {
+ 	if (!utf8_filenames) {
+ 		return _chmod(filename, pmode);
+@@ -127,7 +130,7 @@ int flac_internal_chmod_utf8(const char *filename, int pmode)
+ 	}
+ }
+ 
+-int flac_internal_utime_utf8(const char *filename, struct utimbuf *times)
++FLAC_API int flac_internal_utime_utf8(const char *filename, struct utimbuf *times)
+ {
+ 	if (!utf8_filenames) {
+ 		return utime(filename, times);
+@@ -146,7 +149,7 @@ int flac_internal_utime_utf8(const char *filename, struct utimbuf *times)
+ 	}
+ }
+ 
+-int flac_internal_unlink_utf8(const char *filename)
++FLAC_API int flac_internal_unlink_utf8(const char *filename)
+ {
+ 	if (!utf8_filenames) {
+ 		return _unlink(filename);
+@@ -162,7 +165,7 @@ int flac_internal_unlink_utf8(const char *filename)
+ 	}
+ }
+ 
+-int flac_internal_rename_utf8(const char *oldname, const char *newname)
++FLAC_API int flac_internal_rename_utf8(const char *oldname, const char *newname)
+ {
+ 	if (!utf8_filenames) {
+ 		return rename(oldname, newname);
+-- 
+1.7.1
+

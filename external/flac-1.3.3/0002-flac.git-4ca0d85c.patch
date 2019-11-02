@@ -1,0 +1,45 @@
+From: Erik de Castro Lopo <erikd@mega-nerd.com>
+Date: Thu, 8 Aug 2019 08:20:14 +0000 (+1000)
+Subject: libFLAC: Rename get_client_data_from_decoder function
+X-Git-Url: http://git.xiph.org/?p=flac.git;a=commitdiff_plain;h=4ca0d85c5d0ea3e9d9afc4ac53b5187c9ab98689
+
+libFLAC: Rename get_client_data_from_decoder function
+
+This function was added after the 1.3.2 release, but the name was bad
+(missing "FLAC__" at the start) and the pointer returned should be 'const'.
+---
+
+diff --git a/src/libFLAC/include/protected/stream_decoder.h b/src/libFLAC/include/protected/stream_decoder.h
+index f7e20021..99092751 100644
+--- a/src/libFLAC/include/protected/stream_decoder.h
++++ b/src/libFLAC/include/protected/stream_decoder.h
+@@ -53,13 +53,13 @@ typedef struct FLAC__StreamDecoderProtected {
+ } FLAC__StreamDecoderProtected;
+ 
+ /*
+- * return the number of input bytes consumed
++ * Return the number of input bytes consumed
+  */
+ uint32_t FLAC__stream_decoder_get_input_bytes_unconsumed(const FLAC__StreamDecoder *decoder);
+ 
+ /*
+- * return client_data from decoder
++ * Return client_data from decoder. The data pointed to by the pointer should not be modified.
+  */
+-FLAC_API void *get_client_data_from_decoder(FLAC__StreamDecoder *decoder);
++FLAC_API const void *FLAC__get_decoder_client_data(FLAC__StreamDecoder *decoder);
+ 
+ #endif
+diff --git a/src/libFLAC/stream_decoder.c b/src/libFLAC/stream_decoder.c
+index db1f3202..5b96086c 100644
+--- a/src/libFLAC/stream_decoder.c
++++ b/src/libFLAC/stream_decoder.c
+@@ -3398,7 +3398,7 @@ FLAC__bool file_eof_callback_(const FLAC__StreamDecoder *decoder, void *client_d
+ 	return feof(decoder->private_->file)? true : false;
+ }
+ 
+-void *get_client_data_from_decoder(FLAC__StreamDecoder *decoder)
++FLAC_API const void *FLAC__get_decoder_client_data(FLAC__StreamDecoder *decoder)
+ {
+ 	return decoder->private_->client_data;
+ }

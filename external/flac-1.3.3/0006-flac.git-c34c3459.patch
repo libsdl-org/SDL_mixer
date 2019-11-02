@@ -1,0 +1,41 @@
+From: Erik de Castro Lopo <erikd@mega-nerd.com>
+Date: Sun, 25 Aug 2019 06:14:53 +0000 (+1000)
+Subject: libFLAC/bitreader.c: Fix OOB read
+X-Git-Url: http://git.xiph.org/?p=flac.git;a=commitdiff_plain;h=c34c3459b514df02d922a882d406986e7f47afa4
+
+libFLAC/bitreader.c: Fix OOB read
+
+Credit: OSS-Fuzz
+Issue: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=16457
+Testcase: fuzzer_decoder-5076189185572864
+---
+
+diff --git a/src/libFLAC/bitreader.c b/src/libFLAC/bitreader.c
+index 935208a5..90507435 100644
+--- a/src/libFLAC/bitreader.c
++++ b/src/libFLAC/bitreader.c
+@@ -131,16 +131,19 @@ static inline void crc16_update_block_(FLAC__BitReader *br)
+ 	if(br->consumed_words > br->crc16_offset && br->crc16_align)
+ 		crc16_update_word_(br, br->buffer[br->crc16_offset++]);
+ 
++	/* Prevent OOB read due to wrap-around. */
++	if (br->consumed_words > br->crc16_offset) {
+ #if FLAC__BYTES_PER_WORD == 4
+-	br->read_crc16 = FLAC__crc16_update_words32(br->buffer + br->crc16_offset, br->consumed_words - br->crc16_offset, br->read_crc16);
++		br->read_crc16 = FLAC__crc16_update_words32(br->buffer + br->crc16_offset, br->consumed_words - br->crc16_offset, br->read_crc16);
+ #elif FLAC__BYTES_PER_WORD == 8
+-	br->read_crc16 = FLAC__crc16_update_words64(br->buffer + br->crc16_offset, br->consumed_words - br->crc16_offset, br->read_crc16);
++		br->read_crc16 = FLAC__crc16_update_words64(br->buffer + br->crc16_offset, br->consumed_words - br->crc16_offset, br->read_crc16);
+ #else
+-	unsigned i;
++		unsigned i;
+ 
+-	for(i = br->crc16_offset; i < br->consumed_words; i++)
+-		crc16_update_word_(br, br->buffer[i]);
++		for (i = br->crc16_offset; i < br->consumed_words; i++)
++			crc16_update_word_(br, br->buffer[i]);
+ #endif
++	}
+ 
+ 	br->crc16_offset = 0;
+ }
