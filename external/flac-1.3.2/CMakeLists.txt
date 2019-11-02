@@ -31,20 +31,6 @@ if(HAVE_FSEEKO)
     add_definitions(-DHAVE_FSEEKO)
 endif()
 
-if(WIN32)
-    CHECK_FUNCTION_EXISTS(_wutime64 HAFE_WUTIME64)
-    try_compile(HAFE_WUTIME64_BUILT
-                ${CMAKE_BINARY_DIR}/compile_tests
-                ${CMAKE_CURRENT_SOURCE_DIR}/config.tests/wutime64/wutime64_test.c
-    )
-    if(HAFE_WUTIME64 AND HAFE_WUTIME64_BUILT)
-        message("TEST: _wutime64 found and compiling!")
-        add_definitions(-DHAFE_WUTIME64)
-    else()
-        message("TEST: _wutime64 DISABLED: found: [${HAFE_WUTIME64}] compiling: [${HAFE_WUTIME64_BUILT}]")
-    endif()
-endif()
-
 set(FLAC_SRC)
 
 list(APPEND FLAC_SRC
@@ -71,9 +57,7 @@ list(APPEND FLAC_SRC
 )
 
 if(WIN32)
-    add_definitions(-DUNICODE -D_UNICODE)
     list(APPEND FLAC_SRC
-        src/share/win_utf8_io/win_utf8_io.c
         src/libFLAC/windows_unicode_filenames.c
     )
 endif()
@@ -115,4 +99,3 @@ install(FILES
         include/FLAC/stream_decoder.h
         include/FLAC/stream_encoder.h
         DESTINATION include/FLAC/)
-
