@@ -3,7 +3,7 @@
 # - devel packages for alsa, sdl, etc... to build the respective output modules.
 Summary:	The fast console mpeg audio decoder/player.
 Name:		mpg123
-Version:	1.25.12
+Version:	1.25.13
 Release:	1
 URL:		http://www.mpg123.org/
 License:	GPL

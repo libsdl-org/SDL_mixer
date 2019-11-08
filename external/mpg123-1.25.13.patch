@@ -1,6 +1,6 @@
-diff -u /dev/null mpg123-1.25.12/android/config.h
+diff -u /dev/null mpg123-1.25.13/android/config.h
 --- /dev/null
-+++ mpg123-1.25.12/android/config.h
++++ mpg123-1.25.13/android/config.h
 @@ -0,0 +1,478 @@
 +/* src/config.h.  Generated from config.h.in by configure.  */
 +/* src/config.h.in.  Generated from configure.ac by autoheader.  */
@@ -360,7 +360,7 @@ diff -u /dev/null mpg123-1.25.12/android/config.h
 +#define PACKAGE_NAME "mpg123"
 +
 +/* Define to the full name and version of this package. */
-+#define PACKAGE_STRING "mpg123 1.25.12"
++#define PACKAGE_STRING "mpg123 1.25.13"
 +
 +/* Define to the one symbol short name of this package. */
 +#define PACKAGE_TARNAME "mpg123"
@@ -369,7 +369,7 @@ diff -u /dev/null mpg123-1.25.12/android/config.h
 +#define PACKAGE_URL ""
 +
 +/* Define to the version of this package. */
-+#define PACKAGE_VERSION "1.25.12"
++#define PACKAGE_VERSION "1.25.13"
 +
 +/* Define if portaudio v18 API is wanted. */
 +/* #undef PORTAUDIO18 */
@@ -402,7 +402,7 @@ diff -u /dev/null mpg123-1.25.12/android/config.h
 +/* #undef USE_YASM_FOR_AVX */
 +
 +/* Version number of package */
-+#define VERSION "1.25.12"
++#define VERSION "1.25.13"
 +
 +/* Define to use Win32 named pipes */
 +/* #undef WANT_WIN32_FIFO */
@@ -480,12 +480,12 @@ diff -u /dev/null mpg123-1.25.12/android/config.h
 +
 +/* Define to `unsigned long' if <sys/types.h> does not define. */
 +/* #undef uintptr_t */
-diff -u /dev/null mpg123-1.25.12/android/mpg123.h
+diff -u /dev/null mpg123-1.25.13/android/mpg123.h
 --- /dev/null
-+++ mpg123-1.25.12/android/mpg123.h
++++ mpg123-1.25.13/android/mpg123.h
 @@ -0,0 +1,1441 @@
 +/*
-+	libmpg123: MPEG Audio Decoder library (version 1.25.12)
++	libmpg123: MPEG Audio Decoder library (version 1.25.13)
 +
 +	copyright 1995-2015 by the mpg123 project
 +	free software under the terms of the LGPL 2.1
@@ -1925,9 +1925,9 @@ diff -u /dev/null mpg123-1.25.12/android/mpg123.h
 +#endif
 +
 +#endif
-diff -u /dev/null mpg123-1.25.12/Android.mk
+diff -u /dev/null mpg123-1.25.13/Android.mk
 --- /dev/null
-+++ mpg123-1.25.12/Android.mk
++++ mpg123-1.25.13/Android.mk
 @@ -0,0 +1,225 @@
 +LOCAL_PATH := $(call my-dir)
 +
