@@ -12,7 +12,7 @@ VORBIS_LIBRARY_PATH := external/libvorbisidec-1.2.1
 
 # Enable this if you want to support loading MP3 music via MPG123
 SUPPORT_MP3_MPG123 ?= true
-MPG123_LIBRARY_PATH := external/mpg123-1.25.12
+MPG123_LIBRARY_PATH := external/mpg123-1.25.13
 
 # Enable this if you want to support loading MOD music via modplug
 SUPPORT_MOD_MODPLUG ?= true

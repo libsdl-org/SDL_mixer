@@ -1,3 +1,14 @@
+1.25.13
+-------
+
+This is a bugfix release solely for bug 280 in the parser:
+
+- libmpg123
+-- Reset the flag for having a frame to decode before trying to
+   parse a new one. This prevents very unkind behaviour (crashes)
+   when combinging mpg123_scan() with decoding later on for damaged
+   streams that have a mixture of different MPEG versions.
+
 1.25.12
 -------
 
