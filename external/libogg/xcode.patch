@@ -1,0 +1,72 @@
+diff -u libogg-1.3.2/macosx/Info.plist~ libogg-1.3.2/macosx/Info.plist
+--- libogg-1.3.2/macosx/Info.plist~
++++ libogg-1.3.2/macosx/Info.plist
+@@ -7,7 +7,7 @@
+ 	<key>CFBundleExecutable</key>
+ 	<string>Ogg</string>
+ 	<key>CFBundleGetInfoString</key>
+-	<string>Ogg framework 1.1.4, Copyright © 1994-2009 Xiph.Org Foundation</string>
++	<string>Ogg framework 1.3.2, Copyright © 1994-2009 Xiph.Org Foundation</string>
+ 	<key>CFBundleIconFile</key>
+ 	<string></string>
+ 	<key>CFBundleIdentifier</key>
+@@ -17,13 +17,13 @@
+ 	<key>CFBundlePackageType</key>
+ 	<string>FMWK</string>
+ 	<key>CFBundleShortVersionString</key>
+-	<string>1.1.4</string>
++	<string>1.3.2</string>
+ 	<key>CFBundleSignature</key>
+ 	<string>????</string>
+ 	<key>CFBundleVersion</key>
+-	<string>1.1.4</string>
++	<string>1.3.2</string>
+ 	<key>NSHumanReadableCopyright</key>
+-	<string>Ogg framework 1.1.4, Copyright © 1994-2009 Xiph.Org Foundation</string>
++	<string>Ogg framework 1.3.2, Copyright © 1994-2009 Xiph.Org Foundation</string>
+ 	<key>CSResourcesFileMapped</key>
+ 	<true/>
+ </dict>
+diff -u libogg-1.3.2/macosx/Ogg.xcodeproj/project.pbxproj~ libogg-1.3.2/macosx/Ogg.xcodeproj/project.pbxproj
+--- libogg-1.3.2/macosx/Ogg.xcodeproj/project.pbxproj~
++++ libogg-1.3.2/macosx/Ogg.xcodeproj/project.pbxproj
+@@ -238,8 +238,8 @@
+ 			isa = XCBuildConfiguration;
+ 			buildSettings = {
+ 				COPY_PHASE_STRIP = NO;
+-				DYLIB_COMPATIBILITY_VERSION = 1;
+-				DYLIB_CURRENT_VERSION = 1;
++				DYLIB_COMPATIBILITY_VERSION = 9.0.0;
++				DYLIB_CURRENT_VERSION = 9.2.0;
+ 				FRAMEWORK_VERSION = A;
+ 				GCC_DYNAMIC_NO_PIC = NO;
+ 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+@@ -248,6 +248,8 @@
+ 				GCC_PREFIX_HEADER = Ogg_Prefix.pch;
+ 				INFOPLIST_FILE = Info.plist;
+ 				INSTALL_PATH = /Library/Frameworks;
++				LD_DYLIB_INSTALL_NAME = "@rpath/$(EXECUTABLE_PATH)";
++				MACOSX_DEPLOYMENT_TARGET = 10.5;
+ 				PRODUCT_NAME = Ogg;
+ 				WRAPPER_EXTENSION = framework;
+ 				ZERO_LINK = YES;
+@@ -258,8 +260,8 @@
+ 			isa = XCBuildConfiguration;
+ 			buildSettings = {
+ 				COPY_PHASE_STRIP = YES;
+-				DYLIB_COMPATIBILITY_VERSION = 1;
+-				DYLIB_CURRENT_VERSION = 1;
++				DYLIB_COMPATIBILITY_VERSION = 9.0.0;
++				DYLIB_CURRENT_VERSION = 9.2.0;
+ 				FRAMEWORK_VERSION = A;
+ 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+ 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+@@ -267,6 +269,8 @@
+ 				GCC_PREFIX_HEADER = Ogg_Prefix.pch;
+ 				INFOPLIST_FILE = Info.plist;
+ 				INSTALL_PATH = /Library/Frameworks;
++				LD_DYLIB_INSTALL_NAME = "@rpath/$(EXECUTABLE_PATH)";
++				MACOSX_DEPLOYMENT_TARGET = 10.5;
+ 				PRODUCT_NAME = Ogg;
+ 				WRAPPER_EXTENSION = framework;
+ 				ZERO_LINK = NO;

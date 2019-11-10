@@ -1,0 +1,21 @@
+INSTALL file for libmikmod
+==========================
+
+In most systems just run:
+ $ ./configure
+ $ make
+
+You need GNU make.  On BSD or SysV systems, you may need to use gmake
+instead of make.  Use ./configure --help to see configuration options.
+To install the library and development components, run "make install"
+as the superuser.  This will install the shared and static libraries,
+header file and pkg-config file into directories under /usr/local or a
+different location selected with the --prefix option in configure.
+
+To cross-compile, you will need to use the --host option of configury.
+For example:
+ $ ./configure --host=i686-pc-mingw32        # for Windows (win32)
+ $ ./configure --host=x86_64-w64-mingw32     # for Windows (win64)
+
+We also provide standalone makefiles for Windows which you can use for
+both compiling on the relevant native system, or for cross-compiling.
