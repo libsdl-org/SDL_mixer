@@ -1,0 +1,25 @@
+link the osx dylib with compatibility version set to 25.0
+(corresponds to MPG123_API_VERSION 24)
+
+--- mpg123-1.22.4/build/ltmain.sh-2.4.6.orig
++++ mpg123-1.22.4-edit/build/ltmain.sh
+@@ -8882,15 +8882,15 @@
+ 	  # Darwin ld doesn't like 0 for these options...
+ 	  func_arith $current + 1
+ 	  minor_current=$func_arith_result
+-	  xlcverstring="$wl-compatibility_version $wl$minor_current $wl-current_version $wl$minor_current.$revision"
+-	  verstring="-compatibility_version $minor_current -current_version $minor_current.$revision"
++	  xlcverstring="$wl-compatibility_version 25.0 $wl-current_version $wl$minor_current.$revision"
++	  verstring="-compatibility_version 25.0 -current_version $minor_current.$revision"
+           # On Darwin other compilers
+           case $CC in
+               nagfor*)
+-                  verstring="$wl-compatibility_version $wl$minor_current $wl-current_version $wl$minor_current.$revision"
++                  verstring="$wl-compatibility_version 25.0 $wl-current_version $wl$minor_current.$revision"
+                   ;;
+               *)
+-                  verstring="-compatibility_version $minor_current -current_version $minor_current.$revision"
++                  verstring="-compatibility_version 25.0 -current_version $minor_current.$revision"
+                   ;;
+           esac
+ 	  ;;

@@ -1,0 +1,70 @@
+# Makefile for OS/2 using Open Watcom
+#
+# wmake -f Makefile.os2
+# - builds mpg123.dll and its import lib (mpg123.lib)
+#
+# wmake -f Makefile.os2 target=static
+# - builds the static library mpg123_static.lib
+
+CPPFLAGS = -DREAL_IS_FLOAT -DNEWOLD_WRITE_SAMPLE -DOPT_MULTI -DOPT_GENERIC -DOPT_GENERIC_DITHER -DOPT_I386 -DOPT_I586 -DOPT_I586_DITHER -DOPT_MMX -DOPT_3DNOW -DOPT_3DNOW_VINTAGE -DOPT_3DNOWEXT -DOPT_3DNOWEXT_VINTAGE -DOPT_SSE -DOPT_SSE_VINTAGE
+CPPFLAGS+= -DHAVE_CONFIG_H
+INCLUDES = -IOS2_MSVC -I.
+ASFLAGS  = -fobj -Iasm_nasm/ -D__OS2__
+#ASFLAGS += -DUNDERSCORE
+
+CFLAGS = -zq -bt=os2 -bm -fp5 -fpi87 -mf -oeatxh -w4 -ei -j -zp8
+# -5s : Pentium stack calling conventions
+CFLAGS+= -5s
+DLLFLAGS=-bd
+
+DLLNAME=mpg123.dll
+EXPNAME=mpg123.exp
+LIBNAME=mpg123.lib
+LIBSTATIC=mpg123_static.lib
+
+!ifeq target static
+BLD_TARGET=$(LIBSTATIC)
+!else
+CPPFLAGS+= -DDYNAMIC_BUILD
+CFLAGS+= $(DLLFLAGS)
+BLD_TARGET=$(DLLNAME)
+!endif
+
+COMPILE=wcc386 $(CFLAGS) $(CPPFLAGS) $(INCLUDES)
+
+OBJ=compat.obj parse.obj frame.obj format.obj dct64.obj id3.obj optimize.obj readers.obj tabinit.obj libmpg123.obj index.obj
+OBJ+= feature.obj
+OBJ+= stringbuf.obj ntom.obj synth.obj synth_8bit.obj synth_s32.obj synth_real.obj
+OBJ+= layer1.obj layer2.obj layer3.obj dither.obj
+#OBJ+= icy.obj icy2utf8.obj
+#OBJ+= equalizer.obj equalizer_3dnow.obj
+OBJ+= getcpuflags.obj
+OBJ+= dct64_i386.obj synth_i586.obj synth_i586_dither.obj
+OBJ+= dct64_mmx.obj tabinit_mmx.obj synth_mmx.obj
+OBJ+= synth_3dnow.obj dct64_3dnow.obj dct36_3dnow.obj
+OBJ+= dct64_3dnowext.obj synth_3dnowext.obj dct36_3dnowext.obj
+OBJ+= dct64_sse_float.obj synth_sse_float.obj synth_stereo_sse_float.obj synth_sse_s32.obj synth_stereo_sse_s32.obj dct36_sse.obj dct64_sse.obj synth_sse.obj
+
+all: $(BLD_TARGET)
+
+.SUFFIXES:
+.SUFFIXES: .obj .c .asm
+
+$(DLLNAME): $(OBJ)
+	wlink NAM $@ OP q SYSTEM os2v2_dll INITINSTANCE TERMINSTANCE FIL {$(OBJ)} OPTION IMPF=$(EXPNAME)
+	wlib -q -b -n -c -pa -s -t -zld -ii -io -inn $(LIBNAME) +$(DLLNAME)
+
+$(LIBSTATIC): $(OBJ)
+	wlib -q -b -n -c -pa -s -t -zld -ii -io $@ $(OBJ)
+
+.c.obj:
+	$(COMPILE) -fo=$^@ $<
+
+.asm: asm_nasm
+.asm.obj:
+	nasm $(ASFLAGS) -o $^@ $<
+
+distclean: clean .symbolic
+	rm -f *.err $(LIBSTATIC) $(DLLNAME) $(LIBNAME) $(EXPNAME)
+clean: .symbolic
+	rm -f *.obj
