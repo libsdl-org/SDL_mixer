@@ -6,6 +6,18 @@ X-Git-Url: http://git.xiph.org/?p=flac.git;a=commitdiff_plain;h=04974d271531d429
 Fix a number of gcc 9.2 compiler warnings
 ---
 
+From: sezero <sezero@users.sourceforge.net>
+Date: Sun, 10 Nov 2019 22:12:28 +0000 (+0300)
+Subject: flac/main.c: replace an snprintf() call with flac_snprintf()
+X-Git-Url: http://git.xiph.org/?p=flac.git;a=commitdiff_plain;h=2907d4921cc4e46751c18478f5cbe1d60ce50cac
+
+flac/main.c: replace an snprintf() call with flac_snprintf()
+
+flac_snprintf() is used everywhere else in there. that single instance
+of plain snprintf() was added in commit 04974d27. fixes flac.exe build
+with older msvc versions.
+---
+
 diff --git a/include/share/safe_str.h b/include/share/safe_str.h
 index eb974c51..6709334e 100644
 --- a/include/share/safe_str.h
@@ -45,7 +57,7 @@ index be072a3d..780ccc50 100644
  		}
 -		safe_strncpy(internal_outfilename, outfilename, dest_len);
 -		safe_strncat(internal_outfilename, tmp_suffix, dest_len);
-+		snprintf(internal_outfilename, dest_len, "%s%s", outfilename, tmp_suffix);
++		flac_snprintf(internal_outfilename, dest_len, "%s%s", outfilename, tmp_suffix);
  	}
  
  	if(input_format == FORMAT_RAW) {
