@@ -8882,15 +8882,15 @@ func_mode_link ()
 	  # Darwin ld doesn't like 0 for these options...
 	  func_arith $current + 1
 	  minor_current=$func_arith_result
-	  xlcverstring="$wl-compatibility_version $wl$minor_current $wl-current_version $wl$minor_current.$revision"
-	  verstring="-compatibility_version $minor_current -current_version $minor_current.$revision"
+	  xlcverstring="$wl-compatibility_version 11.0 $wl-current_version $wl$minor_current.$revision"
+	  verstring="-compatibility_version 11.0 -current_version $minor_current.$revision"
           # On Darwin other compilers
           case $CC in
               nagfor*)
-                  verstring="$wl-compatibility_version $wl$minor_current $wl-current_version $wl$minor_current.$revision"
+                  verstring="$wl-compatibility_version 11.0 $wl-current_version $wl$minor_current.$revision"
                   ;;
               *)
-                  verstring="-compatibility_version $minor_current -current_version $minor_current.$revision"
+                  verstring="-compatibility_version 11.0 -current_version $minor_current.$revision"
                   ;;
           esac
 	  ;;
