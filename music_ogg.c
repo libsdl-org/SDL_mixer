@@ -419,12 +419,18 @@ static int OGG_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     }
 
     pcmPos = vorbis.ov_pcm_tell(&music->vf);
-    if ((music->loop == 1) && (pcmPos >= music->loop_end)) {
-        amount -= (int)((pcmPos - music->loop_end) * music->channels) * sizeof(Sint16);
+    if ((music->loop == 1) && (music->play_count != 0) && (pcmPos >= music->loop_end)) {
+        amount -= (int)((pcmPos - music->loop_end) * music->channels) * (int)sizeof(Sint16);
         result = vorbis.ov_pcm_seek(&music->vf, music->loop_start);
         if (result < 0) {
             set_ov_error("ov_pcm_seek", result);
             return -1;
+        } else {
+            int play_count = -1;
+            if (music->play_count > 0) {
+                play_count = (music->play_count - 1);
+            }
+            music->play_count = play_count;
         }
         looped = SDL_TRUE;
     }
