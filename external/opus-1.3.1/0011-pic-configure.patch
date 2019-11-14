@@ -1,0 +1,43 @@
+https://github.com/xiph/opus/pull/149
+
+From a729a53efcfd7c37c69d76a9ae11c89b48eca1f0 Mon Sep 17 00:00:00 2001
+From: sezero <sezero@users.sourceforge.net>
+Date: Sun, 6 Oct 2019 14:37:02 +0300
+Subject: [PATCH] configure: adjust x86 get cpu info inline assembly method for PIC case
+
+.. just like the way it is done in celt/x86/x86cpu.c.
+---
+ configure.ac | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/configure.ac b/configure.ac
+index 18ece291..f12f0aa9 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -691,6 +691,18 @@ AS_IF([test x"$enable_intrinsics" = x"yes"],[
+                  unsigned int CPUInfo2;
+                  unsigned int CPUInfo3;
+                  unsigned int InfoType;
++                #if defined(__i386__) && defined(__PIC__)
++                 __asm__ __volatile__ (
++                 "xchg %%ebx, %1\n"
++                 "cpuid\n"
++                 "xchg %%ebx, %1\n":
++                 "=a" (CPUInfo0),
++                 "=r" (CPUInfo1),
++                 "=c" (CPUInfo2),
++                 "=d" (CPUInfo3) :
++                 "a" (InfoType), "c" (0)
++                );
++               #else
+                  __asm__ __volatile__ (
+                  "cpuid":
+                  "=a" (CPUInfo0),
+@@ -699,6 +711,7 @@ AS_IF([test x"$enable_intrinsics" = x"yes"],[
+                  "=d" (CPUInfo3) :
+                  "a" (InfoType), "c" (0)
+                 );
++               #endif
+             ]])],
+             [get_cpuid_by_asm="yes"
+              AC_MSG_RESULT([Inline Assembly])
