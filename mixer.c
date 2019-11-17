@@ -262,6 +262,7 @@ mix_channels(void *udata, Uint8 *stream, int len)
     Uint8 *mix_input;
     int i, mixable, volume = MIX_MAX_VOLUME;
     Uint32 sdl_ticks;
+    MIX_UNUSED(udata);
 
 #if SDL_VERSION_ATLEAST(1, 3, 0)
     /* Need to initialize the stream in SDL 1.3+ */
@@ -971,13 +972,13 @@ int Mix_PlayChannelTimed(int which, Mix_Chunk *chunk, int loops, int ticks)
             if (Mix_Playing(which))
                 _Mix_channel_done_playing(which);
             mix_channel[which].samples = chunk->abuf;
-            mix_channel[which].playing = chunk->alen;
+            mix_channel[which].playing = (int)chunk->alen;
             mix_channel[which].looping = loops;
             mix_channel[which].chunk = chunk;
             mix_channel[which].paused = 0;
             mix_channel[which].fading = MIX_NO_FADING;
             mix_channel[which].start_time = sdl_ticks;
-            mix_channel[which].expire = (ticks>0) ? (sdl_ticks + ticks) : 0;
+            mix_channel[which].expire = (ticks > 0) ? (sdl_ticks + (Uint32)ticks) : 0;
         }
     }
     Mix_UnlockAudio();
@@ -998,7 +999,7 @@ int Mix_ExpireChannel(int which, int ticks)
         }
     } else if (which < num_channels) {
         Mix_LockAudio();
-        mix_channel[which].expire = (ticks>0) ? (SDL_GetTicks() + ticks) : 0;
+        mix_channel[which].expire = (ticks>0) ? (SDL_GetTicks() + (Uint32)ticks) : 0;
         Mix_UnlockAudio();
         ++ status;
     }
@@ -1041,7 +1042,7 @@ int Mix_FadeInChannelTimed(int which, Mix_Chunk *chunk, int loops, int ms, int t
             if (Mix_Playing(which))
                 _Mix_channel_done_playing(which);
             mix_channel[which].samples = chunk->abuf;
-            mix_channel[which].playing = chunk->alen;
+            mix_channel[which].playing = (int)chunk->alen;
             mix_channel[which].looping = loops;
             mix_channel[which].chunk = chunk;
             mix_channel[which].paused = 0;
@@ -1053,7 +1054,7 @@ int Mix_FadeInChannelTimed(int which, Mix_Chunk *chunk, int loops, int ms, int t
             mix_channel[which].volume = 0;
             mix_channel[which].fade_length = (Uint32)ms;
             mix_channel[which].start_time = mix_channel[which].ticks_fade = sdl_ticks;
-            mix_channel[which].expire = (ticks > 0) ? (sdl_ticks+ticks) : 0;
+            mix_channel[which].expire = (ticks > 0) ? (sdl_ticks+(Uint32)ticks) : 0;
         }
     }
     Mix_UnlockAudio();

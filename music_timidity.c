@@ -43,6 +43,7 @@ static void TIMIDITY_Delete(void *context);
 
 static int TIMIDITY_Open(const SDL_AudioSpec *spec)
 {
+    MIX_UNUSED(spec);
     return Timidity_Init();
 }
 
@@ -139,7 +140,7 @@ static int TIMIDITY_GetSome(void *context, void *data, int bytes, SDL_bool *done
         expected = bytes;
         amount = Timidity_PlaySome(music->song, data, bytes);
     }
-        
+
     if (amount < expected) {
         if (music->play_count == 1) {
             /* We didn't consume anything and we're done */

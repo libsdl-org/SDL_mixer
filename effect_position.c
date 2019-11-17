@@ -101,6 +101,7 @@ void _Eff_PositionDeinit(void)
 /* This just frees up the callback-specific data. */
 static void SDLCALL _Eff_PositionDone(int channel, void *udata)
 {
+    MIX_UNUSED(udata);
     if (channel < 0) {
         if (pos_args_global != NULL) {
             SDL_free(pos_args_global);
@@ -120,13 +121,14 @@ static void SDLCALL _Eff_position_u8(int chan, void *stream, int len, void *udat
     volatile position_args *args = (volatile position_args *) udata;
     Uint8 *ptr = (Uint8 *) stream;
     int i;
+    MIX_UNUSED(chan);
 
         /*
          * if there's only a mono channnel (the only way we wouldn't have
          *  a len divisible by 2 here), then left_f and right_f are always
          *  1.0, and are therefore throwaways.
          */
-    if (len % sizeof (Uint16) != 0) {
+    if ((size_t)len % sizeof (Uint16) != 0) {
         *ptr = (Uint8) (((float) *ptr) * args->distance_f);
         ptr++;
         len--;
@@ -157,13 +159,14 @@ static void SDLCALL _Eff_position_u8_c4(int chan, void *stream, int len, void *u
     volatile position_args *args = (volatile position_args *) udata;
     Uint8 *ptr = (Uint8 *) stream;
     int i;
+    MIX_UNUSED(chan);
 
         /*
          * if there's only a mono channnel (the only way we wouldn't have
          *  a len divisible by 2 here), then left_f and right_f are always
          *  1.0, and are therefore throwaways.
          */
-    if (len % sizeof (Uint16) != 0) {
+    if ((size_t)len % sizeof (Uint16) != 0) {
         *ptr = (Uint8) (((float) *ptr) * args->distance_f);
         ptr++;
         len--;
@@ -241,13 +244,15 @@ static void SDLCALL _Eff_position_u8_c6(int chan, void *stream, int len, void *u
     volatile position_args *args = (volatile position_args *) udata;
     Uint8 *ptr = (Uint8 *) stream;
     int i;
+    MIX_UNUSED(chan);
+    MIX_UNUSED(len);
 
         /*
          * if there's only a mono channnel (the only way we wouldn't have
          *  a len divisible by 2 here), then left_f and right_f are always
          *  1.0, and are therefore throwaways.
          */
-    if (len % sizeof (Uint16) != 0) {
+    if ((size_t)len % sizeof (Uint16) != 0) {
         *ptr = (Uint8) (((float) *ptr) * args->distance_f);
         ptr++;
         len--;
@@ -367,6 +372,7 @@ static void SDLCALL _Eff_position_table_u8(int chan, void *stream, int len, void
     Uint8 *l = ((Uint8 *) _Eff_volume_table) + (256 * args->left_u8);
     Uint8 *r = ((Uint8 *) _Eff_volume_table) + (256 * args->right_u8);
     Uint8 *d = ((Uint8 *) _Eff_volume_table) + (256 * args->distance_u8);
+    MIX_UNUSED(chan);
 
     if (args->room_angle == 180) {
         Uint8 *temp = l;
@@ -378,7 +384,7 @@ static void SDLCALL _Eff_position_table_u8(int chan, void *stream, int len, void
          *  volume 255, and are therefore throwaways. Still, we have to
          *  be sure not to overrun the audio buffer...
          */
-    while (len % sizeof (Uint32) != 0) {
+    while ((size_t)len % sizeof (Uint32) != 0) {
         *ptr = d[l[*ptr]];
         ptr++;
         if (args->channels > 1) {
@@ -412,6 +418,7 @@ static void SDLCALL _Eff_position_s8(int chan, void *stream, int len, void *udat
     volatile position_args *args = (volatile position_args *) udata;
     Sint8 *ptr = (Sint8 *) stream;
     int i;
+    MIX_UNUSED(chan);
 
         /*
          * if there's only a mono channnel (the only way we wouldn't have
@@ -444,13 +451,14 @@ static void SDLCALL _Eff_position_s8_c4(int chan, void *stream, int len, void *u
     volatile position_args *args = (volatile position_args *) udata;
     Sint8 *ptr = (Sint8 *) stream;
     int i;
+    MIX_UNUSED(chan);
 
         /*
          * if there's only a mono channnel (the only way we wouldn't have
          *  a len divisible by 2 here), then left_f and right_f are always
          *  1.0, and are therefore throwaways.
          */
-    if (len % sizeof (Sint16) != 0) {
+    if ((size_t)len % sizeof (Sint16) != 0) {
         *ptr = (Sint8) (((float) *ptr) * args->distance_f);
         ptr++;
         len--;
@@ -490,6 +498,7 @@ static void SDLCALL _Eff_position_s8_c6(int chan, void *stream, int len, void *u
     volatile position_args *args = (volatile position_args *) udata;
     Sint8 *ptr = (Sint8 *) stream;
     int i;
+    MIX_UNUSED(chan);
 
         /*
          * if there's only a mono channnel (the only way we wouldn't have
@@ -561,6 +570,7 @@ static void SDLCALL _Eff_position_table_s8(int chan, void *stream, int len, void
     Sint8 *l = ((Sint8 *) _Eff_volume_table) + (256 * args->left_u8);
     Sint8 *r = ((Sint8 *) _Eff_volume_table) + (256 * args->right_u8);
     Sint8 *d = ((Sint8 *) _Eff_volume_table) + (256 * args->distance_u8);
+    MIX_UNUSED(chan);
 
     if (args->room_angle == 180) {
         Sint8 *temp = l;
@@ -569,7 +579,7 @@ static void SDLCALL _Eff_position_table_s8(int chan, void *stream, int len, void
     }
 
 
-    while (len % sizeof (Uint32) != 0) {
+    while ((size_t)len % sizeof (Uint32) != 0) {
         *ptr = d[l[*ptr]];
         ptr++;
         if (args->channels > 1) {
@@ -607,6 +617,7 @@ static void SDLCALL _Eff_position_u16lsb(int chan, void *stream, int len, void *
     volatile position_args *args = (volatile position_args *) udata;
     Uint16 *ptr = (Uint16 *) stream;
     int i;
+    MIX_UNUSED(chan);
 
     for (i = 0; i < len; i += sizeof (Uint16) * 2) {
         Sint16 sampl = (Sint16) (SDL_SwapLE16(*(ptr+0)) - 32768);
@@ -632,6 +643,7 @@ static void SDLCALL _Eff_position_u16lsb_c4(int chan, void *stream, int len, voi
     volatile position_args *args = (volatile position_args *) udata;
     Uint16 *ptr = (Uint16 *) stream;
     int i;
+    MIX_UNUSED(chan);
 
     for (i = 0; i < len; i += sizeof (Uint16) * 4) {
         Sint16 sampl = (Sint16) (SDL_SwapLE16(*(ptr+0)) - 32768);
@@ -681,6 +693,7 @@ static void SDLCALL _Eff_position_u16lsb_c6(int chan, void *stream, int len, voi
     volatile position_args *args = (volatile position_args *) udata;
     Uint16 *ptr = (Uint16 *) stream;
     int i;
+    MIX_UNUSED(chan);
 
     for (i = 0; i < len; i += sizeof (Uint16) * 6) {
         Sint16 sampl = (Sint16) (SDL_SwapLE16(*(ptr+0)) - 32768);
@@ -746,6 +759,7 @@ static void SDLCALL _Eff_position_s16lsb(int chan, void *stream, int len, void *
     volatile position_args *args = (volatile position_args *) udata;
     Sint16 *ptr = (Sint16 *) stream;
     int i;
+    MIX_UNUSED(chan);
 
 #if 0
     if (len % (sizeof(Sint16) * 2)) {
@@ -775,6 +789,7 @@ static void SDLCALL _Eff_position_s16lsb_c4(int chan, void *stream, int len, voi
     volatile position_args *args = (volatile position_args *) udata;
     Sint16 *ptr = (Sint16 *) stream;
     int i;
+    MIX_UNUSED(chan);
 
     for (i = 0; i < len; i += sizeof (Sint16) * 4) {
         Sint16 swapl = (Sint16) ((((float) (Sint16) SDL_SwapLE16(*(ptr+0))) *
@@ -820,6 +835,7 @@ static void SDLCALL _Eff_position_s16lsb_c6(int chan, void *stream, int len, voi
     volatile position_args *args = (volatile position_args *) udata;
     Sint16 *ptr = (Sint16 *) stream;
     int i;
+    MIX_UNUSED(chan);
 
     for (i = 0; i < len; i += sizeof (Sint16) * 6) {
         Sint16 swapl = (Sint16) ((((float) (Sint16) SDL_SwapLE16(*(ptr+0))) *
@@ -877,6 +893,7 @@ static void SDLCALL _Eff_position_u16msb(int chan, void *stream, int len, void *
     volatile position_args *args = (volatile position_args *) udata;
     Uint16 *ptr = (Uint16 *) stream;
     int i;
+    MIX_UNUSED(chan);
 
     for (i = 0; i < len; i += sizeof (Sint16) * 2) {
         Sint16 sampl = (Sint16) (SDL_SwapBE16(*(ptr+0)) - 32768);
@@ -903,6 +920,7 @@ static void SDLCALL _Eff_position_u16msb_c4(int chan, void *stream, int len, voi
     volatile position_args *args = (volatile position_args *) udata;
     Uint16 *ptr = (Uint16 *) stream;
     int i;
+    MIX_UNUSED(chan);
 
     for (i = 0; i < len; i += sizeof (Sint16) * 4) {
         Sint16 sampl = (Sint16) (SDL_SwapBE16(*(ptr+0)) - 32768);
@@ -953,6 +971,7 @@ static void SDLCALL _Eff_position_u16msb_c6(int chan, void *stream, int len, voi
     volatile position_args *args = (volatile position_args *) udata;
     Uint16 *ptr = (Uint16 *) stream;
     int i;
+    MIX_UNUSED(chan);
 
     for (i = 0; i < len; i += sizeof (Sint16) * 6) {
         Sint16 sampl = (Sint16) (SDL_SwapBE16(*(ptr+0)) - 32768);
@@ -1018,6 +1037,7 @@ static void SDLCALL _Eff_position_s16msb(int chan, void *stream, int len, void *
     volatile position_args *args = (volatile position_args *) udata;
     Sint16 *ptr = (Sint16 *) stream;
     int i;
+    MIX_UNUSED(chan);
 
     for (i = 0; i < len; i += sizeof (Sint16) * 2) {
         Sint16 swapl = (Sint16) ((((float) (Sint16) SDL_SwapBE16(*(ptr+0))) *
@@ -1034,6 +1054,7 @@ static void SDLCALL _Eff_position_s16msb_c4(int chan, void *stream, int len, voi
     volatile position_args *args = (volatile position_args *) udata;
     Sint16 *ptr = (Sint16 *) stream;
     int i;
+    MIX_UNUSED(chan);
 
     for (i = 0; i < len; i += sizeof (Sint16) * 4) {
         Sint16 swapl = (Sint16) ((((float) (Sint16) SDL_SwapBE16(*(ptr+0))) *
@@ -1078,6 +1099,7 @@ static void SDLCALL _Eff_position_s16msb_c6(int chan, void *stream, int len, voi
     volatile position_args *args = (volatile position_args *) udata;
     Sint16 *ptr = (Sint16 *) stream;
     int i;
+    MIX_UNUSED(chan);
 
     for (i = 0; i < len; i += sizeof (Sint16) * 6) {
         Sint16 swapl = (Sint16) ((((float) (Sint16) SDL_SwapBE16(*(ptr+0))) *
@@ -1136,6 +1158,7 @@ static void SDLCALL _Eff_position_s32lsb(int chan, void *stream, int len, void *
     volatile position_args *args = (volatile position_args *) udata;
     Sint32 *ptr = (Sint32 *) stream;
     int i;
+    MIX_UNUSED(chan);
 
 #if 0
     if (len % (sizeof(Sint32) * 2)) {
@@ -1165,6 +1188,7 @@ static void SDLCALL _Eff_position_s32lsb_c4(int chan, void *stream, int len, voi
     volatile position_args *args = (volatile position_args *) udata;
     Sint32 *ptr = (Sint32 *) stream;
     int i;
+    MIX_UNUSED(chan);
 
     for (i = 0; i < len; i += sizeof (Sint32) * 4) {
         Sint32 swapl = (Sint32) ((((float) (Sint32) SDL_SwapLE32(*(ptr+0))) *
@@ -1210,6 +1234,7 @@ static void SDLCALL _Eff_position_s32lsb_c6(int chan, void *stream, int len, voi
     volatile position_args *args = (volatile position_args *) udata;
     Sint32 *ptr = (Sint32 *) stream;
     int i;
+    MIX_UNUSED(chan);
 
     for (i = 0; i < len; i += sizeof (Sint32) * 6) {
         Sint32 swapl = (Sint32) ((((float) (Sint32) SDL_SwapLE32(*(ptr+0))) *
@@ -1267,6 +1292,7 @@ static void SDLCALL _Eff_position_s32msb(int chan, void *stream, int len, void *
     volatile position_args *args = (volatile position_args *) udata;
     Sint32 *ptr = (Sint32 *) stream;
     int i;
+    MIX_UNUSED(chan);
 
     for (i = 0; i < len; i += sizeof (Sint32) * 2) {
         Sint32 swapl = (Sint32) ((((float) (Sint32) SDL_SwapBE32(*(ptr+0))) *
@@ -1283,6 +1309,7 @@ static void SDLCALL _Eff_position_s32msb_c4(int chan, void *stream, int len, voi
     volatile position_args *args = (volatile position_args *) udata;
     Sint32 *ptr = (Sint32 *) stream;
     int i;
+    MIX_UNUSED(chan);
 
     for (i = 0; i < len; i += sizeof (Sint32) * 4) {
         Sint32 swapl = (Sint32) ((((float) (Sint32) SDL_SwapBE32(*(ptr+0))) *
@@ -1327,6 +1354,7 @@ static void SDLCALL _Eff_position_s32msb_c6(int chan, void *stream, int len, voi
     volatile position_args *args = (volatile position_args *) udata;
     Sint32 *ptr = (Sint32 *) stream;
     int i;
+    MIX_UNUSED(chan);
 
     for (i = 0; i < len; i += sizeof (Sint32) * 6) {
         Sint32 swapl = (Sint32) ((((float) (Sint32) SDL_SwapBE32(*(ptr+0))) *
@@ -1385,6 +1413,7 @@ static void SDLCALL _Eff_position_f32sys(int chan, void *stream, int len, void *
     volatile position_args *args = (volatile position_args *) udata;
     float *ptr = (float *) stream;
     int i;
+    MIX_UNUSED(chan);
 
     for (i = 0; i < len; i += sizeof (float) * 2) {
         float swapl = ((*(ptr+0) * args->left_f) * args->distance_f);
@@ -1399,6 +1428,7 @@ static void SDLCALL _Eff_position_f32sys_c4(int chan, void *stream, int len, voi
     volatile position_args *args = (volatile position_args *) udata;
     float *ptr = (float *) stream;
     int i;
+    MIX_UNUSED(chan);
 
     for (i = 0; i < len; i += sizeof (float) * 4) {
         float swapl = ((*(ptr+0) * args->left_f) * args->distance_f);
@@ -1439,6 +1469,7 @@ static void SDLCALL _Eff_position_f32sys_c6(int chan, void *stream, int len, voi
     volatile position_args *args = (volatile position_args *) udata;
     float *ptr = (float *) stream;
     int i;
+    MIX_UNUSED(chan);
 
     for (i = 0; i < len; i += sizeof (float) * 6) {
         float swapl = ((*(ptr+0) * args->left_f) * args->distance_f);
@@ -1517,7 +1548,7 @@ static position_args *get_position_arg(int channel)
     }
 
     if (channel >= position_channels) {
-        rc = SDL_realloc(pos_args_array, (channel + 1) * sizeof (position_args *));
+        rc = SDL_realloc(pos_args_array, (size_t)(channel + 1) * sizeof (position_args *));
         if (rc == NULL) {
             Mix_SetError("Out of memory");
             return(NULL);

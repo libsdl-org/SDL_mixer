@@ -132,7 +132,7 @@ enum {
     MS_input_eof      = 0x0001,
     MS_input_error    = 0x0001,
     MS_decode_error   = 0x0002,
-    MS_error_flags    = 0x000f,
+    MS_error_flags    = 0x000f
 };
 
 typedef struct {
@@ -295,7 +295,7 @@ static SDL_INLINE SDL_bool is_apetag(const unsigned char *data, size_t length)
     if (length < 32 || SDL_memcmp(data,"APETAGEX",8) != 0) {
         return SDL_FALSE;
     }
-    v = (data[11]<<24) | (data[10]<<16) | (data[9]<<8) | data[8]; /* version */
+    v = (Uint32)((data[11]<<24) | (data[10]<<16) | (data[9]<<8) | data[8]); /* version */
     if (v != 2000U && v != 1000U) {
         return SDL_FALSE;
     }
@@ -308,7 +308,8 @@ static SDL_INLINE SDL_bool is_apetag(const unsigned char *data, size_t length)
 static SDL_INLINE long get_ape_len(const unsigned char *data, long datalen, Uint32 *version)
 {
     long size = (long)((data[15]<<24) | (data[14]<<16) | (data[13]<<8) | data[12]);
-    *version = (data[11]<<24) | (data[10]<<16) | (data[9]<<8) | data[8];
+    MIX_UNUSED(datalen);
+    *version = (Uint32)((data[11]<<24) | (data[10]<<16) | (data[9]<<8) | data[8]);
     return size; /* caller will handle the additional v2 header length */
 }
 
@@ -509,7 +510,7 @@ static SDL_bool decode_frame(MAD_Music *music)
     pcm = &music->synth.pcm;
 
     if (!music->audiostream) {
-        music->audiostream = SDL_NewAudioStream(AUDIO_S16, pcm->channels, pcm->samplerate, music_spec.format, music_spec.channels, music_spec.freq);
+        music->audiostream = SDL_NewAudioStream(AUDIO_S16, (Uint8)pcm->channels, (int)pcm->samplerate, music_spec.format, music_spec.channels, music_spec.freq);
         if (!music->audiostream) {
             return SDL_FALSE;
         }
@@ -537,7 +538,7 @@ static SDL_bool decode_frame(MAD_Music *music)
         }
     }
 
-    result = SDL_AudioStreamPut(music->audiostream, buffer, (nsamples * nchannels * sizeof(Sint16)));
+    result = SDL_AudioStreamPut(music->audiostream, buffer, (int)(nsamples * nchannels * sizeof(Sint16)));
     SDL_stack_free(buffer);
 
     if (result < 0) {
@@ -594,7 +595,7 @@ static int MAD_Seek(void *context, double position)
     int int_part;
 
     int_part = (int)position;
-    mad_timer_set(&target, int_part, (int)((position - int_part) * 1000000), 1000000);
+    mad_timer_set(&target, (unsigned long)int_part, (unsigned long)((position - int_part) * 1000000), 1000000);
 
     if (mad_timer_compare(music->next_frame_start, target) > 0) {
         /* In order to seek backwards in a VBR file, we have to rewind and

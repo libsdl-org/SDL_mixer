@@ -36,6 +36,7 @@
 #include <vorbis/vorbisfile.h>
 #endif
 
+
 typedef struct {
     int loaded;
     void *handle;
@@ -209,14 +210,14 @@ static int OGG_UpdateSection(OGG_music *music)
         music->stream = NULL;
     }
 
-    music->stream = SDL_NewAudioStream(AUDIO_S16, vi->channels, (int)vi->rate,
+    music->stream = SDL_NewAudioStream(AUDIO_S16, (Uint8)vi->channels, (int)vi->rate,
                                        music_spec.format, music_spec.channels, music_spec.freq);
     if (!music->stream) {
         return -1;
     }
 
-    music->buffer_size = music_spec.samples * sizeof(Sint16) * vi->channels;
-    music->buffer = (char *)SDL_malloc(music->buffer_size);
+    music->buffer_size = music_spec.samples * (int)sizeof(Sint16) * vi->channels;
+    music->buffer = (char *)SDL_malloc((size_t)music->buffer_size);
     if (!music->buffer) {
         return -1;
     }
@@ -225,7 +226,7 @@ static int OGG_UpdateSection(OGG_music *music)
 
 /* Parse time string of the form HH:MM:SS.mmm and return equivalent sample
  * position */
-static ogg_int64_t parse_time(char *time, long samplerate_hz)
+static ogg_int64_t parse_time(char *time, ogg_int64_t samplerate_hz)
 {
     char *num_start, *p;
     ogg_int64_t result = 0;
@@ -262,9 +263,9 @@ static void *OGG_CreateFromRW(SDL_RWops *src, int freesrc)
     OGG_music *music;
     ov_callbacks callbacks;
     vorbis_comment *vc;
-    int isLoopLength = 0, i;
-    ogg_int64_t fullLength;
-    long rate;
+    int i;
+    ogg_int64_t full_length;
+    SDL_bool is_loop_length = SDL_FALSE;
 
     music = (OGG_music *)SDL_calloc(1, sizeof *music);
     if (!music) {
@@ -318,27 +319,27 @@ static void *OGG_CreateFromRW(SDL_RWops *src, int freesrc)
             music->loop_start = parse_time(value, rate);
         else if (SDL_strcasecmp(argument, "LOOPLENGTH") == 0) {
             music->loop_len = (ogg_int64_t)SDL_strtoull(value, NULL, 10);
-            isLoopLength = 1;
+            is_loop_length = SDL_TRUE;
         } else if (SDL_strcasecmp(argument, "LOOPEND") == 0) {
-            isLoopLength = 0;
             music->loop_end = parse_time(value, rate);
+            is_loop_length = SDL_FALSE;
         }
         SDL_free(param);
     }
 
-    if (isLoopLength == 1) {
+    if (is_loop_length) {
         music->loop_end = music->loop_start + music->loop_len;
     } else {
         music->loop_len = music->loop_end - music->loop_start;
     }
 
-    fullLength = vorbis.ov_pcm_total(&music->vf, -1);
+    full_length = vorbis.ov_pcm_total(&music->vf, -1);
     if (((music->loop_start >= 0) || (music->loop_end > 0)) &&
         ((music->loop_start < music->loop_end) || (music->loop_end == 0)) &&
-         (music->loop_start < fullLength) &&
-         (music->loop_end <= fullLength)) {
+         (music->loop_start < full_length) &&
+         (music->loop_end <= full_length)) {
         if (music->loop_start < 0) music->loop_start = 0;
-        if (music->loop_end == 0)  music->loop_end = fullLength;
+        if (music->loop_end == 0)  music->loop_end = full_length;
         music->loop = 1;
     }
 
