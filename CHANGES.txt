@@ -1,3 +1,7 @@
+2.0.5:
+Michael Day - Sat Nov 16 22:11:29 PST 2019
+ * Added looping support for FLAC files
+
 2.0.4:
 Ozkan Sezer - Wed, 10 Oct 2018 14:56:10
  * Removed smpeg support for mp3 music, now that it's replaced by libmpg123
