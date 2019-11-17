@@ -1533,7 +1533,9 @@ static int op_open1(OggOpusFile *_of,
     ogg_sync_wrote(&_of->oy,(long)_initial_bytes);
   }
   /*Can we seek?
-    Stevens suggests the seek test is portable.*/
+    Stevens suggests the seek test is portable.
+    It's actually not for files on win32, but we address that by fixing it in
+     our callback implementation (see stream.c).*/
   seekable=_cb->seek!=NULL&&(*_cb->seek)(_stream,0,SEEK_CUR)!=-1;
   /*If seek is implemented, tell must also be implemented.*/
   if(seekable){
@@ -2818,10 +2820,16 @@ static int op_read_native(OggOpusFile *_of,
       /*If we have buffered samples, return them.*/
       if(nsamples>0){
         if(nsamples*nchannels>_buf_size)nsamples=_buf_size/nchannels;
-        memcpy(_pcm,_of->od_buffer+nchannels*od_buffer_pos,
-         sizeof(*_pcm)*nchannels*nsamples);
-        od_buffer_pos+=nsamples;
-        _of->od_buffer_pos=od_buffer_pos;
+        /*Check nsamples again so we don't pass NULL to memcpy() if _buf_size
+           is zero.
+          That would technically be undefined behavior, even if the number of
+           bytes to copy were zero.*/
+        if(nsamples>0){
+          memcpy(_pcm,_of->od_buffer+nchannels*od_buffer_pos,
+           sizeof(*_pcm)*nchannels*nsamples);
+          od_buffer_pos+=nsamples;
+          _of->od_buffer_pos=od_buffer_pos;
+        }
         if(_li!=NULL)*_li=_of->cur_link;
         return nsamples;
       }

@@ -358,6 +358,11 @@ typedef int op_sock;
 # include <sys/timeb.h>
 # include <openssl/x509v3.h>
 
+# if (defined(LIBRESSL_VERSION_NUMBER)&&OPENSSL_VERSION_NUMBER==0x20000000L)
+#  undef OPENSSL_VERSION_NUMBER
+#  define OPENSSL_VERSION_NUMBER 0x1000115fL
+# endif
+
 /*The maximum number of simultaneous connections.
   RFC 2616 says this SHOULD NOT be more than 2, but everyone on the modern web
    ignores that (e.g., IE 8 bumped theirs up from 2 to 6, Firefox uses 15).
@@ -1530,7 +1535,7 @@ static long op_bio_retry_ctrl(BIO *_b,int _cmd,long _num,void *_ptr){
   return ret;
 }
 
-# if OPENSSL_VERSION_NUMBER<0x10100000L
+# if (OPENSSL_VERSION_NUMBER<0x10100000L&&LIBRESSL_VERSION_NUMBER<0x2070000fL)
 #  define BIO_set_data(_b,_ptr) ((_b)->ptr=(_ptr))
 #  define BIO_set_init(_b,_init) ((_b)->init=(_init))
 #  define ASN1_STRING_get0_data ASN1_STRING_data
@@ -1538,7 +1543,7 @@ static long op_bio_retry_ctrl(BIO *_b,int _cmd,long _num,void *_ptr){
 
 static int op_bio_retry_new(BIO *_b){
   BIO_set_init(_b,1);
-# if OPENSSL_VERSION_NUMBER<0x10100000L
+# if (OPENSSL_VERSION_NUMBER<0x10100000L&&LIBRESSL_VERSION_NUMBER<0x2070000fL)
   _b->num=0;
 # endif
   BIO_set_data(_b,NULL);
@@ -1549,7 +1554,7 @@ static int op_bio_retry_free(BIO *_b){
   return _b!=NULL;
 }
 
-# if OPENSSL_VERSION_NUMBER<0x10100000L
+# if (OPENSSL_VERSION_NUMBER<0x10100000L&&LIBRESSL_VERSION_NUMBER<0x2070000fL)
 /*This is not const because OpenSSL doesn't allow it, even though it won't
    write to it.*/
 static BIO_METHOD op_bio_retry_method={
@@ -1570,7 +1575,7 @@ static BIO_METHOD op_bio_retry_method={
    proxying https URL requests.*/
 static int op_http_conn_establish_tunnel(OpusHTTPStream *_stream,
  OpusHTTPConn *_conn,op_sock _fd,SSL *_ssl_conn,BIO *_ssl_bio){
-# if OPENSSL_VERSION_NUMBER>=0x10100000L
+# if (OPENSSL_VERSION_NUMBER>=0x10100000L||LIBRESSL_VERSION_NUMBER>=0x2070000fL)
   BIO_METHOD *bio_retry_method;
 # endif
   BIO  *retry_bio;
@@ -1583,7 +1588,7 @@ static int op_http_conn_establish_tunnel(OpusHTTPStream *_stream,
   ret=op_http_conn_write_fully(_conn,
    _stream->proxy_connect.buf,_stream->proxy_connect.nbuf);
   if(OP_UNLIKELY(ret<0))return ret;
-# if OPENSSL_VERSION_NUMBER>=0x10100000L
+# if (OPENSSL_VERSION_NUMBER>=0x10100000L||LIBRESSL_VERSION_NUMBER>=0x2070000fL)
   bio_retry_method=BIO_meth_new(BIO_TYPE_NULL,"retry");
   if(bio_retry_method==NULL)return OP_EFAULT;
   BIO_meth_set_write(bio_retry_method,op_bio_retry_write);
@@ -1606,7 +1611,7 @@ static int op_http_conn_establish_tunnel(OpusHTTPStream *_stream,
   /*This shouldn't succeed, since we can't read yet.*/
   OP_ALWAYS_TRUE(SSL_connect(_ssl_conn)<0);
   SSL_set_bio(_ssl_conn,_ssl_bio,_ssl_bio);
-# if OPENSSL_VERSION_NUMBER>=0x10100000L
+# if (OPENSSL_VERSION_NUMBER>=0x10100000L||LIBRESSL_VERSION_NUMBER>=0x2070000fL)
   BIO_meth_free(bio_retry_method);
 # endif
   /*Only now do we disable write coalescing, to allow the CONNECT
@@ -1635,7 +1640,7 @@ static struct addrinfo *op_inet_pton(const char *_host){
   return NULL;
 }
 
-# if OPENSSL_VERSION_NUMBER<0x10002000L
+# if (OPENSSL_VERSION_NUMBER<0x10002000L&&LIBRESSL_VERSION_NUMBER<0x2070000fL)
 /*Match a host name against a host with a possible wildcard pattern according
    to the rules of RFC 6125 Section 6.4.3.
   Return: 0 if the pattern doesn't match, and a non-zero value if it does.*/
@@ -1893,7 +1898,7 @@ static int op_http_conn_start_tls(OpusHTTPStream *_stream,OpusHTTPConn *_conn,
   SSL_set_tlsext_host_name(_ssl_conn,_stream->url.host);
 # endif
   skip_certificate_check=_stream->skip_certificate_check;
-# if OPENSSL_VERSION_NUMBER>=0x10002000L
+# if (OPENSSL_VERSION_NUMBER>=0x10002000L||LIBRESSL_VERSION_NUMBER>=0x2070000fL)
   /*As of version 1.0.2, OpenSSL can finally do hostname checks automatically.
     Of course, they make it much more complicated than it needs to be.*/
   if(!skip_certificate_check){
@@ -1956,13 +1961,13 @@ static int op_http_conn_start_tls(OpusHTTPStream *_stream,OpusHTTPConn *_conn,
   if(OP_UNLIKELY(ret<=0))return OP_FALSE;
   ssl_session=_stream->ssl_session;
   if(ssl_session==NULL
-# if OPENSSL_VERSION_NUMBER<0x10002000L
+# if (OPENSSL_VERSION_NUMBER<0x10002000L&&LIBRESSL_VERSION_NUMBER<0x2070000fL)
    ||!skip_certificate_check
 # endif
    ){
     ret=op_do_ssl_step(_ssl_conn,_fd,SSL_do_handshake);
     if(OP_UNLIKELY(ret<=0))return OP_FALSE;
-# if OPENSSL_VERSION_NUMBER<0x10002000L
+# if (OPENSSL_VERSION_NUMBER<0x10002000L&&LIBRESSL_VERSION_NUMBER<0x2070000fL)
     /*OpenSSL before version 1.0.2 does not do automatic hostname verification,
        despite the fact that we just passed it the hostname above in the call
        to SSL_set_tlsext_host_name().
@@ -2314,7 +2319,7 @@ static int op_http_stream_open(OpusHTTPStream *_stream,const char *_url,
     /*Initialize the SSL library if necessary.*/
     if(OP_URL_IS_SSL(&_stream->url)&&_stream->ssl_ctx==NULL){
       SSL_CTX *ssl_ctx;
-# if OPENSSL_VERSION_NUMBER<0x10100000L
+# if (OPENSSL_VERSION_NUMBER<0x10100000L&&LIBRESSL_VERSION_NUMBER<0x2070000fL)
 #  if !defined(OPENSSL_NO_LOCKING)
       /*The documentation says SSL_library_init() is not reentrant.
         We don't want to add our own depenencies on a threading library, and it
@@ -3146,8 +3151,10 @@ static int op_http_stream_seek(void *_stream,opus_int64 _offset,int _whence){
     }break;
     case SEEK_END:{
       /*Check for overflow:*/
-      if(_offset>content_length||_offset<content_length-OP_INT64_MAX)return -1;
-      pos=content_length-_offset;
+      if(_offset<-content_length||_offset>OP_INT64_MAX-content_length){
+        return -1;
+      }
+      pos=content_length+_offset;
     }break;
     default:return -1;
   }

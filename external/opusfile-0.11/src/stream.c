@@ -72,7 +72,7 @@ static int op_fseek(void *_stream,opus_int64 _offset,int _whence){
      other libraries (that don't use MSVCRT80 from MSVC 2005 by default).
     i686-w64-mingw32 does have fseeko() and respects _FILE_OFFSET_BITS, but I
      don't know how to detect that at compile time.
-    We could just use fseeko64() (which is available in both), but its
+    We could just use fseeko64() (which is available in both), but it's
      implemented using fgetpos()/fsetpos() just like this code, except without
      the overflow checking, so we prefer our version.*/
   opus_int64 pos;
@@ -227,6 +227,57 @@ static wchar_t *op_utf8_to_utf16(const char *_src){
   return dst;
 }
 
+/*fsetpos() internally dispatches to the win32 API call SetFilePointer().
+  According to SetFilePointer()'s documentation [0], the behavior is
+   undefined if you do not call it on "a file stored on a seeking device".
+  However, none of the MSVCRT seeking functions verify what kind of file is
+   being used before calling it (which I believe is a bug, since they are
+   supposed to fail and return an error, but it is a bug that has been there
+   for multiple decades now).
+  In practice, SetFilePointer() appears to succeed for things like stdin,
+   even when you are not just piping in a regular file, which prevents the use
+   of this API to determine whether it is possible to seek in a file at all.
+  Therefore, we take the approach recommended by the SetFilePointer()
+   documentation and confirm the type of file using GetFileType() first.
+  We do this once, when the file is opened, and return the corresponding
+   callback in order to avoid an extra win32 API call on every seek in the
+   common case.
+  Hopefully the return value of GetFileType() cannot actually change for the
+   lifetime of a file handle.
+  [0] https://docs.microsoft.com/en-us/windows/desktop/api/fileapi/nf-fileapi-setfilepointer
+*/
+static int op_fseek_fail(void *_stream,opus_int64 _offset,int _whence){
+  (void)_stream;
+  (void)_offset;
+  (void)_whence;
+  return -1;
+}
+
+static const OpusFileCallbacks OP_UNSEEKABLE_FILE_CALLBACKS={
+  op_fread,
+  op_fseek_fail,
+  op_ftell,
+  (op_close_func)fclose
+};
+
+# define WIN32_LEAN_AND_MEAN
+# define WIN32_EXTRA_LEAN
+# include <windows.h>
+
+static const OpusFileCallbacks *op_get_file_callbacks(FILE *_fp){
+  intptr_t h_file;
+  h_file=_get_osfhandle(_fileno(_fp));
+  if(h_file!=-1
+   &&(GetFileType((HANDLE)h_file)&~FILE_TYPE_REMOTE)==FILE_TYPE_DISK){
+    return &OP_FILE_CALLBACKS;
+  }
+  return &OP_UNSEEKABLE_FILE_CALLBACKS;
+}
+#else
+static const OpusFileCallbacks *op_get_file_callbacks(FILE *_fp){
+  (void)_fp;
+  return &OP_FILE_CALLBACKS;
+}
 #endif
 
 void *op_fopen(OpusFileCallbacks *_cb,const char *_path,const char *_mode){
@@ -247,14 +298,14 @@ void *op_fopen(OpusFileCallbacks *_cb,const char *_path,const char *_mode){
     _ogg_free(wpath);
   }
 #endif
-  if(fp!=NULL)*_cb=*&OP_FILE_CALLBACKS;
+  if(fp!=NULL)*_cb=*op_get_file_callbacks(fp);
   return fp;
 }
 
 void *op_fdopen(OpusFileCallbacks *_cb,int _fd,const char *_mode){
   FILE *fp;
   fp=fdopen(_fd,_mode);
-  if(fp!=NULL)*_cb=*&OP_FILE_CALLBACKS;
+  if(fp!=NULL)*_cb=*op_get_file_callbacks(fp);
   return fp;
 }
 
@@ -277,7 +328,7 @@ void *op_freopen(OpusFileCallbacks *_cb,const char *_path,const char *_mode,
     _ogg_free(wpath);
   }
 #endif
-  if(fp!=NULL)*_cb=*&OP_FILE_CALLBACKS;
+  if(fp!=NULL)*_cb=*op_get_file_callbacks(fp);
   return fp;
 }
 
@@ -322,8 +373,8 @@ static int op_mem_seek(void *_stream,opus_int64 _offset,int _whence){
       size=stream->size;
       OP_ASSERT(size>=0);
       /*Check for overflow:*/
-      if(_offset>size||_offset<size-OP_MEM_DIFF_MAX)return -1;
-      pos=(ptrdiff_t)(size-_offset);
+      if(_offset<-size||_offset>OP_MEM_DIFF_MAX-size)return -1;
+      pos=(ptrdiff_t)(size+_offset);
     }break;
     default:return -1;
   }
