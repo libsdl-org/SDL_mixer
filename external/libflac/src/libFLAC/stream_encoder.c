@@ -1287,7 +1287,9 @@ FLAC_API FLAC__bool FLAC__stream_encoder_finish(FLAC__StreamEncoder *encoder)
 {
 	FLAC__bool error = false;
 
-	FLAC__ASSERT(0 != encoder);
+	if (encoder == NULL)
+		return false;
+
 	FLAC__ASSERT(0 != encoder->private_);
 	FLAC__ASSERT(0 != encoder->protected_);
 
@@ -4304,14 +4306,10 @@ FILE *get_binary_stdout_(void)
 	 */
 #if defined _MSC_VER || defined __MINGW32__
 	_setmode(_fileno(stdout), _O_BINARY);
-#elif defined __CYGWIN__
-	/* almost certainly not needed for any modern Cygwin, but let's be safe... */
-	setmode(_fileno(stdout), _O_BINARY);
 #elif defined __EMX__
 	setmode(fileno(stdout), O_BINARY);
 #endif
 
 	return stdout;
 }
-
 #endif /* FLAC_INCLUDE_ENCODER */
