@@ -32,6 +32,11 @@
 #include "SDL_mixer.h"
 #include "load_aiff.h"
 
+/* Prevent "Unused" warning on specified object */
+#ifndef MIX_UNUSED
+#define MIX_UNUSED(object) (void)object
+#endif
+
 /*********************************************/
 /* Define values for AIFF (IFF audio) format */
 /*********************************************/
@@ -90,6 +95,8 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
     Uint16 samplesize = 0;
     Uint8 sane_freq[10];
     Uint32 frequency = 0;
+
+    MIX_UNUSED(blocksize);
 
     /* Make sure we are passed a valid data source */
     was_error = 0;

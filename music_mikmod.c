@@ -195,7 +195,7 @@ static int MIKMOD_Open(const SDL_AudioSpec *spec)
     if (spec->channels > 1) {
         *mikmod.md_mode |= DMODE_STEREO;
     }
-    *mikmod.md_mixfreq = spec->freq;
+    *mikmod.md_mixfreq = (UWORD)spec->freq;
     *mikmod.md_device  = 0;
     *mikmod.md_volume  = 96;
     *mikmod.md_musicvolume = 128;
@@ -265,7 +265,7 @@ long LMM_Tell(struct MREADER *mr)
 BOOL LMM_Read(struct MREADER *mr,void *buf,size_t sz)
 {
     LMM_MREADER* lmmmr = (LMM_MREADER*)mr;
-    return SDL_RWread(lmmmr->src, buf, sz, 1);
+    return (BOOL)SDL_RWread(lmmmr->src, buf, sz, 1);
 }
 int LMM_Get(struct MREADER *mr)
 {
@@ -285,12 +285,14 @@ BOOL LMM_Eof(struct MREADER *mr)
 }
 MODULE *MikMod_LoadSongRW(SDL_RWops *src, int maxchan)
 {
-    LMM_MREADER lmmmr = {
-        { LMM_Seek, LMM_Tell, LMM_Read, LMM_Get, LMM_Eof },
-        0,
-        0,
-        0
-    };
+    LMM_MREADER lmmmr;
+    SDL_memset(&lmmmr, 0, sizeof(LMM_MREADER));
+    lmmmr.mr.Seek = LMM_Seek;
+    lmmmr.mr.Tell = LMM_Tell;
+    lmmmr.mr.Read = LMM_Read;
+    lmmmr.mr.Get = LMM_Get;
+    lmmmr.mr.Eof = LMM_Eof;
+
     lmmmr.offset = SDL_RWtell(src);
     SDL_RWseek(src, 0, RW_SEEK_END);
     lmmmr.eof = SDL_RWtell(src);
@@ -372,7 +374,7 @@ static int MIKMOD_Play(void *context, int play_count)
 {
     MIKMOD_Music *music = (MIKMOD_Music *)context;
     music->play_count = play_count;
-    music->module->initvolume = music->volume;
+    music->module->initvolume = (UBYTE)music->volume;
     mikmod.Player_Start(music->module);
     return MIKMOD_Seek(music, 0.0);
 }
@@ -380,6 +382,7 @@ static int MIKMOD_Play(void *context, int play_count)
 /* Return non-zero if a stream is currently playing */
 static SDL_bool MIKMOD_IsPlaying(void *context)
 {
+    (void)context;
     return mikmod.Player_Active() ? SDL_TRUE : SDL_FALSE;
 }
 
@@ -403,7 +406,7 @@ static int MIKMOD_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     /* This never fails, and always writes a full buffer */
     mikmod.VC_WriteBytes(music->buffer, music->buffer_size);
 
-    if (SDL_AudioStreamPut(music->stream, music->buffer, music->buffer_size) < 0) {
+    if (SDL_AudioStreamPut(music->stream, music->buffer, (int)music->buffer_size) < 0) {
         return -1;
     }
 
@@ -432,6 +435,7 @@ static int MIKMOD_GetAudio(void *context, void *data, int bytes)
 /* Jump (seek) to a given position (time is in seconds) */
 static int MIKMOD_Seek(void *context, double position)
 {
+    (void)context;
     mikmod.Player_SetPosition((UWORD)position);
     return 0;
 }
@@ -439,6 +443,7 @@ static int MIKMOD_Seek(void *context, double position)
 /* Stop playback of a stream previously started with MOD_play() */
 static void MIKMOD_Stop(void *context)
 {
+    (void)context;
     mikmod.Player_Stop();
 }
 

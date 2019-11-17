@@ -164,7 +164,7 @@ void *MODPLUG_CreateFromRW(SDL_RWops *src, int freesrc)
         return NULL;
     }
 
-    music->stream = SDL_NewAudioStream((settings.mBits == 8) ? AUDIO_U8 : AUDIO_S16SYS, settings.mChannels, settings.mFrequency,
+    music->stream = SDL_NewAudioStream((settings.mBits == 8) ? AUDIO_U8 : AUDIO_S16SYS, (Uint8)settings.mChannels, settings.mFrequency,
                                        music_spec.format, music_spec.channels, music_spec.freq);
     if (!music->stream) {
         MODPLUG_Delete(music);
@@ -172,7 +172,7 @@ void *MODPLUG_CreateFromRW(SDL_RWops *src, int freesrc)
     }
 
     music->buffer_size = music_spec.samples * (settings.mBits / 8) * settings.mChannels;
-    music->buffer = SDL_malloc(music->buffer_size);
+    music->buffer = SDL_malloc((size_t)music->buffer_size);
     if (!music->buffer) {
         MODPLUG_Delete(music);
         return NULL;
@@ -202,7 +202,14 @@ void *MODPLUG_CreateFromRW(SDL_RWops *src, int freesrc)
 static void MODPLUG_SetVolume(void *context, int volume)
 {
     MODPLUG_Music *music = (MODPLUG_Music *)context;
-    modplug.ModPlug_SetMasterVolume(music->file, volume*4);
+    modplug.ModPlug_SetMasterVolume(music->file, (unsigned int)volume * 2); /* 0-512, reduced to 0-256 to prevent clipping */
+}
+
+/* Get the volume for a modplug stream */
+static int MODPLUG_GetVolume(void *context)
+{
+    MODPLUG_Music *music = (MODPLUG_Music *)context;
+    return music->volume;
 }
 
 /* Start playback of a given modplug stream */

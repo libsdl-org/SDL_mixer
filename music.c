@@ -77,6 +77,38 @@ static int num_decoders = 0;
 /* Semicolon-separated SoundFont paths */
 static char* soundfont_paths = NULL;
 
+/*
+ * public domain strtok_r() by Charlie Gordon
+ *
+ *   from comp.lang.c  9/14/2007
+ *
+ *      http://groups.google.com/group/comp.lang.c/msg/2ab1ecbb86646684
+ *
+ *     (Declaration that it's public domain):
+ *      http://groups.google.com/group/comp.lang.c/msg/7c7b39328fefab9c
+ */
+char *Mix_strtok_safe(char *str, const char *delim, char **nextp)
+{
+    char *ret;
+    if (str == NULL) {
+        str = *nextp;
+    }
+
+    str += strspn(str, delim);
+    if (*str == '\0') {
+        return NULL;
+    }
+    ret = str;
+
+    str += strcspn(str, delim);
+    if (*str) {
+        *str++ = '\0';
+    }
+
+    *nextp = str;
+    return ret;
+}
+
 /* Interfaces for the various music interfaces, ordered by priority */
 static Mix_MusicInterface *s_music_interfaces[] =
 {
@@ -219,6 +251,7 @@ int music_pcm_getaudio(void *context, void *data, int bytes, int volume,
 /* Mixing function */
 void SDLCALL music_mixer(void *udata, Uint8 *stream, int len)
 {
+    MIX_UNUSED(udata);
     while (music_playing && music_active && len > 0) {
         /* Handle fading */
         if (music_playing->fading != MIX_NO_FADING) {
@@ -273,7 +306,8 @@ void SDLCALL music_mixer(void *udata, Uint8 *stream, int len)
 /* Load the music interface libraries for a given music type */
 SDL_bool load_music_type(Mix_MusicType type)
 {
-    int i, loaded = 0;
+    size_t i;
+    int loaded = 0;
     for (i = 0; i < SDL_arraysize(s_music_interfaces); ++i) {
         Mix_MusicInterface *interface = s_music_interfaces[i];
         if (interface->type != type) {
@@ -302,7 +336,8 @@ SDL_bool load_music_type(Mix_MusicType type)
 /* Open the music interfaces for a given music type */
 SDL_bool open_music_type(Mix_MusicType type)
 {
-    int i, opened = 0;
+    size_t i;
+    int opened = 0;
     SDL_bool use_native_midi = SDL_FALSE;
 
     if (!music_spec.format) {
@@ -396,7 +431,7 @@ void open_music(const SDL_AudioSpec *spec)
 /* Return SDL_TRUE if the music type is available */
 SDL_bool has_music(Mix_MusicType type)
 {
-    int i;
+    size_t i;
     for (i = 0; i < SDL_arraysize(s_music_interfaces); ++i) {
         Mix_MusicInterface *interface = s_music_interfaces[i];
         if (interface->type != type) {
@@ -463,7 +498,7 @@ Mix_MusicType detect_music_type(SDL_RWops *src)
 /* Load a music file */
 Mix_Music *Mix_LoadMUS(const char *file)
 {
-    int i;
+    size_t i;
     void *context;
     char *ext;
     Mix_MusicType type;
@@ -551,7 +586,7 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *src, int freesrc)
 
 Mix_Music *Mix_LoadMUSType_RW(SDL_RWops *src, Mix_MusicType type, int freesrc)
 {
-    int i;
+    size_t i;
     void *context;
     Sint64 start;
 
@@ -746,6 +781,7 @@ int Mix_FadeInMusicPos(Mix_Music *music, int loops, int ms, double position)
         loops = 1;
     }
     retval = music_internal_play(music, loops, position);
+    /* Set music as active */
     music_active = (retval == 0);
     Mix_UnlockAudio();
 
@@ -994,7 +1030,7 @@ int Mix_GetSynchroValue(void)
 /* Uninitialize the music interfaces */
 void close_music(void)
 {
-    int i;
+    size_t i;
 
     Mix_HaltMusic();
 
@@ -1028,7 +1064,7 @@ void close_music(void)
 /* Unload the music interface libraries */
 void unload_music(void)
 {
-    int i;
+    size_t i;
     for (i = 0; i < SDL_arraysize(s_music_interfaces); ++i) {
         Mix_MusicInterface *interface = s_music_interfaces[i];
         if (!interface || !interface->loaded) {
@@ -1108,19 +1144,22 @@ int Mix_EachSoundFont(int (SDLCALL *function)(const char*, void*), void *data)
         return 0;
     }
 
-#if defined(__MINGW32__) || defined(__MINGW64__) || defined(__WATCOMC__)
-    for (path = strtok(paths, ";"); path; path = strtok(NULL, ";")) {
-#elif defined(_WIN32)
-    for (path = strtok_s(paths, ";", &context); path; path = strtok_s(NULL, ";", &context)) {
+#if defined(_WIN32)
+#define SEPARATOR ";"
 #else
-    for (path = strtok_r(paths, ":;", &context); path; path = strtok_r(NULL, ":;", &context)) {
+#define SEPARATOR ":;"
 #endif
+    for (path = Mix_strtok_safe(paths, SEPARATOR, &context);
+         path;
+         path = Mix_strtok_safe(NULL, SEPARATOR, &context))
+    {
         if (!function(path, data)) {
             continue;
         } else {
             soundfonts_found++;
         }
     }
+#undef SEPARATOR
 
     SDL_free(paths);
     if (soundfonts_found > 0)

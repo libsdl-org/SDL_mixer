@@ -132,7 +132,7 @@ static int voc_get_block(SDL_RWops *src, vs_t *v, SDL_AudioSpec *spec)
             return 1;  /* assume that's the end of the file. */
 
         /* Size is an 24-bit value. Ugh. */
-        sblen = ((bits24[0]) | (bits24[1] << 8) | (bits24[2] << 16));
+        sblen = (Uint32)((bits24[0]) | (bits24[1] << 8) | (bits24[2] << 16));
 
         switch(block)
         {
@@ -150,7 +150,7 @@ static int voc_get_block(SDL_RWops *src, vs_t *v, SDL_AudioSpec *spec)
                         return 0;
                     }
 
-                    if ((v->rate != -1) && (uc != v->rate))
+                    if (((Sint32)v->rate != -1) && (uc != v->rate))
                     {
                         SDL_SetError("VOC sample rate codes differ");
                         return 0;
@@ -184,13 +184,13 @@ static int voc_get_block(SDL_RWops *src, vs_t *v, SDL_AudioSpec *spec)
                     SDL_SetError("VOC Sample rate is zero?");
                     return 0;
                 }
-                if ((v->rate != -1) && (new_rate_long != v->rate))
+                if (((Sint32)v->rate != -1) && (new_rate_long != v->rate))
                 {
                     SDL_SetError("VOC sample rate codes differ");
                     return 0;
                 }
                 v->rate = new_rate_long;
-                spec->freq = new_rate_long;
+                spec->freq = (int)new_rate_long;
 
                 if (SDL_RWread(src, &uc, sizeof (uc), 1) != 1)
                     return 0;
@@ -235,7 +235,7 @@ static int voc_get_block(SDL_RWops *src, vs_t *v, SDL_AudioSpec *spec)
                  * different sample rate codes in silence.
                  * Adjust period.
                  */
-                if ((v->rate != -1) && (uc != v->rate))
+                if (((Sint32)v->rate != -1) && (uc != v->rate))
                     period = (Uint16)((period * (256 - uc))/(256 - v->rate));
                 else
                     v->rate = uc;
@@ -266,7 +266,7 @@ static int voc_get_block(SDL_RWops *src, vs_t *v, SDL_AudioSpec *spec)
                    SDL_SetError("VOC sample rate is zero");
                    return 0;
                 }
-                if ((v->rate != -1) && (new_rate_short != v->rate))
+                if (((Sint32)v->rate != -1) && (new_rate_short != v->rate))
                 {
                    SDL_SetError("VOC sample rate codes differ");
                    return 0;
@@ -360,7 +360,7 @@ static int voc_read(SDL_RWops *src, vs_t *v, Uint8 *buf, SDL_AudioSpec *spec)
         }
     }
 
-    return done;
+    return (int)done;
 } /* voc_read */
 
 
@@ -380,7 +380,7 @@ SDL_AudioSpec *Mix_LoadVOC_RW (SDL_RWops *src, int freesrc,
     if (!voc_check_header(src))
         goto done;
 
-    v.rate = -1;
+    v.rate = ~(Uint32)0;
     v.rest = 0;
     v.has_extended = 0;
     *audio_buf = NULL;
@@ -390,7 +390,7 @@ SDL_AudioSpec *Mix_LoadVOC_RW (SDL_RWops *src, int freesrc,
     if (!voc_get_block(src, &v, spec))
         goto done;
 
-    if (v.rate == -1)
+    if ((Sint32)v.rate == -1)
     {
         SDL_SetError("VOC data had no sound!");
         goto done;
@@ -432,7 +432,7 @@ SDL_AudioSpec *Mix_LoadVOC_RW (SDL_RWops *src, int freesrc,
 
     /* Don't return a buffer that isn't a multiple of samplesize */
     samplesize = ((spec->format & 0xFF)/8)*spec->channels;
-    *audio_len &= ~(samplesize-1);
+    *audio_len &= (Uint32)~(samplesize-1);
 
 done:
     if (freesrc && src) {
