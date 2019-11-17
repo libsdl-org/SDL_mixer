@@ -415,10 +415,12 @@ static void flac_metadata_music_cb(
         music->stream = SDL_NewAudioStream(AUDIO_S16SYS, channels, music->sample_rate,
                                           music_spec.format, music_spec.channels, music_spec.freq);
     } else if (metadata->type == FLAC__METADATA_TYPE_VORBIS_COMMENT) {
+        int i;
+
         vc  = &metadata->data.vorbis_comment;
         rate = music->sample_rate;
 
-        for (int i = 0; i < vc->num_comments; ++i) {
+        for (i = 0; i < vc->num_comments; ++i) {
             param = SDL_strdup(vc->comments[i].entry);
             argument = param;
             value = SDL_strchr(param, '=');
