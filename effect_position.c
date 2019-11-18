@@ -1866,11 +1866,16 @@ static void set_amplitudes(int channels, int angle, int room_angle)
         }
     }
 
-    if (left < 0) left = 0; if (left > 255) left = 255;
-    if (right < 0) right = 0; if (right > 255) right = 255;
-    if (left_rear < 0) left_rear = 0; if (left_rear > 255) left_rear = 255;
-    if (right_rear < 0) right_rear = 0; if (right_rear > 255) right_rear = 255;
-    if (center < 0) center = 0; if (center > 255) center = 255;
+    if (left < 0) left = 0;
+    if (left > 255) left = 255;
+    if (right < 0) right = 0;
+    if (right > 255) right = 255;
+    if (left_rear < 0) left_rear = 0;
+    if (left_rear > 255) left_rear = 255;
+    if (right_rear < 0) right_rear = 0;
+    if (right_rear > 255) right_rear = 255;
+    if (center < 0) center = 0;
+    if (center > 255) center = 255;
 
     if (room_angle == 90) {
         speaker_amplitude[0] = (Uint8)left_rear;
