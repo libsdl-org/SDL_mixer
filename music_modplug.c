@@ -202,7 +202,7 @@ void *MODPLUG_CreateFromRW(SDL_RWops *src, int freesrc)
 static void MODPLUG_SetVolume(void *context, int volume)
 {
     MODPLUG_Music *music = (MODPLUG_Music *)context;
-    modplug.ModPlug_SetMasterVolume(music->file, (unsigned int)volume * 4);
+    modplug.ModPlug_SetMasterVolume(music->file, (unsigned int)volume * 2); /* 0-512, reduced to 0-256 to prevent clipping */
 }
 
 /* Start playback of a given modplug stream */
