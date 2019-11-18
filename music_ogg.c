@@ -266,6 +266,7 @@ static void *OGG_CreateFromRW(SDL_RWops *src, int freesrc)
     int i;
     ogg_int64_t full_length;
     SDL_bool is_loop_length = SDL_FALSE;
+    long rate;
 
     music = (OGG_music *)SDL_calloc(1, sizeof *music);
     if (!music) {
