@@ -130,12 +130,8 @@ int Mix_SetReverseStereo(int channel, int flip)
             Mix_SetError("Unsupported audio format");
             return(0);
         }
-
-        if (!flip) {
-            return(Mix_UnregisterEffect(channel, f));
-        } else {
-            return(Mix_RegisterEffect(channel, f, NULL, NULL));
-        }
+        if (!flip) return Mix_UnregisterEffect(channel, f);
+        return(Mix_RegisterEffect(channel, f, NULL, NULL));
     }
 
     Mix_SetError("Trying to reverse stereo on a non-stereo stream");
