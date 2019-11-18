@@ -226,7 +226,7 @@ static int OGG_UpdateSection(OGG_music *music)
 
 /* Parse time string of the form HH:MM:SS.mmm and return equivalent sample
  * position */
-static ogg_int64_t parse_time(char *time, ogg_int64_t samplerate_hz)
+static ogg_int64_t parse_time(char *time, long samplerate_hz)
 {
     char *num_start, *p;
     ogg_int64_t result = 0;
@@ -263,10 +263,10 @@ static void *OGG_CreateFromRW(SDL_RWops *src, int freesrc)
     OGG_music *music;
     ov_callbacks callbacks;
     vorbis_comment *vc;
-    int i;
+    long rate;
     ogg_int64_t full_length;
     SDL_bool is_loop_length = SDL_FALSE;
-    long rate;
+    int i;
 
     music = (OGG_music *)SDL_calloc(1, sizeof *music);
     if (!music) {
