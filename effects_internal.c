@@ -23,12 +23,8 @@
   These are some helper functions for the internal mixer special effects.
 */
 
-/* $Id$ */
 
-
-     /* ------ These are used internally only. Don't touch. ------ */
-
-
+/* ------ These are used internally only. Don't touch. ------ */
 
 #include <stdio.h>
 #include <stdlib.h>
