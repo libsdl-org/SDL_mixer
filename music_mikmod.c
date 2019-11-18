@@ -195,7 +195,7 @@ static int MIKMOD_Open(const SDL_AudioSpec *spec)
     if (spec->channels > 1) {
         *mikmod.md_mode |= DMODE_STEREO;
     }
-    *mikmod.md_mixfreq = (UWORD)spec->freq;
+    *mikmod.md_mixfreq = (spec->freq <= 65535) ? (UWORD)spec->freq : 44100;
     *mikmod.md_device  = 0;
     *mikmod.md_volume  = 96;
     *mikmod.md_musicvolume = 128;
