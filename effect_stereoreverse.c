@@ -24,8 +24,6 @@
   effect callback API. They are meant for speed over quality.  :)
 */
 
-/* $Id$ */
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -50,7 +48,6 @@
 */
 
 
-
 /*
  * Stereo reversal effect...this one's pretty straightforward...
  */
@@ -72,7 +69,6 @@ static void SDLCALL _Eff_reversestereo32(int chan, void *stream, int len, void *
     }
 }
 
-
 static void SDLCALL _Eff_reversestereo16(int chan, void *stream, int len, void *udata)
 {
     /* 16 bits * 2 channels. */
@@ -86,7 +82,6 @@ static void SDLCALL _Eff_reversestereo16(int chan, void *stream, int len, void *
         *ptr = (((*ptr) & 0xFFFF0000) >> 16) | (((*ptr) & 0x0000FFFF) << 16);
     }
 }
-
 
 static void SDLCALL _Eff_reversestereo8(int chan, void *stream, int len, void *udata)
 {
@@ -148,7 +143,6 @@ int Mix_SetReverseStereo(int channel, int flip)
 
     /* return(1); */
 }
-
 
 /* end of effect_stereoreverse.c ... */
 
