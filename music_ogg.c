@@ -92,7 +92,7 @@ static int OGG_Load(void)
         FUNCTION_LOADER(ov_clear, int (*)(OggVorbis_File *))
         FUNCTION_LOADER(ov_info, vorbis_info *(*)(OggVorbis_File *,int))
         FUNCTION_LOADER(ov_comment, vorbis_comment *(*)(OggVorbis_File *,int))
-        FUNCTION_LOADER(ov_open_callbacks, int (*)(void *, OggVorbis_File *, const char *, long, ov_callbacks))
+        FUNCTION_LOADER(ov_open_callbacks, int (*)(void *,OggVorbis_File *,const char *,long,ov_callbacks))
         FUNCTION_LOADER(ov_pcm_total, ogg_int64_t (*)(OggVorbis_File *,int))
 #ifdef OGG_USE_TREMOR
         FUNCTION_LOADER(ov_read, long (*)(OggVorbis_File *,char *,int,int *))
@@ -138,7 +138,6 @@ typedef struct {
     ogg_int64_t loop_start;
     ogg_int64_t loop_end;
     ogg_int64_t loop_len;
-    ogg_int64_t channels;
 } OGG_music;
 
 
@@ -403,7 +402,7 @@ static int OGG_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 
     pcmPos = vorbis.ov_pcm_tell(&music->vf);
     if ((music->loop == 1) && (music->play_count != 0) && (pcmPos >= music->loop_end)) {
-        amount -= (int)((pcmPos - music->loop_end) * music->channels) * (int)sizeof(Sint16);
+        amount -= (int)((pcmPos - music->loop_end) * music->vi.channels) * (int)sizeof(Sint16);
         result = vorbis.ov_pcm_seek(&music->vf, music->loop_start);
         if (result < 0) {
             set_ov_error("ov_pcm_seek", result);
