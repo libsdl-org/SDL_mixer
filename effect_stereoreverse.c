@@ -136,12 +136,10 @@ int Mix_SetReverseStereo(int channel, int flip)
         } else {
             return(Mix_RegisterEffect(channel, f, NULL, NULL));
         }
-    } else {
-        Mix_SetError("Trying to reverse stereo on a non-stereo stream");
-        return(0);
     }
 
-    /* return(1); */
+    Mix_SetError("Trying to reverse stereo on a non-stereo stream");
+    return(0);
 }
 
 /* end of effect_stereoreverse.c ... */
