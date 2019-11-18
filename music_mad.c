@@ -308,8 +308,8 @@ static SDL_INLINE SDL_bool is_apetag(const unsigned char *data, size_t length)
 static SDL_INLINE long get_ape_len(const unsigned char *data, long datalen, Uint32 *version)
 {
     long size = (long)((data[15]<<24) | (data[14]<<16) | (data[13]<<8) | data[12]);
-    MIX_UNUSED(datalen);
     *version = (Uint32)((data[11]<<24) | (data[10]<<16) | (data[9]<<8) | data[8]);
+    (void)datalen;
     return size; /* caller will handle the additional v2 header length */
 }
 

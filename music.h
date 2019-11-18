@@ -23,10 +23,6 @@
 #ifndef MUSIC_H_
 #define MUSIC_H_
 
-/* Prevent "Unused" warning on specified object */
-
-#define MIX_UNUSED(object) (void)object
-
 /* Supported music APIs, in order of preference */
 
 typedef enum
@@ -123,7 +119,7 @@ extern void unload_music(void);
 extern char *music_cmd;
 extern SDL_AudioSpec music_spec;
 
-/* Saafe strtok implementation */
+/* Safe strtok implementation */
 extern char *Mix_strtok_safe(char *str, const char *delim, char **nextp);
 
 #endif /* MUSIC_H_ */

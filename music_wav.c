@@ -427,16 +427,16 @@ static SDL_bool LoadWAVMusic(WAV_Music *wave)
     Uint32 chunk_length;
     SDL_bool found_FMT = SDL_FALSE;
     SDL_bool found_DATA = SDL_FALSE;
-
     /* WAV magic header */
     Uint32 wavelen;
     Uint32 WAVEmagic;
-    MIX_UNUSED(WAVEmagic);
-    MIX_UNUSED(wavelen);
 
     /* Check the magic header */
     wavelen = SDL_ReadLE32(src);
     WAVEmagic = SDL_ReadLE32(src);
+
+    (void)wavelen;   /* unused */
+    (void)WAVEmagic; /* unused */
 
     /* Read the chunks */
     for (; ;) {

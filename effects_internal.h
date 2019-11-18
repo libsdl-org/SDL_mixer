@@ -30,11 +30,6 @@
 
 #include "SDL_mixer.h"
 
-/* Prevent "Unused" warning on specified object */
-#ifndef MIX_UNUSED
-#define MIX_UNUSED(object) (void)object
-#endif
-
 extern int _Mix_effects_max_speed;
 extern void *_Eff_volume_table;
 void *_Eff_build_volume_table_u8(void);

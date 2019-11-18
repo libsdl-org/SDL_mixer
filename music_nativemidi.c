@@ -49,31 +49,31 @@ static int NATIVEMIDI_Play(void *context, int play_count)
 
 static void NATIVEMIDI_SetVolume(void *context, int volume)
 {
-    MIX_UNUSED(context);
+    (void)context;
     native_midi_setvolume(volume);
 }
 
 static SDL_bool NATIVEMIDI_IsPlaying(void *context)
 {
-    MIX_UNUSED(context);
+    (void)context;
     return native_midi_active() ? SDL_TRUE : SDL_FALSE;
 }
 
 static void NATIVEMIDI_Pause(void *context)
 {
-    MIX_UNUSED(context);
+    (void)context;
     native_midi_pause();
 }
 
 static void NATIVEMIDI_Resume(void *context)
 {
-    MIX_UNUSED(context);
+    (void)context;
     native_midi_resume();
 }
 
 static void NATIVEMIDI_Stop(void *context)
 {
-    MIX_UNUSED(context);
+    (void)context;
     native_midi_stop();
 }
 

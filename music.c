@@ -251,7 +251,8 @@ int music_pcm_getaudio(void *context, void *data, int bytes, int volume,
 /* Mixing function */
 void SDLCALL music_mixer(void *udata, Uint8 *stream, int len)
 {
-    MIX_UNUSED(udata);
+    (void)udata;
+
     while (music_playing && music_active && len > 0) {
         /* Handle fading */
         if (music_playing->fading != MIX_NO_FADING) {
