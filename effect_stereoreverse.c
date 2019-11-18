@@ -61,6 +61,7 @@ static void SDLCALL _Eff_reversestereo32(int chan, void *stream, int len, void *
     Uint32 *ptr = (Uint32 *) stream;
     Uint32 tmp;
     int i;
+
     MIX_UNUSED(chan);
     MIX_UNUSED(udata);
 
@@ -77,6 +78,7 @@ static void SDLCALL _Eff_reversestereo16(int chan, void *stream, int len, void *
     /* 16 bits * 2 channels. */
     Uint32 *ptr = (Uint32 *) stream;
     int i;
+
     MIX_UNUSED(chan);
     MIX_UNUSED(udata);
 
@@ -91,11 +93,12 @@ static void SDLCALL _Eff_reversestereo8(int chan, void *stream, int len, void *u
     /* 8 bits * 2 channels. */
     Uint32 *ptr = (Uint32 *) stream;
     int i;
+
     MIX_UNUSED(chan);
     MIX_UNUSED(udata);
 
     /* get the last two bytes if len is not divisible by four... */
-    if ((size_t)len % sizeof (Uint32) != 0) {
+    if (len % (int)sizeof(Uint32) != 0) {
         Uint16 *p = (Uint16 *) (((Uint8 *) stream) + (len - 2));
         *p = (Uint16)((((*p) & 0xFF00) >> 8) | (((*ptr) & 0x00FF) << 8));
         len -= 2;

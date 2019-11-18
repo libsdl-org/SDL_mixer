@@ -128,7 +128,7 @@ static void SDLCALL _Eff_position_u8(int chan, void *stream, int len, void *udat
          *  a len divisible by 2 here), then left_f and right_f are always
          *  1.0, and are therefore throwaways.
          */
-    if ((size_t)len % sizeof (Uint16) != 0) {
+    if (len % (int)sizeof(Uint16) != 0) {
         *ptr = (Uint8) (((float) *ptr) * args->distance_f);
         ptr++;
         len--;
@@ -166,7 +166,7 @@ static void SDLCALL _Eff_position_u8_c4(int chan, void *stream, int len, void *u
          *  a len divisible by 2 here), then left_f and right_f are always
          *  1.0, and are therefore throwaways.
          */
-    if ((size_t)len % sizeof (Uint16) != 0) {
+    if (len % (int)sizeof(Uint16) != 0) {
         *ptr = (Uint8) (((float) *ptr) * args->distance_f);
         ptr++;
         len--;
@@ -252,7 +252,7 @@ static void SDLCALL _Eff_position_u8_c6(int chan, void *stream, int len, void *u
          *  a len divisible by 2 here), then left_f and right_f are always
          *  1.0, and are therefore throwaways.
          */
-    if ((size_t)len % sizeof (Uint16) != 0) {
+    if (len % (int)sizeof(Uint16) != 0) {
         *ptr = (Uint8) (((float) *ptr) * args->distance_f);
         ptr++;
         len--;
@@ -384,7 +384,7 @@ static void SDLCALL _Eff_position_table_u8(int chan, void *stream, int len, void
          *  volume 255, and are therefore throwaways. Still, we have to
          *  be sure not to overrun the audio buffer...
          */
-    while ((size_t)len % sizeof (Uint32) != 0) {
+    while (len % (int)sizeof(Uint32) != 0) {
         *ptr = d[l[*ptr]];
         ptr++;
         if (args->channels > 1) {
@@ -425,7 +425,7 @@ static void SDLCALL _Eff_position_s8(int chan, void *stream, int len, void *udat
          *  a len divisible by 2 here), then left_f and right_f are always
          *  1.0, and are therefore throwaways.
          */
-    if (len % sizeof (Sint16) != 0) {
+    if (len % (int)sizeof(Sint16) != 0) {
         *ptr = (Sint8) (((float) *ptr) * args->distance_f);
         ptr++;
         len--;
@@ -458,7 +458,7 @@ static void SDLCALL _Eff_position_s8_c4(int chan, void *stream, int len, void *u
          *  a len divisible by 2 here), then left_f and right_f are always
          *  1.0, and are therefore throwaways.
          */
-    if ((size_t)len % sizeof (Sint16) != 0) {
+    if (len % (int)sizeof(Sint16) != 0) {
         *ptr = (Sint8) (((float) *ptr) * args->distance_f);
         ptr++;
         len--;
@@ -505,7 +505,7 @@ static void SDLCALL _Eff_position_s8_c6(int chan, void *stream, int len, void *u
          *  a len divisible by 2 here), then left_f and right_f are always
          *  1.0, and are therefore throwaways.
          */
-    if (len % sizeof (Sint16) != 0) {
+    if (len % (int)sizeof(Sint16) != 0) {
         *ptr = (Sint8) (((float) *ptr) * args->distance_f);
         ptr++;
         len--;
@@ -578,8 +578,7 @@ static void SDLCALL _Eff_position_table_s8(int chan, void *stream, int len, void
         r = temp;
     }
 
-
-    while ((size_t)len % sizeof (Uint32) != 0) {
+    while (len % (int)sizeof(Uint32) != 0) {
         *ptr = d[l[*ptr]];
         ptr++;
         if (args->channels > 1) {
@@ -605,8 +604,6 @@ static void SDLCALL _Eff_position_table_s8(int chan, void *stream, int len, void
 #endif
         ++p;
     }
-
-
 }
 
 
@@ -759,10 +756,11 @@ static void SDLCALL _Eff_position_s16lsb(int chan, void *stream, int len, void *
     volatile position_args *args = (volatile position_args *) udata;
     Sint16 *ptr = (Sint16 *) stream;
     int i;
+
     MIX_UNUSED(chan);
 
 #if 0
-    if (len % (sizeof(Sint16) * 2)) {
+    if (len % (int)(sizeof(Sint16) * 2)) {
         fprintf(stderr,"Not an even number of frames! len=%d\n", len);
         return;
     }
@@ -1158,10 +1156,11 @@ static void SDLCALL _Eff_position_s32lsb(int chan, void *stream, int len, void *
     volatile position_args *args = (volatile position_args *) udata;
     Sint32 *ptr = (Sint32 *) stream;
     int i;
+
     MIX_UNUSED(chan);
 
 #if 0
-    if (len % (sizeof(Sint32) * 2)) {
+    if (len % (int)(sizeof(Sint32) * 2)) {
         fprintf(stderr,"Not an even number of frames! len=%d\n", len);
         return;
     }
@@ -1354,6 +1353,7 @@ static void SDLCALL _Eff_position_s32msb_c6(int chan, void *stream, int len, voi
     volatile position_args *args = (volatile position_args *) udata;
     Sint32 *ptr = (Sint32 *) stream;
     int i;
+
     MIX_UNUSED(chan);
 
     for (i = 0; i < len; i += sizeof (Sint32) * 6) {
