@@ -119,9 +119,6 @@ extern void unload_music(void);
 extern char *music_cmd;
 extern SDL_AudioSpec music_spec;
 
-/* Safe strtok implementation */
-extern char *Mix_strtok_safe(char *str, const char *delim, char **nextp);
-
 #endif /* MUSIC_H_ */
 
 /* vi: set ts=4 sw=4 expandtab: */

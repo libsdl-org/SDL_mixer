@@ -77,38 +77,6 @@ static int num_decoders = 0;
 /* Semicolon-separated SoundFont paths */
 static char* soundfont_paths = NULL;
 
-/*
- * public domain strtok_r() by Charlie Gordon
- *
- *   from comp.lang.c  9/14/2007
- *
- *      http://groups.google.com/group/comp.lang.c/msg/2ab1ecbb86646684
- *
- *     (Declaration that it's public domain):
- *      http://groups.google.com/group/comp.lang.c/msg/7c7b39328fefab9c
- */
-char *Mix_strtok_safe(char *str, const char *delim, char **nextp)
-{
-    char *ret;
-    if (str == NULL) {
-        str = *nextp;
-    }
-
-    str += strspn(str, delim);
-    if (*str == '\0') {
-        return NULL;
-    }
-    ret = str;
-
-    str += strcspn(str, delim);
-    if (*str) {
-        *str++ = '\0';
-    }
-
-    *nextp = str;
-    return ret;
-}
-
 /* Interfaces for the various music interfaces, ordered by priority */
 static Mix_MusicInterface *s_music_interfaces[] =
 {
@@ -1129,6 +1097,38 @@ const char* Mix_GetSoundFonts(void)
     return NULL;
 }
 
+/*
+ * public domain strtok_r() by Charlie Gordon
+ *
+ *   from comp.lang.c  9/14/2007
+ *
+ *      http://groups.google.com/group/comp.lang.c/msg/2ab1ecbb86646684
+ *
+ *     (Declaration that it's public domain):
+ *      http://groups.google.com/group/comp.lang.c/msg/7c7b39328fefab9c
+ */
+static char *_strtok_safe(char *str, const char *delim, char **nextp)
+{
+    char *ret;
+    if (str == NULL) {
+        str = *nextp;
+    }
+
+    str += strspn(str, delim);
+    if (*str == '\0') {
+        return NULL;
+    }
+    ret = str;
+
+    str += strcspn(str, delim);
+    if (*str) {
+        *str++ = '\0';
+    }
+
+    *nextp = str;
+    return ret;
+}
+
 int Mix_EachSoundFont(int (SDLCALL *function)(const char*, void*), void *data)
 {
     char *context, *path, *paths;
@@ -1150,9 +1150,8 @@ int Mix_EachSoundFont(int (SDLCALL *function)(const char*, void*), void *data)
 #else
 #define SEPARATOR ":;"
 #endif
-    for (path = Mix_strtok_safe(paths, SEPARATOR, &context);
-         path;
-         path = Mix_strtok_safe(NULL, SEPARATOR, &context))
+    for (path = _strtok_safe(paths, SEPARATOR, &context); path;
+         path = _strtok_safe(NULL,  SEPARATOR, &context))
     {
         if (!function(path, data)) {
             continue;
