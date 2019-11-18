@@ -1144,7 +1144,7 @@ int Mix_EachSoundFont(int (SDLCALL *function)(const char*, void*), void *data)
         return 0;
     }
 
-#if defined(_WIN32)
+#if defined(_WIN32)||defined(__OS2__)
 #define SEPARATOR ";"
 #else
 #define SEPARATOR ":;"
