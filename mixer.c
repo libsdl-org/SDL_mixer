@@ -262,7 +262,8 @@ mix_channels(void *udata, Uint8 *stream, int len)
     Uint8 *mix_input;
     int i, mixable, volume = MIX_MAX_VOLUME;
     Uint32 sdl_ticks;
-    MIX_UNUSED(udata);
+
+    (void)udata;
 
 #if SDL_VERSION_ATLEAST(1, 3, 0)
     /* Need to initialize the stream in SDL 1.3+ */
