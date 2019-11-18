@@ -421,7 +421,7 @@ static void flac_metadata_music_cb(
         rate = music->sample_rate;
 
         for (i = 0; i < vc->num_comments; ++i) {
-            param = SDL_strdup(vc->comments[i].entry);
+            param = SDL_strdup((const char *) vc->comments[i].entry);
             argument = param;
             value = SDL_strchr(param, '=');
 
