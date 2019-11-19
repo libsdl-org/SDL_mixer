@@ -68,7 +68,7 @@ case "$host" in
         BASE_LDFLAGS=""
         ;;
 esac
-BUILD_CFLAGS="$CFLAGS $CPPFLAGS"
+BUILD_CFLAGS="$CFLAGS $CPPFLAGS -I$srcdir/include -I$srcdir/src -I$srcdir/src/codecs"
 EXTRA_CFLAGS="$INCLUDE $BASE_CFLAGS"
 BUILD_LDFLAGS="$LDFLAGS"
 EXTRA_LDFLAGS="$BASE_LDFLAGS"
@@ -135,7 +135,7 @@ case "$host" in
 esac
 
 # Standard C sources
-SOURCES=`ls $srcdir/*.c | fgrep -v playwave.c | fgrep -v playmus.c`
+SOURCES=`ls $srcdir/src/*.c $srcdir/src/codecs/*.c | fgrep -v playwave.c | fgrep -v playmus.c`
 
 dnl set this to use on systems that use lib64 instead of lib
 base_libdir=`echo \${libdir} | sed 's/.*\/\(.*\)/\1/; q'`
@@ -359,8 +359,8 @@ if test x$enable_music_midi = xyes; then
 AC_HELP_STRING([--enable-music-midi-timidity], [enable timidity MIDI output [[default=yes]]]),
                   [], [enable_music_midi_timidity=yes])
     if test x$enable_music_midi_timidity = xyes; then
-        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MID_TIMIDITY -I\$(srcdir)/timidity"
-        SOURCES="$SOURCES $srcdir/timidity/*.c"
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MID_TIMIDITY -I\$(srcdir)/src/codecs/timidity"
+        SOURCES="$SOURCES $srcdir/src/codecs/timidity/*.c"
     fi
     AC_ARG_ENABLE([music-midi-native],
 AC_HELP_STRING([--enable-music-midi-native], [enable native MIDI music output [[default=yes]]]),
@@ -381,16 +381,16 @@ AC_HELP_STRING([--enable-music-midi-native], [enable native MIDI music output [[
                 ;;
             *-*-haiku*)
                 use_music_midi_native=yes_cpp
-                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lmidi" 
+                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lmidi"
                 ;;
         esac
         if test x$use_music_midi_native = xyes; then
-            EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MID_NATIVE -I\$(srcdir)/native_midi"
-            SOURCES="$SOURCES $srcdir/native_midi/*.c"
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MID_NATIVE -I\$(srcdir)/src/codecs/native_midi"
+            SOURCES="$SOURCES $srcdir/src/codecs/native_midi/*.c"
         elif test x$use_music_midi_native = xyes_cpp; then
-            EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MID_NATIVE -I\$(srcdir)/native_midi"
-            SOURCES="$SOURCES $srcdir/native_midi/*.c"
-            SOURCES_CXX="$SOURCES_CXX $srcdir/native_midi/*.cpp"
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MID_NATIVE -I\$(srcdir)/src/codecs/native_midi"
+            SOURCES="$SOURCES $srcdir/src/codecs/native_midi/*.c"
+            SOURCES_CXX="$SOURCES_CXX $srcdir/src/codecs/native_midi/*.cpp"
         fi
     fi
     AC_ARG_ENABLE([music-midi-fluidsynth],
@@ -541,7 +541,7 @@ if test x$enable_music_flac = xyes; then
     if test x$have_flac_ver = xyes; then
         AC_CHECK_HEADER([FLAC/stream_decoder.h], [have_flac_hdr=yes])
         AC_CHECK_LIB([FLAC], [FLAC__stream_decoder_new], [have_flac_lib=yes])
-        if test x$have_flac_hdr = xyes -a x$have_flac_lib = xyes; then    
+        if test x$have_flac_hdr = xyes -a x$have_flac_lib = xyes; then
             case "$host" in
                 *-*-darwin*)
                     flac_lib=[`find_lib libFLAC.dylib`]
@@ -768,7 +768,7 @@ $PLAYWAVE_DEPENDS
 
 -include \$(PLAYMUS_OBJECTS:.lo=.d)
 $PLAYMUS_DEPENDS
-__EOF__ 
+__EOF__
 ], [
 DEPENDS="$DEPENDS"
 VERSION_DEPENDS="$VERSION_DEPENDS"

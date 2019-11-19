@@ -4,7 +4,6 @@ project(SDL_mixer C)
 
 if (ANDROID)
 
-
     # FIXME: missing CMakeLists.txt for MPG123
     set(SUPPORT_MP3_MPG123 OFF CACHE BOOL "" FORCE)
 
@@ -14,14 +13,20 @@ if (ANDROID)
     option(SUPPORT_MOD_MODPLUG "Support loading MOD music via modplug" OFF)
     option(SUPPORT_MID_TIMIDITY "Support TiMidity" OFF)
 
+    include_directories(include src src/codecs)
+
     add_library(SDL2_mixer SHARED)
 
     target_sources(SDL2_mixer PRIVATE
-            effect_position.c effects_internal.c
-            effect_stereoreverse.c load_aiff.c load_voc.c mixer.c music.c
-            music_cmd.c music_flac.c music_fluidsynth.c music_mad.c
-            music_mikmod.c music_modplug.c music_mpg123.c music_nativemidi.c
-            music_ogg.c music_opus.c music_timidity.c music_wav.c)
+            src/effect_position.c src/effects_internal.c src/effect_stereoreverse.c
+            src/mixer.c src/music.c
+            src/codecs/load_aiff.c src/codecs/load_voc.c
+            src/codecs/music_cmd.c src/codecs/music_flac.c
+            src/codecs/music_fluidsynth.c src/codecs/music_mad.c
+            src/codecs/music_mikmod.c src/codecs/music_modplug.c
+            src/codecs/music_mpg123.c src/codecs/music_nativemidi.c
+            src/codecs/music_ogg.c src/codecs/music_opus.c
+            src/codecs/music_timidity.c src/codecs/music_wav.c)
 
     if (SUPPORT_FLAC)
         add_definitions(-DMUSIC_FLAC)

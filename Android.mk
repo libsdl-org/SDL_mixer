@@ -20,7 +20,7 @@ MODPLUG_LIBRARY_PATH := external/libmodplug-0.8.9.0
 
 # Enable this if you want to support TiMidity
 SUPPORT_MID_TIMIDITY ?= true
-TIMIDITY_LIBRARY_PATH := timidity
+TIMIDITY_LIBRARY_PATH := src/codecs/timidity
 
 
 # Build the library
@@ -57,7 +57,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := SDL2_mixer
 
-LOCAL_SRC_FILES := $(notdir $(filter-out %/playmus.c %/playwave.c, $(wildcard $(LOCAL_PATH)/*.c))) \
+LOCAL_SRC_FILES := $(notdir $(filter-out %/playmus.c %/playwave.c, $(wildcard $(LOCAL_PATH)/src/*.c), $(wildcard $(LOCAL_PATH)/src/codecs/*.c)) \
 
 LOCAL_CFLAGS :=
 LOCAL_LDLIBS :=
