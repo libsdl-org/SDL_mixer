@@ -216,6 +216,7 @@ static int WAV_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     pos = SDL_RWtell(music->src);
     stop = music->stop;
     loop = NULL;
+    loop_start = 0; /* silence warnings */
     for (i = 0; i < music->numloops; ++i) {
         loop = &music->loops[i];
         if (loop->active) {
