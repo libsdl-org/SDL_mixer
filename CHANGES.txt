@@ -1,4 +1,8 @@
 2.0.5:
+Vitaly Novichkov - Tue Nov 19 12:36:40 2019
+ * Reorganized source tree layout
+Ozkan Sezer - Sun Nov 17 23:10:10 2019
+ * Updated external libraries with multiple bug / security fixes
 Michael Day - Sat Nov 16 22:11:29 PST 2019
  * Added looping support for FLAC files
 
