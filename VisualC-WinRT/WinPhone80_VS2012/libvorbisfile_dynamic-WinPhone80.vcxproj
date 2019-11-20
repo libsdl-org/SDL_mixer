@@ -82,14 +82,14 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalUsingDirectories>$(WindowsSDK_MetadataPath);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>..\..\external\libvorbis-1.3.5\include;..\..\external\libogg-1.3.2\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\external\libvorbis-1.3.6\include;..\..\external\libogg-1.3.2\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.5\win32\vorbisfile.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.6\win32\vorbisfile.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -99,14 +99,14 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalUsingDirectories>$(WindowsSDK_MetadataPath);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>..\..\external\libvorbis-1.3.5\include;..\..\external\libogg-1.3.2\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\external\libvorbis-1.3.6\include;..\..\external\libogg-1.3.2\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.5\win32\vorbisfile.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.6\win32\vorbisfile.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
@@ -116,14 +116,14 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalUsingDirectories>$(WindowsSDK_MetadataPath);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>..\..\external\libvorbis-1.3.5\include;..\..\external\libogg-1.3.2\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\external\libvorbis-1.3.6\include;..\..\external\libogg-1.3.2\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.5\win32\vorbisfile.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.6\win32\vorbisfile.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
@@ -133,14 +133,14 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalUsingDirectories>$(WindowsSDK_MetadataPath);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>..\..\external\libvorbis-1.3.5\include;..\..\external\libogg-1.3.2\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\external\libvorbis-1.3.6\include;..\..\external\libogg-1.3.2\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.5\win32\vorbisfile.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.6\win32\vorbisfile.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -153,10 +153,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\external\libvorbis-1.3.5\lib\vorbisfile.c" />
+    <ClCompile Include="..\..\external\libvorbis-1.3.6\lib\vorbisfile.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\include\vorbis\vorbisfile.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\include\vorbis\vorbisfile.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="libogg_dynamic-WinPhone80.vcxproj">
