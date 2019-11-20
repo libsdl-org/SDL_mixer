@@ -113,7 +113,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.5\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.6\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBVORBISFILE_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -126,7 +126,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.5\win32\vorbisfile.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.6\win32\vorbisfile.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)libvorbisfile.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -136,7 +136,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.5\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.6\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WIN32_WCE;_DEBUG;_WINDOWS;_USRDLL;LIBVORBISFILE_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -149,7 +149,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.5\win32\vorbisfile.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.6\win32\vorbisfile.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)libvorbisfile.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -161,7 +161,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.5\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.6\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBVORBISFILE_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -174,7 +174,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.5\win32\vorbisfile.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.6\win32\vorbisfile.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)libvorbisfile.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -183,7 +183,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.5\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.6\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBVORBISFILE_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>
@@ -194,7 +194,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.5\win32\vorbisfile.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.6\win32\vorbisfile.def</ModuleDefinitionFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -204,7 +204,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.5\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.6\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WIN32_WCE;NDEBUG;_WINDOWS;_USRDLL;LIBVORBISFILE_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>
@@ -215,7 +215,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.5\win32\vorbisfile.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.6\win32\vorbisfile.def</ModuleDefinitionFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -227,7 +227,7 @@
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.5\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.6\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBVORBISFILE_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>
@@ -238,7 +238,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.5\win32\vorbisfile.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.6\win32\vorbisfile.def</ModuleDefinitionFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -247,10 +247,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\external\libvorbis-1.3.5\lib\vorbisfile.c" />
+    <ClCompile Include="..\..\external\libvorbis-1.3.6\lib\vorbisfile.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\include\vorbis\vorbisfile.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\include\vorbis\vorbisfile.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="libogg_dynamic-WinRT80.vcxproj">

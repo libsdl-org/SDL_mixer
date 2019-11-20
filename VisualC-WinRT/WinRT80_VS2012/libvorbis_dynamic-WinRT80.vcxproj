@@ -112,7 +112,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\external\libvorbis-1.3.5\include;..\..\external\libogg-1.3.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\external\libvorbis-1.3.6\include;..\..\external\libogg-1.3.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBVORBIS_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -126,7 +126,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.5\win32\vorbis.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.6\win32\vorbis.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)libvorbis.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -136,7 +136,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\external\libvorbis-1.3.5\include;..\..\external\libogg-1.3.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\external\libvorbis-1.3.6\include;..\..\external\libogg-1.3.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WIN32_WCE;_DEBUG;_WINDOWS;_USRDLL;LIBVORBIS_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -150,7 +150,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.5\win32\vorbis.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.6\win32\vorbis.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)libvorbis.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -162,7 +162,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\external\libvorbis-1.3.5\include;..\..\external\libogg-1.3.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\external\libvorbis-1.3.6\include;..\..\external\libogg-1.3.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBVORBIS_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -176,7 +176,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.5\win32\vorbis.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.6\win32\vorbis.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)libvorbis.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -189,7 +189,7 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>..\..\external\libvorbis-1.3.5\include;..\..\external\libogg-1.3.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\external\libvorbis-1.3.6\include;..\..\external\libogg-1.3.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBVORBIS_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling>
@@ -206,7 +206,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.5\win32\vorbis.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.6\win32\vorbis.def</ModuleDefinitionFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -220,7 +220,7 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>..\..\external\libvorbis-1.3.5\include;..\..\external\libogg-1.3.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\external\libvorbis-1.3.6\include;..\..\external\libogg-1.3.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WIN32_WCE;NDEBUG;_WINDOWS;_USRDLL;LIBVORBIS_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling>
@@ -237,7 +237,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.5\win32\vorbis.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.6\win32\vorbis.def</ModuleDefinitionFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -253,7 +253,7 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>..\..\external\libvorbis-1.3.5\include;..\..\external\libogg-1.3.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\external\libvorbis-1.3.6\include;..\..\external\libogg-1.3.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBVORBIS_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling>
@@ -270,7 +270,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.5\win32\vorbis.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>..\..\external\libvorbis-1.3.6\win32\vorbis.def</ModuleDefinitionFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -279,74 +279,74 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\external\libvorbis-1.3.5\lib\analysis.c" />
-    <ClCompile Include="..\..\external\libvorbis-1.3.5\lib\bitrate.c" />
-    <ClCompile Include="..\..\external\libvorbis-1.3.5\lib\block.c" />
-    <ClCompile Include="..\..\external\libvorbis-1.3.5\lib\codebook.c" />
-    <ClCompile Include="..\..\external\libvorbis-1.3.5\lib\envelope.c" />
-    <ClCompile Include="..\..\external\libvorbis-1.3.5\lib\floor0.c" />
-    <ClCompile Include="..\..\external\libvorbis-1.3.5\lib\floor1.c" />
-    <ClCompile Include="..\..\external\libvorbis-1.3.5\lib\info.c" />
-    <ClCompile Include="..\..\external\libvorbis-1.3.5\lib\lookup.c" />
-    <ClCompile Include="..\..\external\libvorbis-1.3.5\lib\lpc.c" />
-    <ClCompile Include="..\..\external\libvorbis-1.3.5\lib\lsp.c" />
-    <ClCompile Include="..\..\external\libvorbis-1.3.5\lib\mapping0.c" />
-    <ClCompile Include="..\..\external\libvorbis-1.3.5\lib\mdct.c" />
-    <ClCompile Include="..\..\external\libvorbis-1.3.5\lib\psy.c" />
-    <ClCompile Include="..\..\external\libvorbis-1.3.5\lib\registry.c" />
-    <ClCompile Include="..\..\external\libvorbis-1.3.5\lib\res0.c" />
-    <ClCompile Include="..\..\external\libvorbis-1.3.5\lib\sharedbook.c" />
-    <ClCompile Include="..\..\external\libvorbis-1.3.5\lib\smallft.c" />
-    <ClCompile Include="..\..\external\libvorbis-1.3.5\lib\synthesis.c" />
-    <ClCompile Include="..\..\external\libvorbis-1.3.5\lib\vorbisenc.c" />
-    <ClCompile Include="..\..\external\libvorbis-1.3.5\lib\window.c" />
+    <ClCompile Include="..\..\external\libvorbis-1.3.6\lib\analysis.c" />
+    <ClCompile Include="..\..\external\libvorbis-1.3.6\lib\bitrate.c" />
+    <ClCompile Include="..\..\external\libvorbis-1.3.6\lib\block.c" />
+    <ClCompile Include="..\..\external\libvorbis-1.3.6\lib\codebook.c" />
+    <ClCompile Include="..\..\external\libvorbis-1.3.6\lib\envelope.c" />
+    <ClCompile Include="..\..\external\libvorbis-1.3.6\lib\floor0.c" />
+    <ClCompile Include="..\..\external\libvorbis-1.3.6\lib\floor1.c" />
+    <ClCompile Include="..\..\external\libvorbis-1.3.6\lib\info.c" />
+    <ClCompile Include="..\..\external\libvorbis-1.3.6\lib\lookup.c" />
+    <ClCompile Include="..\..\external\libvorbis-1.3.6\lib\lpc.c" />
+    <ClCompile Include="..\..\external\libvorbis-1.3.6\lib\lsp.c" />
+    <ClCompile Include="..\..\external\libvorbis-1.3.6\lib\mapping0.c" />
+    <ClCompile Include="..\..\external\libvorbis-1.3.6\lib\mdct.c" />
+    <ClCompile Include="..\..\external\libvorbis-1.3.6\lib\psy.c" />
+    <ClCompile Include="..\..\external\libvorbis-1.3.6\lib\registry.c" />
+    <ClCompile Include="..\..\external\libvorbis-1.3.6\lib\res0.c" />
+    <ClCompile Include="..\..\external\libvorbis-1.3.6\lib\sharedbook.c" />
+    <ClCompile Include="..\..\external\libvorbis-1.3.6\lib\smallft.c" />
+    <ClCompile Include="..\..\external\libvorbis-1.3.6\lib\synthesis.c" />
+    <ClCompile Include="..\..\external\libvorbis-1.3.6\lib\vorbisenc.c" />
+    <ClCompile Include="..\..\external\libvorbis-1.3.6\lib\window.c" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\external\libvorbis-1.3.5\win32\vorbis.def" />
+    <None Include="..\..\external\libvorbis-1.3.6\win32\vorbis.def" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\backends.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\bitrate.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\codebook.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\include\vorbis\codec.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\codec_internal.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\envelope.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\modes\floor_all.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\books\floor\floor_books.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\highlevel.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\lookup.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\lookup_data.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\lpc.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\lsp.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\masking.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\mdct.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\misc.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\os.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\psy.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\modes\psych_11.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\modes\psych_16.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\modes\psych_44.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\modes\psych_8.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\registry.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\books\coupled\res_books_stereo.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\books\uncoupled\res_books_uncoupled.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\modes\residue_16.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\modes\residue_44.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\modes\residue_44u.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\modes\residue_8.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\scales.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\modes\setup_11.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\modes\setup_16.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\modes\setup_22.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\modes\setup_32.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\modes\setup_44.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\modes\setup_44u.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\modes\setup_8.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\modes\setup_X.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\smallft.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\include\vorbis\vorbisenc.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\include\vorbis\vorbisfile.h" />
-    <ClInclude Include="..\..\external\libvorbis-1.3.5\lib\window.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\backends.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\bitrate.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\codebook.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\include\vorbis\codec.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\codec_internal.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\envelope.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\modes\floor_all.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\books\floor\floor_books.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\highlevel.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\lookup.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\lookup_data.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\lpc.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\lsp.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\masking.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\mdct.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\misc.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\os.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\psy.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\modes\psych_11.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\modes\psych_16.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\modes\psych_44.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\modes\psych_8.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\registry.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\books\coupled\res_books_stereo.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\books\uncoupled\res_books_uncoupled.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\modes\residue_16.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\modes\residue_44.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\modes\residue_44u.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\modes\residue_8.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\scales.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\modes\setup_11.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\modes\setup_16.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\modes\setup_22.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\modes\setup_32.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\modes\setup_44.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\modes\setup_44u.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\modes\setup_8.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\modes\setup_X.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\smallft.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\include\vorbis\vorbisenc.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\include\vorbis\vorbisfile.h" />
+    <ClInclude Include="..\..\external\libvorbis-1.3.6\lib\window.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="libogg_dynamic-WinRT80.vcxproj">
