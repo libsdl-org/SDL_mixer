@@ -19,27 +19,27 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\timidity\common.c" />
-    <ClCompile Include="..\..\timidity\instrum.c" />
-    <ClCompile Include="..\..\timidity\mix.c" />
-    <ClCompile Include="..\..\timidity\output.c" />
-    <ClCompile Include="..\..\timidity\playmidi.c" />
-    <ClCompile Include="..\..\timidity\readmidi.c" />
-    <ClCompile Include="..\..\timidity\resample.c" />
-    <ClCompile Include="..\..\timidity\tables.c" />
-    <ClCompile Include="..\..\timidity\timidity.c" />
+    <ClCompile Include="..\..\src\codecs\timidity\common.c" />
+    <ClCompile Include="..\..\src\codecs\timidity\instrum.c" />
+    <ClCompile Include="..\..\src\codecs\timidity\mix.c" />
+    <ClCompile Include="..\..\src\codecs\timidity\output.c" />
+    <ClCompile Include="..\..\src\codecs\timidity\playmidi.c" />
+    <ClCompile Include="..\..\src\codecs\timidity\readmidi.c" />
+    <ClCompile Include="..\..\src\codecs\timidity\resample.c" />
+    <ClCompile Include="..\..\src\codecs\timidity\tables.c" />
+    <ClCompile Include="..\..\src\codecs\timidity\timidity.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\timidity\common.h" />
-    <ClInclude Include="..\..\timidity\instrum.h" />
-    <ClInclude Include="..\..\timidity\mix.h" />
-    <ClInclude Include="..\..\timidity\options.h" />
-    <ClInclude Include="..\..\timidity\output.h" />
-    <ClInclude Include="..\..\timidity\playmidi.h" />
-    <ClInclude Include="..\..\timidity\readmidi.h" />
-    <ClInclude Include="..\..\timidity\resample.h" />
-    <ClInclude Include="..\..\timidity\tables.h" />
-    <ClInclude Include="..\..\timidity\timidity.h" />
+    <ClInclude Include="..\..\src\codecs\timidity\common.h" />
+    <ClInclude Include="..\..\src\codecs\timidity\instrum.h" />
+    <ClInclude Include="..\..\src\codecs\timidity\mix.h" />
+    <ClInclude Include="..\..\src\codecs\timidity\options.h" />
+    <ClInclude Include="..\..\src\codecs\timidity\output.h" />
+    <ClInclude Include="..\..\src\codecs\timidity\playmidi.h" />
+    <ClInclude Include="..\..\src\codecs\timidity\readmidi.h" />
+    <ClInclude Include="..\..\src\codecs\timidity\resample.h" />
+    <ClInclude Include="..\..\src\codecs\timidity\tables.h" />
+    <ClInclude Include="..\..\src\codecs\timidity\timidity.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>timidity</ProjectName>
@@ -104,7 +104,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
@@ -118,7 +118,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
@@ -135,7 +135,7 @@
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
@@ -152,7 +152,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
