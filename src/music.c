@@ -18,8 +18,6 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include <string.h> /* for strtok() and strtok_s() */
-
 #include "SDL_hints.h"
 #include "SDL_log.h"
 #include "SDL_timer.h"
@@ -41,6 +39,8 @@
 #include "music_mad.h"
 #include "music_flac.h"
 #include "native_midi/native_midi.h"
+
+#include "compat.h"
 
 /* Check to make sure we are building with a new enough SDL */
 #if SDL_COMPILEDVERSION < SDL_VERSIONNUM(2, 0, 7)
@@ -1097,38 +1097,6 @@ const char* Mix_GetSoundFonts(void)
     return NULL;
 }
 
-/*
- * public domain strtok_r() by Charlie Gordon
- *
- *   from comp.lang.c  9/14/2007
- *
- *      http://groups.google.com/group/comp.lang.c/msg/2ab1ecbb86646684
- *
- *     (Declaration that it's public domain):
- *      http://groups.google.com/group/comp.lang.c/msg/7c7b39328fefab9c
- */
-static char *_strtok_safe(char *str, const char *delim, char **nextp)
-{
-    char *ret;
-    if (str == NULL) {
-        str = *nextp;
-    }
-
-    str += strspn(str, delim);
-    if (*str == '\0') {
-        return NULL;
-    }
-    ret = str;
-
-    str += strcspn(str, delim);
-    if (*str) {
-        *str++ = '\0';
-    }
-
-    *nextp = str;
-    return ret;
-}
-
 int Mix_EachSoundFont(int (SDLCALL *function)(const char*, void*), void *data)
 {
     char *context, *path, *paths;
@@ -1146,26 +1114,20 @@ int Mix_EachSoundFont(int (SDLCALL *function)(const char*, void*), void *data)
     }
 
 #if defined(_WIN32)||defined(__OS2__)
-#define SEPARATOR ";"
+#define PATHSEP ";"
 #else
-#define SEPARATOR ":;"
+#define PATHSEP ":;"
 #endif
-    for (path = _strtok_safe(paths, SEPARATOR, &context); path;
-         path = _strtok_safe(NULL,  SEPARATOR, &context))
-    {
+    for (path = SDL_strtokr(paths, PATHSEP, &context); path;
+         path = SDL_strtokr(NULL,  PATHSEP, &context)) {
         if (!function(path, data)) {
             continue;
-        } else {
-            soundfonts_found++;
         }
+        soundfonts_found++;
     }
-#undef SEPARATOR
 
     SDL_free(paths);
-    if (soundfonts_found > 0)
-        return 1;
-    else
-        return 0;
+    return (soundfonts_found > 0);
 }
 
 /* vi: set ts=4 sw=4 expandtab: */

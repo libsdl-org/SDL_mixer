@@ -27,6 +27,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\compat.c" />
     <ClCompile Include="..\..\src\effects_internal.c" />
     <ClCompile Include="..\..\src\effect_position.c" />
     <ClCompile Include="..\..\src\effect_stereoreverse.c" />
@@ -58,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\SDL_mixer.h" />
+    <ClInclude Include="..\..\src\compat.h" />
     <ClInclude Include="..\..\src\codecs\timidity\common.h" />
     <ClInclude Include="..\..\src\codecs\timidity\instrum.h" />
     <ClInclude Include="..\..\src\codecs\timidity\mix.h" />

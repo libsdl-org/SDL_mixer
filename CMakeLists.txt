@@ -19,7 +19,7 @@ if (ANDROID)
 
     target_sources(SDL2_mixer PRIVATE
             src/effect_position.c src/effects_internal.c src/effect_stereoreverse.c
-            src/mixer.c src/music.c
+            src/mixer.c src/music.c src/compat.c
             src/codecs/load_aiff.c src/codecs/load_voc.c
             src/codecs/music_cmd.c src/codecs/music_flac.c
             src/codecs/music_fluidsynth.c src/codecs/music_mad.c
