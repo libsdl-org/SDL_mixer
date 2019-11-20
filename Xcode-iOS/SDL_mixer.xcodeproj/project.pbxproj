@@ -32,6 +32,10 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		639008DE2385A84C009019FA /* compat.c in Sources */ = {isa = PBXBuildFile; fileRef = 639008DC2385A84C009019FA /* compat.c */; };
+		639008DF2385A84C009019FA /* compat.h in Headers */ = {isa = PBXBuildFile; fileRef = 639008DD2385A84C009019FA /* compat.h */; };
+		639008E02385A84C009019FA /* compat.c in Sources */ = {isa = PBXBuildFile; fileRef = 639008DC2385A84C009019FA /* compat.c */; };
+		639008E12385A84C009019FA /* compat.h in Headers */ = {isa = PBXBuildFile; fileRef = 639008DD2385A84C009019FA /* compat.h */; };
 		AA1C71151F9BC66000A6BC31 /* effect_position.c in Sources */ = {isa = PBXBuildFile; fileRef = AA1C71131F9BC66000A6BC31 /* effect_position.c */; };
 		AA1C71161F9BC66000A6BC31 /* effect_stereoreverse.c in Sources */ = {isa = PBXBuildFile; fileRef = AA1C71141F9BC66000A6BC31 /* effect_stereoreverse.c */; };
 		AA1C71191F9BC67200A6BC31 /* effects_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1C71171F9BC67100A6BC31 /* effects_internal.h */; };
@@ -338,6 +342,8 @@
 
 /* Begin PBXFileReference section */
 		1014BAEA010A4B677F000001 /* SDL_mixer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SDL_mixer.h; sourceTree = "<group>"; };
+		639008DC2385A84C009019FA /* compat.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = compat.c; sourceTree = "<group>"; };
+		639008DD2385A84C009019FA /* compat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compat.h; sourceTree = "<group>"; };
 		AA1C71131F9BC66000A6BC31 /* effect_position.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = effect_position.c; sourceTree = "<group>"; };
 		AA1C71141F9BC66000A6BC31 /* effect_stereoreverse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = effect_stereoreverse.c; sourceTree = "<group>"; };
 		AA1C71171F9BC67100A6BC31 /* effects_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = effects_internal.h; sourceTree = "<group>"; };
@@ -624,6 +630,8 @@
 		63FD69ED23853ABC00C3C961 /* mixersrc */ = {
 			isa = PBXGroup;
 			children = (
+				639008DC2385A84C009019FA /* compat.c */,
+				639008DD2385A84C009019FA /* compat.h */,
 				AAE406151F9609BA00EDAF53 /* music.c */,
 				AAE4060A1F9609B900EDAF53 /* music.h */,
 				AAE406091F9609B900EDAF53 /* mixer.c */,
@@ -811,6 +819,7 @@
 				AA53147D1FE0FE2E0025C9BE /* music_ogg.h in Headers */,
 				AA53147E1FE0FE2E0025C9BE /* tables.h in Headers */,
 				AA53147F1FE0FE2E0025C9BE /* music_wav.h in Headers */,
+				639008E12385A84C009019FA /* compat.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -863,6 +872,7 @@
 				AAE406371F9609BD00EDAF53 /* music_ogg.h in Headers */,
 				AA60219617653A9800662B9C /* tables.h in Headers */,
 				AAE406301F9609BD00EDAF53 /* music_wav.h in Headers */,
+				639008DF2385A84C009019FA /* compat.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1109,6 +1119,7 @@
 				AA5314E91FE0FE2E0025C9BE /* mixer.c in Sources */,
 				AA5314EA1FE0FE2E0025C9BE /* sndfile.cpp in Sources */,
 				AA5314EB1FE0FE2E0025C9BE /* sndmix.cpp in Sources */,
+				639008E02385A84C009019FA /* compat.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1222,6 +1233,7 @@
 				AAE406291F9609BD00EDAF53 /* mixer.c in Sources */,
 				AA60219417653A9800662B9C /* sndfile.cpp in Sources */,
 				AA60219517653A9800662B9C /* sndmix.cpp in Sources */,
+				639008DE2385A84C009019FA /* compat.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

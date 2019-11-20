@@ -4,6 +4,9 @@
     <ClInclude Include="..\include\SDL_mixer.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\compat.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\effects_internal.h">
       <Filter>Sources</Filter>
     </ClInclude>
@@ -167,6 +170,9 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\compat.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\effects_internal.c">
       <Filter>Sources</Filter>
     </ClCompile>

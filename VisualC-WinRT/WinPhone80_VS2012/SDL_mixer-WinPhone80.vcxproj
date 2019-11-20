@@ -164,6 +164,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\compat.c" />
     <ClCompile Include="..\..\src\effects_internal.c" />
     <ClCompile Include="..\..\src\effect_position.c" />
     <ClCompile Include="..\..\src\effect_stereoreverse.c" />
@@ -195,6 +196,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\SDL_mixer.h" />
+    <ClInclude Include="..\..\src\compat.h" />
     <ClInclude Include="..\..\src\effects_internal.h" />
     <ClInclude Include="..\..\src\mixer.h" />
     <ClInclude Include="..\..\src\music.h" />
