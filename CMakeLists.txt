@@ -30,8 +30,8 @@ if (ANDROID)
 
     if (SUPPORT_FLAC)
         add_definitions(-DMUSIC_FLAC)
-        add_subdirectory(external/flac-1.3.2)
-        include_directories(external/flac-1.3.2/include)
+        add_subdirectory(external/flac-1.3.3)
+        include_directories(external/flac-1.3.3/include)
         target_link_libraries(SDL2_mixer PRIVATE FLAC)
     endif()
 
@@ -45,7 +45,7 @@ if (ANDROID)
 
     if (SUPPORT_MP3_MPG123)
         add_definitions(-DMUSIC_MP3_MPG123)
-        add_subdirectory(external/mpg123-1.25.6)
+        add_subdirectory(external/mpg123-1.25.13)
         target_link_libraries(SDL2_mixer PRIVATE mpg123)
     endif()
 
