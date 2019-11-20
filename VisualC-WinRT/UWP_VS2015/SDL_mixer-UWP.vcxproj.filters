@@ -1,83 +1,83 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="..\..\effect_position.c" />
-    <ClCompile Include="..\..\effect_stereoreverse.c" />
-    <ClCompile Include="..\..\effects_internal.c" />
-    <ClCompile Include="..\..\load_aiff.c" />
-    <ClCompile Include="..\..\load_voc.c" />
-    <ClCompile Include="..\..\mixer.c" />
-    <ClCompile Include="..\..\music.c" />
-    <ClCompile Include="..\..\music_cmd.c" />
-    <ClCompile Include="..\..\music_flac.c" />
-    <ClCompile Include="..\..\music_fluidsynth.c" />
-    <ClCompile Include="..\..\music_mad.c" />
-    <ClCompile Include="..\..\music_mikmod.c" />
-    <ClCompile Include="..\..\music_modplug.c" />
-    <ClCompile Include="..\..\music_mpg123.c" />
-    <ClCompile Include="..\..\music_nativemidi.c" />
-    <ClCompile Include="..\..\music_ogg.c" />
-    <ClCompile Include="..\..\music_opus.c" />
-    <ClCompile Include="..\..\music_timidity.c" />
-    <ClCompile Include="..\..\music_wav.c" />
-    <ClCompile Include="..\..\timidity\common.c">
+    <ClCompile Include="..\..\src\effect_position.c" />
+    <ClCompile Include="..\..\src\effect_stereoreverse.c" />
+    <ClCompile Include="..\..\src\effects_internal.c" />
+    <ClCompile Include="..\..\src\mixer.c" />
+    <ClCompile Include="..\..\src\music.c" />
+    <ClCompile Include="..\..\src\codecs\load_aiff.c" />
+    <ClCompile Include="..\..\src\codecs\load_voc.c" />
+    <ClCompile Include="..\..\src\codecs\music_cmd.c" />
+    <ClCompile Include="..\..\src\codecs\music_flac.c" />
+    <ClCompile Include="..\..\src\codecs\music_fluidsynth.c" />
+    <ClCompile Include="..\..\src\codecs\music_mad.c" />
+    <ClCompile Include="..\..\src\codecs\music_mikmod.c" />
+    <ClCompile Include="..\..\src\codecs\music_modplug.c" />
+    <ClCompile Include="..\..\src\codecs\music_mpg123.c" />
+    <ClCompile Include="..\..\src\codecs\music_nativemidi.c" />
+    <ClCompile Include="..\..\src\codecs\music_ogg.c" />
+    <ClCompile Include="..\..\src\codecs\music_opus.c" />
+    <ClCompile Include="..\..\src\codecs\music_timidity.c" />
+    <ClCompile Include="..\..\src\codecs\music_wav.c" />
+    <ClCompile Include="..\..\src\codecs\timidity\common.c">
       <Filter>Timidity</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\timidity\instrum.c">
+    <ClCompile Include="..\..\src\codecs\timidity\instrum.c">
       <Filter>Timidity</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\timidity\mix.c">
+    <ClCompile Include="..\..\src\codecs\timidity\mix.c">
       <Filter>Timidity</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\timidity\output.c">
+    <ClCompile Include="..\..\src\codecs\timidity\output.c">
       <Filter>Timidity</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\timidity\playmidi.c">
+    <ClCompile Include="..\..\src\codecs\timidity\playmidi.c">
       <Filter>Timidity</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\timidity\readmidi.c">
+    <ClCompile Include="..\..\src\codecs\timidity\readmidi.c">
       <Filter>Timidity</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\timidity\resample.c">
+    <ClCompile Include="..\..\src\codecs\timidity\resample.c">
       <Filter>Timidity</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\timidity\tables.c">
+    <ClCompile Include="..\..\src\codecs\timidity\tables.c">
       <Filter>Timidity</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\timidity\timidity.c">
+    <ClCompile Include="..\..\src\codecs\timidity\timidity.c">
       <Filter>Timidity</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\SDL_mixer.h" />
-    <ClInclude Include="..\..\timidity\common.h">
+    <ClInclude Include="..\..\include\SDL_mixer.h" />
+    <ClInclude Include="..\..\src\codecs\timidity\common.h">
       <Filter>Timidity</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\timidity\instrum.h">
+    <ClInclude Include="..\..\src\codecs\timidity\instrum.h">
       <Filter>Timidity</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\timidity\mix.h">
+    <ClInclude Include="..\..\src\codecs\timidity\mix.h">
       <Filter>Timidity</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\timidity\options.h">
+    <ClInclude Include="..\..\src\codecs\timidity\options.h">
       <Filter>Timidity</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\timidity\output.h">
+    <ClInclude Include="..\..\src\codecs\timidity\output.h">
       <Filter>Timidity</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\timidity\playmidi.h">
+    <ClInclude Include="..\..\src\codecs\timidity\playmidi.h">
       <Filter>Timidity</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\timidity\readmidi.h">
+    <ClInclude Include="..\..\src\codecs\timidity\readmidi.h">
       <Filter>Timidity</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\timidity\resample.h">
+    <ClInclude Include="..\..\src\codecs\timidity\resample.h">
       <Filter>Timidity</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\timidity\tables.h">
+    <ClInclude Include="..\..\src\codecs\timidity\tables.h">
       <Filter>Timidity</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\timidity\timidity.h">
+    <ClInclude Include="..\..\src\codecs\timidity\timidity.h">
       <Filter>Timidity</Filter>
     </ClInclude>
   </ItemGroup>
