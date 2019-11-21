@@ -1,0 +1,28 @@
+From: Erik de Castro Lopo <erikd@mega-nerd.com>
+Date: Thu, 21 Nov 2019 07:53:10 +0000 (+1100)
+Subject: libFLAC/bitreader.c: Fix shift invoking undefined behaviour
+X-Git-Url: http://git.xiph.org/?p=flac.git;a=commitdiff_plain;h=d518e13a1f5802db84cc7986e94405042d247efb
+
+libFLAC/bitreader.c: Fix shift invoking undefined behaviour
+
+Credit: Oss-Fuzz
+Issue: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=19036
+Testcase: fuzzer_decoder-5679084202098688
+---
+
+diff --git a/src/libFLAC/bitreader.c b/src/libFLAC/bitreader.c
+index 3fdb12bd..e94f8b01 100644
+--- a/src/libFLAC/bitreader.c
++++ b/src/libFLAC/bitreader.c
+@@ -415,8 +415,9 @@ FLAC__bool FLAC__bitreader_read_raw_uint32(FLAC__BitReader *br, FLAC__uint32 *va
+ 			br->consumed_words++;
+ 			br->consumed_bits = 0;
+ 			if(bits) { /* if there are still bits left to read, there have to be less than 32 so they will all be in the next word */
+-				*val = bits >= 32 ? 0 : *val << bits ;
+-				*val |= (FLAC__uint32)(br->buffer[br->consumed_words] >> (FLAC__BITS_PER_WORD-bits));
++				uint32_t shift = FLAC__BITS_PER_WORD - bits;
++				*val = bits < 32 ? *val << bits : 0;
++				*val |= shift < FLAC__BITS_PER_WORD ? (FLAC__uint32)(br->buffer[br->consumed_words] >> shift) : 0;
+ 				br->consumed_bits = bits;
+ 			}
+ 			return true;
