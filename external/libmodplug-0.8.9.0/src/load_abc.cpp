@@ -395,7 +395,7 @@ static void abc_dumptracks(ABCHANDLE *h, const char *p)
 	}
 }
 
-#if defined(WIN32) && defined(_mm_free)
+#if defined(_WIN32) && defined(_mm_free)
 #undef _mm_free
 #endif
 
@@ -2635,10 +2635,11 @@ static int ABC_ReadPatterns(MODCOMMAND *pattern[], WORD psize[], ABCHANDLE *h, i
 static int ABC_Key(const char *p)
 {
 	int i,j;
-	char c[8] = {}; // initialize all to zero.
+	char c[8];
 	const char *q;
 	while( isspace(*p) ) p++;
 	q = p;
+	memset(c, 0, 8);
 	for( i=0; i<8 && *p && *p != ']'; p++ ) {
 		if( isspace(*p) ) {
 			while( isspace(*p) ) p++;
@@ -2931,9 +2932,10 @@ static void abc_MIDI_voice(const char *p, ABCTRACK *tp, ABCHANDLE *h)
 static void abc_MIDI_chordname(const char *p)
 {
 	char name[20];
-	int i, notes[6] = {};
+	int i;
 
-	for( ; *p && isspace(*p); p++ ) ;
+	for(; *p && isspace(*p); p++)
+		;
 	i = 0;
 	while ((i < 19) && (*p != ' ') && (*p != '\0')) {
 		name[i] = *p;
@@ -2945,9 +2947,12 @@ static void abc_MIDI_chordname(const char *p)
 		abc_message("Failure: Bad format for chordname command, %s", p);
 	}
 	else {
+		int notes[6];
 		i = 0;
+		memset(notes, 0, sizeof(notes));
 		while ((i < 6) && isspace(*p)) {
-			for( ; *p && isspace(*p); p++ ) ;
+			for(; *p && isspace(*p); p++)
+				;
 			p += abc_getnumber(p, &notes[i]);
 			i = i + 1;
 		}

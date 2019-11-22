@@ -1383,17 +1383,18 @@ UINT CSoundFile::ReadSample(MODINSTRUMENT *pIns, UINT nFlags, LPCSTR lpMemFile, 
 	// PTM 8bit delta to 16-bit sample
 	case RS_PTM8DTO16:
 		{
+			UINT j;
 			len = pIns->nLength * 2;
 			if (len > dwMemLength) break;
 			int8_t *pSample = (int8_t *)pIns->pSample;
 			int8_t delta8 = 0;
-			for (UINT j=0; j<len; j++)
+			for (j=0; j<len; j++)
 			{
 				delta8 += lpMemFile[j];
 				*pSample++ = delta8;
 			}
 			uint16_t *pSampleW = (uint16_t *)pIns->pSample;
-			for (UINT j=0; j<len; j+=2)   // swaparoni!
+			for (j=0; j<len; j+=2)   // swaparoni!
 			{
 				uint16_t rawSample = *pSampleW;
 			        *pSampleW++ = bswapLE16(rawSample);

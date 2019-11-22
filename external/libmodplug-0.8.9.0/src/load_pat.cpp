@@ -62,9 +62,10 @@
 
 // 128 gm and 63 drum
 #define MAXSMP				191
+
 static char midipat[MAXSMP][PATH_MAX];
-static char pathforpat[PATH_MAX] = {};
-static char timiditycfg[PATH_MAX] = {};
+static char pathforpat[PATH_MAX];
+static char timiditycfg[PATH_MAX];
 
 #pragma pack(1)
 
@@ -274,7 +275,7 @@ typedef float (*PAT_SAMPLE_FUN)(int);
 
 static PAT_SAMPLE_FUN pat_fun[] = { pat_sinus, pat_square, pat_sawtooth };
 
-#if defined(WIN32) && defined(_mm_free)
+#if defined(_WIN32) && defined(_mm_free)
 #undef _mm_free
 #endif
 
