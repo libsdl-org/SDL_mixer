@@ -13,12 +13,11 @@
 
 #ifndef NO_FILTER
 
-#ifdef MSC_VER
+#if defined(_MSC_VER) && defined(_M_IX86)
 #define _ASM_MATH
 #endif
 
 #ifdef _ASM_MATH
-
 // pow(a,b) returns a^^b -> 2^^(b.log2(a))
 static float pow(float a, float b)
 {
@@ -41,7 +40,6 @@ static float pow(float a, float b)
 	}
 	return result;
 }
-
 
 #else
 

@@ -50,18 +50,6 @@ Contents
 - Plays 22 different mod formats, including:
     MOD, S3M, XM, IT, 669, AMF (both of them), AMS, DBM, DMF, DSM, FAR,
     MDL, MED, MTM, OKT, PTM, STM, ULT, UMX, MT2, PSM
-- Plays zip, rar, gzip, and bzip2 compressed mods.  The following
-    extensions are recognized: (Only in modplug-xmms)
-    zip:  MDZ,  S3Z,  XMZ,  ITZ
-    rar:  MDR,  S3R,  XMR,  ITR
-    gzip: MDGZ, S3GZ, XMGZ, ITGZ
-   You can also load plain old ZIP, RAR, and GZ files.  If ModPlug finds
-   a mod in them, it will play it.
-   Note: To play these formats, you need to have the associated
-    decompression utilities (unzip, gunzip, unrar) installed.
-   Note(2): The format of the mod is NOT determined from the extension on
-    compressed mods.  For example, if you zipped a UMX mod and gave it the
-    extension MDZ, it would work fine.
 - plays timidity's GUS patch files (*.pat):
    a multi sample pat file with n samples can be played with a Frere Jacques
    canon with n voices.
