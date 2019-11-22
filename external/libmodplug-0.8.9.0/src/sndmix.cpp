@@ -80,7 +80,7 @@ static const UINT PreAmpAGCTable[16] =
 // Return (a*b)/c - no divide error
 int _muldiv(long a, long b, long c)
 {
-#ifdef MSC_VER
+#if defined(_MSC_VER) && defined(_M_IX86)
 	int sign, result;
 	_asm {
 	mov eax, a
@@ -123,11 +123,10 @@ rneg:
 #endif
 }
 
-
 // Return (a*b+c/2)/c - no divide error
 int _muldivr(long a, long b, long c)
 {
-#ifdef MSC_VER
+#if defined(_MSC_VER) && defined(_M_IX86)
 	int sign, result;
 	_asm {
 	mov eax, a
@@ -338,7 +337,6 @@ MixDone:
 	if (nStat) { m_nMixStat += nStat-1; m_nMixStat /= nStat; }
 	return lMax - lRead;
 }
-
 
 
 /////////////////////////////////////////////////////////////////////////////

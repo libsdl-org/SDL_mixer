@@ -1476,7 +1476,7 @@ static void	abc_add_chord(const char *p, ABCHANDLE *h, ABCTRACK *tp, uint32_t tr
 			d[chordnote] = i;
 			break;
 		}
-	p++;
+	if (*p) p++;
 	switch(*p) {
 		case 'b':
 			d[chordnote]--;
@@ -1498,7 +1498,7 @@ static void	abc_add_chord(const char *p, ABCHANDLE *h, ABCTRACK *tp, uint32_t tr
 				d[chordbase] = i;
 				break;
 			}
-		p++;
+		if (*p) p++;
 		switch(*p) {
 			case 'b':
 				d[chordbase]--;

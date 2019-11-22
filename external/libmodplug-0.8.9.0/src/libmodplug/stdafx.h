@@ -33,7 +33,7 @@
 
 #ifdef _WIN32
 
-#ifdef MSC_VER
+#ifdef _MSC_VER
 #pragma warning (disable:4201)
 #pragma warning (disable:4514)
 #endif

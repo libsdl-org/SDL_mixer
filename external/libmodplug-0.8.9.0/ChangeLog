@@ -86,7 +86,7 @@ date = 2-nov-2006 [Konstanty Bialkowski/Macro Trillo]
 date = 20-jul-2006 [Peter Grootswagers]
 -> file: src/load_abc.cpp
 		where: instrument loader functions
-		what: replaced with correspondig functions in load_pat.cpp
+		what: replaced with corresponding functions in load_pat.cpp
 -> file: src/load_mid.cpp
 		where: whole source
 		what: new loader for midi files
