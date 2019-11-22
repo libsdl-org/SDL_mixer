@@ -44,7 +44,16 @@
 #include <mmsystem.h>
 #include <stdio.h>
 #include <malloc.h>
+#if (_MSC_VER >= 1600)
 #include <stdint.h>
+#else
+typedef signed char    int8_t;
+typedef signed short   int16_t;
+typedef signed int     int32_t;
+typedef unsigned char  uint8_t;
+typedef unsigned short uint16_t;
+typedef unsigned int   uint32_t;
+#endif
 
 #define srandom(_seed)  srand(_seed)
 #define random()        rand()
