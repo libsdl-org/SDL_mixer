@@ -501,7 +501,7 @@ Mix_Music *Mix_LoadMUS(const char *file)
 
     /* Use the extension as a first guess on the file type */
     type = MUS_NONE;
-    ext = strrchr(file, '.');
+    ext = SDL_strrchr(file, '.');
     if (ext) {
         ++ext; /* skip the dot in the extension */
         if (SDL_strcasecmp(ext, "WAV") == 0) {
