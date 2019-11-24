@@ -61,97 +61,7 @@ void CSoundFile::ConvertModCommand(MODCOMMAND *m) const
 	m->param = param;
 }
 
-
-#ifndef MODPLUG_NO_FILESAVE
-WORD CSoundFile::ModSaveCommand(const MODCOMMAND *m, BOOL bXM) const
-//------------------------------------------------------------------
-{
-	UINT command = m->command & 0x3F, param = m->param;
-
-	switch(command)
-	{
-	case 0:						command = param = 0; break;
-	case CMD_ARPEGGIO:			command = 0; break;
-	case CMD_PORTAMENTOUP:
-		if (m_nType & (MOD_TYPE_S3M|MOD_TYPE_IT|MOD_TYPE_STM))
-		{
-			if ((param & 0xF0) == 0xE0) { command=0x0E; param=((param & 0x0F) >> 2)|0x10; break; }
-			else if ((param & 0xF0) == 0xF0) { command=0x0E; param &= 0x0F; param|=0x10; break; }
-		}
-		command = 0x01;
-		break;
-	case CMD_PORTAMENTODOWN:
-		if (m_nType & (MOD_TYPE_S3M|MOD_TYPE_IT|MOD_TYPE_STM))
-		{
-			if ((param & 0xF0) == 0xE0) { command=0x0E; param=((param & 0x0F) >> 2)|0x20; break; }
-			else if ((param & 0xF0) == 0xF0) { command=0x0E; param &= 0x0F; param|=0x20; break; }
-		}
-		command = 0x02;
-		break;
-	case CMD_TONEPORTAMENTO:	command = 0x03; break;
-	case CMD_VIBRATO:			command = 0x04; break;
-	case CMD_TONEPORTAVOL:		command = 0x05; break;
-	case CMD_VIBRATOVOL:		command = 0x06; break;
-	case CMD_TREMOLO:			command = 0x07; break;
-	case CMD_PANNING8:			
-		command = 0x08;
-		if (bXM)
-		{
-			if ((m_nType != MOD_TYPE_IT) && (m_nType != MOD_TYPE_XM) && (param <= 0x80))
-			{
-				param <<= 1;
-				if (param > 255) param = 255;
-			}
-		} else
-		{
-			if ((m_nType == MOD_TYPE_IT) || (m_nType == MOD_TYPE_XM)) param >>= 1;
-		}
-		break;
-	case CMD_OFFSET:			command = 0x09; break;
-	case CMD_VOLUMESLIDE:		command = 0x0A; break;
-	case CMD_POSITIONJUMP:		command = 0x0B; break;
-	case CMD_VOLUME:			command = 0x0C; break;
-	case CMD_PATTERNBREAK:		command = 0x0D; param = ((param / 10) << 4) | (param % 10); break;
-	case CMD_MODCMDEX:			command = 0x0E; break;
-	case CMD_SPEED:				command = 0x0F; if (param > 0x20) param = 0x20; break;
-	case CMD_TEMPO:				if (param > 0x20) { command = 0x0F; break; }
-	case CMD_GLOBALVOLUME:		command = 'G' - 55; break;
-	case CMD_GLOBALVOLSLIDE:	command = 'H' - 55; break;
-	case CMD_KEYOFF:			command = 'K' - 55; break;
-	case CMD_SETENVPOSITION:	command = 'L' - 55; break;
-	case CMD_CHANNELVOLUME:		command = 'M' - 55; break;
-	case CMD_CHANNELVOLSLIDE:	command = 'N' - 55; break;
-	case CMD_PANNINGSLIDE:		command = 'P' - 55; break;
-	case CMD_RETRIG:			command = 'R' - 55; break;
-	case CMD_TREMOR:			command = 'T' - 55; break;
-	case CMD_XFINEPORTAUPDOWN:	command = 'X' - 55; break;
-	case CMD_PANBRELLO:			command = 'Y' - 55; break;
-	case CMD_MIDI:				command = 'Z' - 55; break;
-	case CMD_S3MCMDEX:
-		switch(param & 0xF0)
-		{
-		case 0x10:	command = 0x0E; param = (param & 0x0F) | 0x30; break;
-		case 0x20:	command = 0x0E; param = (param & 0x0F) | 0x50; break;
-		case 0x30:	command = 0x0E; param = (param & 0x0F) | 0x40; break;
-		case 0x40:	command = 0x0E; param = (param & 0x0F) | 0x70; break;
-		case 0x90:	command = 'X' - 55; break;
-		case 0xB0:	command = 0x0E; param = (param & 0x0F) | 0x60; break;
-		case 0xA0:
-		case 0x50:
-		case 0x70:
-		case 0x60:	command = param = 0; break;
-		default:	command = 0x0E; break;
-		}
-		break;
-	default:		command = param = 0;
-	}
-	return (WORD)((command << 8) | (param));
-}
-#endif // MODPLUG_NO_FILESAVE
-
-
 #pragma pack(1)
-
 typedef struct _MODSAMPLE
 {
 	CHAR name[22];
@@ -169,7 +79,6 @@ typedef struct _MODMAGIC
 	BYTE Orders[128];
         char Magic[4];          // changed from CHAR
 } MODMAGIC, *PMODMAGIC;
-
 #pragma pack()
 
 static BOOL IsValidName(LPCSTR s, int length, CHAR minChar)
@@ -192,7 +101,6 @@ static BOOL IsMagic(LPCSTR s1, LPCSTR s2)
 {
 	return ((*(DWORD *)s1) == (*(DWORD *)s2)) ? TRUE : FALSE;
 }
-
 
 BOOL CSoundFile::ReadMod(const BYTE *lpStream, DWORD dwMemLength)
 //---------------------------------------------------------------
@@ -390,151 +298,5 @@ BOOL CSoundFile::ReadMod(const BYTE *lpStream, DWORD dwMemLength)
 			dwErrCheck++;
 		}
 	}
-#ifdef MODPLUG_TRACKER
-	return TRUE;
-#else
 	return (dwErrCheck) ? TRUE : FALSE;
-#endif
 }
-
-
-#ifndef MODPLUG_NO_FILESAVE
-
-#ifdef _MSC_VER
-#pragma warning(disable:4100)
-#endif
-
-BOOL CSoundFile::SaveMod(LPCSTR lpszFileName, UINT nPacking)
-//----------------------------------------------------------
-{
-	BYTE insmap[32];
-	UINT inslen[32];
-	BYTE bTab[32];
-	BYTE ord[128];
-	FILE *f;
-
-	if ((!m_nChannels) || (!lpszFileName)) return FALSE;
-	if ((f = fopen(lpszFileName, "wb")) == NULL) return FALSE;
-	memset(ord, 0, sizeof(ord));
-	memset(inslen, 0, sizeof(inslen));
-	if (m_nInstruments)
-	{
-		memset(insmap, 0, sizeof(insmap));
-		for (UINT i=1; i<32; i++) if (Headers[i])
-		{
-			for (UINT j=0; j<128; j++) if (Headers[i]->Keyboard[j])
-			{
-				insmap[i] = Headers[i]->Keyboard[j];
-				break;
-			}
-		}
-	} else
-	{
-		for (UINT i=0; i<32; i++) insmap[i] = (BYTE)i;
-	}
-	// Writing song name
-	fwrite(m_szNames, 20, 1, f);
-	// Writing instrument definition
-	for (UINT iins=1; iins<=31; iins++)
-	{
-		MODINSTRUMENT *pins = &Ins[insmap[iins]];
-		memcpy(bTab, m_szNames[iins],22);
-		inslen[iins] = pins->nLength;
-		if (inslen[iins] > 0x1fff0) inslen[iins] = 0x1fff0;
-		bTab[22] = inslen[iins] >> 9;
-		bTab[23] = inslen[iins] >> 1;
-		if (pins->RelativeTone < 0) bTab[24] = 0x08; else
-		if (pins->RelativeTone > 0) bTab[24] = 0x07; else
-		bTab[24] = (BYTE)XM2MODFineTune(pins->nFineTune);
-		bTab[25] = pins->nVolume >> 2;
-		bTab[26] = pins->nLoopStart >> 9;
-		bTab[27] = pins->nLoopStart >> 1;
-		bTab[28] = (pins->nLoopEnd - pins->nLoopStart) >> 9;
-		bTab[29] = (pins->nLoopEnd - pins->nLoopStart) >> 1;
-		fwrite(bTab, 30, 1, f);
-	}
-	// Writing number of patterns
-	UINT nbp=0, norders=128;
-	for (UINT iord=0; iord<128; iord++)
-	{
-		if (Order[iord] == 0xFF)
-		{
-			norders = iord;
-			break;
-		}
-		if ((Order[iord] < 0x80) && (nbp<=Order[iord])) nbp = Order[iord]+1;
-	}
-	bTab[0] = norders;
-	bTab[1] = m_nRestartPos;
-	fwrite(bTab, 2, 1, f);
-	// Writing pattern list
-	if (norders) memcpy(ord, Order, norders);
-	fwrite(ord, 128, 1, f);
-	// Writing signature
-	if (m_nChannels == 4)
-		lstrcpy((LPSTR)&bTab, "M.K.");
-	else
-		wsprintf((LPSTR)&bTab, "%luCHN", m_nChannels);
-	fwrite(bTab, 4, 1, f);
-	// Writing patterns
-	for (UINT ipat=0; ipat<nbp; ipat++) if (Patterns[ipat])
-	{
-		BYTE s[64*4];
-		MODCOMMAND *m = Patterns[ipat];
-		for (UINT i=0; i<64; i++) if (i < PatternSize[ipat])
-		{
-			LPBYTE p=s;
-			for (UINT c=0; c<m_nChannels; c++,p+=4,m++)
-			{
-				UINT param = ModSaveCommand(m, FALSE);
-				UINT command = param >> 8;
-				param &= 0xFF;
-				if (command > 0x0F) command = param = 0;
-				if ((m->vol >= 0x10) && (m->vol <= 0x50) && (!command) && (!param)) { command = 0x0C; param = m->vol - 0x10; }
-				UINT period = m->note;
-				if (period)
-				{
-					if (period < 37) period = 37;
-					period -= 37;
-					if (period >= 6*12) period = 6*12-1;
-					period = ProTrackerPeriodTable[period];
-				}
-				UINT instr = (m->instr > 31) ? 0 : m->instr;
-				p[0] = ((period >> 8) & 0x0F) | (instr & 0x10);
-				p[1] = period & 0xFF;
-				p[2] = ((instr & 0x0F) << 4) | (command & 0x0F);
-				p[3] = param;
-			}
-			fwrite(s, m_nChannels, 4, f);
-		} else
-		{
-			memset(s, 0, m_nChannels*4);
-			fwrite(s, m_nChannels, 4, f);
-		}
-	}
-	// Writing instruments
-	for (UINT ismpd=1; ismpd<=31; ismpd++) if (inslen[ismpd])
-	{
-		MODINSTRUMENT *pins = &Ins[insmap[ismpd]];
-		UINT flags = RS_PCM8S;
-#ifndef NO_PACKING
-		if (!(pins->uFlags & (CHN_16BIT|CHN_STEREO)))
-		{
-			if ((nPacking) && (CanPackSample((char *)pins->pSample, inslen[ismpd], nPacking)))
-			{
-				fwrite("ADPCM", 1, 5, f);
-				flags = RS_ADPCM4;
-			}
-		}
-#endif
-		WriteSample(f, pins, flags, inslen[ismpd]);
-	}
-	fclose(f);
-	return TRUE;
-}
-
-#ifdef _MSC_VER
-#pragma warning(default:4100)
-#endif
-
-#endif // MODPLUG_NO_FILESAVE

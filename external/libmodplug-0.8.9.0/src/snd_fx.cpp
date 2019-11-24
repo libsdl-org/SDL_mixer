@@ -514,7 +514,6 @@ void CSoundFile::NoteChange(UINT nChn, int note, BOOL bPorta, BOOL bResetEnv)
 	if (!bPorta)
 	{
 		pChn->nVUMeter = 0x100;
-		pChn->nLeftVU = pChn->nRightVU = 0xFF;
 		pChn->dwFlags &= ~CHN_FILTER;
 		pChn->dwFlags |= CHN_FASTVOLRAMP;
 		pChn->nRetrigCount = 0;
@@ -1225,9 +1224,6 @@ BOOL CSoundFile::ProcessEffects()
 						if (m_nRepeatCount > 0) m_nRepeatCount--;
 					} else
 					{
-					#ifdef MODPLUG_TRACKER
-						if (gdwSoundSetup & SNDMIX_NOBACKWARDJUMPS)
-					#endif
 						// Backward jump disabled
 						bNoLoop = TRUE;
 						//reset repeat count incase there are multiple loops.
@@ -2074,7 +2070,6 @@ void CSoundFile::SetSpeed(UINT param)
 {
 	UINT max = (m_nType == MOD_TYPE_IT) ? 256 : 128;
 	// Modplug Tracker and Mod-Plugin don't do this check
-#ifndef MODPLUG_TRACKER
 #ifndef MODPLUG_FASTSOUNDLIB
 	// Big Hack!!!
 	if ((!param) || (param >= 0x80) || ((m_nType & (MOD_TYPE_MOD|MOD_TYPE_XM|MOD_TYPE_MT2)) && (param >= 0x1E)))
@@ -2085,7 +2080,6 @@ void CSoundFile::SetSpeed(UINT param)
 		}
 	}
 #endif // MODPLUG_FASTSOUNDLIB
-#endif // MODPLUG_TRACKER
 	if ((m_nType & MOD_TYPE_S3M) && (param > 0x80)) param -= 0x80;
 	if ((param) && (param <= max)) m_nMusicSpeed = param;
 }

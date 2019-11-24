@@ -417,7 +417,6 @@ typedef struct _MODCHANNEL
 	BYTE nRowNote, nRowInstr;
 	BYTE nRowVolCmd, nRowVolume;
 	BYTE nRowCommand, nRowParam;
-	BYTE nLeftVU, nRightVU;
 	BYTE nActiveMacro, nPadding;
 } MODCHANNEL;
 
@@ -650,22 +649,9 @@ public:
 	BOOL TestPAT(LPCBYTE lpStream, DWORD dwMemLength);
 #endif
 	// Save Functions
-#ifndef MODPLUG_NO_FILESAVE
-	UINT WriteSample(FILE *f, MODINSTRUMENT *pins, UINT nFlags, UINT nMaxLen=0);
-	BOOL SaveXM(LPCSTR lpszFileName, UINT nPacking=0);
-	BOOL SaveS3M(LPCSTR lpszFileName, UINT nPacking=0);
-	BOOL SaveMod(LPCSTR lpszFileName, UINT nPacking=0);
-	BOOL SaveIT(LPCSTR lpszFileName, UINT nPacking=0);
-	UINT GetBestSaveFormat() const;
-	UINT GetSaveFormats() const;
-#endif
 	// MOD Convert function
 	void ConvertModCommand(MODCOMMAND *) const;
 	void S3MConvert(MODCOMMAND *m, BOOL bIT) const;
-#ifndef MODPLUG_NO_FILESAVE
-	void S3MSaveConvert(UINT *pcmd, UINT *pprm, BOOL bIT) const;
-	WORD ModSaveCommand(const MODCOMMAND *m, BOOL bXM) const;
-#endif
 
 public:
 	// Real-time sound functions
@@ -751,10 +737,6 @@ public:
 	BOOL IsValidBackwardJump(UINT nStartOrder, UINT nStartRow, UINT nJumpOrder, UINT nJumpRow) const;
 	// Read/Write sample functions
 	signed char GetDeltaValue(signed char prev, UINT n) const { return (signed char)(prev + CompressionTable[n & 0x0F]); }
-#if !(defined(MODPLUG_NO_FILESAVE)||defined(NO_PACKING))
-	UINT PackSample(int &sample, int next);
-	BOOL CanPackSample(LPSTR pSample, UINT nLen, UINT nPacking, BYTE *result=NULL);
-#endif // NO_FILESAVE, NO_PACKING
 
 	UINT ReadSample(MODINSTRUMENT *pIns, UINT nFlags, LPCSTR pMemFile, DWORD dwMemLength);
 	BOOL DestroySample(UINT nSample);
