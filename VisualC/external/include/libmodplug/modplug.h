@@ -19,6 +19,12 @@ extern "C" {
 # else
 #   define MODPLUG_EXPORT __declspec(dllimport)			/* using libmodplug dll for windows */
 # endif
+#elif defined(__OS2__) && defined(__WATCOMC__)
+# if defined(MODPLUG_BUILD) && defined(__SW_BD)		/* building libmodplug as a dll for os/2 */
+#   define MODPLUG_EXPORT __declspec(dllexport)
+# else
+#   define MODPLUG_EXPORT					/* using dll or static libmodplug for os/2 */
+# endif
 #elif defined(MODPLUG_BUILD) && defined(SYM_VISIBILITY)
 #   define MODPLUG_EXPORT __attribute__((visibility("default")))
 #else
@@ -130,24 +136,6 @@ MODPLUG_EXPORT void ModPlug_SeekOrder(ModPlugFile* file,int order);
 MODPLUG_EXPORT int ModPlug_GetModuleType(ModPlugFile* file);
 MODPLUG_EXPORT char* ModPlug_GetMessage(ModPlugFile* file);
 
-#define MODPLUG_NO_FILESAVE /* experimental yet.  must match stdafx.h. */
-#ifndef MODPLUG_NO_FILESAVE
-/*
- * EXPERIMENTAL Export Functions
- */
-/*Export to a Scream Tracker 3 S3M module. EXPERIMENTAL (only works on Little-Endian platforms)*/
-MODPLUG_EXPORT char ModPlug_ExportS3M(ModPlugFile* file, const char* filepath);
-
-/*Export to an Extended Module (XM). EXPERIMENTAL (only works on Little-Endian platforms)*/
-MODPLUG_EXPORT char ModPlug_ExportXM(ModPlugFile* file, const char* filepath);
-
-/*Export to an Amiga MOD file. EXPERIMENTAL.*/
-MODPLUG_EXPORT char ModPlug_ExportMOD(ModPlugFile* file, const char* filepath);
-
-/*Export to an Impulse Tracker IT file. Should work OK in Little-Endian & Big-Endian platforms :-) */
-MODPLUG_EXPORT char ModPlug_ExportIT(ModPlugFile* file, const char* filepath);
-#endif /* MODPLUG_NO_FILESAVE */
-
 MODPLUG_EXPORT unsigned int ModPlug_NumInstruments(ModPlugFile* file);
 MODPLUG_EXPORT unsigned int ModPlug_NumSamples(ModPlugFile* file);
 MODPLUG_EXPORT unsigned int ModPlug_NumPatterns(ModPlugFile* file);
@@ -182,4 +170,4 @@ MODPLUG_EXPORT void ModPlug_UnloadMixerCallback(ModPlugFile* file) ;
 } /* extern "C" */
 #endif
 
-#endif
+#endif /* MODPLUG_H__INCLUDED */
