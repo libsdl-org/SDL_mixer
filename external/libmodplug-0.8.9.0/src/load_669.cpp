@@ -26,7 +26,6 @@ typedef struct tagFILEHEADER669
 	BYTE breaks[128];
 } FILEHEADER669;
 
-
 typedef struct tagSAMPLE669
 {
 	BYTE filename[13];
@@ -156,9 +155,9 @@ BOOL CSoundFile::Read669(const BYTE *lpStream, DWORD dwMemLength)
 					case 0x04:	command = CMD_VIBRATO; param |= 0x40; break;
 					case 0x05:	if (param) command = CMD_SPEED; else command = 0; param += 2; break;
 					case 0x06:	if (param == 0) { command = CMD_PANNINGSLIDE; param = 0xFE; }
-								else if (param == 1) { command = CMD_PANNINGSLIDE; param = 0xEF; }
-								else command = 0;
-								break;
+							else if (param == 1) { command = CMD_PANNINGSLIDE; param = 0xEF; }
+							else command = 0;
+							break;
 					default:	command = 0;
 					}
 					if (command)
