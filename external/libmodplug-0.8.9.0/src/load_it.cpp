@@ -22,13 +22,6 @@ BYTE autovibit2xm[8] =
 //////////////////////////////////////////////////////////
 // Impulse Tracker IT file support
 
-static inline UINT ConvertVolParam(UINT value)
-//--------------------------------------------
-{
-	return (value > 9)  ? 9 : value;
-}
-
-
 BOOL CSoundFile::ITInstrToMPT(const void *p, INSTRUMENTHEADER *penv, UINT trkvers)
 //--------------------------------------------------------------------------------
 {
