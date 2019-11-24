@@ -39,7 +39,6 @@ typedef struct tagS3MSAMPLESTRUCT
 	CHAR scrs[4];
 } S3MSAMPLESTRUCT;
 
-
 typedef struct tagS3MFILEHEADER
 {
 	CHAR name[28];
@@ -63,6 +62,7 @@ typedef struct tagS3MFILEHEADER
 	WORD special;
 	BYTE channels[32];
 } S3MFILEHEADER;
+#pragma pack()
 
 
 void CSoundFile::S3MConvert(MODCOMMAND *m, BOOL bIT) const
