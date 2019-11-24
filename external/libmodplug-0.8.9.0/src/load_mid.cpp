@@ -259,18 +259,18 @@ static void mid_adjust_for_optimal_tempo(MIDHANDLE *h, int maxtempo)
 static MIDEVENT *mid_new_event(MIDHANDLE *h)
 // =====================================================================================
 {
-    MIDEVENT   *retval;
+	MIDEVENT   *retval;
 
-    retval = (MIDEVENT *)_mm_calloc(h->trackhandle, 1,sizeof(MIDEVENT));
-		retval->next      = NULL;
-    retval->tracktick = h->tracktime;
-		retval->flg       = 0;
-		retval->note      = 0;
-		retval->volume    = 0;
-		retval->smpno     = 0;
-		retval->fx        = none;
-		retval->fxparam   = 0;
-    return retval;
+	retval = (MIDEVENT *)_mm_calloc(h->trackhandle, 1,sizeof(MIDEVENT));
+	retval->next      = NULL;
+	retval->tracktick = h->tracktime;
+	retval->flg       = 0;
+	retval->note      = 0;
+	retval->volume    = 0;
+	retval->smpno     = 0;
+	retval->fx        = none;
+	retval->fxparam   = 0;
+	return retval;
 }
 
 // =====================================================================================
