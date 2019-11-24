@@ -44,15 +44,15 @@
 #include <mmsystem.h>
 #include <stdio.h>
 #include <malloc.h>
-#if (_MSC_VER >= 1600)
-#include <stdint.h>
-#else
+#if defined(_MSC_VER) && (_MSC_VER < 1600)
 typedef signed char    int8_t;
 typedef signed short   int16_t;
 typedef signed int     int32_t;
 typedef unsigned char  uint8_t;
 typedef unsigned short uint16_t;
 typedef unsigned int   uint32_t;
+#else
+#include <stdint.h>
 #endif
 
 #define srandom(_seed)  srand(_seed)
@@ -66,7 +66,9 @@ inline void ProcessPlugins(int n) {}
 #define strcasecmp(a,b)     _stricmp(a,b)
 #define strncasecmp(a,b,c)  _strnicmp(a,b,c)
 
+#if defined(_MSC_VER) || defined(__MINGW32__)
 #define HAVE_SINF 1
+#endif
 
 #ifndef isblank
 #define isblank(c) ((c) == ' ' || (c) == '\t')
