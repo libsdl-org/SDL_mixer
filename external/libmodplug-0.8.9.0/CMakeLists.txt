@@ -55,7 +55,6 @@ add_library(modplug STATIC
     src/load_dsm.cpp
     src/load_far.cpp
     src/load_it.cpp
-    # src/load_j2b.cpp
     src/load_mdl.cpp
     src/load_med.cpp
     #src/load_mid.cpp

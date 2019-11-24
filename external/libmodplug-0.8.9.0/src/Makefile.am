@@ -35,7 +35,6 @@ libmodplug_la_SOURCES = tables.h         \
                         load_ams.cpp       \
                         load_amf.cpp       \
                         load_669.cpp       \
-                        load_j2b.cpp       \
                         load_mt2.cpp       \
                         load_psm.cpp       \
                         load_abc.cpp       \
