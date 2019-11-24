@@ -1,15 +1,17 @@
+synced with libmodplug git, with furter changes in mainstream git, including:
+- don't export cplusplus interface from shared libs. SDL_mixer doesn't use it.
 - disable wav formats handling: SDL_mixer has its own code for it.
 - disable midi formats handling: SDL_mixer has timidity or native midi for it.
-- disable experimental file save support: no one uses it, ever.
-- don't export cplusplus interface from shared libs. SDL_mixer doesn't use it.
 - disable mmcmp unpacking. disable broken pp20 unpacking.
-- merge https://github.com/Konstanty/libmodplug/pull/36 (fix PSM loader overwrites const data)
-- merge https://github.com/Konstanty/libmodplug/pull/39 (case-sensitive STM signature checks)
-- merge https://github.com/Konstanty/libmodplug/pull/40 (big-endian-friendly MDL track length read)
-- merge https://github.com/Konstanty/libmodplug/pull/24 (make some stuff static)
-- merge https://github.com/Konstanty/libmodplug/pull/14 (NO_PACKING / MODPLUG_NO_FILESAVE ifdefs)
-- merge https://github.com/Konstanty/libmodplug/pull/32 (replace setenv)
-- merge https://github.com/Konstanty/libmodplug/pull/41 (timidity paths update)
+- removed experimental file save support: no one uses it, ever.
+- removed irrelevant/dead modplug tracker/player code: not enabled ever.
+- load_med.cpp: fix an old incorrect logic in boundary check.
+- merge libmodplug github PR/46 (unbalanced pragma pack fix)
+- merge libmodplug github PR/39 (case-sensitive STM signature checks)
+- merge libmodplug github PR/45 (_MSC_VER ifdef corrections)
+- merge libmodplug github PR/32 (replace setenv)
+- merge libmodplug github PR/41 (timidity paths update)
+- merge libmodplug github PR/24 (make some stuff static)
 
 diff -u libmodplug-0.8.9.0/configure.ac~ libmodplug-0.8.9.0/configure.ac
 --- libmodplug-0.8.9.0/configure.ac~
@@ -65,7 +67,138 @@ diff -u libmodplug-0.8.9.0/src/config.h.in~ libmodplug-0.8.9.0/src/config.h.in
  /* Define to 1 if you have the `sinf' function. */
  #undef HAVE_SINF
  
-diff -up libmodplug-0.8.9.0/src/libmodplug/it_defs.h~ libmodplug-0.8.9.0/src/libmodplug/it_defs.h
+diff -u libmodplug-0.8.9.0/src/fastmix.cpp~ libmodplug-0.8.9.0/src/fastmix.cpp
+--- libmodplug-0.8.9.0/src/fastmix.cpp~
++++ libmodplug-0.8.9.0/src/fastmix.cpp
+@@ -9,7 +9,7 @@
+ #include "sndfile.h"
+ #include <math.h>
+ 
+-#ifdef MSC_VER
++#if defined(_MSC_VER) && defined(_M_IX86)
+ #pragma bss_seg(".modplug")
+ #endif
+ 
+@@ -27,7 +27,7 @@ int MixRearBuffer[MIXBUFFERSIZE*2];
+ float MixFloatBuffer[MIXBUFFERSIZE*2];
+ #endif
+ 
+-#ifdef MSC_VER
++#if defined(_MSC_VER) && defined(_M_IX86)
+ #pragma bss_seg()
+ #endif
+ 
+@@ -1611,7 +1611,7 @@ UINT CSoundFile::CreateStereoMix(int cou
+ #endif
+ 
+ // Clip and convert to 8 bit
+-#ifdef MSC_VER
++#if defined(_MSC_VER) && defined(_M_IX86)
+ __declspec(naked) DWORD MPPASMCALL X86_Convert32To8(LPVOID lp16, int *pBuffer, DWORD lSampleCount, LPLONG lpMin, LPLONG lpMax)
+ //------------------------------------------------------------------------------
+ {
+@@ -1701,7 +1701,7 @@ DWORD MPPASMCALL X86_Convert32To8(LPVOID
+ #endif //MSC_VER, else
+ 
+ 
+-#ifdef MSC_VER
++#if defined(_MSC_VER) && defined(_M_IX86)
+ // Clip and convert to 16 bit
+ __declspec(naked) DWORD MPPASMCALL X86_Convert32To16(LPVOID lp16, int *pBuffer, DWORD lSampleCount, LPLONG lpMin, LPLONG lpMax)
+ //------------------------------------------------------------------------------
+@@ -1794,7 +1794,7 @@ DWORD MPPASMCALL X86_Convert32To16(LPVOI
+ }
+ #endif //MSC_VER, else
+ 
+-#ifdef MSC_VER
++#if defined(_MSC_VER) && defined(_M_IX86)
+ // Clip and convert to 24 bit
+ __declspec(naked) DWORD MPPASMCALL X86_Convert32To24(LPVOID lp16, int *pBuffer, DWORD lSampleCount, LPLONG lpMin, LPLONG lpMax)
+ //------------------------------------------------------------------------------
+@@ -1902,7 +1902,7 @@ DWORD MPPASMCALL X86_Convert32To24(LPVOI
+ }
+ #endif
+ 
+-#ifdef MSC_VER
++#if defined(_MSC_VER) && defined(_M_IX86)
+ // Clip and convert to 32 bit
+ __declspec(naked) DWORD MPPASMCALL X86_Convert32To32(LPVOID lp16, int *pBuffer, DWORD lSampleCount, LPLONG lpMin, LPLONG lpMax)
+ //------------------------------------------------------------------------------
+@@ -1992,7 +1992,7 @@ DWORD MPPASMCALL X86_Convert32To32(LPVOI
+ #endif
+ 
+ 
+-#ifdef MSC_VER
++#if defined(_MSC_VER) && defined(_M_IX86)
+ void MPPASMCALL X86_InitMixBuffer(int *pBuffer, UINT nSamples)
+ //------------------------------------------------------------
+ {
+@@ -2034,7 +2034,7 @@ void MPPASMCALL X86_InitMixBuffer(int *p
+ #endif
+ 
+ 
+-#ifdef MSC_VER
++#if defined(_MSC_VER) && defined(_M_IX86)
+ __declspec(naked) void MPPASMCALL X86_InterleaveFrontRear(int *pFrontBuf, int *pRearBuf, DWORD nSamples)
+ //------------------------------------------------------------------------------
+ {
+@@ -2079,7 +2079,7 @@ void MPPASMCALL X86_InterleaveFrontRear(
+ #endif
+ 
+ 
+-#ifdef MSC_VER
++#if defined(_MSC_VER) && defined(_M_IX86)
+ VOID MPPASMCALL X86_MonoFromStereo(int *pMixBuf, UINT nSamples)
+ //-------------------------------------------------------------
+ {
+@@ -2116,7 +2116,7 @@ VOID MPPASMCALL X86_MonoFromStereo(int *
+ #define OFSDECAYMASK	0xFF
+ 
+ 
+-#ifdef MSC_VER
++#if defined(_MSC_VER) && defined(_M_IX86)
+ void MPPASMCALL X86_StereoFill(int *pBuffer, UINT nSamples, LPLONG lpROfs, LPLONG lpLOfs)
+ //------------------------------------------------------------------------------
+ {
+@@ -2217,7 +2217,7 @@ void MPPASMCALL X86_StereoFill(int *pBuf
+ }
+ #endif
+ 
+-#ifdef MSC_VER
++#if defined(_MSC_VER) && defined(_M_IX86)
+ void MPPASMCALL X86_EndChannelOfs(MODCHANNEL *pChannel, int *pBuffer, UINT nSamples)
+ //------------------------------------------------------------------------------
+ {
+@@ -2291,7 +2291,7 @@ void MPPASMCALL X86_EndChannelOfs(MODCHA
+ #define MIXING_LIMITMAX		(0x08100000)
+ #define MIXING_LIMITMIN		(-MIXING_LIMITMAX)
+ 
+-#ifdef MSC_VER
++#if defined(_MSC_VER) && defined(_M_IX86)
+ __declspec(naked) UINT MPPASMCALL X86_AGC(int *pBuffer, UINT nSamples, UINT nAGC)
+ //------------------------------------------------------------------------------
+ {
+@@ -2327,7 +2327,6 @@ agcupdate:
+ 	jmp agcrecover
+ 	}
+ }
+-
+ #pragma warning (default:4100)
+ #else
+ // Version for GCC
+@@ -2378,11 +2377,9 @@ void CSoundFile::ProcessAGC(int count)
+ }
+ 
+ 
+-
+ void CSoundFile::ResetAGC()
+ //-------------------------
+ {
+ 	gnAGC = AGC_UNITY;
+ }
+-
+ #endif // NO_AGC
+diff -u libmodplug-0.8.9.0/src/libmodplug/it_defs.h~ libmodplug-0.8.9.0/src/libmodplug/it_defs.h
 --- libmodplug-0.8.9.0/src/libmodplug/it_defs.h~
 +++ libmodplug-0.8.9.0/src/libmodplug/it_defs.h
 @@ -128,7 +128,9 @@ typedef struct ITSAMPLESTRUCT
@@ -80,42 +213,147 @@ diff -up libmodplug-0.8.9.0/src/libmodplug/it_defs.h~ libmodplug-0.8.9.0/src/lib
 +#endif
  
  #endif
-diff -up libmodplug-0.8.9.0/src/libmodplug/sndfile.h~ libmodplug-0.8.9.0/src/libmodplug/sndfile.h
+diff -u libmodplug-0.8.9.0/src/libmodplug/sndfile.h~ libmodplug-0.8.9.0/src/libmodplug/sndfile.h
 --- libmodplug-0.8.9.0/src/libmodplug/sndfile.h~
 +++ libmodplug-0.8.9.0/src/libmodplug/sndfile.h
-@@ -456,7 +456,7 @@ typedef struct _MODCOMMAND
+@@ -43,7 +43,6 @@ typedef const BYTE * LPCBYTE;
+ #define MAX_EQ_BANDS		6
+ #define MAX_MIXPLUGINS		8
+ 
+-
+ #define MOD_TYPE_NONE		0x00
+ #define MOD_TYPE_MOD		0x01
+ #define MOD_TYPE_S3M		0x02
+@@ -74,8 +73,6 @@ typedef const BYTE * LPCBYTE;
+ #define MOD_TYPE_UMX		0x80000000 // Fake type
+ #define MAX_MODTYPE		24
+ 
+-
+-
+ // Channel flags:
+ // Bits 0-7:	Sample Flags
+ #define CHN_16BIT               0x01
+@@ -108,7 +105,6 @@ typedef const BYTE * LPCBYTE;
+ #define CHN_REVERB              0x4000000
+ #define CHN_NOREVERB		0x8000000
+ 
+-
+ #define ENV_VOLUME              0x0001
+ #define ENV_VOLSUSTAIN		0x0002
+ #define ENV_VOLLOOP             0x0004
+@@ -157,7 +153,6 @@ typedef const BYTE * LPCBYTE;
+ #define CMD_SETENVPOSITION		30
+ #define CMD_MIDI                        31
+ 
+-
+ // Volume Column commands
+ #define VOLCMD_VOLUME			1
+ #define VOLCMD_PANNING			2
+@@ -278,7 +273,6 @@ typedef const BYTE * LPCBYTE;
+ #define SNDMIX_NOBACKWARDJUMPS	0x40000
+ #define SNDMIX_MAXDEFAULTPAN	0x80000	// Used by the MOD loader
+ 
+-
+ // Reverb Types (GM2 Presets)
+ enum {
+ 	REVERBTYPE_SMALLROOM,
+@@ -290,7 +284,6 @@ enum {
+ 	NUM_REVERBTYPES
+ };
+ 
+-
+ enum {
+ 	SRCMODE_NEAREST,
+ 	SRCMODE_LINEAR,
+@@ -299,7 +292,6 @@ enum {
+ 	NUM_SRC_MODES
+ };
+ 
+-
+ // Sample Struct
+ typedef struct _MODINSTRUMENT
+ {
+@@ -320,7 +312,6 @@ typedef struct _MODINSTRUMENT
+ 	CHAR name[22];
+ } MODINSTRUMENT;
+ 
+-
+ // Instrument Struct
+ typedef struct _INSTRUMENTHEADER
+ {
+@@ -369,7 +360,6 @@ typedef struct _INSTRUMENTHEADER
+ 	CHAR filename[12];
+ } INSTRUMENTHEADER;
+ 
+-
+ // Channel Struct
+ typedef struct _MODCHANNEL
+ {
+@@ -427,11 +417,9 @@ typedef struct _MODCHANNEL
+ 	BYTE nRowNote, nRowInstr;
+ 	BYTE nRowVolCmd, nRowVolume;
+ 	BYTE nRowCommand, nRowParam;
+-	BYTE nLeftVU, nRightVU;
+ 	BYTE nActiveMacro, nPadding;
+ } MODCHANNEL;
+ 
+-
+ typedef struct _MODCHANNELSETTINGS
+ {
+ 	UINT nPan;
+@@ -441,7 +429,6 @@ typedef struct _MODCHANNELSETTINGS
+         char szName[MAX_CHANNELNAME];        // changed from CHAR
+ } MODCHANNELSETTINGS;
+ 
+-
+ typedef struct _MODCOMMAND
+ {
+ 	BYTE note;
+@@ -456,7 +443,7 @@ typedef struct _MODCOMMAND
  // Mix Plugins
  #define MIXPLUG_MIXREADY			0x01	// Set when cleared
  
 -class MODPLUG_EXPORT IMixPlugin
-+class /*MODPLUG_EXPORT*/ IMixPlugin
++class MODPLUG_EXPORTPP IMixPlugin
  {
  public:
  	virtual ~IMixPlugin() {};
-@@ -535,7 +535,7 @@ typedef VOID (* LPSNDMIXHOOKPROC)(int *,
+@@ -520,7 +507,6 @@ enum {
+ 	MIDIOUT_PROGRAM,
+ };
+ 
+-
+ typedef struct MODMIDICFG
+ {
+         char szMidiGlb[9*32];      // changed from CHAR
+@@ -533,9 +519,8 @@ typedef struct MODMIDICFG
+ typedef VOID (* LPSNDMIXHOOKPROC)(int *, unsigned long, unsigned long); // buffer, samples, channels
  
  
+-
  //==============
 -class MODPLUG_EXPORT CSoundFile
-+class /*MODPLUG_EXPORT*/ CSoundFile
++class MODPLUG_EXPORTPP CSoundFile
  //==============
  {
  public:	// Static Members
-@@ -638,7 +638,9 @@ public:
+@@ -638,7 +623,9 @@ public:
  	BOOL ReadIT(LPCBYTE lpStream, DWORD dwMemLength);
  	BOOL Read669(LPCBYTE lpStream, DWORD dwMemLength);
  	BOOL ReadUlt(LPCBYTE lpStream, DWORD dwMemLength);
-+#ifndef NO_WAVFORMAT
++#ifdef WAV_SUPPORT
  	BOOL ReadWav(LPCBYTE lpStream, DWORD dwMemLength);
 +#endif
  	BOOL ReadDSM(LPCBYTE lpStream, DWORD dwMemLength);
  	BOOL ReadFAR(LPCBYTE lpStream, DWORD dwMemLength);
  	BOOL ReadAMS(LPCBYTE lpStream, DWORD dwMemLength);
-@@ -653,12 +655,14 @@ public:
+@@ -651,29 +638,19 @@ public:
+ 	BOOL ReadAMF(LPCBYTE lpStream, DWORD dwMemLength);
+ 	BOOL ReadMT2(LPCBYTE lpStream, DWORD dwMemLength);
  	BOOL ReadPSM(LPCBYTE lpStream, DWORD dwMemLength);
- 	BOOL ReadJ2B(LPCBYTE lpStream, DWORD dwMemLength);
+-	BOOL ReadJ2B(LPCBYTE lpStream, DWORD dwMemLength);
  	BOOL ReadUMX(LPCBYTE lpStream, DWORD dwMemLength);
-+#ifndef NO_MIDIFORMATS
++#ifdef MIDIFMT_SUPPORT
  	BOOL ReadABC(LPCBYTE lpStream, DWORD dwMemLength);
  	BOOL TestABC(LPCBYTE lpStream, DWORD dwMemLength);
  	BOOL ReadMID(LPCBYTE lpStream, DWORD dwMemLength);
@@ -124,59 +362,182 @@ diff -up libmodplug-0.8.9.0/src/libmodplug/sndfile.h~ libmodplug-0.8.9.0/src/lib
  	BOOL TestPAT(LPCBYTE lpStream, DWORD dwMemLength);
 +#endif
  	// Save Functions
- #ifndef MODPLUG_NO_FILESAVE
- 	UINT WriteSample(FILE *f, MODINSTRUMENT *pins, UINT nFlags, UINT nMaxLen=0);
-@@ -666,14 +670,16 @@ public:
- 	BOOL SaveS3M(LPCSTR lpszFileName, UINT nPacking=0);
- 	BOOL SaveMod(LPCSTR lpszFileName, UINT nPacking=0);
- 	BOOL SaveIT(LPCSTR lpszFileName, UINT nPacking=0);
+-#ifndef MODPLUG_NO_FILESAVE
+-	UINT WriteSample(FILE *f, MODINSTRUMENT *pins, UINT nFlags, UINT nMaxLen=0);
+-	BOOL SaveXM(LPCSTR lpszFileName, UINT nPacking=0);
+-	BOOL SaveS3M(LPCSTR lpszFileName, UINT nPacking=0);
+-	BOOL SaveMod(LPCSTR lpszFileName, UINT nPacking=0);
+-	BOOL SaveIT(LPCSTR lpszFileName, UINT nPacking=0);
 -#endif // MODPLUG_NO_FILESAVE
--	// MOD Convert function
- 	UINT GetBestSaveFormat() const;
- 	UINT GetSaveFormats() const;
-+#endif
-+	// MOD Convert function
+ 	// MOD Convert function
+-	UINT GetBestSaveFormat() const;
+-	UINT GetSaveFormats() const;
  	void ConvertModCommand(MODCOMMAND *) const;
  	void S3MConvert(MODCOMMAND *m, BOOL bIT) const;
-+#ifndef MODPLUG_NO_FILESAVE
- 	void S3MSaveConvert(UINT *pcmd, UINT *pprm, BOOL bIT) const;
- 	WORD ModSaveCommand(const MODCOMMAND *m, BOOL bXM) const;
-+#endif
+-	void S3MSaveConvert(UINT *pcmd, UINT *pprm, BOOL bIT) const;
+-	WORD ModSaveCommand(const MODCOMMAND *m, BOOL bXM) const;
  
  public:
  	// Real-time sound functions
-@@ -759,8 +765,11 @@ public:
+@@ -759,8 +736,7 @@ public:
  	BOOL IsValidBackwardJump(UINT nStartOrder, UINT nStartRow, UINT nJumpOrder, UINT nJumpRow) const;
  	// Read/Write sample functions
  	signed char GetDeltaValue(signed char prev, UINT n) const { return (signed char)(prev + CompressionTable[n & 0x0F]); }
-+#if !(defined(MODPLUG_NO_FILESAVE)||defined(NO_PACKING))
- 	UINT PackSample(int &sample, int next);
- 	BOOL CanPackSample(LPSTR pSample, UINT nLen, UINT nPacking, BYTE *result=NULL);
-+#endif // NO_FILESAVE, NO_PACKING
+-	UINT PackSample(int &sample, int next);
+-	BOOL CanPackSample(LPSTR pSample, UINT nLen, UINT nPacking, BYTE *result=NULL);
 +
  	UINT ReadSample(MODINSTRUMENT *pIns, UINT nFlags, LPCSTR pMemFile, DWORD dwMemLength);
  	BOOL DestroySample(UINT nSample);
  	BOOL DestroyInstrument(UINT nInstr);
-diff -up libmodplug-0.8.9.0/src/libmodplug/stdafx.h~ libmodplug-0.8.9.0/src/libmodplug/stdafx.h
+@@ -803,11 +779,6 @@ public:
+ 	static UINT Normalize24BitBuffer(LPBYTE pbuffer, UINT cbsizebytes, DWORD lmax24, DWORD dwByteInc);
+ };
+ 
+-
+-// inline DWORD BigEndian(DWORD x) { return ((x & 0xFF) << 24) | ((x & 0xFF00) << 8) | ((x & 0xFF0000) >> 8) | ((x & 0xFF000000) >> 24); }
+-// inline WORD BigEndianW(WORD x) { return (WORD)(((x >> 8) & 0xFF) | ((x << 8) & 0xFF00)); }
+-
+-
+ //////////////////////////////////////////////////////////
+ // WAVE format information
+ 
+@@ -848,7 +819,6 @@ typedef struct WAVEFILEHEADER
+ 	DWORD id_WAVE;
+ } WAVEFILEHEADER;
+ 
+-
+ typedef struct WAVEFORMATHEADER
+ {
+ 	DWORD id_fmt;		// "fmt "
+@@ -861,14 +831,12 @@ typedef struct WAVEFORMATHEADER
+ 	WORD bitspersample;	// bits per sample (8/16)
+ } WAVEFORMATHEADER;
+ 
+-
+ typedef struct WAVEDATAHEADER
+ {
+ 	DWORD id_data;		// "data"
+ 	DWORD length;		// length of data
+ } WAVEDATAHEADER;
+ 
+-
+ typedef struct WAVESMPLHEADER
+ {
+ 	// SMPL
+@@ -885,7 +853,6 @@ typedef struct WAVESMPLHEADER
+ 	DWORD cbSamplerData;
+ } WAVESMPLHEADER;
+ 
+-
+ typedef struct SAMPLELOOPSTRUCT
+ {
+ 	DWORD dwIdentifier;
+@@ -896,14 +863,12 @@ typedef struct SAMPLELOOPSTRUCT
+ 	DWORD dwPlayCount;		// Loop Count, 0=infinite
+ } SAMPLELOOPSTRUCT;
+ 
+-
+ typedef struct WAVESAMPLERINFO
+ {
+ 	WAVESMPLHEADER wsiHdr;
+ 	SAMPLELOOPSTRUCT wsiLoops[2];
+ } WAVESAMPLERINFO;
+ 
+-
+ typedef struct WAVELISTHEADER
+ {
+ 	DWORD list_id;	// "LIST" -> 0x5453494C
+@@ -911,7 +876,6 @@ typedef struct WAVELISTHEADER
+ 	DWORD info;		// "INFO"
+ } WAVELISTHEADER;
+ 
+-
+ typedef struct WAVEEXTRAHEADER
+ {
+ 	DWORD xtra_id;	// "xtra"	-> 0x61727478
+@@ -943,7 +907,7 @@ typedef struct WAVEEXTRAHEADER
+ #define AGC_UNITY			(1 << AGC_PRECISION)
+ 
+ // Calling conventions
+-#ifdef MSC_VER
++#if defined(_MSC_VER) && defined(_M_IX86)
+ #define MPPASMCALL	__cdecl
+ #define MPPFASTCALL	__fastcall
+ #else
+@@ -958,6 +922,9 @@ int _muldiv(long a, long b, long c);
+ int _muldivr(long a, long b, long c);
+ 
+ 
++// inline DWORD BigEndian(DWORD x) { return ((x & 0xFF) << 24) | ((x & 0xFF00) << 8) | ((x & 0xFF0000) >> 8) | ((x & 0xFF000000) >> 24); }
++// inline WORD BigEndianW(WORD x) { return (WORD)(((x >> 8) & 0xFF) | ((x << 8) & 0xFF00)); }
++
+ // Byte swapping functions from the GNU C Library and libsdl
+ 
+ /* Swap bytes in 16 bit value.  */
+diff -u libmodplug-0.8.9.0/src/libmodplug/stdafx.h~ libmodplug-0.8.9.0/src/libmodplug/stdafx.h
 --- libmodplug-0.8.9.0/src/libmodplug/stdafx.h~
 +++ libmodplug-0.8.9.0/src/libmodplug/stdafx.h
-@@ -21,9 +21,15 @@
+@@ -21,13 +21,18 @@
  # include <stdint.h>
  #endif
  
++/*#define CXX_INTERFACE*/ /* export C++ interface from dll. */
++/*#define MIDIFMT_SUPPORT*/
++/*#define WAV_SUPPORT*/
 +/*#define MMCMP_SUPPORT*/
 +
  /* disable AGC and FILESAVE for all targets for uniformity. */
  #define NO_AGC
- #define MODPLUG_NO_FILESAVE
-+/*#define NO_PACKING*/
+-#define MODPLUG_NO_FILESAVE
 +/*#define NO_FILTER */
-+#define NO_MIDIFORMATS
-+#define NO_WAVFORMAT
  
  #ifdef _WIN32
  
-@@ -88,12 +94,6 @@ typedef const char* LPCSTR;
+-#ifdef MSC_VER
++#ifdef _MSC_VER
+ #pragma warning (disable:4201)
+ #pragma warning (disable:4514)
+ #endif
+@@ -38,7 +43,16 @@
+ #include <mmsystem.h>
+ #include <stdio.h>
+ #include <malloc.h>
++#if defined(_MSC_VER) && (_MSC_VER < 1600)
++typedef signed char    int8_t;
++typedef signed short   int16_t;
++typedef signed int     int32_t;
++typedef unsigned char  uint8_t;
++typedef unsigned short uint16_t;
++typedef unsigned int   uint32_t;
++#else
+ #include <stdint.h>
++#endif
+ 
+ #define srandom(_seed)  srand(_seed)
+ #define random()        rand()
+@@ -51,7 +65,9 @@ inline void ProcessPlugins(int n) {}
+ #define strcasecmp(a,b)     _stricmp(a,b)
+ #define strncasecmp(a,b,c)  _strnicmp(a,b,c)
+ 
++#if defined(_MSC_VER) || defined(__MINGW32__)
+ #define HAVE_SINF 1
++#endif
+ 
+ #ifndef isblank
+ #define isblank(c) ((c) == ' ' || (c) == '\t')
+@@ -66,6 +82,11 @@ inline void ProcessPlugins(int n) {}
+ #include <malloc.h>
+ #endif
+ 
++#ifdef __WATCOMC__
++#define srandom(_seed)  srand(_seed)
++#define random()        rand()
++#endif
++
+ typedef int8_t CHAR;
+ typedef uint8_t UCHAR;
+ typedef uint8_t* PUCHAR;
+@@ -88,12 +109,6 @@ typedef const char* LPCSTR;
  typedef void* PVOID;
  typedef void VOID;
  
@@ -189,7 +550,30 @@ diff -up libmodplug-0.8.9.0/src/libmodplug/stdafx.h~ libmodplug-0.8.9.0/src/libm
  #define LPCTSTR LPCSTR
  #define lstrcpyn strncpy
  #define lstrcpy strcpy
-diff -up libmodplug-0.8.9.0/src/load_669.cpp~ libmodplug-0.8.9.0/src/load_669.cpp
+@@ -132,10 +147,22 @@ inline void ProcessPlugins(int n) {}
+ # else
+ #   define MODPLUG_EXPORT __declspec(dllimport)			/* using libmodplug dll for windows */
+ # endif
++#elif defined(__OS2__) && defined(__WATCOMC__)
++# if defined(MODPLUG_BUILD) && defined(__SW_BD)		/* building libmodplug as a dll for os/2 */
++#   define MODPLUG_EXPORT __declspec(dllexport)
++# else
++#   define MODPLUG_EXPORT					/* using dll or static libmodplug for os/2 */
++# endif
+ #elif defined(MODPLUG_BUILD) && defined(SYM_VISIBILITY)
+ #   define MODPLUG_EXPORT __attribute__((visibility("default")))
+ #else
+ #define MODPLUG_EXPORT
+ #endif
+ 
++#if defined(CXX_INTERFACE)
++#define MODPLUG_EXPORTPP	MODPLUG_EXPORT
++#else
++#define MODPLUG_EXPORTPP
++#endif
++
+ #endif
+diff -u libmodplug-0.8.9.0/src/load_669.cpp~ libmodplug-0.8.9.0/src/load_669.cpp
 --- libmodplug-0.8.9.0/src/load_669.cpp~
 +++ libmodplug-0.8.9.0/src/load_669.cpp
 @@ -17,7 +17,7 @@
@@ -201,7 +585,15 @@ diff -up libmodplug-0.8.9.0/src/load_669.cpp~ libmodplug-0.8.9.0/src/load_669.cp
  	BYTE samples;			// number of samples (1-64)
  	BYTE patterns;			// number of patterns (1-128)
  	BYTE restartpos;
-@@ -35,7 +35,7 @@ typedef struct tagSAMPLE669
+@@ -26,7 +26,6 @@ typedef struct tagFILEHEADER669
+ 	BYTE breaks[128];
+ } FILEHEADER669;
+ 
+-
+ typedef struct tagSAMPLE669
+ {
+ 	BYTE filename[13];
+@@ -35,7 +34,7 @@ typedef struct tagSAMPLE669
  	BYTE loopend[4];
  } SAMPLE669;
  
@@ -210,14 +602,27 @@ diff -up libmodplug-0.8.9.0/src/load_669.cpp~ libmodplug-0.8.9.0/src/load_669.cp
  	DWORD len = (length[3] << 24) +
  		(length[2] << 16) +
  		(length[1] << 8) +
-diff -up libmodplug-0.8.9.0/src/load_abc.cpp~ libmodplug-0.8.9.0/src/load_abc.cpp
+@@ -156,9 +155,9 @@ BOOL CSoundFile::Read669(const BYTE *lpS
+ 					case 0x04:	command = CMD_VIBRATO; param |= 0x40; break;
+ 					case 0x05:	if (param) command = CMD_SPEED; else command = 0; param += 2; break;
+ 					case 0x06:	if (param == 0) { command = CMD_PANNINGSLIDE; param = 0xFE; }
+-								else if (param == 1) { command = CMD_PANNINGSLIDE; param = 0xEF; }
+-								else command = 0;
+-								break;
++							else if (param == 1) { command = CMD_PANNINGSLIDE; param = 0xEF; }
++							else command = 0;
++							break;
+ 					default:	command = 0;
+ 					}
+ 					if (command)
+diff -u libmodplug-0.8.9.0/src/load_abc.cpp~ libmodplug-0.8.9.0/src/load_abc.cpp
 --- libmodplug-0.8.9.0/src/load_abc.cpp~
 +++ libmodplug-0.8.9.0/src/load_abc.cpp
 @@ -37,9 +37,11 @@
  #include "stdafx.h"
  #include "sndfile.h"
  
-+#ifndef NO_MIDIFORMATS
++#ifdef MIDIFMT_SUPPORT
 +
  #include "load_pat.h"
  
@@ -243,6 +648,33 @@ diff -up libmodplug-0.8.9.0/src/load_abc.cpp~ libmodplug-0.8.9.0/src/load_abc.cp
  
  static int abc_isvalidchar(char c) {
  	return(isalpha(c) || isdigit(c) || isspace(c) || c == '%' || c == ':');
+@@ -403,7 +395,7 @@ static void abc_dumptracks(ABCHANDLE *h,
+ 	}
+ }
+ 
+-#if defined(WIN32) && defined(_mm_free)
++#if defined(_WIN32) && defined(_mm_free)
+ #undef _mm_free
+ #endif
+ 
+@@ -1484,7 +1476,7 @@ static void	abc_add_chord(const char *p,
+ 			d[chordnote] = i;
+ 			break;
+ 		}
+-	p++;
++	if (*p) p++;
+ 	switch(*p) {
+ 		case 'b':
+ 			d[chordnote]--;
+@@ -1506,7 +1498,7 @@ static void	abc_add_chord(const char *p,
+ 				d[chordbase] = i;
+ 				break;
+ 			}
+-		p++;
++		if (*p) p++;
+ 		switch(*p) {
+ 			case 'b':
+ 				d[chordbase]--;
 @@ -2345,9 +2337,9 @@ BOOL CSoundFile::TestABC(const BYTE *lpS
  // =====================================================================================
  static ABCHANDLE *ABC_Init(void)
@@ -275,12 +707,52 @@ diff -up libmodplug-0.8.9.0/src/load_abc.cpp~ libmodplug-0.8.9.0/src/load_abc.cp
  	}
  	return retval;
  }
-@@ -4878,3 +4870,4 @@ BOOL CSoundFile::ReadABC(const uint8_t *
+@@ -2643,10 +2635,11 @@ static int ABC_ReadPatterns(MODCOMMAND *
+ static int ABC_Key(const char *p)
+ {
+ 	int i,j;
+-	char c[8] = {}; // initialize all to zero.
++	char c[8];
+ 	const char *q;
+ 	while( isspace(*p) ) p++;
+ 	q = p;
++	memset(c, 0, 8);
+ 	for( i=0; i<8 && *p && *p != ']'; p++ ) {
+ 		if( isspace(*p) ) {
+ 			while( isspace(*p) ) p++;
+@@ -2939,9 +2932,10 @@ static void abc_MIDI_voice(const char *p
+ static void abc_MIDI_chordname(const char *p)
+ {
+ 	char name[20];
+-	int i, notes[6] = {};
++	int i;
+ 
+-	for( ; *p && isspace(*p); p++ ) ;
++	for(; *p && isspace(*p); p++)
++		;
+ 	i = 0;
+ 	while ((i < 19) && (*p != ' ') && (*p != '\0')) {
+ 		name[i] = *p;
+@@ -2953,9 +2947,12 @@ static void abc_MIDI_chordname(const cha
+ 		abc_message("Failure: Bad format for chordname command, %s", p);
+ 	}
+ 	else {
++		int notes[6];
+ 		i = 0;
++		memset(notes, 0, sizeof(notes));
+ 		while ((i < 6) && isspace(*p)) {
+-			for( ; *p && isspace(*p); p++ ) ;
++			for(; *p && isspace(*p); p++)
++				;
+ 			p += abc_getnumber(p, &notes[i]);
+ 			i = i + 1;
+ 		}
+@@ -4878,3 +4875,4 @@ BOOL CSoundFile::ReadABC(const uint8_t *
  	ABC_Cleanup(h);	// we dont need it anymore
  	return 1;
  }
-+#endif // NO_MIDIFORMATS
-diff -up libmodplug-0.8.9.0/src/load_amf.cpp~ libmodplug-0.8.9.0/src/load_amf.cpp
++#endif // MIDIFMT_SUPPORT
+diff -u libmodplug-0.8.9.0/src/load_amf.cpp~ libmodplug-0.8.9.0/src/load_amf.cpp
 --- libmodplug-0.8.9.0/src/load_amf.cpp~
 +++ libmodplug-0.8.9.0/src/load_amf.cpp
 @@ -44,7 +44,6 @@ typedef struct _AMFSAMPLE
@@ -308,10 +780,37 @@ diff -up libmodplug-0.8.9.0/src/load_amf.cpp~ libmodplug-0.8.9.0/src/load_amf.cp
  BOOL CSoundFile::ReadAMF(LPCBYTE lpStream, const DWORD dwMemLength)
  //-----------------------------------------------------------
  {
-diff -up libmodplug-0.8.9.0/src/load_dmf.cpp~ libmodplug-0.8.9.0/src/load_dmf.cpp
+diff -u libmodplug-0.8.9.0/src/load_dbm.cpp~ libmodplug-0.8.9.0/src/load_dbm.cpp
+--- libmodplug-0.8.9.0/src/load_dbm.cpp~
++++ libmodplug-0.8.9.0/src/load_dbm.cpp
+@@ -249,7 +249,7 @@ BOOL CSoundFile::ReadDBM(const BYTE *lpS
+ 					MODCOMMAND *m = AllocatePattern(nRows, m_nChannels);
+ 					if (m)
+ 					{
+-						LPBYTE pkdata = (LPBYTE)&pph->patterndata;
++						LPBYTE pkdata = (LPBYTE)pph->patterndata;
+ 						UINT row = 0;
+ 						UINT i = 0;
+ 
+@@ -365,4 +365,3 @@ BOOL CSoundFile::ReadDBM(const BYTE *lpS
+ 	}
+ 	return TRUE;
+ }
+-
+diff -u libmodplug-0.8.9.0/src/load_dmf.cpp~ libmodplug-0.8.9.0/src/load_dmf.cpp
 --- libmodplug-0.8.9.0/src/load_dmf.cpp~
 +++ libmodplug-0.8.9.0/src/load_dmf.cpp
-@@ -509,7 +509,7 @@ typedef struct DMF_HTREE
+@@ -279,7 +279,8 @@ BOOL CSoundFile::ReadDMF(const BYTE *lpS
+ 								case 8: cmd.command = CMD_VIBRATO; cmd.param = eval; break;
+ 								// 12: Note cut
+ 								case 12: if (eval & 0xe0) { cmd.command = CMD_S3MCMDEX; cmd.param = (eval>>5)|0xc0; }
+-										else if (!cmd.note) { cmd.note = 0xfe; } break;
++									 else if (!cmd.note) { cmd.note = 0xfe; }
++									 break;
+ 								#ifdef DMFLOG
+ 								default: Log("FX2: %02X.%02X\n", efx, eval);
+ 								#endif
+@@ -509,7 +510,7 @@ typedef struct DMF_HTREE
  
  
  // DMF Huffman ReadBits
@@ -320,7 +819,7 @@ diff -up libmodplug-0.8.9.0/src/load_dmf.cpp~ libmodplug-0.8.9.0/src/load_dmf.cp
  //-------------------------------------------
  {
  	BYTE x = 0, bitv = 1;
-@@ -534,7 +534,7 @@ BYTE DMFReadBits(DMF_HTREE *tree, UINT n
+@@ -534,7 +535,7 @@ BYTE DMFReadBits(DMF_HTREE *tree, UINT n
  // tree: [8-bit value][12-bit index][12-bit index] = 32-bit
  //
  
@@ -329,23 +828,20 @@ diff -up libmodplug-0.8.9.0/src/load_dmf.cpp~ libmodplug-0.8.9.0/src/load_dmf.cp
  //------------------------------
  {
  	BYTE isleft, isright;
-diff -up libmodplug-0.8.9.0/src/load_it.cpp~ libmodplug-0.8.9.0/src/load_it.cpp
+diff -u libmodplug-0.8.9.0/src/load_it.cpp~ libmodplug-0.8.9.0/src/load_it.cpp
 --- libmodplug-0.8.9.0/src/load_it.cpp~
 +++ libmodplug-0.8.9.0/src/load_it.cpp
-@@ -15,19 +15,18 @@
+@@ -15,19 +15,13 @@
  #pragma warning(disable:4244)
  #endif
  
 +static const
  BYTE autovibit2xm[8] =
  { 0, 3, 1, 4, 2, 0, 0, 0 };
--
-+#ifndef MODPLUG_NO_FILESAVE
-+static const
- BYTE autovibxm2it[8] =
- { 0, 2, 4, 1, 3, 0, 0, 0 };
-+#endif
  
+-BYTE autovibxm2it[8] =
+-{ 0, 2, 4, 1, 3, 0, 0, 0 };
+-
  //////////////////////////////////////////////////////////
  // Impulse Tracker IT file support
  
@@ -356,7 +852,637 @@ diff -up libmodplug-0.8.9.0/src/load_it.cpp~ libmodplug-0.8.9.0/src/load_it.cpp
  static inline UINT ConvertVolParam(UINT value)
  //--------------------------------------------
  {
-diff -up libmodplug-0.8.9.0/src/load_mdl.cpp~ libmodplug-0.8.9.0/src/load_mdl.cpp
+@@ -165,6 +159,7 @@ BOOL CSoundFile::ReadIT(const BYTE *lpSt
+ 	DWORD patpos[MAX_PATTERNS];
+ 	BYTE chnmask[64], channels_used[64];
+ 	MODCOMMAND lastvalue[64];
++	UINT j;
+ 
+ 	if ((!lpStream) || (dwMemLength < sizeof(ITFILEHEADER))) return FALSE;
+ 	ITFILEHEADER pifh = *(ITFILEHEADER *)lpStream;
+@@ -237,7 +232,7 @@ BOOL CSoundFile::ReadIT(const BYTE *lpSt
+ 	if (inspossize > MAX_INSTRUMENTS) inspossize = MAX_INSTRUMENTS;
+ 	inspossize <<= 2;
+ 	memcpy(inspos, lpStream+dwMemPos, inspossize);
+-	for (UINT j=0; j < (inspossize>>2); j++)
++	for (j=0; j < (inspossize>>2); j++)
+ 	{
+ 	       inspos[j] = bswapLE32(inspos[j]);
+ 	}
+@@ -248,7 +243,7 @@ BOOL CSoundFile::ReadIT(const BYTE *lpSt
+ 	if (smppossize > MAX_SAMPLES) smppossize = MAX_SAMPLES;
+ 	smppossize <<= 2;
+ 	memcpy(smppos, lpStream+dwMemPos, smppossize);
+-	for (UINT j=0; j < (smppossize>>2); j++)
++	for (j=0; j < (smppossize>>2); j++)
+ 	{
+ 	       smppos[j] = bswapLE32(smppos[j]);
+ 	}
+@@ -259,7 +254,7 @@ BOOL CSoundFile::ReadIT(const BYTE *lpSt
+ 	if (patpossize > MAX_PATTERNS) patpossize = MAX_PATTERNS;
+ 	patpossize <<= 2;
+ 	memcpy(patpos, lpStream+dwMemPos, patpossize);
+-	for (UINT j=0; j < (patpossize>>2); j++)
++	for (j=0; j < (patpossize>>2); j++)
+ 	{
+ 	       patpos[j] = bswapLE32(patpos[j]);
+ 	}
+@@ -592,593 +587,6 @@ BOOL CSoundFile::ReadIT(const BYTE *lpSt
+ }
+ 
+ 
+-#ifndef MODPLUG_NO_FILESAVE
+-//#define SAVEITTIMESTAMP
+-#ifdef _MSC_VER
+-#pragma warning(disable:4100)
+-#endif
+-
+-BOOL CSoundFile::SaveIT(LPCSTR lpszFileName, UINT nPacking)
+-//---------------------------------------------------------
+-{
+-	DWORD dwPatNamLen, dwChnNamLen;
+-	ITFILEHEADER header, writeheader;
+-	ITINSTRUMENT iti, writeiti;
+-	ITSAMPLESTRUCT itss;
+-	BYTE smpcount[MAX_SAMPLES];
+-	DWORD inspos[MAX_INSTRUMENTS];
+-	DWORD patpos[MAX_PATTERNS];
+-	DWORD smppos[MAX_SAMPLES];
+-	DWORD dwPos = 0, dwHdrPos = 0, dwExtra = 2;
+-	WORD patinfo[4];
+-	BYTE chnmask[64];
+-	BYTE buf[512];
+-	MODCOMMAND lastvalue[64];
+-	FILE *f;
+-
+-
+-	if ((!lpszFileName) || ((f = fopen(lpszFileName, "wb")) == NULL)) return FALSE;
+-	memset(inspos, 0, sizeof(inspos));
+-	memset(patpos, 0, sizeof(patpos));
+-	memset(smppos, 0, sizeof(smppos));
+-	// Writing Header
+-	memset(&header, 0, sizeof(header));
+-	dwPatNamLen = 0;
+-	dwChnNamLen = 0;
+-	header.id = 0x4D504D49; // IMPM
+-	lstrcpyn((char *)header.songname, m_szNames[0], 27);
+-	header.reserved1 = 0x1004;
+-	header.ordnum = 0;
+-	while ((header.ordnum < MAX_ORDERS) && (Order[header.ordnum] < 0xFF)) header.ordnum++;
+-	if (header.ordnum < MAX_ORDERS) Order[header.ordnum++] = 0xFF;
+-	header.insnum = m_nInstruments;
+-	header.smpnum = m_nSamples;
+-	header.patnum = MAX_PATTERNS;
+-	while ((header.patnum > 0) && (!Patterns[header.patnum-1])) header.patnum--;
+-	header.cwtv = 0x217;
+-	header.cmwt = 0x200;
+-	header.flags = 0x0001;
+-	header.special = 0x0006;
+-	if (m_nInstruments) header.flags |= 0x04;
+-	if (m_dwSongFlags & SONG_LINEARSLIDES) header.flags |= 0x08;
+-	if (m_dwSongFlags & SONG_ITOLDEFFECTS) header.flags |= 0x10;
+-	if (m_dwSongFlags & SONG_ITCOMPATMODE) header.flags |= 0x20;
+-	if (m_dwSongFlags & SONG_EXFILTERRANGE) header.flags |= 0x1000;
+-	header.globalvol = m_nDefaultGlobalVolume >> 1;
+-	header.mv = m_nSongPreAmp;
+-	// clip song pre-amp values (between 0x20 and 0x7f)
+-	if (header.mv < 0x20) header.mv = 0x20;
+-	if (header.mv > 0x7F) header.mv = 0x7F;
+-	header.speed = m_nDefaultSpeed;
+-	header.tempo = m_nDefaultTempo;
+-	header.sep = m_nStereoSeparation;
+-	dwHdrPos = sizeof(header) + header.ordnum;
+-	// Channel Pan and Volume
+-	memset(header.chnpan, 0xFF, 64);
+-	memset(header.chnvol, 64, 64);
+-	for (UINT ich=0; ich<m_nChannels; ich++)
+-	{
+-		header.chnpan[ich] = ChnSettings[ich].nPan >> 2;
+-		if (ChnSettings[ich].dwFlags & CHN_SURROUND) header.chnpan[ich] = 100;
+-		header.chnvol[ich] = ChnSettings[ich].nVolume;
+-		if (ChnSettings[ich].dwFlags & CHN_MUTE) header.chnpan[ich] |= 0x80;
+-		if (ChnSettings[ich].szName[0])
+-		{
+-			dwChnNamLen = (ich+1) * MAX_CHANNELNAME;
+-		}
+-	}
+-	if (dwChnNamLen) dwExtra += dwChnNamLen + 8;
+-#ifdef SAVEITTIMESTAMP
+-	dwExtra += 8; // Time Stamp
+-#endif
+-	if (m_dwSongFlags & SONG_EMBEDMIDICFG)
+-	{
+-		header.flags |= 0x80;
+-		header.special |= 0x08;
+-		dwExtra += sizeof(MODMIDICFG);
+-	}
+-	// Pattern Names
+-	if ((m_nPatternNames) && (m_lpszPatternNames))
+-	{
+-		dwPatNamLen = m_nPatternNames * MAX_PATTERNNAME;
+-		while ((dwPatNamLen >= MAX_PATTERNNAME) && (!m_lpszPatternNames[dwPatNamLen-MAX_PATTERNNAME])) dwPatNamLen -= MAX_PATTERNNAME;
+-		if (dwPatNamLen < MAX_PATTERNNAME) dwPatNamLen = 0;
+-		if (dwPatNamLen) dwExtra += dwPatNamLen + 8;
+-	}
+-	// Mix Plugins
+-	dwExtra += SaveMixPlugins(NULL, TRUE);
+-	// Comments
+-	if (m_lpszSongComments)
+-	{
+-		header.special |= 1;
+-		header.msglength = strlen(m_lpszSongComments)+1;
+-		header.msgoffset = dwHdrPos + dwExtra + header.insnum*4 + header.patnum*4 + header.smpnum*4;
+-	}
+-	// Write file header
+-	memcpy(&writeheader, &header, sizeof(header));
+-
+-	// Byteswap header information
+-	writeheader.id = bswapLE32(writeheader.id);
+-	writeheader.reserved1 = bswapLE16(writeheader.reserved1);
+-	writeheader.ordnum = bswapLE16(writeheader.ordnum);
+-	writeheader.insnum = bswapLE16(writeheader.insnum);
+-	writeheader.smpnum = bswapLE16(writeheader.smpnum);
+-	writeheader.patnum = bswapLE16(writeheader.patnum);
+-	writeheader.cwtv = bswapLE16(writeheader.cwtv);
+-	writeheader.cmwt = bswapLE16(writeheader.cmwt);
+-	writeheader.flags = bswapLE16(writeheader.flags);
+-	writeheader.special = bswapLE16(writeheader.special);
+-	writeheader.msglength = bswapLE16(writeheader.msglength);
+-	writeheader.msgoffset = bswapLE32(writeheader.msgoffset);
+-	writeheader.reserved2 = bswapLE32(writeheader.reserved2);
+-
+-	fwrite(&writeheader, 1, sizeof(writeheader), f);
+-
+-	fwrite(Order, 1, header.ordnum, f);
+-	if (header.insnum) fwrite(inspos, 4, header.insnum, f);
+-	if (header.smpnum) fwrite(smppos, 4, header.smpnum, f);
+-	if (header.patnum) fwrite(patpos, 4, header.patnum, f);
+-	// Writing editor history information
+-	{
+-#ifdef SAVEITTIMESTAMP
+-		SYSTEMTIME systime;
+-		FILETIME filetime;
+-		WORD timestamp[4];
+-		WORD nInfoEx = 1;
+-		memset(timestamp, 0, sizeof(timestamp));
+-		fwrite(&nInfoEx, 1, 2, f);
+-		GetSystemTime(&systime);
+-		SystemTimeToFileTime(&systime, &filetime);
+-		FileTimeToDosDateTime(&filetime, &timestamp[0], &timestamp[1]);
+-		fwrite(timestamp, 1, 8, f);
+-#else
+-		WORD nInfoEx = 0;
+-		fwrite(&nInfoEx, 1, 2, f);
+-#endif
+-	}
+-	// Writing midi cfg
+-	if (header.flags & 0x80)
+-	{
+-		fwrite(&m_MidiCfg, 1, sizeof(MODMIDICFG), f);
+-	}
+-	// Writing pattern names
+-	if (dwPatNamLen)
+-	{
+-		DWORD d = bswapLE32(0x4d414e50);
+-		UINT len= bswapLE32(dwPatNamLen);
+-		fwrite(&d, 1, 4, f);
+-		fwrite(&len, 1, 4, f);
+-		fwrite(m_lpszPatternNames, 1, dwPatNamLen, f);
+-	}
+-	// Writing channel Names
+-	if (dwChnNamLen)
+-	{
+-		DWORD d = bswapLE32(0x4d414e43);
+-		UINT len= bswapLE32(dwChnNamLen);
+-		fwrite(&d, 1, 4, f);
+-		fwrite(&len, 1, 4, f);
+-		UINT nChnNames = dwChnNamLen / MAX_CHANNELNAME;
+-		for (UINT inam=0; inam<nChnNames; inam++)
+-		{
+-			fwrite(ChnSettings[inam].szName, 1, MAX_CHANNELNAME, f);
+-		}
+-	}
+-	// Writing mix plugins info
+-	SaveMixPlugins(f, FALSE);
+-	// Writing song message
+-	dwPos = dwHdrPos + dwExtra + (header.insnum + header.smpnum + header.patnum) * 4;
+-	if (header.special & 1)
+-	{
+-		dwPos += strlen(m_lpszSongComments) + 1;
+-		fwrite(m_lpszSongComments, 1, strlen(m_lpszSongComments)+1, f);
+-	}
+-	// Writing instruments
+-	for (UINT nins=1; nins<=header.insnum; nins++)
+-	{
+-		memset(&iti, 0, sizeof(iti));
+-		iti.id = 0x49504D49;	// "IMPI"
+-		iti.trkvers = 0x211;
+-		if (Headers[nins])
+-		{
+-			INSTRUMENTHEADER *penv = Headers[nins];
+-			memset(smpcount, 0, sizeof(smpcount));
+-			memcpy(iti.filename, penv->filename, 12);
+-			memcpy(iti.name, penv->name, 26);
+-			iti.mbank = penv->wMidiBank;
+-			iti.mpr = penv->nMidiProgram;
+-			iti.mch = penv->nMidiChannel;
+-			iti.nna = penv->nNNA;
+-			iti.dct = penv->nDCT;
+-			iti.dca = penv->nDNA;
+-			iti.fadeout = penv->nFadeOut >> 5;
+-			iti.pps = penv->nPPS;
+-			iti.ppc = penv->nPPC;
+-			iti.gbv = (BYTE)(penv->nGlobalVol << 1);
+-			iti.dfp = (BYTE)penv->nPan >> 2;
+-			if (!(penv->dwFlags & ENV_SETPANNING)) iti.dfp |= 0x80;
+-			iti.rv = penv->nVolSwing;
+-			iti.rp = penv->nPanSwing;
+-			iti.ifc = penv->nIFC;
+-			iti.ifr = penv->nIFR;
+-			iti.nos = 0;
+-			for (UINT i=0; i<NOTE_MAX; i++) if (penv->Keyboard[i] < MAX_SAMPLES)
+-			{
+-				UINT smp = penv->Keyboard[i];
+-				if ((smp) && (!smpcount[smp]))
+-				{
+-					smpcount[smp] = 1;
+-					iti.nos++;
+-				}
+-				iti.keyboard[i*2] = penv->NoteMap[i] - 1;
+-				iti.keyboard[i*2+1] = smp;
+-			}
+-			// Writing Volume envelope
+-			if (penv->dwFlags & ENV_VOLUME) iti.volenv.flags |= 0x01;
+-			if (penv->dwFlags & ENV_VOLLOOP) iti.volenv.flags |= 0x02;
+-			if (penv->dwFlags & ENV_VOLSUSTAIN) iti.volenv.flags |= 0x04;
+-			if (penv->dwFlags & ENV_VOLCARRY) iti.volenv.flags |= 0x08;
+-			iti.volenv.num = (BYTE)penv->nVolEnv;
+-			iti.volenv.lpb = (BYTE)penv->nVolLoopStart;
+-			iti.volenv.lpe = (BYTE)penv->nVolLoopEnd;
+-			iti.volenv.slb = penv->nVolSustainBegin;
+-			iti.volenv.sle = penv->nVolSustainEnd;
+-			// Writing Panning envelope
+-			if (penv->dwFlags & ENV_PANNING) iti.panenv.flags |= 0x01;
+-			if (penv->dwFlags & ENV_PANLOOP) iti.panenv.flags |= 0x02;
+-			if (penv->dwFlags & ENV_PANSUSTAIN) iti.panenv.flags |= 0x04;
+-			if (penv->dwFlags & ENV_PANCARRY) iti.panenv.flags |= 0x08;
+-			iti.panenv.num = (BYTE)penv->nPanEnv;
+-			iti.panenv.lpb = (BYTE)penv->nPanLoopStart;
+-			iti.panenv.lpe = (BYTE)penv->nPanLoopEnd;
+-			iti.panenv.slb = penv->nPanSustainBegin;
+-			iti.panenv.sle = penv->nPanSustainEnd;
+-			// Writing Pitch Envelope
+-			if (penv->dwFlags & ENV_PITCH) iti.pitchenv.flags |= 0x01;
+-			if (penv->dwFlags & ENV_PITCHLOOP) iti.pitchenv.flags |= 0x02;
+-			if (penv->dwFlags & ENV_PITCHSUSTAIN) iti.pitchenv.flags |= 0x04;
+-			if (penv->dwFlags & ENV_PITCHCARRY) iti.pitchenv.flags |= 0x08;
+-			if (penv->dwFlags & ENV_FILTER) iti.pitchenv.flags |= 0x80;
+-			iti.pitchenv.num = (BYTE)penv->nPitchEnv;
+-			iti.pitchenv.lpb = (BYTE)penv->nPitchLoopStart;
+-			iti.pitchenv.lpe = (BYTE)penv->nPitchLoopEnd;
+-			iti.pitchenv.slb = (BYTE)penv->nPitchSustainBegin;
+-			iti.pitchenv.sle = (BYTE)penv->nPitchSustainEnd;
+-			// Writing Envelopes data
+-			for (UINT ev=0; ev<25; ev++)
+-			{
+-				iti.volenv.data[ev*3] = penv->VolEnv[ev];
+-				iti.volenv.data[ev*3+1] = penv->VolPoints[ev] & 0xFF;
+-				iti.volenv.data[ev*3+2] = penv->VolPoints[ev] >> 8;
+-				iti.panenv.data[ev*3] = penv->PanEnv[ev] - 32;
+-				iti.panenv.data[ev*3+1] = penv->PanPoints[ev] & 0xFF;
+-				iti.panenv.data[ev*3+2] = penv->PanPoints[ev] >> 8;
+-				iti.pitchenv.data[ev*3] = penv->PitchEnv[ev] - 32;
+-				iti.pitchenv.data[ev*3+1] = penv->PitchPoints[ev] & 0xFF;
+-				iti.pitchenv.data[ev*3+2] = penv->PitchPoints[ev] >> 8;
+-			}
+-		} else
+-		// Save Empty Instrument
+-		{
+-			for (UINT i=0; i<NOTE_MAX; i++) iti.keyboard[i*2] = i;
+-			iti.ppc = 5*12;
+-			iti.gbv = 128;
+-			iti.dfp = 0x20;
+-			iti.ifc = 0xFF;
+-		}
+-		if (!iti.nos) iti.trkvers = 0;
+-		// Writing instrument
+-		inspos[nins-1] = dwPos;
+-		dwPos += sizeof(ITINSTRUMENT);
+-
+-		memcpy(&writeiti, &iti, sizeof(ITINSTRUMENT));
+-
+-		writeiti.fadeout = bswapLE16(writeiti.fadeout);
+-		writeiti.id = bswapLE32(writeiti.id);
+-		writeiti.trkvers = bswapLE16(writeiti.trkvers);
+-		writeiti.mbank = bswapLE16(writeiti.mbank);
+-
+-		fwrite(&writeiti, 1, sizeof(ITINSTRUMENT), f);
+-	}
+-	// Writing sample headers
+-	memset(&itss, 0, sizeof(itss));
+-	for (UINT hsmp=0; hsmp<header.smpnum; hsmp++)
+-	{
+-		smppos[hsmp] = dwPos;
+-		dwPos += sizeof(ITSAMPLESTRUCT);
+-		fwrite(&itss, 1, sizeof(ITSAMPLESTRUCT), f);
+-	}
+-	// Writing Patterns
+-	for (UINT npat=0; npat<header.patnum; npat++)
+-	{
+-		DWORD dwPatPos = dwPos;
+-		UINT len;
+-		if (!Patterns[npat]) continue;
+-		patpos[npat] = dwPos;
+-		patinfo[0] = 0;
+-		patinfo[1] = bswapLE16(PatternSize[npat]);
+-		patinfo[2] = 0;
+-		patinfo[3] = 0;
+-		// Check for empty pattern
+-		if (PatternSize[npat] == 64)
+-		{
+-			MODCOMMAND *pzc = Patterns[npat];
+-			UINT iz, nz = PatternSize[npat] * m_nChannels;
+-			for (iz=0; iz<nz; iz++)
+-			{
+-				if ((pzc[iz].note) || (pzc[iz].instr)
+-				 || (pzc[iz].volcmd) || (pzc[iz].command)) break;
+-			}
+-			if (iz == nz)
+-			{
+-				patpos[npat] = 0;
+-				continue;
+-			}
+-		}
+-		fwrite(patinfo, 8, 1, f);
+-		dwPos += 8;
+-		memset(chnmask, 0xFF, sizeof(chnmask));
+-		memset(lastvalue, 0, sizeof(lastvalue));
+-		MODCOMMAND *m = Patterns[npat];
+-		for (UINT row=0; row<PatternSize[npat]; row++)
+-		{
+-			len = 0;
+-			for (UINT ch=0; ch<m_nChannels; ch++, m++)
+-			{
+-				BYTE b = 0;
+-				UINT command = m->command;
+-				UINT param = m->param;
+-				UINT vol = 0xFF;
+-				UINT note = m->note;
+-				if (note) b |= 1;
+-				if ((note) && (note < 0x80)) note--; // 0xfe->0x80 --Toad
+-				if (m->instr) b |= 2;
+-				if (m->volcmd)
+-				{
+-					UINT volcmd = m->volcmd;
+-					switch(volcmd)
+-					{
+-					case VOLCMD_VOLUME:			vol = m->vol; if (vol > 64) vol = 64; break;
+-					case VOLCMD_PANNING:		vol = m->vol + 128; if (vol > 192) vol = 192; break;
+-					case VOLCMD_VOLSLIDEUP:		vol = 85 + ConvertVolParam(m->vol); break;
+-					case VOLCMD_VOLSLIDEDOWN:	vol = 95 + ConvertVolParam(m->vol); break;
+-					case VOLCMD_FINEVOLUP:		vol = 65 + ConvertVolParam(m->vol); break;
+-					case VOLCMD_FINEVOLDOWN:	vol = 75 + ConvertVolParam(m->vol); break;
+-					case VOLCMD_VIBRATOSPEED:	vol = 203 + ConvertVolParam(m->vol); break;
+-					case VOLCMD_VIBRATO:		vol = 203; break;
+-					case VOLCMD_TONEPORTAMENTO:	vol = 193 + ConvertVolParam(m->vol); break;
+-					case VOLCMD_PORTADOWN:		vol = 105 + ConvertVolParam(m->vol); break;
+-					case VOLCMD_PORTAUP:		vol = 115 + ConvertVolParam(m->vol); break;
+-					default:					vol = 0xFF;
+-					}
+-				}
+-				if (vol != 0xFF) b |= 4;
+-				if (command)
+-				{
+-					S3MSaveConvert(&command, &param, TRUE);
+-					if (command) b |= 8;
+-				}
+-				// Packing information
+-				if (b)
+-				{
+-					// Same note ?
+-					if (b & 1)
+-					{
+-						if ((note == lastvalue[ch].note) && (lastvalue[ch].volcmd & 1))
+-						{
+-							b &= ~1;
+-							b |= 0x10;
+-						} else
+-						{
+-							lastvalue[ch].note = note;
+-							lastvalue[ch].volcmd |= 1;
+-						}
+-					}
+-					// Same instrument ?
+-					if (b & 2)
+-					{
+-						if ((m->instr == lastvalue[ch].instr) && (lastvalue[ch].volcmd & 2))
+-						{
+-							b &= ~2;
+-							b |= 0x20;
+-						} else
+-						{
+-							lastvalue[ch].instr = m->instr;
+-							lastvalue[ch].volcmd |= 2;
+-						}
+-					}
+-					// Same volume column byte ?
+-					if (b & 4)
+-					{
+-						if ((vol == lastvalue[ch].vol) && (lastvalue[ch].volcmd & 4))
+-						{
+-							b &= ~4;
+-							b |= 0x40;
+-						} else
+-						{
+-							lastvalue[ch].vol = vol;
+-							lastvalue[ch].volcmd |= 4;
+-						}
+-					}
+-					// Same command / param ?
+-					if (b & 8)
+-					{
+-						if ((command == lastvalue[ch].command) && (param == lastvalue[ch].param) && (lastvalue[ch].volcmd & 8))
+-						{
+-							b &= ~8;
+-							b |= 0x80;
+-						} else
+-						{
+-							lastvalue[ch].command = command;
+-							lastvalue[ch].param = param;
+-							lastvalue[ch].volcmd |= 8;
+-						}
+-					}
+-					if (b != chnmask[ch])
+-					{
+-						chnmask[ch] = b;
+-						buf[len++] = (ch+1) | 0x80;
+-						buf[len++] = b;
+-					} else
+-					{
+-						buf[len++] = ch+1;
+-					}
+-					if (b & 1) buf[len++] = note;
+-					if (b & 2) buf[len++] = m->instr;
+-					if (b & 4) buf[len++] = vol;
+-					if (b & 8)
+-					{
+-						buf[len++] = command;
+-						buf[len++] = param;
+-					}
+-				}
+-			}
+-			buf[len++] = 0;
+-			dwPos += len;
+-			patinfo[0] += len;
+-			fwrite(buf, 1, len, f);
+-		}
+-		fseek(f, dwPatPos, SEEK_SET);
+-		patinfo[0] = bswapLE16(patinfo[0]); // byteswap -- Toad
+-		fwrite(patinfo, 8, 1, f);
+-		fseek(f, dwPos, SEEK_SET);
+-	}
+-	// Writing Sample Data
+-	for (UINT nsmp=1; nsmp<=header.smpnum; nsmp++)
+-	{
+-		MODINSTRUMENT *psmp = &Ins[nsmp];
+-		memset(&itss, 0, sizeof(itss));
+-		memcpy(itss.filename, psmp->name, 12);
+-		memcpy(itss.name, m_szNames[nsmp], 26);
+-		itss.id = 0x53504D49;
+-		itss.gvl = (BYTE)psmp->nGlobalVol;
+-		if (m_nInstruments)
+-		{
+-			for (UINT iu=1; iu<=m_nInstruments; iu++) if (Headers[iu])
+-			{
+-				INSTRUMENTHEADER *penv = Headers[iu];
+-				for (UINT ju=0; ju<128; ju++) if (penv->Keyboard[ju] == nsmp)
+-				{
+-					itss.flags = 0x01;
+-					break;
+-				}
+-			}
+-		} else
+-		{
+-			itss.flags = 0x01;
+-		}
+-		if (psmp->uFlags & CHN_LOOP) itss.flags |= 0x10;
+-		if (psmp->uFlags & CHN_SUSTAINLOOP) itss.flags |= 0x20;
+-		if (psmp->uFlags & CHN_PINGPONGLOOP) itss.flags |= 0x40;
+-		if (psmp->uFlags & CHN_PINGPONGSUSTAIN) itss.flags |= 0x80;
+-		itss.C5Speed = psmp->nC4Speed;
+-		if (!itss.C5Speed) // if no C5Speed assume it is XM Sample
+-		{
+-			UINT period;
+-
+-			/**
+-			 * C5 note => number 61, but in XM samples:
+-			 * RealNote = Note + RelativeTone
+-			 */
+-			period = GetPeriodFromNote(61+psmp->RelativeTone, psmp->nFineTune, 0);
+-
+-			if (period)
+-				itss.C5Speed = GetFreqFromPeriod(period, 0, 0);
+-			/**
+-			 * If it didn`t work, it may not be a XM file;
+-			 * so put the default C5Speed, 8363Hz.
+-			 */
+-	 		if (!itss.C5Speed) itss.C5Speed = 8363;
+-		}
+-
+-		itss.length = psmp->nLength;
+-		itss.loopbegin = psmp->nLoopStart;
+-		itss.loopend = psmp->nLoopEnd;
+-		itss.susloopbegin = psmp->nSustainStart;
+-		itss.susloopend = psmp->nSustainEnd;
+-		itss.vol = psmp->nVolume >> 2;
+-		itss.dfp = psmp->nPan >> 2;
+-		itss.vit = autovibxm2it[psmp->nVibType & 7];
+-		itss.vis = psmp->nVibRate;
+-		itss.vid = psmp->nVibDepth;
+-		itss.vir = (psmp->nVibSweep < 64) ? psmp->nVibSweep * 4 : 255;
+-		if (psmp->uFlags & CHN_PANNING) itss.dfp |= 0x80;
+-		if ((psmp->pSample) && (psmp->nLength)) itss.cvt = 0x01;
+-		UINT flags = RS_PCM8S;
+-#ifndef NO_PACKING
+-		if (nPacking)
+-		{
+-			if ((!(psmp->uFlags & (CHN_16BIT|CHN_STEREO)))
+-			 && (CanPackSample((char *)psmp->pSample, psmp->nLength, nPacking)))
+-			{
+-				flags = RS_ADPCM4;
+-				itss.cvt = 0xFF;
+-			}
+-		} else
+-#endif // NO_PACKING
+-		{
+-			if (psmp->uFlags & CHN_STEREO)
+-			{
+-				flags = RS_STPCM8S;
+-				itss.flags |= 0x04;
+-			}
+-			if (psmp->uFlags & CHN_16BIT)
+-			{
+-				itss.flags |= 0x02;
+-				flags = (psmp->uFlags & CHN_STEREO) ? RS_STPCM16S : RS_PCM16S;
+-			}
+-		}
+-		itss.samplepointer = dwPos;
+-		fseek(f, smppos[nsmp-1], SEEK_SET);
+-
+-		itss.id = bswapLE32(itss.id);
+-		itss.length = bswapLE32(itss.length);
+-		itss.loopbegin = bswapLE32(itss.loopbegin);
+-		itss.loopend = bswapLE32(itss.loopend);
+-		itss.C5Speed = bswapLE32(itss.C5Speed);
+-		itss.susloopbegin = bswapLE32(itss.susloopbegin);
+-		itss.susloopend = bswapLE32(itss.susloopend);
+-		itss.samplepointer = bswapLE32(itss.samplepointer);
+-
+-		fwrite(&itss, 1, sizeof(ITSAMPLESTRUCT), f);
+-		fseek(f, dwPos, SEEK_SET);
+-		if ((psmp->pSample) && (psmp->nLength))
+-		{
+-			dwPos += WriteSample(f, psmp, flags);
+-		}
+-	}
+-	// Updating offsets
+-	fseek(f, dwHdrPos, SEEK_SET);
+-
+-	/* <Toad> Now we can byteswap them ;-) */
+-	UINT WW;
+-	UINT WX;
+-	WX = (UINT)header.insnum;
+-	WX <<= 2;
+-	for (WW=0; WW < (WX>>2); WW++)
+-	       inspos[WW] = bswapLE32(inspos[WW]);
+-
+-	WX = (UINT)header.smpnum;
+-	WX <<= 2;
+-	for (WW=0; WW < (WX>>2); WW++)
+-	       smppos[WW] = bswapLE32(smppos[WW]);
+-
+-	WX=(UINT)header.patnum;
+-	WX <<= 2;
+-	for (WW=0; WW < (WX>>2); WW++)
+-	       patpos[WW] = bswapLE32(patpos[WW]);
+-
+-	if (header.insnum) fwrite(inspos, 4, header.insnum, f);
+-	if (header.smpnum) fwrite(smppos, 4, header.smpnum, f);
+-	if (header.patnum) fwrite(patpos, 4, header.patnum, f);
+-	fclose(f);
+-	return TRUE;
+-}
+-
+-#ifdef _MSC_VER
+-//#pragma warning(default:4100)
+-#endif
+-#endif // MODPLUG_NO_FILESAVE
+-
+ //////////////////////////////////////////////////////////////////////////////
+ // IT 2.14 compression
+ 
+Only in libmodplug-0.8.9.0/src: load_j2b.cpp
+diff -u libmodplug-0.8.9.0/src/load_mdl.cpp~ libmodplug-0.8.9.0/src/load_mdl.cpp
 --- libmodplug-0.8.9.0/src/load_mdl.cpp~
 +++ libmodplug-0.8.9.0/src/load_mdl.cpp
 @@ -42,7 +42,7 @@ typedef struct MDLPATTERNDATA
@@ -385,32 +1511,19 @@ diff -up libmodplug-0.8.9.0/src/load_mdl.cpp~ libmodplug-0.8.9.0/src/load_mdl.cp
  BOOL CSoundFile::ReadMDL(const BYTE *lpStream, DWORD dwMemLength)
  //---------------------------------------------------------------
  {
-@@ -429,12 +428,13 @@ BOOL CSoundFile::ReadMDL(const BYTE *lpS
- 		for (UINT ipat=0; ipat<npatterns; ipat++)
- 		{
- 			if ((Patterns[ipat] = AllocatePattern(PatternSize[ipat], m_nChannels)) == NULL) break;
--			for (UINT chn=0; chn<m_nChannels; chn++) if ((patterntracks[ipat*32+chn]) && (patterntracks[ipat*32+chn] <= ntracks) && (*(WORD *)lpStream+dwTrackPos) < dwMemLength-dwTrackPos)
-+			for (UINT chn=0; chn<m_nChannels; chn++) if ((patterntracks[ipat*32+chn]) && (patterntracks[ipat*32+chn] <= ntracks))
- 			{
-+			    const BYTE *lpTracks = lpStream + dwTrackPos;
-+			    UINT len = lpTracks[0] | (lpTracks[1] << 8);
-+			    if (len < dwMemLength-dwTrackPos) {
- 				MODCOMMAND *m = Patterns[ipat] + chn;
- 				UINT nTrack = patterntracks[ipat*32+chn];
--				const BYTE *lpTracks = lpStream + dwTrackPos;
--				UINT len = lpTracks[0] | (lpTracks[1] << 8);
- 
- 				lpTracks += 2;
- 				for (UINT ntrk=1; ntrk<nTrack && lpTracks < (dwMemLength + lpStream - len); ntrk++)
-@@ -447,6 +447,7 @@ BOOL CSoundFile::ReadMDL(const BYTE *lpS
- 				if ( len > dwMemLength - dwTrackPos ) len = 0;
- 
- 				UnpackMDLTrack(m, m_nChannels, PatternSize[ipat], nTrack, lpTracks, len);
-+			    }
- 			}
- 		}
- 	}
-diff -up libmodplug-0.8.9.0/src/load_mid.cpp~ libmodplug-0.8.9.0/src/load_mid.cpp
+diff -u libmodplug-0.8.9.0/src/load_med.cpp~ libmodplug-0.8.9.0/src/load_med.cpp
+--- libmodplug-0.8.9.0/src/load_med.cpp~
++++ libmodplug-0.8.9.0/src/load_med.cpp
+@@ -876,7 +876,7 @@ BOOL CSoundFile::ReadMed(const BYTE *lpS
+ 				{
+ 					DWORD nameofs = bswapBE32(pbi->blockname);
+ 					UINT namelen = bswapBE32(pbi->blocknamelen);
+-					if ((nameofs < dwMemLength) && (namelen < dwMemLength + nameofs))
++					if ((nameofs < dwMemLength) && (namelen < dwMemLength - nameofs))
+ 					{
+ 						SetPatternName(iBlk, (LPCSTR)(lpStream+nameofs));
+ 					}
+diff -u libmodplug-0.8.9.0/src/load_mid.cpp~ libmodplug-0.8.9.0/src/load_mid.cpp
 --- libmodplug-0.8.9.0/src/load_mid.cpp~
 +++ libmodplug-0.8.9.0/src/load_mid.cpp
 @@ -35,6 +35,9 @@
@@ -418,12 +1531,17 @@ diff -up libmodplug-0.8.9.0/src/load_mid.cpp~ libmodplug-0.8.9.0/src/load_mid.cp
  #include "stdafx.h"
  #include "sndfile.h"
 +
-+#ifndef NO_MIDIFORMATS
++#ifdef MIDIFMT_SUPPORT
 +
  #define PAN_LEFT    0x30
  #define PAN_RIGHT   0xD0
  #define MAX_POLYPHONY 16  // max notes in one midi channel
-@@ -92,7 +95,7 @@ typedef struct _MIDTRACK
+@@ -88,11 +91,11 @@ typedef struct _MIDTRACK
+ 	BYTE instr;	// current instrument for this track
+ } MIDTRACK;
+ 
+-#if defined(WIN32) && defined(_mm_free)
++#if defined(_WIN32) && defined(_mm_free)
  #undef _mm_free
  #endif
  
@@ -436,27 +1554,126 @@ diff -up libmodplug-0.8.9.0/src/load_mid.cpp~ libmodplug-0.8.9.0/src/load_mid.cp
  	avoid_reentry = 0; // it is safe now, I'm finished
  	return TRUE;
  }
-+#endif // NO_MIDIFORMATS
-diff -up libmodplug-0.8.9.0/src/load_mod.cpp~ libmodplug-0.8.9.0/src/load_mod.cpp
++#endif // MIDIFMT_SUPPORT
+diff -u libmodplug-0.8.9.0/src/load_mod.cpp~ libmodplug-0.8.9.0/src/load_mod.cpp
 --- libmodplug-0.8.9.0/src/load_mod.cpp~
 +++ libmodplug-0.8.9.0/src/load_mod.cpp
-@@ -60,6 +60,7 @@ void CSoundFile::ConvertModCommand(MODCO
+@@ -39,7 +39,9 @@ void CSoundFile::ConvertModCommand(MODCO
+ 	case 0x0D:	command = CMD_PATTERNBREAK; param = ((param >> 4) * 10) + (param & 0x0F); break;
+ 	case 0x0E:	command = CMD_MODCMDEX; break;
+ 	case 0x0F:	command = (param <= (UINT)((m_nType & (MOD_TYPE_XM|MOD_TYPE_MT2)) ? 0x1F : 0x20)) ? CMD_SPEED : CMD_TEMPO;
+-				if ((param == 0xFF) && (m_nSamples == 15)) command = 0; break;
++			if((param == 0xFF) && (m_nSamples == 15))
++			    command = 0;
++			break;
+ 	// Extension for XM extended effects
+ 	case 'G' - 55:	command = CMD_GLOBALVOLUME; break;
+ 	case 'H' - 55:	command = CMD_GLOBALVOLSLIDE; if (param & 0xF0) param &= 0xF0; break;
+@@ -59,95 +61,7 @@ void CSoundFile::ConvertModCommand(MODCO
+ 	m->param = param;
  }
  
- 
-+#ifndef MODPLUG_NO_FILESAVE
- WORD CSoundFile::ModSaveCommand(const MODCOMMAND *m, BOOL bXM) const
- //------------------------------------------------------------------
- {
-@@ -144,6 +145,7 @@ WORD CSoundFile::ModSaveCommand(const MO
- 	}
- 	return (WORD)((command << 8) | (param));
- }
-+#endif // MODPLUG_NO_FILESAVE
- 
- 
+-
+-WORD CSoundFile::ModSaveCommand(const MODCOMMAND *m, BOOL bXM) const
+-//------------------------------------------------------------------
+-{
+-	UINT command = m->command & 0x3F, param = m->param;
+-
+-	switch(command)
+-	{
+-	case 0:						command = param = 0; break;
+-	case CMD_ARPEGGIO:			command = 0; break;
+-	case CMD_PORTAMENTOUP:
+-		if (m_nType & (MOD_TYPE_S3M|MOD_TYPE_IT|MOD_TYPE_STM))
+-		{
+-			if ((param & 0xF0) == 0xE0) { command=0x0E; param=((param & 0x0F) >> 2)|0x10; break; }
+-			else if ((param & 0xF0) == 0xF0) { command=0x0E; param &= 0x0F; param|=0x10; break; }
+-		}
+-		command = 0x01;
+-		break;
+-	case CMD_PORTAMENTODOWN:
+-		if (m_nType & (MOD_TYPE_S3M|MOD_TYPE_IT|MOD_TYPE_STM))
+-		{
+-			if ((param & 0xF0) == 0xE0) { command=0x0E; param=((param & 0x0F) >> 2)|0x20; break; }
+-			else if ((param & 0xF0) == 0xF0) { command=0x0E; param &= 0x0F; param|=0x20; break; }
+-		}
+-		command = 0x02;
+-		break;
+-	case CMD_TONEPORTAMENTO:	command = 0x03; break;
+-	case CMD_VIBRATO:			command = 0x04; break;
+-	case CMD_TONEPORTAVOL:		command = 0x05; break;
+-	case CMD_VIBRATOVOL:		command = 0x06; break;
+-	case CMD_TREMOLO:			command = 0x07; break;
+-	case CMD_PANNING8:			
+-		command = 0x08;
+-		if (bXM)
+-		{
+-			if ((m_nType != MOD_TYPE_IT) && (m_nType != MOD_TYPE_XM) && (param <= 0x80))
+-			{
+-				param <<= 1;
+-				if (param > 255) param = 255;
+-			}
+-		} else
+-		{
+-			if ((m_nType == MOD_TYPE_IT) || (m_nType == MOD_TYPE_XM)) param >>= 1;
+-		}
+-		break;
+-	case CMD_OFFSET:			command = 0x09; break;
+-	case CMD_VOLUMESLIDE:		command = 0x0A; break;
+-	case CMD_POSITIONJUMP:		command = 0x0B; break;
+-	case CMD_VOLUME:			command = 0x0C; break;
+-	case CMD_PATTERNBREAK:		command = 0x0D; param = ((param / 10) << 4) | (param % 10); break;
+-	case CMD_MODCMDEX:			command = 0x0E; break;
+-	case CMD_SPEED:				command = 0x0F; if (param > 0x20) param = 0x20; break;
+-	case CMD_TEMPO:				if (param > 0x20) { command = 0x0F; break; }
+-	case CMD_GLOBALVOLUME:		command = 'G' - 55; break;
+-	case CMD_GLOBALVOLSLIDE:	command = 'H' - 55; break;
+-	case CMD_KEYOFF:			command = 'K' - 55; break;
+-	case CMD_SETENVPOSITION:	command = 'L' - 55; break;
+-	case CMD_CHANNELVOLUME:		command = 'M' - 55; break;
+-	case CMD_CHANNELVOLSLIDE:	command = 'N' - 55; break;
+-	case CMD_PANNINGSLIDE:		command = 'P' - 55; break;
+-	case CMD_RETRIG:			command = 'R' - 55; break;
+-	case CMD_TREMOR:			command = 'T' - 55; break;
+-	case CMD_XFINEPORTAUPDOWN:	command = 'X' - 55; break;
+-	case CMD_PANBRELLO:			command = 'Y' - 55; break;
+-	case CMD_MIDI:				command = 'Z' - 55; break;
+-	case CMD_S3MCMDEX:
+-		switch(param & 0xF0)
+-		{
+-		case 0x10:	command = 0x0E; param = (param & 0x0F) | 0x30; break;
+-		case 0x20:	command = 0x0E; param = (param & 0x0F) | 0x50; break;
+-		case 0x30:	command = 0x0E; param = (param & 0x0F) | 0x40; break;
+-		case 0x40:	command = 0x0E; param = (param & 0x0F) | 0x70; break;
+-		case 0x90:	command = 'X' - 55; break;
+-		case 0xB0:	command = 0x0E; param = (param & 0x0F) | 0x60; break;
+-		case 0xA0:
+-		case 0x50:
+-		case 0x70:
+-		case 0x60:	command = param = 0; break;
+-		default:	command = 0x0E; break;
+-		}
+-		break;
+-	default:		command = param = 0;
+-	}
+-	return (WORD)((command << 8) | (param));
+-}
+-
+-
  #pragma pack(1)
-@@ -184,7 +186,7 @@ static BOOL IsValidName(LPCSTR s, int le
+-
+ typedef struct _MODSAMPLE
+ {
+ 	CHAR name[22];
+@@ -165,7 +79,6 @@ typedef struct _MODMAGIC
+ 	BYTE Orders[128];
+         char Magic[4];          // changed from CHAR
+ } MODMAGIC, *PMODMAGIC;
+-
+ #pragma pack()
+ 
+ static BOOL IsValidName(LPCSTR s, int length, CHAR minChar)
+@@ -184,12 +97,11 @@ static BOOL IsValidName(LPCSTR s, int le
  	return TRUE;
  }
  
@@ -465,19 +1682,190 @@ diff -up libmodplug-0.8.9.0/src/load_mod.cpp~ libmodplug-0.8.9.0/src/load_mod.cp
  {
  	return ((*(DWORD *)s1) == (*(DWORD *)s2)) ? TRUE : FALSE;
  }
-diff -up libmodplug-0.8.9.0/src/load_pat.cpp~ libmodplug-0.8.9.0/src/load_pat.cpp
+ 
+-
+ BOOL CSoundFile::ReadMod(const BYTE *lpStream, DWORD dwMemLength)
+ //---------------------------------------------------------------
+ {
+@@ -386,151 +298,5 @@ BOOL CSoundFile::ReadMod(const BYTE *lpS
+ 			dwErrCheck++;
+ 		}
+ 	}
+-#ifdef MODPLUG_TRACKER
+-	return TRUE;
+-#else
+ 	return (dwErrCheck) ? TRUE : FALSE;
+-#endif
+-}
+-
+-
+-#ifndef MODPLUG_NO_FILESAVE
+-
+-#ifdef _MSC_VER
+-#pragma warning(disable:4100)
+-#endif
+-
+-BOOL CSoundFile::SaveMod(LPCSTR lpszFileName, UINT nPacking)
+-//----------------------------------------------------------
+-{
+-	BYTE insmap[32];
+-	UINT inslen[32];
+-	BYTE bTab[32];
+-	BYTE ord[128];
+-	FILE *f;
+-
+-	if ((!m_nChannels) || (!lpszFileName)) return FALSE;
+-	if ((f = fopen(lpszFileName, "wb")) == NULL) return FALSE;
+-	memset(ord, 0, sizeof(ord));
+-	memset(inslen, 0, sizeof(inslen));
+-	if (m_nInstruments)
+-	{
+-		memset(insmap, 0, sizeof(insmap));
+-		for (UINT i=1; i<32; i++) if (Headers[i])
+-		{
+-			for (UINT j=0; j<128; j++) if (Headers[i]->Keyboard[j])
+-			{
+-				insmap[i] = Headers[i]->Keyboard[j];
+-				break;
+-			}
+-		}
+-	} else
+-	{
+-		for (UINT i=0; i<32; i++) insmap[i] = (BYTE)i;
+-	}
+-	// Writing song name
+-	fwrite(m_szNames, 20, 1, f);
+-	// Writing instrument definition
+-	for (UINT iins=1; iins<=31; iins++)
+-	{
+-		MODINSTRUMENT *pins = &Ins[insmap[iins]];
+-		memcpy(bTab, m_szNames[iins],22);
+-		inslen[iins] = pins->nLength;
+-		if (inslen[iins] > 0x1fff0) inslen[iins] = 0x1fff0;
+-		bTab[22] = inslen[iins] >> 9;
+-		bTab[23] = inslen[iins] >> 1;
+-		if (pins->RelativeTone < 0) bTab[24] = 0x08; else
+-		if (pins->RelativeTone > 0) bTab[24] = 0x07; else
+-		bTab[24] = (BYTE)XM2MODFineTune(pins->nFineTune);
+-		bTab[25] = pins->nVolume >> 2;
+-		bTab[26] = pins->nLoopStart >> 9;
+-		bTab[27] = pins->nLoopStart >> 1;
+-		bTab[28] = (pins->nLoopEnd - pins->nLoopStart) >> 9;
+-		bTab[29] = (pins->nLoopEnd - pins->nLoopStart) >> 1;
+-		fwrite(bTab, 30, 1, f);
+-	}
+-	// Writing number of patterns
+-	UINT nbp=0, norders=128;
+-	for (UINT iord=0; iord<128; iord++)
+-	{
+-		if (Order[iord] == 0xFF)
+-		{
+-			norders = iord;
+-			break;
+-		}
+-		if ((Order[iord] < 0x80) && (nbp<=Order[iord])) nbp = Order[iord]+1;
+-	}
+-	bTab[0] = norders;
+-	bTab[1] = m_nRestartPos;
+-	fwrite(bTab, 2, 1, f);
+-	// Writing pattern list
+-	if (norders) memcpy(ord, Order, norders);
+-	fwrite(ord, 128, 1, f);
+-	// Writing signature
+-	if (m_nChannels == 4)
+-		lstrcpy((LPSTR)&bTab, "M.K.");
+-	else
+-		wsprintf((LPSTR)&bTab, "%luCHN", m_nChannels);
+-	fwrite(bTab, 4, 1, f);
+-	// Writing patterns
+-	for (UINT ipat=0; ipat<nbp; ipat++) if (Patterns[ipat])
+-	{
+-		BYTE s[64*4];
+-		MODCOMMAND *m = Patterns[ipat];
+-		for (UINT i=0; i<64; i++) if (i < PatternSize[ipat])
+-		{
+-			LPBYTE p=s;
+-			for (UINT c=0; c<m_nChannels; c++,p+=4,m++)
+-			{
+-				UINT param = ModSaveCommand(m, FALSE);
+-				UINT command = param >> 8;
+-				param &= 0xFF;
+-				if (command > 0x0F) command = param = 0;
+-				if ((m->vol >= 0x10) && (m->vol <= 0x50) && (!command) && (!param)) { command = 0x0C; param = m->vol - 0x10; }
+-				UINT period = m->note;
+-				if (period)
+-				{
+-					if (period < 37) period = 37;
+-					period -= 37;
+-					if (period >= 6*12) period = 6*12-1;
+-					period = ProTrackerPeriodTable[period];
+-				}
+-				UINT instr = (m->instr > 31) ? 0 : m->instr;
+-				p[0] = ((period >> 8) & 0x0F) | (instr & 0x10);
+-				p[1] = period & 0xFF;
+-				p[2] = ((instr & 0x0F) << 4) | (command & 0x0F);
+-				p[3] = param;
+-			}
+-			fwrite(s, m_nChannels, 4, f);
+-		} else
+-		{
+-			memset(s, 0, m_nChannels*4);
+-			fwrite(s, m_nChannels, 4, f);
+-		}
+-	}
+-	// Writing instruments
+-	for (UINT ismpd=1; ismpd<=31; ismpd++) if (inslen[ismpd])
+-	{
+-		MODINSTRUMENT *pins = &Ins[insmap[ismpd]];
+-		UINT flags = RS_PCM8S;
+-#ifndef NO_PACKING
+-		if (!(pins->uFlags & (CHN_16BIT|CHN_STEREO)))
+-		{
+-			if ((nPacking) && (CanPackSample((char *)pins->pSample, inslen[ismpd], nPacking)))
+-			{
+-				fwrite("ADPCM", 1, 5, f);
+-				flags = RS_ADPCM4;
+-			}
+-		}
+-#endif
+-		WriteSample(f, pins, flags, inslen[ismpd]);
+-	}
+-	fclose(f);
+-	return TRUE;
+ }
+-
+-#ifdef _MSC_VER
+-#pragma warning(default:4100)
+-#endif
+-
+-#endif // MODPLUG_NO_FILESAVE
+diff -u libmodplug-0.8.9.0/src/load_pat.cpp~ libmodplug-0.8.9.0/src/load_pat.cpp
 --- libmodplug-0.8.9.0/src/load_pat.cpp~
 +++ libmodplug-0.8.9.0/src/load_pat.cpp
-@@ -44,16 +44,18 @@
- #include "stdafx.h"
- #include "sndfile.h"
- 
-+#ifndef NO_MIDIFORMATS
+@@ -33,36 +33,39 @@
+ #include <string.h>
+ #include <math.h>
+ #include <ctype.h>
+-#ifndef _WIN32
+ #include <limits.h> // for PATH_MAX
++#ifndef _WIN32
+ #include <unistd.h> // for sleep
+ #endif
 +
++#include "stdafx.h"
++#include "sndfile.h"
+ #ifndef PATH_MAX
+ #define PATH_MAX 256
+ #endif
+ 
+-#include "stdafx.h"
+-#include "sndfile.h"
++#ifdef MIDIFMT_SUPPORT
+ 
  #include "load_pat.h"
  
 -#ifdef MSC_VER
-+#ifdef _WIN32
++#if defined(_WIN32)||defined(__OS2__)
  #define DIRDELIM		'\\'
  #define TIMIDITYCFG	"C:\\TIMIDITY\\TIMIDITY.CFG"
  #define PATHFORPAT	"C:\\TIMIDITY\\INSTRUMENTS"
@@ -490,7 +1878,28 @@ diff -up libmodplug-0.8.9.0/src/load_pat.cpp~ libmodplug-0.8.9.0/src/load_pat.cp
  #endif
  
  #define PAT_ENV_PATH2CFG			"MMPAT_PATH_TO_CFG"
-@@ -764,10 +766,7 @@ BOOL CSoundFile::TestPAT(const BYTE *lpS
+ 
+ // 128 gm and 63 drum
+ #define MAXSMP				191
++
+ static char midipat[MAXSMP][PATH_MAX];
+-static char pathforpat[PATH_MAX] = {};
+-static char timiditycfg[PATH_MAX] = {};
++static char pathforpat[PATH_MAX];
++static char timiditycfg[PATH_MAX];
+ 
+ #pragma pack(1)
+ 
+@@ -272,7 +275,7 @@ typedef float (*PAT_SAMPLE_FUN)(int);
+ 
+ static PAT_SAMPLE_FUN pat_fun[] = { pat_sinus, pat_square, pat_sawtooth };
+ 
+-#if defined(WIN32) && defined(_mm_free)
++#if defined(_WIN32) && defined(_mm_free)
+ #undef _mm_free
+ #endif
+ 
+@@ -764,10 +767,7 @@ BOOL CSoundFile::TestPAT(const BYTE *lpS
  // =====================================================================================
  static PATHANDLE *PAT_Init(void)
  {
@@ -502,12 +1911,12 @@ diff -up libmodplug-0.8.9.0/src/load_pat.cpp~ libmodplug-0.8.9.0/src/load_pat.cp
  }
  
  // =====================================================================================
-@@ -1259,3 +1258,4 @@ BOOL CSoundFile::ReadPAT(const BYTE *lpS
+@@ -1259,3 +1259,4 @@ BOOL CSoundFile::ReadPAT(const BYTE *lpS
  	PAT_Cleanup(h);	// we dont need it anymore
  	return 1;
  }
-+#endif // NO_MIDIFORMATS
-diff -up libmodplug-0.8.9.0/src/load_psm.cpp~ libmodplug-0.8.9.0/src/load_psm.cpp
++#endif // MIDIFMT_SUPPORT
+diff -u libmodplug-0.8.9.0/src/load_psm.cpp~ libmodplug-0.8.9.0/src/load_psm.cpp
 --- libmodplug-0.8.9.0/src/load_psm.cpp~
 +++ libmodplug-0.8.9.0/src/load_psm.cpp
 @@ -84,7 +84,9 @@ typedef struct _PSMSAMPLE
@@ -521,7 +1930,7 @@ diff -up libmodplug-0.8.9.0/src/load_psm.cpp~ libmodplug-0.8.9.0/src/load_psm.cp
  	p->smpid = bswapLE32(p->smpid);
  	p->length = bswapLE32(p->length);
  	p->loopstart = bswapLE32(p->loopstart);
-@@ -92,13 +94,11 @@ void swap_PSMSAMPLE(PSMSAMPLE* p){
+@@ -92,8 +94,6 @@ void swap_PSMSAMPLE(PSMSAMPLE* p){
  	p->samplerate = bswapLE32(p->samplerate);
  }
  
@@ -530,211 +1939,391 @@ diff -up libmodplug-0.8.9.0/src/load_psm.cpp~ libmodplug-0.8.9.0/src/load_psm.cp
  
  BOOL CSoundFile::ReadPSM(LPCBYTE lpStream, DWORD dwMemLength)
  //-----------------------------------------------------------
- {
--	PSMCHUNK *pfh = (PSMCHUNK *)lpStream;
-+	PSMCHUNK pfh = *(const PSMCHUNK *)lpStream;
- 	DWORD dwMemPos, dwSongPos;
- 	DWORD smpnames[MAX_SAMPLES];
- 	DWORD patptrs[MAX_PATTERNS];
-@@ -108,17 +108,17 @@ BOOL CSoundFile::ReadPSM(LPCBYTE lpStrea
- 	if (dwMemLength < 256) return FALSE;
- 
- 	// Swap chunk
--	swap_PSMCHUNK(pfh);
-+	swap_PSMCHUNK(&pfh);
- 
- 	// Chunk0: "PSM ",filesize,"FILE"
--	if (pfh->id == PSM_ID_OLD)
-+	if (pfh.id == PSM_ID_OLD)
- 	{
- 	#ifdef PSM_LOG
- 		Log("Old PSM format not supported\n");
- 	#endif
- 		return FALSE;
- 	}
--	if ((pfh->id != PSM_ID_NEW) || (pfh->len+12 > dwMemLength) || (pfh->listid != IFFID_FILE)) return FALSE;
-+	if ((pfh.id != PSM_ID_NEW) || (pfh.len+12 > dwMemLength) || (pfh.listid != IFFID_FILE)) return FALSE;
- 	m_nType = MOD_TYPE_PSM;
- 	m_nChannels = 16;
- 	m_nSamples = 0;
-@@ -132,13 +132,13 @@ BOOL CSoundFile::ReadPSM(LPCBYTE lpStrea
- 	}
- 	while (dwMemPos+8 < dwMemLength)
- 	{
--		PSMCHUNK *pchunk = (PSMCHUNK *)(lpStream+dwMemPos);
--		swap_PSMCHUNK(pchunk);
--		if ((pchunk->len >= dwMemLength - 8) || (dwMemPos + pchunk->len + 8 > dwMemLength)) break;
-+		PSMCHUNK pchunk = *(const PSMCHUNK *)(lpStream+dwMemPos);
-+		swap_PSMCHUNK(&pchunk);
-+		if ((pchunk.len >= dwMemLength - 8) || (dwMemPos + pchunk.len + 8 > dwMemLength)) break;
- 		dwMemPos += 8;
- 		PUCHAR pdata = (PUCHAR)(lpStream+dwMemPos);
--		ULONG len = pchunk->len;
--		if (len) switch(pchunk->id)
-+		ULONG len = pchunk.len;
-+		if (len) switch(pchunk.id)
- 		{
- 		// "TITL": Song title
- 		case IFFID_TITL:
-@@ -166,21 +166,21 @@ BOOL CSoundFile::ReadPSM(LPCBYTE lpStrea
- 			{
- 				m_nSamples++;
- 				MODINSTRUMENT *pins = &Ins[m_nSamples];
--				PSMSAMPLE *psmp = (PSMSAMPLE *)pdata;
--				swap_PSMSAMPLE(psmp);
--				smpnames[m_nSamples] = psmp->smpid;
--				memcpy(m_szNames[m_nSamples], psmp->samplename, 31);
-+				PSMSAMPLE psmp = *(PSMSAMPLE *)pdata;
-+				swap_PSMSAMPLE(&psmp);
-+				smpnames[m_nSamples] = psmp.smpid;
-+				memcpy(m_szNames[m_nSamples], psmp.samplename, 31);
- 				m_szNames[m_nSamples][31] = 0;
- 				samplemap[m_nSamples-1] = (BYTE)m_nSamples;
- 				// Init sample
- 				pins->nGlobalVol = 0x40;
--				pins->nC4Speed = psmp->samplerate;
--				pins->nLength = psmp->length;
--				pins->nLoopStart = psmp->loopstart;
--				pins->nLoopEnd = psmp->loopend;
-+				pins->nC4Speed = psmp.samplerate;
-+				pins->nLength = psmp.length;
-+				pins->nLoopStart = psmp.loopstart;
-+				pins->nLoopEnd = psmp.loopend;
- 				pins->nPan = 128;
--				pins->nVolume = (psmp->defvol+1) * 2;
--				pins->uFlags = (psmp->flags & 0x80) ? CHN_LOOP : 0;
-+				pins->nVolume = (psmp.defvol+1) * 2;
-+				pins->uFlags = (psmp.flags & 0x80) ? CHN_LOOP : 0;
- 				if (pins->nLoopStart > 0) pins->nLoopStart--;
- 				// Point to sample data
- 				pdata += 0x60;
-@@ -199,17 +199,17 @@ BOOL CSoundFile::ReadPSM(LPCBYTE lpStrea
- 		default:
- 			{
- 				CHAR s[8], s2[64];
--				*(DWORD *)s = pchunk->id;
-+				*(DWORD *)s = pchunk.id;
- 				s[4] = 0;
--				wsprintf(s2, "%s: %4d bytes @ %4d\n", s, pchunk->len, dwMemPos);
-+				wsprintf(s2, "%s: %4d bytes @ %4d\n", s, pchunk.len, dwMemPos);
- 				OutputDebugString(s2);
- 			}
- 	#endif
- 		}
--		dwMemPos += pchunk->len;
-+		dwMemPos += pchunk.len;
- 	}
- 	// Step #1: convert song structure
--	PSMSONGHDR *pSong = (PSMSONGHDR *)(lpStream+dwSongPos+8);
-+	const PSMSONGHDR *pSong = (const PSMSONGHDR *)(lpStream+dwSongPos+8);
- 	if ((!dwSongPos) || (pSong->channels < 2) || (pSong->channels > 32)) return TRUE;
- 	m_nChannels = pSong->channels;
- 	// Valid song header -> convert attached chunks
-@@ -218,13 +218,13 @@ BOOL CSoundFile::ReadPSM(LPCBYTE lpStrea
- 		dwMemPos = dwSongPos + 8 + 11; // sizeof(PSMCHUNK)+sizeof(PSMSONGHDR)
- 		while (dwMemPos + 8 < dwSongEnd)
- 		{
--			PSMCHUNK *pchunk = (PSMCHUNK *)(lpStream+dwMemPos);
--			swap_PSMCHUNK(pchunk);
-+			PSMCHUNK pchunk = *(const PSMCHUNK *)(lpStream+dwMemPos);
-+			swap_PSMCHUNK(&pchunk);
- 			dwMemPos += 8;
--			if ((pchunk->len > dwSongEnd) || (dwMemPos + pchunk->len > dwSongEnd)) break;
-+			if ((pchunk.len > dwSongEnd) || (dwMemPos + pchunk.len > dwSongEnd)) break;
- 			PUCHAR pdata = (PUCHAR)(lpStream+dwMemPos);
--			ULONG len = pchunk->len;
--			switch(pchunk->id)
-+			ULONG len = pchunk.len;
-+			switch(pchunk.id)
- 			{
- 			case IFFID_OPLH:
- 				if (len >= 0x20)
-@@ -237,7 +237,7 @@ BOOL CSoundFile::ReadPSM(LPCBYTE lpStrea
- 						DWORD dwName = *(DWORD *)(pdata+pos);
- 						for (UINT i=0; i<nPatterns; i++)
- 						{
--							DWORD dwPatName = ((PSMPATTERN *)(lpStream+patptrs[i]+8))->name;
-+							DWORD dwPatName = ((const PSMPATTERN *)(lpStream+patptrs[i]+8))->name;
- 							if (dwName == dwPatName)
- 							{
- 								bFound = TRUE;
-@@ -258,7 +258,7 @@ BOOL CSoundFile::ReadPSM(LPCBYTE lpStrea
- 						DWORD dwName = *(DWORD *)(pdata+pos);
- 						for (UINT i=0; i<nPatterns; i++)
- 						{
--							DWORD dwPatName = ((PSMPATTERN *)(lpStream+patptrs[i]+8))->name;
-+							DWORD dwPatName = ((const PSMPATTERN *)(lpStream+patptrs[i]+8))->name;
- 							if (dwName == dwPatName)
- 							{
- 								Order[iOrd++] = i;
-@@ -270,23 +270,23 @@ BOOL CSoundFile::ReadPSM(LPCBYTE lpStrea
- 				}
- 				break;
- 			}
--			dwMemPos += pchunk->len;
-+			dwMemPos += pchunk.len;
- 		}
- 	}
- 
- 	// Step #2: convert patterns
- 	for (UINT nPat=0; nPat<nPatterns; nPat++)
- 	{
--		PSMPATTERN *pPsmPat = (PSMPATTERN *)(lpStream+patptrs[nPat]+8);
--		swap_PSMPATTERN(pPsmPat);
-+		PSMPATTERN pPsmPat = *(const PSMPATTERN *)(lpStream+patptrs[nPat]+8);
-+		swap_PSMPATTERN(&pPsmPat);
- 		ULONG len = *(DWORD *)(lpStream+patptrs[nPat]+4) - 12;
--		UINT nRows = pPsmPat->rows;
--		if (len > pPsmPat->size) len = pPsmPat->size;
-+		UINT nRows = pPsmPat.rows;
-+		if (len > pPsmPat.size) len = pPsmPat.size;
- 		if ((nRows < 64) || (nRows > 256)) nRows = 64;
- 		PatternSize[nPat] = nRows;
- 		if ((Patterns[nPat] = AllocatePattern(nRows, m_nChannels)) == NULL) break;
- 		MODCOMMAND *m = Patterns[nPat];
--		BYTE *p = pPsmPat->data;
-+		BYTE *p = pPsmPat.data;
- 		MODCOMMAND *sp, dummy;
- 		UINT pos = 0;
- 		UINT row = 0;
-@@ -295,7 +295,7 @@ BOOL CSoundFile::ReadPSM(LPCBYTE lpStrea
- 		Log("Pattern %d at offset 0x%04X\n", nPat, (DWORD)(p - (BYTE *)lpStream));
- 	#endif
- 		UINT flags, ch;
--		rowlim = bswapLE16(pPsmPat->reserved1)-2;
-+		rowlim = bswapLE16(pPsmPat.reserved1)-2;
- 		while ((row < nRows) && (pos+3 < len))
- 		{
- 			if ((pos+1) >= rowlim) {
-@@ -393,7 +393,7 @@ BOOL CSoundFile::ReadPSM(LPCBYTE lpStrea
- 	#ifdef PSM_LOG
- 		if (pos < len)
- 		{
--			Log("Pattern %d: %d/%d[%d] rows (%d bytes) -> %d bytes left\n", nPat, row, nRows, pPsmPat->rows, pPsmPat->size, len-pos);
-+			Log("Pattern %d: %d/%d[%d] rows (%d bytes) -> %d bytes left\n", nPat, row, nRows, pPsmPat.rows, pPsmPat.size, len-pos);
- 		}
- 	#endif
- 	}
-diff -up libmodplug-0.8.9.0/src/load_s3m.cpp~ libmodplug-0.8.9.0/src/load_s3m.cpp
+diff -u libmodplug-0.8.9.0/src/load_s3m.cpp~ libmodplug-0.8.9.0/src/load_s3m.cpp
 --- libmodplug-0.8.9.0/src/load_s3m.cpp~
 +++ libmodplug-0.8.9.0/src/load_s3m.cpp
-@@ -105,6 +105,7 @@ void CSoundFile::S3MConvert(MODCOMMAND *
- }
+@@ -39,7 +39,6 @@ typedef struct tagS3MSAMPLESTRUCT
+ 	CHAR scrs[4];
+ } S3MSAMPLESTRUCT;
  
- 
-+#ifndef MODPLUG_NO_FILESAVE
- void CSoundFile::S3MSaveConvert(UINT *pcmd, UINT *pprm, BOOL bIT) const
- //---------------------------------------------------------------------
+-
+ typedef struct tagS3MFILEHEADER
  {
-@@ -182,6 +183,7 @@ void CSoundFile::S3MSaveConvert(UINT *pc
- 	*pcmd = command;
- 	*pprm = param;
- }
-+#endif // MODPLUG_NO_FILESAVE
+ 	CHAR name[28];
+@@ -63,6 +62,7 @@ typedef struct tagS3MFILEHEADER
+ 	WORD special;
+ 	BYTE channels[32];
+ } S3MFILEHEADER;
++#pragma pack()
  
+ 
+ void CSoundFile::S3MConvert(MODCOMMAND *m, BOOL bIT) const
+@@ -104,85 +104,6 @@ void CSoundFile::S3MConvert(MODCOMMAND *
+ 	m->param = param;
+ }
+ 
+-
+-void CSoundFile::S3MSaveConvert(UINT *pcmd, UINT *pprm, BOOL bIT) const
+-//---------------------------------------------------------------------
+-{
+-	UINT command = *pcmd;
+-	UINT param = *pprm;
+-	switch(command)
+-	{
+-	case CMD_SPEED:				command = 'A'; break;
+-	case CMD_POSITIONJUMP:		command = 'B'; break;
+-	case CMD_PATTERNBREAK:		command = 'C'; if (!bIT) param = ((param / 10) << 4) + (param % 10); break;
+-	case CMD_VOLUMESLIDE:		command = 'D'; break;
+-	case CMD_PORTAMENTODOWN:	command = 'E'; if ((param >= 0xE0) && (m_nType & (MOD_TYPE_MOD|MOD_TYPE_XM))) param = 0xDF; break;
+-	case CMD_PORTAMENTOUP:		command = 'F'; if ((param >= 0xE0) && (m_nType & (MOD_TYPE_MOD|MOD_TYPE_XM))) param = 0xDF; break;
+-	case CMD_TONEPORTAMENTO:	command = 'G'; break;
+-	case CMD_VIBRATO:			command = 'H'; break;
+-	case CMD_TREMOR:			command = 'I'; break;
+-	case CMD_ARPEGGIO:			command = 'J'; break;
+-	case CMD_VIBRATOVOL:		command = 'K'; break;
+-	case CMD_TONEPORTAVOL:		command = 'L'; break;
+-	case CMD_CHANNELVOLUME:		command = 'M'; break;
+-	case CMD_CHANNELVOLSLIDE:	command = 'N'; break;
+-	case CMD_OFFSET:			command = 'O'; break;
+-	case CMD_PANNINGSLIDE:		command = 'P'; break;
+-	case CMD_RETRIG:			command = 'Q'; break;
+-	case CMD_TREMOLO:			command = 'R'; break;
+-	case CMD_S3MCMDEX:			command = 'S'; break;
+-	case CMD_TEMPO:				command = 'T'; break;
+-	case CMD_FINEVIBRATO:		command = 'U'; break;
+-	case CMD_GLOBALVOLUME:		command = 'V'; break;
+-	case CMD_GLOBALVOLSLIDE:	command = 'W'; break;
+-	case CMD_PANNING8:
+-		command = 'X';
+-		if ((bIT) && (m_nType != MOD_TYPE_IT) && (m_nType != MOD_TYPE_XM))
+-		{
+-			if (param == 0xA4) { command = 'S'; param = 0x91; }	else
+-			if (param <= 0x80) { param <<= 1; if (param > 255) param = 255; } else
+-			command = param = 0;
+-		} else
+-		if ((!bIT) && ((m_nType == MOD_TYPE_IT) || (m_nType == MOD_TYPE_XM)))
+-		{
+-			param >>= 1;
+-		}
+-		break;
+-	case CMD_PANBRELLO:			command = 'Y'; break;
+-	case CMD_MIDI:				command = 'Z'; break;
+-	case CMD_XFINEPORTAUPDOWN:
+-		if (param & 0x0F) switch(param & 0xF0)
+-		{
+-		case 0x10:	command = 'F'; param = (param & 0x0F) | 0xE0; break;
+-		case 0x20:	command = 'E'; param = (param & 0x0F) | 0xE0; break;
+-		case 0x90:	command = 'S'; break;
+-		default:	command = param = 0;
+-		} else command = param = 0;
+-		break;
+-	case CMD_MODCMDEX:
+-		command = 'S';
+-		switch(param & 0xF0)
+-		{
+-		case 0x00:	command = param = 0; break;
+-		case 0x10:	command = 'F'; param |= 0xF0; break;
+-		case 0x20:	command = 'E'; param |= 0xF0; break;
+-		case 0x30:	param = (param & 0x0F) | 0x10; break;
+-		case 0x40:	param = (param & 0x0F) | 0x30; break;
+-		case 0x50:	param = (param & 0x0F) | 0x20; break;
+-		case 0x60:	param = (param & 0x0F) | 0xB0; break;
+-		case 0x70:	param = (param & 0x0F) | 0x40; break;
+-		case 0x90:	command = 'Q'; param &= 0x0F; break;
+-		case 0xA0:	if (param & 0x0F) { command = 'D'; param = (param << 4) | 0x0F; } else command=param=0; break;
+-		case 0xB0:	if (param & 0x0F) { command = 'D'; param |= 0xF0; } else command=param=0; break;
+-		}
+-		break;
+-	default:	command = param = 0;
+-	}
+-	command &= ~0x40;
+-	*pcmd = command;
+-	*pprm = param;
+-}
+-
  static DWORD boundInput(DWORD input, DWORD smin, DWORD smax)
  {
-diff -up libmodplug-0.8.9.0/src/load_stm.cpp~ libmodplug-0.8.9.0/src/load_stm.cpp
+ 	if (input > smax) input = smax;
+@@ -190,7 +111,6 @@ static DWORD boundInput(DWORD input, DWO
+ 	return(input);
+ }
+ 
+-
+ BOOL CSoundFile::ReadS3M(const BYTE *lpStream, DWORD dwMemLength)
+ //---------------------------------------------------------------
+ {
+@@ -299,7 +219,7 @@ BOOL CSoundFile::ReadS3M(const BYTE *lpS
+ 		}
+ 		S3MSAMPLESTRUCT pSmp;
+ 		memcpy(&pSmp, lpStream+nInd, 0x50);
+-		memcpy(Ins[iSmp].name, &pSmp.dosname, 12);
++		memcpy(Ins[iSmp].name, pSmp.dosname, 12);
+ 		insflags[iSmp-1] = pSmp.flags;
+ 		inspack[iSmp-1] = pSmp.pack;
+ 		memcpy(m_szNames[iSmp], pSmp.name, 28);
+@@ -410,261 +330,3 @@ BOOL CSoundFile::ReadS3M(const BYTE *lpS
+ 	if (psfh.flags & 0x10) m_dwSongFlags |= SONG_AMIGALIMITS;
+ 	return TRUE;
+ }
+-
+-
+-#ifndef MODPLUG_NO_FILESAVE
+-
+-#ifdef _MSC_VER
+-#pragma warning(disable:4100)
+-#endif
+-
+-static BYTE S3MFiller[16] =
+-{
+-	0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+-	0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80
+-};
+-
+-
+-BOOL CSoundFile::SaveS3M(LPCSTR lpszFileName, UINT nPacking)
+-//----------------------------------------------------------
+-{
+-	FILE *f;
+-	BYTE header[0x60];
+-	UINT nbo,nbi,nbp,i;
+-	WORD patptr[128];
+-	WORD insptr[128];
+-	BYTE buffer[5*1024];
+-	S3MSAMPLESTRUCT insex[128];
+-
+-	if ((!m_nChannels) || (!lpszFileName)) return FALSE;
+-	if ((f = fopen(lpszFileName, "wb")) == NULL) return FALSE;
+-	// Writing S3M header
+-	memset(header, 0, sizeof(header));
+-	memset(insex, 0, sizeof(insex));
+-	memcpy(header, m_szNames[0], 0x1C);
+-	header[0x1B] = 0;
+-	header[0x1C] = 0x1A;
+-	header[0x1D] = 0x10;
+-	nbo = (GetNumPatterns() + 15) & 0xF0;
+-	if (!nbo) nbo = 16;
+-	header[0x20] = nbo & 0xFF;
+-	header[0x21] = nbo >> 8;
+-	nbi = m_nInstruments;
+-	if (!nbi) nbi = m_nSamples;
+-	if (nbi > 99) nbi = 99;
+-	header[0x22] = nbi & 0xFF;
+-	header[0x23] = nbi >> 8;
+-	nbp = 0;
+-	for (i=0; Patterns[i]; i++) { nbp = i+1; if (nbp >= MAX_PATTERNS) break; }
+-	for (i=0; i<MAX_ORDERS; i++) if ((Order[i] < MAX_PATTERNS) && (Order[i] >= nbp)) nbp = Order[i] + 1;
+-	header[0x24] = nbp & 0xFF;
+-	header[0x25] = nbp >> 8;
+-	if (m_dwSongFlags & SONG_FASTVOLSLIDES) header[0x26] |= 0x40;
+-	if ((m_nMaxPeriod < 20000) || (m_dwSongFlags & SONG_AMIGALIMITS)) header[0x26] |= 0x10;
+-	header[0x28] = 0x20;
+-	header[0x29] = 0x13;
+-	header[0x2A] = 0x02; // Version = 1 => Signed samples
+-	header[0x2B] = 0x00;
+-	header[0x2C] = 'S';
+-	header[0x2D] = 'C';
+-	header[0x2E] = 'R';
+-	header[0x2F] = 'M';
+-	header[0x30] = m_nDefaultGlobalVolume >> 2;
+-	header[0x31] = m_nDefaultSpeed;
+-	header[0x32] = m_nDefaultTempo;
+-	header[0x33] = ((m_nSongPreAmp < 0x20) ? 0x20 : m_nSongPreAmp) | 0x80;	// Stereo
+-	header[0x35] = 0xFC;
+-	for (i=0; i<32; i++)
+-	{
+-		if (i < m_nChannels)
+-		{
+-			UINT tmp = (i & 0x0F) >> 1;
+-			header[0x40+i] = (i & 0x10) | ((i & 1) ? 8+tmp : tmp);
+-		} else header[0x40+i] = 0xFF;
+-	}
+-	fwrite(header, 0x60, 1, f);
+-	fwrite(Order, nbo, 1, f);
+-	memset(patptr, 0, sizeof(patptr));
+-	memset(insptr, 0, sizeof(insptr));
+-	UINT ofs0 = 0x60 + nbo;
+-	UINT ofs1 = ((0x60 + nbo + nbi*2 + nbp*2 + 15) & 0xFFF0) + 0x20;
+-	UINT ofs = ofs1;
+-
+-	for (i=0; i<nbi; i++) insptr[i] = (WORD)((ofs + i*0x50) / 16);
+-	for (i=0; i<nbp; i++) patptr[i] = (WORD)((ofs + nbi*0x50) / 16);
+-	fwrite(insptr, nbi, 2, f);
+-	fwrite(patptr, nbp, 2, f);
+-	if (header[0x35] == 0xFC)
+-	{
+-		BYTE chnpan[32];
+-		for (i=0; i<32; i++)
+-		{
+-			chnpan[i] = 0x20 | (ChnSettings[i].nPan >> 4);
+-		}
+-		fwrite(chnpan, 0x20, 1, f);
+-	}
+-	if ((nbi*2+nbp*2) & 0x0F)
+-	{
+-		fwrite(S3MFiller, 0x10 - ((nbi*2+nbp*2) & 0x0F), 1, f);
+-	}
+-	ofs1 = ftell(f);
+-	fwrite(insex, nbi, 0x50, f);
+-	// Packing patterns
+-	ofs += nbi*0x50;
+-	for (i=0; i<nbp; i++)
+-	{
+-		WORD len = 64;
+-		memset(buffer, 0, sizeof(buffer));
+-		patptr[i] = ofs / 16;
+-		if (Patterns[i])
+-		{
+-			len = 2;
+-			MODCOMMAND *p = Patterns[i];
+-			for (int row=0; row<64; row++) if (row < PatternSize[i])
+-			{
+-				for (UINT j=0; j<m_nChannels; j++)
+-				{
+-					UINT b = j;
+-					MODCOMMAND *m = &p[row*m_nChannels+j];
+-					UINT note = m->note;
+-					UINT volcmd = m->volcmd;
+-					UINT vol = m->vol;
+-					UINT command = m->command;
+-					UINT param = m->param;
+-
+-					if ((note) || (m->instr)) b |= 0x20;
+-					if (!note) note = 0xFF; else
+-					if (note >= 0xFE) note = 0xFE; else
+-					if (note < 13) note = 0; else note -= 13;
+-					if (note < 0xFE) note = (note % 12) + ((note / 12) << 4);
+-					if (command == CMD_VOLUME)
+-					{
+-						command = 0;
+-						if (param > 64) param = 64;
+-						volcmd = VOLCMD_VOLUME;
+-						vol = param;
+-					}
+-					if (volcmd == VOLCMD_VOLUME) b |= 0x40; else
+-					if (volcmd == VOLCMD_PANNING) { vol |= 0x80; b |= 0x40; }
+-					if (command)
+-					{
+-						S3MSaveConvert(&command, &param, FALSE);
+-						if (command) b |= 0x80;
+-					}
+-					if (b & 0xE0)
+-					{
+-						buffer[len++] = b;
+-						if (b & 0x20)
+-						{
+-							buffer[len++] = note;
+-							buffer[len++] = m->instr;
+-						}
+-						if (b & 0x40)
+-						{
+-							buffer[len++] = vol;
+-						}
+-						if (b & 0x80)
+-						{
+-							buffer[len++] = command;
+-							buffer[len++] = param;
+-						}
+-						if (len > sizeof(buffer) - 20) break;
+-					}
+-				}
+-				buffer[len++] = 0;
+-				if (len > sizeof(buffer) - 20) break;
+-			}
+-		}
+-		buffer[0] = (len - 2) & 0xFF;
+-		buffer[1] = (len - 2) >> 8;
+-		len = (len+15) & (~0x0F);
+-		fwrite(buffer, len, 1, f);
+-		ofs += len;
+-	}
+-	// Writing samples
+-	for (i=1; i<=nbi; i++)
+-	{
+-		MODINSTRUMENT *pins = &Ins[i];
+-		if (m_nInstruments)
+-		{
+-			pins = Ins;
+-			if (Headers[i])
+-			{
+-				for (UINT j=0; j<128; j++)
+-				{
+-					UINT n = Headers[i]->Keyboard[j];
+-					if ((n) && (n < MAX_INSTRUMENTS))
+-					{
+-						pins = &Ins[n];
+-						break;
+-					}
+-				}
+-			}
+-		}
+-		memcpy(insex[i-1].dosname, pins->name, 12);
+-		memcpy(insex[i-1].name, m_szNames[i], 28);
+-		memcpy(insex[i-1].scrs, "SCRS", 4);
+-		insex[i-1].hmem = (BYTE)((DWORD)ofs >> 20);
+-		insex[i-1].memseg = (WORD)((DWORD)ofs >> 4);
+-		if (pins->pSample)
+-		{
+-			insex[i-1].type = 1;
+-			insex[i-1].length = pins->nLength;
+-			insex[i-1].loopbegin = pins->nLoopStart;
+-			insex[i-1].loopend = pins->nLoopEnd;
+-			insex[i-1].vol = pins->nVolume / 4;
+-			insex[i-1].flags = (pins->uFlags & CHN_LOOP) ? 1 : 0;
+-			if (pins->nC4Speed)
+-				insex[i-1].finetune = pins->nC4Speed;
+-			else
+-				insex[i-1].finetune = TransposeToFrequency(pins->RelativeTone, pins->nFineTune);
+-			UINT flags = RS_PCM8U;
+-#ifndef NO_PACKING
+-			if (nPacking)
+-			{
+-				if ((!(pins->uFlags & (CHN_16BIT|CHN_STEREO)))
+-				 && (CanPackSample((char *)pins->pSample, pins->nLength, nPacking)))
+-				{
+-					insex[i-1].pack = 4;
+-					flags = RS_ADPCM4;
+-				}
+-			} else
+-#endif // NO_PACKING
+-			{
+-				if (pins->uFlags & CHN_16BIT)
+-				{
+-					insex[i-1].flags |= 4;
+-					flags = RS_PCM16U;
+-				}
+-				if (pins->uFlags & CHN_STEREO)
+-				{
+-					insex[i-1].flags |= 2;
+-					flags = (pins->uFlags & CHN_16BIT) ? RS_STPCM16U : RS_STPCM8U;
+-				}
+-			}
+-			DWORD len = WriteSample(f, pins, flags);
+-			if (len & 0x0F)
+-			{
+-				fwrite(S3MFiller, 0x10 - (len & 0x0F), 1, f);
+-			}
+-			ofs += (len + 15) & (~0x0F);
+-		} else
+-		{
+-			insex[i-1].length = 0;
+-		}
+-	}
+-	// Updating parapointers
+-	fseek(f, ofs0, SEEK_SET);
+-	fwrite(insptr, nbi, 2, f);
+-	fwrite(patptr, nbp, 2, f);
+-	fseek(f, ofs1, SEEK_SET);
+-	fwrite(insex, 0x50, nbi, f);
+-	fclose(f);
+-	return TRUE;
+-}
+-
+-#ifdef _MSC_VER
+-#pragma warning(default:4100)
+-#endif
+-
+-#endif // MODPLUG_NO_FILESAVE
+diff -u libmodplug-0.8.9.0/src/load_stm.cpp~ libmodplug-0.8.9.0/src/load_stm.cpp
 --- libmodplug-0.8.9.0/src/load_stm.cpp~
 +++ libmodplug-0.8.9.0/src/load_stm.cpp
 @@ -64,8 +64,8 @@ BOOL CSoundFile::ReadSTM(const BYTE *lpS
@@ -748,19 +2337,34 @@ diff -up libmodplug-0.8.9.0/src/load_stm.cpp~ libmodplug-0.8.9.0/src/load_stm.cp
  	memcpy(m_szNames[0], phdr->songname, 20);
  	// Read STM header
  	m_nType = MOD_TYPE_STM;
-diff -up libmodplug-0.8.9.0/src/load_wav.cpp~ libmodplug-0.8.9.0/src/load_wav.cpp
+diff -u libmodplug-0.8.9.0/src/load_wav.cpp~ libmodplug-0.8.9.0/src/load_wav.cpp
 --- libmodplug-0.8.9.0/src/load_wav.cpp~
 +++ libmodplug-0.8.9.0/src/load_wav.cpp
 @@ -7,6 +7,8 @@
  #include "stdafx.h"
  #include "sndfile.h"
  
-+#ifndef NO_WAVFORMAT
++#ifdef WAV_SUPPORT
 +
  #ifndef WAVE_FORMAT_EXTENSIBLE
  #define WAVE_FORMAT_EXTENSIBLE	0xFFFE
  #endif
-@@ -170,7 +172,6 @@ static const int gIMAUnpackTable[90] =
+@@ -144,14 +146,12 @@ BOOL CSoundFile::ReadWav(const BYTE *lpS
+ // IMA ADPCM Support
+ 
+ #pragma pack(1)
+-
+ typedef struct IMAADPCMBLOCK
+ {
+ 	WORD sample;
+ 	BYTE index;
+ 	BYTE Reserved;
+ } DVI_ADPCMBLOCKHEADER;
+-
+ #pragma pack()
+ 
+ static const int gIMAUnpackTable[90] =
+@@ -170,7 +170,6 @@ static const int gIMAUnpackTable[90] =
    32767, 0
  };
  
@@ -768,12 +2372,405 @@ diff -up libmodplug-0.8.9.0/src/load_wav.cpp~ libmodplug-0.8.9.0/src/load_wav.cp
  BOOL IMAADPCMUnpack16(signed short *pdest, UINT nLen, LPBYTE psrc, DWORD dwBytes, UINT pkBlkAlign)
  //------------------------------------------------------------------------------------------------
  {
-@@ -215,3 +216,4 @@ BOOL IMAADPCMUnpack16(signed short *pdes
+@@ -215,3 +214,4 @@ BOOL IMAADPCMUnpack16(signed short *pdes
  	}
  	return TRUE;
  }
-+#endif // NO_WAVFORMAT
-diff -up libmodplug-0.8.9.0/src/mmcmp.cpp~ libmodplug-0.8.9.0/src/mmcmp.cpp
++#endif // WAV_SUPPORT
+diff -u libmodplug-0.8.9.0/src/load_xm.cpp~ libmodplug-0.8.9.0/src/load_xm.cpp
+--- libmodplug-0.8.9.0/src/load_xm.cpp~
++++ libmodplug-0.8.9.0/src/load_xm.cpp
+@@ -11,7 +11,7 @@
+ ////////////////////////////////////////////////////////
+ // FastTracker II XM file support
+ 
+-#ifdef MSC_VER
++#ifdef _MSC_VER
+ #pragma warning(disable:4244)
+ #endif
+ 
+@@ -30,7 +30,6 @@ typedef struct tagXMFILEHEADER
+ 	BYTE order[256];
+ } XMFILEHEADER;
+ 
+-
+ typedef struct tagXMINSTRUMENTHEADER
+ {
+ 	DWORD size;
+@@ -40,7 +39,6 @@ typedef struct tagXMINSTRUMENTHEADER
+ 	BYTE samplesh;
+ } XMINSTRUMENTHEADER;
+ 
+-
+ typedef struct tagXMSAMPLEHEADER
+ {
+ 	DWORD shsize;
+@@ -71,7 +69,6 @@ typedef struct tagXMSAMPLESTRUCT
+ } XMSAMPLESTRUCT;
+ #pragma pack()
+ 
+-
+ BOOL CSoundFile::ReadXM(const BYTE *lpStream, DWORD dwMemLength)
+ //--------------------------------------------------------------
+ {
+@@ -582,315 +579,3 @@ BOOL CSoundFile::ReadXM(const BYTE *lpSt
+ 	}
+ 	return TRUE;
+ }
+-
+-
+-#ifndef MODPLUG_NO_FILESAVE
+-
+-BOOL CSoundFile::SaveXM(LPCSTR lpszFileName, UINT nPacking)
+-//---------------------------------------------------------
+-{
+-	BYTE s[64*64*5];
+-	XMFILEHEADER header;
+-	XMINSTRUMENTHEADER xmih;
+-	XMSAMPLEHEADER xmsh;
+-	XMSAMPLESTRUCT xmss;
+-	BYTE smptable[32];
+-	BYTE xmph[9];
+-	FILE *f;
+-	int i;
+-
+-	if ((!m_nChannels) || (!lpszFileName)) return FALSE;
+-	if ((f = fopen(lpszFileName, "wb")) == NULL) return FALSE;
+-	fwrite("Extended Module: ", 17, 1, f);
+-	fwrite(m_szNames[0], 20, 1, f);
+-	s[0] = 0x1A;
+-	lstrcpy((LPSTR)&s[1], (nPacking) ? "MOD Plugin packed   " : "FastTracker v2.00   ");
+-	s[21] = 0x04;
+-	s[22] = 0x01;
+-	fwrite(s, 23, 1, f);
+-	// Writing song header
+-	memset(&header, 0, sizeof(header));
+-	header.size = sizeof(XMFILEHEADER);
+-	header.norder = 0;
+-	header.restartpos = m_nRestartPos;
+-	header.channels = m_nChannels;
+-	header.patterns = 0;
+-	for (i=0; i<MAX_ORDERS; i++)
+-	{
+-		if (Order[i] == 0xFF) break;
+-		header.norder++;
+-		if ((Order[i] >= header.patterns) && (Order[i] < MAX_PATTERNS)) header.patterns = Order[i]+1;
+-	}
+-	header.instruments = m_nInstruments;
+-	if (!header.instruments) header.instruments = m_nSamples;
+-	header.flags = (m_dwSongFlags & SONG_LINEARSLIDES) ? 0x01 : 0x00;
+-	if (m_dwSongFlags & SONG_EXFILTERRANGE) header.flags |= 0x1000;
+-	header.tempo = m_nDefaultTempo;
+-	header.speed = m_nDefaultSpeed;
+-	memcpy(header.order, Order, header.norder);
+-	fwrite(&header, 1, sizeof(header), f);
+-	// Writing patterns
+-	for (i=0; i<header.patterns; i++) if (Patterns[i])
+-	{
+-		MODCOMMAND *p = Patterns[i];
+-		UINT len = 0;
+-
+-		memset(&xmph, 0, sizeof(xmph));
+-		xmph[0] = 9;
+-		xmph[5] = (BYTE)(PatternSize[i] & 0xFF);
+-		xmph[6] = (BYTE)(PatternSize[i] >> 8);
+-		for (UINT j=m_nChannels*PatternSize[i]; j; j--,p++)
+-		{
+-			UINT note = p->note;
+-			UINT param = ModSaveCommand(p, TRUE);
+-			UINT command = param >> 8;
+-			param &= 0xFF;
+-			if (note >= 0xFE) note = 97; else
+-			if ((note <= 12) || (note > 96+12)) note = 0; else
+-			note -= 12;
+-			UINT vol = 0;
+-			if (p->volcmd)
+-			{
+-				UINT volcmd = p->volcmd;
+-				switch(volcmd)
+-				{
+-				case VOLCMD_VOLUME:			vol = 0x10 + p->vol; break;
+-				case VOLCMD_VOLSLIDEDOWN:	vol = 0x60 + (p->vol & 0x0F); break;
+-				case VOLCMD_VOLSLIDEUP:		vol = 0x70 + (p->vol & 0x0F); break;
+-				case VOLCMD_FINEVOLDOWN:	vol = 0x80 + (p->vol & 0x0F); break;
+-				case VOLCMD_FINEVOLUP:		vol = 0x90 + (p->vol & 0x0F); break;
+-				case VOLCMD_VIBRATOSPEED:	vol = 0xA0 + (p->vol & 0x0F); break;
+-				case VOLCMD_VIBRATO:		vol = 0xB0 + (p->vol & 0x0F); break;
+-				case VOLCMD_PANNING:		vol = 0xC0 + (p->vol >> 2); if (vol > 0xCF) vol = 0xCF; break;
+-				case VOLCMD_PANSLIDELEFT:	vol = 0xD0 + (p->vol & 0x0F); break;
+-				case VOLCMD_PANSLIDERIGHT:	vol = 0xE0 + (p->vol & 0x0F); break;
+-				case VOLCMD_TONEPORTAMENTO:	vol = 0xF0 + (p->vol & 0x0F); break;
+-				}
+-			}
+-			if ((note) && (p->instr) && (vol > 0x0F) && (command) && (param))
+-			{
+-				s[len++] = note;
+-				s[len++] = p->instr;
+-				s[len++] = vol;
+-				s[len++] = command;
+-				s[len++] = param;
+-			} else
+-			{
+-				BYTE b = 0x80;
+-				if (note) b |= 0x01;
+-				if (p->instr) b |= 0x02;
+-				if (vol >= 0x10) b |= 0x04;
+-				if (command) b |= 0x08;
+-				if (param) b |= 0x10;
+-				s[len++] = b;
+-				if (b & 1) s[len++] = note;
+-				if (b & 2) s[len++] = p->instr;
+-				if (b & 4) s[len++] = vol;
+-				if (b & 8) s[len++] = command;
+-				if (b & 16) s[len++] = param;
+-			}
+-			if (len > sizeof(s) - 5) break;
+-		}
+-		xmph[7] = (BYTE)(len & 0xFF);
+-		xmph[8] = (BYTE)(len >> 8);
+-		fwrite(xmph, 1, 9, f);
+-		fwrite(s, 1, len, f);
+-	} else
+-	{
+-		memset(&xmph, 0, sizeof(xmph));
+-		xmph[0] = 9;
+-		xmph[5] = (BYTE)(PatternSize[i] & 0xFF);
+-		xmph[6] = (BYTE)(PatternSize[i] >> 8);
+-		fwrite(xmph, 1, 9, f);
+-	}
+-	// Writing instruments
+-	for (i=1; i<=header.instruments; i++)
+-	{
+-		MODINSTRUMENT *pins;
+-		BYTE flags[32];
+-
+-		memset(&xmih, 0, sizeof(xmih));
+-		memset(&xmsh, 0, sizeof(xmsh));
+-		xmih.size = sizeof(xmih) + sizeof(xmsh);
+-		memcpy(xmih.name, m_szNames[i], 22);
+-		xmih.type = 0;
+-		xmih.samples = 0;
+-		if (m_nInstruments)
+-		{
+-			INSTRUMENTHEADER *penv = Headers[i];
+-			if (penv)
+-			{
+-				memcpy(xmih.name, penv->name, 22);
+-				xmih.type = penv->nMidiProgram;
+-				xmsh.volfade = penv->nFadeOut;
+-				xmsh.vnum = (BYTE)penv->nVolEnv;
+-				xmsh.pnum = (BYTE)penv->nPanEnv;
+-				if (xmsh.vnum > 12) xmsh.vnum = 12;
+-				if (xmsh.pnum > 12) xmsh.pnum = 12;
+-				for (UINT ienv=0; ienv<12; ienv++)
+-				{
+-					xmsh.venv[ienv*2] = penv->VolPoints[ienv];
+-					xmsh.venv[ienv*2+1] = penv->VolEnv[ienv];
+-					xmsh.penv[ienv*2] = penv->PanPoints[ienv];
+-					xmsh.penv[ienv*2+1] = penv->PanEnv[ienv];
+-				}
+-				if (penv->dwFlags & ENV_VOLUME) xmsh.vtype |= 1;
+-				if (penv->dwFlags & ENV_VOLSUSTAIN) xmsh.vtype |= 2;
+-				if (penv->dwFlags & ENV_VOLLOOP) xmsh.vtype |= 4;
+-				if (penv->dwFlags & ENV_PANNING) xmsh.ptype |= 1;
+-				if (penv->dwFlags & ENV_PANSUSTAIN) xmsh.ptype |= 2;
+-				if (penv->dwFlags & ENV_PANLOOP) xmsh.ptype |= 4;
+-				xmsh.vsustain = (BYTE)penv->nVolSustainBegin;
+-				xmsh.vloops = (BYTE)penv->nVolLoopStart;
+-				xmsh.vloope = (BYTE)penv->nVolLoopEnd;
+-				xmsh.psustain = (BYTE)penv->nPanSustainBegin;
+-				xmsh.ploops = (BYTE)penv->nPanLoopStart;
+-				xmsh.ploope = (BYTE)penv->nPanLoopEnd;
+-				for (UINT j=0; j<96; j++) if (penv->Keyboard[j+12])
+-				{
+-					UINT k;
+-					for (k=0; k<xmih.samples; k++)	if (smptable[k] == penv->Keyboard[j+12]) break;
+-					if (k == xmih.samples)
+-					{
+-						smptable[xmih.samples++] = penv->Keyboard[j+12];
+-					}
+-					if (xmih.samples >= 32) break;
+-					xmsh.snum[j] = k;
+-				}
+-//				xmsh.reserved2 = xmih.samples;
+-			}
+-		} else
+-		{
+-			xmih.samples = 1;
+-//			xmsh.reserved2 = 1;
+-			smptable[0] = i;
+-		}
+-		xmsh.shsize = (xmih.samples) ? 40 : 0;
+-		fwrite(&xmih, 1, sizeof(xmih), f);
+-		if (smptable[0])
+-		{
+-			MODINSTRUMENT *pvib = &Ins[smptable[0]];
+-			xmsh.vibtype = pvib->nVibType;
+-			xmsh.vibsweep = pvib->nVibSweep;
+-			xmsh.vibdepth = pvib->nVibDepth;
+-			xmsh.vibrate = pvib->nVibRate;
+-		}
+-		fwrite(&xmsh, 1, xmih.size - sizeof(xmih), f);
+-		if (!xmih.samples) continue;
+-		for (UINT ins=0; ins<xmih.samples; ins++)
+-		{
+-			memset(&xmss, 0, sizeof(xmss));
+-			if (smptable[ins]) memcpy(xmss.name, m_szNames[smptable[ins]], 22);
+-			pins = &Ins[smptable[ins]];
+-			xmss.samplen = pins->nLength;
+-			xmss.loopstart = pins->nLoopStart;
+-			xmss.looplen = pins->nLoopEnd - pins->nLoopStart;
+-			xmss.vol = pins->nVolume / 4;
+-			xmss.finetune = (char)pins->nFineTune;
+-			xmss.type = 0;
+-			if (pins->uFlags & CHN_LOOP) xmss.type = (pins->uFlags & CHN_PINGPONGLOOP) ? 2 : 1;
+-			flags[ins] = RS_PCM8D;
+-#ifndef NO_PACKING
+-			if (nPacking)
+-			{
+-				if ((!(pins->uFlags & (CHN_16BIT|CHN_STEREO)))
+-				 && (CanPackSample((char *)pins->pSample, pins->nLength, nPacking)))
+-				{
+-					flags[ins] = RS_ADPCM4;
+-					xmss.res = 0xAD;
+-				}
+-			} else
+-#endif
+-			{
+-				if (pins->uFlags & CHN_16BIT)
+-				{
+-					flags[ins] = RS_PCM16D;
+-					xmss.type |= 0x10;
+-					xmss.looplen *= 2;
+-					xmss.loopstart *= 2;
+-					xmss.samplen *= 2;
+-				}
+-				if (pins->uFlags & CHN_STEREO)
+-				{
+-					flags[ins] = (pins->uFlags & CHN_16BIT) ? RS_STPCM16D : RS_STPCM8D;
+-					xmss.type |= 0x20;
+-					xmss.looplen *= 2;
+-					xmss.loopstart *= 2;
+-					xmss.samplen *= 2;
+-				}
+-			}
+-			xmss.pan = 255;
+-			if (pins->nPan < 256) xmss.pan = (BYTE)pins->nPan;
+-			xmss.relnote = (signed char)pins->RelativeTone;
+-			fwrite(&xmss, 1, xmsh.shsize, f);
+-		}
+-		for (UINT ismpd=0; ismpd<xmih.samples; ismpd++)
+-		{
+-			pins = &Ins[smptable[ismpd]];
+-			if (pins->pSample)
+-			{
+-#ifndef NO_PACKING
+-				if ((flags[ismpd] == RS_ADPCM4) && (xmih.samples>1)) CanPackSample((char *)pins->pSample, pins->nLength, nPacking);
+-#endif // NO_PACKING
+-				WriteSample(f, pins, flags[ismpd]);
+-			}
+-		}
+-	}
+-	// Writing song comments
+-	if ((m_lpszSongComments) && (m_lpszSongComments[0]))
+-	{
+-		DWORD d = 0x74786574;
+-		fwrite(&d, 1, 4, f);
+-		d = strlen(m_lpszSongComments);
+-		fwrite(&d, 1, 4, f);
+-		fwrite(m_lpszSongComments, 1, d, f);
+-	}
+-	// Writing midi cfg
+-	if (m_dwSongFlags & SONG_EMBEDMIDICFG)
+-	{
+-		DWORD d = 0x4944494D;
+-		fwrite(&d, 1, 4, f);
+-		d = sizeof(MODMIDICFG);
+-		fwrite(&d, 1, 4, f);
+-		fwrite(&m_MidiCfg, 1, sizeof(MODMIDICFG), f);
+-	}
+-	// Writing Pattern Names
+-	if ((m_nPatternNames) && (m_lpszPatternNames))
+-	{
+-		DWORD dwLen = m_nPatternNames * MAX_PATTERNNAME;
+-		while ((dwLen >= MAX_PATTERNNAME) && (!m_lpszPatternNames[dwLen-MAX_PATTERNNAME])) dwLen -= MAX_PATTERNNAME;
+-		if (dwLen >= MAX_PATTERNNAME)
+-		{
+-			DWORD d = 0x4d414e50;
+-			fwrite(&d, 1, 4, f);
+-			fwrite(&dwLen, 1, 4, f);
+-			fwrite(m_lpszPatternNames, 1, dwLen, f);
+-		}
+-	}
+-	// Writing Channel Names
+-	{
+-		UINT nChnNames = 0;
+-		for (UINT inam=0; inam<m_nChannels; inam++)
+-		{
+-			if (ChnSettings[inam].szName[0]) nChnNames = inam+1;
+-		}
+-		// Do it!
+-		if (nChnNames)
+-		{
+-			DWORD dwLen = nChnNames * MAX_CHANNELNAME;
+-			DWORD d = 0x4d414e43;
+-			fwrite(&d, 1, 4, f);
+-			fwrite(&dwLen, 1, 4, f);
+-			for (UINT inam=0; inam<nChnNames; inam++)
+-			{
+-				fwrite(ChnSettings[inam].szName, 1, MAX_CHANNELNAME, f);
+-			}
+-		}
+-	}
+-	// Save mix plugins information
+-	SaveMixPlugins(f);
+-	fclose(f);
+-	return TRUE;
+-}
+-
+-#endif // MODPLUG_NO_FILESAVE
+diff -u libmodplug-0.8.9.0/src/Makefile.am~ libmodplug-0.8.9.0/src/Makefile.am
+--- libmodplug-0.8.9.0/src/Makefile.am~
++++ libmodplug-0.8.9.0/src/Makefile.am
+@@ -35,7 +35,6 @@ libmodplug_la_SOURCES = tables.h        
+                         load_ams.cpp       \
+                         load_amf.cpp       \
+                         load_669.cpp       \
+-                        load_j2b.cpp       \
+                         load_mt2.cpp       \
+                         load_psm.cpp       \
+                         load_abc.cpp       \
+diff -u libmodplug-0.8.9.0/src/Makefile.in~ libmodplug-0.8.9.0/src/Makefile.in
+--- libmodplug-0.8.9.0/src/Makefile.in~
++++ libmodplug-0.8.9.0/src/Makefile.in
+@@ -139,8 +139,8 @@ am_libmodplug_la_OBJECTS = sndmix.lo snd
+ 	load_umx.lo load_ult.lo load_stm.lo load_s3m.lo load_ptm.lo \
+ 	load_okt.lo load_mtm.lo load_mod.lo load_med.lo load_mdl.lo \
+ 	load_it.lo load_far.lo load_dsm.lo load_dmf.lo load_dbm.lo \
+-	load_ams.lo load_amf.lo load_669.lo load_j2b.lo load_mt2.lo \
+-	load_psm.lo load_abc.lo load_mid.lo load_pat.lo modplug.lo
++	load_ams.lo load_amf.lo load_669.lo load_mt2.lo load_psm.lo \
++	load_abc.lo load_mid.lo load_pat.lo modplug.lo
+ libmodplug_la_OBJECTS = $(am_libmodplug_la_OBJECTS)
+ AM_V_lt = $(am__v_lt_@AM_V@)
+ am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
+@@ -392,7 +392,6 @@ libmodplug_la_SOURCES = tables.h        
+                         load_ams.cpp       \
+                         load_amf.cpp       \
+                         load_669.cpp       \
+-                        load_j2b.cpp       \
+                         load_mt2.cpp       \
+                         load_psm.cpp       \
+                         load_abc.cpp       \
+@@ -507,7 +506,6 @@ distclean-compile:
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/load_dsm.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/load_far.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/load_it.Plo@am__quote@
+-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/load_j2b.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/load_mdl.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/load_med.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/load_mid.Plo@am__quote@
+diff -u libmodplug-0.8.9.0/src/mmcmp.cpp~ libmodplug-0.8.9.0/src/mmcmp.cpp
 --- libmodplug-0.8.9.0/src/mmcmp.cpp~
 +++ libmodplug-0.8.9.0/src/mmcmp.cpp
 @@ -8,6 +8,7 @@
@@ -789,7 +2786,86 @@ diff -up libmodplug-0.8.9.0/src/mmcmp.cpp~ libmodplug-0.8.9.0/src/mmcmp.cpp
  	return TRUE;
  }
 +#endif /* MMCMP_SUPPORT */
-diff -up libmodplug-0.8.9.0/src/sndfile.cpp~ libmodplug-0.8.9.0/src/sndfile.cpp
+diff -u libmodplug-0.8.9.0/src/modplug.cpp~ libmodplug-0.8.9.0/src/modplug.cpp
+--- libmodplug-0.8.9.0/src/modplug.cpp~
++++ libmodplug-0.8.9.0/src/modplug.cpp
+@@ -187,28 +187,6 @@ char* ModPlug_GetMessage(ModPlugFile* fi
+ 	return file->mSoundFile.m_lpszSongComments;
+ }
+ 
+-#ifndef MODPLUG_NO_FILESAVE
+-char ModPlug_ExportS3M(ModPlugFile* file,const char* filepath)
+-{
+-	return (char)file->mSoundFile.SaveS3M(filepath,0);
+-}
+-
+-char ModPlug_ExportXM(ModPlugFile* file,const char* filepath)
+-{
+-	return (char)file->mSoundFile.SaveXM(filepath,0);
+-}
+-
+-char ModPlug_ExportMOD(ModPlugFile* file,const char* filepath)
+-{
+-	return (char)file->mSoundFile.SaveMod(filepath,0);
+-}
+-
+-char ModPlug_ExportIT(ModPlugFile* file,const char* filepath)
+-{
+-	return (char)file->mSoundFile.SaveIT(filepath,0);
+-}
+-#endif // MODPLUG_NO_FILESAVE
+-
+ unsigned int ModPlug_NumInstruments(ModPlugFile* file)
+ {
+ 	return file->mSoundFile.m_nInstruments;
+diff -u libmodplug-0.8.9.0/src/modplug.h~ libmodplug-0.8.9.0/src/modplug.h
+--- libmodplug-0.8.9.0/src/modplug.h~
++++ libmodplug-0.8.9.0/src/modplug.h
+@@ -19,6 +19,12 @@ extern "C" {
+ # else
+ #   define MODPLUG_EXPORT __declspec(dllimport)			/* using libmodplug dll for windows */
+ # endif
++#elif defined(__OS2__) && defined(__WATCOMC__)
++# if defined(MODPLUG_BUILD) && defined(__SW_BD)		/* building libmodplug as a dll for os/2 */
++#   define MODPLUG_EXPORT __declspec(dllexport)
++# else
++#   define MODPLUG_EXPORT					/* using dll or static libmodplug for os/2 */
++# endif
+ #elif defined(MODPLUG_BUILD) && defined(SYM_VISIBILITY)
+ #   define MODPLUG_EXPORT __attribute__((visibility("default")))
+ #else
+@@ -130,24 +136,6 @@ MODPLUG_EXPORT void ModPlug_SeekOrder(Mo
+ MODPLUG_EXPORT int ModPlug_GetModuleType(ModPlugFile* file);
+ MODPLUG_EXPORT char* ModPlug_GetMessage(ModPlugFile* file);
+ 
+-#define MODPLUG_NO_FILESAVE /* experimental yet.  must match stdafx.h. */
+-#ifndef MODPLUG_NO_FILESAVE
+-/*
+- * EXPERIMENTAL Export Functions
+- */
+-/*Export to a Scream Tracker 3 S3M module. EXPERIMENTAL (only works on Little-Endian platforms)*/
+-MODPLUG_EXPORT char ModPlug_ExportS3M(ModPlugFile* file, const char* filepath);
+-
+-/*Export to an Extended Module (XM). EXPERIMENTAL (only works on Little-Endian platforms)*/
+-MODPLUG_EXPORT char ModPlug_ExportXM(ModPlugFile* file, const char* filepath);
+-
+-/*Export to an Amiga MOD file. EXPERIMENTAL.*/
+-MODPLUG_EXPORT char ModPlug_ExportMOD(ModPlugFile* file, const char* filepath);
+-
+-/*Export to an Impulse Tracker IT file. Should work OK in Little-Endian & Big-Endian platforms :-) */
+-MODPLUG_EXPORT char ModPlug_ExportIT(ModPlugFile* file, const char* filepath);
+-#endif /* MODPLUG_NO_FILESAVE */
+-
+ MODPLUG_EXPORT unsigned int ModPlug_NumInstruments(ModPlugFile* file);
+ MODPLUG_EXPORT unsigned int ModPlug_NumSamples(ModPlugFile* file);
+ MODPLUG_EXPORT unsigned int ModPlug_NumPatterns(ModPlugFile* file);
+@@ -182,4 +170,4 @@ MODPLUG_EXPORT void ModPlug_UnloadMixerC
+ } /* extern "C" */
+ #endif
+ 
+-#endif
++#endif /* MODPLUG_H__INCLUDED */
+diff -u libmodplug-0.8.9.0/src/sndfile.cpp~ libmodplug-0.8.9.0/src/sndfile.cpp
 --- libmodplug-0.8.9.0/src/sndfile.cpp~
 +++ libmodplug-0.8.9.0/src/sndfile.cpp
 @@ -9,8 +9,6 @@
@@ -801,37 +2877,40 @@ diff -up libmodplug-0.8.9.0/src/sndfile.cpp~ libmodplug-0.8.9.0/src/sndfile.cpp
  #ifdef MMCMP_SUPPORT
  extern BOOL MMCMP_Unpack(LPCBYTE *ppMemFile, LPDWORD pdwMemLength);
  #endif
-@@ -24,9 +22,11 @@ extern void ITUnpack8Bit(signed char *pS
+@@ -24,24 +22,6 @@ extern void ITUnpack8Bit(signed char *pS
  extern void ITUnpack16Bit(signed char *pSample, DWORD dwLen, LPBYTE lpMemFile, DWORD dwMemLength, BOOL b215);
  
  
-+#ifndef MODPLUG_NO_FILESAVE
-+#ifndef NO_PACKING
-+
- #define MAX_PACK_TABLES		3
- 
+-#define MAX_PACK_TABLES		3
 -
- // Compression table
- static const signed char UnpackTable[MAX_PACK_TABLES][16] =
- //--------------------------------------------
-@@ -40,6 +40,8 @@ static const signed char UnpackTable[MAX
- 	{0, 1, 2, 3, 5, 7, 12, 19,
- 	-1, -2, -3, -5, -7, -12, -19, -31}
- };
-+#endif
-+#endif
- 
- 
+-
+-// Compression table
+-static const signed char UnpackTable[MAX_PACK_TABLES][16] =
+-//--------------------------------------------
+-{
+-	// CPU-generated dynamic table
+-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+-	// u-Law table
+-	{0, 1, 2, 4, 8, 16, 32, 64,
+-	-1, -2, -4, -8, -16, -32, -48, -64},
+-	// Linear table
+-	{0, 1, 2, 3, 5, 7, 12, 19,
+-	-1, -2, -3, -5, -7, -12, -19, -31}
+-};
+-
+-
  //////////////////////////////////////////////////////////
-@@ -140,12 +142,16 @@ BOOL CSoundFile::Create(LPCBYTE lpStream
+ // CSoundFile
+ 
+@@ -140,12 +120,16 @@ BOOL CSoundFile::Create(LPCBYTE lpStream
  		if ((!ReadXM(lpStream, dwMemLength))
  		 && (!ReadS3M(lpStream, dwMemLength))
  		 && (!ReadIT(lpStream, dwMemLength))
-+#ifndef NO_WAVFORMAT
++#ifdef WAV_SUPPORT
  		 && (!ReadWav(lpStream, dwMemLength))
 +#endif
  #ifndef MODPLUG_BASIC_SUPPORT
-+#ifndef NO_MIDIFORMATS
++#ifdef MIDIFMT_SUPPORT
  /* Sequencer File Format Support */
  		 && (!ReadABC(lpStream, dwMemLength))
  		 && (!ReadMID(lpStream, dwMemLength))
@@ -840,52 +2919,539 @@ diff -up libmodplug-0.8.9.0/src/sndfile.cpp~ libmodplug-0.8.9.0/src/sndfile.cpp
  		 && (!ReadSTM(lpStream, dwMemLength))
  		 && (!ReadMed(lpStream, dwMemLength))
  		 && (!ReadMTM(lpStream, dwMemLength))
-@@ -753,6 +759,7 @@ void CSoundFile::LoopPattern(int nPat, i
+@@ -753,41 +737,6 @@ void CSoundFile::LoopPattern(int nPat, i
  }
  
  
-+#ifndef MODPLUG_NO_FILESAVE
- UINT CSoundFile::GetBestSaveFormat() const
- //----------------------------------------
- {
-@@ -767,7 +774,6 @@ UINT CSoundFile::GetBestSaveFormat() con
- 	return MOD_TYPE_IT;
- }
- 
+-UINT CSoundFile::GetBestSaveFormat() const
+-//----------------------------------------
+-{
+-	if ((!m_nSamples) || (!m_nChannels)) return MOD_TYPE_NONE;
+-	if (!m_nType) return MOD_TYPE_NONE;
+-	if (m_nType & (MOD_TYPE_MOD|MOD_TYPE_OKT))
+-		return MOD_TYPE_MOD;
+-	if (m_nType & (MOD_TYPE_S3M|MOD_TYPE_STM|MOD_TYPE_ULT|MOD_TYPE_FAR|MOD_TYPE_PTM))
+-		return MOD_TYPE_S3M;
+-	if (m_nType & (MOD_TYPE_XM|MOD_TYPE_MED|MOD_TYPE_MTM|MOD_TYPE_MT2))
+-		return MOD_TYPE_XM;
+-	return MOD_TYPE_IT;
+-}
 -
- UINT CSoundFile::GetSaveFormats() const
- //-------------------------------------
- {
-@@ -786,6 +792,7 @@ UINT CSoundFile::GetSaveFormats() const
- 	}
- 	return n;
- }
-+#endif // MODPLUG_NO_FILESAVE
- 
- 
+-
+-UINT CSoundFile::GetSaveFormats() const
+-//-------------------------------------
+-{
+-	UINT n = 0;
+-	if ((!m_nSamples) || (!m_nChannels) || (m_nType == MOD_TYPE_NONE)) return 0;
+-	if (m_nType & MOD_TYPE_MOD)
+-		n |= MOD_TYPE_MOD;
+-	if (m_nType & MOD_TYPE_S3M)
+-		n |= MOD_TYPE_S3M;
+-	// Can always save to XM & IT
+-	n |= MOD_TYPE_XM | MOD_TYPE_IT;
+-	if (!m_nInstruments)
+-	{
+-		if (m_nSamples < 32) n |= MOD_TYPE_MOD;
+-		n |= MOD_TYPE_S3M;
+-	}
+-	return n;
+-}
+-
+-
  UINT CSoundFile::GetSampleName(UINT nSample,LPSTR s) const
-@@ -817,6 +824,8 @@ UINT CSoundFile::GetInstrumentName(UINT 
+ //--------------------------------------------------------
+ {
+@@ -817,274 +766,6 @@ UINT CSoundFile::GetInstrumentName(UINT 
  }
  
  
-+#ifndef MODPLUG_NO_FILESAVE
-+
- #ifndef NO_PACKING
- UINT CSoundFile::PackSample(int &sample, int next)
- //------------------------------------------------
-@@ -877,8 +886,6 @@ BOOL CSoundFile::CanPackSample(LPSTR pSa
- }
- #endif // NO_PACKING
- 
+-#ifndef NO_PACKING
+-UINT CSoundFile::PackSample(int &sample, int next)
+-//------------------------------------------------
+-{
+-	UINT i = 0;
+-	int delta = next - sample;
+-	if (delta >= 0)
+-	{
+-		for (i=0; i<7; i++) if (delta <= (int)CompressionTable[i+1]) break;
+-	} else
+-	{
+-		for (i=8; i<15; i++) if (delta >= (int)CompressionTable[i+1]) break;
+-	}
+-	sample += (int)CompressionTable[i];
+-	return i;
+-}
+-
+-
+-BOOL CSoundFile::CanPackSample(LPSTR pSample, UINT nLen, UINT nPacking, BYTE *result)
+-//-----------------------------------------------------------------------------------
+-{
+-	int pos, old, oldpos, besttable = 0;
+-	DWORD dwErr, dwTotal, dwResult;
+-	int i,j;
+-
+-	if (result) *result = 0;
+-	if ((!pSample) || (nLen < 1024)) return FALSE;
+-	// Try packing with different tables
+-	dwResult = 0;
+-	for (j=1; j<MAX_PACK_TABLES; j++)
+-	{
+-		memcpy(CompressionTable, UnpackTable[j], 16);
+-		dwErr = 0;
+-		dwTotal = 1;
+-		old = pos = oldpos = 0;
+-		for (i=0; i<(int)nLen; i++)
+-		{
+-			int s = (int)pSample[i];
+-			PackSample(pos, s);
+-			dwErr += abs(pos - oldpos);
+-			dwTotal += abs(s - old);
+-			old = s;
+-			oldpos = pos;
+-		}
+-		dwErr = _muldiv(dwErr, 100, dwTotal);
+-		if (dwErr >= dwResult)
+-		{
+-			dwResult = dwErr;
+-			besttable = j;
+-		}
+-	}
+-	memcpy(CompressionTable, UnpackTable[besttable], 16);
+-	if (result)
+-	{
+-		if (dwResult > 100) *result	= 100; else *result = (BYTE)dwResult;
+-	}
+-	return (dwResult >= nPacking) ? TRUE : FALSE;
+-}
+-#endif // NO_PACKING
+-
 -#ifndef MODPLUG_NO_FILESAVE
 -
- UINT CSoundFile::WriteSample(FILE *f, MODINSTRUMENT *pins, UINT nFlags, UINT nMaxLen)
- //-----------------------------------------------------------------------------------
+-UINT CSoundFile::WriteSample(FILE *f, MODINSTRUMENT *pins, UINT nFlags, UINT nMaxLen)
+-//-----------------------------------------------------------------------------------
+-{
+-	UINT len = 0, bufcount;
+-	signed char buffer[4096];
+-	signed char *pSample = (signed char *)pins->pSample;
+-	UINT nLen = pins->nLength;
+-
+-	if ((nMaxLen) && (nLen > nMaxLen)) nLen = nMaxLen;
+-	if ((!pSample) || (f == NULL) || (!nLen)) return 0;
+-	switch(nFlags)
+-	{
+-#ifndef NO_PACKING
+-	// 3: 4-bit ADPCM data
+-	case RS_ADPCM4:
+-		{
+-			int pos;
+-			len = (nLen + 1) / 2;
+-			fwrite(CompressionTable, 16, 1, f);
+-			bufcount = 0;
+-			pos = 0;
+-			for (UINT j=0; j<len; j++)
+-			{
+-				BYTE b;
+-				// Sample #1
+-				b = PackSample(pos, (int)pSample[j*2]);
+-				// Sample #2
+-				b |= PackSample(pos, (int)pSample[j*2+1]) << 4;
+-				buffer[bufcount++] = (signed char)b;
+-				if (bufcount >= sizeof(buffer))
+-				{
+-					fwrite(buffer, 1, bufcount, f);
+-					bufcount = 0;
+-				}
+-			}
+-			if (bufcount) fwrite(buffer, 1, bufcount, f);
+-			len += 16;
+-		}
+-		break;
+-#endif // NO_PACKING
+-
+-	// 16-bit samples
+-	case RS_PCM16U:
+-	case RS_PCM16D:
+-	case RS_PCM16S:
+-		{
+-			int16_t *p = (int16_t *)pSample;
+-			int s_old = 0, s_ofs;
+-			len = nLen * 2;
+-			bufcount = 0;
+-			s_ofs = (nFlags == RS_PCM16U) ? 0x8000 : 0;
+-			for (UINT j=0; j<nLen; j++)
+-			{
+-				int s_new = *p;
+-				p++;
+-				if (pins->uFlags & CHN_STEREO)
+-				{
+-					s_new = (s_new + (*p) + 1) >> 1;
+-					p++;
+-				}
+-				if (nFlags == RS_PCM16D)
+-				{
+-					int16_t temp = bswapLE16((int16_t)(s_new - s_old));
+-					*((int16_t*)(&buffer[bufcount])) = temp;
+-					s_old = s_new;
+-				} else
+-				{
+-					int16_t temp = bswapLE16((int16_t)(s_new + s_ofs));
+-					*((int16_t *)(&buffer[bufcount])) = temp;
+-				}
+-				bufcount += 2;
+-				if (bufcount >= sizeof(buffer) - 1)
+-				{
+-					fwrite(buffer, 1, bufcount, f);
+-					bufcount = 0;
+-				}
+-			}
+-			if (bufcount) fwrite(buffer, 1, bufcount, f);
+-		}
+-		break;
+-
+-
+-	// 8-bit Stereo samples (not interleaved)
+-	case RS_STPCM8S:
+-	case RS_STPCM8U:
+-	case RS_STPCM8D:
+-		{
+-			int s_ofs = (nFlags == RS_STPCM8U) ? 0x80 : 0;
+-			for (UINT iCh=0; iCh<2; iCh++)
+-			{
+-				signed char *p = pSample + iCh;
+-				int s_old = 0;
+-
+-				bufcount = 0;
+-				for (UINT j=0; j<nLen; j++)
+-				{
+-					int s_new = *p;
+-					p += 2;
+-					if (nFlags == RS_STPCM8D)
+-					{
+-						buffer[bufcount++] = (signed char)(s_new - s_old);
+-						s_old = s_new;
+-					} else
+-					{
+-						buffer[bufcount++] = (signed char)(s_new + s_ofs);
+-					}
+-					if (bufcount >= sizeof(buffer))
+-					{
+-						fwrite(buffer, 1, bufcount, f);
+-						bufcount = 0;
+-					}
+-				}
+-				if (bufcount) fwrite(buffer, 1, bufcount, f);
+-			}
+-		}
+-		len = nLen * 2;
+-		break;
+-
+-	// 16-bit Stereo samples (not interleaved)
+-	case RS_STPCM16S:
+-	case RS_STPCM16U:
+-	case RS_STPCM16D:
+-		{
+-			int s_ofs = (nFlags == RS_STPCM16U) ? 0x8000 : 0;
+-			for (UINT iCh=0; iCh<2; iCh++)
+-			{
+-				int16_t *p = ((int16_t *)pSample) + iCh;
+-				int s_old = 0;
+-
+-				bufcount = 0;
+-				for (UINT j=0; j<nLen; j++)
+-				{
+-					int s_new = *p;
+-					p += 2;
+-					if (nFlags == RS_STPCM16D)
+-					{
+-						int16_t temp = bswapLE16((int16_t)(s_new - s_old));
+-						*((int16_t *)(&buffer[bufcount])) = temp;
+-						s_old = s_new;
+-					} else
+-					{
+-						int16_t temp = bswapLE16((int16_t)(s_new - s_ofs));
+-						*((int16_t*)(&buffer[bufcount])) = temp;
+-					}
+-					bufcount += 2;
+-					if (bufcount >= sizeof(buffer))
+-					{
+-						fwrite(buffer, 1, bufcount, f);
+-						bufcount = 0;
+-					}
+-				}
+-				if (bufcount) fwrite(buffer, 1, bufcount, f);
+-			}
+-		}
+-		len = nLen*4;
+-		break;
+-
+-	//	Stereo signed interleaved
+-	case RS_STIPCM8S:
+-	case RS_STIPCM16S:
+-		len = nLen * 2;
+-		if (nFlags == RS_STIPCM16S) len *= 2;
+-		fwrite(pSample, 1, len, f);
+-		break;
+-
+-	// Default: assume 8-bit PCM data
+-	default:
+-		len = nLen;
+-		bufcount = 0;
+-		{
+-			signed char *p = pSample;
+-			int sinc = (pins->uFlags & CHN_16BIT) ? 2 : 1;
+-			int s_old = 0, s_ofs = (nFlags == RS_PCM8U) ? 0x80 : 0;
+-			if (pins->uFlags & CHN_16BIT) p++;
+-			for (UINT j=0; j<len; j++)
+-			{
+-				int s_new = (signed char)(*p);
+-				p += sinc;
+-				if (pins->uFlags & CHN_STEREO)
+-				{
+-					s_new = (s_new + ((int)*p) + 1) >> 1;
+-					p += sinc;
+-				}
+-				if (nFlags == RS_PCM8D)
+-				{
+-					buffer[bufcount++] = (signed char)(s_new - s_old);
+-					s_old = s_new;
+-				} else
+-				{
+-					buffer[bufcount++] = (signed char)(s_new + s_ofs);
+-				}
+-				if (bufcount >= sizeof(buffer))
+-				{
+-					fwrite(buffer, 1, bufcount, f);
+-					bufcount = 0;
+-				}
+-			}
+-			if (bufcount) fwrite(buffer, 1, bufcount, f);
+-		}
+-	}
+-	return len;
+-}
+-
+-#endif // MODPLUG_NO_FILESAVE
+-
+-
+ // Flags:
+ //	0 = signed 8-bit PCM data (default)
+ //	1 = unsigned 8-bit PCM data
+@@ -1376,17 +1057,18 @@ UINT CSoundFile::ReadSample(MODINSTRUMEN
+ 	// PTM 8bit delta to 16-bit sample
+ 	case RS_PTM8DTO16:
+ 		{
++			UINT j;
+ 			len = pIns->nLength * 2;
+ 			if (len > dwMemLength) break;
+ 			int8_t *pSample = (int8_t *)pIns->pSample;
+ 			int8_t delta8 = 0;
+-			for (UINT j=0; j<len; j++)
++			for (j=0; j<len; j++)
+ 			{
+ 				delta8 += lpMemFile[j];
+ 				*pSample++ = delta8;
+ 			}
+ 			uint16_t *pSampleW = (uint16_t *)pIns->pSample;
+-			for (UINT j=0; j<len; j+=2)   // swaparoni!
++			for (j=0; j<len; j+=2)   // swaparoni!
+ 			{
+ 				uint16_t rawSample = *pSampleW;
+ 			        *pSampleW++ = bswapLE16(rawSample);
+@@ -1448,88 +1130,6 @@ UINT CSoundFile::ReadSample(MODINSTRUMEN
+ 			len = DMFUnpack((LPBYTE)pIns->pSample, ibuf, ibufmax, maxlen);
+ 		}
+ 		break;
+-
+-#ifdef MODPLUG_TRACKER
+-	// PCM 24-bit signed -> load sample, and normalize it to 16-bit
+-	case RS_PCM24S:
+-	case RS_PCM32S:
+-		len = pIns->nLength * 3;
+-		if (nFlags == RS_PCM32S) len += pIns->nLength;
+-		if (len > dwMemLength) break;
+-		if (len > 4*8)
+-		{
+-			UINT slsize = (nFlags == RS_PCM32S) ? 4 : 3;
+-			LPBYTE pSrc = (LPBYTE)lpMemFile;
+-			LONG max = 255;
+-			if (nFlags == RS_PCM32S) pSrc++;
+-			for (UINT j=0; j<len; j+=slsize)
+-			{
+-				LONG l = ((((pSrc[j+2] << 8) + pSrc[j+1]) << 8) + pSrc[j]) << 8;
+-				l /= 256;
+-				if (l > max) max = l;
+-				if (-l > max) max = -l;
+-			}
+-			max = (max / 128) + 1;
+-			int16_t *pDest = (int16_t *)pIns->pSample;
+-			for (UINT k=0; k<len; k+=slsize)
+-			{
+-				LONG l = ((((pSrc[k+2] << 8) + pSrc[k+1]) << 8) + pSrc[k]) << 8;
+-				*pDest++ = (uint16_t)(l / max);
+-			}
+-		}
+-		break;
+-
+-	// Stereo PCM 24-bit signed -> load sample, and normalize it to 16-bit
+-	case RS_STIPCM24S:
+-	case RS_STIPCM32S:
+-		len = pIns->nLength * 6;
+-		if (nFlags == RS_STIPCM32S) len += pIns->nLength * 2;
+-		if (len > dwMemLength) break;
+-		if (len > 8*8)
+-		{
+-			UINT slsize = (nFlags == RS_STIPCM32S) ? 4 : 3;
+-			LPBYTE pSrc = (LPBYTE)lpMemFile;
+-			LONG max = 255;
+-			if (nFlags == RS_STIPCM32S) pSrc++;
+-			for (UINT j=0; j<len; j+=slsize)
+-			{
+-				LONG l = ((((pSrc[j+2] << 8) + pSrc[j+1]) << 8) + pSrc[j]) << 8;
+-				l /= 256;
+-				if (l > max) max = l;
+-				if (-l > max) max = -l;
+-			}
+-			max = (max / 128) + 1;
+-			int16_t *pDest = (int16_t *)pIns->pSample;
+-			for (UINT k=0; k<len; k+=slsize)
+-			{
+-				LONG lr = ((((pSrc[k+2] << 8) + pSrc[k+1]) << 8) + pSrc[k]) << 8;
+-				k += slsize;
+-				LONG ll = ((((pSrc[k+2] << 8) + pSrc[k+1]) << 8) + pSrc[k]) << 8;
+-				pDest[0] = (int16_t)ll;
+-				pDest[1] = (int16_t)lr;
+-				pDest += 2;
+-			}
+-		}
+-		break;
+-
+-	// 16-bit signed big endian interleaved stereo
+-	case RS_STIPCM16M:
+-		{
+-			len = pIns->nLength;
+-			if (len*4 > dwMemLength) len = dwMemLength >> 2;
+-			LPCBYTE psrc = (LPCBYTE)lpMemFile;
+-			int16_t *pSample = (int16_t *)pIns->pSample;
+-			for (UINT j=0; j<len; j++)
+-			{
+-				pSample[j*2] = (int16_t)(((UINT)psrc[0] << 8) | (psrc[1]));
+-				pSample[j*2+1] = (int16_t)(((UINT)psrc[2] << 8) | (psrc[3]));
+-				psrc += 4;
+-			}
+-			len *= 4;
+-		}
+-		break;
+-
+-#endif // MODPLUG_TRACKER
+ #endif // !MODPLUG_FASTSOUNDLIB
+ #endif // !MODPLUG_BASIC_SUPPORT
+ 
+@@ -1654,8 +1254,7 @@ void CSoundFile::AdjustSampleLoop(MODINS
+ DWORD CSoundFile::TransposeToFrequency(int transp, int ftune)
+ //-----------------------------------------------------------
  {
-diff -up libmodplug-0.8.9.0/src/sndmix.cpp~ libmodplug-0.8.9.0/src/sndmix.cpp
+-
+-#ifdef MSC_VER
++#if defined(_MSC_VER) && defined(_M_IX86)
+ 	const float _fbase = 8363;
+ 	const float _factor = 1.0f/(12.0f*128.0f);
+ 	int result;
+@@ -1695,8 +1294,7 @@ DWORD CSoundFile::TransposeToFrequency(i
+ int CSoundFile::FrequencyToTranspose(DWORD freq)
+ //----------------------------------------------
+ {
+-
+-#ifdef MSC_VER
++#if defined(_MSC_VER) && defined(_M_IX86)
+ 	const float _f1_8363 = 1.0f / 8363.0f;
+ 	const float _factor = 128 * 12;
+ 	LONG result;
+diff -u libmodplug-0.8.9.0/src/snd_flt.cpp~ libmodplug-0.8.9.0/src/snd_flt.cpp
+--- libmodplug-0.8.9.0/src/snd_flt.cpp~
++++ libmodplug-0.8.9.0/src/snd_flt.cpp
+@@ -13,12 +13,11 @@
+ 
+ #ifndef NO_FILTER
+ 
+-#ifdef MSC_VER
++#if defined(_MSC_VER) && defined(_M_IX86)
+ #define _ASM_MATH
+ #endif
+ 
+ #ifdef _ASM_MATH
+-
+ // pow(a,b) returns a^^b -> 2^^(b.log2(a))
+ static float pow(float a, float b)
+ {
+@@ -42,7 +41,6 @@ static float pow(float a, float b)
+ 	return result;
+ }
+ 
+-
+ #else
+ 
+ #include <math.h>
+diff -u libmodplug-0.8.9.0/src/snd_fx.cpp~ libmodplug-0.8.9.0/src/snd_fx.cpp
+--- libmodplug-0.8.9.0/src/snd_fx.cpp~
++++ libmodplug-0.8.9.0/src/snd_fx.cpp
+@@ -9,7 +9,7 @@
+ #include "sndfile.h"
+ #include "tables.h"
+ 
+-#ifdef MSC_VER
++#ifdef _MSC_VER
+ #pragma warning(disable:4244)
+ #endif
+ 
+@@ -514,7 +514,6 @@ void CSoundFile::NoteChange(UINT nChn, i
+ 	if (!bPorta)
+ 	{
+ 		pChn->nVUMeter = 0x100;
+-		pChn->nLeftVU = pChn->nRightVU = 0xFF;
+ 		pChn->dwFlags &= ~CHN_FILTER;
+ 		pChn->dwFlags |= CHN_FASTVOLRAMP;
+ 		pChn->nRetrigCount = 0;
+@@ -1225,9 +1224,6 @@ BOOL CSoundFile::ProcessEffects()
+ 						if (m_nRepeatCount > 0) m_nRepeatCount--;
+ 					} else
+ 					{
+-					#ifdef MODPLUG_TRACKER
+-						if (gdwSoundSetup & SNDMIX_NOBACKWARDJUMPS)
+-					#endif
+ 						// Backward jump disabled
+ 						bNoLoop = TRUE;
+ 						//reset repeat count incase there are multiple loops.
+@@ -2074,7 +2070,6 @@ void CSoundFile::SetSpeed(UINT param)
+ {
+ 	UINT max = (m_nType == MOD_TYPE_IT) ? 256 : 128;
+ 	// Modplug Tracker and Mod-Plugin don't do this check
+-#ifndef MODPLUG_TRACKER
+ #ifndef MODPLUG_FASTSOUNDLIB
+ 	// Big Hack!!!
+ 	if ((!param) || (param >= 0x80) || ((m_nType & (MOD_TYPE_MOD|MOD_TYPE_XM|MOD_TYPE_MT2)) && (param >= 0x1E)))
+@@ -2085,7 +2080,6 @@ void CSoundFile::SetSpeed(UINT param)
+ 		}
+ 	}
+ #endif // MODPLUG_FASTSOUNDLIB
+-#endif // MODPLUG_TRACKER
+ 	if ((m_nType & MOD_TYPE_S3M) && (param > 0x80)) param -= 0x80;
+ 	if ((param) && (param <= max)) m_nMusicSpeed = param;
+ }
+diff -u libmodplug-0.8.9.0/src/sndmix.cpp~ libmodplug-0.8.9.0/src/sndmix.cpp
 --- libmodplug-0.8.9.0/src/sndmix.cpp~
 +++ libmodplug-0.8.9.0/src/sndmix.cpp
-@@ -60,7 +60,7 @@ UINT gnReverbSend;
+@@ -8,10 +8,6 @@
+ #include "libmodplug/sndfile.h"
+ #include "tables.h"
+ 
+-#ifdef MODPLUG_TRACKER
+-#define ENABLE_STEREOVU
+-#endif
+-
+ // Volume ramp length, in 1/10 ms
+ #define VOLUMERAMPLEN	146	// 1.46ms = 64 samples at 44.1kHz
+ 
+@@ -60,7 +56,7 @@ UINT gnReverbSend;
  
  // Log tables for pre-amp
  // We don't want the tracker to get too loud
@@ -894,7 +3460,7 @@ diff -up libmodplug-0.8.9.0/src/sndmix.cpp~ libmodplug-0.8.9.0/src/sndmix.cpp
  {
  	0x60, 0x60, 0x60, 0x70,	// 0-7
  	0x80, 0x88, 0x90, 0x98,	// 8-15
-@@ -68,7 +68,7 @@ const UINT PreAmpTable[16] =
+@@ -68,7 +64,7 @@ const UINT PreAmpTable[16] =
  	0xB4, 0xB8, 0xBC, 0xC0,	// 24-31
  };
  
@@ -903,3 +3469,112 @@ diff -up libmodplug-0.8.9.0/src/sndmix.cpp~ libmodplug-0.8.9.0/src/sndmix.cpp
  {
  	0x60, 0x60, 0x60, 0x60,
  	0x68, 0x70, 0x78, 0x80,
+@@ -80,7 +76,7 @@ const UINT PreAmpAGCTable[16] =
+ // Return (a*b)/c - no divide error
+ int _muldiv(long a, long b, long c)
+ {
+-#ifdef MSC_VER
++#if defined(_MSC_VER) && defined(_M_IX86)
+ 	int sign, result;
+ 	_asm {
+ 	mov eax, a
+@@ -123,11 +119,10 @@ rneg:
+ #endif
+ }
+ 
+-
+ // Return (a*b+c/2)/c - no divide error
+ int _muldivr(long a, long b, long c)
+ {
+-#ifdef MSC_VER
++#if defined(_MSC_VER) && defined(_M_IX86)
+ 	int sign, result;
+ 	_asm {
+ 	mov eax, a
+@@ -340,7 +335,6 @@ MixDone:
+ }
+ 
+ 
+-
+ /////////////////////////////////////////////////////////////////////////////
+ // Handles navigation/effects
+ 
+@@ -504,9 +498,6 @@ BOOL CSoundFile::ReadNote()
+ 		if ((pChn->dwFlags & CHN_MUTE) || ((nChn >= m_nChannels) && (!pChn->nLength)))
+ 		{
+ 			pChn->nVUMeter = 0;
+-#ifdef ENABLE_STEREOVU
+-			pChn->nLeftVU = pChn->nRightVU = 0;
+-#endif
+ 			continue;
+ 		}
+ 		// Reset channel data
+@@ -1038,56 +1029,17 @@ BOOL CSoundFile::ReadNote()
+ 				}
+ 			}
+ 		}
+-#ifdef MODPLUG_PLAYER
+-		// Limit CPU -> > 80% -> don't ramp
+-		if ((gnCPUUsage >= 80) && (!pChn->nRealVolume))
+-		{
+-			pChn->nLeftVol = pChn->nRightVol = 0;
+-		}
+-#endif // MODPLUG_PLAYER
+ 		// Volume ramping
+ 		pChn->dwFlags &= ~CHN_VOLUMERAMP;
+ 		if ((pChn->nRealVolume) || (pChn->nLeftVol) || (pChn->nRightVol))
+ 			pChn->dwFlags |= CHN_VOLUMERAMP;
+-#ifdef MODPLUG_PLAYER
+-		// Decrease VU-Meter
+-		if (pChn->nVUMeter > VUMETER_DECAY)	pChn->nVUMeter -= VUMETER_DECAY; else pChn->nVUMeter = 0;
+-#endif // MODPLUG_PLAYER
+-#ifdef ENABLE_STEREOVU
+-		if (pChn->nLeftVU > VUMETER_DECAY) pChn->nLeftVU -= VUMETER_DECAY; else pChn->nLeftVU = 0;
+-		if (pChn->nRightVU > VUMETER_DECAY) pChn->nRightVU -= VUMETER_DECAY; else pChn->nRightVU = 0;
+-#endif
+ 		// Check for too big nInc
+ 		if (((pChn->nInc >> 16) + 1) >= (LONG)(pChn->nLoopEnd - pChn->nLoopStart)) pChn->dwFlags &= ~CHN_LOOP;
+ 		pChn->nNewRightVol = pChn->nNewLeftVol = 0;
+ 		pChn->pCurrentSample = ((pChn->pSample) && (pChn->nLength) && (pChn->nInc)) ? pChn->pSample : NULL;
+ 		if (pChn->pCurrentSample)
+ 		{
+-			// Update VU-Meter (nRealVolume is 14-bit)
+-#ifdef MODPLUG_PLAYER
+-			UINT vutmp = pChn->nRealVolume >> (14 - 8);
+-			if (vutmp > 0xFF) vutmp = 0xFF;
+-			if (pChn->nVUMeter >= 0x100) pChn->nVUMeter = vutmp;
+-			vutmp >>= 1;
+-			if (pChn->nVUMeter < vutmp)	pChn->nVUMeter = vutmp;
+-#endif // MODPLUG_PLAYER
+-#ifdef ENABLE_STEREOVU
+-			UINT vul = (pChn->nRealVolume * pChn->nRealPan) >> 14;
+-			if (vul > 127) vul = 127;
+-			if (pChn->nLeftVU > 127) pChn->nLeftVU = (BYTE)vul;
+-			vul >>= 1;
+-			if (pChn->nLeftVU < vul) pChn->nLeftVU = (BYTE)vul;
+-			UINT vur = (pChn->nRealVolume * (256-pChn->nRealPan)) >> 14;
+-			if (vur > 127) vur = 127;
+-			if (pChn->nRightVU > 127) pChn->nRightVU = (BYTE)vur;
+-			vur >>= 1;
+-			if (pChn->nRightVU < vur) pChn->nRightVU = (BYTE)vur;
+-#endif
+-#ifdef MODPLUG_TRACKER
+-			UINT kChnMasterVol = (pChn->dwFlags & CHN_EXTRALOUD) ? 0x100 : nMasterVol;
+-#else
+ #define		kChnMasterVol	nMasterVol
+-#endif // MODPLUG_TRACKER
+ 			// Adjusting volumes
+ 			if (gnChannels >= 2)
+ 			{
+@@ -1196,11 +1148,6 @@ BOOL CSoundFile::ReadNote()
+ 			if (m_nMixChannels >= MAX_CHANNELS) break;
+ 		} else
+ 		{
+-#ifdef ENABLE_STEREOVU
+-			// Note change but no sample
+-			if (pChn->nLeftVU > 128) pChn->nLeftVU = 0;
+-			if (pChn->nRightVU > 128) pChn->nRightVU = 0;
+-#endif
+ 			if (pChn->nVUMeter > 0xFF) pChn->nVUMeter = 0;
+ 			pChn->nLeftVol = pChn->nRightVol = 0;
+ 			pChn->nLength = 0;
