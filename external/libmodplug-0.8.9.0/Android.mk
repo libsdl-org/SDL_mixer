@@ -4,9 +4,9 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := modplug
 
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/src $(LOCAL_PATH)/src/libmodplug 
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/src $(LOCAL_PATH)/src/libmodplug
 
-LOCAL_CFLAGS += -DHAVE_SETENV -DHAVE_SINF
+LOCAL_CFLAGS += -DHAVE_SETENV -DHAVE_SINF -DHAVE_STDINT_H
 
 LOCAL_SRC_FILES += \
     src/fastmix.cpp \
@@ -19,7 +19,6 @@ LOCAL_SRC_FILES += \
     src/load_dsm.cpp \
     src/load_far.cpp \
     src/load_it.cpp \
-    src/load_j2b.cpp \
     src/load_mdl.cpp \
     src/load_med.cpp \
     src/load_mid.cpp \
