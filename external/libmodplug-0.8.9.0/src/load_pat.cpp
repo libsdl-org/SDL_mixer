@@ -48,7 +48,7 @@
 
 #include "load_pat.h"
 
-#ifdef _WIN32
+#if defined(_WIN32)||defined(__OS2__)
 #define DIRDELIM		'\\'
 #define TIMIDITYCFG	"C:\\TIMIDITY\\TIMIDITY.CFG"
 #define PATHFORPAT	"C:\\TIMIDITY\\INSTRUMENTS"
