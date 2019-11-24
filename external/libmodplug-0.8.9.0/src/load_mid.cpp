@@ -36,7 +36,7 @@
 #include "stdafx.h"
 #include "sndfile.h"
 
-#ifndef NO_MIDIFORMATS
+#ifdef MIDIFMT_SUPPORT
 
 #define PAN_LEFT    0x30
 #define PAN_RIGHT   0xD0
@@ -1585,4 +1585,4 @@ BOOL CSoundFile::ReadMID(const BYTE *lpStream, DWORD dwMemLength)
 	avoid_reentry = 0; // it is safe now, I'm finished
 	return TRUE;
 }
-#endif // NO_MIDIFORMATS
+#endif // MIDIFMT_SUPPORT

@@ -142,11 +142,11 @@ BOOL CSoundFile::Create(LPCBYTE lpStream, DWORD dwMemLength)
 		if ((!ReadXM(lpStream, dwMemLength))
 		 && (!ReadS3M(lpStream, dwMemLength))
 		 && (!ReadIT(lpStream, dwMemLength))
-#ifndef NO_WAVFORMAT
+#ifdef WAV_SUPPORT
 		 && (!ReadWav(lpStream, dwMemLength))
 #endif
 #ifndef MODPLUG_BASIC_SUPPORT
-#ifndef NO_MIDIFORMATS
+#ifdef MIDIFMT_SUPPORT
 /* Sequencer File Format Support */
 		 && (!ReadABC(lpStream, dwMemLength))
 		 && (!ReadMID(lpStream, dwMemLength))
