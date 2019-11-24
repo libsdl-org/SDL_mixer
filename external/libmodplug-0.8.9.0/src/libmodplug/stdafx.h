@@ -21,6 +21,7 @@
 # include <stdint.h>
 #endif
 
+/*#define CXX_INTERFACE*/ /* export C++ interface from dll. */
 /*#define MMCMP_SUPPORT*/
 
 /* disable AGC and FILESAVE for all targets for uniformity. */
@@ -147,6 +148,12 @@ inline void ProcessPlugins(int n) {}
 #   define MODPLUG_EXPORT __attribute__((visibility("default")))
 #else
 #define MODPLUG_EXPORT
+#endif
+
+#if defined(CXX_INTERFACE)
+#define MODPLUG_EXPORTPP	MODPLUG_EXPORT
+#else
+#define MODPLUG_EXPORTPP
 #endif
 
 #endif
