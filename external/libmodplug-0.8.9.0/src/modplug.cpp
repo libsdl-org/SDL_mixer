@@ -187,28 +187,6 @@ char* ModPlug_GetMessage(ModPlugFile* file)
 	return file->mSoundFile.m_lpszSongComments;
 }
 
-#ifndef MODPLUG_NO_FILESAVE
-char ModPlug_ExportS3M(ModPlugFile* file,const char* filepath)
-{
-	return (char)file->mSoundFile.SaveS3M(filepath,0);
-}
-
-char ModPlug_ExportXM(ModPlugFile* file,const char* filepath)
-{
-	return (char)file->mSoundFile.SaveXM(filepath,0);
-}
-
-char ModPlug_ExportMOD(ModPlugFile* file,const char* filepath)
-{
-	return (char)file->mSoundFile.SaveMod(filepath,0);
-}
-
-char ModPlug_ExportIT(ModPlugFile* file,const char* filepath)
-{
-	return (char)file->mSoundFile.SaveIT(filepath,0);
-}
-#endif // MODPLUG_NO_FILESAVE
-
 unsigned int ModPlug_NumInstruments(ModPlugFile* file)
 {
 	return file->mSoundFile.m_nInstruments;
