@@ -301,7 +301,7 @@ BOOL CSoundFile::ReadS3M(const BYTE *lpStream, DWORD dwMemLength)
 		}
 		S3MSAMPLESTRUCT pSmp;
 		memcpy(&pSmp, lpStream+nInd, 0x50);
-		memcpy(Ins[iSmp].name, &pSmp.dosname, 12);
+		memcpy(Ins[iSmp].name, pSmp.dosname, 12);
 		insflags[iSmp-1] = pSmp.flags;
 		inspack[iSmp-1] = pSmp.pack;
 		memcpy(m_szNames[iSmp], pSmp.name, 28);
