@@ -96,7 +96,7 @@ static int OGG_Load(void)
         FUNCTION_LOADER(ov_pcm_total, ogg_int64_t (*)(OggVorbis_File *,int))
 #ifdef OGG_USE_TREMOR
         FUNCTION_LOADER(ov_read, long (*)(OggVorbis_File *,char *,int,int *))
-        FUNCTION_LOADER(ov_time_seek, long (*)(OggVorbis_File *,ogg_int64_t))
+        FUNCTION_LOADER(ov_time_seek, int (*)(OggVorbis_File *,ogg_int64_t))
 #else
         FUNCTION_LOADER(ov_read, long (*)(OggVorbis_File *,char *,int,int,int,int,int *))
         FUNCTION_LOADER(ov_time_seek, int (*)(OggVorbis_File *,double))
