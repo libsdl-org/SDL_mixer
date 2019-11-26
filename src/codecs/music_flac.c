@@ -339,7 +339,8 @@ static FLAC__StreamDecoderWriteStatus flac_write_music_cb(
     }
     amount = frame->header.blocksize * channels * sizeof(*data);
     music->pcm_pos += frame->header.blocksize;
-    if ((music->loop == 1) && (music->pcm_pos >= music->loop_end)) {
+    if ((music->loop == 1) && (music->play_count != 1) &&
+        (music->pcm_pos >= music->loop_end)) {
         amount -= (music->pcm_pos - music->loop_end) * channels * sizeof(*data);
         music->loop_flag = SDL_TRUE;
     }
@@ -609,6 +610,11 @@ static int FLAC_GetSome(void *context, void *data, int bytes, SDL_bool *done)
             flac.FLAC__stream_decoder_flush(music->flac_decoder);
             return -1;
         } else {
+            int play_count = -1;
+            if (music->play_count > 0) {
+                play_count = (music->play_count - 1);
+            }
+            music->play_count = play_count;
             music->loop_flag = SDL_FALSE;
         }
     }
