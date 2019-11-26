@@ -118,15 +118,15 @@ static void output_versions(const char *libname, const SDL_version *compiled,
 static void test_versions(void)
 {
     SDL_version compiled;
-    const SDL_version *linked;
+    SDL_version linked;
 
     SDL_VERSION(&compiled);
-    linked = SDL_Linked_Version();
-    output_versions("SDL", &compiled, linked);
+    SDL_GetVersion(&linked);
+    output_versions("SDL", &compiled, &linked);
 
     SDL_MIXER_VERSION(&compiled);
-    linked = Mix_Linked_Version();
-    output_versions("SDL_mixer", &compiled, linked);
+    SDL_memcpy(&linked, Mix_Linked_Version(), sizeof(SDL_version));
+    output_versions("SDL_mixer", &compiled, &linked);
 }
 #endif
 
@@ -137,7 +137,7 @@ static void SDLCALL channel_complete_callback (int chan)
 {
     Mix_Chunk *done_chunk = Mix_GetChunk(chan);
     SDL_Log("We were just alerted that Mixer channel #%d is done.\n", chan);
-    SDL_Log("Channel's chunk pointer is (%p).\n", done_chunk);
+    SDL_Log("Channel's chunk pointer is (%p).\n", (void*)done_chunk);
     SDL_Log(" Which %s correct.\n", (wave == done_chunk) ? "is" : "is NOT");
     channel_is_done = 1;
 }
@@ -160,8 +160,8 @@ static void do_panning_update(void)
 {
     static Uint8 leftvol = 128;
     static Uint8 rightvol = 128;
-    static Uint8 leftincr = -1;
-    static Uint8 rightincr = 1;
+    static Sint8 leftincr = -1;
+    static Sint8 rightincr = 1;
     static int panningok = 1;
     static Uint32 next_panning_update = 0;
 
@@ -174,14 +174,16 @@ static void do_panning_update(void)
         }
 
         if ((leftvol == 255) || (leftvol == 0)) {
-            if (leftvol == 255)
+            if (leftvol == 255) {
                 SDL_Log("All the way in the left speaker.\n");
-                leftincr *= -1;
+            }
+            leftincr *= -1;
         }
 
         if ((rightvol == 255) || (rightvol == 0)) {
-            if (rightvol == 255)
+            if (rightvol == 255) {
                 SDL_Log("All the way in the right speaker.\n");
+            }
             rightincr *= -1;
         }
 
@@ -197,7 +199,7 @@ static void do_panning_update(void)
 static void do_distance_update(void)
 {
     static Uint8 distance = 1;
-    static Uint8 distincr = 1;
+    static Sint8 distincr = 1;
     static int distanceok = 1;
     static Uint32 next_distance_update = 0;
 
@@ -229,13 +231,13 @@ static void do_position_update(void)
 {
     static Sint16 distance = 1;
     static Sint8 distincr = 1;
-    static Uint16 angle = 0;
+    static Sint16 angle = 0;
     static Sint8 angleincr = 1;
     static int positionok = 1;
     static Uint32 next_position_update = 0;
 
     if ((positionok) && (SDL_GetTicks() >= next_position_update)) {
-        positionok = Mix_SetPosition(0, angle, distance);
+        positionok = Mix_SetPosition(0, angle, (Uint8)distance);
         if (!positionok) {
             SDL_Log("Mix_SetPosition(0, %d, %d) failed!\n",
                     (int) angle, (int) distance);
@@ -253,7 +255,6 @@ static void do_position_update(void)
         }
 
         distance += distincr;
-
         if (distance < 0) {
             distance = 0;
             distincr = 3;
@@ -364,6 +365,8 @@ int main(int argc, char *argv[])
     int i;
     int reverse_stereo = 0;
     int reverse_sample = 0;
+
+    (void) argc;
 
 #ifdef HAVE_SETBUF
     setbuf(stdout, NULL);    /* rcg06132001 for debugging purposes. */
