@@ -117,6 +117,7 @@ int main(int argc, char *argv[])
     int interactive = 0;
     int rwops = 0;
     int i;
+    const char *typ;
 
     /* Initialize variables */
     audio_rate = MIX_DEFAULT_FREQUENCY;
@@ -214,6 +215,40 @@ int main(int argc, char *argv[])
                 argv[i], SDL_GetError());
             CleanUp(2);
         }
+
+        switch (Mix_GetMusicType(music)) {
+        case MUS_CMD:
+            typ = "CMD";
+            break;
+        case MUS_WAV:
+            typ = "WAV";
+            break;
+        case MUS_MOD:
+        case MUS_MODPLUG_UNUSED:
+            typ = "MOD";
+            break;
+        case MUS_FLAC:
+            typ = "FLAC";
+            break;
+        case MUS_MID:
+            typ = "MIDI";
+            break;
+        case MUS_OGG:
+            typ = "OGG Vorbis";
+            break;
+        case MUS_MP3:
+        case MUS_MP3_MAD_UNUSED:
+            typ = "MP3";
+            break;
+        case MUS_OPUS:
+            typ = "OPUS";
+            break;
+        case MUS_NONE:
+        default:
+            typ = "NONE";
+            break;
+        }
+        SDL_Log("Detected music type: %s", typ);
 
         /* Play and then exit */
         SDL_Log("Playing %s\n", argv[i]);
