@@ -284,7 +284,7 @@ Mix_MusicInterface Mix_MusicInterface_CMD =
     MusicCMD_Stop,
     MusicCMD_Delete,
     NULL,   /* Close */
-    NULL,   /* Unload */
+    NULL    /* Unload */
 };
 
 #endif /* MUSIC_CMD */

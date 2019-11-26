@@ -632,7 +632,7 @@ Mix_MusicInterface Mix_MusicInterface_WAV =
     NULL,   /* Stop */
     WAV_Delete,
     NULL,   /* Close */
-    NULL,   /* Unload */
+    NULL    /* Unload */
 };
 
 #endif /* MUSIC_WAV */

@@ -213,7 +213,7 @@ Mix_MusicInterface Mix_MusicInterface_TIMIDITY =
     NULL,   /* Stop */
     TIMIDITY_Delete,
     TIMIDITY_Close,
-    NULL,   /* Unload */
+    NULL    /* Unload */
 };
 
 #endif /* MUSIC_MID_TIMIDITY */

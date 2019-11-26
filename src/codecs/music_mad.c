@@ -668,7 +668,7 @@ Mix_MusicInterface Mix_MusicInterface_MAD =
     NULL,   /* Stop */
     MAD_Delete,
     NULL,   /* Close */
-    NULL,   /* Unload */
+    NULL    /* Unload */
 };
 
 #endif /* MUSIC_MP3_MAD */

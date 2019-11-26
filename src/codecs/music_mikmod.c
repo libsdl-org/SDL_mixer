@@ -486,7 +486,7 @@ Mix_MusicInterface Mix_MusicInterface_MIKMOD =
     MIKMOD_Stop,
     MIKMOD_Delete,
     MIKMOD_Close,
-    MIKMOD_Unload,
+    MIKMOD_Unload
 };
 
 #endif /* MUSIC_MOD_MIKMOD */
