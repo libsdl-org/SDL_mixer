@@ -119,9 +119,9 @@ int main(int argc, char *argv[])
     int i;
 
     /* Initialize variables */
-    audio_rate = 22050;
-    audio_format = AUDIO_S16;
-    audio_channels = 2;
+    audio_rate = MIX_DEFAULT_FREQUENCY;
+    audio_format = MIX_DEFAULT_FORMAT;
+    audio_channels = MIX_DEFAULT_CHANNELS;
     audio_buffers = 4096;
 
     /* Check command line usage */

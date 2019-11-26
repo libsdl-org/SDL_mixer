@@ -374,7 +374,7 @@ int main(int argc, char *argv[])
     /* Initialize variables */
     audio_rate = MIX_DEFAULT_FREQUENCY;
     audio_format = MIX_DEFAULT_FORMAT;
-    audio_channels = 2;
+    audio_channels = MIX_DEFAULT_CHANNELS;
 
     /* Check command line usage */
     for (i=1; argv[i] && (*argv[i] == '-'); ++i) {
