@@ -182,14 +182,14 @@ static int OPUS_UpdateSection(OPUS_music *music)
         music->stream = NULL;
     }
 
-    music->stream = SDL_NewAudioStream(AUDIO_S16, op_info->channel_count, 48000,
+    music->stream = SDL_NewAudioStream(AUDIO_S16, (Uint8)op_info->channel_count, 48000,
                                        music_spec.format, music_spec.channels, music_spec.freq);
     if (!music->stream) {
         return -1;
     }
 
-    music->buffer_size = music_spec.samples * sizeof(opus_int16) * op_info->channel_count;
-    music->buffer = (char *)SDL_malloc(music->buffer_size);
+    music->buffer_size = (int)music_spec.samples * (int)sizeof(opus_int16) * op_info->channel_count;
+    music->buffer = (char *)SDL_malloc((size_t)music->buffer_size);
     if (!music->buffer) {
         return -1;
     }
@@ -273,7 +273,7 @@ static int OPUS_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     }
 
     section = music->section;
-    samples = opus.op_read(music->of, (opus_int16 *)music->buffer, music->buffer_size / sizeof(opus_int16), &section);
+    samples = opus.op_read(music->of, (opus_int16 *)music->buffer, music->buffer_size / (int)sizeof(opus_int16), &section);
     if (samples < 0) {
         set_op_error("op_read", samples);
         return -1;
@@ -365,7 +365,7 @@ Mix_MusicInterface Mix_MusicInterface_Opus =
     NULL,   /* Stop */
     OPUS_Delete,
     NULL,   /* Close */
-    OPUS_Unload,
+    OPUS_Unload
 };
 
 #endif /* MUSIC_OPUS */

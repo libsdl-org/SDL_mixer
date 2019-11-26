@@ -400,7 +400,7 @@ static void flac_metadata_music_cb(
         music->sample_rate = metadata->data.stream_info.sample_rate;
         music->channels = metadata->data.stream_info.channels;
         music->bits_per_sample = metadata->data.stream_info.bits_per_sample;
-    /*printf("FLAC: Sample rate = %d, channels = %d, bits_per_sample = %d\n", music->sample_rate, music->channels, music->bits_per_sample);*/
+      /*printf("FLAC: Sample rate = %d, channels = %d, bits_per_sample = %d\n", music->sample_rate, music->channels, music->bits_per_sample);*/
 
         /* SDL's channel mapping and FLAC channel mapping are the same,
            except for 3 channels: SDL is FL FR LFE and FLAC is FL FR FC
@@ -703,7 +703,7 @@ Mix_MusicInterface Mix_MusicInterface_FLAC =
     NULL,   /* Stop */
     FLAC_Delete,
     NULL,   /* Close */
-    FLAC_Unload,
+    FLAC_Unload
 };
 
 #endif /* MUSIC_FLAC */

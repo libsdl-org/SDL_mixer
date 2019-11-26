@@ -105,7 +105,7 @@ Mix_MusicInterface Mix_MusicInterface_NATIVEMIDI =
     NATIVEMIDI_Stop,
     NATIVEMIDI_Delete,
     NULL,   /* Close */
-    NULL,   /* Unload */
+    NULL    /* Unload */
 };
 
 #endif /* MUSIC_MID_NATIVE */

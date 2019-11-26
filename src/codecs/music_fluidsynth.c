@@ -128,6 +128,7 @@ static int SDLCALL fluidsynth_check_soundfont(const char *path, void *data)
 {
     FILE *file = fopen(path, "r");
 
+    (void)data;
     if (file) {
         fclose(file);
         return 1;
@@ -146,6 +147,7 @@ static int SDLCALL fluidsynth_load_soundfont(const char *path, void *data)
 
 static int FLUIDSYNTH_Open(const SDL_AudioSpec *spec)
 {
+    (void)spec;
     if (!Mix_EachSoundFont(fluidsynth_check_soundfont, NULL)) {
         return -1;
     }
@@ -159,10 +161,10 @@ static FLUIDSYNTH_Music *FLUIDSYNTH_LoadMusic(void *data)
     fluid_settings_t *settings;
 
     if ((music = SDL_calloc(1, sizeof(FLUIDSYNTH_Music)))) {
-        int channels = 2;
+        Uint8 channels = 2;
         if ((music->stream = SDL_NewAudioStream(AUDIO_S16SYS, channels, music_spec.freq, music_spec.format, music_spec.channels, music_spec.freq))) {
             music->buffer_size = music_spec.samples * sizeof(Sint16) * channels;
-            if ((music->buffer = SDL_malloc(music->buffer_size))) {
+            if ((music->buffer = SDL_malloc((size_t)music->buffer_size))) {
                 if ((settings = fluidsynth.new_fluid_settings())) {
                     fluidsynth.fluid_settings_setnum(settings, "synth.sample-rate", (double) music_spec.freq);
 
@@ -245,6 +247,8 @@ static int FLUIDSYNTH_GetSome(void *context, void *data, int bytes, SDL_bool *do
     FLUIDSYNTH_Music *music = (FLUIDSYNTH_Music *)context;
     int filled;
 
+    (void)done;
+
     filled = SDL_AudioStreamGet(music->stream, data, bytes);
     if (filled != 0) {
         return filled;
@@ -301,7 +305,7 @@ Mix_MusicInterface Mix_MusicInterface_FLUIDSYNTH =
     FLUIDSYNTH_Stop,
     FLUIDSYNTH_Delete,
     NULL,   /* Close */
-    FLUIDSYNTH_Unload,
+    FLUIDSYNTH_Unload
 };
 
 #endif /* MUSIC_MID_FLUIDSYNTH */

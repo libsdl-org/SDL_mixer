@@ -41,7 +41,7 @@ typedef struct {
     void (*ModPlug_Seek)(ModPlugFile* file, int millisecond);
     void (*ModPlug_GetSettings)(ModPlug_Settings* settings);
     void (*ModPlug_SetSettings)(const ModPlug_Settings* settings);
-    void (*ModPlug_SetMasterVolume)(ModPlugFile* file,unsigned int cvol) ;
+    void (*ModPlug_SetMasterVolume)(ModPlugFile* file,unsigned int cvol);
 } modplug_loader;
 
 static modplug_loader modplug = {
@@ -302,7 +302,7 @@ Mix_MusicInterface Mix_MusicInterface_MODPLUG =
     NULL,   /* Stop */
     MODPLUG_Delete,
     NULL,   /* Close */
-    MODPLUG_Unload,
+    MODPLUG_Unload
 };
 
 #endif /* MUSIC_MOD_MODPLUG */
