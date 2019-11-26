@@ -33,7 +33,7 @@
 #include "SDL_mixer.h"
 #include "mixer.h"
 
-#define __MIX_INTERNAL_EFFECT__
+#define MIX_INTERNAL_EFFECT__
 #include "effects_internal.h"
 
 /* profile code:

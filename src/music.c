@@ -153,7 +153,7 @@ static void add_music_decoder(const char *decoder)
         }
     }
 
-    ptr = SDL_realloc((void *)music_decoders, (num_decoders + 1) * sizeof (const char *));
+    ptr = SDL_realloc((void *)music_decoders, ((size_t)num_decoders + 1) * sizeof (const char *));
     if (ptr == NULL) {
         return;  /* oh well, go on without it. */
     }
@@ -194,7 +194,7 @@ int music_pcm_getaudio(void *context, void *data, int bytes, int volume,
     if (volume == MIX_MAX_VOLUME) {
         dst = snd;
     } else {
-        dst = SDL_stack_alloc(Uint8, bytes);
+        dst = SDL_stack_alloc(Uint8, (size_t)bytes);
     }
     while (len > 0 && !done) {
         int consumed = GetSome(context, dst, len, &done);
@@ -394,7 +394,7 @@ void open_music(const SDL_AudioSpec *spec)
     Mix_VolumeMusic(MIX_MAX_VOLUME);
 
     /* Calculate the number of ms for each callback */
-    ms_per_step = (int) (((float)spec->samples * 1000.0) / spec->freq);
+    ms_per_step = (int) (((float)spec->samples * 1000.0f) / spec->freq);
 }
 
 /* Return SDL_TRUE if the music type is available */
