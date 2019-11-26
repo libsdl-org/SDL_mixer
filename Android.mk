@@ -57,7 +57,17 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := SDL2_mixer
 
-LOCAL_SRC_FILES := $(notdir $(filter-out %/playmus.c %/playwave.c, $(wildcard $(LOCAL_PATH)/src/*.c), $(wildcard $(LOCAL_PATH)/src/codecs/*.c)) \
+LOCAL_C_INCLUDES :=                                     \
+    $(LOCAL_PATH)/include                               \
+    $(LOCAL_PATH)/src/                                  \
+    $(LOCAL_PATH)/src/codecs                            \
+
+
+LOCAL_SRC_FILES :=                                      \
+    $(subst $(LOCAL_PATH)/,,                            \
+    $(wildcard $(LOCAL_PATH)/src/*.c)                   \
+    $(wildcard $(LOCAL_PATH)/src/codecs/*.c)            \
+    )
 
 LOCAL_CFLAGS :=
 LOCAL_LDLIBS :=
