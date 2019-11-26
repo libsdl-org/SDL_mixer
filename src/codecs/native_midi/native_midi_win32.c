@@ -298,6 +298,10 @@ void native_midi_stop(void)
 
 int native_midi_active(void)
 {
+  if (!hMidiStream)
+    return 0;
+  if (!currentsong)
+    return 0;
   return currentsong->MusicPlaying;
 }
 
