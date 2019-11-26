@@ -57,7 +57,7 @@ static int BlockOut(NativeMidiSong *song)
 
   if ((song->MusicLoaded) && (song->NewEvents))
   {
-    // proff 12/8/98: Added for safety
+    /* proff 12/8/98: Added for safety*/
     song->CurrentHdr = !song->CurrentHdr;
     hdr = &song->MidiStreamHdr[song->CurrentHdr];
     midiOutUnprepareHeader((HMIDIOUT)hMidiStream,hdr,sizeof(MIDIHDR));
@@ -166,6 +166,10 @@ static void MIDItoStream(NativeMidiSong *song, MIDIEvent *evntlist)
 void CALLBACK MidiProc( HMIDIIN hMidi, UINT uMsg, DWORD_PTR dwInstance,
                         DWORD_PTR dwParam1, DWORD_PTR dwParam2 )
 {
+    (void)hMidi;
+    (void)dwInstance;
+    (void)dwParam2;
+
     switch( uMsg )
     {
     case MOM_DONE:
@@ -256,10 +260,10 @@ void native_midi_start(NativeMidiSong *song, int loops)
     merr=midiStreamOpen(&hMidiStream,&MidiDevice,(DWORD)1,(DWORD_PTR)MidiProc,(DWORD_PTR)0,CALLBACK_FUNCTION);
     if (merr!=MMSYSERR_NOERROR)
     {
-      hMidiStream = NULL; // should I do midiStreamClose(hMidiStream) before?
+      hMidiStream = NULL; /* should I do midiStreamClose(hMidiStream) before? */
       return;
     }
-    //midiStreamStop(hMidiStream);
+    /* midiStreamStop(hMidiStream); */
     currentsong=song;
     currentsong->NewPos=0;
     currentsong->MusicPlaying=1;

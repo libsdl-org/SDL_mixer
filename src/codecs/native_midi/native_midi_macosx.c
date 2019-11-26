@@ -251,7 +251,7 @@ void native_midi_freesong(NativeMidiSong *song)
             currentsong = NULL;
         MusicPlayerStop(song->player);
 
-        // needed to prevent error and memory leak when disposing sequence
+        /* needed to prevent error and memory leak when disposing sequence */
         MusicPlayerSetSequence(song->player, NULL);
 
         DisposeMusicSequence(song->sequence);

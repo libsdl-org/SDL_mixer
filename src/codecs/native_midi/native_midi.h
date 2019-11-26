@@ -19,8 +19,8 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef _NATIVE_MIDI_H_
-#define _NATIVE_MIDI_H_
+#ifndef NATIVE_MIDI_H_
+#define NATIVE_MIDI_H_
 
 #include "SDL_rwops.h"
 
@@ -37,4 +37,4 @@ int native_midi_active(void);
 void native_midi_setvolume(int volume);
 const char *native_midi_error(void);
 
-#endif /* _NATIVE_MIDI_H_ */
+#endif /* NATIVE_MIDI_H_ */
