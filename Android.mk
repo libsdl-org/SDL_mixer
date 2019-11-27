@@ -110,3 +110,19 @@ endif
 LOCAL_EXPORT_C_INCLUDES += $(LOCAL_PATH)/include
 
 include $(BUILD_SHARED_LIBRARY)
+
+###########################
+#
+# SDL2_mixer static library
+#
+###########################
+
+LOCAL_MODULE := SDL2_mixer_static
+
+LOCAL_MODULE_FILENAME := libSDL2_mixer
+
+LOCAL_LDLIBS :=
+LOCAL_EXPORT_LDLIBS :=
+
+include $(BUILD_STATIC_LIBRARY)
+
