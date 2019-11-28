@@ -359,7 +359,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = src
-EXTRA_DIST = \
+EXTRA_DIST = CMakeLists.txt \
 	AUTHORS COPYING ChangeLog \
 	INSTALL README TODO
 

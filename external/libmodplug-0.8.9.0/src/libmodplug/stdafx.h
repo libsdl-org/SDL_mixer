@@ -21,11 +21,6 @@
 # include <stdint.h>
 #endif
 
-/*#define CXX_INTERFACE*/ /* export C++ interface from dll. */
-/*#define MIDIFMT_SUPPORT*/
-/*#define WAV_SUPPORT*/
-/*#define MMCMP_SUPPORT*/
-
 /* disable AGC and FILESAVE for all targets for uniformity. */
 #define NO_AGC
 /*#define NO_FILTER */
@@ -159,7 +154,7 @@ inline void ProcessPlugins(int n) {}
 #define MODPLUG_EXPORT
 #endif
 
-#if defined(CXX_INTERFACE)
+#if !defined(NO_CXX_EXPORTS)
 #define MODPLUG_EXPORTPP	MODPLUG_EXPORT
 #else
 #define MODPLUG_EXPORTPP

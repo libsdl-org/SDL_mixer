@@ -44,7 +44,15 @@
 #define PATH_MAX 256
 #endif
 
-#ifdef MIDIFMT_SUPPORT
+#ifndef MIDIFMT_SUPPORT
+BOOL CSoundFile::TestPAT(const BYTE *lpStream, DWORD dwMemLength) {
+	return FALSE;
+}
+BOOL CSoundFile::ReadPAT(const BYTE *lpStream, DWORD dwMemLength) {
+	return FALSE;
+}
+
+#else
 
 #include "load_pat.h"
 

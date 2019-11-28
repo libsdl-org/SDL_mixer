@@ -36,7 +36,15 @@
 #include "stdafx.h"
 #include "sndfile.h"
 
-#ifdef MIDIFMT_SUPPORT
+#ifndef MIDIFMT_SUPPORT
+BOOL CSoundFile::TestMID(const BYTE *lpStream, DWORD dwMemLength) {
+	return FALSE;
+}
+BOOL CSoundFile::ReadMID(const BYTE *lpStream, DWORD dwMemLength) {
+	return FALSE;
+}
+
+#else
 
 #define PAN_LEFT    0x30
 #define PAN_RIGHT   0xD0
