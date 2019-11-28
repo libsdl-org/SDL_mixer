@@ -7,7 +7,11 @@
 #include "stdafx.h"
 #include "sndfile.h"
 
-#ifdef WAV_SUPPORT
+#ifndef WAV_SUPPORT
+BOOL CSoundFile::ReadWav(const BYTE *lpStream,DWORD dwMemLength) {
+	return FALSE;
+}
+#else
 
 #ifndef WAVE_FORMAT_EXTENSIBLE
 #define WAVE_FORMAT_EXTENSIBLE	0xFFFE
@@ -140,7 +144,6 @@ BOOL CSoundFile::ReadWav(const BYTE *lpStream, DWORD dwMemLength)
 	}
 	return TRUE;
 }
-
 
 ////////////////////////////////////////////////////////////////////////
 // IMA ADPCM Support

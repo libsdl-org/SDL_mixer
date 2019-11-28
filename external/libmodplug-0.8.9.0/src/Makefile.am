@@ -44,6 +44,8 @@ libmodplug_la_SOURCES = tables.h         \
 
 libmodplugincludedir = $(includedir)/libmodplug
 
-
-libmodpluginclude_HEADERS = libmodplug/stdafx.h libmodplug/sndfile.h libmodplug/it_defs.h modplug.h
+if EXPORT_CXX
+HEADERS_CXX = libmodplug/stdafx.h libmodplug/sndfile.h libmodplug/it_defs.h
+endif
+libmodpluginclude_HEADERS = modplug.h $(HEADERS_CXX)
 noinst_HEADERS = load_pat.h

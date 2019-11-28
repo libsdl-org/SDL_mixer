@@ -82,6 +82,39 @@ case ${target_os} in
 		;;
 esac
 
+AC_ARG_ENABLE([cxx_interface],
+    [AS_HELP_STRING([--enable-cxx-interface],
+                    [export C++ interface from library [[default=yes]]])],,
+    [enable_cxx_interface=yes])
+if test x$enable_cxx_interface != xyes; then
+    AC_DEFINE(NO_CXX_EXPORTS, 1, [Do not export the C++ interface.])
+fi
+AM_CONDITIONAL(EXPORT_CXX, test x$enable_cxx_interface = xyes)
+
+AC_ARG_ENABLE([midi],
+    [AS_HELP_STRING([--enable-midi],
+                    [compile with midi formats support [[default=no]]])],,
+    [enable_midi=no])
+if test x$enable_midi = xyes; then
+    AC_DEFINE(MIDIFMT_SUPPORT, 1, [Enable midi formats support.])
+fi
+
+AC_ARG_ENABLE([wav],
+    [AS_HELP_STRING([--enable-wav],
+                    [compile with wav formats support [[default=no]]])],,
+    [enable_wav=no])
+if test x$enable_wav = xyes; then
+    AC_DEFINE(WAV_SUPPORT, 1, [Enable wav formats support.])
+fi
+
+AC_ARG_ENABLE([mmcmp],
+    [AS_HELP_STRING([--enable-mmcmp],
+                    [compile with mmcmp and pp20 decompression support [[default=no]]])],,
+    [enable_mmcmp=no])
+if test x$enable_mmcmp = xyes; then
+    AC_DEFINE(MMCMP_SUPPORT, 1, [Enable mmcmp and pp20 decompression support.])
+fi
+
 # portable types. requires autoconf 2.60
 # `configure' will check if these are defined in system headers.
 # if not, it will auto-detect and define them in `config.h'

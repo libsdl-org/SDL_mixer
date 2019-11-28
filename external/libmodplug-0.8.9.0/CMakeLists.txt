@@ -1,103 +1,184 @@
-cmake_minimum_required(VERSION 3.2)
-project(libModPlug VERSION 0.8.9.0 LANGUAGES CXX)
+cmake_minimum_required(VERSION 2.8.0)
 
-include(CheckFunctionExists)
-include(CheckIncludeFile)
-include(${CMAKE_CURRENT_SOURCE_DIR}/../audio_codec_common.cmake)
+project(libmodplug)
 
-if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -pedantic -std=gnu99")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-pedantic -std=gnu++98 -Wno-sequence-point")
-    if(NOT APPLE)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-but-set-variable")
+set(VERSION "0.8.9.0")
+
+option(BUILD_SHARED_LIBS "Build Shared Library (DLL)" OFF)
+option(EXPORT_CXX "Export C++ interface from library" ON)
+option(MIDIFMT_SUPPORT "Enable midi formats support" OFF)
+option(WAV_SUPPORT "Enable wav formats support" OFF)
+option(MMCMP_SUPPORT "Enable mmcmp and pp20 decompression support" OFF)
+
+add_definitions(-DMODPLUG_BUILD)
+if(MIDIFMT_SUPPORT)
+  add_definitions(-DMIDIFMT_SUPPORT)
+endif()
+if(WAV_SUPPORT)
+  add_definitions(-DWAV_SUPPORT)
+endif()
+if(MMCMP_SUPPORT)
+  add_definitions(-DMMCMP_SUPPORT)
+endif()
+if(NOT EXPORT_CXX)
+  add_definitions(-DNO_CXX_EXPORTS)
+else()
+  set(HEADERS_CXX
+      src/libmodplug/it_defs.h
+      src/libmodplug/sndfile.h
+      src/libmodplug/stdafx.h)
+endif()
+
+include (CheckFunctionExists)
+include (CheckIncludeFile)
+include (CheckCCompilerFlag)
+include (CheckCSourceCompiles)
+include (TestBigEndian)
+
+TEST_BIG_ENDIAN(WORDS_BIGENDIAN)
+if(WORDS_BIGENDIAN)
+  add_definitions(-DWORDS_BIGENDIAN=1)
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID MATCHES "Clang")
+  add_definitions(-Wall)
+  # check symbol visibility attributes
+  set(OLD_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS}")
+  if(NOT WIN32 AND NOT CYGWIN)
+    set(CMAKE_REQUIRED_FLAGS "${OLD_REQUIRED_FLAGS} -Werror")
+    check_c_source_compiles("int foo(void) __attribute__((visibility(\"default\")));
+                             int main(void) {return 0;}" HAVE_VISIBILITY_DEFAULT)
+    if(HAVE_VISIBILITY_DEFAULT)
+      check_c_compiler_flag(-fvisibility=hidden HAVE_VISIBILITY_HIDDEN)
     endif()
+  endif()
+  set(CMAKE_REQUIRED_FLAGS "-Wl,--no-undefined")
+  check_c_compiler_flag("" HAVE_NO_UNDEFINED)
+  set(CMAKE_REQUIRED_FLAGS "${OLD_REQUIRED_FLAGS}")
 endif()
 
-if(MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4100 /wd4244 /wd4267 /wd4996 /wd4702 /wd4706 /wd4456")
+include_directories(AFTER
+  src
+  src/libmodplug
+  ${PROJECT_BINARY_DIR}
+)
+
+if(UNIX AND NOT APPLE)
+  find_library(MATH_LIB m)
+  if(MATH_LIB)
+    set(CMAKE_REQUIRED_LIBRARIES m)
+  endif()
 endif()
 
-add_definitions(
-    #-DMODPLUG_NO_FILESAVE
-    #-DNO_MIDIFORMATS
-    #-DNO_WAVFORMAT
-    -DHAVE_CONFIG_H
-    -DHAVE_CMAKE_CONFIG_H
-    -DMODPLUG_STATIC
-    -DMODPLUG_BUILD=1
-    -D_REENTRANT
-    -D_USE_MATH_DEFINES
+if (WIN32)
+  add_definitions(-D_USE_MATH_DEFINES)
+  add_definitions(-DNOMINMAX)
+endif()
+
+check_include_file("stdint.h" HAVE_STDINT)
+if (HAVE_STDINT)
+  add_definitions(-DHAVE_STDINT_H)
+endif()
+
+check_function_exists("sinf" HAVE_SINF)
+if(HAVE_SINF)
+  add_definitions(-DHAVE_SINF)
+endif()
+
+if (BUILD_SHARED_LIBS)
+  set (LIB_TYPE SHARED)
+  if (WIN32 OR CYGWIN)
+    add_definitions(-DDLL_EXPORT)
+  elseif (HAVE_VISIBILITY_HIDDEN)
+    add_definitions(-fvisibility=hidden)
+    add_definitions("-DSYM_VISIBILITY")
+  endif()
+else ()
+  set(LIB_TYPE STATIC)
+  add_definitions(-DMODPLUG_STATIC)
+endif()
+
+add_library(modplug ${LIB_TYPE}
+  src/libmodplug/it_defs.h
+  src/libmodplug/sndfile.h
+  src/libmodplug/stdafx.h
+
+  src/fastmix.cpp
+  src/load_669.cpp
+  src/load_abc.cpp
+  src/load_amf.cpp
+  src/load_ams.cpp
+  src/load_dbm.cpp
+  src/load_dmf.cpp
+  src/load_dsm.cpp
+  src/load_far.cpp
+  src/load_it.cpp
+  src/load_mdl.cpp
+  src/load_med.cpp
+  src/load_mid.cpp
+  src/load_mod.cpp
+  src/load_mt2.cpp
+  src/load_mtm.cpp
+  src/load_okt.cpp
+  src/load_pat.cpp
+  src/load_pat.h
+  src/load_psm.cpp
+  src/load_ptm.cpp
+  src/load_s3m.cpp
+  src/load_stm.cpp
+  src/load_ult.cpp
+  src/load_umx.cpp
+  src/load_wav.cpp
+  src/load_xm.cpp
+  src/mmcmp.cpp
+  src/modplug.cpp
+  src/modplug.h
+  src/snd_dsp.cpp
+  src/snd_flt.cpp
+  src/snd_fx.cpp
+  src/sndfile.cpp
+  src/sndmix.cpp
+  src/tables.h
 )
 
-foreach(_FN
-        setenv putenv
-        )
-    string(TOUPPER ${_FN} _UPPER)
-    set(_HAVEVAR "HAVE_${_UPPER}")
-    CHECK_FUNCTION_EXISTS("${_FN}" ${_HAVEVAR})
-endforeach()
+if (BUILD_SHARED_LIBS)
+  if(APPLE)
+    target_link_libraries(modplug -Wl,-undefined,error)
+    target_link_libraries(modplug -Wl,-compatibility_version,2.0.0)
+    target_link_libraries(modplug -Wl,-current_version,2.0.0)
+  else()
+    if(HAVE_NO_UNDEFINED)
+      target_link_libraries(modplug -Wl,--no-undefined)
+    endif()
+    set_target_properties(modplug PROPERTIES
+                                  VERSION 1.0.0 SOVERSION 1)
+  endif()
+  if(MATH_LIB)
+    target_link_libraries(modplug m)
+  endif()
+endif()
 
-CHECK_INCLUDE_FILE("malloc.h" HAVE_MALLOC_H)
-CHECK_INCLUDE_FILE("memory.h" HAVE_MEMORY_H)
-CHECK_INCLUDE_FILE("inttypes.h" HAVE_INTTYPES_H)
+# install the library:
+install(TARGETS modplug DESTINATION lib)
 
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/src/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config/config.h)
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/config/)
-
-add_library(modplug STATIC
-    src/fastmix.cpp
-    src/load_669.cpp
-    src/load_abc.cpp
-    src/load_amf.cpp
-    src/load_ams.cpp
-    src/load_dbm.cpp
-    src/load_dmf.cpp
-    src/load_dsm.cpp
-    src/load_far.cpp
-    src/load_it.cpp
-    src/load_mdl.cpp
-    src/load_med.cpp
-    #src/load_mid.cpp
-    src/load_mod.cpp
-    src/load_mt2.cpp
-    src/load_mtm.cpp
-    src/load_okt.cpp
-    src/load_pat.cpp
-    src/load_psm.cpp
-    src/load_ptm.cpp
-    src/load_s3m.cpp
-    src/load_stm.cpp
-    src/load_ult.cpp
-    src/load_umx.cpp
-    #src/load_wav.cpp
-    src/load_xm.cpp
-    src/mmcmp.cpp
-    src/modplug.cpp
-    src/snd_dsp.cpp
-    src/snd_flt.cpp
-    src/snd_fx.cpp
-    src/sndfile.cpp
-    src/sndmix.cpp
-)
-
-# include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include_p)
-# include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
-# include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libogg/include)
-
-target_include_directories(modplug PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_include_directories(modplug PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/libmodplug
-        ${CMAKE_CURRENT_SOURCE_DIR}/src
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/libmodplug
-)
-
-install(TARGETS modplug
-        LIBRARY DESTINATION "lib"
-        ARCHIVE DESTINATION "lib"
-        INCLUDES DESTINATION "include")
-
+# install the headers:
 install(FILES
-        include/libmodplug/modplug.h
-        DESTINATION include/libmodplug/)
+  src/modplug.h
+  ${HEADERS_CXX}
 
+  DESTINATION
+  include/libmodplug
+)
 
+if (NOT WIN32)
+  set(prefix "${CMAKE_INSTALL_PREFIX}")
+  set(exec_prefix "${CMAKE_INSTALL_PREFIX}")
+  set(libdir "${CMAKE_INSTALL_PREFIX}/lib")
+  set(includedir "${CMAKE_INSTALL_PREFIX}/include")
+  configure_file(libmodplug.pc.in libmodplug.pc)
+
+  # install pkg-config file:
+  install(FILES "${PROJECT_BINARY_DIR}/libmodplug.pc"
+    DESTINATION lib/pkgconfig
+  )
+endif (NOT WIN32)

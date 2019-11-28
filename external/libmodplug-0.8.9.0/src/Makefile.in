@@ -97,8 +97,9 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
-DIST_COMMON = $(srcdir)/Makefile.am $(libmodpluginclude_HEADERS) \
-	$(noinst_HEADERS) $(am__DIST_COMMON)
+DIST_COMMON = $(srcdir)/Makefile.am \
+	$(am__libmodpluginclude_HEADERS_DIST) $(noinst_HEADERS) \
+	$(am__DIST_COMMON)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES =
@@ -209,6 +210,8 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
+am__libmodpluginclude_HEADERS_DIST = modplug.h libmodplug/stdafx.h \
+	libmodplug/sndfile.h libmodplug/it_defs.h
 HEADERS = $(libmodpluginclude_HEADERS) $(noinst_HEADERS)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) \
 	$(LISP)config.h.in
@@ -400,7 +403,8 @@ libmodplug_la_SOURCES = tables.h         \
                         modplug.cpp
 
 libmodplugincludedir = $(includedir)/libmodplug
-libmodpluginclude_HEADERS = libmodplug/stdafx.h libmodplug/sndfile.h libmodplug/it_defs.h modplug.h
+@EXPORT_CXX_TRUE@HEADERS_CXX = libmodplug/stdafx.h libmodplug/sndfile.h libmodplug/it_defs.h
+libmodpluginclude_HEADERS = modplug.h $(HEADERS_CXX)
 noinst_HEADERS = load_pat.h
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am

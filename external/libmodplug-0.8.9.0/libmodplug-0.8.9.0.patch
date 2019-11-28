@@ -1,4 +1,4 @@
-synced with libmodplug git, with furter changes in mainstream git, including:
+synced with libmodplug git -- with further changes, including:
 
 - don't export cplusplus interface from shared libs. SDL_mixer doesn't use it.
 - disable wav formats handling: SDL_mixer has its own code for it.
@@ -26,7 +26,47 @@ diff -u libmodplug-0.8.9.0/configure.ac~ libmodplug-0.8.9.0/configure.ac
  
  CXXFLAGS="$CXXFLAGS -fno-exceptions -Wall -ffast-math -fno-common -D_REENTRANT"
  
-@@ -99,6 +99,6 @@ MODPLUG_LIBRARY_VERSION=1:0:0
+@@ -82,6 +82,39 @@ case ${target_os} in
+ 		;;
+ esac
+ 
++AC_ARG_ENABLE([cxx_interface],
++    [AS_HELP_STRING([--enable-cxx-interface],
++                    [export C++ interface from library [[default=yes]]])],,
++    [enable_cxx_interface=yes])
++if test x$enable_cxx_interface != xyes; then
++    AC_DEFINE(NO_CXX_EXPORTS, 1, [Do not export the C++ interface.])
++fi
++AM_CONDITIONAL(EXPORT_CXX, test x$enable_cxx_interface = xyes)
++
++AC_ARG_ENABLE([midi],
++    [AS_HELP_STRING([--enable-midi],
++                    [compile with midi formats support [[default=no]]])],,
++    [enable_midi=no])
++if test x$enable_midi = xyes; then
++    AC_DEFINE(MIDIFMT_SUPPORT, 1, [Enable midi formats support.])
++fi
++
++AC_ARG_ENABLE([wav],
++    [AS_HELP_STRING([--enable-wav],
++                    [compile with wav formats support [[default=no]]])],,
++    [enable_wav=no])
++if test x$enable_wav = xyes; then
++    AC_DEFINE(WAV_SUPPORT, 1, [Enable wav formats support.])
++fi
++
++AC_ARG_ENABLE([mmcmp],
++    [AS_HELP_STRING([--enable-mmcmp],
++                    [compile with mmcmp and pp20 decompression support [[default=no]]])],,
++    [enable_mmcmp=no])
++if test x$enable_mmcmp = xyes; then
++    AC_DEFINE(MMCMP_SUPPORT, 1, [Enable mmcmp and pp20 decompression support.])
++fi
++
+ # portable types. requires autoconf 2.60
+ # `configure' will check if these are defined in system headers.
+ # if not, it will auto-detect and define them in `config.h'
+@@ -99,6 +132,6 @@ MODPLUG_LIBRARY_VERSION=1:0:0
  AC_SUBST(MODPLUG_LIBRARY_VERSION)
  
  AC_CONFIG_FILES([Makefile
@@ -34,10 +74,256 @@ diff -u libmodplug-0.8.9.0/configure.ac~ libmodplug-0.8.9.0/configure.ac
 +	  src/Makefile
  	  libmodplug.pc])
  AC_OUTPUT
+diff -u libmodplug-0.8.9.0/CMakeLists.txt~ libmodplug-0.8.9.0/CMakeLists.txt
+--- libmodplug-0.8.9.0/CMakeLists.txt~
++++ libmodplug-0.8.9.0/CMakeLists.txt
+@@ -1,19 +1,73 @@
+ cmake_minimum_required(VERSION 2.8.0)
+ 
+ project(libmodplug)
++
++set(VERSION "0.8.9.0")
++
++option(BUILD_SHARED_LIBS "Build Shared Library (DLL)" OFF)
++option(EXPORT_CXX "Export C++ interface from library" OFF)
++option(MIDIFMT_SUPPORT "Enable midi formats support" OFF)
++option(WAV_SUPPORT "Enable wav formats support" OFF)
++option(MMCMP_SUPPORT "Enable mmcmp and pp20 decompression support" OFF)
++
+ add_definitions(-DMODPLUG_BUILD)
++if(MIDIFMT_SUPPORT)
++  add_definitions(-DMIDIFMT_SUPPORT)
++endif()
++if(WAV_SUPPORT)
++  add_definitions(-DWAV_SUPPORT)
++endif()
++if(MMCMP_SUPPORT)
++  add_definitions(-DMMCMP_SUPPORT)
++endif()
++if(NOT EXPORT_CXX)
++  add_definitions(-DNO_CXX_EXPORTS)
++else()
++  set(HEADERS_CXX
++      src/libmodplug/it_defs.h
++      src/libmodplug/sndfile.h
++      src/libmodplug/stdafx.h)
++endif()
+ 
+ include (CheckFunctionExists)
+ include (CheckIncludeFile)
++include (CheckCCompilerFlag)
++include (CheckCSourceCompiles)
++include (TestBigEndian)
++
++TEST_BIG_ENDIAN(WORDS_BIGENDIAN)
++if(WORDS_BIGENDIAN)
++  add_definitions(-DWORDS_BIGENDIAN=1)
++endif()
++
++if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID MATCHES "Clang")
++  add_definitions(-Wall)
++  # check symbol visibility attributes
++  set(OLD_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS}")
++  if(NOT WIN32 AND NOT CYGWIN)
++    set(CMAKE_REQUIRED_FLAGS "${OLD_REQUIRED_FLAGS} -Werror")
++    check_c_source_compiles("int foo(void) __attribute__((visibility(\"default\")));
++                             int main(void) {return 0;}" HAVE_VISIBILITY_DEFAULT)
++    if(HAVE_VISIBILITY_DEFAULT)
++      check_c_compiler_flag(-fvisibility=hidden HAVE_VISIBILITY_HIDDEN)
++    endif()
++  endif()
++  set(CMAKE_REQUIRED_FLAGS "-Wl,--no-undefined")
++  check_c_compiler_flag("" HAVE_NO_UNDEFINED)
++  set(CMAKE_REQUIRED_FLAGS "${OLD_REQUIRED_FLAGS}")
++endif()
+ 
+ include_directories(AFTER
+   src
+   src/libmodplug
+   ${PROJECT_BINARY_DIR}
+-  )
++)
+ 
+-if (UNIX)
+-  set (CMAKE_REQUIRED_LIBRARIES m)
++if(UNIX AND NOT APPLE)
++  find_library(MATH_LIB m)
++  if(MATH_LIB)
++    set(CMAKE_REQUIRED_LIBRARIES m)
++  endif()
+ endif()
+ 
+ if (WIN32)
+@@ -21,58 +75,28 @@ if (WIN32)
+   add_definitions(-DNOMINMAX)
+ endif()
+ 
+-if (WIN32 AND NOT (MINGW OR MSYS))
+-  set(MSINTTYPES_PATH "$ENV{MSINTTYPES_PATH}" CACHE PATH "search path for inttypes.h and stdint.h")
+-
+-  find_path(STDINT_INCLUDE_DIR
+-    stdint.h
+-    PATHS
+-    ${MSINTTYPES_PATH})
+-
+-  if (STDINT_INCLUDE_DIR)
+-    add_definitions(-DHAVE_STDINT_H)
+-    include_directories(AFTER "${STDINT_INCLUDE_DIR}")
+-  endif()
+-
+-  find_path(INTTYPES_INCLUDE_DIR
+-    inttypes.h
+-    PATHS
+-    ${MSINTTYPES_PATH})
+-
+-  if (INTTYPES_INCLUDE_DIR)
+-    add_definitions(-DHAVE_INTTYPES_H)
+-    include_directories(AFTER "${INTTYPES_INCLUDE_DIR}")
+-  endif()
+-
+-  if (NOT STDINT_INCLUDE_DIR OR NOT INTTYPES_INCLUDE_DIR)
+-    message(WARNING
+-      "Compilation may fail if inttypes.h is not natively supported by the compiler."
+-      "You can get inttypes.h from http://code.google.com/p/msinttypes/")
+-  endif()
+-else()
+-  check_include_file("stdint.h" HAVE_STDINT)
+-  if (HAVE_STDINT)
+-    add_definitions(-DHAVE_STDINT_H)
+-  endif()
++check_include_file("stdint.h" HAVE_STDINT)
++if (HAVE_STDINT)
++  add_definitions(-DHAVE_STDINT_H)
+ endif()
+ 
+-check_function_exists("setenv" HAVE_SETENV)
+ check_function_exists("sinf" HAVE_SINF)
+-
+-# Allow the developer to select if Dynamic or Static libraries are built
+-option(BUILD_SHARED_LIBS "Build Shared Library (DLL)" OFF)
+-
+-# Set the LIB_TYPE variable to STATIC
+-set(LIB_TYPE STATIC)
++if(HAVE_SINF)
++  add_definitions(-DHAVE_SINF)
++endif()
+ 
+ if (BUILD_SHARED_LIBS)
+-  # User wants to build Dynamic Libraries,
+-  # so change the LIB_TYPE variable to CMake keyword 'SHARED'
+   set (LIB_TYPE SHARED)
+-  add_definitions(-DDLL_EXPORT)
+-else (BUILD_SHARED_LIBS)
++  if (WIN32 OR CYGWIN)
++    add_definitions(-DDLL_EXPORT)
++  elseif (HAVE_VISIBILITY_HIDDEN)
++    add_definitions(-fvisibility=hidden)
++    add_definitions("-DSYM_VISIBILITY")
++  endif()
++else ()
++  set(LIB_TYPE STATIC)
+   add_definitions(-DMODPLUG_STATIC)
+-endif (BUILD_SHARED_LIBS)
++endif()
+ 
+ add_library(modplug ${LIB_TYPE}
+   src/libmodplug/it_defs.h
+@@ -89,7 +113,6 @@ add_library(modplug ${LIB_TYPE}
+   src/load_dsm.cpp
+   src/load_far.cpp
+   src/load_it.cpp
+-  src/load_j2b.cpp
+   src/load_mdl.cpp
+   src/load_med.cpp
+   src/load_mid.cpp
+@@ -116,30 +139,36 @@ add_library(modplug ${LIB_TYPE}
+   src/sndfile.cpp
+   src/sndmix.cpp
+   src/tables.h
+-  )
++)
++
++if (BUILD_SHARED_LIBS)
++  if(APPLE)
++    target_link_libraries(modplug -Wl,-undefined,error)
++    target_link_libraries(modplug -Wl,-compatibility_version,2.0.0)
++    target_link_libraries(modplug -Wl,-current_version,2.0.0)
++  else()
++    if(HAVE_NO_UNDEFINED)
++      target_link_libraries(modplug -Wl,--no-undefined)
++    endif()
++    set_target_properties(modplug PROPERTIES
++                                  VERSION 1.0.0 SOVERSION 1)
++  endif()
++  if(MATH_LIB)
++    target_link_libraries(modplug m)
++  endif()
++endif()
+ 
+ # install the library:
+ install(TARGETS modplug DESTINATION lib)
+ 
+-# incstall the headers:
++# install the headers:
+ install(FILES
+-  src/libmodplug/it_defs.h
+-  src/libmodplug/sndfile.h
+-  src/libmodplug/stdafx.h
+   src/modplug.h
++  ${HEADERS_CXX}
+ 
+   DESTINATION
+   include/libmodplug
+-  )
+-
+-set(VERSION "0.8.8.5")
+-
+-if(HAVE_SETENV)
+-  add_definitions(-DHAVE_SETENV)
+-endif(HAVE_SETENV)
+-if(HAVE_SINF)
+-  add_definitions(-DHAVE_SINF)
+-endif(HAVE_SINF)
++)
+ 
+ if (NOT WIN32)
+   set(prefix "${CMAKE_INSTALL_PREFIX}")
 diff -u libmodplug-0.8.9.0/configure~ libmodplug-0.8.9.0/configure
 --- libmodplug-0.8.9.0/configure~
 +++ libmodplug-0.8.9.0/configure
-@@ -16702,13 +16702,12 @@ fi
+@@ -634,6 +634,8 @@ am__EXEEXT_TRUE
+ LTLIBOBJS
+ LIBOBJS
+ MODPLUG_LIBRARY_VERSION
++EXPORT_CXX_FALSE
++EXPORT_CXX_TRUE
+ LT_LDFLAGS
+ LT_SYS_LIBRARY_PATH
+ OTOOL64
+@@ -772,6 +774,10 @@ with_aix_soname
+ with_gnu_ld
+ with_sysroot
+ enable_libtool_lock
++enable_cxx_interface
++enable_midi
++enable_wav
++enable_mmcmp
+ '
+       ac_precious_vars='build_alias
+ host_alias
+@@ -1418,6 +1424,11 @@ Optional Features:
+   --enable-fast-install[=PKGS]
+                           optimize for fast installation [default=yes]
+   --disable-libtool-lock  avoid locking (might break parallel builds)
++  --enable-cxx-interface  export C++ interface from library [[default=yes]]
++  --enable-midi           compile with midi formats support [[default=no]]
++  --enable-wav            compile with wav formats support [[default=no]]
++  --enable-mmcmp          compile with mmcmp and pp20 decompression support
++                          [[default=no]]
+ 
+ Optional Packages:
+   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
+@@ -16702,13 +16713,12 @@ fi
  
  done
  
@@ -55,6 +341,108 @@ diff -u libmodplug-0.8.9.0/configure~ libmodplug-0.8.9.0/configure
  _ACEOF
  
  fi
+@@ -16786,6 +16796,66 @@ case ${target_os} in
+ 		;;
+ esac
+ 
++# Check whether --enable-cxx_interface was given.
++if test "${enable_cxx_interface+set}" = set; then :
++  enableval=$enable_cxx_interface;
++else
++  enable_cxx_interface=yes
++fi
++
++if test x$enable_cxx_interface != xyes; then
++
++$as_echo "#define NO_CXX_EXPORTS 1" >>confdefs.h
++
++fi
++ if test x$enable_cxx_interface = xyes; then
++  EXPORT_CXX_TRUE=
++  EXPORT_CXX_FALSE='#'
++else
++  EXPORT_CXX_TRUE='#'
++  EXPORT_CXX_FALSE=
++fi
++
++
++# Check whether --enable-midi was given.
++if test "${enable_midi+set}" = set; then :
++  enableval=$enable_midi;
++else
++  enable_midi=no
++fi
++
++if test x$enable_midi = xyes; then
++
++$as_echo "#define MIDIFMT_SUPPORT 1" >>confdefs.h
++
++fi
++
++# Check whether --enable-wav was given.
++if test "${enable_wav+set}" = set; then :
++  enableval=$enable_wav;
++else
++  enable_wav=no
++fi
++
++if test x$enable_wav = xyes; then
++
++$as_echo "#define WAV_SUPPORT 1" >>confdefs.h
++
++fi
++
++# Check whether --enable-mmcmp was given.
++if test "${enable_mmcmp+set}" = set; then :
++  enableval=$enable_mmcmp;
++else
++  enable_mmcmp=no
++fi
++
++if test x$enable_mmcmp = xyes; then
++
++$as_echo "#define MMCMP_SUPPORT 1" >>confdefs.h
++
++fi
++
+ # portable types. requires autoconf 2.60
+ # `configure' will check if these are defined in system headers.
+ # if not, it will auto-detect and define them in `config.h'
+@@ -17036,6 +17106,10 @@ if test -z "${am__fastdepCXX_TRUE}" && t
+ Usually this means the macro was only invoked conditionally." "$LINENO" 5
+ fi
+ 
++if test -z "${EXPORT_CXX_TRUE}" && test -z "${EXPORT_CXX_FALSE}"; then
++  as_fn_error $? "conditional \"EXPORT_CXX\" was never defined.
++Usually this means the macro was only invoked conditionally." "$LINENO" 5
++fi
+ 
+ : "${CONFIG_STATUS=./config.status}"
+ ac_write_fail=0
+diff -u libmodplug-0.8.9.0/Makefile.am~ libmodplug-0.8.9.0b/Makefile.am
+--- libmodplug-0.8.9.0/Makefile.am
++++ libmodplug-0.8.9.0/Makefile.am
+@@ -2,7 +2,7 @@ ACLOCAL_AMFLAGS = -I m4
+ 
+ SUBDIRS = src
+ 
+-EXTRA_DIST =	 \
++EXTRA_DIST = CMakeLists.txt \
+ 	AUTHORS COPYING ChangeLog \
+ 	INSTALL README TODO
+ 
+diff -u libmodplug-0.8.9.0/Makefile.in~ libmodplug-0.8.9.0b/Makefile.in
+--- libmodplug-0.8.9.0/Makefile.in
++++ libmodplug-0.8.9.0/Makefile.in
+@@ -359,7 +359,7 @@ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+ ACLOCAL_AMFLAGS = -I m4
+ SUBDIRS = src
+-EXTRA_DIST = \
++EXTRA_DIST = CMakeLists.txt \
+ 	AUTHORS COPYING ChangeLog \
+ 	INSTALL README TODO
+ 
 diff -u libmodplug-0.8.9.0/src/config.h.in~ libmodplug-0.8.9.0/src/config.h.in
 --- libmodplug-0.8.9.0/src/config.h.in~
 +++ libmodplug-0.8.9.0/src/config.h.in
@@ -68,6 +456,32 @@ diff -u libmodplug-0.8.9.0/src/config.h.in~ libmodplug-0.8.9.0/src/config.h.in
  /* Define to 1 if you have the `sinf' function. */
  #undef HAVE_SINF
  
+@@ -45,6 +42,15 @@
+ /* Define to the sub-directory where libtool stores uninstalled libraries. */
+ #undef LT_OBJDIR
+ 
++/* Enable midi formats support. */
++#undef MIDIFMT_SUPPORT
++
++/* Enable mmcmp and pp20 decompression support. */
++#undef MMCMP_SUPPORT
++
++/* Do not export the C++ interface. */
++#undef NO_CXX_EXPORTS
++
+ /* Name of package */
+ #undef PACKAGE
+ 
+@@ -72,6 +78,9 @@
+ /* Version number of package */
+ #undef VERSION
+ 
++/* Enable wav formats support. */
++#undef WAV_SUPPORT
++
+ /* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
+    significant byte first (like Motorola and SPARC, unlike Intel). */
+ #if defined AC_APPLE_UNIVERSAL_BUILD
 diff -u libmodplug-0.8.9.0/src/fastmix.cpp~ libmodplug-0.8.9.0/src/fastmix.cpp
 --- libmodplug-0.8.9.0/src/fastmix.cpp~
 +++ libmodplug-0.8.9.0/src/fastmix.cpp
@@ -290,11 +704,12 @@ diff -u libmodplug-0.8.9.0/src/libmodplug/sndfile.h~ libmodplug-0.8.9.0/src/libm
  // Channel Struct
  typedef struct _MODCHANNEL
  {
-@@ -427,11 +417,9 @@ typedef struct _MODCHANNEL
+@@ -427,11 +417,10 @@ typedef struct _MODCHANNEL
  	BYTE nRowNote, nRowInstr;
  	BYTE nRowVolCmd, nRowVolume;
  	BYTE nRowCommand, nRowParam;
 -	BYTE nLeftVU, nRightVU;
++	BYTE nLeftVU, nRightVU; /* NOT USED! */
  	BYTE nActiveMacro, nPadding;
  } MODCHANNEL;
  
@@ -302,7 +717,7 @@ diff -u libmodplug-0.8.9.0/src/libmodplug/sndfile.h~ libmodplug-0.8.9.0/src/libm
  typedef struct _MODCHANNELSETTINGS
  {
  	UINT nPan;
-@@ -441,7 +429,6 @@ typedef struct _MODCHANNELSETTINGS
+@@ -441,7 +430,6 @@ typedef struct _MODCHANNELSETTINGS
          char szName[MAX_CHANNELNAME];        // changed from CHAR
  } MODCHANNELSETTINGS;
  
@@ -310,7 +725,7 @@ diff -u libmodplug-0.8.9.0/src/libmodplug/sndfile.h~ libmodplug-0.8.9.0/src/libm
  typedef struct _MODCOMMAND
  {
  	BYTE note;
-@@ -456,7 +443,7 @@ typedef struct _MODCOMMAND
+@@ -456,7 +444,7 @@ typedef struct _MODCOMMAND
  // Mix Plugins
  #define MIXPLUG_MIXREADY			0x01	// Set when cleared
  
@@ -319,7 +734,7 @@ diff -u libmodplug-0.8.9.0/src/libmodplug/sndfile.h~ libmodplug-0.8.9.0/src/libm
  {
  public:
  	virtual ~IMixPlugin() {};
-@@ -520,7 +507,6 @@ enum {
+@@ -520,7 +508,6 @@ enum {
  	MIDIOUT_PROGRAM,
  };
  
@@ -327,7 +742,7 @@ diff -u libmodplug-0.8.9.0/src/libmodplug/sndfile.h~ libmodplug-0.8.9.0/src/libm
  typedef struct MODMIDICFG
  {
          char szMidiGlb[9*32];      // changed from CHAR
-@@ -533,9 +519,8 @@ typedef struct MODMIDICFG
+@@ -533,9 +520,8 @@ typedef struct MODMIDICFG
  typedef VOID (* LPSNDMIXHOOKPROC)(int *, unsigned long, unsigned long); // buffer, samples, channels
  
  
@@ -338,30 +753,17 @@ diff -u libmodplug-0.8.9.0/src/libmodplug/sndfile.h~ libmodplug-0.8.9.0/src/libm
  //==============
  {
  public:	// Static Members
-@@ -638,7 +623,9 @@ public:
- 	BOOL ReadIT(LPCBYTE lpStream, DWORD dwMemLength);
- 	BOOL Read669(LPCBYTE lpStream, DWORD dwMemLength);
- 	BOOL ReadUlt(LPCBYTE lpStream, DWORD dwMemLength);
-+#ifdef WAV_SUPPORT
- 	BOOL ReadWav(LPCBYTE lpStream, DWORD dwMemLength);
-+#endif
- 	BOOL ReadDSM(LPCBYTE lpStream, DWORD dwMemLength);
- 	BOOL ReadFAR(LPCBYTE lpStream, DWORD dwMemLength);
- 	BOOL ReadAMS(LPCBYTE lpStream, DWORD dwMemLength);
-@@ -651,29 +638,19 @@ public:
+@@ -651,7 +637,6 @@ public:
  	BOOL ReadAMF(LPCBYTE lpStream, DWORD dwMemLength);
  	BOOL ReadMT2(LPCBYTE lpStream, DWORD dwMemLength);
  	BOOL ReadPSM(LPCBYTE lpStream, DWORD dwMemLength);
 -	BOOL ReadJ2B(LPCBYTE lpStream, DWORD dwMemLength);
  	BOOL ReadUMX(LPCBYTE lpStream, DWORD dwMemLength);
-+#ifdef MIDIFMT_SUPPORT
  	BOOL ReadABC(LPCBYTE lpStream, DWORD dwMemLength);
  	BOOL TestABC(LPCBYTE lpStream, DWORD dwMemLength);
- 	BOOL ReadMID(LPCBYTE lpStream, DWORD dwMemLength);
- 	BOOL TestMID(LPCBYTE lpStream, DWORD dwMemLength);
+@@ -660,20 +645,9 @@ public:
  	BOOL ReadPAT(LPCBYTE lpStream, DWORD dwMemLength);
  	BOOL TestPAT(LPCBYTE lpStream, DWORD dwMemLength);
-+#endif
  	// Save Functions
 -#ifndef MODPLUG_NO_FILESAVE
 -	UINT WriteSample(FILE *f, MODINSTRUMENT *pins, UINT nFlags, UINT nMaxLen=0);
@@ -380,7 +782,7 @@ diff -u libmodplug-0.8.9.0/src/libmodplug/sndfile.h~ libmodplug-0.8.9.0/src/libm
  
  public:
  	// Real-time sound functions
-@@ -759,8 +736,7 @@ public:
+@@ -759,8 +733,7 @@ public:
  	BOOL IsValidBackwardJump(UINT nStartOrder, UINT nStartRow, UINT nJumpOrder, UINT nJumpRow) const;
  	// Read/Write sample functions
  	signed char GetDeltaValue(signed char prev, UINT n) const { return (signed char)(prev + CompressionTable[n & 0x0F]); }
@@ -390,7 +792,7 @@ diff -u libmodplug-0.8.9.0/src/libmodplug/sndfile.h~ libmodplug-0.8.9.0/src/libm
  	UINT ReadSample(MODINSTRUMENT *pIns, UINT nFlags, LPCSTR pMemFile, DWORD dwMemLength);
  	BOOL DestroySample(UINT nSample);
  	BOOL DestroyInstrument(UINT nInstr);
-@@ -803,11 +779,6 @@ public:
+@@ -803,11 +776,6 @@ public:
  	static UINT Normalize24BitBuffer(LPBYTE pbuffer, UINT cbsizebytes, DWORD lmax24, DWORD dwByteInc);
  };
  
@@ -402,7 +804,7 @@ diff -u libmodplug-0.8.9.0/src/libmodplug/sndfile.h~ libmodplug-0.8.9.0/src/libm
  //////////////////////////////////////////////////////////
  // WAVE format information
  
-@@ -848,7 +819,6 @@ typedef struct WAVEFILEHEADER
+@@ -848,7 +816,6 @@ typedef struct WAVEFILEHEADER
  	DWORD id_WAVE;
  } WAVEFILEHEADER;
  
@@ -410,7 +812,7 @@ diff -u libmodplug-0.8.9.0/src/libmodplug/sndfile.h~ libmodplug-0.8.9.0/src/libm
  typedef struct WAVEFORMATHEADER
  {
  	DWORD id_fmt;		// "fmt "
-@@ -861,14 +831,12 @@ typedef struct WAVEFORMATHEADER
+@@ -861,14 +828,12 @@ typedef struct WAVEFORMATHEADER
  	WORD bitspersample;	// bits per sample (8/16)
  } WAVEFORMATHEADER;
  
@@ -425,7 +827,7 @@ diff -u libmodplug-0.8.9.0/src/libmodplug/sndfile.h~ libmodplug-0.8.9.0/src/libm
  typedef struct WAVESMPLHEADER
  {
  	// SMPL
-@@ -885,7 +853,6 @@ typedef struct WAVESMPLHEADER
+@@ -885,7 +850,6 @@ typedef struct WAVESMPLHEADER
  	DWORD cbSamplerData;
  } WAVESMPLHEADER;
  
@@ -433,7 +835,7 @@ diff -u libmodplug-0.8.9.0/src/libmodplug/sndfile.h~ libmodplug-0.8.9.0/src/libm
  typedef struct SAMPLELOOPSTRUCT
  {
  	DWORD dwIdentifier;
-@@ -896,14 +863,12 @@ typedef struct SAMPLELOOPSTRUCT
+@@ -896,14 +860,12 @@ typedef struct SAMPLELOOPSTRUCT
  	DWORD dwPlayCount;		// Loop Count, 0=infinite
  } SAMPLELOOPSTRUCT;
  
@@ -448,7 +850,7 @@ diff -u libmodplug-0.8.9.0/src/libmodplug/sndfile.h~ libmodplug-0.8.9.0/src/libm
  typedef struct WAVELISTHEADER
  {
  	DWORD list_id;	// "LIST" -> 0x5453494C
-@@ -911,7 +876,6 @@ typedef struct WAVELISTHEADER
+@@ -911,7 +873,6 @@ typedef struct WAVELISTHEADER
  	DWORD info;		// "INFO"
  } WAVELISTHEADER;
  
@@ -456,7 +858,7 @@ diff -u libmodplug-0.8.9.0/src/libmodplug/sndfile.h~ libmodplug-0.8.9.0/src/libm
  typedef struct WAVEEXTRAHEADER
  {
  	DWORD xtra_id;	// "xtra"	-> 0x61727478
-@@ -943,7 +907,7 @@ typedef struct WAVEEXTRAHEADER
+@@ -943,7 +904,7 @@ typedef struct WAVEEXTRAHEADER
  #define AGC_UNITY			(1 << AGC_PRECISION)
  
  // Calling conventions
@@ -465,7 +867,7 @@ diff -u libmodplug-0.8.9.0/src/libmodplug/sndfile.h~ libmodplug-0.8.9.0/src/libm
  #define MPPASMCALL	__cdecl
  #define MPPFASTCALL	__fastcall
  #else
-@@ -958,6 +922,9 @@ int _muldiv(long a, long b, long c);
+@@ -958,6 +919,9 @@ int _muldiv(long a, long b, long c);
  int _muldivr(long a, long b, long c);
  
  
@@ -478,15 +880,8 @@ diff -u libmodplug-0.8.9.0/src/libmodplug/sndfile.h~ libmodplug-0.8.9.0/src/libm
 diff -u libmodplug-0.8.9.0/src/libmodplug/stdafx.h~ libmodplug-0.8.9.0/src/libmodplug/stdafx.h
 --- libmodplug-0.8.9.0/src/libmodplug/stdafx.h~
 +++ libmodplug-0.8.9.0/src/libmodplug/stdafx.h
-@@ -21,13 +21,18 @@
- # include <stdint.h>
- #endif
+@@ -23,11 +23,11 @@
  
-+/*#define CXX_INTERFACE*/ /* export C++ interface from dll. */
-+/*#define MIDIFMT_SUPPORT*/
-+/*#define WAV_SUPPORT*/
-+/*#define MMCMP_SUPPORT*/
-+
  /* disable AGC and FILESAVE for all targets for uniformity. */
  #define NO_AGC
 -#define MODPLUG_NO_FILESAVE
@@ -499,7 +894,7 @@ diff -u libmodplug-0.8.9.0/src/libmodplug/stdafx.h~ libmodplug-0.8.9.0/src/libmo
  #pragma warning (disable:4201)
  #pragma warning (disable:4514)
  #endif
-@@ -38,7 +43,16 @@
+@@ -38,7 +38,16 @@
  #include <mmsystem.h>
  #include <stdio.h>
  #include <malloc.h>
@@ -516,7 +911,7 @@ diff -u libmodplug-0.8.9.0/src/libmodplug/stdafx.h~ libmodplug-0.8.9.0/src/libmo
  
  #define srandom(_seed)  srand(_seed)
  #define random()        rand()
-@@ -51,7 +65,9 @@ inline void ProcessPlugins(int n) {}
+@@ -51,7 +60,9 @@ inline void ProcessPlugins(int n) {}
  #define strcasecmp(a,b)     _stricmp(a,b)
  #define strncasecmp(a,b,c)  _strnicmp(a,b,c)
  
@@ -526,7 +921,7 @@ diff -u libmodplug-0.8.9.0/src/libmodplug/stdafx.h~ libmodplug-0.8.9.0/src/libmo
  
  #ifndef isblank
  #define isblank(c) ((c) == ' ' || (c) == '\t')
-@@ -66,6 +82,11 @@ inline void ProcessPlugins(int n) {}
+@@ -66,6 +77,11 @@ inline void ProcessPlugins(int n) {}
  #include <malloc.h>
  #endif
  
@@ -538,7 +933,7 @@ diff -u libmodplug-0.8.9.0/src/libmodplug/stdafx.h~ libmodplug-0.8.9.0/src/libmo
  typedef int8_t CHAR;
  typedef uint8_t UCHAR;
  typedef uint8_t* PUCHAR;
-@@ -88,12 +109,6 @@ typedef const char* LPCSTR;
+@@ -88,12 +104,6 @@ typedef const char* LPCSTR;
  typedef void* PVOID;
  typedef void VOID;
  
@@ -551,7 +946,7 @@ diff -u libmodplug-0.8.9.0/src/libmodplug/stdafx.h~ libmodplug-0.8.9.0/src/libmo
  #define LPCTSTR LPCSTR
  #define lstrcpyn strncpy
  #define lstrcpy strcpy
-@@ -132,10 +147,22 @@ inline void ProcessPlugins(int n) {}
+@@ -132,10 +142,22 @@ inline void ProcessPlugins(int n) {}
  # else
  #   define MODPLUG_EXPORT __declspec(dllimport)			/* using libmodplug dll for windows */
  # endif
@@ -567,7 +962,7 @@ diff -u libmodplug-0.8.9.0/src/libmodplug/stdafx.h~ libmodplug-0.8.9.0/src/libmo
  #define MODPLUG_EXPORT
  #endif
  
-+#if defined(CXX_INTERFACE)
++#if !defined(NO_CXX_EXPORTS)
 +#define MODPLUG_EXPORTPP	MODPLUG_EXPORT
 +#else
 +#define MODPLUG_EXPORTPP
@@ -619,11 +1014,19 @@ diff -u libmodplug-0.8.9.0/src/load_669.cpp~ libmodplug-0.8.9.0/src/load_669.cpp
 diff -u libmodplug-0.8.9.0/src/load_abc.cpp~ libmodplug-0.8.9.0/src/load_abc.cpp
 --- libmodplug-0.8.9.0/src/load_abc.cpp~
 +++ libmodplug-0.8.9.0/src/load_abc.cpp
-@@ -37,9 +37,11 @@
+@@ -37,9 +37,19 @@
  #include "stdafx.h"
  #include "sndfile.h"
  
-+#ifdef MIDIFMT_SUPPORT
++#ifndef MIDIFMT_SUPPORT
++BOOL CSoundFile::TestABC(const BYTE *lpStream, DWORD dwMemLength) {
++	return FALSE;
++}
++BOOL CSoundFile::ReadABC(const BYTE *lpStream, DWORD dwMemLength) {
++	return FALSE;
++}
++
++#else
 +
  #include "load_pat.h"
  
@@ -632,7 +1035,7 @@ diff -u libmodplug-0.8.9.0/src/load_abc.cpp~ libmodplug-0.8.9.0/src/load_abc.cpp
  #define putenv _putenv
  #define strdup _strdup
  #endif
-@@ -256,16 +258,6 @@ static void abc_add_setjumploop(ABCHANDL
+@@ -256,16 +266,6 @@ static void abc_add_setjumploop(ABCHANDL
  static uint32_t abc_pattracktime(ABCHANDLE *h, uint32_t tracktime);
  static int abc_patno(ABCHANDLE *h, uint32_t tracktime);
  
@@ -649,7 +1052,7 @@ diff -u libmodplug-0.8.9.0/src/load_abc.cpp~ libmodplug-0.8.9.0/src/load_abc.cpp
  
  static int abc_isvalidchar(char c) {
  	return(isalpha(c) || isdigit(c) || isspace(c) || c == '%' || c == ':');
-@@ -403,7 +395,7 @@ static void abc_dumptracks(ABCHANDLE *h,
+@@ -403,7 +403,7 @@ static void abc_dumptracks(ABCHANDLE *h,
  	}
  }
  
@@ -658,7 +1061,7 @@ diff -u libmodplug-0.8.9.0/src/load_abc.cpp~ libmodplug-0.8.9.0/src/load_abc.cpp
  #undef _mm_free
  #endif
  
-@@ -1484,7 +1476,7 @@ static void	abc_add_chord(const char *p,
+@@ -1484,7 +1484,7 @@ static void	abc_add_chord(const char *p,
  			d[chordnote] = i;
  			break;
  		}
@@ -667,7 +1070,7 @@ diff -u libmodplug-0.8.9.0/src/load_abc.cpp~ libmodplug-0.8.9.0/src/load_abc.cpp
  	switch(*p) {
  		case 'b':
  			d[chordnote]--;
-@@ -1506,7 +1498,7 @@ static void	abc_add_chord(const char *p,
+@@ -1506,7 +1506,7 @@ static void	abc_add_chord(const char *p,
  				d[chordbase] = i;
  				break;
  			}
@@ -676,7 +1079,7 @@ diff -u libmodplug-0.8.9.0/src/load_abc.cpp~ libmodplug-0.8.9.0/src/load_abc.cpp
  		switch(*p) {
  			case 'b':
  				d[chordbase]--;
-@@ -2345,9 +2337,9 @@ BOOL CSoundFile::TestABC(const BYTE *lpS
+@@ -2345,9 +2345,9 @@ BOOL CSoundFile::TestABC(const BYTE *lpS
  // =====================================================================================
  static ABCHANDLE *ABC_Init(void)
  {
@@ -687,7 +1090,7 @@ diff -u libmodplug-0.8.9.0/src/load_abc.cpp~ libmodplug-0.8.9.0/src/load_abc.cpp
  	retval = (ABCHANDLE *)calloc(1,sizeof(ABCHANDLE));
  	if( !retval ) return NULL;
  	retval->track       = NULL;
-@@ -2365,16 +2357,16 @@ static ABCHANDLE *ABC_Init(void)
+@@ -2365,16 +2365,16 @@ static ABCHANDLE *ABC_Init(void)
  			retval->pickrandom = atoi(p);
  		if( *p == '-' ) {
  			retval->pickrandom = atoi(p+1)-1; // xmms preloads the file
@@ -708,7 +1111,7 @@ diff -u libmodplug-0.8.9.0/src/load_abc.cpp~ libmodplug-0.8.9.0/src/load_abc.cpp
  	}
  	return retval;
  }
-@@ -2643,10 +2635,11 @@ static int ABC_ReadPatterns(MODCOMMAND *
+@@ -2643,10 +2643,11 @@ static int ABC_ReadPatterns(MODCOMMAND *
  static int ABC_Key(const char *p)
  {
  	int i,j;
@@ -721,7 +1124,7 @@ diff -u libmodplug-0.8.9.0/src/load_abc.cpp~ libmodplug-0.8.9.0/src/load_abc.cpp
  	for( i=0; i<8 && *p && *p != ']'; p++ ) {
  		if( isspace(*p) ) {
  			while( isspace(*p) ) p++;
-@@ -2939,9 +2932,10 @@ static void abc_MIDI_voice(const char *p
+@@ -2939,9 +2940,10 @@ static void abc_MIDI_voice(const char *p
  static void abc_MIDI_chordname(const char *p)
  {
  	char name[20];
@@ -734,7 +1137,7 @@ diff -u libmodplug-0.8.9.0/src/load_abc.cpp~ libmodplug-0.8.9.0/src/load_abc.cpp
  	i = 0;
  	while ((i < 19) && (*p != ' ') && (*p != '\0')) {
  		name[i] = *p;
-@@ -2953,9 +2947,12 @@ static void abc_MIDI_chordname(const cha
+@@ -2953,9 +2955,12 @@ static void abc_MIDI_chordname(const cha
  		abc_message("Failure: Bad format for chordname command, %s", p);
  	}
  	else {
@@ -748,7 +1151,7 @@ diff -u libmodplug-0.8.9.0/src/load_abc.cpp~ libmodplug-0.8.9.0/src/load_abc.cpp
  			p += abc_getnumber(p, &notes[i]);
  			i = i + 1;
  		}
-@@ -4878,3 +4875,4 @@ BOOL CSoundFile::ReadABC(const uint8_t *
+@@ -4878,3 +4883,4 @@ BOOL CSoundFile::ReadABC(const uint8_t *
  	ABC_Cleanup(h);	// we dont need it anymore
  	return 1;
  }
@@ -1534,17 +1937,25 @@ diff -u libmodplug-0.8.9.0/src/load_med.cpp~ libmodplug-0.8.9.0/src/load_med.cpp
 diff -u libmodplug-0.8.9.0/src/load_mid.cpp~ libmodplug-0.8.9.0/src/load_mid.cpp
 --- libmodplug-0.8.9.0/src/load_mid.cpp~
 +++ libmodplug-0.8.9.0/src/load_mid.cpp
-@@ -35,6 +35,9 @@
+@@ -35,6 +35,17 @@
  
  #include "stdafx.h"
  #include "sndfile.h"
 +
-+#ifdef MIDIFMT_SUPPORT
++#ifndef MIDIFMT_SUPPORT
++BOOL CSoundFile::TestMID(const BYTE *lpStream, DWORD dwMemLength) {
++	return FALSE;
++}
++BOOL CSoundFile::ReadMID(const BYTE *lpStream, DWORD dwMemLength) {
++	return FALSE;
++}
++
++#else
 +
  #define PAN_LEFT    0x30
  #define PAN_RIGHT   0xD0
  #define MAX_POLYPHONY 16  // max notes in one midi channel
-@@ -88,11 +91,11 @@ typedef struct _MIDTRACK
+@@ -88,11 +99,11 @@ typedef struct _MIDTRACK
  	BYTE instr;	// current instrument for this track
  } MIDTRACK;
  
@@ -1558,7 +1969,7 @@ diff -u libmodplug-0.8.9.0/src/load_mid.cpp~ libmodplug-0.8.9.0/src/load_mid.cpp
  #define _mm_fseek(f,pos,whence)			fseek(f,pos,whence)
  #define _mm_read_UBYTES(buf,sz,f)		fread(buf,sz,1,f)
  #define _mm_read_SBYTES(buf,sz,f)		fread(buf,sz,1,f)
-@@ -256,18 +259,18 @@ static void mid_adjust_for_optimal_tempo
+@@ -256,18 +267,18 @@ static void mid_adjust_for_optimal_tempo
  static MIDEVENT *mid_new_event(MIDHANDLE *h)
  // =====================================================================================
  {
@@ -1588,7 +1999,7 @@ diff -u libmodplug-0.8.9.0/src/load_mid.cpp~ libmodplug-0.8.9.0/src/load_mid.cpp
  }
  
  // =====================================================================================
-@@ -1582,3 +1585,4 @@ BOOL CSoundFile::ReadMID(const BYTE *lpS
+@@ -1582,3 +1593,4 @@ BOOL CSoundFile::ReadMID(const BYTE *lpS
  	avoid_reentry = 0; // it is safe now, I'm finished
  	return TRUE;
  }
@@ -1880,7 +2291,7 @@ diff -u libmodplug-0.8.9.0/src/load_mod.cpp~ libmodplug-0.8.9.0/src/load_mod.cpp
 diff -u libmodplug-0.8.9.0/src/load_pat.cpp~ libmodplug-0.8.9.0/src/load_pat.cpp
 --- libmodplug-0.8.9.0/src/load_pat.cpp~
 +++ libmodplug-0.8.9.0/src/load_pat.cpp
-@@ -33,36 +33,39 @@
+@@ -33,36 +33,47 @@
  #include <string.h>
  #include <math.h>
  #include <ctype.h>
@@ -1898,7 +2309,15 @@ diff -u libmodplug-0.8.9.0/src/load_pat.cpp~ libmodplug-0.8.9.0/src/load_pat.cpp
  
 -#include "stdafx.h"
 -#include "sndfile.h"
-+#ifdef MIDIFMT_SUPPORT
++#ifndef MIDIFMT_SUPPORT
++BOOL CSoundFile::TestPAT(const BYTE *lpStream, DWORD dwMemLength) {
++	return FALSE;
++}
++BOOL CSoundFile::ReadPAT(const BYTE *lpStream, DWORD dwMemLength) {
++	return FALSE;
++}
++
++#else
  
  #include "load_pat.h"
  
@@ -1928,7 +2347,7 @@ diff -u libmodplug-0.8.9.0/src/load_pat.cpp~ libmodplug-0.8.9.0/src/load_pat.cpp
  
  #pragma pack(1)
  
-@@ -272,7 +275,7 @@ typedef float (*PAT_SAMPLE_FUN)(int);
+@@ -272,7 +283,7 @@ typedef float (*PAT_SAMPLE_FUN)(int);
  
  static PAT_SAMPLE_FUN pat_fun[] = { pat_sinus, pat_square, pat_sawtooth };
  
@@ -1937,7 +2356,7 @@ diff -u libmodplug-0.8.9.0/src/load_pat.cpp~ libmodplug-0.8.9.0/src/load_pat.cpp
  #undef _mm_free
  #endif
  
-@@ -764,10 +767,7 @@ BOOL CSoundFile::TestPAT(const BYTE *lpS
+@@ -764,10 +775,7 @@ BOOL CSoundFile::TestPAT(const BYTE *lpS
  // =====================================================================================
  static PATHANDLE *PAT_Init(void)
  {
@@ -1949,7 +2368,7 @@ diff -u libmodplug-0.8.9.0/src/load_pat.cpp~ libmodplug-0.8.9.0/src/load_pat.cpp
  }
  
  // =====================================================================================
-@@ -1259,3 +1259,4 @@ BOOL CSoundFile::ReadPAT(const BYTE *lpS
+@@ -1259,3 +1267,4 @@ BOOL CSoundFile::ReadPAT(const BYTE *lpS
  	PAT_Cleanup(h);	// we dont need it anymore
  	return 1;
  }
@@ -2895,16 +3314,25 @@ diff -u libmodplug-0.8.9.0/src/load_stm.cpp~ libmodplug-0.8.9.0/src/load_stm.cpp
 diff -u libmodplug-0.8.9.0/src/load_wav.cpp~ libmodplug-0.8.9.0/src/load_wav.cpp
 --- libmodplug-0.8.9.0/src/load_wav.cpp~
 +++ libmodplug-0.8.9.0/src/load_wav.cpp
-@@ -7,6 +7,8 @@
+@@ -7,6 +7,12 @@
  #include "stdafx.h"
  #include "sndfile.h"
  
-+#ifdef WAV_SUPPORT
++#ifndef WAV_SUPPORT
++BOOL CSoundFile::ReadWav(const BYTE *lpStream,DWORD dwMemLength) {
++	return FALSE;
++}
++#else
 +
  #ifndef WAVE_FORMAT_EXTENSIBLE
  #define WAVE_FORMAT_EXTENSIBLE	0xFFFE
  #endif
-@@ -144,14 +146,12 @@ BOOL CSoundFile::ReadWav(const BYTE *lpS
+@@ -139,19 +145,16 @@ BOOL CSoundFile::ReadWav(const BYTE *lpS
+ 	return TRUE;
+ }
+ 
+-
+ ////////////////////////////////////////////////////////////////////////
  // IMA ADPCM Support
  
  #pragma pack(1)
@@ -2919,7 +3347,7 @@ diff -u libmodplug-0.8.9.0/src/load_wav.cpp~ libmodplug-0.8.9.0/src/load_wav.cpp
  #pragma pack()
  
  static const int gIMAUnpackTable[90] =
-@@ -170,7 +170,6 @@ static const int gIMAUnpackTable[90] =
+@@ -170,7 +173,6 @@ static const int gIMAUnpackTable[90] =
    32767, 0
  };
  
@@ -2927,7 +3355,7 @@ diff -u libmodplug-0.8.9.0/src/load_wav.cpp~ libmodplug-0.8.9.0/src/load_wav.cpp
  BOOL IMAADPCMUnpack16(signed short *pdest, UINT nLen, LPBYTE psrc, DWORD dwBytes, UINT pkBlkAlign)
  //------------------------------------------------------------------------------------------------
  {
-@@ -215,3 +214,4 @@ BOOL IMAADPCMUnpack16(signed short *pdes
+@@ -215,3 +217,4 @@ BOOL IMAADPCMUnpack16(signed short *pdes
  	}
  	return TRUE;
  }
@@ -3295,10 +3723,33 @@ diff -u libmodplug-0.8.9.0/src/Makefile.am~ libmodplug-0.8.9.0/src/Makefile.am
                          load_mt2.cpp       \
                          load_psm.cpp       \
                          load_abc.cpp       \
+@@ -45,6 +44,8 @@ libmodplug_la_SOURCES = tables.h        
+ 
+ libmodplugincludedir = $(includedir)/libmodplug
+ 
+-
+-libmodpluginclude_HEADERS = libmodplug/stdafx.h libmodplug/sndfile.h libmodplug/it_defs.h modplug.h
++if EXPORT_CXX
++HEADERS_CXX = libmodplug/stdafx.h libmodplug/sndfile.h libmodplug/it_defs.h
++endif
++libmodpluginclude_HEADERS = modplug.h $(HEADERS_CXX)
+ noinst_HEADERS = load_pat.h
 diff -u libmodplug-0.8.9.0/src/Makefile.in~ libmodplug-0.8.9.0/src/Makefile.in
 --- libmodplug-0.8.9.0/src/Makefile.in~
 +++ libmodplug-0.8.9.0/src/Makefile.in
-@@ -139,8 +139,8 @@ am_libmodplug_la_OBJECTS = sndmix.lo snd
+@@ -97,8 +97,9 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/l
+ 	$(top_srcdir)/configure.ac
+ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
+ 	$(ACLOCAL_M4)
+-DIST_COMMON = $(srcdir)/Makefile.am $(libmodpluginclude_HEADERS) \
+-	$(noinst_HEADERS) $(am__DIST_COMMON)
++DIST_COMMON = $(srcdir)/Makefile.am \
++	$(am__libmodpluginclude_HEADERS_DIST) $(noinst_HEADERS) \
++	$(am__DIST_COMMON)
+ mkinstalldirs = $(install_sh) -d
+ CONFIG_HEADER = config.h
+ CONFIG_CLEAN_FILES =
+@@ -139,8 +140,8 @@ am_libmodplug_la_OBJECTS = sndmix.lo snd
  	load_umx.lo load_ult.lo load_stm.lo load_s3m.lo load_ptm.lo \
  	load_okt.lo load_mtm.lo load_mod.lo load_med.lo load_mdl.lo \
  	load_it.lo load_far.lo load_dsm.lo load_dmf.lo load_dbm.lo \
@@ -3309,7 +3760,16 @@ diff -u libmodplug-0.8.9.0/src/Makefile.in~ libmodplug-0.8.9.0/src/Makefile.in
  libmodplug_la_OBJECTS = $(am_libmodplug_la_OBJECTS)
  AM_V_lt = $(am__v_lt_@AM_V@)
  am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
-@@ -392,7 +392,6 @@ libmodplug_la_SOURCES = tables.h        
+@@ -209,6 +210,8 @@ am__can_run_installinfo = \
+     n|no|NO) false;; \
+     *) (install-info --version) >/dev/null 2>&1;; \
+   esac
++am__libmodpluginclude_HEADERS_DIST = modplug.h libmodplug/stdafx.h \
++	libmodplug/sndfile.h libmodplug/it_defs.h
+ HEADERS = $(libmodpluginclude_HEADERS) $(noinst_HEADERS)
+ am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) \
+ 	$(LISP)config.h.in
+@@ -392,7 +395,6 @@ libmodplug_la_SOURCES = tables.h        
                          load_ams.cpp       \
                          load_amf.cpp       \
                          load_669.cpp       \
@@ -3317,7 +3777,17 @@ diff -u libmodplug-0.8.9.0/src/Makefile.in~ libmodplug-0.8.9.0/src/Makefile.in
                          load_mt2.cpp       \
                          load_psm.cpp       \
                          load_abc.cpp       \
-@@ -507,7 +506,6 @@ distclean-compile:
+@@ -401,7 +403,8 @@ libmodplug_la_SOURCES = tables.h        
+                         modplug.cpp
+ 
+ libmodplugincludedir = $(includedir)/libmodplug
+-libmodpluginclude_HEADERS = libmodplug/stdafx.h libmodplug/sndfile.h libmodplug/it_defs.h modplug.h
++@EXPORT_CXX_TRUE@HEADERS_CXX = libmodplug/stdafx.h libmodplug/sndfile.h libmodplug/it_defs.h
++libmodpluginclude_HEADERS = modplug.h $(HEADERS_CXX)
+ noinst_HEADERS = load_pat.h
+ all: config.h
+ 	$(MAKE) $(AM_MAKEFLAGS) all-am
+@@ -507,7 +510,6 @@ distclean-compile:
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/load_dsm.Plo@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/load_far.Plo@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/load_it.Plo@am__quote@

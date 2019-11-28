@@ -634,6 +634,8 @@ am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
 MODPLUG_LIBRARY_VERSION
+EXPORT_CXX_FALSE
+EXPORT_CXX_TRUE
 LT_LDFLAGS
 LT_SYS_LIBRARY_PATH
 OTOOL64
@@ -772,6 +774,10 @@ with_aix_soname
 with_gnu_ld
 with_sysroot
 enable_libtool_lock
+enable_cxx_interface
+enable_midi
+enable_wav
+enable_mmcmp
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1418,6 +1424,11 @@ Optional Features:
   --enable-fast-install[=PKGS]
                           optimize for fast installation [default=yes]
   --disable-libtool-lock  avoid locking (might break parallel builds)
+  --enable-cxx-interface  export C++ interface from library [[default=yes]]
+  --enable-midi           compile with midi formats support [[default=no]]
+  --enable-wav            compile with wav formats support [[default=no]]
+  --enable-mmcmp          compile with mmcmp and pp20 decompression support
+                          [[default=no]]
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -16785,6 +16796,66 @@ case ${target_os} in
 		;;
 esac
 
+# Check whether --enable-cxx_interface was given.
+if test "${enable_cxx_interface+set}" = set; then :
+  enableval=$enable_cxx_interface;
+else
+  enable_cxx_interface=yes
+fi
+
+if test x$enable_cxx_interface != xyes; then
+
+$as_echo "#define NO_CXX_EXPORTS 1" >>confdefs.h
+
+fi
+ if test x$enable_cxx_interface = xyes; then
+  EXPORT_CXX_TRUE=
+  EXPORT_CXX_FALSE='#'
+else
+  EXPORT_CXX_TRUE='#'
+  EXPORT_CXX_FALSE=
+fi
+
+
+# Check whether --enable-midi was given.
+if test "${enable_midi+set}" = set; then :
+  enableval=$enable_midi;
+else
+  enable_midi=no
+fi
+
+if test x$enable_midi = xyes; then
+
+$as_echo "#define MIDIFMT_SUPPORT 1" >>confdefs.h
+
+fi
+
+# Check whether --enable-wav was given.
+if test "${enable_wav+set}" = set; then :
+  enableval=$enable_wav;
+else
+  enable_wav=no
+fi
+
+if test x$enable_wav = xyes; then
+
+$as_echo "#define WAV_SUPPORT 1" >>confdefs.h
+
+fi
+
+# Check whether --enable-mmcmp was given.
+if test "${enable_mmcmp+set}" = set; then :
+  enableval=$enable_mmcmp;
+else
+  enable_mmcmp=no
+fi
+
+if test x$enable_mmcmp = xyes; then
+
+$as_echo "#define MMCMP_SUPPORT 1" >>confdefs.h
+
+fi
+
 # portable types. requires autoconf 2.60
 # `configure' will check if these are defined in system headers.
 # if not, it will auto-detect and define them in `config.h'
@@ -17035,6 +17106,10 @@ if test -z "${am__fastdepCXX_TRUE}" && test -z "${am__fastdepCXX_FALSE}"; then
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 
+if test -z "${EXPORT_CXX_TRUE}" && test -z "${EXPORT_CXX_FALSE}"; then
+  as_fn_error $? "conditional \"EXPORT_CXX\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
 
 : "${CONFIG_STATUS=./config.status}"
 ac_write_fail=0

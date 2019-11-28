@@ -37,7 +37,15 @@
 #include "stdafx.h"
 #include "sndfile.h"
 
-#ifdef MIDIFMT_SUPPORT
+#ifndef MIDIFMT_SUPPORT
+BOOL CSoundFile::TestABC(const BYTE *lpStream, DWORD dwMemLength) {
+	return FALSE;
+}
+BOOL CSoundFile::ReadABC(const BYTE *lpStream, DWORD dwMemLength) {
+	return FALSE;
+}
+
+#else
 
 #include "load_pat.h"
 

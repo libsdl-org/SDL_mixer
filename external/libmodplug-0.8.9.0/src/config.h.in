@@ -42,6 +42,15 @@
 /* Define to the sub-directory where libtool stores uninstalled libraries. */
 #undef LT_OBJDIR
 
+/* Enable midi formats support. */
+#undef MIDIFMT_SUPPORT
+
+/* Enable mmcmp and pp20 decompression support. */
+#undef MMCMP_SUPPORT
+
+/* Do not export the C++ interface. */
+#undef NO_CXX_EXPORTS
+
 /* Name of package */
 #undef PACKAGE
 
@@ -68,6 +77,9 @@
 
 /* Version number of package */
 #undef VERSION
+
+/* Enable wav formats support. */
+#undef WAV_SUPPORT
 
 /* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
    significant byte first (like Motorola and SPARC, unlike Intel). */
