@@ -16,7 +16,7 @@ index 12ba684..69dc200 100644
   ********************************************************************/
  
 +#ifdef HAVE_CONFIG_H
-+#include "config.h"
++#  include "config.h"
 +#endif
 +
  #include <math.h>

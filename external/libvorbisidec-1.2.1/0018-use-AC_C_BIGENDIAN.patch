@@ -1,0 +1,78 @@
+From 5d48fcab6d955a2f8b41c460d6cec3b858894ec7 Mon Sep 17 00:00:00 2001
+From: sezero <sezero@users.sourceforge.net>
+Date: Tue, 20 Mar 2018 11:50:50 +0300
+Subject: [PATCH] use autoconf AC_C_BIGENDIAN / WORDS_BIGENDIAN checks
+
+because BYTE_ORDER, LITTLE_ENDIAN and BIG_ENDIAN are
+not very portable..
+---
+ configure.in |    3 +++
+ misc.h       |   17 +++++------------
+ os.h         |    2 --
+ 3 files changed, 8 insertions(+), 14 deletions(-)
+
+diff --git a/configure.in b/configure.in
+index 4e853dc..ade6f21 100644
+--- a/configure.in
++++ b/configure.in
+@@ -80,6 +80,9 @@ LDFLAGS="$LDFLAGS $ldflags_save"
+ AC_PROG_LD
+ AC_PROG_LD_GNU
+ 
++# check endianism
++AC_C_BIGENDIAN
++
+ dnl --------------------------------------------------
+ dnl Options 
+ dnl --------------------------------------------------
+diff --git a/misc.h b/misc.h
+index ee5660d..77cb2e2 100644
+--- a/misc.h
++++ b/misc.h
+@@ -41,25 +41,18 @@
+ #include <sys/types.h>
+ #endif
+ 
+-#if BYTE_ORDER==LITTLE_ENDIAN
+-union magic {
+-  struct {
+-    ogg_int32_t lo;
+-    ogg_int32_t hi;
+-  } halves;
+-  ogg_int64_t whole;
+-};
+-#endif 
+-
+-#if BYTE_ORDER==BIG_ENDIAN
+ union magic {
+   struct {
++#ifdef WORDS_BIGENDIAN
+     ogg_int32_t hi;
+     ogg_int32_t lo;
++#else /* little endian */
++    ogg_int32_t lo;
++    ogg_int32_t hi;
++#endif
+   } halves;
+   ogg_int64_t whole;
+ };
+-#endif
+ 
+ STIN ogg_int32_t MULT32(ogg_int32_t x, ogg_int32_t y) {
+   union magic magic;
+diff --git a/os.h b/os.h
+index 31400de..329c5d0 100644
+--- a/os.h
++++ b/os.h
+@@ -42,8 +42,6 @@
+ 
+ #ifdef _WIN32
+ #  include <malloc.h>
+-#  define LITTLE_ENDIAN 1
+-#  define BYTE_ORDER LITTLE_ENDIAN
+ #endif
+ 
+ #if defined HAVE_ALLOCA
+-- 
+1.7.1
+

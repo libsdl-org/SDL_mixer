@@ -18,7 +18,7 @@
  ********************************************************************/
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#  include "config.h"
 #endif
 
 #include <math.h>
@@ -38,8 +38,6 @@
 
 #ifdef _WIN32
 #  include <malloc.h>
-#  define LITTLE_ENDIAN 1
-#  define BYTE_ORDER LITTLE_ENDIAN
 #endif
 
 #if defined HAVE_ALLOCA
