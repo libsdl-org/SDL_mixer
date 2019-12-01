@@ -1,15 +1,13 @@
-From 19a0e99ac3ac5f1fc24d66612668a277ceba8195 Mon Sep 17 00:00:00 2001
 From: sezero <sezero@users.sourceforge.net>
-Date: Wed, 9 Oct 2019 10:39:11 +0300
-Subject: [PATCH] move the new public get_decoder_client_data function to public header.
+Date: Wed, 9 Oct 2019 07:39:11 +0000 (+0300)
+Subject: move the new public get_decoder_client_data function to public header.
+X-Git-Url: http://git.xiph.org/?p=flac.git;a=commitdiff_plain;h=19a0e99ac3ac5f1fc24d66612668a277ceba8195
 
+move the new public get_decoder_client_data function to public header.
 ---
- include/FLAC/stream_decoder.h                  |   10 ++++++++++
- src/libFLAC/include/protected/stream_decoder.h |    5 -----
- 2 files changed, 10 insertions(+), 5 deletions(-)
 
 diff --git a/include/FLAC/stream_decoder.h b/include/FLAC/stream_decoder.h
-index 57215c5..50ebfa8 100644
+index 57215c5e..50ebfa80 100644
 --- a/include/FLAC/stream_decoder.h
 +++ b/include/FLAC/stream_decoder.h
 @@ -1550,6 +1550,16 @@ FLAC_API FLAC__bool FLAC__stream_decoder_skip_single_frame(FLAC__StreamDecoder *
@@ -30,7 +28,7 @@ index 57215c5..50ebfa8 100644
  
  #ifdef __cplusplus
 diff --git a/src/libFLAC/include/protected/stream_decoder.h b/src/libFLAC/include/protected/stream_decoder.h
-index 9909275..2f3996b 100644
+index 99092751..2f3996b3 100644
 --- a/src/libFLAC/include/protected/stream_decoder.h
 +++ b/src/libFLAC/include/protected/stream_decoder.h
 @@ -57,9 +57,4 @@ typedef struct FLAC__StreamDecoderProtected {
@@ -43,6 +41,3 @@ index 9909275..2f3996b 100644
 -FLAC_API const void *FLAC__get_decoder_client_data(FLAC__StreamDecoder *decoder);
 -
  #endif
--- 
-1.7.1
-

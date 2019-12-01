@@ -1,0 +1,21 @@
+From: Andrey Astafyev <dev@246060.ru>
+Date: Fri, 29 Nov 2019 17:03:25 +0000 (+0300)
+Subject: Both files are checked for EOF
+X-Git-Url: http://git.xiph.org/?p=flac.git;a=commitdiff_plain;h=6455e477218360899c55f8dbd06c6628260d4123
+
+Both files are checked for EOF
+---
+
+diff --git a/src/utils/flacdiff/main.cpp b/src/utils/flacdiff/main.cpp
+index f86b8bbd..6a42db15 100644
+--- a/src/utils/flacdiff/main.cpp
++++ b/src/utils/flacdiff/main.cpp
+@@ -166,7 +166,7 @@ static FLAC__off_t get_diff_offset(AutoFILE &f1, AutoFILE &f2)
+ {
+ 	FLAC__off_t off = 0;
+ 	while(1) {
+-		if(feof((FILE*)f1) && feof((FILE*)f1)) {
++		if(feof((FILE*)f1) && feof((FILE*)f2)) {
+ 			fprintf(stderr, "ERROR: files are identical\n");
+ 			return -1;
+ 		}
