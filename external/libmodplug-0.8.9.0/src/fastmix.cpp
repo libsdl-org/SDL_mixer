@@ -287,8 +287,14 @@ CzWINDOWEDFIR sfir;
 // ----------------------------------------------------------------------------
 // MIXING MACROS
 // ----------------------------------------------------------------------------
+#if defined(__cplusplus) && (__cplusplus >= 201402L)
+#define REGISTER
+#else
+#define REGISTER register
+#endif
+
 #define SNDMIX_BEGINSAMPLELOOP8\
-	register MODCHANNEL * const pChn = pChannel;\
+	REGISTER MODCHANNEL * const pChn = pChannel;\
 	nPos = pChn->nPosLo;\
 	const signed char *p = (signed char *)(pChn->pCurrentSample+pChn->nPos);\
 	if (pChn->dwFlags & CHN_STEREO) p += pChn->nPos;\
@@ -296,7 +302,7 @@ CzWINDOWEDFIR sfir;
 	do {
 
 #define SNDMIX_BEGINSAMPLELOOP16\
-	register MODCHANNEL * const pChn = pChannel;\
+	REGISTER MODCHANNEL * const pChn = pChannel;\
 	nPos = pChn->nPosLo;\
 	const signed short *p = (signed short *)(pChn->pCurrentSample+(pChn->nPos*2));\
 	if (pChn->dwFlags & CHN_STEREO) p += pChn->nPos;\
