@@ -1,7 +1,7 @@
 diff -u /dev/null flac-1.3.3/android/config.h
 --- /dev/null
 +++ flac-1.3.3/android/config.h
-@@ -0,0 +1,252 @@
+@@ -0,0 +1,254 @@
 +/* config.h.  Generated from config.h.in by configure.  */
 +/* config.h.in.  Generated from configure.ac by autoheader.  */
 +
@@ -162,7 +162,9 @@ diff -u /dev/null flac-1.3.3/android/config.h
 +#define LT_OBJDIR ".libs/"
 +
 +/* Define if debugging is disabled */
++#ifndef NDEBUG
 +#define NDEBUG
++#endif
 +
 +/* Name of package */
 +#define PACKAGE "flac"
@@ -321,4 +323,3 @@ diff -u flac-1.3.3/src/libFLAC/format.c.orig flac-1.3.3/src/libFLAC/format.c
  FLAC_API const char *FLAC__VERSION_STRING = PACKAGE_VERSION;
  
  FLAC_API const char *FLAC__VENDOR_STRING = "reference libFLAC " PACKAGE_VERSION " 20190804";
-

@@ -1,19 +1,11 @@
-cmake_minimum_required(VERSION 3.2)
-project(libFLAC VERSION 1.3.3 LANGUAGES C)
+cmake_minimum_required(VERSION 2.8.11)
+project(libFLAC C)
 
-include(CheckIncludeFiles)
+set(FLAC_VERSION "1.3.3")
+
 include(CheckFunctionExists)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/../audio_codec_common.cmake)
-
-if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
-    # Turn on warnings and legacy C/C++ standards to support more compilers
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -Wall -Wno-pedantic")
-endif()
-
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-shift-negative-value")
-endif()
 
 if(MSVC)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4267 /wd4334 /wd4996 /wd4244")
@@ -24,15 +16,12 @@ add_definitions(
     -DFLAC__NO_DLL
 )
 
-set(FLAC_VERSION "${libFLAC_VERSION}")
-
 CHECK_FUNCTION_EXISTS(fseeko HAVE_FSEEKO)
 if(HAVE_FSEEKO)
     add_definitions(-DHAVE_FSEEKO)
 endif()
 
 set(FLAC_SRC)
-
 list(APPEND FLAC_SRC
     src/libFLAC/bitmath.c
     src/libFLAC/bitreader.c
@@ -56,7 +45,6 @@ list(APPEND FLAC_SRC
     src/libFLAC/ogg_helper.c
     src/libFLAC/ogg_mapping.c
 )
-
 if(WIN32)
     list(APPEND FLAC_SRC
         src/libFLAC/windows_unicode_filenames.c
@@ -67,18 +55,17 @@ add_library(FLAC STATIC
     ${FLAC_SRC}
 )
 
-target_include_directories(FLAC PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_definitions(FLAC PRIVATE
     -DVERSION="${FLAC_VERSION}"
     -DPACKAGE_VERSION="${FLAC_VERSION}"
 )
 target_include_directories(FLAC PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/../libogg-1.3.2/include
     ${CMAKE_CURRENT_SOURCE_DIR}/../libogg-1.3.2/android
 )
 target_include_directories(FLAC PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/include_p
     ${CMAKE_CURRENT_SOURCE_DIR}/src/libFLAC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/libFLAC/include
     ${CMAKE_CURRENT_SOURCE_DIR}/android

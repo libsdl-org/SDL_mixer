@@ -1,13 +1,9 @@
-cmake_minimum_required(VERSION 3.2)
-project(libVorbis VERSION 1.3.6 LANGUAGES C)
+cmake_minimum_required(VERSION 2.8.11)
+project(libvorbisidec C)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/../audio_codec_common.cmake)
 
-add_definitions(
-    -DHAVE_CONFIG_H -DHAVE_ALLOCA
-)
-
-add_definitions(-DFLOAT_LOOKUP -DINT_LOOKUP)
+add_definitions(-DHAVE_ALLOCA -DFLOAT_LOOKUP -DINT_LOOKUP)
 
 if(MSVC)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4244 /wd4267 /wd4305")
@@ -26,32 +22,23 @@ add_library(vorbisidec STATIC
     sharedbook.c
     synthesis.c
     window.c
-)
-
-add_library(vorbisfile STATIC
     vorbisfile.c
 )
-
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libogg-1.3.2/include)
-
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libogg-1.3.2/android)
- 
-
 
 target_include_directories(vorbisidec PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_include_directories(vorbisfile PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-install(TARGETS vorbisidec vorbisfile 
+install(TARGETS vorbisidec
         LIBRARY DESTINATION "lib"
         ARCHIVE DESTINATION "lib"
         INCLUDES DESTINATION "include")
 
 install(FILES
-        include/vorbis/codec.h
-        include/vorbis/vorbisfile.h
-        DESTINATION include/vorbis)
-
-
+        config_types.h
+        ivorbiscodec.h
+        ivorbisfile.h
+        DESTINATION include/tremor)
