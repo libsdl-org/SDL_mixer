@@ -1,18 +1,13 @@
-From 7bc7aebc7c7f10e3e5252162b668095845cd509a Mon Sep 17 00:00:00 2001
 From: NY00123 <ny00@outlook.com>
-Date: Mon, 14 Oct 2019 22:15:18 +0300
-Subject: [PATCH] Replace unsigned with uint32_t in prototypes; Fixes DJGPP builds.
+Date: Mon, 14 Oct 2019 19:15:18 +0000 (+0300)
+Subject: Replace unsigned with uint32_t in prototypes; Fixes DJGPP builds.
+X-Git-Url: http://git.xiph.org/?p=flac.git;a=commitdiff_plain;h=7bc7aebc7c7f10e3e5252162b668095845cd509a
 
+Replace unsigned with uint32_t in prototypes; Fixes DJGPP builds.
 ---
- include/test_libs_common/file_utils_flac.h |    2 +-
- include/test_libs_common/metadata_utils.h  |    6 +++---
- src/flac/analyze.h                         |    2 +-
- src/flac/encode.h                          |    2 +-
- src/flac/utils.h                           |    2 +-
- 5 files changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/include/test_libs_common/file_utils_flac.h b/include/test_libs_common/file_utils_flac.h
-index 8b809b8..7687c8f 100644
+index 8b809b85..7687c8f7 100644
 --- a/include/test_libs_common/file_utils_flac.h
 +++ b/include/test_libs_common/file_utils_flac.h
 @@ -31,6 +31,6 @@
@@ -24,7 +19,7 @@ index 8b809b8..7687c8f 100644
  
  #endif
 diff --git a/include/test_libs_common/metadata_utils.h b/include/test_libs_common/metadata_utils.h
-index ad0f6f5..6bd4e8f 100644
+index ad0f6f58..6bd4e8f6 100644
 --- a/include/test_libs_common/metadata_utils.h
 +++ b/include/test_libs_common/metadata_utils.h
 @@ -28,9 +28,9 @@
@@ -49,7 +44,7 @@ index ad0f6f5..6bd4e8f 100644
  FLAC__bool mutils__compare_block(const FLAC__StreamMetadata *block, const FLAC__StreamMetadata *blockcopy);
  
 diff --git a/src/flac/analyze.h b/src/flac/analyze.h
-index 7c7ec23..44798c7 100644
+index 7c7ec237..44798c71 100644
 --- a/src/flac/analyze.h
 +++ b/src/flac/analyze.h
 @@ -26,7 +26,7 @@ typedef struct {
@@ -62,7 +57,7 @@ index 7c7ec23..44798c7 100644
  
  #endif
 diff --git a/src/flac/encode.h b/src/flac/encode.h
-index 51c68a4..b98bef6 100644
+index 51c68a40..b98bef6b 100644
 --- a/src/flac/encode.h
 +++ b/src/flac/encode.h
 @@ -112,6 +112,6 @@ typedef struct {
@@ -74,7 +69,7 @@ index 51c68a4..b98bef6 100644
  
  #endif
 diff --git a/src/flac/utils.h b/src/flac/utils.h
-index 6932d3e..36ceb37 100644
+index 6932d3ef..36ceb37d 100644
 --- a/src/flac/utils.h
 +++ b/src/flac/utils.h
 @@ -62,7 +62,7 @@ void stats_print_name(int level, const char *name);
@@ -86,6 +81,3 @@ index 6932d3e..36ceb37 100644
  
  FLAC__bool flac__utils_parse_cue_specification(const char *s, utils__CueSpecification *spec);
  void flac__utils_canonicalize_cue_specification(const utils__CueSpecification *cue_spec, const FLAC__StreamMetadata_CueSheet *cuesheet, FLAC__uint64 total_samples, utils__SkipUntilSpecification *skip_spec, utils__SkipUntilSpecification *until_spec);
--- 
-1.7.1
-

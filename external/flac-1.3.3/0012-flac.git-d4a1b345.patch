@@ -1,7 +1,9 @@
-From d4a1b345dd16591ff6f17c67ee519afebe2f9792 Mon Sep 17 00:00:00 2001
 From: sezero <sezero@users.sourceforge.net>
-Date: Tue, 8 Oct 2019 20:25:55 +0300
-Subject: [PATCH] configure.ac: allow several compiler flags for clang
+Date: Tue, 8 Oct 2019 17:25:55 +0000 (+0300)
+Subject: configure.ac: allow several compiler flags for clang
+X-Git-Url: http://git.xiph.org/?p=flac.git;a=commitdiff_plain;h=d4a1b345dd16591ff6f17c67ee519afebe2f9792
+
+configure.ac: allow several compiler flags for clang
 
 The flac configury marked clang as 'not being gcc' and excluded
 a lot of compiler switches, most importantly the visibility flags,
@@ -26,12 +28,9 @@ Tested compilation using gcc-7.3.1 and clang-5.0.2 on x86_64-linux,
 and gcc-4.4.7 and clang-3.4.2 on an i686-linux.  Also tested cross-
 compiling for Mac OS X using clang-5.0.2.
 ---
- configure.ac      |   18 ++++++++++++++----
- m4/gcc_version.m4 |    3 +++
- 2 files changed, 17 insertions(+), 4 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index 6efefaf..88f89a9 100644
+index 6efefaf5..88f89a91 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -429,11 +429,12 @@ dnl If debugging is disabled AND no CFLAGS/CXXFLAGS/CPPFLAGS/LDFLAGS
@@ -75,7 +74,7 @@ index 6efefaf..88f89a9 100644
  		CFLAGS="$CFLAGS -fvisibility=hidden"
  		CXXFLAGS="$CXXFLAGS -fvisibility=hidden"
 diff --git a/m4/gcc_version.m4 b/m4/gcc_version.m4
-index 1c53086..e6aaa60 100644
+index 1c53086f..e6aaa603 100644
 --- a/m4/gcc_version.m4
 +++ b/m4/gcc_version.m4
 @@ -22,6 +22,9 @@ if test "x$ac_cv_c_compiler_gnu" = "xyes" ; then
@@ -88,6 +87,3 @@ index 1c53086..e6aaa60 100644
  	fi
  
  AC_SUBST(GCC_VERSION)
--- 
-1.7.1
-

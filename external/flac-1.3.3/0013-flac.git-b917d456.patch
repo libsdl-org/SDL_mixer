@@ -1,7 +1,9 @@
-From b917d456d23c3268cc6f466d720605b713d7b9ff Mon Sep 17 00:00:00 2001
 From: sezero <sezero@users.sourceforge.net>
-Date: Tue, 8 Oct 2019 15:10:20 +0300
-Subject: [PATCH] make dllexport work with compilers other than MSVC
+Date: Tue, 8 Oct 2019 12:10:20 +0000 (+0300)
+Subject: make dllexport work with compilers other than MSVC
+X-Git-Url: http://git.xiph.org/?p=flac.git;a=commitdiff_plain;h=b917d456d23c3268cc6f466d720605b713d7b9ff
+
+make dllexport work with compilers other than MSVC
 
 the issue is, flac and metaflac exes rely on flac_internal_???_utf8()
 procedures from windows_unicode_filenames.c and there is no easy way
@@ -9,14 +11,9 @@ to exclude them from exports without breaking things. So export them
 explicitly (they are exported anyway w/o this patch), but add a FIXME
 note about the kludge in windows_unicode_filenames.c.
 ---
- configure.ac                            |   16 ++++++++++++++++
- include/FLAC++/export.h                 |    2 +-
- include/FLAC/export.h                   |    2 +-
- src/libFLAC/windows_unicode_filenames.c |   19 +++++++++++--------
- 4 files changed, 29 insertions(+), 10 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index 14e2205..6efefaf 100644
+index 14e2205a..6efefaf5 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -493,6 +493,22 @@ if test x$enable_stack_smash_protection = "xyes" ; then
@@ -43,7 +40,7 @@ index 14e2205..6efefaf 100644
  	Makefile \
  	src/Makefile \
 diff --git a/include/FLAC++/export.h b/include/FLAC++/export.h
-index 1645362..6776b29 100644
+index 16453621..6776b29c 100644
 --- a/include/FLAC++/export.h
 +++ b/include/FLAC++/export.h
 @@ -59,7 +59,7 @@
@@ -56,7 +53,7 @@ index 1645362..6776b29 100644
  #define	FLACPP_API __declspec(dllexport)
  #else
 diff --git a/include/FLAC/export.h b/include/FLAC/export.h
-index d52f0bb..628fe5f 100644
+index d52f0bbb..628fe5fc 100644
 --- a/include/FLAC/export.h
 +++ b/include/FLAC/export.h
 @@ -59,7 +59,7 @@
@@ -69,7 +66,7 @@ index d52f0bb..628fe5f 100644
  #define	FLAC_API __declspec(dllexport)
  #else
 diff --git a/src/libFLAC/windows_unicode_filenames.c b/src/libFLAC/windows_unicode_filenames.c
-index 7855008..7f59ebe 100644
+index 78550087..7f59ebea 100644
 --- a/src/libFLAC/windows_unicode_filenames.c
 +++ b/src/libFLAC/windows_unicode_filenames.c
 @@ -37,6 +37,9 @@
@@ -150,6 +147,3 @@ index 7855008..7f59ebe 100644
  {
  	if (!utf8_filenames) {
  		return rename(oldname, newname);
--- 
-1.7.1
-
