@@ -81,6 +81,9 @@ LDFLAGS="$LDFLAGS $ldflags_save"
 AC_PROG_LD
 AC_PROG_LD_GNU
 
+# check endianism
+AC_C_BIGENDIAN
+
 dnl --------------------------------------------------
 dnl Options 
 dnl --------------------------------------------------
@@ -106,6 +109,8 @@ dnl none
 dnl --------------------------------------------------
 dnl Check for libraries
 dnl --------------------------------------------------
+
+PKG_PROG_PKG_CONFIG
 
 HAVE_OGG=no
 if test "x$PKG_CONFIG" != "x"

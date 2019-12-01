@@ -34,14 +34,3 @@ diff -u /dev/null libvorbisidec-1.2.1/Android.mk
 +LOCAL_SHARED_LIBRARIES := ogg
 +
 +include $(BUILD_STATIC_LIBRARY)
-diff -u libvorbisidec-1.2.1/misc.h~ libvorbisidec-1.2.1/misc.h
---- libvorbisidec-1.2.1/misc.h~
-+++ libvorbisidec-1.2.1/misc.h
-@@ -30,6 +30,7 @@
- 
- #include "asm_arm.h"
- #include <stdlib.h> /* for abs() */
-+#include <endian.h>
-   
- #ifndef _V_WIDE_MATH
- #define _V_WIDE_MATH
