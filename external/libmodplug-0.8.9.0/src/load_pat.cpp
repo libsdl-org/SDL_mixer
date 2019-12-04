@@ -33,9 +33,9 @@
 #include <string.h>
 #include <math.h>
 #include <ctype.h>
-#include <limits.h> // for PATH_MAX
+#include <limits.h> /* PATH_MAX */
 #ifndef _WIN32
-#include <unistd.h> // for sleep
+#include <unistd.h>  /* sleep() */
 #endif
 
 #include "stdafx.h"

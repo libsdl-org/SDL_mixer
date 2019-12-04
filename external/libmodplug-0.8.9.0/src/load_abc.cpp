@@ -31,8 +31,8 @@
 #include <math.h>
 #include <ctype.h>
 #ifndef _WIN32
-#include <unistd.h> // for sleep
-#endif // _WIN32
+#include <unistd.h>  /* sleep() */
+#endif
 
 #include "stdafx.h"
 #include "sndfile.h"
@@ -2370,8 +2370,8 @@ static ABCHANDLE *ABC_Init(void)
 		}
 	}
 	else {
-		srandom((uint32_t)time(0));	// initialize random generator with seed
-		retval->pickrandom = 1+(int)(10000.0*random()/(RAND_MAX+1.0));
+		srand((unsigned int)time(0));	// initialize random generator with seed
+		retval->pickrandom = 1+(int)(10000.0*rand()/(RAND_MAX+1.0));
 		// can handle pickin' from songbooks with 10.000 songs
 		sprintf(buf,"%s=-%ld",ABC_ENV_NORANDOMPICK,retval->pickrandom); // xmms preloads the file
 		putenv(buf);
