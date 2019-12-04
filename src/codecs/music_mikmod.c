@@ -436,6 +436,7 @@ static int MIKMOD_GetAudio(void *context, void *data, int bytes)
 static int MIKMOD_Seek(void *context, double position)
 {
     (void)context;
+    /* FIXME: WRONG: THIS IS NOT A TIME SEEK */
     mikmod.Player_SetPosition((UWORD)position);
     return 0;
 }
