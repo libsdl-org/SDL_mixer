@@ -30,7 +30,7 @@
 #include <math.h>
 #include <ctype.h>
 #ifndef _WIN32
-#include <unistd.h> // for sleep
+#include <unistd.h> /* sleep() */
 #endif
 
 #include "stdafx.h"

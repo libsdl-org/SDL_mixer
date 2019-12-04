@@ -34,8 +34,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include <windowsx.h>
-#include <mmsystem.h>
+#include <mmsystem.h> /* for WAVE_FORMAT_PCM */
 #include <stdio.h>
 #include <malloc.h>
 #if defined(_MSC_VER) && (_MSC_VER < 1600)
@@ -49,11 +48,9 @@ typedef unsigned int   uint32_t;
 #include <stdint.h>
 #endif
 
-#define srandom(_seed)  srand(_seed)
-#define random()        rand()
-#define sleep(_ms)      Sleep(_ms)
+#define sleep(_ms)      Sleep(_ms * 1000)
 
-inline void ProcessPlugins(int n) {}
+inline void ProcessPlugins(int n) { (void)n; }
 
 #undef strcasecmp
 #undef strncasecmp
@@ -77,11 +74,6 @@ inline void ProcessPlugins(int n) {}
 #include <malloc.h>
 #endif
 
-#ifdef __WATCOMC__
-#define srandom(_seed)  srand(_seed)
-#define random()        rand()
-#endif
-
 typedef int8_t CHAR;
 typedef uint8_t UCHAR;
 typedef uint8_t* PUCHAR;
@@ -96,7 +88,7 @@ typedef uint32_t* LPDWORD;
 typedef uint16_t WORD;
 typedef uint8_t BYTE;
 typedef uint8_t* LPBYTE;
-typedef bool BOOL;
+typedef bool BOOL; /* FIXME: must be 'int' */
 typedef char* LPSTR;
 typedef void* LPVOID;
 typedef uint16_t* LPWORD;
@@ -112,17 +104,7 @@ typedef void VOID;
 
 #define WAVE_FORMAT_PCM 1
 
-#define  GHND   0
-#define GlobalFreePtr(p) free((void *)(p))
-inline int8_t * GlobalAllocPtr(unsigned int, size_t size)
-{
-  int8_t * p = (int8_t *) malloc(size);
-
-  if (p != NULL) memset(p, 0, size);
-  return p;
-}
-
-inline void ProcessPlugins(int n) {}
+inline void ProcessPlugins(int n) { (void)n; }
 
 #ifndef FALSE
 #define FALSE	false
