@@ -42,10 +42,13 @@ typedef struct {
     int play_count;
     Sint64 start;
     Sint64 stop;
+    Sint64 samplesize;
     Uint8 *buffer;
     SDL_AudioStream *stream;
     unsigned int numloops;
     WAVLoopPoint *loops;
+    Uint16 encoding;
+    int (*decode)(void *music, int length);
 } WAV_Music;
 
 /*
@@ -64,8 +67,14 @@ typedef struct {
 #define FMT         0x20746D66      /* "fmt " */
 #define DATA        0x61746164      /* "data" */
 #define SMPL        0x6c706d73      /* "smpl" */
-#define PCM_CODE    1
-#define ADPCM_CODE  2
+#define LIST        0x5453494c      /* "LIST" */
+#define ID3_        0x20336469      /* "id3 " */
+#define PCM_CODE    1               /* WAVE_FORMAT_PCM */
+#define ADPCM_CODE  2               /* WAVE_FORMAT_ADPCM */
+#define FLOAT_CODE  3               /* WAVE_FORMAT_IEEE_FLOAT */
+#define ALAW_CODE   6               /* WAVE_FORMAT_ALAW */
+#define uLAW_CODE   7               /* WAVE_FORMAT_MULAW */
+#define EXT_CODE    0xFFFE          /* WAVE_FORMAT_EXTENSIBLE */
 #define WAVE_MONO   1
 #define WAVE_STEREO 2
 
@@ -81,6 +90,21 @@ typedef struct {
     Uint16  blockalign;     /* Bytes per sample block */
     Uint16  bitspersample;      /* One of 8, 12, 16, or 4 for ADPCM */
 } WaveFMT;
+
+typedef struct {
+    Uint16  cbSize;
+    union {
+        Uint16 validbitspersample; /* bits of precision */
+        Uint16 samplesperblock;   /* valid if wBitsPerSample==0 */
+        Uint16 reserved;         /* If neither applies, set to zero. */
+    } Samples;
+    Uint32 channelsmask;
+    /* GUID subFormat 16 bytes */
+    Uint32 subencoding;
+    Uint16 sub_data2;
+    Uint16 sub_data3;
+    Uint8  sub_data[8];
+} WaveFMTex;
 
 typedef struct {
     Uint32 identifier;
@@ -113,15 +137,36 @@ typedef struct {
 /*********************************************/
 #define FORM        0x4d524f46      /* "FORM" */
 #define AIFF        0x46464941      /* "AIFF" */
+#define AIFC        0x43464941      /* "AIFС" */
+#define FVER        0x52455646      /* "FVER" */
 #define SSND        0x444e5353      /* "SSND" */
 #define COMM        0x4d4d4f43      /* "COMM" */
+#define AIFF_ID3_   0x20334449      /* "ID3 " */
+#define MARK        0x4B52414D      /* "MARK" */
+#define INST        0x54534E49      /* "INST" */
+#define AUTH        0x48545541      /* "AUTH" */
+#define NAME        0x454D414E      /* "NAME" */
+#define _c__        0x20296328      /* "(c) " */
 
+/* Supported compression types */
+#define NONE        0x454E4F4E      /* "NONE" */
+#define sowt        0x74776F73      /* "sowt" */
+#define raw_        0x20776172      /* "raw " */
+#define ulaw        0x77616C75      /* "ulaw" */
+#define alaw        0x77616C61      /* "alaw" */
+#define ULAW        0x57414C55      /* "ULAW" */
+#define ALAW        0x57414C41      /* "ALAW" */
+#define fl32        0x32336C66      /* "fl32" */
+#define fl64        0x34366C66      /* "fl64" */
+#define FL32        0x32334C46      /* "FL32" */
 
 /* Function to load the WAV/AIFF stream */
 static SDL_bool LoadWAVMusic(WAV_Music *wave);
 static SDL_bool LoadAIFFMusic(WAV_Music *wave);
 
 static void WAV_Delete(void *context);
+
+static int fetch_pcm(void *context, int length);
 
 /* Load a WAV stream from the given RWops object */
 static void *WAV_CreateFromRW(SDL_RWops *src, int freesrc)
@@ -137,6 +182,9 @@ static void *WAV_CreateFromRW(SDL_RWops *src, int freesrc)
     }
     music->src = src;
     music->volume = MIX_MAX_VOLUME;
+    /* Default decoder is PCM */
+    music->decode = fetch_pcm;
+    music->encoding = PCM_CODE;
 
     magic = SDL_ReadLE32(src);
     if (magic == RIFF || magic == WAVE) {
@@ -190,15 +238,250 @@ static int WAV_Play(void *context, int play_count)
     return 0;
 }
 
+static int fetch_pcm(void *context, int length)
+{
+    WAV_Music *music = (WAV_Music *)context;
+    return (int)SDL_RWread(music->src, music->buffer, 1, (size_t)length);
+}
+
+static Uint32 PCM_S24_to_S32_BE(Uint8 *x) {
+    const Uint32 bits = 24;
+    Uint32 in = (((Uint32)x[0] << 0)  & 0x0000FF) |
+                (((Uint32)x[1] << 8)  & 0x00FF00) |
+                (((Uint32)x[2] << 16) & 0xFF0000);
+    Uint32 m = 1u << (bits - 1);
+    return (in ^ m) - m;
+}
+
+static Uint32 PCM_S24_to_S32_LE(Uint8 *x) {
+    const Uint32 bits = 24;
+    Uint32 in = (((Uint32)x[2] << 0)  & 0x0000FF) |
+                (((Uint32)x[1] << 8)  & 0x00FF00) |
+                (((Uint32)x[0] << 16) & 0xFF0000);
+    Uint32 m = 1u << (bits - 1);
+    return (in ^ m) - m;
+}
+
+static int fetch_pcm24be(void *context, int length)
+{
+    WAV_Music *music = (WAV_Music *)context;
+    int i = 0, o = 0;
+    length = (int)SDL_RWread(music->src, music->buffer, 1, (size_t)((length / 4) * 3));
+    if (length % music->samplesize != 0) {
+        length -= length % music->samplesize;
+    }
+    for (i = length - 3, o = ((length - 3) / 3) * 4; i >= 0; i -= 3, o -= 4) {
+        Uint32 decoded = PCM_S24_to_S32_BE(music->buffer + i);
+        music->buffer[o + 0] = (decoded >> 0) & 0xFF;
+        music->buffer[o + 1] = (decoded >> 8) & 0xFF;
+        music->buffer[o + 2] = (decoded >> 16) & 0xFF;
+        music->buffer[o + 3] = (decoded >> 24) & 0xFF;
+    }
+    return (length / 3) * 4;
+}
+
+static int fetch_pcm24le(void *context, int length)
+{
+    WAV_Music *music = (WAV_Music *)context;
+    int i = 0, o = 0;
+    length = (int)SDL_RWread(music->src, music->buffer, 1, (size_t)((length / 4) * 3));
+    if (length % music->samplesize != 0) {
+        length -= length % music->samplesize;
+    }
+    for (i = length - 3, o = ((length - 3) / 3) * 4; i >= 0; i -= 3, o -= 4) {
+        Uint32 decoded = PCM_S24_to_S32_LE(music->buffer + i);
+        music->buffer[o + 3] = (decoded >> 0) & 0xFF;
+        music->buffer[o + 2] = (decoded >> 8) & 0xFF;
+        music->buffer[o + 1] = (decoded >> 16) & 0xFF;
+        music->buffer[o + 0] = (decoded >> 24) & 0xFF;
+    }
+    return (length / 3) * 4;
+}
+
+SDL_FORCE_INLINE double
+Mix_SwapDouble(double x)
+{
+    union
+    {
+        double f;
+        Uint64 ui64;
+    } swapper;
+    swapper.f = x;
+    swapper.ui64 = SDL_Swap64(swapper.ui64);
+    return swapper.f;
+}
+
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+#define Mix_SwapDoubleLE(X)  (X)
+#define Mix_SwapDoubleBE(X)  Mix_SwapDouble(X)
+#else
+#define Mix_SwapDoubleLE(X)  Mix_SwapDouble(X)
+#define Mix_SwapDoubleBE(X)  (X)
+#endif
+
+static int fetch_float64be(void *context, int length)
+{
+    WAV_Music *music = (WAV_Music *)context;
+    int i = 0, o = 0;
+    length = (int)SDL_RWread(music->src, music->buffer, 1, (size_t)(length));
+    if (length % music->samplesize != 0) {
+        length -= length % music->samplesize;
+    }
+    for (i = 0, o = 0; i <= length; i += 8, o += 4) {
+        union
+        {
+            float f;
+            Uint32 ui32;
+        } sample;
+        sample.f = (float)Mix_SwapDoubleBE(*(double*)(music->buffer + i));
+        music->buffer[o + 0] = (sample.ui32 >> 0) & 0xFF;
+        music->buffer[o + 1] = (sample.ui32 >> 8) & 0xFF;
+        music->buffer[o + 2] = (sample.ui32 >> 16) & 0xFF;
+        music->buffer[o + 3] = (sample.ui32 >> 24) & 0xFF;
+    }
+    return length / 2;
+}
+
+static int fetch_float64le(void *context, int length)
+{
+    WAV_Music *music = (WAV_Music *)context;
+    int i = 0, o = 0;
+    length = (int)SDL_RWread(music->src, music->buffer, 1, (size_t)(length));
+    if (length % music->samplesize != 0) {
+        length -= length % music->samplesize;
+    }
+    for (i = 0, o = 0; i <= length; i += 8, o += 4) {
+        union
+        {
+            float f;
+            Uint32 ui32;
+        } sample;
+        sample.f = (float)Mix_SwapDoubleLE(*(double*)(music->buffer + i));
+        music->buffer[o + 0] = (sample.ui32 >> 0) & 0xFF;
+        music->buffer[o + 1] = (sample.ui32 >> 8) & 0xFF;
+        music->buffer[o + 2] = (sample.ui32 >> 16) & 0xFF;
+        music->buffer[o + 3] = (sample.ui32 >> 24) & 0xFF;
+    }
+    return length / 2;
+}
+
+/*
+    G711 decode tables taken from SDL2 (src/audio/SDL_wave.c)
+*/
+#ifdef SDL_WAVE_LAW_LUT
+static const Sint16 alaw_lut[256] = {
+    -5504, -5248, -6016, -5760, -4480, -4224, -4992, -4736, -7552, -7296, -8064, -7808, -6528, -6272, -7040, -6784, -2752,
+    -2624, -3008, -2880, -2240, -2112, -2496, -2368, -3776, -3648, -4032, -3904, -3264, -3136, -3520, -3392, -22016,
+    -20992, -24064, -23040, -17920, -16896, -19968, -18944, -30208, -29184, -32256, -31232, -26112, -25088, -28160, -27136, -11008,
+    -10496, -12032, -11520, -8960, -8448, -9984, -9472, -15104, -14592, -16128, -15616, -13056, -12544, -14080, -13568, -344,
+    -328, -376, -360, -280, -264, -312, -296, -472, -456, -504, -488, -408, -392, -440, -424, -88,
+    -72, -120, -104, -24, -8, -56, -40, -216, -200, -248, -232, -152, -136, -184, -168, -1376,
+    -1312, -1504, -1440, -1120, -1056, -1248, -1184, -1888, -1824, -2016, -1952, -1632, -1568, -1760, -1696, -688,
+    -656, -752, -720, -560, -528, -624, -592, -944, -912, -1008, -976, -816, -784, -880, -848, 5504,
+    5248, 6016, 5760, 4480, 4224, 4992, 4736, 7552, 7296, 8064, 7808, 6528, 6272, 7040, 6784, 2752,
+    2624, 3008, 2880, 2240, 2112, 2496, 2368, 3776, 3648, 4032, 3904, 3264, 3136, 3520, 3392, 22016,
+    20992, 24064, 23040, 17920, 16896, 19968, 18944, 30208, 29184, 32256, 31232, 26112, 25088, 28160, 27136, 11008,
+    10496, 12032, 11520, 8960, 8448, 9984, 9472, 15104, 14592, 16128, 15616, 13056, 12544, 14080, 13568, 344,
+    328, 376, 360, 280, 264, 312, 296, 472, 456, 504, 488, 408, 392, 440, 424, 88,
+    72, 120, 104, 24, 8, 56, 40, 216, 200, 248, 232, 152, 136, 184, 168, 1376,
+    1312, 1504, 1440, 1120, 1056, 1248, 1184, 1888, 1824, 2016, 1952, 1632, 1568, 1760, 1696, 688,
+    656, 752, 720, 560, 528, 624, 592, 944, 912, 1008, 976, 816, 784, 880, 848
+};
+
+static const Sint16 mulaw_lut[256] = {
+    -32124, -31100, -30076, -29052, -28028, -27004, -25980, -24956, -23932, -22908, -21884, -20860, -19836, -18812, -17788, -16764, -15996,
+    -15484, -14972, -14460, -13948, -13436, -12924, -12412, -11900, -11388, -10876, -10364, -9852, -9340, -8828, -8316, -7932,
+    -7676, -7420, -7164, -6908, -6652, -6396, -6140, -5884, -5628, -5372, -5116, -4860, -4604, -4348, -4092, -3900,
+    -3772, -3644, -3516, -3388, -3260, -3132, -3004, -2876, -2748, -2620, -2492, -2364, -2236, -2108, -1980, -1884,
+    -1820, -1756, -1692, -1628, -1564, -1500, -1436, -1372, -1308, -1244, -1180, -1116, -1052, -988, -924, -876,
+    -844, -812, -780, -748, -716, -684, -652, -620, -588, -556, -524, -492, -460, -428, -396, -372,
+    -356, -340, -324, -308, -292, -276, -260, -244, -228, -212, -196, -180, -164, -148, -132, -120,
+    -112, -104, -96, -88, -80, -72, -64, -56, -48, -40, -32, -24, -16, -8, 0, 32124,
+    31100, 30076, 29052, 28028, 27004, 25980, 24956, 23932, 22908, 21884, 20860, 19836, 18812, 17788, 16764, 15996,
+    15484, 14972, 14460, 13948, 13436, 12924, 12412, 11900, 11388, 10876, 10364, 9852, 9340, 8828, 8316, 7932,
+    7676, 7420, 7164, 6908, 6652, 6396, 6140, 5884, 5628, 5372, 5116, 4860, 4604, 4348, 4092, 3900,
+    3772, 3644, 3516, 3388, 3260, 3132, 3004, 2876, 2748, 2620, 2492, 2364, 2236, 2108, 1980, 1884,
+    1820, 1756, 1692, 1628, 1564, 1500, 1436, 1372, 1308, 1244, 1180, 1116, 1052, 988, 924, 876,
+    844, 812, 780, 748, 716, 684, 652, 620, 588, 556, 524, 492, 460, 428, 396, 372,
+    356, 340, 324, 308, 292, 276, 260, 244, 228, 212, 196, 180, 164, 148, 132, 120,
+    112, 104, 96, 88, 80, 72, 64, 56, 48, 40, 32, 24, 16, 8, 0
+};
+#endif
+
+static Sint16 uLAW_To_PCM16(Uint8 u_val)
+{
+#ifdef SDL_WAVE_LAW_LUT
+    return mulaw_lut[u_val];
+#else
+    Uint8 nibble = ~u_val;
+    Sint16 mantissa = nibble & 0xf;
+    Uint8 exponent = (nibble >> 4) & 0x7;
+    Sint16 step = (Sint16)(4 << (exponent + 1));
+
+    mantissa = (Sint16)(0x80 << exponent) + step * mantissa + step / 2 - 132;
+
+    return nibble & 0x80 ? -mantissa : mantissa;
+#endif
+}
+
+static Sint16 ALAW_To_PCM16(Uint8 a_val)
+{
+#ifdef SDL_WAVE_LAW_LUT
+    return alaw_lut[a_val];
+#else
+    Uint8 nibble = a_val;
+    Uint8 exponent = (nibble & 0x7f) ^ 0x55;
+    Sint16 mantissa = exponent & 0xf;
+
+    exponent >>= 4;
+    if (exponent > 0) {
+        mantissa |= 0x10;
+    }
+    mantissa = (Sint16)(mantissa << 4) | 0x8;
+    if (exponent > 1) {
+        mantissa <<= exponent - 1;
+    }
+
+    return nibble & 0x80 ? mantissa : -mantissa;
+#endif
+}
+
+static int fetch_xlaw(Sint16 (*decode_sample)(Uint8), void *context, int length)
+{
+    WAV_Music *music = (WAV_Music *)context;
+    int i = 0, o = 0;
+    length = (int)SDL_RWread(music->src, music->buffer, 1, (size_t)(length / 2));
+    if (length % music->samplesize != 0) {
+        length -= length % music->samplesize;
+    }
+    for (i = length - 1, o = (length - 1) * 2; i >= 0; i--, o -= 2) {
+        Uint16 decoded = (Uint16)decode_sample(music->buffer[i]);
+        music->buffer[o] = decoded & 0xFF;
+        music->buffer[o + 1] = (decoded >> 8) & 0xFF;
+    }
+    return length * 2;
+}
+
+static int fetch_ulaw(void *context, int length)
+{
+    return fetch_xlaw(uLAW_To_PCM16, context, length);
+}
+
+static int fetch_alaw(void *context, int length)
+{
+    return fetch_xlaw(ALAW_To_PCM16, context, length);
+}
+
 /* Play some of a stream previously started with WAV_Play() */
 static int WAV_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 {
     WAV_Music *music = (WAV_Music *)context;
     Sint64 pos, stop;
     WAVLoopPoint *loop;
-    Sint64 loop_start;
-    Sint64 loop_stop;
+    Sint64 loop_start = music->start;
+    Sint64 loop_stop = music->stop;
     SDL_bool looped = SDL_FALSE;
+    SDL_bool at_end = SDL_FALSE;
     unsigned int i;
     int filled, amount, result;
 
@@ -216,13 +499,12 @@ static int WAV_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     pos = SDL_RWtell(music->src);
     stop = music->stop;
     loop = NULL;
-    loop_start = 0; /* silence warnings */
     for (i = 0; i < music->numloops; ++i) {
         loop = &music->loops[i];
         if (loop->active) {
             const int bytes_per_sample = (SDL_AUDIO_BITSIZE(music->spec.format) / 8) * music->spec.channels;
-            loop_start = music->start + loop->start * bytes_per_sample;
-            loop_stop = music->start + (loop->stop + 1) * bytes_per_sample;
+            loop_start = music->start + loop->start * (Uint32)bytes_per_sample;
+            loop_stop = music->start + (loop->stop + 1) * (Uint32)bytes_per_sample;
             if (pos >= loop_start && pos < loop_stop) {
                 stop = loop_stop;
                 break;
@@ -231,11 +513,12 @@ static int WAV_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         loop = NULL;
     }
 
-    amount = music->spec.size;
+    amount = (int)music->spec.size;
     if ((stop - pos) < amount) {
         amount = (int)(stop - pos);
     }
-    amount = (int)SDL_RWread(music->src, music->buffer, 1, amount);
+
+    amount = music->decode(music, amount);
     if (amount > 0) {
         result = SDL_AudioStreamPut(music->stream, music->buffer, amount);
         if (result < 0) {
@@ -243,6 +526,7 @@ static int WAV_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         }
     } else {
         /* We might be looping, continue */
+        at_end = SDL_TRUE;
     }
 
     if (loop && SDL_RWtell(music->src) >= stop) {
@@ -257,7 +541,7 @@ static int WAV_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         }
     }
 
-    if (!looped && SDL_RWtell(music->src) >= music->stop) {
+    if (!looped && (at_end || SDL_RWtell(music->src) >= music->stop)) {
         if (music->play_count == 1) {
             music->play_count = 0;
             SDL_AudioStreamFlush(music->stream);
@@ -280,6 +564,19 @@ static int WAV_GetAudio(void *context, void *data, int bytes)
 {
     WAV_Music *music = (WAV_Music *)context;
     return music_pcm_getaudio(context, data, bytes, music->volume, WAV_GetSome);
+}
+
+static int WAV_Seek(void *context, double position)
+{
+    WAV_Music *music = (WAV_Music *)context;
+    Sint64 sample_size = music->spec.freq * music->samplesize;
+    Sint64 dest_offset = (Sint64)(position * (double)music->spec.freq * music->samplesize);
+    Sint64 destpos = music->start + dest_offset;
+    destpos -= dest_offset % sample_size;
+    if (destpos > music->stop)
+        return -1;
+    SDL_RWseek(music->src, destpos, RW_SEEK_SET);
+    return 0;
 }
 
 /* Close the given WAV stream */
@@ -307,7 +604,9 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
 {
     SDL_AudioSpec *spec = &wave->spec;
     WaveFMT *format;
+    WaveFMTex *formatEx = NULL;
     Uint8 *data;
+    Uint16 bitsamplerate;
     SDL_bool loaded = SDL_FALSE;
 
     if (chunk_length < sizeof(*format)) {
@@ -326,29 +625,82 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
     }
     format = (WaveFMT *)data;
 
+    wave->encoding = SDL_SwapLE16(format->encoding);
+
+    if (wave->encoding == EXT_CODE) {
+        formatEx = (WaveFMTex*)(data + sizeof(WaveFMT));
+        wave->encoding = (Uint16)SDL_SwapLE32(formatEx->subencoding);
+    }
+
     /* Decode the audio data format */
-    switch (SDL_SwapLE16(format->encoding)) {
+    switch (wave->encoding) {
         case PCM_CODE:
+        case FLOAT_CODE:
             /* We can understand this */
+            wave->decode = fetch_pcm;
+            break;
+        case uLAW_CODE:
+            /* , this */
+            wave->decode = fetch_ulaw;
+            break;
+        case ALAW_CODE:
+            /* , and this */
+            wave->decode = fetch_alaw;
             break;
         default:
+            /* but NOT this */
             Mix_SetError("Unknown WAVE data format");
             goto done;
     }
-    spec->freq = SDL_SwapLE32(format->frequency);
-    switch (SDL_SwapLE16(format->bitspersample)) {
+    spec->freq = (int)SDL_SwapLE32(format->frequency);
+    bitsamplerate = SDL_SwapLE16(format->bitspersample);
+    switch (bitsamplerate) {
         case 8:
-            spec->format = AUDIO_U8;
+            switch(wave->encoding) {
+            case PCM_CODE:  spec->format = AUDIO_U8; break;
+            case ALAW_CODE: spec->format = AUDIO_S16; break;
+            case uLAW_CODE: spec->format = AUDIO_S16; break;
+            default: goto unknown_length;
+            }
             break;
         case 16:
-            spec->format = AUDIO_S16;
+            switch(wave->encoding) {
+            case PCM_CODE: spec->format = AUDIO_S16; break;
+            default: goto unknown_length;
+            }
+            break;
+        case 24:
+            switch(wave->encoding) {
+            case PCM_CODE:
+                wave->decode = fetch_pcm24le;
+                spec->format = AUDIO_S32;
+                break;
+            default: goto unknown_length;
+            }
+        case 32:
+            switch(wave->encoding) {
+            case PCM_CODE:   spec->format = AUDIO_S32; break;
+            case FLOAT_CODE: spec->format = AUDIO_F32; break;
+            default: goto unknown_length;
+            }
+            break;
+        case 64:
+            switch(wave->encoding) {
+            case FLOAT_CODE:
+                wave->decode = fetch_float64le;
+                spec->format = AUDIO_F32;
+                break;
+            default: goto unknown_length;
+            }
             break;
         default:
-            Mix_SetError("Unknown PCM data format");
+            unknown_length:
+            Mix_SetError("Unknown PCM data format of %d-bit length", (int)bitsamplerate);
             goto done;
     }
     spec->channels = (Uint8) SDL_SwapLE16(format->channels);
     spec->samples = 4096;       /* Good default buffer size */
+    wave->samplesize = spec->channels * (bitsamplerate / 8);
     /* SDL_CalculateAudioSpec */
     spec->size = SDL_AUDIO_BITSIZE(spec->format) / 8;
     spec->size *= spec->channels;
@@ -513,10 +865,15 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
     SDL_AudioSpec *spec = &wave->spec;
     SDL_bool found_SSND = SDL_FALSE;
     SDL_bool found_COMM = SDL_FALSE;
+    SDL_bool found_FVER = SDL_FALSE;
+    SDL_bool is_AIFC = SDL_FALSE;
 
     Uint32 chunk_type;
     Uint32 chunk_length;
-    Sint64 next_chunk;
+    Sint64 next_chunk = 0;
+    Sint64 file_length;
+
+    file_length = SDL_RWsize(src);
 
     /* AIFF magic header */
     Uint32 AIFFmagic;
@@ -529,13 +886,18 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
     Uint16 samplesize = 0;
     Uint8 sane_freq[10];
     Uint32 frequency = 0;
+    Uint32 AIFCVersion1 = 0;
+    Uint32 compressionType = 0;
 
     /* Check the magic header */
     chunk_length = SDL_ReadBE32(src);
     AIFFmagic = SDL_ReadLE32(src);
-    if (AIFFmagic != AIFF) {
-        Mix_SetError("Unrecognized file type (not AIFF)");
+    if (AIFFmagic != AIFF && AIFFmagic != AIFC) {
+        Mix_SetError("Unrecognized file type (not AIFF or AIFC)");
         return SDL_FALSE;
+    }
+    if (AIFFmagic == AIFC) {
+        is_AIFC = SDL_TRUE;
     }
 
     /* From what I understand of the specification, chunks may appear in
@@ -549,9 +911,9 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
         chunk_length    = SDL_ReadBE32(src);
         next_chunk      = SDL_RWtell(src) + chunk_length;
 
-        /* Paranoia to avoid infinite loops */
-        if (chunk_length == 0)
-            break;
+        if (chunk_length % 2) {
+            next_chunk++;
+        }
 
         switch (chunk_type) {
         case SSND:
@@ -559,6 +921,24 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
             offset = SDL_ReadBE32(src);
             blocksize = SDL_ReadBE32(src);
             wave->start = SDL_RWtell(src) + offset;
+            (void)blocksize; /* unused */
+            break;
+
+        case FVER:
+            found_FVER = SDL_TRUE;
+            AIFCVersion1 = SDL_ReadBE32(src);
+            (void)AIFCVersion1; /* unused */
+            break;
+
+        case MARK:
+        case INST:
+            /* Just skip those chunks */
+            break;
+
+        case NAME:
+        case AUTH:
+        case _c__:
+            /* Just skip those chunks */
             break;
 
         case COMM:
@@ -570,42 +950,123 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
             samplesize = SDL_ReadBE16(src);
             SDL_RWread(src, sane_freq, sizeof(sane_freq), 1);
             frequency = SANE_to_Uint32(sane_freq);
+            if (is_AIFC) {
+                compressionType = SDL_ReadLE32(src);
+                /* here must be a "compressionName" which is a padded string */
+            }
             break;
 
         default:
+            /* Unknown/unsupported chunk: we just skip over */
             break;
         }
-    } while ((!found_SSND || !found_COMM)
-         && SDL_RWseek(src, next_chunk, RW_SEEK_SET) != -1);
+    } while (next_chunk < file_length && SDL_RWseek(src, next_chunk, RW_SEEK_SET) != -1);
 
     if (!found_SSND) {
-        Mix_SetError("Bad AIFF file (no SSND chunk)");
+        Mix_SetError("Bad AIFF/AIFF-C file (no SSND chunk)");
         return SDL_FALSE;
     }
 
     if (!found_COMM) {
-        Mix_SetError("Bad AIFF file (no COMM chunk)");
+        Mix_SetError("Bad AIFF/AIFF-C file (no COMM chunk)");
         return SDL_FALSE;
     }
 
+    if (is_AIFC && !found_FVER) {
+        Mix_SetError("Bad AIFF-C file (no FVER chunk)");
+        return SDL_FALSE;
+    }
+
+
+    wave->samplesize = channels * (samplesize / 8);
     wave->stop = wave->start + channels * numsamples * (samplesize / 8);
 
     /* Decode the audio data format */
     SDL_memset(spec, 0, (sizeof *spec));
-    spec->freq = frequency;
+    spec->freq = (int)frequency;
     switch (samplesize) {
     case 8:
-        spec->format = AUDIO_S8;
+        if (!is_AIFC)
+            spec->format = AUDIO_S8;
+        else switch (compressionType) {
+        case raw_: spec->format = AUDIO_U8; break;
+        case sowt: spec->format = AUDIO_S8; break;
+        case ulaw:
+            spec->format = AUDIO_S16LSB;
+            wave->encoding = uLAW_CODE;
+            wave->decode = fetch_ulaw;
+            break;
+        case alaw:
+            spec->format = AUDIO_S16LSB;
+            wave->encoding = ALAW_CODE;
+            wave->decode = fetch_alaw;
+            break;
+        default: goto unsupported_format;
+        }
         break;
     case 16:
-        spec->format = AUDIO_S16MSB;
+        if (!is_AIFC)
+            spec->format = AUDIO_S16MSB;
+        else switch (compressionType) {
+        case sowt: spec->format = AUDIO_S16LSB; break;
+        case NONE: spec->format = AUDIO_S16MSB; break;
+        case ULAW:
+            spec->format = AUDIO_S16LSB;
+            wave->encoding = uLAW_CODE;
+            wave->decode = fetch_ulaw;
+            break;
+        case ALAW:
+            spec->format = AUDIO_S16LSB;
+            wave->encoding = ALAW_CODE;
+            wave->decode = fetch_alaw;
+            break;
+        default: goto unsupported_format;
+        }
+        break;
+    case 24:
+        wave->encoding = PCM_CODE;
+        wave->decode = fetch_pcm24be;
+        if (!is_AIFC)
+            spec->format = AUDIO_S32MSB;
+        else switch (compressionType) {
+        case sowt: spec->format = AUDIO_S32LSB; break;
+        case NONE: spec->format = AUDIO_S32MSB; break;
+        default: goto unsupported_format;
+        }
+        break;
+    case 32:
+        if (!is_AIFC)
+            spec->format = AUDIO_S32MSB;
+        else switch (compressionType) {
+        case sowt: spec->format = AUDIO_S32LSB; break;
+        case NONE: spec->format = AUDIO_S32MSB; break;
+        case fl32:
+        case FL32: spec->format = AUDIO_F32MSB; break;
+        default: goto unsupported_format;
+        }
+        break;
+    case 64:
+        wave->encoding = FLOAT_CODE;
+        wave->decode = fetch_float64be;
+        if (!is_AIFC)
+            spec->format = AUDIO_F32;
+        else switch (compressionType) {
+        case fl64:
+            spec->format = AUDIO_F32;
+            break;
+        default: goto unsupported_format;
+        }
         break;
     default:
+    unsupported_format:
         Mix_SetError("Unknown samplesize in data format");
         return SDL_FALSE;
     }
     spec->channels = (Uint8) channels;
     spec->samples = 4096;       /* Good default buffer size */
+    spec->size = SDL_AUDIO_BITSIZE(spec->format) / 8;
+    spec->size *= spec->channels;
+    spec->size *= spec->samples;
 
     return SDL_TRUE;
 }
@@ -626,7 +1087,7 @@ Mix_MusicInterface Mix_MusicInterface_WAV =
     WAV_Play,
     NULL,   /* IsPlaying */
     WAV_GetAudio,
-    NULL,   /* Seek */
+    WAV_Seek,   /* Seek */
     NULL,   /* Pause */
     NULL,   /* Resume */
     NULL,   /* Stop */
