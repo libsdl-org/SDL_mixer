@@ -238,17 +238,6 @@ static SDL_INLINE SDL_bool is_id3v1(const unsigned char *data, size_t length)
     }
     return SDL_TRUE;
 }
-static SDL_INLINE SDL_bool is_id3v1ext(const unsigned char *data, size_t length)
-{
-    /* ID3v1 extended tag: just before ID3v1, always 227 bytes.
-     * https://www.getid3.org/phpBB3/viewtopic.php?t=1202
-     * https://en.wikipedia.org/wiki/ID3v1#Enhanced_tag
-     * Not an official standard, is only supported by few programs. */
-    if (length < 4 || SDL_memcmp(data,"TAG+",4) != 0) {
-        return SDL_FALSE;
-    }
-    return SDL_TRUE;
-}
 static SDL_INLINE SDL_bool is_id3v2(const unsigned char *data, size_t length)
 {
     /* ID3v2 header is 10 bytes:  http://id3.org/id3v2.4.0-structure */
@@ -349,20 +338,7 @@ static int skip_tags(MAD_Music *music)
     if (is_id3v1(music->input_buffer, 128)) {
         music->length -= 128;
 
-        /* extended ID3v1 just before the ID3v1 tag? (unlikely)
-         * if found, assume no additional tags: this stupidity
-         * is non-standard..  */
-        if (music->length < 227) goto ape;
-        MAD_RWseek(music, -227, RW_SEEK_END);
-        readsize = MAD_RWread(music, music->input_buffer, 1, 227);
-        MAD_RWseek(music, 0, RW_SEEK_SET);
-        if (readsize != 227) return -1;
-        if (is_id3v1ext(music->input_buffer, 227)) {
-            music->length -= 227;
-            goto end;
-        }
-
-        /* FIXME: handle possible double-ID3v1 tags? */
+        /* FIXME: handle possible double-ID3v1 tags?? */
     }
 
     ape: /* APE tag may be at the end: read the footer */
@@ -378,7 +354,6 @@ static int skip_tags(MAD_Music *music)
         }
     }
 
-    end:
     return (music->length > 0)? 0: -1;
 }
 
