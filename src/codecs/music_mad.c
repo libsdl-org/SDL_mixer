@@ -305,12 +305,14 @@ static SDL_INLINE SDL_bool is_apetag(const unsigned char *data, size_t length)
     }
     return SDL_TRUE;
 }
-static SDL_INLINE long get_ape_len(const unsigned char *data, long datalen, Uint32 *version)
+static SDL_INLINE long get_ape_len(const unsigned char *data)
 {
+    Uint32 flags, version;
     long size = (long)((data[15]<<24) | (data[14]<<16) | (data[13]<<8) | data[12]);
-    *version = (Uint32)((data[11]<<24) | (data[10]<<16) | (data[9]<<8) | data[8]);
-    (void)datalen;
-    return size; /* caller will handle the additional v2 header length */
+    version = (Uint32)((data[11]<<24) | (data[10]<<16) | (data[9]<<8) | data[8]);
+    flags = (Uint32)((data[23]<<24) | (data[22]<<16) | (data[21]<<8) | data[20]);
+    if (version == 2000U && (flags & (1U<<31))) size += 32; /* header present. */
+    return size;
 }
 
 static int skip_tags(MAD_Music *music)
@@ -328,11 +330,10 @@ static int skip_tags(MAD_Music *music)
         music->length -= len;
         MAD_RWseek(music, 0, RW_SEEK_SET);
     }
-    /* APE tag _might_ be at the start: read the header */
+    /* APE tag _might_ be at the start (discouraged
+     * but not forbidden, either.)  read the header. */
     else if (is_apetag(music->input_buffer, readsize)) {
-        Uint32 v;
-        len = get_ape_len(music->input_buffer, (long)readsize, &v);
-        len += 32; /* we're at top: have a header. */
+        len = get_ape_len(music->input_buffer);
         if (len >= music->length) return -1;
         music->start += len;
         music->length -= len;
@@ -348,29 +349,10 @@ static int skip_tags(MAD_Music *music)
     if (is_id3v1(music->input_buffer, 128)) {
         music->length -= 128;
 
-        /* APE tag may be before the ID3v1: read the footer */
-        if (music->length < 32) goto end;
-        MAD_RWseek(music, -32, RW_SEEK_END);
-        readsize = MAD_RWread(music, music->input_buffer, 1, 32);
-        MAD_RWseek(music, 0, RW_SEEK_SET);
-        if (readsize != 32) return -1;
-        if (is_apetag(music->input_buffer, 32)) {
-            Uint32 v;
-            len = get_ape_len(music->input_buffer, (long)readsize, &v);
-            if (v == 2000U) len += 32; /* header */
-            if (len >= music->length) return -1;
-            if (v == 2000U) { /* verify header : */
-                MAD_RWseek(music, -len, RW_SEEK_END);
-                readsize = MAD_RWread(music, music->input_buffer, 1, 32);
-                MAD_RWseek(music, 0, RW_SEEK_SET);
-                if (readsize != 32) return -1;
-                if (!is_apetag(music->input_buffer, 32)) return -1;
-            }
-            music->length -= len;
-            goto end;
-        }
-        /* extended ID3v1 just before the ID3v1 tag? (unlikely)  */
-        if (music->length < 227) goto end;
+        /* extended ID3v1 just before the ID3v1 tag? (unlikely)
+         * if found, assume no additional tags: this stupidity
+         * is non-standard..  */
+        if (music->length < 227) goto ape;
         MAD_RWseek(music, -227, RW_SEEK_END);
         readsize = MAD_RWread(music, music->input_buffer, 1, 227);
         MAD_RWseek(music, 0, RW_SEEK_SET);
@@ -379,7 +361,10 @@ static int skip_tags(MAD_Music *music)
             music->length -= 227;
             goto end;
         }
+
+        /* FIXME: handle possible double-ID3v1 tags? */
     }
+
     ape: /* APE tag may be at the end: read the footer */
     if (music->length >= 32) {
         MAD_RWseek(music, -32, RW_SEEK_END);
@@ -387,17 +372,8 @@ static int skip_tags(MAD_Music *music)
         MAD_RWseek(music, 0, RW_SEEK_SET);
         if (readsize != 32) return -1;
         if (is_apetag(music->input_buffer, 32)) {
-            Uint32 v;
-            len = get_ape_len(music->input_buffer, (long)readsize, &v);
-            if (v == 2000U) len += 32; /* header */
+            len = get_ape_len(music->input_buffer);
             if (len >= music->length) return -1;
-            if (v == 2000U) { /* verify header : */
-                MAD_RWseek(music, -len, RW_SEEK_END);
-                readsize = MAD_RWread(music, music->input_buffer, 1, 32);
-                MAD_RWseek(music, 0, RW_SEEK_SET);
-                if (readsize != 32) return -1;
-                if (!is_apetag(music->input_buffer, 32)) return -1;
-            }
             music->length -= len;
         }
     }
