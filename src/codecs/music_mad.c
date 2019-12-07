@@ -341,6 +341,10 @@ static int skip_tags(MAD_Music *music)
         /* FIXME: handle possible double-ID3v1 tags?? */
     }
 
+    /* FIXME: handle Lyrics3 tags?
+     * http://id3.org/Lyrics3
+     * http://id3.org/Lyrics3v2 */
+
     ape: /* APE tag may be at the end: read the footer */
     if (music->length >= 32) {
         MAD_RWseek(music, -32, RW_SEEK_END);
