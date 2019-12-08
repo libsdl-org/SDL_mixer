@@ -52,10 +52,14 @@ static Sint32 getvl(SDL_RWops *rw)
     }
 }
 
+#if 0 /* SNDDBG() is just an empty macro */
 /* Print a string from the file, followed by a newline. Any non-ASCII
    or unprintable characters will be converted to periods. */
-static int dumpstring(SDL_RWops *rw, Sint32 len, char *label)
+static int dumpstring(SDL_RWops *rw, Sint32 len, Uint8 type)
 {
+  static char *label[]={
+    "Text event: ", "Text: ", "Copyright: ", "Track name: ",
+    "Instrument: ", "Lyric: ", "Marker: ", "Cue point: "};
   signed char *s=safe_malloc(len+1);
   if (len != (Sint32) SDL_RWread(rw, s, 1, len))
     {
@@ -68,10 +72,15 @@ static int dumpstring(SDL_RWops *rw, Sint32 len, char *label)
       if (s[len]<32)
 	s[len]='.';
     }
-  SNDDBG(("%s%s", label, s));
+  SNDDBG(("%s%s", label[(type>7) ? 0 : type], s));
   free(s);
   return 0;
 }
+#else
+static SDL_INLINE int dumpstring(SDL_RWops *rw, Sint32 len, Uint8 type) {
+  return SDL_RWseek(rw, len, RW_SEEK_CUR);
+}
+#endif
 
 #define MIDIEVENT(at,t,ch,pa,pb) \
   new=safe_malloc(sizeof(MidiEventList)); \
@@ -111,10 +120,7 @@ static MidiEventList *read_midi_event(MidiSong *song)
 	  len=getvl(song->rw);
 	  if (type>0 && type<16)
 	    {
-	      static char *label[]={
-		"Text event: ", "Text: ", "Copyright: ", "Track name: ",
-		"Instrument: ", "Lyric: ", "Marker: ", "Cue point: "};
-	      dumpstring(song->rw, len, label[(type>7) ? 0 : type]);
+	      dumpstring(song->rw, len, type);
 	    }
 	  else
 	    switch(type)
