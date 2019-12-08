@@ -1,10 +1,30 @@
 2.0.5:
-Vitaly Novichkov - Tue Nov 19 12:36:40 2019
- * Reorganized source tree layout
-Ozkan Sezer - Sun Nov 17 23:10:10 2019
- * Updated external libraries with multiple bug / security fixes
+Ozkan Sezer - Sun Dec 08 10:20:40 2019
+ * Improved mp3 tag detection/skipping
+Ozkan Sezer - Thu Dec 05 01:41:50 2019
+ * Updated external libraries with multiple bug/security fixes
+Vitaly Novichkov - Wed Dec 04 18:50:02 2019
+ * Extended support for WAV files
+Vitaly Novichkov - Tue Nov 26 15:55:50 2019
+ * Added looping support for Opus files
+Vitaly Novichkov - Tue, 26 Nov 2019 15:02:51
+ * Allow rmid files be opened by native midi
+Vitaly Novichkov - Tue Nov 26 14:37:25 2019
+ * Fixed possible crash in win32 native midi
+Vitaly Novichkov - Mon Nov 18 17:10:20 2019
+ * Prevent clipping due to volume settings in modplug music
+Michael Day - Mon Nov 18 07:43:52 2019
+ * Fixed FLAC initial stutter
 Michael Day - Sat Nov 16 22:11:29 PST 2019
  * Added looping support for FLAC files
+Michael Day - Fri Nov 01 10:38:35 2019
+ * Improved OGG looping support
+Sam Lantinga - Fri Oct 04 18:00:42 2019
+ * Fixed loading Opus audio as audio chunks
+Sylvain Becker - Wed Aug 21 09:30:22 2019
+ * Fixed Mix_FadeOutChannel() never setting fade_volume_reset
+Ioan Chera - Sat Mar 30 14:07:03 2019
+ * Fixed memory leak in macOS native midi code
 
 2.0.4:
 Ozkan Sezer - Wed, 10 Oct 2018 14:56:10
