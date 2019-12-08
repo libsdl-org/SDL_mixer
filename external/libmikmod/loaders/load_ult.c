@@ -206,12 +206,6 @@ static BOOL ULT_Load(BOOL curious)
 	if(!AllocPositions(256)) return 0;
 	for(t=0;t<256;t++)
 		of.positions[t]=_mm_read_UBYTE(modreader);
-	for(t=0;t<256;t++)
-		if(of.positions[t]==255) {
-			of.positions[t]=LAST_PATTERN;
-			break;
-		}
-	of.numpos=t;
 
 	noc=_mm_read_UBYTE(modreader);
 	nop=_mm_read_UBYTE(modreader);
@@ -219,6 +213,20 @@ static BOOL ULT_Load(BOOL curious)
 	of.numchn=++noc;
 	of.numpat=++nop;
 	of.numtrk=of.numchn*of.numpat;
+
+	for(t=0;t<256;t++) {
+		if(of.positions[t]==255) {
+			of.positions[t]=LAST_PATTERN;
+			break;
+		}
+		if (of.positions[t]>of.numpat) { /* SANITIY CHECK */
+		/*	fprintf(stderr,"positions[%d]=%d > numpat=%d\n",t,of.positions[t],of.numpat);*/
+			_mm_errno = MMERR_LOADING_HEADER;
+			return 0;
+		}
+	}
+	of.numpos=t;
+
 	if(!AllocTracks()) return 0;
 	if(!AllocPatterns()) return 0;
 	for(u=0;u<of.numchn;u++)

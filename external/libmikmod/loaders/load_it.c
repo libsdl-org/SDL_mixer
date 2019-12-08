@@ -396,6 +396,7 @@ static void LoadMidiString(MREADER* r,CHAR* dest)
 {
 	CHAR *curp,*lastp;
 
+	memset(dest,0,33*sizeof(CHAR));/* caller sends midiline[33] */
 	_mm_read_UBYTES(dest,32,r);
 	curp=lastp=dest;
 	/* remove blanks and uppercase all */

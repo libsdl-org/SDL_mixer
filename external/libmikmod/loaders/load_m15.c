@@ -92,7 +92,6 @@ static BOOL LoadModuleHeader(MODULEHEADER *h)
 	int t,u;
 
 	_mm_read_string(h->songname,20,modreader);
-	h->songname[20]=0;	/* just in case */
 
 	/* sanity check : title should contain printable characters and a bunch
 	   of null chars */
@@ -105,7 +104,6 @@ static BOOL LoadModuleHeader(MODULEHEADER *h)
 		MSAMPINFO *s=&h->samples[t];
 
 		_mm_read_string(s->samplename,22,modreader);
-		s->samplename[22]=0;	/* just in case */
 		s->length   =_mm_read_M_UWORD(modreader);
 		s->finetune =_mm_read_UBYTE(modreader);
 		s->volume   =_mm_read_UBYTE(modreader);
@@ -180,6 +178,7 @@ static BOOL M15_Test(void)
 	MODULEHEADER h;
 
 	ust_loader = 0;
+	memset(&h, 0, sizeof(MODULEHEADER));
 	if(!LoadModuleHeader(&h)) return 0;
 
 	/* reject other file types */
@@ -242,7 +241,7 @@ static BOOL M15_Test(void)
 
 static BOOL M15_Init(void)
 {
-	if(!(mh=(MODULEHEADER*)_mm_malloc(sizeof(MODULEHEADER)))) return 0;
+	if(!(mh=(MODULEHEADER*)_mm_calloc(1,sizeof(MODULEHEADER)))) return 0;
 	return 1;
 }
 

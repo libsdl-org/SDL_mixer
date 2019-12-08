@@ -4,9 +4,10 @@
 # make static : builds the static library mikmod_static.lib
 
 INCLUDES=-I../os2 -I../include
-AR=emxomfar
-ARFLAGS=cr
 CC=gcc
+AR=ar #emxomfar
+ARFLAGS=cr
+RANLIB=ranlib
 IMPLIB=emximp
 
 CFLAGS=-O2 -Wall -funroll-loops -ffast-math -fno-strength-reduce -Zomf -Zmt
@@ -77,6 +78,7 @@ $(DLLNAME): $(OBJ) $(DEFNAME)
 $(LIBSTATIC): CPPFLAGS+=-DMIKMOD_STATIC
 $(LIBSTATIC): $(OBJ)
 	$(AR) $(ARFLAGS) $(LIBSTATIC) $(OBJ)
+	$(RANLIB) $(LIBSTATIC)
 
 HEADER_DEPS=../include/mikmod.h ../include/mikmod_internals.h ../include/mikmod_ctype.h
 drv_dart.o: ../drivers/drv_dart.c $(HEADER_DEPS)

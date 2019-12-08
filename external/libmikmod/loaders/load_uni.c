@@ -623,9 +623,14 @@ static BOOL UNI_Load(BOOL curious)
 		for(t=0;t<of.numchn;t++) of.panning[t]=mh.panning[t];
 	}
 	/* convert the ``end of song'' pattern code if necessary */
-	if(universion<0x106)
-		for(t=0;t<of.numpos;t++)
-			if(of.positions[t]==255) of.positions[t]=LAST_PATTERN;
+	for(t=0;t<of.numpos;t++) {
+		if(universion<0x106 && of.positions[t]==255) of.positions[t]=LAST_PATTERN;
+		else if (of.positions[t]>of.numpat) { /* SANITIY CHECK */
+		/*	fprintf(stderr,"position[%d]=%d > numpat=%d\n",t,of.positions[t],of.numpat);*/
+			_mm_errno = MMERR_LOADING_HEADER;
+			return 0;
+		}
+	}
 
 	/* instruments and samples */
 	if(universion>=6) {

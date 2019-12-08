@@ -114,6 +114,7 @@ static BOOL STX_Test(void)
 	UBYTE id[8];
 	int t;
 
+	memset(id,0,8);
 	_mm_fseek(modreader,0x3C,SEEK_SET);
 	if(!_mm_read_UBYTES(id,4,modreader)) return 0;
 	if(memcmp(id,"SCRM",4)) return 0;
@@ -297,7 +298,8 @@ static BOOL STX_Load(BOOL curious)
 		_mm_errno = MMERR_LOADING_HEADER;
 		return 0;
 	}
-	if(mh->ordnum > 256 || mh->insnum > 256 || mh->patnum > 254) {
+	if(mh->ordnum > 256 || !mh->insnum || mh->insnum > 256 ||
+	   mh->patnum > 254 || !mh->patnum) {
 		_mm_errno = MMERR_NOT_A_MODULE;
 		return 0;
 	}
