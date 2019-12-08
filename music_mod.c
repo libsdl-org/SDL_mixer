@@ -347,6 +347,7 @@ void MOD_delete(MODULE *music)
 /* Jump (seek) to a given position (time is in seconds) */
 void MOD_jump_to_time(MODULE *music, double time)
 {
+	/* FIXME: WRONG: THIS IS NOT A TIME SEEK */
 	mikmod.Player_SetPosition((UWORD)time);
 }
 
