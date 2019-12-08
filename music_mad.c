@@ -205,6 +205,42 @@ static __inline__ int get_ape_len(const unsigned char *data)
     if (version == 2000U && (flags & (1U<<31))) size += 32; /* header present. */
     return size;
 }
+static __inline__ int is_lyrics3tag(const unsigned char *data, int length) {
+    /* http://id3.org/Lyrics3
+     * http://id3.org/Lyrics3v2 */
+    if (length < 15) return 0;
+    if (SDL_memcmp(data+6,"LYRICS200",9) == 0) return 2; /* v2 */
+    if (SDL_memcmp(data+6,"LYRICSEND",9) == 0) return 1; /* v1 */
+    return 0;
+}
+static __inline__ int get_lyrics3v1_len(mad_data *m) {
+    const char *p; int i, len;
+    /* needs manual search:  http://id3.org/Lyrics3 */
+    /* this relies on the input_buffer size >= 5100 */
+    if (m->length < 20) return -1;
+    len = (m->length > 5109)? 5109 : m->length;
+    MAD_RWseek(m, -len, RW_SEEK_END);
+    MAD_RWread(m, m->input_buffer, 1, (len -= 9)); /* exclude footer */
+    MAD_RWseek(m, 0, RW_SEEK_SET);
+    /* strstr() won't work here. */
+    for (i = len - 11, p = (const char*)m->input_buffer; i >= 0; --i, ++p) {
+        if (SDL_memcmp(p, "LYRICSBEGIN", 11) == 0)
+            break;
+    }
+    if (i < 0) return -1;
+    return len - (int)(p - (const char*)m->input_buffer) + 9 /* footer */;
+}
+static __inline__ int get_lyrics3v2_len(const unsigned char *data, int length) {
+    /* 6 bytes before the end marker is size in decimal format -
+     * does not include the 9 bytes end marker and size field. */
+    if (length != 6) return 0;
+    return SDL_strtol((const char *)data, NULL, 10) + 15;
+}
+static __inline__ SDL_bool verify_lyrics3v2(const unsigned char *data, int length) {
+    if (length < 11) return SDL_FALSE;
+    if (SDL_memcmp(data,"LYRICSBEGIN",11) == 0) return SDL_TRUE;
+    return SDL_FALSE;
+}
 
 static int skip_tags(mad_data *music)
 {
@@ -243,9 +279,8 @@ static int skip_tags(mad_data *music)
         /* FIXME: handle possible double-ID3v1 tags?? */
     }
 
-    /* FIXME: handle Lyrics3 tags?
-     * http://id3.org/Lyrics3
-     * http://id3.org/Lyrics3v2 */
+    /* do we know whether ape or lyrics3 is the first?
+     * well, we don't: we need to handle that later... */
 
     ape: /* APE tag may be at the end: read the footer */
     if (music->length >= 32) {
@@ -256,6 +291,30 @@ static int skip_tags(mad_data *music)
         if (is_apetag(music->input_buffer, 32)) {
             len = get_ape_len(music->input_buffer);
             if (len >= music->length) return -1;
+            music->length -= len;
+        }
+    }
+
+    if (music->length >= 15) {
+        MAD_RWseek(music, -15, RW_SEEK_END);
+        readsize = MAD_RWread(music, music->input_buffer, 1, 15);
+        MAD_RWseek(music, 0, RW_SEEK_SET);
+        if (readsize != 15) return -1;
+        len = is_lyrics3tag(music->input_buffer, 15);
+        if (len == 2) {
+            len = get_lyrics3v2_len(music->input_buffer, 6);
+            if (len >= music->length) return -1;
+            if (len < 15) return -1;
+            MAD_RWseek(music, -len, RW_SEEK_END);
+            readsize = MAD_RWread(music, music->input_buffer, 1, 11);
+            MAD_RWseek(music, 0, RW_SEEK_SET);
+            if (readsize != 11) return -1;
+            if (!verify_lyrics3v2(music->input_buffer, 11)) return -1;
+            music->length -= len;
+        }
+        else if (len == 1) {
+            len = get_lyrics3v1_len(music);
+            if (len < 0) return -1;
             music->length -= len;
         }
     }
