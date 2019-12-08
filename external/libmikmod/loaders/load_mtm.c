@@ -217,8 +217,14 @@ static BOOL MTM_Load(BOOL curious)
 	}
 
 	if(!AllocPositions(of.numpos)) return 0;
-	for(t=0;t<of.numpos;t++)
+	for(t=0;t<of.numpos;t++) {
 		of.positions[t]=_mm_read_UBYTE(modreader);
+		if (of.positions[t]>of.numpat) { /* SANITIY CHECK */
+		/*	fprintf(stderr,"positions[%d]=%d > numpat=%d\n",t,of.positions[t],of.numpat);*/
+			_mm_errno = MMERR_LOADING_HEADER;
+			return 0;
+		}
+	}
 	for(;t<128;t++) _mm_skip_BYTE(modreader);
 	if(_mm_eof(modreader)) {
 		_mm_errno = MMERR_LOADING_HEADER;

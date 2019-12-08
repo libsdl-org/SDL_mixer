@@ -103,6 +103,7 @@ static BOOL STM_Test(void)
 	UBYTE str[44];
 	int t;
 
+	memset(str,0,44);
 	_mm_fseek(modreader,20,SEEK_SET);
 	_mm_read_UBYTES(str,44,modreader);
 	if(str[9]!=2) return 0;	/* STM Module = filetype 2 */

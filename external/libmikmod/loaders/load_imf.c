@@ -490,6 +490,13 @@ static BOOL IMF_Load(BOOL curious)
 	if(!AllocPositions(of.numpos)) return 0;
 	for(t=u=0;t<mh->ordnum;t++)
 		if(mh->orders[t]!=0xff) of.positions[u++]=mh->orders[t];
+	for(t=0;t<of.numpos;t++) {
+		if (of.positions[t]>of.numpat) { /* SANITIY CHECK */
+		/*	fprintf(stderr,"position[%d]=%d > numpat=%d\n",t,of.positions[t],of.numpat);*/
+			_mm_errno = MMERR_LOADING_HEADER;
+			return 0;
+		}
+	}
 
 	/* load pattern info */
 	of.numtrk=of.numpat*of.numchn;

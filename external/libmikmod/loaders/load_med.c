@@ -554,8 +554,14 @@ static BOOL MED_Load(BOOL curious)
 	/* copy song positions */
 	if (!AllocPositions(ms->songlen))
 		return 0;
-	for (t = 0; t < ms->songlen; t++)
+	for (t = 0; t < ms->songlen; t++) {
 		of.positions[t] = ms->playseq[t];
+		if (of.positions[t]>ms->numblocks) { /* SANITIY CHECK */
+		/*	fprintf(stderr,"positions[%d]=%d > numpat=%d\n",t,of.positions[t],ms->numblocks);*/
+			_mm_errno = MMERR_LOADING_HEADER;
+			return 0;
+		}
+	}
 
 	decimalvolumes = (ms->flags & 0x10) ? 0 : 1;
 	bpmtempos = (ms->flags2 & 0x20) ? 1 : 0;

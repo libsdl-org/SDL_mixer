@@ -285,6 +285,11 @@ static BOOL DSM_Load(BOOL curious)
 	for(t=0;t<mh->numord;t++) {
 		int order=mh->orders[t];
 		if(order==255) order=LAST_PATTERN;
+		else if (of.positions[t]>of.numpat) { /* SANITIY CHECK */
+		/*	fprintf(stderr,"positions[%d]=%d > numpat=%d\n",t,of.positions[t],of.numpat);*/
+			_mm_errno = MMERR_LOADING_HEADER;
+			return 0;
+		}
 		of.positions[of.numpos]=order;
 		if(mh->orders[t]<254) of.numpos++;
 	}

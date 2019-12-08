@@ -363,6 +363,11 @@ static SWORD StartEnvelope(ENVPR *t,UBYTE flg,UBYTE pts,UBYTE susbeg,UBYTE susen
 	t->a=0;
 	t->b=((t->flg&EF_SUSTAIN)&&(!(keyoff&KEY_OFF)))?0:1;
 
+	if (!t->pts) { /* FIXME: bad/crafted file. better/more general solution? */
+		t->b=0;
+		return t->env[0].val;
+	}
+
 	/* Imago Orpheus sometimes stores an extra initial point in the envelope */
 	if ((t->pts>=2)&&(t->env[0].pos==t->env[1].pos)) {
 		t->a++;
@@ -825,6 +830,11 @@ static int DoPTEffectB(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWOR
 	if (tick || mod->patdly2)
 		return 0;
 
+	if (dat >= mod->numpos) { /* crafted file? */
+	/*	fprintf(stderr,"DoPTEffectB: numpos=%d, dat=%d -> %d\n",mod->numpos,dat,mod->numpos-1);*/
+		dat=mod->numpos-1;
+	}
+
 	/* Vincent Voois uses a nasty trick in "Universal Bolero" */
 	if (dat == mod->sngpos && mod->patbrk == mod->patpos)
 		return 0;
@@ -872,6 +882,10 @@ static int DoPTEffectD(UWORD tick, UWORD flags, MP_CONTROL *a, MODULE *mod, SWOR
 
 	dat=UniGetByte();
 	if ((tick)||(mod->patdly2)) return 0;
+	if (dat && dat >= mod->numrow) { /* crafted file? */
+	/*	fprintf(stderr,"DoPTEffectD: numrow=%d, dat=%d -> 0\n",mod->numrow,dat);*/
+		dat=0;
+	}
 	if ((mod->positions[mod->sngpos]!=LAST_PATTERN)&&
 	    (dat>mod->pattrows[mod->positions[mod->sngpos]])) {
 		dat=mod->pattrows[mod->positions[mod->sngpos]];

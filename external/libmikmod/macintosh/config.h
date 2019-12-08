@@ -3,6 +3,9 @@
 /* Define if you have the ANSI C header files.  */
 /* #undef STDC_HEADERS */
 
+/* disable the high quality mixer (build only with the standart mixer) */
+/* #define NO_HQMIXER */
+
 /* Define if you want support for output to stdout */
 /* #undef DRV_STDOUT */
 
