@@ -29,6 +29,7 @@
 #include "SDL_loadso.h"
 
 #include "music_mpg123.h"
+#include "mp3utils.h"
 
 #include <mpg123.h>
 
@@ -94,7 +95,7 @@ static int MPG123_Load(void)
         FUNCTION_LOADER(mpg123_new, mpg123_handle *(*)(const char* decoder, int *error))
         FUNCTION_LOADER(mpg123_open_handle, int (*)(mpg123_handle *mh, void *iohandle))
         FUNCTION_LOADER(mpg123_plain_strerror, const char* (*)(int errcode))
-        FUNCTION_LOADER(mpg123_rates, void (*)(const long **list, size_t *number));
+        FUNCTION_LOADER(mpg123_rates, void (*)(const long **list, size_t *number))
         FUNCTION_LOADER(mpg123_read, int (*)(mpg123_handle *mh, unsigned char *outmemory, size_t outmemsize, size_t *done ))
         FUNCTION_LOADER(mpg123_replace_reader_handle, int (*)( mpg123_handle *mh, ssize_t (*r_read) (void *, void *, size_t), off_t (*r_lseek)(void *, off_t, int), void (*cleanup)(void*) ))
         FUNCTION_LOADER(mpg123_seek, off_t (*)( mpg123_handle *mh, off_t sampleoff, int whence ))
@@ -121,8 +122,8 @@ static void MPG123_Unload(void)
 
 typedef struct
 {
+    struct mp3file_t mp3file;
     int play_count;
-    SDL_RWops* src;
     int freesrc;
     int volume;
 
@@ -183,12 +184,12 @@ static char const* mpg_err(mpg123_handle* mpg, int result)
 /* we're gonna override mpg123's I/O with these wrappers for RWops */
 static ssize_t rwops_read(void* p, void* dst, size_t n)
 {
-    return (ssize_t)SDL_RWread((SDL_RWops*)p, dst, 1, n);
+    return (ssize_t)MP3_RWread((struct mp3file_t *)p, dst, 1, n);
 }
 
 static off_t rwops_seek(void* p, off_t offset, int whence)
 {
-    return (off_t)SDL_RWseek((SDL_RWops*)p, (Sint64)offset, whence);
+    return (off_t)MP3_RWseek((struct mp3file_t *)p, (Sint64)offset, whence);
 }
 
 static void rwops_cleanup(void* p)
@@ -219,8 +220,16 @@ static void *MPG123_CreateFromRW(SDL_RWops *src, int freesrc)
     if (!music) {
         return NULL;
     }
-    music->src = src;
+    music->mp3file.src = src;
     music->volume = MIX_MAX_VOLUME;
+
+    music->mp3file.length = SDL_RWsize(src);
+    if (mp3_skiptags(&music->mp3file) < 0) {
+        SDL_free(music);
+        Mix_SetError("music_mpg123: corrupt mp3 file (bad tags.)");
+        return NULL;
+    }
+    MP3_RWseek(&music->mp3file, 0, RW_SEEK_SET);
 
     /* Just assume 16-bit 2 channel audio for now */
     music->buffer_size = music_spec.samples * sizeof(Sint16) * 2;
@@ -268,7 +277,7 @@ static void *MPG123_CreateFromRW(SDL_RWops *src, int freesrc)
         mpg123.mpg123_format(music->handle, rates[i], channels, formats);
     }
 
-    result = mpg123.mpg123_open_handle(music->handle, music->src);
+    result = mpg123.mpg123_open_handle(music->handle, &music->mp3file);
     if (result != MPG123_OK) {
         MPG123_Delete(music);
         Mix_SetError("mpg123_open_handle: %s", mpg_err(music->handle, result));
@@ -392,7 +401,7 @@ static void MPG123_Delete(void *context)
         SDL_free(music->buffer);
     }
     if (music->freesrc) {
-        SDL_RWclose(music->src);
+        SDL_RWclose(music->mp3file.src);
     }
     SDL_free(music);
 }
