@@ -229,7 +229,6 @@ static void *MPG123_CreateFromRW(SDL_RWops *src, int freesrc)
         Mix_SetError("music_mpg123: corrupt mp3 file (bad tags.)");
         return NULL;
     }
-    MP3_RWseek(&music->mp3file, 0, RW_SEEK_SET);
 
     /* Just assume 16-bit 2 channel audio for now */
     music->buffer_size = music_spec.samples * sizeof(Sint16) * 2;
