@@ -149,7 +149,6 @@ static SDL_INLINE long get_lyrics3v1_len(struct mp3file_t *m) {
     len = (m->length > 5109)? 5109 : (long)m->length;
     MP3_RWseek(m, -len, RW_SEEK_END);
     MP3_RWread(m, buf, 1, (len -= 9)); /* exclude footer */
-    MP3_RWseek(m, 0, RW_SEEK_SET);
     /* strstr() won't work here. */
     for (i = len - 11, p = buf; i >= 0; --i, ++p) {
         if (SDL_memcmp(p, "LYRICSBEGIN", 11) == 0)
@@ -174,52 +173,49 @@ int mp3_skiptags(struct mp3file_t *fil)
 {
     unsigned char buf[128];
     long len; size_t readsize;
+    int rc = -1;
 
     readsize = MP3_RWread(fil, buf, 1, 128);
-    if (!readsize) return -1;
+    if (!readsize) goto fail;
 
     /* ID3v2 tag is at the start */
     if (is_id3v2(buf, readsize)) {
         len = get_id3v2_len(buf, (long)readsize);
-        if (len >= fil->length) return -1;
+        if (len >= fil->length) goto fail;
         fil->start += len;
         fil->length -= len;
-        MP3_RWseek(fil, 0, RW_SEEK_SET);
     }
     /* APE tag _might_ be at the start (discouraged
      * but not forbidden, either.)  read the header. */
     else if (is_apetag(buf, readsize)) {
         len = get_ape_len(buf);
-        if (len >= fil->length) return -1;
+        if (len >= fil->length) goto fail;
         fil->start += len;
         fil->length -= len;
-        MP3_RWseek(fil, 0, RW_SEEK_SET);
     }
 
     /* ID3v1 tag is at the end */
-    if (fil->length < 128) goto ape;
-    MP3_RWseek(fil, -128, RW_SEEK_END);
-    readsize = MP3_RWread(fil, buf, 1, 128);
-    MP3_RWseek(fil, 0, RW_SEEK_SET);
-    if (readsize != 128) return -1;
-    if (is_id3v1(buf, 128)) {
-        fil->length -= 128;
-
-        /* FIXME: handle possible double-ID3v1 tags?? */
+    if (fil->length >= 128) {
+        MP3_RWseek(fil, -128, RW_SEEK_END);
+        readsize = MP3_RWread(fil, buf, 1, 128);
+        if (readsize != 128) goto fail;
+        if (is_id3v1(buf, 128)) {
+            fil->length -= 128;
+            /* FIXME: handle possible double-ID3v1 tags?? */
+        }
     }
 
     /* do we know whether ape or lyrics3 is the first?
      * well, we don't: we need to handle that later... */
 
-    ape: /* APE tag may be at the end: read the footer */
+    /* APE tag may be at the end: read the footer */
     if (fil->length >= 32) {
         MP3_RWseek(fil, -32, RW_SEEK_END);
         readsize = MP3_RWread(fil, buf, 1, 32);
-        MP3_RWseek(fil, 0, RW_SEEK_SET);
-        if (readsize != 32) return -1;
+        if (readsize != 32) goto fail;
         if (is_apetag(buf, 32)) {
             len = get_ape_len(buf);
-            if (len >= fil->length) return -1;
+            if (len >= fil->length) goto fail;
             fil->length -= len;
         }
     }
@@ -227,28 +223,29 @@ int mp3_skiptags(struct mp3file_t *fil)
     if (fil->length >= 15) {
         MP3_RWseek(fil, -15, RW_SEEK_END);
         readsize = MP3_RWread(fil, buf, 1, 15);
-        MP3_RWseek(fil, 0, RW_SEEK_SET);
-        if (readsize != 15) return -1;
+        if (readsize != 15) goto fail;
         len = is_lyrics3tag(buf, 15);
         if (len == 2) {
             len = get_lyrics3v2_len(buf, 6);
-            if (len >= fil->length) return -1;
-            if (len < 15) return -1;
+            if (len >= fil->length) goto fail;
+            if (len < 15) goto fail;
             MP3_RWseek(fil, -len, RW_SEEK_END);
             readsize = MP3_RWread(fil, buf, 1, 11);
-            MP3_RWseek(fil, 0, RW_SEEK_SET);
-            if (readsize != 11) return -1;
-            if (!verify_lyrics3v2(buf, 11)) return -1;
+            if (readsize != 11) goto fail;
+            if (!verify_lyrics3v2(buf, 11)) goto fail;
             fil->length -= len;
         }
         else if (len == 1) {
             len = get_lyrics3v1_len(fil);
-            if (len < 0) return -1;
+            if (len < 0) goto fail;
             fil->length -= len;
         }
     }
 
-    return (fil->length > 0)? 0: -1;
+    rc = 0;
+    fail:
+    MP3_RWseek(fil, 0, RW_SEEK_SET);
+    return (fil->length > 0)? rc : -1;
 }
 #endif /* MUSIC_MP3_????? */
 
