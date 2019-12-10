@@ -22,6 +22,9 @@
     <ClInclude Include="..\src\codecs\load_voc.h">
       <Filter>Sources</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\codecs\mp3utils.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\codecs\music_cmd.h">
       <Filter>Sources</Filter>
     </ClInclude>
@@ -192,6 +195,9 @@
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\src\codecs\load_voc.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\mp3utils.c">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\src\codecs\music_cmd.c">

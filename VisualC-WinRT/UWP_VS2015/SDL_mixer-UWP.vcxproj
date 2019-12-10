@@ -35,6 +35,7 @@
     <ClCompile Include="..\..\src\music.c" />
     <ClCompile Include="..\..\src\codecs\load_aiff.c" />
     <ClCompile Include="..\..\src\codecs\load_voc.c" />
+    <ClCompile Include="..\..\src\codecs\mp3utils.c" />
     <ClCompile Include="..\..\src\codecs\music_cmd.c" />
     <ClCompile Include="..\..\src\codecs\music_flac.c" />
     <ClCompile Include="..\..\src\codecs\music_fluidsynth.c" />

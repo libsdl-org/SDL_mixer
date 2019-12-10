@@ -13,6 +13,8 @@
 		630FBD8520D5211F009867AB /* music_opus.h in Headers */ = {isa = PBXBuildFile; fileRef = 630FBD8420D5211F009867AB /* music_opus.h */; };
 		639008C82385A822009019FA /* compat.c in Sources */ = {isa = PBXBuildFile; fileRef = 639008C62385A822009019FA /* compat.c */; };
 		639008C92385A822009019FA /* compat.h in Headers */ = {isa = PBXBuildFile; fileRef = 639008C72385A822009019FA /* compat.h */; };
+		639197F1239FE66700F1D8F8 /* mp3utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 639197EF239FE66700F1D8F8 /* mp3utils.c */; };
+		639197F2239FE66700F1D8F8 /* mp3utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 639197F0239FE66700F1D8F8 /* mp3utils.h */; };
 		63CD6ADC20D52DE20096FB34 /* Opus.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 630FBD7620D52063009867AB /* Opus.framework */; };
 		63CD6ADD20D52DE90096FB34 /* OpusFile.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 630FBD7C20D5206E009867AB /* OpusFile.framework */; };
 		AA6021301765383B00662B9C /* modplug.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = AA60212F1765382200662B9C /* modplug.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -119,6 +121,8 @@
 		630FBD8420D5211F009867AB /* music_opus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_opus.h; sourceTree = "<group>"; };
 		639008C62385A822009019FA /* compat.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = compat.c; sourceTree = "<group>"; };
 		639008C72385A822009019FA /* compat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compat.h; sourceTree = "<group>"; };
+		639197EF239FE66700F1D8F8 /* mp3utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mp3utils.c; sourceTree = "<group>"; };
+		639197F0239FE66700F1D8F8 /* mp3utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp3utils.h; sourceTree = "<group>"; };
 		AA60212F1765382200662B9C /* modplug.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = modplug.framework; path = Frameworks/modplug.framework; sourceTree = "<group>"; };
 		AA64428E175AA7A500A2125A /* mpg123.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = mpg123.framework; path = Frameworks/mpg123.framework; sourceTree = "<group>"; };
 		AA6442D0175B181300A2125A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
@@ -294,6 +298,8 @@
 		6398B0BB238528360024EEA1 /* codecs */ = {
 			isa = PBXGroup;
 			children = (
+				639197EF239FE66700F1D8F8 /* mp3utils.c */,
+				639197F0239FE66700F1D8F8 /* mp3utils.h */,
 				AAE405DE1F9607C300EDAF53 /* music_cmd.c */,
 				AAE405DB1F9607C200EDAF53 /* music_cmd.h */,
 				AAE405D41F9607C100EDAF53 /* music_flac.c */,
@@ -435,6 +441,7 @@
 				AAE405F51F9607C300EDAF53 /* music_ogg.h in Headers */,
 				630FBD8520D5211F009867AB /* music_opus.h in Headers */,
 				639008C92385A822009019FA /* compat.h in Headers */,
+				639197F2239FE66700F1D8F8 /* mp3utils.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -638,6 +645,7 @@
 				0448E8AE108B937A00C9D3EA /* native_midi_macosx.c in Sources */,
 				630FBD8320D52105009867AB /* music_opus.c in Sources */,
 				639008C82385A822009019FA /* compat.c in Sources */,
+				639197F1239FE66700F1D8F8 /* mp3utils.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
