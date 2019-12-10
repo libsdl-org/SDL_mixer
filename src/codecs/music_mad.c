@@ -22,6 +22,7 @@
 #ifdef MUSIC_MP3_MAD
 
 #include "music_mad.h"
+#include "mp3utils.h"
 
 #include "mad.h"
 
@@ -136,9 +137,8 @@ enum {
 };
 
 typedef struct {
+    struct mp3file_t mp3file;
     int play_count;
-    SDL_RWops *src;
-    Sint64 start, length, pos;
     int freesrc;
     struct mad_stream stream;
     struct mad_frame frame;
@@ -152,38 +152,7 @@ typedef struct {
 } MAD_Music;
 
 
-static size_t MAD_RWread(MAD_Music *music, void *ptr, size_t size, size_t maxnum) {
-    size_t remaining = (size_t)(music->length - music->pos);
-    size_t ret;
-    maxnum *= size;
-    if (maxnum > remaining) maxnum = remaining;
-    ret = SDL_RWread(music->src, ptr, 1, maxnum);
-    music->pos += (Sint64)ret;
-    return ret;
-}
-
-static Sint64 MAD_RWseek(MAD_Music *music, Sint64 offset, int whence) {
-    Sint64 ret;
-    switch (whence) { /* assumes a legal whence value */
-    case RW_SEEK_CUR:
-        offset += music->pos;
-        break;
-    case RW_SEEK_END:
-        offset = music->length + offset;
-        break;
-    }
-    if (offset < 0) return -1;
-    if (offset > music->length)
-        offset = music->length;
-    ret = SDL_RWseek(music->src, music->start + offset, RW_SEEK_SET);
-    if (ret < 0) return ret;
-    music->pos = offset;
-    return (music->pos - music->start);
-}
-
-
 static int MAD_Seek(void *context, double position);
-static int skip_tags(MAD_Music *music);
 
 static void *MAD_CreateFromRW(SDL_RWops *src, int freesrc)
 {
@@ -194,11 +163,11 @@ static void *MAD_CreateFromRW(SDL_RWops *src, int freesrc)
         SDL_OutOfMemory();
         return NULL;
     }
-    music->src = src;
+    music->mp3file.src = src;
     music->volume = MIX_MAX_VOLUME;
 
-    music->length = SDL_RWsize(src);
-    if (skip_tags(music) < 0) {
+    music->mp3file.length = SDL_RWsize(src);
+    if (mp3_skiptags(&music->mp3file) < 0) {
         SDL_free(music);
         Mix_SetError("music_mad: corrupt mp3 file.");
         return NULL;
@@ -228,198 +197,6 @@ static int MAD_Play(void *context, int play_count)
 }
 
 
-/*************************** TAG HANDLING: ******************************/
-
-static SDL_INLINE SDL_bool is_id3v1(const unsigned char *data, size_t length)
-{
-    /* http://id3.org/ID3v1 :  3 bytes "TAG" identifier and 125 bytes tag data */
-    if (length < 3 || SDL_memcmp(data,"TAG",3) != 0) {
-        return SDL_FALSE;
-    }
-    return SDL_TRUE;
-}
-static SDL_INLINE SDL_bool is_id3v2(const unsigned char *data, size_t length)
-{
-    /* ID3v2 header is 10 bytes:  http://id3.org/id3v2.4.0-structure */
-    /* bytes 0-2: "ID3" identifier */
-    if (length < 10 || SDL_memcmp(data,"ID3",3) != 0) {
-        return SDL_FALSE;
-    }
-    /* bytes 3-4: version num (major,revision), each byte always less than 0xff. */
-    if (data[3] == 0xff || data[4] == 0xff) {
-        return SDL_FALSE;
-    }
-    /* bytes 6-9 are the ID3v2 tag size: a 32 bit 'synchsafe' integer, i.e. the
-     * highest bit 7 in each byte zeroed.  i.e.: 7 bit information in each byte ->
-     * effectively a 28 bit value.  */
-    if (data[6] >= 0x80 || data[7] >= 0x80 || data[8] >= 0x80 || data[9] >= 0x80) {
-        return SDL_FALSE;
-    }
-    return SDL_TRUE;
-}
-static SDL_INLINE long get_id3v2_len(const unsigned char *data, long length)
-{
-    /* size is a 'synchsafe' integer (see above) */
-    long size = (long)((data[6]<<21) + (data[7]<<14) + (data[8]<<7) + data[9]);
-    size += 10; /* header size */
-    /* ID3v2 header[5] is flags (bits 4-7 only, 0-3 are zero).
-     * bit 4 set: footer is present (a copy of the header but
-     * with "3DI" as ident.)  */
-    if (data[5] & 0x10) {
-        size += 10; /* footer size */
-    }
-    /* optional padding (always zeroes) */
-    while (size < length && data[size] == 0) {
-        ++size;
-    }
-    return size;
-}
-static SDL_INLINE SDL_bool is_apetag(const unsigned char *data, size_t length)
-{
-   /* http://wiki.hydrogenaud.io/index.php?title=APEv2_specification
-    * Header/footer is 32 bytes: bytes 0-7 ident, bytes 8-11 version,
-    * bytes 12-17 size. bytes 24-31 are reserved: must be all zeroes. */
-    Uint32 v;
-
-    if (length < 32 || SDL_memcmp(data,"APETAGEX",8) != 0) {
-        return SDL_FALSE;
-    }
-    v = (Uint32)((data[11]<<24) | (data[10]<<16) | (data[9]<<8) | data[8]); /* version */
-    if (v != 2000U && v != 1000U) {
-        return SDL_FALSE;
-    }
-    v = 0; /* reserved bits : */
-    if (SDL_memcmp(&data[24],&v,4) != 0 || SDL_memcmp(&data[28],&v,4) != 0) {
-        return SDL_FALSE;
-    }
-    return SDL_TRUE;
-}
-static SDL_INLINE long get_ape_len(const unsigned char *data)
-{
-    Uint32 flags, version;
-    long size = (long)((data[15]<<24) | (data[14]<<16) | (data[13]<<8) | data[12]);
-    version = (Uint32)((data[11]<<24) | (data[10]<<16) | (data[9]<<8) | data[8]);
-    flags = (Uint32)((data[23]<<24) | (data[22]<<16) | (data[21]<<8) | data[20]);
-    if (version == 2000U && (flags & (1U<<31))) size += 32; /* header present. */
-    return size;
-}
-static SDL_INLINE int is_lyrics3tag(const unsigned char *data, long length) {
-    /* http://id3.org/Lyrics3
-     * http://id3.org/Lyrics3v2 */
-    if (length < 15) return 0;
-    if (SDL_memcmp(data+6,"LYRICS200",9) == 0) return 2; /* v2 */
-    if (SDL_memcmp(data+6,"LYRICSEND",9) == 0) return 1; /* v1 */
-    return 0;
-}
-static SDL_INLINE long get_lyrics3v1_len(MAD_Music *m) {
-    const char *p; long i, len;
-    /* needs manual search:  http://id3.org/Lyrics3 */
-    /* this relies on the input_buffer size >= 5100 */
-    if (m->length < 20) return -1;
-    len = (m->length > 5109)? 5109 : (long)m->length;
-    MAD_RWseek(m, -len, RW_SEEK_END);
-    MAD_RWread(m, m->input_buffer, 1, (len -= 9)); /* exclude footer */
-    MAD_RWseek(m, 0, RW_SEEK_SET);
-    /* strstr() won't work here. */
-    for (i = len - 11, p = (const char*)m->input_buffer; i >= 0; --i, ++p) {
-        if (SDL_memcmp(p, "LYRICSBEGIN", 11) == 0)
-            break;
-    }
-    if (i < 0) return -1;
-    return len - (long)(p - (const char*)m->input_buffer) + 9 /* footer */;
-}
-static SDL_INLINE long get_lyrics3v2_len(const unsigned char *data, long length) {
-    /* 6 bytes before the end marker is size in decimal format -
-     * does not include the 9 bytes end marker and size field. */
-    if (length != 6) return 0;
-    return SDL_strtol((const char *)data, NULL, 10) + 15;
-}
-static SDL_INLINE SDL_bool verify_lyrics3v2(const unsigned char *data, long length) {
-    if (length < 11) return SDL_FALSE;
-    if (SDL_memcmp(data,"LYRICSBEGIN",11) == 0) return SDL_TRUE;
-    return SDL_FALSE;
-}
-
-static int skip_tags(MAD_Music *music)
-{
-    long len; size_t readsize;
-
-    readsize = MAD_RWread(music, music->input_buffer, 1, MAD_INPUT_BUFFER_SIZE);
-    if (!readsize) return -1;
-
-    /* ID3v2 tag is at the start */
-    if (is_id3v2(music->input_buffer, readsize)) {
-        len = get_id3v2_len(music->input_buffer, (long)readsize);
-        if (len >= music->length) return -1;
-        music->start += len;
-        music->length -= len;
-        MAD_RWseek(music, 0, RW_SEEK_SET);
-    }
-    /* APE tag _might_ be at the start (discouraged
-     * but not forbidden, either.)  read the header. */
-    else if (is_apetag(music->input_buffer, readsize)) {
-        len = get_ape_len(music->input_buffer);
-        if (len >= music->length) return -1;
-        music->start += len;
-        music->length -= len;
-        MAD_RWseek(music, 0, RW_SEEK_SET);
-    }
-
-    /* ID3v1 tag is at the end */
-    if (music->length < 128) goto ape;
-    MAD_RWseek(music, -128, RW_SEEK_END);
-    readsize = MAD_RWread(music, music->input_buffer, 1, 128);
-    MAD_RWseek(music, 0, RW_SEEK_SET);
-    if (readsize != 128) return -1;
-    if (is_id3v1(music->input_buffer, 128)) {
-        music->length -= 128;
-
-        /* FIXME: handle possible double-ID3v1 tags?? */
-    }
-
-    /* do we know whether ape or lyrics3 is the first?
-     * well, we don't: we need to handle that later... */
-
-    ape: /* APE tag may be at the end: read the footer */
-    if (music->length >= 32) {
-        MAD_RWseek(music, -32, RW_SEEK_END);
-        readsize = MAD_RWread(music, music->input_buffer, 1, 32);
-        MAD_RWseek(music, 0, RW_SEEK_SET);
-        if (readsize != 32) return -1;
-        if (is_apetag(music->input_buffer, 32)) {
-            len = get_ape_len(music->input_buffer);
-            if (len >= music->length) return -1;
-            music->length -= len;
-        }
-    }
-
-    if (music->length >= 15) {
-        MAD_RWseek(music, -15, RW_SEEK_END);
-        readsize = MAD_RWread(music, music->input_buffer, 1, 15);
-        MAD_RWseek(music, 0, RW_SEEK_SET);
-        if (readsize != 15) return -1;
-        len = is_lyrics3tag(music->input_buffer, 15);
-        if (len == 2) {
-            len = get_lyrics3v2_len(music->input_buffer, 6);
-            if (len >= music->length) return -1;
-            if (len < 15) return -1;
-            MAD_RWseek(music, -len, RW_SEEK_END);
-            readsize = MAD_RWread(music, music->input_buffer, 1, 11);
-            MAD_RWseek(music, 0, RW_SEEK_SET);
-            if (readsize != 11) return -1;
-            if (!verify_lyrics3v2(music->input_buffer, 11)) return -1;
-            music->length -= len;
-        }
-        else if (len == 1) {
-            len = get_lyrics3v1_len(music);
-            if (len < 0) return -1;
-            music->length -= len;
-        }
-    }
-
-    return (music->length > 0)? 0: -1;
-}
-
 /* Reads the next frame from the file.
    Returns true on success or false on failure.
  */
@@ -447,7 +224,7 @@ static SDL_bool read_next_frame(MAD_Music *music)
         }
 
         /* Now read additional bytes from the input file. */
-        read_size = MAD_RWread(music, read_start, 1, read_size);
+        read_size = MP3_RWread(&music->mp3file, read_start, 1, read_size);
 
         if (read_size == 0) {
             if ((music->status & (MS_input_eof | MS_input_error)) == 0) {
@@ -596,6 +373,7 @@ static int MAD_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     }
     return 0;
 }
+
 static int MAD_GetAudio(void *context, void *data, int bytes)
 {
     MAD_Music *music = (MAD_Music *)context;
@@ -621,7 +399,7 @@ static int MAD_Seek(void *context, double position)
         mad_timer_reset(&music->next_frame_start);
         music->status &= ~MS_error_flags;
 
-        MAD_RWseek(music, 0, RW_SEEK_SET);
+        MP3_RWseek(&music->mp3file, 0, RW_SEEK_SET);
     }
 
     /* Now we have to skip frames until we come to the right one.
@@ -655,7 +433,7 @@ static void MAD_Delete(void *context)
         SDL_FreeAudioStream(music->audiostream);
     }
     if (music->freesrc) {
-        SDL_RWclose(music->src);
+        SDL_RWclose(music->mp3file.src);
     }
     SDL_free(music);
 }
