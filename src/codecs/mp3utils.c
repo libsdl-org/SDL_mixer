@@ -219,11 +219,11 @@ static SDL_INLINE long get_musicmatch_len(struct mp3file_t *m) {
     Sint32 i, j, imgext_ofs, version_ofs;
     long len;
 
-    /* calc. the image extension section ofs */
     MP3_RWseek(m, -68, RW_SEEK_END);
     MP3_RWread(m, buf, 1, 20);
     imgext_ofs  = (Sint32)((buf[3] <<24) | (buf[2] <<16) | (buf[1] <<8) | buf[0] );
     version_ofs = (Sint32)((buf[15]<<24) | (buf[14]<<16) | (buf[13]<<8) | buf[12]);
+    if (version_ofs <= imgext_ofs) return -1;
     /* Try finding the version info section:
      * Because metadata section comes after it, and because metadata section
      * has different sizes across versions (format ver. <= 3.00: always 7868
@@ -256,8 +256,15 @@ static SDL_INLINE long get_musicmatch_len(struct mp3file_t *m) {
     #endif
     len += (version_ofs - imgext_ofs);
     if (m->length < len) return -1;
-    if (m->length < len + 256) return len;
+    #ifdef MMTAG_PARANOID
+    MP3_RWseek(m, -len, RW_SEEK_END);
+    MP3_RWread(m, buf, 1, 8);
+    j = (Sint32)((buf[7] <<24) | (buf[6] <<16) | (buf[5] <<8) | buf[4]);
+    /* verify image size: */
+    if (j + 12 != version_ofs - imgext_ofs) return -1;
+    #endif
     /* try finding the optional header */
+    if (m->length < len + 256) return len;
     MP3_RWseek(m, -(len + 256), RW_SEEK_END);
     MP3_RWread(m, buf, 1, 256);
     /* [0..9]: sync string, [30..255]: 0x20 */
