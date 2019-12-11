@@ -168,6 +168,7 @@ static SDL_INLINE SDL_bool verify_lyrics3v2(const unsigned char *data, long leng
     if (SDL_memcmp(data,"LYRICSBEGIN",11) == 0) return SDL_TRUE;
     return SDL_FALSE;
 }
+#define MMTAG_PARANOID
 static SDL_INLINE SDL_bool is_musicmatch(const unsigned char *data, long length) {
   /* From docs/musicmatch.txt in id3lib: https://sourceforge.net/projects/id3lib/
      Overall tag structure:
@@ -193,7 +194,7 @@ static SDL_INLINE SDL_bool is_musicmatch(const unsigned char *data, long length)
       |      Footer (48 bytes)      |
       +-----------------------------+
      */
-    if (length < 48) return 0;
+    if (length < 48) return SDL_FALSE;
     /* sig: 19 bytes company name + 13 bytes space */
     if (SDL_memcmp(data,"Brava Software Inc.             ",32) != 0) {
         return SDL_FALSE;
@@ -203,14 +204,19 @@ static SDL_INLINE SDL_bool is_musicmatch(const unsigned char *data, long length)
         !SDL_isdigit(data[34]) ||!SDL_isdigit(data[35])) {
         return SDL_FALSE;
     }
+    #ifdef MMTAG_PARANOID
     /* [36..47]: 12 bytes trailing space */
+    for (length = 36; length < 48; ++length) {
+        if (data[length] != ' ') return SDL_FALSE;
+    }
+    #endif
     return SDL_TRUE;
 }
 static SDL_INLINE long get_musicmatch_len(struct mp3file_t *m) {
     const Sint32 metasizes[4] = { 7868, 7936, 8004, 8132 };
     const unsigned char syncstr[10] = {'1','8','2','7','3','6','4','5',0,0};
-    unsigned char buf[20];
-    Sint32 i, imgext_ofs, version_ofs;
+    unsigned char buf[256];
+    Sint32 i, j, imgext_ofs, version_ofs;
     long len;
 
     /* calc. the image extension section ofs */
@@ -228,23 +234,41 @@ static SDL_INLINE long get_musicmatch_len(struct mp3file_t *m) {
         len = metasizes[i] + 48 + 20 + 256;
         if (m->length < len) return -1;
         MP3_RWseek(m, -len, RW_SEEK_END);
-        MP3_RWread(m, buf, 1, 10);
+        MP3_RWread(m, buf, 1, 256);
         /* [0..9]: sync string, [30..255]: 0x20 */
+        #ifdef MMTAG_PARANOID
+        for (j = 30; j < 256; ++j) {
+            if (buf[j] != ' ') break;
+        }
+        if (j < 256) continue;
+        #endif
         if (SDL_memcmp(buf, syncstr, 10) == 0) {
             break;
         }
     }
     if (i == 4) return -1; /* no luck. */
+    (void) (j = 0);
+    #ifdef MMTAG_PARANOID
+    /* unused section: (4 bytes of 0x00) */
+    MP3_RWseek(m, -(len + 4), RW_SEEK_END);
+    MP3_RWread(m, buf, 1, 4);
+    if (SDL_memcmp(buf, &j, 4) != 0) return -1;
+    #endif
     len += (version_ofs - imgext_ofs);
     if (m->length < len) return -1;
     if (m->length < len + 256) return len;
     /* try finding the optional header */
     MP3_RWseek(m, -(len + 256), RW_SEEK_END);
-    MP3_RWread(m, buf, 1, 10);
+    MP3_RWread(m, buf, 1, 256);
     /* [0..9]: sync string, [30..255]: 0x20 */
     if (SDL_memcmp(buf, syncstr, 10) != 0) {
         return len;
     }
+    #ifdef MMTAG_PARANOID
+    for (j = 30; j < 256; ++j) {
+        if (buf[j] != ' ') return len;
+    }
+    #endif
     return len + 256; /* header is present. */
 }
 
