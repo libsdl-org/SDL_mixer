@@ -365,10 +365,10 @@ int mp3_skiptags(struct mp3file_t *fil)
         }
     }
 
-    rc = 0;
+    rc = (fil->length > 0)? 0 : -1;
     fail:
     MP3_RWseek(fil, 0, RW_SEEK_SET);
-    return (fil->length > 0)? rc : -1;
+    return rc;
 }
 #endif /* MUSIC_MP3_????? */
 
