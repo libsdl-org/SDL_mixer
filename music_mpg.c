@@ -83,12 +83,12 @@ mpg_err(mpg123_handle* mpg, int code)
 /* we're gonna override mpg123's I/O with these wrappers for RWops */
 static
 ssize_t rwops_read(void* p, void* dst, size_t n) {
-    return (ssize_t)SDL_RWread((SDL_RWops*)p, dst, 1, n);
+    return (ssize_t)MP3_RWread((struct mp3file_t *)p, dst, 1, n);
 }
 
 static
 off_t rwops_seek(void* p, off_t offset, int whence) {
-    return (off_t)SDL_RWseek((SDL_RWops*)p, (Sint64)offset, whence);
+    return (off_t)MP3_RWseek((struct mp3file_t *)p, (int)offset, whence);
 }
 
 static
@@ -103,6 +103,7 @@ mpg_data*
 mpg_new_rw(SDL_RWops *src, SDL_AudioSpec* mixer, int freesrc)
 {
     int fmt, result;
+    int pos;
     mpg_data* m = NULL;
 
     if (!Mix_Init(MIX_INIT_MP3)) {
@@ -117,8 +118,16 @@ mpg_new_rw(SDL_RWops *src, SDL_AudioSpec* mixer, int freesrc)
 
     SDL_memset(m, 0, sizeof(mpg_data));
 
-    m->src = src;
+    m->mp3file.rw = src;
     m->freesrc = freesrc;
+
+    pos = SDL_RWtell(src);
+    m->mp3file.length = SDL_RWseek(src, 0, RW_SEEK_END);
+    SDL_RWseek(src, pos, RW_SEEK_SET);
+    if (mp3_skiptags(&m->mp3file) < 0) {
+        Mix_SetError("music_mpg: corrupt mp3 file (bad tags.)");
+        goto fail;
+    }
 
     m->handle = mpg123.mpg123_new(0, &result);
     if (result != MPG123_OK) {
@@ -148,7 +157,7 @@ mpg_new_rw(SDL_RWops *src, SDL_AudioSpec* mixer, int freesrc)
         goto fail;
     }
 
-    result = mpg123.mpg123_open_handle(m->handle, m->src);
+    result = mpg123.mpg123_open_handle(m->handle, &m->mp3file);
     if (result != MPG123_OK) {
         goto fail;
     }
@@ -188,7 +197,7 @@ mpg_delete(mpg_data* m)
     }
 
     if (m->freesrc) {
-        SDL_RWclose(m->src);
+        SDL_RWclose(m->mp3file.rw);
     }
 
     if (m->cvt.buf) {

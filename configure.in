@@ -558,6 +558,7 @@ AC_HELP_STRING([--enable-music-mp3], [enable MP3 music via libmpg123 [[default=y
 AC_ARG_ENABLE([music-mp3-shared],
 AC_HELP_STRING([--enable-music-mp3-shared], [dynamically load MP3 support [[default=yes]]]),
               [], [enable_music_mp3_shared=yes])
+have_mpg123=no
 if test x$enable_music_mp3 = xyes; then
     AC_CHECK_HEADER([mpg123.h], [have_mpg123_hdr=yes])
     AC_CHECK_LIB([mpg123], [mpg123_replace_reader_handle], [have_mpg123_lib=yes])
@@ -590,9 +591,9 @@ fi
 AC_ARG_ENABLE(music-mp3-mad-gpl,
 AC_HELP_STRING([--enable-music-mp3-mad-gpl], [enable MP3 music via libmad GPL code [[default=no]]]),
                   [], [enable_music_mp3_mad_gpl=no])
+have_libmad=no
 if test x$enable_music_mp3_mad_gpl = xyes; then
     AC_MSG_CHECKING(for libmad headers)
-    have_libmad=no
     AC_TRY_COMPILE([
      #include "mad.h"
     ],[
@@ -611,6 +612,8 @@ fi
 
 if test x$have_mpg123 != xyes -a x$have_libmad != xyes; then
     AC_MSG_WARN([MP3 support disabled])
+else
+    SOURCES="$SOURCES $srcdir/mp3utils.c"
 fi
 
 EXTRA_LDFLAGS="$EXTRA_LDFLAGS $LIBM"

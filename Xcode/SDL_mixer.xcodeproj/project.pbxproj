@@ -37,6 +37,10 @@
 		639076AC216EC43000ED9E54 /* music_mpg.c in Sources */ = {isa = PBXBuildFile; fileRef = 639076AA216EC43000ED9E54 /* music_mpg.c */; };
 		639076AE216EC49000ED9E54 /* music_mpg.h in Headers */ = {isa = PBXBuildFile; fileRef = 639076AD216EC49000ED9E54 /* music_mpg.h */; };
 		639076AF216EC49000ED9E54 /* music_mpg.h in Headers */ = {isa = PBXBuildFile; fileRef = 639076AD216EC49000ED9E54 /* music_mpg.h */; };
+		639090DF23A52FF400D5554E /* mp3utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 639090DD23A52FF400D5554E /* mp3utils.c */; };
+		639090E023A52FF400D5554E /* mp3utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 639090DE23A52FF400D5554E /* mp3utils.h */; };
+		639090E123A52FF400D5554E /* mp3utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 639090DD23A52FF400D5554E /* mp3utils.c */; };
+		639090E223A52FF400D5554E /* mp3utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 639090DE23A52FF400D5554E /* mp3utils.h */; };
 		63CB2527216EC68100928244 /* mpg123.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 639076A3216EC3E200ED9E54 /* mpg123.framework */; };
 		AA9F7DB514B15ADC00278D1E /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA9F7DB314B15ADC00278D1E /* Ogg.framework */; };
 		AA9F7DB614B15ADC00278D1E /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA9F7DB414B15ADC00278D1E /* Vorbis.framework */; };
@@ -218,6 +222,8 @@
 		639076A3216EC3E200ED9E54 /* mpg123.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = mpg123.framework; path = Frameworks/mpg123.framework; sourceTree = "<group>"; };
 		639076AA216EC43000ED9E54 /* music_mpg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = music_mpg.c; path = ../music_mpg.c; sourceTree = SOURCE_ROOT; };
 		639076AD216EC49000ED9E54 /* music_mpg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = music_mpg.h; path = ../music_mpg.h; sourceTree = SOURCE_ROOT; };
+		639090DD23A52FF400D5554E /* mp3utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mp3utils.c; path = ../mp3utils.c; sourceTree = SOURCE_ROOT; };
+		639090DE23A52FF400D5554E /* mp3utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mp3utils.h; path = ../mp3utils.h; sourceTree = SOURCE_ROOT; };
 		AA9F7DB314B15ADC00278D1E /* Ogg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ogg.framework; path = Frameworks/Ogg.framework; sourceTree = "<group>"; };
 		AA9F7DB414B15ADC00278D1E /* Vorbis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Vorbis.framework; path = Frameworks/Vorbis.framework; sourceTree = "<group>"; };
 		AA9F7DB714B15AE700278D1E /* FLAC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FLAC.framework; path = Frameworks/FLAC.framework; sourceTree = "<group>"; };
@@ -308,6 +314,8 @@
 		08FB77ACFE841707C02AAC07 /* Library Source */ = {
 			isa = PBXGroup;
 			children = (
+				639090DD23A52FF400D5554E /* mp3utils.c */,
+				639090DE23A52FF400D5554E /* mp3utils.h */,
 				639076AD216EC49000ED9E54 /* music_mpg.h */,
 				639076AA216EC43000ED9E54 /* music_mpg.c */,
 				00938E49108A397A0009CF19 /* dynamic_flac.c */,
@@ -466,6 +474,7 @@
 				00938E51108A397A0009CF19 /* dynamic_mp3.h in Headers */,
 				00938E52108A397A0009CF19 /* dynamic_ogg.h in Headers */,
 				639076AE216EC49000ED9E54 /* music_mpg.h in Headers */,
+				639090E023A52FF400D5554E /* mp3utils.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -496,6 +505,7 @@
 				00938E56108A397A0009CF19 /* dynamic_mp3.h in Headers */,
 				00938E57108A397A0009CF19 /* dynamic_ogg.h in Headers */,
 				639076AF216EC49000ED9E54 /* music_mpg.h in Headers */,
+				639090E223A52FF400D5554E /* mp3utils.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -695,6 +705,7 @@
 				00938E50108A397A0009CF19 /* dynamic_mod.c in Sources */,
 				0448E8AE108B937A00C9D3EA /* native_midi_macosx.c in Sources */,
 				639076AB216EC43000ED9E54 /* music_mpg.c in Sources */,
+				639090DF23A52FF400D5554E /* mp3utils.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -732,6 +743,7 @@
 				00938E55108A397A0009CF19 /* dynamic_mod.c in Sources */,
 				0448E8AF108B937A00C9D3EA /* native_midi_macosx.c in Sources */,
 				639076AC216EC43000ED9E54 /* music_mpg.c in Sources */,
+				639090E123A52FF400D5554E /* mp3utils.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

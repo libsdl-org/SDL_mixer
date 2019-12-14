@@ -22,10 +22,12 @@
 #ifdef MP3_MUSIC
 
 #include <mpg123.h>
+#include "SDL_rwops.h"
+#include "mp3utils.h"
 
 typedef struct
 {
-    SDL_RWops* src;
+    struct mp3file_t mp3file;
     int freesrc;
 
     SDL_AudioSpec mixer;
@@ -55,4 +57,3 @@ void mpg_seek(mpg_data* m, double seconds);
 void mpg_volume(mpg_data* m, int volume);
 
 #endif
-
