@@ -107,9 +107,7 @@ static const char **chunk_decoders = NULL;
 static int num_decoders = 0;
 
 /* Semicolon-separated SoundFont paths */
-#ifdef MID_MUSIC
 extern char* soundfont_paths;
-#endif
 
 int Mix_GetNumChunkDecoders(void)
 {
@@ -147,6 +145,11 @@ static int initialized = 0;
 int Mix_Init(int flags)
 {
 	int result = 0;
+
+#ifdef MIX_INIT_SOUNDFONT_PATHS
+	if (!soundfont_paths)
+		soundfont_paths = SDL_strdup(MIX_INIT_SOUNDFONT_PATHS);
+#endif
 
 	if (flags & MIX_INIT_FLUIDSYNTH) {
 #ifdef USE_FLUIDSYNTH_MIDI
@@ -227,12 +230,10 @@ void Mix_Quit(void)
 		Mix_QuitOgg();
 	}
 #endif
-#ifdef MID_MUSIC
 	if (soundfont_paths) {
 		SDL_free(soundfont_paths);
 		soundfont_paths=NULL;
 	}
-#endif
 	initialized = 0;
 }
 
