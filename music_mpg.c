@@ -314,6 +314,12 @@ getsome(mpg_data* m)
         return 0;
     }
 
+    if (!cvt->buf) {
+        /* not received MPG123_NEW_FORMAT... */
+        Mix_SetError("music_mpg: No format.");
+        return 0;
+    }
+
     SDL_memcpy(cvt->buf, data, cbdata);
 
     if (cvt->needed) {
