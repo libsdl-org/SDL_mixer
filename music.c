@@ -145,9 +145,7 @@ static const char **music_decoders = NULL;
 static int num_decoders = 0;
 
 /* Semicolon-separated SoundFont paths */
-#ifdef MID_MUSIC
 char* soundfont_paths = NULL;
-#endif
 
 int Mix_GetNumMusicDecoders(void)
 {
@@ -1527,7 +1525,6 @@ void close_music(void)
 
 int Mix_SetSoundFonts(const char *paths)
 {
-#ifdef MID_MUSIC
 	if (soundfont_paths) {
 		SDL_free(soundfont_paths);
 		soundfont_paths = NULL;
@@ -1539,26 +1536,24 @@ int Mix_SetSoundFonts(const char *paths)
 			return 0;
 		}
 	}
-#endif
 	return 1;
 }
 
-#ifdef MID_MUSIC
 const char* Mix_GetSoundFonts(void)
 {
 	const char* force = getenv("SDL_FORCE_SOUNDFONTS");
 
 	if (!soundfont_paths || (force && force[0] == '1')) {
 		return getenv("SDL_SOUNDFONTS");
-	} else {
-		return soundfont_paths;
 	}
+	return soundfont_paths;
 }
 
 int Mix_EachSoundFont(int (SDLCALL *function)(const char*, void*), void *data)
 {
 	char *context, *path, *paths;
 	const char* cpaths = Mix_GetSoundFonts();
+	int soundfonts_found = 0;
 
 	if (!cpaths) {
 		Mix_SetError("No SoundFonts have been requested");
@@ -1578,12 +1573,11 @@ int Mix_EachSoundFont(int (SDLCALL *function)(const char*, void*), void *data)
 	for (path = strtok_r(paths, ":;", &context); path; path = strtok_r(NULL, ":;", &context)) {
 #endif
 		if (!function(path, data)) {
-			SDL_free(paths);
-			return 0;
+			continue;
 		}
+		soundfonts_found++;
 	}
 
 	SDL_free(paths);
-	return 1;
+	return (soundfonts_found > 0);
 }
-#endif
