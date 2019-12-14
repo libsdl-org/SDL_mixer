@@ -14883,6 +14883,7 @@ else
   enable_music_mp3_shared=yes
 fi
 
+have_mpg123=no
 if test x$enable_music_mp3 = xyes; then
     if test "${ac_cv_header_mpg123_h+set}" = set; then
   { $as_echo "$as_me:$LINENO: checking for mpg123.h" >&5
@@ -15119,10 +15120,10 @@ else
   enable_music_mp3_mad_gpl=no
 fi
 
+have_libmad=no
 if test x$enable_music_mp3_mad_gpl = xyes; then
     { $as_echo "$as_me:$LINENO: checking for libmad headers" >&5
 $as_echo_n "checking for libmad headers... " >&6; }
-    have_libmad=no
     cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
@@ -15185,6 +15186,8 @@ fi
 if test x$have_mpg123 != xyes -a x$have_libmad != xyes; then
     { $as_echo "$as_me:$LINENO: WARNING: MP3 support disabled" >&5
 $as_echo "$as_me: WARNING: MP3 support disabled" >&2;}
+else
+    SOURCES="$SOURCES $srcdir/mp3utils.c"
 fi
 
 EXTRA_LDFLAGS="$EXTRA_LDFLAGS $LIBM"

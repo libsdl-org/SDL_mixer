@@ -14,6 +14,10 @@
 		00938E57108A397A0009CF19 /* dynamic_ogg.h in Headers */ = {isa = PBXBuildFile; fileRef = 00938E4D108A397A0009CF19 /* dynamic_ogg.h */; };
 		04A8FCA60A19CAEC0046373F /* dynamic_mp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A8FCA40A19CAEC0046373F /* dynamic_mp3.c */; };
 		04A8FCAB0A19CB070046373F /* dynamic_ogg.c in Sources */ = {isa = PBXBuildFile; fileRef = 04A8FCA90A19CB070046373F /* dynamic_ogg.c */; };
+		639090F823A5305400D5554E /* music_mpg.c in Sources */ = {isa = PBXBuildFile; fileRef = 639090F623A5305400D5554E /* music_mpg.c */; };
+		639090F923A5305400D5554E /* music_mpg.h in Headers */ = {isa = PBXBuildFile; fileRef = 639090F723A5305400D5554E /* music_mpg.h */; };
+		639090FC23A5306500D5554E /* mp3utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 639090FA23A5306500D5554E /* mp3utils.c */; };
+		639090FD23A5306500D5554E /* mp3utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 639090FB23A5306500D5554E /* mp3utils.h */; };
 		AA5F0F0914B6A6490036992F /* dynamic_fluidsynth.c in Sources */ = {isa = PBXBuildFile; fileRef = AA5F0F0214B6A6490036992F /* dynamic_fluidsynth.c */; };
 		AA5F0F0A14B6A6490036992F /* dynamic_fluidsynth.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5F0F0314B6A6490036992F /* dynamic_fluidsynth.h */; };
 		AA5F0F0B14B6A6490036992F /* dynamic_mod.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5F0F0414B6A6490036992F /* dynamic_mod.h */; };
@@ -116,6 +120,10 @@
 		5CC1B898012FB8CD7F000001 /* timidity.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = timidity.h; sourceTree = "<group>"; };
 		5CC1B89B012FB8CD7F000001 /* wavestream.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = wavestream.c; path = ../wavestream.c; sourceTree = "<group>"; };
 		5CC1B89C012FB8CD7F000001 /* wavestream.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = wavestream.h; path = ../wavestream.h; sourceTree = "<group>"; };
+		639090F623A5305400D5554E /* music_mpg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = music_mpg.c; path = ../music_mpg.c; sourceTree = SOURCE_ROOT; };
+		639090F723A5305400D5554E /* music_mpg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = music_mpg.h; path = ../music_mpg.h; sourceTree = SOURCE_ROOT; };
+		639090FA23A5306500D5554E /* mp3utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mp3utils.c; path = ../mp3utils.c; sourceTree = SOURCE_ROOT; };
+		639090FB23A5306500D5554E /* mp3utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mp3utils.h; path = ../mp3utils.h; sourceTree = SOURCE_ROOT; };
 		AA5F0F0214B6A6490036992F /* dynamic_fluidsynth.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dynamic_fluidsynth.c; path = ../dynamic_fluidsynth.c; sourceTree = "<group>"; };
 		AA5F0F0314B6A6490036992F /* dynamic_fluidsynth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dynamic_fluidsynth.h; path = ../dynamic_fluidsynth.h; sourceTree = "<group>"; };
 		AA5F0F0414B6A6490036992F /* dynamic_mod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dynamic_mod.h; path = ../dynamic_mod.h; sourceTree = "<group>"; };
@@ -184,6 +192,10 @@
 		08FB77ACFE841707C02AAC07 /* Library Source */ = {
 			isa = PBXGroup;
 			children = (
+				639090FA23A5306500D5554E /* mp3utils.c */,
+				639090FB23A5306500D5554E /* mp3utils.h */,
+				639090F623A5305400D5554E /* music_mpg.c */,
+				639090F723A5305400D5554E /* music_mpg.h */,
 				00938E49108A397A0009CF19 /* dynamic_flac.c */,
 				00938E4A108A397A0009CF19 /* dynamic_flac.h */,
 				AA5F0F0214B6A6490036992F /* dynamic_fluidsynth.c */,
@@ -295,6 +307,8 @@
 				AA5F0F0B14B6A6490036992F /* dynamic_mod.h in Headers */,
 				AA5F0F0D14B6A6490036992F /* fluidsynth.h in Headers */,
 				AA5F0F0F14B6A6490036992F /* music_modplug.h in Headers */,
+				639090F923A5305400D5554E /* music_mpg.h in Headers */,
+				639090FD23A5306500D5554E /* mp3utils.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -394,6 +408,8 @@
 				AA5F0F0914B6A6490036992F /* dynamic_fluidsynth.c in Sources */,
 				AA5F0F0C14B6A6490036992F /* fluidsynth.c in Sources */,
 				AA5F0F0E14B6A6490036992F /* music_modplug.c in Sources */,
+				639090F823A5305400D5554E /* music_mpg.c in Sources */,
+				639090FC23A5306500D5554E /* mp3utils.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

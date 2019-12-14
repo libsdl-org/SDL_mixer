@@ -57,7 +57,7 @@ int Mix_InitMP3(void)
 		FUNCTION_LOADER(mpg123_new, mpg123_handle *(*)(const char* decoder, int *error))
 		FUNCTION_LOADER(mpg123_open_handle, int (*)(mpg123_handle *mh, void *iohandle))
 		FUNCTION_LOADER(mpg123_plain_strerror, const char* (*)(int errcode))
-		FUNCTION_LOADER(mpg123_rates, void (*)(const long **list, size_t *number));
+		FUNCTION_LOADER(mpg123_rates, void (*)(const long **list, size_t *number))
 		FUNCTION_LOADER(mpg123_read, int (*)(mpg123_handle *mh, unsigned char *outmemory, size_t outmemsize, size_t *done ))
 		FUNCTION_LOADER(mpg123_replace_reader_handle, int (*)( mpg123_handle *mh, ssize_t (*r_read) (void *, void *, size_t), off_t (*r_lseek)(void *, off_t, int), void (*cleanup)(void*) ))
 		FUNCTION_LOADER(mpg123_seek, off_t (*)( mpg123_handle *mh, off_t sampleoff, int whence ))

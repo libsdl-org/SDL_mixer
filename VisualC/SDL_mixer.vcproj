@@ -884,6 +884,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\mp3utils.c"
+			>
+		</File>
+		<File
+			RelativePath="..\mp3utils.h"
+			>
+		</File>
+		<File
 			RelativePath="..\music_mad.c"
 			>
 		</File>
@@ -892,19 +900,19 @@
 			>
 		</File>
 		<File
-			RelativePath="..\music_mod.c"
-			>
-		</File>
-		<File
-			RelativePath="..\music_mod.h"
-			>
-		</File>
-		<File
 			RelativePath="..\music_mpg.c"
 			>
 		</File>
 		<File
 			RelativePath="..\music_mpg.h"
+			>
+		</File>
+		<File
+			RelativePath="..\music_mod.c"
+			>
+		</File>
+		<File
+			RelativePath="..\music_mod.h"
 			>
 		</File>
 		<File
