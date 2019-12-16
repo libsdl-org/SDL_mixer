@@ -239,7 +239,7 @@ static Instrument *load_instrument(MidiSong *song, char *name, int percussion,
       thing = SDL_SwapLE16(tmpshort);
 #define READ_LONG(thing) \
       if (1 != SDL_RWread(rw, &tmplong, 4, 1)) goto fail; \
-      thing = SDL_SwapLE32(tmplong);
+      thing = (Sint32)SDL_SwapLE32((Uint32)tmplong);
 
       SDL_RWseek(rw, 7, RW_SEEK_CUR); /* Skip the wave name */
 
