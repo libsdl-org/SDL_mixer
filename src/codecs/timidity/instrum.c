@@ -160,6 +160,7 @@ static Instrument *load_instrument(MidiSong *song, char *name, int percussion,
   char tmp[1024];
   int i,j,noluck=0;
   static char *patch_ext[] = PATCH_EXT_LIST;
+  (void)percussion; /* unused */
 
   if (!name) return 0;
   
