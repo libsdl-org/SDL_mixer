@@ -293,7 +293,7 @@ static int read_track(MidiSong *song, int append)
       SNDDBG(("Can't read track header.\n"));
       return -1;
     }
-  len=SDL_SwapBE32(len);
+  len=(Sint32)SDL_SwapBE32((Uint32)len);
   next_pos = SDL_RWtell(song->rw) + len;
   if (memcmp(tmp, "MTrk", 4))
     {
