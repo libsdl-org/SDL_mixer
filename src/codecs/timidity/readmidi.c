@@ -537,7 +537,7 @@ MidiEvent *read_midi_file(MidiSong *song, Sint32 *count, Sint32 *sp)
 	return NULL;
       }
   }
-  len=SDL_SwapBE32(len);
+  len=(Sint32)SDL_SwapBE32((Uint32)len);
   if (memcmp(tmp, "MThd", 4) || len < 6)
     {
       SNDDBG(("Not a MIDI file!\n"));
