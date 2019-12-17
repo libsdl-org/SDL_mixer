@@ -482,6 +482,7 @@ Mix_MusicInterface Mix_MusicInterface_MIKMOD =
     MIKMOD_IsPlaying,
     MIKMOD_GetAudio,
     MIKMOD_Seek,
+    NULL,   /* Duration */
     NULL,   /* Pause */
     NULL,   /* Resume */
     MIKMOD_Stop,

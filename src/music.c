@@ -795,6 +795,35 @@ int Mix_SetMusicPosition(double position)
     return(retval);
 }
 
+static double music_duration_int(Mix_Music *music)
+{
+    if (music->interface->Duration) {
+        return music->interface->Duration(music->context);
+    } else {
+        Mix_SetError("Duration not implemented for music type");
+        return -1;
+    }
+}
+
+double Mix_MusicDuration(Mix_Music *music)
+{
+    double retval;
+
+    Mix_LockAudio();
+
+    if (music) {
+        retval = music_duration_int(music);
+    } else if (music_playing) {
+        retval = music_duration_int(music_playing);
+    } else {
+        Mix_SetError("music is NULL and no playing music");
+        retval = -1;
+    }
+    Mix_UnlockAudio();
+
+    return(retval);
+}
+
 /* Set the music's initial volume */
 static void music_internal_initialize_volume(void)
 {

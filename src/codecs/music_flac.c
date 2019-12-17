@@ -156,6 +156,7 @@ typedef struct {
     SDL_AudioStream *stream;
     int loop;
     FLAC__uint64 pcm_pos;
+    FLAC__uint64 full_length;
     SDL_bool loop_flag;
     FLAC__uint64 loop_start;
     FLAC__uint64 loop_end;
@@ -578,6 +579,7 @@ static void *FLAC_CreateFromRW(SDL_RWops *src, int freesrc)
         music->loop = 1;
     }
 
+    music->full_length = full_length;
     music->freesrc = freesrc;
     return music;
 }
@@ -679,6 +681,13 @@ static int FLAC_Seek(void *context, double position)
     return 0;
 }
 
+/* Return music duration in seconds */
+static double FLAC_Duration(void *context)
+{
+    FLAC_Music *music = (FLAC_Music *)context;
+    return (double)music->full_length / music->sample_rate;
+}
+
 /* Close the given FLAC_Music object */
 static void FLAC_Delete(void *context)
 {
@@ -715,6 +724,7 @@ Mix_MusicInterface Mix_MusicInterface_FLAC =
     NULL,   /* IsPlaying */
     FLAC_GetAudio,
     FLAC_Seek,
+    FLAC_Duration,
     NULL,   /* Pause */
     NULL,   /* Resume */
     NULL,   /* Stop */
