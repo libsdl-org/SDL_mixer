@@ -1,4 +1,6 @@
 2.0.5:
+Matthias Gatto - Tue Dec 17 21:55:00 2019
+ * Add Mix_MusicDuration() to return music duration in seconds.
 Vitaly Novichkov - Tue Dec 17 15:50:02 2019
  * Fixed music_mpg123 seek bug when sample rate of the file and
    the stream don't match
