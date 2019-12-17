@@ -193,6 +193,7 @@ static int TIMIDITY_GetSome(void *context, void *data, int bytes, SDL_bool *done
         return amount;
     }
 }
+
 static int TIMIDITY_GetAudio(void *context, void *data, int bytes)
 {
     return music_pcm_getaudio(context, data, bytes, MIX_MAX_VOLUME, TIMIDITY_GetSome);
@@ -203,6 +204,12 @@ static int TIMIDITY_Seek(void *context, double position)
     TIMIDITY_Music *music = (TIMIDITY_Music *)context;
     Timidity_Seek(music->song, (Uint32)(position * 1000));
     return 0;
+}
+
+static double TIMIDITY_Duration(void *context)
+{
+    TIMIDITY_Music *music = (TIMIDITY_Music *)context;
+    return Timidity_GetSongLength(music->song) / 1000.0;
 }
 
 static void TIMIDITY_Delete(void *context)
@@ -238,6 +245,7 @@ Mix_MusicInterface Mix_MusicInterface_TIMIDITY =
     NULL,   /* IsPlaying */
     TIMIDITY_GetAudio,
     TIMIDITY_Seek,
+    TIMIDITY_Duration,
     NULL,   /* Pause */
     NULL,   /* Resume */
     NULL,   /* Stop */

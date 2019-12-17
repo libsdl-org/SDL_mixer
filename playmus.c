@@ -251,7 +251,7 @@ int main(int argc, char *argv[])
         SDL_Log("Detected music type: %s", typ);
 
         /* Play and then exit */
-        SDL_Log("Playing %s\n", argv[i]);
+        SDL_Log("Playing %s, duration %f\n", argv[i], Mix_MusicDuration(music));
         Mix_FadeInMusic(music,looping,2000);
         while (!next_track && (Mix_PlayingMusic() || Mix_PausedMusic())) {
             if(interactive)

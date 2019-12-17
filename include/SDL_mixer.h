@@ -618,6 +618,12 @@ extern DECLSPEC int SDLCALL Mix_PlayingMusic(void);
 /* Stop music and set external music playback command */
 extern DECLSPEC int SDLCALL Mix_SetMusicCMD(const char *command);
 
+/* Return music duration in seconds.
+   If NULL is passed, returns duration of current playing music.
+   Returns -1 on error.
+ */
+extern DECLSPEC double SDLCALL Mix_MusicDuration(Mix_Music *music);
+
 /* Synchro value is set by MikMod from modules while playing */
 extern DECLSPEC int SDLCALL Mix_SetSynchroValue(int value);
 extern DECLSPEC int SDLCALL Mix_GetSynchroValue(void);

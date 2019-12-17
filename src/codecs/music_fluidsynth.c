@@ -300,6 +300,7 @@ Mix_MusicInterface Mix_MusicInterface_FLUIDSYNTH =
     FLUIDSYNTH_IsPlaying,
     FLUIDSYNTH_GetAudio,
     NULL,   /* Seek */
+    NULL,   /* Duration */
     NULL,   /* Pause */
     NULL,   /* Resume */
     FLUIDSYNTH_Stop,

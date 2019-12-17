@@ -579,6 +579,14 @@ static int WAV_Seek(void *context, double position)
     return 0;
 }
 
+/* Return music duration in seconds */
+static double WAV_Duration(void *context)
+{
+    WAV_Music *music = (WAV_Music *)context;
+    Sint64 sample_size = music->spec.freq * music->samplesize;
+    return (double)(music->stop - music->start) / sample_size;
+}
+
 /* Close the given WAV stream */
 static void WAV_Delete(void *context)
 {
@@ -1088,6 +1096,7 @@ Mix_MusicInterface Mix_MusicInterface_WAV =
     NULL,   /* IsPlaying */
     WAV_GetAudio,
     WAV_Seek,   /* Seek */
+    WAV_Duration,
     NULL,   /* Pause */
     NULL,   /* Resume */
     NULL,   /* Stop */

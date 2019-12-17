@@ -120,6 +120,7 @@ typedef struct {
     ogg_int64_t loop_start;
     ogg_int64_t loop_end;
     ogg_int64_t loop_len;
+    ogg_int64_t full_length;
 } OPUS_music;
 
 
@@ -339,6 +340,7 @@ static void *OPUS_CreateFromRW(SDL_RWops *src, int freesrc)
         music->loop = 1;
     }
 
+    music->full_length = full_length;
     music->freesrc = freesrc;
     return music;
 }
@@ -449,6 +451,13 @@ static int OPUS_Seek(void *context, double time)
     return 0;
 }
 
+/* Return music duration in seconds */
+static double OPUS_Duration(void *context)
+{
+    OPUS_music *music = (OPUS_music *)context;
+    return music->full_length / 48000.0;
+}
+
 /* Close the given Opus stream */
 static void OPUS_Delete(void *context)
 {
@@ -483,6 +492,7 @@ Mix_MusicInterface Mix_MusicInterface_Opus =
     NULL,   /* IsPlaying */
     OPUS_GetAudio,
     OPUS_Seek,
+    OPUS_Duration,
     NULL,   /* Pause */
     NULL,   /* Resume */
     NULL,   /* Stop */

@@ -55,6 +55,11 @@ typedef struct {
 #else
     int (*ov_time_seek)(OggVorbis_File *vf,double pos);
 #endif
+#ifdef OGG_USE_TREMOR
+    ogg_int64_t (*ov_time_total)(OggVorbis_File *vf, int i);
+#else
+    double (*ov_time_total)(OggVorbis_File *vf, int i);
+#endif
     int (*ov_pcm_seek)(OggVorbis_File *vf, ogg_int64_t pos);
     ogg_int64_t (*ov_pcm_tell)(OggVorbis_File *vf);
 } vorbis_loader;
@@ -97,9 +102,11 @@ static int OGG_Load(void)
 #ifdef OGG_USE_TREMOR
         FUNCTION_LOADER(ov_read, long (*)(OggVorbis_File *,char *,int,int *))
         FUNCTION_LOADER(ov_time_seek, int (*)(OggVorbis_File *,ogg_int64_t))
+        FUNCTION_LOADER(ov_time_total, ogg_int64_t (*)(OggVorbis_File *, int))
 #else
         FUNCTION_LOADER(ov_read, long (*)(OggVorbis_File *,char *,int,int,int,int,int *))
         FUNCTION_LOADER(ov_time_seek, int (*)(OggVorbis_File *,double))
+        FUNCTION_LOADER(ov_time_total, double (*)(OggVorbis_File *, int))
 #endif
         FUNCTION_LOADER(ov_pcm_seek, int (*)(OggVorbis_File *,ogg_int64_t))
         FUNCTION_LOADER(ov_pcm_tell, ogg_int64_t (*)(OggVorbis_File *))
@@ -459,6 +466,17 @@ static int OGG_Seek(void *context, double time)
     return 0;
 }
 
+/* Return music duration in seconds */
+static double OGG_Duration(void *context)
+{
+    OGG_music *music = (OGG_music *)context;
+#ifdef OGG_USE_TREMOR
+    return vorbis.ov_time_total(&music->vf, -1) / 1000.0;
+#else
+    return vorbis.ov_time_total(&music->vf, -1);
+#endif
+}
+
 /* Close the given OGG stream */
 static void OGG_Delete(void *context)
 {
@@ -493,6 +511,7 @@ Mix_MusicInterface Mix_MusicInterface_OGG =
     NULL,   /* IsPlaying */
     OGG_GetAudio,
     OGG_Seek,
+    OGG_Duration,
     NULL,   /* Pause */
     NULL,   /* Resume */
     NULL,   /* Stop */

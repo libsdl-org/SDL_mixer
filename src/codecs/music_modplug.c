@@ -39,6 +39,7 @@ typedef struct {
     void (*ModPlug_Unload)(ModPlugFile* file);
     int  (*ModPlug_Read)(ModPlugFile* file, void* buffer, int size);
     void (*ModPlug_Seek)(ModPlugFile* file, int millisecond);
+    int  (*ModPlug_GetLength)(ModPlugFile* file);
     void (*ModPlug_GetSettings)(ModPlug_Settings* settings);
     void (*ModPlug_SetSettings)(const ModPlug_Settings* settings);
     void (*ModPlug_SetMasterVolume)(ModPlugFile* file,unsigned int cvol);
@@ -81,6 +82,7 @@ static int MODPLUG_Load(void)
         FUNCTION_LOADER(ModPlug_Unload, void (*)(ModPlugFile* file))
         FUNCTION_LOADER(ModPlug_Read, int  (*)(ModPlugFile* file, void* buffer, int size))
         FUNCTION_LOADER(ModPlug_Seek, void (*)(ModPlugFile* file, int millisecond))
+        FUNCTION_LOADER(ModPlug_GetLength, int (*)(ModPlugFile* file))
         FUNCTION_LOADER(ModPlug_GetSettings, void (*)(ModPlug_Settings* settings))
         FUNCTION_LOADER(ModPlug_SetSettings, void (*)(const ModPlug_Settings* settings))
         FUNCTION_LOADER(ModPlug_SetMasterVolume, void (*)(ModPlugFile* file,unsigned int cvol))
@@ -264,6 +266,13 @@ static int MODPLUG_Seek(void *context, double position)
     return 0;
 }
 
+/* Return music duration in seconds */
+static double MODPLUG_Duration(void *context)
+{
+    MODPLUG_Music *music = (MODPLUG_Music *)context;
+    return modplug.ModPlug_GetLength(music->file) / 1000.0;
+}
+
 /* Close the given modplug stream */
 static void MODPLUG_Delete(void *context)
 {
@@ -297,6 +306,7 @@ Mix_MusicInterface Mix_MusicInterface_MODPLUG =
     NULL,   /* IsPlaying */
     MODPLUG_GetAudio,
     MODPLUG_Seek,
+    MODPLUG_Duration,
     NULL,   /* Pause */
     NULL,   /* Resume */
     NULL,   /* Stop */
