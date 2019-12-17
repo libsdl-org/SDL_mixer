@@ -47,17 +47,11 @@ typedef struct {
     ogg_int64_t (*ov_pcm_total)(OggVorbis_File *vf,int i);
 #ifdef OGG_USE_TREMOR
     long (*ov_read)(OggVorbis_File *vf,char *buffer,int length, int *bitstream);
-#else
-    long (*ov_read)(OggVorbis_File *vf,char *buffer,int length, int bigendianp,int word,int sgned,int *bitstream);
-#endif
-#ifdef OGG_USE_TREMOR
     int (*ov_time_seek)(OggVorbis_File *vf,ogg_int64_t pos);
-#else
-    int (*ov_time_seek)(OggVorbis_File *vf,double pos);
-#endif
-#ifdef OGG_USE_TREMOR
     ogg_int64_t (*ov_time_total)(OggVorbis_File *vf, int i);
 #else
+    long (*ov_read)(OggVorbis_File *vf,char *buffer,int length, int bigendianp,int word,int sgned,int *bitstream);
+    int (*ov_time_seek)(OggVorbis_File *vf,double pos);
     double (*ov_time_total)(OggVorbis_File *vf, int i);
 #endif
     int (*ov_pcm_seek)(OggVorbis_File *vf, ogg_int64_t pos);
