@@ -77,6 +77,9 @@ static int num_decoders = 0;
 /* Semicolon-separated SoundFont paths */
 static char* soundfont_paths = NULL;
 
+/* full path of timidity config file */
+static char* timidity_cfg = NULL;
+
 /* Interfaces for the various music interfaces, ordered by priority */
 static Mix_MusicInterface *s_music_interfaces[] =
 {
@@ -1045,6 +1048,28 @@ void unload_music(void)
         }
         interface->loaded = SDL_FALSE;
     }
+}
+
+int Mix_SetTimidityCfg(const char *path)
+{
+    if (timidity_cfg) {
+        SDL_free(timidity_cfg);
+        timidity_cfg = NULL;
+    }
+
+    if (path && *path) {
+        if (!(timidity_cfg = SDL_strdup(path))) {
+            Mix_SetError("Insufficient memory to set Timidity cfg file");
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+const char* Mix_GetTimidityCfg(void)
+{
+    return timidity_cfg;
 }
 
 int Mix_SetSoundFonts(const char *paths)
