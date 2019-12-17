@@ -361,6 +361,12 @@ AC_HELP_STRING([--enable-music-midi-timidity], [enable timidity MIDI output [[de
     if test x$enable_music_midi_timidity = xyes; then
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MID_TIMIDITY -I\$(srcdir)/src/codecs/timidity"
         SOURCES="$SOURCES $srcdir/src/codecs/timidity/*.c"
+        timidity_cfg=no
+        AC_ARG_WITH([timidity-cfg],
+AC_HELP_STRING([--with-timidity-cfg=FILE], [Specify full path to timidity.cfg]), timidity_cfg="$withval", [])
+        if test x$timidity_cfg != xyes -a x$timidity_cfg != xno; then
+                EXTRA_CFLAGS="$EXTRA_CFLAGS -DTIMIDITY_CFG=\\\"$timidity_cfg\\\""
+        fi
     fi
     AC_ARG_ENABLE([music-midi-native],
 AC_HELP_STRING([--enable-music-midi-native], [enable native MIDI music output [[default=yes]]]),

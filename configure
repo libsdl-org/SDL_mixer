@@ -904,6 +904,7 @@ enable_music_mod_mikmod
 enable_music_mod_mikmod_shared
 enable_music_midi
 enable_music_midi_timidity
+with_timidity_cfg
 enable_music_midi_native
 enable_music_midi_fluidsynth
 enable_music_midi_fluidsynth_shared
@@ -1615,6 +1616,8 @@ Optional Packages:
   --with-gnu-ld           assume the C compiler uses GNU ld [default=no]
   --with-sdl-prefix=PFX   Prefix where SDL is installed (optional)
   --with-sdl-exec-prefix=PFX Exec prefix where SDL is installed (optional)
+  --with-timidity-cfg=FILE
+                          Specify full path to timidity.cfg
 
 Some influential environment variables:
   CC          C compiler command
@@ -3939,13 +3942,13 @@ if ${lt_cv_nm_interface+:} false; then :
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:3942: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:3945: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:3945: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:3948: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:3948: output\"" >&5)
+  (eval echo "\"\$as_me:3951: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -5156,7 +5159,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 5159 "configure"' > conftest.$ac_ext
+  echo '#line 5162 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -6986,11 +6989,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:6989: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:6992: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:6993: \$? = $ac_status" >&5
+   echo "$as_me:6996: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7325,11 +7328,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7328: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7331: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7332: \$? = $ac_status" >&5
+   echo "$as_me:7335: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7430,11 +7433,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7433: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7436: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:7437: \$? = $ac_status" >&5
+   echo "$as_me:7440: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -7485,11 +7488,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7488: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7491: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:7492: \$? = $ac_status" >&5
+   echo "$as_me:7495: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -9854,7 +9857,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 9857 "configure"
+#line 9860 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -9950,7 +9953,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 9953 "configure"
+#line 9956 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -12118,6 +12121,16 @@ fi
     if test x$enable_music_midi_timidity = xyes; then
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MID_TIMIDITY -I\$(srcdir)/src/codecs/timidity"
         SOURCES="$SOURCES $srcdir/src/codecs/timidity/*.c"
+        timidity_cfg=no
+
+# Check whether --with-timidity-cfg was given.
+if test "${with_timidity_cfg+set}" = set; then :
+  withval=$with_timidity_cfg; timidity_cfg="$withval"
+fi
+
+        if test x$timidity_cfg != xyes -a x$timidity_cfg != xno; then
+                EXTRA_CFLAGS="$EXTRA_CFLAGS -DTIMIDITY_CFG=\\\"$timidity_cfg\\\""
+        fi
     fi
     # Check whether --enable-music-midi-native was given.
 if test "${enable_music_midi_native+set}" = set; then :
