@@ -555,9 +555,9 @@ static void *FLAC_CreateFromRW(SDL_RWops *src, int freesrc)
     if (was_error) {
         switch (init_stage) {
             case 2:
-                flac.FLAC__stream_decoder_finish(music->flac_decoder);
+                flac.FLAC__stream_decoder_finish(music->flac_decoder); /* fallthrough */
             case 1:
-                flac.FLAC__stream_decoder_delete(music->flac_decoder);
+                flac.FLAC__stream_decoder_delete(music->flac_decoder); /* fallthrough */
             case 0:
                 SDL_free(music);
                 break;
@@ -568,7 +568,6 @@ static void *FLAC_CreateFromRW(SDL_RWops *src, int freesrc)
     /* loop_start, loop_end and loop_len get set by metadata callback if tags
      * are present in metadata.
      */
-
     full_length = flac.FLAC__stream_decoder_get_total_samples(music->flac_decoder);
     if (((music->loop_start >= 0) || (music->loop_end > 0)) &&
         ((music->loop_start < music->loop_end) || (music->loop_end > 0)) &&
