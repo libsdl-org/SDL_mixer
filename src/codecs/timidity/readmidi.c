@@ -117,7 +117,7 @@ static MidiEventList *read_midi_event(MidiSong *song)
 	  if (type>0 && type<16)
 	    {
 	    /*dumpstring(song->rw, len, type);*/ /* see above */
-	      SDL_RWseek(rw, len, RW_SEEK_CUR);
+	      SDL_RWseek(song->rw, len, RW_SEEK_CUR);
 	    }
 	  else
 	    switch(type)
