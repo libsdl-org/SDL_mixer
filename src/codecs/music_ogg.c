@@ -336,7 +336,7 @@ static void *OGG_CreateFromRW(SDL_RWops *src, int freesrc)
 
     full_length = vorbis.ov_pcm_total(&music->vf, -1);
     if (((music->loop_start >= 0) || (music->loop_end > 0)) &&
-        ((music->loop_start < music->loop_end) || (music->loop_end == 0)) &&
+        ((music->loop_start < music->loop_end) || (music->loop_end > 0)) &&
          (music->loop_start < full_length) &&
          (music->loop_end <= full_length)) {
         if (music->loop_start < 0) music->loop_start = 0;
