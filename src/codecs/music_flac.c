@@ -155,12 +155,12 @@ typedef struct {
     int freesrc;
     SDL_AudioStream *stream;
     int loop;
-    FLAC__uint64 pcm_pos;
-    FLAC__uint64 full_length;
+    FLAC__int64 pcm_pos;
+    FLAC__int64 full_length;
     SDL_bool loop_flag;
-    FLAC__uint64 loop_start;
-    FLAC__uint64 loop_end;
-    FLAC__uint64 loop_len;
+    FLAC__int64 loop_start;
+    FLAC__int64 loop_end;
+    FLAC__int64 loop_len;
 } FLAC_Music;
 
 
@@ -351,7 +351,7 @@ static FLAC__StreamDecoderWriteStatus flac_write_music_cb(
         }
     }
     amount = (int)(frame->header.blocksize * channels * sizeof(*data));
-    music->pcm_pos += (FLAC__uint64) frame->header.blocksize;
+    music->pcm_pos += (FLAC__int64) frame->header.blocksize;
     if ((music->loop == 1) && (music->play_count != 1) &&
         (music->pcm_pos >= music->loop_end)) {
         amount -= (music->pcm_pos - music->loop_end) * channels * sizeof(*data);
@@ -366,15 +366,15 @@ static FLAC__StreamDecoderWriteStatus flac_write_music_cb(
 
 /* Parse time string of the form HH:MM:SS.mmm and return equivalent sample
  * position */
-static FLAC__uint64 parse_time(char *time, unsigned samplerate_hz)
+static FLAC__int64 parse_time(char *time, unsigned samplerate_hz)
 {
     char *num_start, *p;
-    FLAC__uint64 result = 0;
-    char c;
+    FLAC__int64 result = 0;
+    char c; int val;
 
     /* Time is directly expressed as a sample position */
     if (SDL_strchr(time, ':') == NULL) {
-        return SDL_strtoull(time, NULL, 10);
+        return SDL_strtoll(time, NULL, 10);
     }
 
     result = 0;
@@ -383,18 +383,22 @@ static FLAC__uint64 parse_time(char *time, unsigned samplerate_hz)
     for (p = time; *p != '\0'; ++p) {
         if (*p == '.' || *p == ':') {
             c = *p; *p = '\0';
-            result = result * 60 + SDL_atoi(num_start);
+            if ((val = SDL_atoi(num_start)) < 0)
+                return -1;
+            result = result * 60 + val;
             num_start = p + 1;
             *p = c;
         }
 
         if (*p == '.') {
-            return result * samplerate_hz
-                + (FLAC__uint64) (SDL_atof(p) * samplerate_hz);
+            double val_f = SDL_atof(p);
+            if (val_f < 0) return -1;
+            return result * samplerate_hz + (FLAC__int64) (val_f * samplerate_hz);
         }
     }
 
-    return (result * 60 + SDL_atoi(num_start)) * samplerate_hz;
+    if ((val = SDL_atoi(num_start)) < 0) return -1;
+    return (result * 60 + val) * samplerate_hz;
 }
 
 static void flac_metadata_music_cb(
@@ -449,20 +453,25 @@ static void flac_metadata_music_cb(
 
             /* Want to match LOOP-START, LOOP_START, etc. Remove - or _ from
              * string if it is present at position 4. */
-
             if ((argument[4] == '_') || (argument[4] == '-')) {
-                SDL_memmove(argument + 4, argument + 5,
-                           SDL_strlen(argument) - 4);
+                SDL_memmove(argument + 4, argument + 5, SDL_strlen(argument) - 4);
             }
 
             if (SDL_strcasecmp(argument, "LOOPSTART") == 0)
                 music->loop_start = parse_time(value, rate);
             else if (SDL_strcasecmp(argument, "LOOPLENGTH") == 0) {
-                music->loop_len = SDL_strtoull(value, NULL, 10);
+                music->loop_len = SDL_strtoll(value, NULL, 10);
                 is_loop_length = SDL_TRUE;
             } else if (SDL_strcasecmp(argument, "LOOPEND") == 0) {
                 music->loop_end = parse_time(value, rate);
                 is_loop_length = SDL_FALSE;
+            }
+            if (music->loop_start < 0 || music->loop_len < 0 || music->loop_end < 0) {
+                music->loop_start = 0;
+                music->loop_len = 0;
+                music->loop_end = 0;
+                SDL_free(param);
+                break;  /* ignore tag. */
             }
             SDL_free(param);
         }
@@ -509,7 +518,7 @@ static void *FLAC_CreateFromRW(SDL_RWops *src, int freesrc)
     FLAC_Music *music;
     int init_stage = 0;
     int was_error = 1;
-    FLAC__uint64 full_length;
+    FLAC__int64 full_length;
 
     music = (FLAC_Music *)SDL_calloc(1, sizeof(*music));
     if (!music) {
@@ -519,11 +528,6 @@ static void *FLAC_CreateFromRW(SDL_RWops *src, int freesrc)
     music->src = src;
     music->volume = MIX_MAX_VOLUME;
     music->loop = -1;
-    music->loop_start = -1;
-    music->loop_end = 0;
-    music->loop_len = 0;
-    music->loop_flag = SDL_FALSE;
-    music->pcm_pos = 0;
 
     music->flac_decoder = flac.FLAC__stream_decoder_new();
     if (music->flac_decoder) {
@@ -568,13 +572,9 @@ static void *FLAC_CreateFromRW(SDL_RWops *src, int freesrc)
     /* loop_start, loop_end and loop_len get set by metadata callback if tags
      * are present in metadata.
      */
-    full_length = flac.FLAC__stream_decoder_get_total_samples(music->flac_decoder);
-    if (((music->loop_start >= 0) || (music->loop_end > 0)) &&
-        ((music->loop_start < music->loop_end) || (music->loop_end > 0)) &&
-         (music->loop_start < full_length) &&
-         (music->loop_end <= full_length)) {
-        if (music->loop_start < 0) music->loop_start = 0;
-        if (music->loop_end == 0) music->loop_end = full_length;
+    full_length = (FLAC__int64) flac.FLAC__stream_decoder_get_total_samples(music->flac_decoder);
+    if ((music->loop_end > 0) && (music->loop_end <= full_length) &&
+        (music->loop_start < music->loop_end)) {
         music->loop = 1;
     }
 
@@ -668,7 +668,7 @@ static int FLAC_Seek(void *context, double position)
     FLAC__uint64 seek_sample = (FLAC__uint64) (music->sample_rate * position);
 
     SDL_AudioStreamClear(music->stream);
-    music->pcm_pos = seek_sample;
+    music->pcm_pos = (FLAC__int64) seek_sample;
     if (!flac.FLAC__stream_decoder_seek_absolute(music->flac_decoder, seek_sample)) {
         if (flac.FLAC__stream_decoder_get_state(music->flac_decoder) == FLAC__STREAM_DECODER_SEEK_ERROR) {
             flac.FLAC__stream_decoder_flush(music->flac_decoder);
