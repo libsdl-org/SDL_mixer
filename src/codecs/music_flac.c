@@ -352,7 +352,7 @@ static FLAC__StreamDecoderWriteStatus flac_write_music_cb(
     }
     amount = (int)(frame->header.blocksize * channels * sizeof(*data));
     music->pcm_pos += (FLAC__int64) frame->header.blocksize;
-    if ((music->loop == 1) && (music->play_count != 1) &&
+    if (music->loop && (music->play_count != 1) &&
         (music->pcm_pos >= music->loop_end)) {
         amount -= (music->pcm_pos - music->loop_end) * channels * sizeof(*data);
         music->loop_flag = SDL_TRUE;
@@ -419,7 +419,7 @@ static void flac_metadata_music_cb(
         music->sample_rate = metadata->data.stream_info.sample_rate;
         music->channels = metadata->data.stream_info.channels;
         music->bits_per_sample = metadata->data.stream_info.bits_per_sample;
-      /*printf("FLAC: Sample rate = %d, channels = %d, bits_per_sample = %d\n", music->sample_rate, music->channels, music->bits_per_sample);*/
+        /*printf("FLAC: Sample rate = %d, channels = %d, bits_per_sample = %d\n", music->sample_rate, music->channels, music->bits_per_sample);*/
 
         /* SDL's channel mapping and FLAC channel mapping are the same,
            except for 3 channels: SDL is FL FR LFE and FLAC is FL FR FC
@@ -527,7 +527,6 @@ static void *FLAC_CreateFromRW(SDL_RWops *src, int freesrc)
     }
     music->src = src;
     music->volume = MIX_MAX_VOLUME;
-    music->loop = -1;
 
     music->flac_decoder = flac.FLAC__stream_decoder_new();
     if (music->flac_decoder) {

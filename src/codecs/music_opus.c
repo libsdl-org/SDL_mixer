@@ -270,7 +270,6 @@ static void *OPUS_CreateFromRW(SDL_RWops *src, int freesrc)
     music->src = src;
     music->volume = MIX_MAX_VOLUME;
     music->section = -1;
-    music->loop = -1;
 
     SDL_zero(callbacks);
     callbacks.read = sdl_read_func;
@@ -399,7 +398,7 @@ static int OPUS_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     }
 
     pcmPos = opus.op_pcm_tell(music->of);
-    if ((music->loop == 1) && (music->play_count != 1) && (pcmPos >= music->loop_end)) {
+    if (music->loop && (music->play_count != 1) && (pcmPos >= music->loop_end)) {
         samples -= (int)((pcmPos - music->loop_end) * music->op_info->channel_count) * (int)sizeof(Sint16);
         result = opus.op_pcm_seek(music->of, music->loop_start);
         if (result < 0) {
@@ -447,8 +446,7 @@ static int OPUS_GetAudio(void *context, void *data, int bytes)
 static int OPUS_Seek(void *context, double time)
 {
     OPUS_music *music = (OPUS_music *)context;
-    int result;
-    result = opus.op_pcm_seek(music->of, (ogg_int64_t)(time * 48000));
+    int result = opus.op_pcm_seek(music->of, (ogg_int64_t)(time * 48000));
     if (result < 0) {
         return set_op_error("op_pcm_seek", result);
     }

@@ -279,7 +279,6 @@ static void *OGG_CreateFromRW(SDL_RWops *src, int freesrc)
     music->src = src;
     music->volume = MIX_MAX_VOLUME;
     music->section = -1;
-    music->loop = -1;
 
     SDL_zero(callbacks);
     callbacks.read_func = sdl_read_func;
@@ -404,7 +403,7 @@ static int OGG_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     }
 
     pcmPos = vorbis.ov_pcm_tell(&music->vf);
-    if ((music->loop == 1) && (music->play_count != 1) && (pcmPos >= music->loop_end)) {
+    if (music->loop && (music->play_count != 1) && (pcmPos >= music->loop_end)) {
         amount -= (int)((pcmPos - music->loop_end) * music->vi.channels) * (int)sizeof(Sint16);
         result = vorbis.ov_pcm_seek(&music->vf, music->loop_start);
         if (result < 0) {
