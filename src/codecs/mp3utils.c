@@ -279,7 +279,7 @@ static SDL_INLINE long get_musicmatch_len(struct mp3file_t *m) {
     return len + 256; /* header is present. */
 }
 
-int mp3_skiptags(struct mp3file_t *fil)
+int mp3_skiptags(struct mp3file_t *fil, SDL_bool keep_id3v2)
 {
     unsigned char buf[128];
     long len; size_t readsize;
@@ -292,8 +292,10 @@ int mp3_skiptags(struct mp3file_t *fil)
     if (is_id3v2(buf, readsize)) {
         len = get_id3v2_len(buf, (long)readsize);
         if (len >= fil->length) goto fail;
-        fil->start += len;
-        fil->length -= len;
+        if (! keep_id3v2)  {
+            fil->start  += len;
+            fil->length -= len;
+        }
     }
     /* APE tag _might_ be at the start (discouraged
      * but not forbidden, either.)  read the header. */
