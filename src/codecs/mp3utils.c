@@ -68,7 +68,7 @@ static SDL_INLINE SDL_bool is_id3v1(const unsigned char *data, size_t length)
     }
     return SDL_TRUE;
 }
-static SDL_INLINE SDL_bool is_id3v2(const unsigned char *data, size_t length)
+static SDL_bool is_id3v2(const unsigned char *data, size_t length)
 {
     /* ID3v2 header is 10 bytes:  http://id3.org/id3v2.4.0-structure */
     /* bytes 0-2: "ID3" identifier */
@@ -87,7 +87,7 @@ static SDL_INLINE SDL_bool is_id3v2(const unsigned char *data, size_t length)
     }
     return SDL_TRUE;
 }
-static SDL_INLINE long get_id3v2_len(const unsigned char *data, long length)
+static long get_id3v2_len(const unsigned char *data, long length)
 {
     /* size is a 'synchsafe' integer (see above) */
     long size = (long)((data[6]<<21) + (data[7]<<14) + (data[8]<<7) + data[9]);
@@ -104,7 +104,7 @@ static SDL_INLINE long get_id3v2_len(const unsigned char *data, long length)
     }
     return size;
 }
-static SDL_INLINE SDL_bool is_apetag(const unsigned char *data, size_t length)
+static SDL_bool is_apetag(const unsigned char *data, size_t length)
 {
    /* http://wiki.hydrogenaud.io/index.php?title=APEv2_specification
     * Header/footer is 32 bytes: bytes 0-7 ident, bytes 8-11 version,
@@ -124,7 +124,7 @@ static SDL_INLINE SDL_bool is_apetag(const unsigned char *data, size_t length)
     }
     return SDL_TRUE;
 }
-static SDL_INLINE long get_ape_len(const unsigned char *data)
+static long get_ape_len(const unsigned char *data)
 {
     Uint32 flags, version;
     long size = (long)((data[15]<<24) | (data[14]<<16) | (data[13]<<8) | data[12]);
@@ -141,7 +141,7 @@ static SDL_INLINE int is_lyrics3tag(const unsigned char *data, long length) {
     if (SDL_memcmp(data+6,"LYRICSEND",9) == 0) return 1; /* v1 */
     return 0;
 }
-static SDL_INLINE long get_lyrics3v1_len(struct mp3file_t *m) {
+static long get_lyrics3v1_len(struct mp3file_t *m) {
     const char *p; long i, len;
     char buf[5104];
     /* needs manual search:  http://id3.org/Lyrics3 */
@@ -163,13 +163,13 @@ static SDL_INLINE long get_lyrics3v2_len(const unsigned char *data, long length)
     if (length != 6) return 0;
     return SDL_strtol((const char *)data, NULL, 10) + 15;
 }
-static SDL_INLINE SDL_bool verify_lyrics3v2(const unsigned char *data, long length) {
+static SDL_bool verify_lyrics3v2(const unsigned char *data, long length) {
     if (length < 11) return SDL_FALSE;
     if (SDL_memcmp(data,"LYRICSBEGIN",11) == 0) return SDL_TRUE;
     return SDL_FALSE;
 }
 #define MMTAG_PARANOID
-static SDL_INLINE SDL_bool is_musicmatch(const unsigned char *data, long length) {
+static SDL_bool is_musicmatch(const unsigned char *data, long length) {
   /* From docs/musicmatch.txt in id3lib: https://sourceforge.net/projects/id3lib/
      Overall tag structure:
 
@@ -212,7 +212,7 @@ static SDL_INLINE SDL_bool is_musicmatch(const unsigned char *data, long length)
     #endif
     return SDL_TRUE;
 }
-static SDL_INLINE long get_musicmatch_len(struct mp3file_t *m) {
+static long get_musicmatch_len(struct mp3file_t *m) {
     const Sint32 metasizes[4] = { 7868, 7936, 8004, 8132 };
     const unsigned char syncstr[10] = {'1','8','2','7','3','6','4','5',0,0};
     unsigned char buf[256];
@@ -279,11 +279,89 @@ static SDL_INLINE long get_musicmatch_len(struct mp3file_t *m) {
     return len + 256; /* header is present. */
 }
 
+static int probe_id3v1(struct mp3file_t *fil, unsigned char *buf) {
+    if (fil->length >= 128) {
+        MP3_RWseek(fil, -128, RW_SEEK_END);
+        if (MP3_RWread(fil, buf, 1, 128) != 128)
+            return -1;
+        if (is_id3v1(buf, 128)) {
+            fil->length -= 128;
+            return 1;
+            /* FIXME: handle possible double-ID3v1 tags?? */
+        }
+    }
+    return 0;
+}
+static int probe_mmtag(struct mp3file_t *fil, unsigned char *buf) {
+    long len;
+    if (fil->length >= 68) {
+        MP3_RWseek(fil, -48, RW_SEEK_END);
+        if (MP3_RWread(fil, buf, 1, 48) != 48)
+            return -1;
+        if (is_musicmatch(buf, 48)) {
+            len = get_musicmatch_len(fil);
+            if (len < 0) return -1;
+            if (len >= fil->length) return -1;
+            fil->length -= len;
+            return 1;
+        }
+    }
+    return 0;
+}
+static int probe_apetag(struct mp3file_t *fil, unsigned char *buf) {
+    long len;
+    if (fil->length >= 32) {
+        MP3_RWseek(fil, -32, RW_SEEK_END);
+        if (MP3_RWread(fil, buf, 1, 32) != 32)
+            return -1;
+        if (is_apetag(buf, 32)) {
+            len = get_ape_len(buf);
+            if (len >= fil->length) return -1;
+            fil->length -= len;
+            return 1;
+        }
+    }
+    return 0;
+}
+static int probe_lyrics3(struct mp3file_t *fil, unsigned char *buf) {
+    long len;
+    if (fil->length >= 15) {
+        MP3_RWseek(fil, -15, RW_SEEK_END);
+        if (MP3_RWread(fil, buf, 1, 15) != 15)
+            return -1;
+        len = is_lyrics3tag(buf, 15);
+        if (len == 2) {
+            len = get_lyrics3v2_len(buf, 6);
+            if (len >= fil->length) return -1;
+            if (len < 15) return -1;
+            MP3_RWseek(fil, -len, RW_SEEK_END);
+            if (MP3_RWread(fil, buf, 1, 11)!= 11)
+                return -1;
+            if (!verify_lyrics3v2(buf, 11)) return -1;
+            fil->length -= len;
+            return 1;
+        }
+        else if (len == 1) {
+            len = get_lyrics3v1_len(fil);
+            if (len < 0) return -1;
+            fil->length -= len;
+            return 1;
+        }
+    }
+    return 0;
+}
+
 int mp3_skiptags(struct mp3file_t *fil, SDL_bool keep_id3v2)
 {
     unsigned char buf[128];
     long len; size_t readsize;
+    int c_id3, c_ape, c_lyr, c_mm;
     int rc = -1;
+
+    /* MP3 standard has no metadata format, so everyone invented
+     * their own thing, even with extensions, until ID3v2 became
+     * dominant: Hence the impossible mess here.
+     */
 
     readsize = MP3_RWread(fil, buf, 1, 128);
     if (!readsize) goto fail;
@@ -292,7 +370,7 @@ int mp3_skiptags(struct mp3file_t *fil, SDL_bool keep_id3v2)
     if (is_id3v2(buf, readsize)) {
         len = get_id3v2_len(buf, (long)readsize);
         if (len >= fil->length) goto fail;
-        if (! keep_id3v2)  {
+        if (! keep_id3v2) {
             fil->start  += len;
             fil->length -= len;
         }
@@ -306,66 +384,38 @@ int mp3_skiptags(struct mp3file_t *fil, SDL_bool keep_id3v2)
         fil->length -= len;
     }
 
+    /* it's not impossible that _old_ MusicMatch tag
+     * placing itself after ID3v1. */
+    if ((c_mm = probe_mmtag(fil, buf)) < 0) {
+        goto fail;
+    }
     /* ID3v1 tag is at the end */
-    if (fil->length >= 128) {
-        MP3_RWseek(fil, -128, RW_SEEK_END);
-        readsize = MP3_RWread(fil, buf, 1, 128);
-        if (readsize != 128) goto fail;
-        if (is_id3v1(buf, 128)) {
-            fil->length -= 128;
-            /* FIXME: handle possible double-ID3v1 tags?? */
-        }
+    if ((c_id3 = probe_id3v1(fil, buf)) < 0) {
+        goto fail;
     }
-
-    /* do we know whether ape or lyrics3 is the first?
-     * well, we don't: we need to handle that later... */
-
-    /* check for the _old_ MusicMatch tag at end. */
-    if (fil->length >= 68) {
-        MP3_RWseek(fil, -48, RW_SEEK_END);
-        readsize = MP3_RWread(fil, buf, 1, 48);
-        if (readsize != 48) goto fail;
-        if (is_musicmatch(buf, 48)) {
-            len = get_musicmatch_len(fil);
-            if (len < 0) goto fail;
-            if (len >= fil->length) goto fail;
-            fil->length -= len;
+    /* we do not know the order of ape or lyrics3
+     * or musicmatch tags, hence the loop here.. */
+    c_ape = 0;
+    c_lyr = 0;
+    for (;;) {
+        if (!c_lyr) {
+        /* care about mp3s with double Lyrics3 tags? */
+            if ((c_lyr = probe_lyrics3(fil, buf)) < 0)
+                goto fail;
+            if (c_lyr) continue;
         }
-    }
-
-    /* APE tag may be at the end: read the footer */
-    if (fil->length >= 32) {
-        MP3_RWseek(fil, -32, RW_SEEK_END);
-        readsize = MP3_RWread(fil, buf, 1, 32);
-        if (readsize != 32) goto fail;
-        if (is_apetag(buf, 32)) {
-            len = get_ape_len(buf);
-            if (len >= fil->length) goto fail;
-            fil->length -= len;
+        if (!c_mm) {
+            if ((c_mm = probe_mmtag(fil, buf)) < 0)
+                goto fail;
+            if (c_mm) continue;
         }
-    }
-
-    if (fil->length >= 15) {
-        MP3_RWseek(fil, -15, RW_SEEK_END);
-        readsize = MP3_RWread(fil, buf, 1, 15);
-        if (readsize != 15) goto fail;
-        len = is_lyrics3tag(buf, 15);
-        if (len == 2) {
-            len = get_lyrics3v2_len(buf, 6);
-            if (len >= fil->length) goto fail;
-            if (len < 15) goto fail;
-            MP3_RWseek(fil, -len, RW_SEEK_END);
-            readsize = MP3_RWread(fil, buf, 1, 11);
-            if (readsize != 11) goto fail;
-            if (!verify_lyrics3v2(buf, 11)) goto fail;
-            fil->length -= len;
+        if (!c_ape) {
+            if ((c_ape = probe_apetag(fil, buf)) < 0)
+                goto fail;
+            if (c_ape) continue;
         }
-        else if (len == 1) {
-            len = get_lyrics3v1_len(fil);
-            if (len < 0) goto fail;
-            fil->length -= len;
-        }
-    }
+        break;
+    } /* for (;;) */
 
     rc = (fil->length > 0)? 0 : -1;
     fail:
