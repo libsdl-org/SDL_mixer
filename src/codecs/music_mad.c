@@ -167,7 +167,7 @@ static void *MAD_CreateFromRW(SDL_RWops *src, int freesrc)
     music->volume = MIX_MAX_VOLUME;
 
     music->mp3file.length = SDL_RWsize(src);
-    if (mp3_skiptags(&music->mp3file) < 0) {
+    if (mp3_skiptags(&music->mp3file, SDL_FALSE) < 0) {
         SDL_free(music);
         Mix_SetError("music_mad: corrupt mp3 file (bad tags.)");
         return NULL;
