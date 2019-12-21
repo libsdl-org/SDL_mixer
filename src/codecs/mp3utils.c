@@ -40,12 +40,12 @@ size_t MP3_RWread(struct mp3file_t *fil, void *ptr, size_t size, size_t maxnum) 
 
 Sint64 MP3_RWseek(struct mp3file_t *fil, Sint64 offset, int whence) {
     Sint64 ret;
-    switch (whence) { /* assumes a legal whence value */
+    switch (whence) {
     case RW_SEEK_CUR:
         offset += fil->pos;
         break;
     case RW_SEEK_END:
-        offset = fil->length + offset;
+        offset += fil->length;
         break;
     }
     if (offset < 0) return -1;
@@ -60,16 +60,14 @@ Sint64 MP3_RWseek(struct mp3file_t *fil, Sint64 offset, int whence) {
 
 /*************************** TAG HANDLING: ******************************/
 
-static SDL_INLINE SDL_bool is_id3v1(const unsigned char *data, size_t length)
-{
+static SDL_INLINE SDL_bool is_id3v1(const unsigned char *data, long length) {
     /* http://id3.org/ID3v1 :  3 bytes "TAG" identifier and 125 bytes tag data */
     if (length < 3 || SDL_memcmp(data,"TAG",3) != 0) {
         return SDL_FALSE;
     }
     return SDL_TRUE;
 }
-static SDL_bool is_id3v2(const unsigned char *data, size_t length)
-{
+static SDL_bool is_id3v2(const unsigned char *data, size_t length) {
     /* ID3v2 header is 10 bytes:  http://id3.org/id3v2.4.0-structure */
     /* bytes 0-2: "ID3" identifier */
     if (length < 10 || SDL_memcmp(data,"ID3",3) != 0) {
@@ -87,8 +85,7 @@ static SDL_bool is_id3v2(const unsigned char *data, size_t length)
     }
     return SDL_TRUE;
 }
-static long get_id3v2_len(const unsigned char *data, long length)
-{
+static long get_id3v2_len(const unsigned char *data, long length) {
     /* size is a 'synchsafe' integer (see above) */
     long size = (long)((data[6]<<21) + (data[7]<<14) + (data[8]<<7) + data[9]);
     size += 10; /* header size */
@@ -104,8 +101,7 @@ static long get_id3v2_len(const unsigned char *data, long length)
     }
     return size;
 }
-static SDL_bool is_apetag(const unsigned char *data, size_t length)
-{
+static SDL_bool is_apetag(const unsigned char *data, size_t length) {
    /* http://wiki.hydrogenaud.io/index.php?title=APEv2_specification
     * Header/footer is 32 bytes: bytes 0-7 ident, bytes 8-11 version,
     * bytes 12-17 size. bytes 24-31 are reserved: must be all zeroes. */
@@ -124,8 +120,7 @@ static SDL_bool is_apetag(const unsigned char *data, size_t length)
     }
     return SDL_TRUE;
 }
-static long get_ape_len(const unsigned char *data)
-{
+static long get_ape_len(const unsigned char *data) {
     Uint32 flags, version;
     long size = (long)((data[15]<<24) | (data[14]<<16) | (data[13]<<8) | data[12]);
     version = (Uint32)((data[11]<<24) | (data[10]<<16) | (data[9]<<8) | data[8]);
@@ -163,7 +158,7 @@ static SDL_INLINE long get_lyrics3v2_len(const unsigned char *data, long length)
     if (length != 6) return 0;
     return SDL_strtol((const char *)data, NULL, 10) + 15;
 }
-static SDL_bool verify_lyrics3v2(const unsigned char *data, long length) {
+static SDL_INLINE SDL_bool verify_lyrics3v2(const unsigned char *data, long length) {
     if (length < 11) return SDL_FALSE;
     if (SDL_memcmp(data,"LYRICSBEGIN",11) == 0) return SDL_TRUE;
     return SDL_FALSE;
@@ -335,7 +330,7 @@ static int probe_lyrics3(struct mp3file_t *fil, unsigned char *buf) {
             if (len >= fil->length) return -1;
             if (len < 15) return -1;
             MP3_RWseek(fil, -len, RW_SEEK_END);
-            if (MP3_RWread(fil, buf, 1, 11)!= 11)
+            if (MP3_RWread(fil, buf, 1, 11) != 11)
                 return -1;
             if (!verify_lyrics3v2(buf, 11)) return -1;
             fil->length -= len;
@@ -361,6 +356,9 @@ int mp3_skiptags(struct mp3file_t *fil, SDL_bool keep_id3v2)
     /* MP3 standard has no metadata format, so everyone invented
      * their own thing, even with extensions, until ID3v2 became
      * dominant: Hence the impossible mess here.
+     *
+     * Note: I don't yet care about freaky broken mp3 files with
+     * double tags. -- O.S.
      */
 
     readsize = MP3_RWread(fil, buf, 1, 128);
@@ -422,6 +420,6 @@ int mp3_skiptags(struct mp3file_t *fil, SDL_bool keep_id3v2)
     MP3_RWseek(fil, 0, RW_SEEK_SET);
     return rc;
 }
-#endif /* MUSIC_MP3_????? */
+#endif /* MUSIC_MP3_??? */
 
 /* vi: set ts=4 sw=4 expandtab: */
