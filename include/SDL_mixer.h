@@ -245,7 +245,7 @@ extern DECLSPEC void SDLCALL Mix_ChannelFinished(void (SDLCALL *channel_finished
 
 /* Special Effects API by ryan c. gordon. (icculus@icculus.org) */
 
-#define MIX_CHANNEL_POST  -2
+#define MIX_CHANNEL_POST  (-2)
 
 /* This is the format of a special effect callback:
  *
