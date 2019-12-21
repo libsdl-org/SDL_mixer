@@ -165,8 +165,8 @@ extern DECLSPEC Mix_Chunk * SDLCALL Mix_LoadWAV_RW(SDL_RWops *src, int freesrc);
 #define Mix_LoadWAV(file)   Mix_LoadWAV_RW(SDL_RWFromFile(file, "rb"), 1)
 extern DECLSPEC Mix_Music * SDLCALL Mix_LoadMUS(const char *file);
 
-/* Load a music file from an SDL_RWop object (Ogg and MikMod specific currently)
-   Matt Campbell (matt@campbellhome.dhs.org) April 2000 */
+/* Load a music file from an SDL_RWop object
+ * Matt Campbell (matt@campbellhome.dhs.org) April 2000 */
 extern DECLSPEC Mix_Music * SDLCALL Mix_LoadMUS_RW(SDL_RWops *src, int freesrc);
 
 /* Load a music file from an SDL_RWop object assuming a specific format */
