@@ -408,6 +408,8 @@ static int MAD_Seek(void *context, double position)
         music->status &= ~MS_error_flags;
 
         MP3_RWseek(&music->mp3file, 0, RW_SEEK_SET);
+        /* Avoid junk chunk be played after seek -- Vitaly Novichkov */
+        SDL_memset(music->input_buffer, 0, sizeof(music->input_buffer));
     }
 
     /* Now we have to skip frames until we come to the right one.
