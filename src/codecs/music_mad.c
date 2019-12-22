@@ -147,6 +147,8 @@ typedef struct {
     int volume;
     int status;
     SDL_AudioStream *audiostream;
+    unsigned short last_nchannels;
+    unsigned int last_samplerate;
 
     unsigned char input_buffer[MAD_INPUT_BUFFER_SIZE + MAD_BUFFER_GUARD];
 } MAD_Music;
@@ -300,11 +302,17 @@ static SDL_bool decode_frame(MAD_Music *music)
     mad_synth_frame(&music->synth, &music->frame);
     pcm = &music->synth.pcm;
 
-    if (!music->audiostream) {
-        music->audiostream = SDL_NewAudioStream(AUDIO_S16, (Uint8)pcm->channels, (int)pcm->samplerate, music_spec.format, music_spec.channels, music_spec.freq);
+    if (!music->audiostream || music->last_nchannels != pcm->channels || music->last_samplerate != pcm->samplerate) {
+        if (music->audiostream) {
+            SDL_FreeAudioStream(music->audiostream);
+        }
+        music->audiostream = SDL_NewAudioStream(AUDIO_S16, (Uint8)pcm->channels, (int)pcm->samplerate,
+                                                music_spec.format, music_spec.channels, music_spec.freq);
         if (!music->audiostream) {
             return SDL_FALSE;
         }
+        music->last_nchannels = pcm->channels;
+        music->last_samplerate = pcm->samplerate;
     }
 
     nchannels = pcm->channels;
