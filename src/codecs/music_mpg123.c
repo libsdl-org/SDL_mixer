@@ -375,6 +375,9 @@ static int MPG123_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         format = mpg123_format_to_sdl(encoding);
         SDL_assert(format != -1);
 
+        if (music->stream) {
+            SDL_FreeAudioStream(music->stream);
+        }
         music->stream = SDL_NewAudioStream((SDL_AudioFormat)format, (Uint8)channels, (int)rate,
                                            music_spec.format, music_spec.channels, music_spec.freq);
         if (!music->stream) {
