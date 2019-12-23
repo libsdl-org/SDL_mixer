@@ -318,6 +318,7 @@ Mix_MusicInterface Mix_MusicInterface_MODPLUG =
     NULL,   /* IsPlaying */
     MODPLUG_GetAudio,
     MODPLUG_Seek,
+    NULL,   /* Tell */
     MODPLUG_Duration,
     NULL,   /* Pause */
     NULL,   /* Resume */

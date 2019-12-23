@@ -85,6 +85,9 @@ typedef struct
     /* Seek to a play position (in seconds) */
     int (*Seek)(void *music, double position);
 
+    /* Tell a play position (in seconds) */
+    double (*Tell)(void *music);
+
     /* Get Music duration (in seconds) */
     double (*Duration)(void *music);
 

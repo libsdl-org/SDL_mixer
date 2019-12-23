@@ -48,10 +48,12 @@ typedef struct {
 #ifdef OGG_USE_TREMOR
     long (*ov_read)(OggVorbis_File *vf,char *buffer,int length, int *bitstream);
     int (*ov_time_seek)(OggVorbis_File *vf,ogg_int64_t pos);
+    ogg_int64_t (*ov_time_tell)(OggVorbis_File *vf);
     ogg_int64_t (*ov_time_total)(OggVorbis_File *vf, int i);
 #else
     long (*ov_read)(OggVorbis_File *vf,char *buffer,int length, int bigendianp,int word,int sgned,int *bitstream);
     int (*ov_time_seek)(OggVorbis_File *vf,double pos);
+    double (*ov_time_tell)(OggVorbis_File *vf);
     double (*ov_time_total)(OggVorbis_File *vf, int i);
 #endif
     int (*ov_pcm_seek)(OggVorbis_File *vf, ogg_int64_t pos);
@@ -96,10 +98,12 @@ static int OGG_Load(void)
 #ifdef OGG_USE_TREMOR
         FUNCTION_LOADER(ov_read, long (*)(OggVorbis_File *,char *,int,int *))
         FUNCTION_LOADER(ov_time_seek, int (*)(OggVorbis_File *,ogg_int64_t))
+        FUNCTION_LOADER(ov_time_tell, ogg_int64_t (*)(OggVorbis_File *))
         FUNCTION_LOADER(ov_time_total, ogg_int64_t (*)(OggVorbis_File *, int))
 #else
         FUNCTION_LOADER(ov_read, long (*)(OggVorbis_File *,char *,int,int,int,int,int *))
         FUNCTION_LOADER(ov_time_seek, int (*)(OggVorbis_File *,double))
+        FUNCTION_LOADER(ov_time_tell, double (*)(OggVorbis_File *))
         FUNCTION_LOADER(ov_time_total, double (*)(OggVorbis_File *, int))
 #endif
         FUNCTION_LOADER(ov_pcm_seek, int (*)(OggVorbis_File *,ogg_int64_t))
@@ -468,6 +472,16 @@ static int OGG_Seek(void *context, double time)
     return 0;
 }
 
+static double OGG_Tell(void *context)
+{
+    OGG_music *music = (OGG_music *)context;
+#ifdef OGG_USE_TREMOR
+    return vorbis.ov_time_tell(&music->vf) / 1000.0;
+#else
+    return vorbis.ov_time_tell(&music->vf);
+#endif
+}
+
 /* Return music duration in seconds */
 static double OGG_Duration(void *context)
 {
@@ -514,6 +528,7 @@ Mix_MusicInterface Mix_MusicInterface_OGG =
     NULL,   /* IsPlaying */
     OGG_GetAudio,
     OGG_Seek,
+    OGG_Tell,
     OGG_Duration,
     NULL,   /* Pause */
     NULL,   /* Resume */

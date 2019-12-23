@@ -686,6 +686,12 @@ static int FLAC_Seek(void *context, double position)
     return 0;
 }
 
+static double FLAC_Tell(void *context)
+{
+    FLAC_Music *music = (FLAC_Music *)context;
+    return (double)music->pcm_pos / music->sample_rate;
+}
+
 /* Return music duration in seconds */
 static double FLAC_Duration(void *context)
 {
@@ -730,6 +736,7 @@ Mix_MusicInterface Mix_MusicInterface_FLAC =
     NULL,   /* IsPlaying */
     FLAC_GetAudio,
     FLAC_Seek,
+    FLAC_Tell,
     FLAC_Duration,
     NULL,   /* Pause */
     NULL,   /* Resume */
