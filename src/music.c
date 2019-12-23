@@ -66,7 +66,7 @@ struct _Mix_Music {
     int fade_step;
     int fade_steps;
 
-    char music_filename[1024];
+    char filename[1024];
 };
 
 /* Used to calculate fading steps */
@@ -82,7 +82,7 @@ static char* soundfont_paths = NULL;
 /* full path of timidity config file */
 static char* timidity_cfg = NULL;
 
-/* Meta-Tags utiltiy */
+/* Meta-Tags utility */
 void meta_tags_init(Mix_MusicMetaTags *tags)
 {
     SDL_memset(tags, 0, sizeof(Mix_MusicMetaTags));
@@ -113,7 +113,6 @@ void meta_tags_set(Mix_MusicMetaTags *tags, Mix_MusicMetaTag type, const char *v
 
     len = SDL_strlen(value);
     out = (char *)SDL_malloc(sizeof(char) * len + 1);
-    SDL_memset(out, 0, len + 1);
     SDL_strlcpy(out, value, len +1);
 
     if (tags->tags[type]) {
@@ -137,6 +136,21 @@ const char *meta_tags_get(Mix_MusicMetaTags *tags, Mix_MusicMetaTag type)
     }
     return "";
 }
+
+/* for music->filename */
+#if defined(__WIN32__)||defined(__OS2__)
+static SDL_INLINE const char *get_last_dirsep (const char *p) {
+    const char *p1 = SDL_strrchr(p, '/');
+    const char *p2 = SDL_strrchr(p, '\\');
+    if (!p1) return p2;
+    if (!p2) return p1;
+    return (p1 > p2)? p1 : p2;
+}
+#else /* unix */
+static SDL_INLINE const char *get_last_dirsep (const char *p) {
+    return SDL_strrchr(p, '/');
+}
+#endif
 
 
 /* Interfaces for the various music interfaces, ordered by priority */
@@ -543,6 +557,7 @@ Mix_Music *Mix_LoadMUS(const char *file)
 
         context = interface->CreateFromFile(file);
         if (context) {
+            const char *p;
             /* Allocate memory for the music structure */
             Mix_Music *music = (Mix_Music *)SDL_calloc(1, sizeof(Mix_Music));
             if (music == NULL) {
@@ -551,7 +566,8 @@ Mix_Music *Mix_LoadMUS(const char *file)
             }
             music->interface = interface;
             music->context = context;
-            SDL_strlcpy(music->music_filename, (SDL_strstr(file, "/")) ? (SDL_strrchr(file, '/') + 1) : file, 1024);
+            p = get_last_dirsep(file);
+            SDL_strlcpy(music->filename, (p != NULL)? p + 1 : file, 1024);
             return music;
         }
     }
@@ -755,10 +771,10 @@ const char *Mix_GetMusicTitle(const Mix_Music *music)
         return tag;
     }
     if (music) {
-        return music->music_filename;
+        return music->filename;
     }
     if (music_playing) {
-        return music_playing->music_filename;
+        return music_playing->filename;
     }
     return "";
 }
