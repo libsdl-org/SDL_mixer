@@ -860,6 +860,21 @@ int Mix_VolumeMusic(int volume)
     return(prev_volume);
 }
 
+int Mix_GetVolumeMusicStream(Mix_Music *music)
+{
+    int prev_volume;
+
+    if (music && music->interface->GetVolume)
+        prev_volume = music->interface->GetVolume(music->context);
+    else if (music_playing && music_playing->interface->GetVolume) {
+        prev_volume = music_playing->interface->GetVolume(music_playing->context);
+    } else {
+        prev_volume = music_volume;
+    }
+
+    return prev_volume;
+}
+
 /* Halt playing of music */
 static void music_internal_halt(void)
 {

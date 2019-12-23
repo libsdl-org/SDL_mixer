@@ -324,6 +324,12 @@ static void MPG123_SetVolume(void *context, int volume)
     music->volume = volume;
 }
 
+static int MPG123_GetVolume(void *context)
+{
+    MPG123_Music *music = (MPG123_Music *)context;
+    return music->volume;
+}
+
 static int MPG123_Play(void *context, int play_count)
 {
     MPG123_Music *music = (MPG123_Music *)context;
@@ -471,6 +477,7 @@ Mix_MusicInterface Mix_MusicInterface_MPG123 =
     MPG123_CreateFromRW,
     NULL,   /* CreateFromFile */
     MPG123_SetVolume,
+    MPG123_GetVolume,
     MPG123_Play,
     NULL,   /* IsPlaying */
     MPG123_GetAudio,

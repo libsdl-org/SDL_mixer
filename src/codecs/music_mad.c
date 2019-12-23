@@ -190,6 +190,12 @@ static void MAD_SetVolume(void *context, int volume)
     music->volume = volume;
 }
 
+static int MAD_GetVolume(void *context)
+{
+    MAD_Music *music = (MAD_Music *)context;
+    return music->volume;
+}
+
 /* Starts the playback. */
 static int MAD_Play(void *context, int play_count)
 {
@@ -461,6 +467,7 @@ Mix_MusicInterface Mix_MusicInterface_MAD =
     MAD_CreateFromRW,
     NULL,   /* CreateFromFile */
     MAD_SetVolume,
+    MAD_GetVolume,
     MAD_Play,
     NULL,   /* IsPlaying */
     MAD_GetAudio,

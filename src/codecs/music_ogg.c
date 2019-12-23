@@ -356,6 +356,13 @@ static void OGG_SetVolume(void *context, int volume)
     music->volume = volume;
 }
 
+/* Get the volume for an OGG stream */
+static int OGG_GetVolume(void *context)
+{
+    OGG_music *music = (OGG_music *)context;
+    return music->volume;
+}
+
 /* Start playback of a given OGG stream */
 static int OGG_Play(void *context, int play_count)
 {
@@ -386,7 +393,7 @@ static int OGG_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 
     section = music->section;
 #ifdef OGG_USE_TREMOR
-    amount = vorbis.ov_read(&music->vf, music->buffer, music->buffer_size, &section);
+    amount = (int)vorbis.ov_read(&music->vf, music->buffer, music->buffer_size, &section);
 #else
     amount = (int)vorbis.ov_read(&music->vf, music->buffer, music->buffer_size, 0, 2, 1, &section);
 #endif
@@ -502,6 +509,7 @@ Mix_MusicInterface Mix_MusicInterface_OGG =
     OGG_CreateFromRW,
     NULL,   /* CreateFromFile */
     OGG_SetVolume,
+    OGG_GetVolume,
     OGG_Play,
     NULL,   /* IsPlaying */
     OGG_GetAudio,

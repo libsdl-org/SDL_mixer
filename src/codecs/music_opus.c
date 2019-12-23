@@ -355,6 +355,13 @@ static void OPUS_SetVolume(void *context, int volume)
     music->volume = volume;
 }
 
+/* Get the volume for an Opus stream */
+static int OPUS_GetVolume(void *context)
+{
+    OPUS_music *music = (OPUS_music *)context;
+    return music->volume;
+}
+
 /* Start playback of a given Opus stream */
 static int OPUS_Play(void *context, int play_count)
 {
@@ -490,6 +497,7 @@ Mix_MusicInterface Mix_MusicInterface_Opus =
     OPUS_CreateFromRW,
     NULL,   /* CreateFromFile */
     OPUS_SetVolume,
+    OPUS_GetVolume,
     OPUS_Play,
     NULL,   /* IsPlaying */
     OPUS_GetAudio,

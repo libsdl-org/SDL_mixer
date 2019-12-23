@@ -108,6 +108,7 @@ static void MODPLUG_Unload(void)
 
 typedef struct
 {
+    int volume;
     int play_count;
     ModPlugFile *file;
     SDL_AudioStream *stream;
@@ -166,6 +167,8 @@ void *MODPLUG_CreateFromRW(SDL_RWops *src, int freesrc)
         return NULL;
     }
 
+    music->volume = MIX_MAX_VOLUME;
+
     music->stream = SDL_NewAudioStream((settings.mBits == 8) ? AUDIO_U8 : AUDIO_S16SYS, (Uint8)settings.mChannels, settings.mFrequency,
                                        music_spec.format, music_spec.channels, music_spec.freq);
     if (!music->stream) {
@@ -204,7 +207,15 @@ void *MODPLUG_CreateFromRW(SDL_RWops *src, int freesrc)
 static void MODPLUG_SetVolume(void *context, int volume)
 {
     MODPLUG_Music *music = (MODPLUG_Music *)context;
+    music->volume = volume;
     modplug.ModPlug_SetMasterVolume(music->file, (unsigned int)volume * 2); /* 0-512, reduced to 0-256 to prevent clipping */
+}
+
+/* Get the volume for a modplug stream */
+static int MODPLUG_GetVolume(void *context)
+{
+    MODPLUG_Music *music = (MODPLUG_Music *)context;
+    return music->volume;
 }
 
 /* Start playback of a given modplug stream */
@@ -302,6 +313,7 @@ Mix_MusicInterface Mix_MusicInterface_MODPLUG =
     MODPLUG_CreateFromRW,
     NULL,   /* CreateFromFile */
     MODPLUG_SetVolume,
+    MODPLUG_GetVolume,
     MODPLUG_Play,
     NULL,   /* IsPlaying */
     MODPLUG_GetAudio,
