@@ -121,6 +121,7 @@ typedef struct {
     ogg_int64_t loop_end;
     ogg_int64_t loop_len;
     ogg_int64_t full_length;
+    Mix_MusicMetaTags tags;
 } OPUS_music;
 
 
@@ -320,13 +321,14 @@ static void *OPUS_CreateFromRW(SDL_RWops *src, int freesrc)
         } else if (SDL_strcasecmp(argument, "LOOPEND") == 0) {
             music->loop_end = parse_time(value);
             is_loop_length = SDL_FALSE;
-        }
-        if (music->loop_start < 0 || music->loop_len < 0 || music->loop_end < 0) {
-            music->loop_start = 0;
-            music->loop_len = 0;
-            music->loop_end = 0;
-            SDL_free(param);
-            break;  /* ignore tag. */
+        } else if (SDL_strcasecmp(argument, "TITLE") == 0) {
+            meta_tags_set(&music->tags, MIX_META_TITLE, value);
+        } else if (SDL_strcasecmp(argument, "ARTIST") == 0) {
+            meta_tags_set(&music->tags, MIX_META_ARTIST, value);
+        } else if (SDL_strcasecmp(argument, "ALBUM") == 0) {
+            meta_tags_set(&music->tags, MIX_META_ALBUM, value);
+        } else if (SDL_strcasecmp(argument, "COPYRIGHT") == 0) {
+            meta_tags_set(&music->tags, MIX_META_COPYRIGHT, value);
         }
         SDL_free(param);
     }
@@ -335,6 +337,13 @@ static void *OPUS_CreateFromRW(SDL_RWops *src, int freesrc)
         music->loop_end = music->loop_start + music->loop_len;
     } else {
         music->loop_len = music->loop_end - music->loop_start;
+    }
+
+    /* Ignore invalid loop tag */
+    if (music->loop_start < 0 || music->loop_len < 0 || music->loop_end < 0) {
+        music->loop_start = 0;
+        music->loop_len = 0;
+        music->loop_end = 0;
     }
 
     full_length = opus.op_pcm_total(music->of, -1);
@@ -346,6 +355,12 @@ static void *OPUS_CreateFromRW(SDL_RWops *src, int freesrc)
     music->full_length = full_length;
     music->freesrc = freesrc;
     return music;
+}
+
+static const char* OPUS_GetMetaTag(void *context, Mix_MusicMetaTag tag_type)
+{
+    OPUS_music *music = (OPUS_music *)context;
+    return meta_tags_get(&music->tags, tag_type);
 }
 
 /* Set the volume for an Opus stream */
@@ -540,6 +555,7 @@ Mix_MusicInterface Mix_MusicInterface_Opus =
     OPUS_LoopStart,
     OPUS_LoopEnd,
     OPUS_LoopLength,
+    OPUS_GetMetaTag,
     NULL,   /* Pause */
     NULL,   /* Resume */
     NULL,   /* Stop */

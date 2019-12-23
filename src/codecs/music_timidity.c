@@ -261,6 +261,7 @@ Mix_MusicInterface Mix_MusicInterface_TIMIDITY =
     NULL,   /* LoopStart */
     NULL,   /* LoopEnd */
     NULL,   /* LoopLength */
+    NULL,   /* GetMetaTag */
     NULL,   /* Pause */
     NULL,   /* Resume */
     NULL,   /* Stop */

@@ -43,6 +43,31 @@ typedef enum
 } Mix_MusicAPI;
 
 
+/* Supported meta-tags */
+
+typedef enum
+{
+    MIX_META_TITLE,
+    MIX_META_ARTIST,
+    MIX_META_ALBUM,
+    MIX_META_COPYRIGHT,
+    MIX_META_LAST
+} Mix_MusicMetaTag;
+
+
+/* MIXER-X: Meta-tags utility structure */
+
+typedef struct {
+    char *tags[4];
+} Mix_MusicMetaTags;
+
+
+extern void meta_tags_init(Mix_MusicMetaTags *tags);
+extern void meta_tags_clear(Mix_MusicMetaTags *tags);
+extern void meta_tags_set(Mix_MusicMetaTags *tags, Mix_MusicMetaTag type, const char *value);
+extern const char* meta_tags_get(Mix_MusicMetaTags *tags, Mix_MusicMetaTag type);
+
+
 /* Music API implementation */
 
 typedef struct
@@ -99,6 +124,9 @@ typedef struct
 
     /* Tell a loop length position (in seconds) */
     double (*LoopLength)(void *music);
+
+    /* Get a meta-tag string if available */
+    const char* (*GetMetaTag)(void *music, Mix_MusicMetaTag tag_type);
 
     /* Pause playing music */
     void (*Pause)(void *music);

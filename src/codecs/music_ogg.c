@@ -143,6 +143,7 @@ typedef struct {
     ogg_int64_t loop_start;
     ogg_int64_t loop_end;
     ogg_int64_t loop_len;
+    Mix_MusicMetaTags tags;
 } OGG_music;
 
 
@@ -264,6 +265,13 @@ static ogg_int64_t parse_time(char *time, long samplerate_hz)
     return (result * 60 + val) * samplerate_hz;
 }
 
+static SDL_bool is_loop_tag(const char *tag)
+{
+    char buf[5];
+    SDL_strlcpy(buf, tag, 5);
+    return SDL_strcasecmp(buf, "LOOP") == 0;
+}
+
 /* Load an OGG stream from an SDL_RWops object */
 static void *OGG_CreateFromRW(SDL_RWops *src, int freesrc)
 {
@@ -314,7 +322,7 @@ static void *OGG_CreateFromRW(SDL_RWops *src, int freesrc)
 
         /* Want to match LOOP-START, LOOP_START, etc. Remove - or _ from
          * string if it is present at position 4. */
-        if ((argument[4] == '_') || (argument[4] == '-')) {
+        if (is_loop_tag(argument) && ((argument[4] == '_') || (argument[4] == '-'))) {
             SDL_memmove(argument + 4, argument + 5, SDL_strlen(argument) - 4);
         }
 
@@ -326,13 +334,14 @@ static void *OGG_CreateFromRW(SDL_RWops *src, int freesrc)
         } else if (SDL_strcasecmp(argument, "LOOPEND") == 0) {
             music->loop_end = parse_time(value, rate);
             is_loop_length = SDL_FALSE;
-        }
-        if (music->loop_start < 0 || music->loop_len < 0 || music->loop_end < 0) {
-            music->loop_start = 0;
-            music->loop_len = 0;
-            music->loop_end = 0;
-            SDL_free(param);
-            break;  /* ignore tag. */
+        } else if (SDL_strcasecmp(argument, "TITLE") == 0) {
+            meta_tags_set(&music->tags, MIX_META_TITLE, value);
+        } else if (SDL_strcasecmp(argument, "ARTIST") == 0) {
+            meta_tags_set(&music->tags, MIX_META_ARTIST, value);
+        } else if (SDL_strcasecmp(argument, "ALBUM") == 0) {
+            meta_tags_set(&music->tags, MIX_META_ALBUM, value);
+        } else if (SDL_strcasecmp(argument, "COPYRIGHT") == 0) {
+            meta_tags_set(&music->tags, MIX_META_COPYRIGHT, value);
         }
         SDL_free(param);
     }
@@ -343,6 +352,13 @@ static void *OGG_CreateFromRW(SDL_RWops *src, int freesrc)
         music->loop_len = music->loop_end - music->loop_start;
     }
 
+    /* Ignore invalid loop tag */
+    if (music->loop_start < 0 || music->loop_len < 0 || music->loop_end < 0) {
+        music->loop_start = 0;
+        music->loop_len = 0;
+        music->loop_end = 0;
+    }
+
     full_length = vorbis.ov_pcm_total(&music->vf, -1);
     if ((music->loop_end > 0) && (music->loop_end <= full_length) &&
         (music->loop_start < music->loop_end)) {
@@ -351,6 +367,12 @@ static void *OGG_CreateFromRW(SDL_RWops *src, int freesrc)
 
     music->freesrc = freesrc;
     return music;
+}
+
+static const char* OGG_GetMetaTag(void *context, Mix_MusicMetaTag tag_type)
+{
+    OGG_music *music = (OGG_music *)context;
+    return meta_tags_get(&music->tags, tag_type);
 }
 
 /* Set the volume for an OGG stream */
@@ -525,6 +547,7 @@ static double   OGG_LoopLength(void *music_p)
 static void OGG_Delete(void *context)
 {
     OGG_music *music = (OGG_music *)context;
+    meta_tags_clear(&music->tags);
     vorbis.ov_clear(&music->vf);
     if (music->stream) {
         SDL_FreeAudioStream(music->stream);
@@ -561,6 +584,7 @@ Mix_MusicInterface Mix_MusicInterface_OGG =
     OGG_LoopStart,
     OGG_LoopEnd,
     OGG_LoopLength,
+    OGG_GetMetaTag,   /* GetMetaTag */
     NULL,   /* Pause */
     NULL,   /* Resume */
     NULL,   /* Stop */

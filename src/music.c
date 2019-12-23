@@ -65,6 +65,8 @@ struct _Mix_Music {
     Mix_Fading fading;
     int fade_step;
     int fade_steps;
+
+    char music_filename[1024];
 };
 
 /* Used to calculate fading steps */
@@ -79,6 +81,63 @@ static char* soundfont_paths = NULL;
 
 /* full path of timidity config file */
 static char* timidity_cfg = NULL;
+
+/* Meta-Tags utiltiy */
+void meta_tags_init(Mix_MusicMetaTags *tags)
+{
+    SDL_memset(tags, 0, sizeof(Mix_MusicMetaTags));
+}
+
+void meta_tags_clear(Mix_MusicMetaTags *tags)
+{
+    size_t i = 0;
+    for (i = 0; i < MIX_META_LAST; i++) {
+        if (tags->tags[i]) {
+            SDL_free(tags->tags[i]);
+            tags->tags[i] = NULL;
+        }
+    }
+}
+
+void meta_tags_set(Mix_MusicMetaTags *tags, Mix_MusicMetaTag type, const char *value)
+{
+    char *out;
+    size_t len;
+
+    if (!value) {
+        return;
+    }
+    if (type >= MIX_META_LAST) {
+        return;
+    }
+
+    len = SDL_strlen(value);
+    out = (char *)SDL_malloc(sizeof(char) * len + 1);
+    SDL_memset(out, 0, len + 1);
+    SDL_strlcpy(out, value, len +1);
+
+    if (tags->tags[type]) {
+        SDL_free(tags->tags[type]);
+    }
+
+    tags->tags[type] = out;
+}
+
+const char *meta_tags_get(Mix_MusicMetaTags *tags, Mix_MusicMetaTag type)
+{
+    switch (type) {
+    case MIX_META_TITLE:
+    case MIX_META_ARTIST:
+    case MIX_META_ALBUM:
+    case MIX_META_COPYRIGHT:
+        return tags->tags[type] ? tags->tags[type] : "";
+    case MIX_META_LAST:
+    default:
+        break;
+    }
+    return "";
+}
+
 
 /* Interfaces for the various music interfaces, ordered by priority */
 static Mix_MusicInterface *s_music_interfaces[] =
@@ -492,6 +551,7 @@ Mix_Music *Mix_LoadMUS(const char *file)
             }
             music->interface = interface;
             music->context = context;
+            SDL_strlcpy(music->music_filename, (SDL_strstr(file, "/")) ? (SDL_strrchr(file, '/') + 1) : file, 1024);
             return music;
         }
     }
@@ -664,6 +724,58 @@ Mix_MusicType Mix_GetMusicType(const Mix_Music *music)
         Mix_UnlockAudio();
     }
     return(type);
+}
+
+static const char * get_music_tag_internal(const Mix_Music *music, Mix_MusicMetaTag tag_type)
+{
+    const char *tag = "";
+
+    Mix_LockAudio();
+    if (music && music->interface->GetMetaTag) {
+        tag = music->interface->GetMetaTag(music->context, tag_type);
+    } else if (music_playing && music_playing->interface->GetMetaTag) {
+        tag = music_playing->interface->GetMetaTag(music_playing->context, tag_type);
+    } else {
+        Mix_SetError("Music isn't playing");
+    }
+    Mix_UnlockAudio();
+    return tag;
+}
+
+const char *Mix_GetMusicTitleTag(const Mix_Music *music)
+{
+    return get_music_tag_internal(music, MIX_META_TITLE);
+}
+
+/* Get music title from meta-tag if possible */
+const char *Mix_GetMusicTitle(const Mix_Music *music)
+{
+    const char *tag = Mix_GetMusicTitleTag(music);
+    if (SDL_strlen(tag) > 0) {
+        return tag;
+    }
+    if (music) {
+        return music->music_filename;
+    }
+    if (music_playing) {
+        return music_playing->music_filename;
+    }
+    return "";
+}
+
+const char *Mix_GetMusicArtistTag(const Mix_Music *music)
+{
+    return get_music_tag_internal(music, MIX_META_ARTIST);
+}
+
+const char *Mix_GetMusicAlbumTag(const Mix_Music *music)
+{
+    return get_music_tag_internal(music, MIX_META_ALBUM);
+}
+
+const char *Mix_GetMusicCopyrightTag(const Mix_Music *music)
+{
+    return get_music_tag_internal(music, MIX_META_COPYRIGHT);
 }
 
 /* Play a music chunk.  Returns 0, or -1 if there was an error.

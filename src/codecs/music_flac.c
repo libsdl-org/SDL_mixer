@@ -161,6 +161,7 @@ typedef struct {
     FLAC__int64 loop_start;
     FLAC__int64 loop_end;
     FLAC__int64 loop_len;
+    Mix_MusicMetaTags tags;
 } FLAC_Music;
 
 
@@ -401,6 +402,13 @@ static FLAC__int64 parse_time(char *time, unsigned samplerate_hz)
     return (result * 60 + val) * samplerate_hz;
 }
 
+static SDL_bool is_loop_tag(const char *tag)
+{
+    char buf[5];
+    SDL_strlcpy(buf, tag, 5);
+    return SDL_strcasecmp(buf, "LOOP") == 0;
+}
+
 static void flac_metadata_music_cb(
                     const FLAC__StreamDecoder *decoder,
                     const FLAC__StreamMetadata *metadata,
@@ -453,8 +461,9 @@ static void flac_metadata_music_cb(
 
             /* Want to match LOOP-START, LOOP_START, etc. Remove - or _ from
              * string if it is present at position 4. */
-            if ((argument[4] == '_') || (argument[4] == '-')) {
-                SDL_memmove(argument + 4, argument + 5, SDL_strlen(argument) - 4);
+            if (is_loop_tag(argument) && ((argument[4] == '_') || (argument[4] == '-'))) {
+                SDL_memmove(argument + 4, argument + 5,
+                           SDL_strlen(argument) - 4);
             }
 
             if (SDL_strcasecmp(argument, "LOOPSTART") == 0)
@@ -465,13 +474,14 @@ static void flac_metadata_music_cb(
             } else if (SDL_strcasecmp(argument, "LOOPEND") == 0) {
                 music->loop_end = parse_time(value, rate);
                 is_loop_length = SDL_FALSE;
-            }
-            if (music->loop_start < 0 || music->loop_len < 0 || music->loop_end < 0) {
-                music->loop_start = 0;
-                music->loop_len = 0;
-                music->loop_end = 0;
-                SDL_free(param);
-                break;  /* ignore tag. */
+            } else if (SDL_strcasecmp(argument, "TITLE") == 0) {
+                meta_tags_set(&music->tags, MIX_META_TITLE, value);
+            } else if (SDL_strcasecmp(argument, "ARTIST") == 0) {
+                meta_tags_set(&music->tags, MIX_META_ARTIST, value);
+            } else if (SDL_strcasecmp(argument, "ALBUM") == 0) {
+                meta_tags_set(&music->tags, MIX_META_ALBUM, value);
+            } else if (SDL_strcasecmp(argument, "COPYRIGHT") == 0) {
+                meta_tags_set(&music->tags, MIX_META_COPYRIGHT, value);
             }
             SDL_free(param);
         }
@@ -480,6 +490,13 @@ static void flac_metadata_music_cb(
             music->loop_end = music->loop_start + music->loop_len;
         } else {
             music->loop_len = music->loop_end - music->loop_start;
+        }
+
+        /* Ignore invalid loop tag */
+        if (music->loop_start < 0 || music->loop_len < 0 || music->loop_end < 0) {
+            music->loop_start = 0;
+            music->loop_len = 0;
+            music->loop_end = 0;
         }
     }
 }
@@ -581,6 +598,13 @@ static void *FLAC_CreateFromRW(SDL_RWops *src, int freesrc)
     music->freesrc = freesrc;
     return music;
 }
+
+static const char* FLAC_GetMetaTag(void *context, Mix_MusicMetaTag tag_type)
+{
+    FLAC_Music *music = (FLAC_Music *)context;
+    return meta_tags_get(&music->tags, tag_type);
+}
+
 
 /* Set the volume for an FLAC stream */
 static void FLAC_SetVolume(void *context, int volume)
@@ -731,6 +755,7 @@ static void FLAC_Delete(void *context)
 {
     FLAC_Music *music = (FLAC_Music *)context;
     if (music) {
+        meta_tags_clear(&music->tags);
         if (music->flac_decoder) {
             flac.FLAC__stream_decoder_finish(music->flac_decoder);
             flac.FLAC__stream_decoder_delete(music->flac_decoder);
@@ -768,6 +793,7 @@ Mix_MusicInterface Mix_MusicInterface_FLAC =
     FLAC_LoopStart,
     FLAC_LoopEnd,
     FLAC_LoopLength,
+    FLAC_GetMetaTag,/* GetMetaTag */
     NULL,   /* Pause */
     NULL,   /* Resume */
     NULL,   /* Stop */
