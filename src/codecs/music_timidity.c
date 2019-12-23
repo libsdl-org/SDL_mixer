@@ -258,6 +258,9 @@ Mix_MusicInterface Mix_MusicInterface_TIMIDITY =
     TIMIDITY_Seek,
     NULL,   /* Tell */
     TIMIDITY_Duration,
+    NULL,   /* LoopStart */
+    NULL,   /* LoopEnd */
+    NULL,   /* LoopLength */
     NULL,   /* Pause */
     NULL,   /* Resume */
     NULL,   /* Stop */

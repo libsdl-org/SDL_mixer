@@ -493,6 +493,34 @@ static double OGG_Duration(void *context)
 #endif
 }
 
+static double   OGG_LoopStart(void *music_p)
+{
+    OGG_music *music = (OGG_music *)music_p;
+    if (music->loop > 0) {
+        return (double)music->loop_start / music->vi.rate;
+    }
+    return -1.0;
+}
+
+static double   OGG_LoopEnd(void *music_p)
+{
+    OGG_music *music = (OGG_music *)music_p;
+    if (music->loop > 0) {
+        return (double)music->loop_end / music->vi.rate;
+    }
+    return -1.0;
+}
+
+static double   OGG_LoopLength(void *music_p)
+{
+    OGG_music *music = (OGG_music *)music_p;
+    if (music->loop > 0) {
+        return (double)music->loop_len / music->vi.rate;
+    }
+    return -1.0;
+}
+
+
 /* Close the given OGG stream */
 static void OGG_Delete(void *context)
 {
@@ -530,6 +558,9 @@ Mix_MusicInterface Mix_MusicInterface_OGG =
     OGG_Seek,
     OGG_Tell,
     OGG_Duration,
+    OGG_LoopStart,
+    OGG_LoopEnd,
+    OGG_LoopLength,
     NULL,   /* Pause */
     NULL,   /* Resume */
     NULL,   /* Stop */

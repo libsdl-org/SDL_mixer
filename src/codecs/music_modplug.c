@@ -320,6 +320,9 @@ Mix_MusicInterface Mix_MusicInterface_MODPLUG =
     MODPLUG_Seek,
     NULL,   /* Tell */
     MODPLUG_Duration,
+    NULL,   /* LoopStart */
+    NULL,   /* LoopEnd */
+    NULL,   /* LoopLength */
     NULL,   /* Pause */
     NULL,   /* Resume */
     NULL,   /* Stop */

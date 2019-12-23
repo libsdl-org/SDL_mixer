@@ -282,6 +282,9 @@ Mix_MusicInterface Mix_MusicInterface_CMD =
     NULL,   /* Seek */
     NULL,   /* Tell */
     NULL,   /* Duration */
+    NULL,   /* LoopStart */
+    NULL,   /* LoopEnd */
+    NULL,   /* LoopLength */
     MusicCMD_Pause,
     MusicCMD_Resume,
     MusicCMD_Stop,

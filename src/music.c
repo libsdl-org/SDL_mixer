@@ -848,6 +848,86 @@ double Mix_MusicDuration(Mix_Music *music)
     return(retval);
 }
 
+/* Get Loop start position */
+static double music_internal_loop_start(Mix_Music *music)
+{
+    if (music->interface->LoopStart) {
+        return music->interface->LoopStart(music->context);
+    }
+    return -1;
+}
+double Mix_GetMusicLoopStartTime(Mix_Music *music)
+{
+    double retval;
+
+    Mix_LockAudio();
+    if (music) {
+        retval = music_internal_loop_start(music);
+    } else if (music_playing) {
+        retval = music_internal_loop_start(music_playing);
+    } else {
+        Mix_SetError("Music isn't playing");
+        retval = -1.0;
+    }
+    Mix_UnlockAudio();
+
+    return(retval);
+}
+
+/* Get Loop end position */
+static double music_internal_loop_end(Mix_Music *music)
+{
+    if (music->interface->LoopEnd) {
+        return music->interface->LoopEnd(music->context);
+    }
+    return -1;
+}
+double Mix_GetMusicLoopEndTime(Mix_Music *music)
+{
+    double retval;
+
+    Mix_LockAudio();
+    if (music) {
+        retval = music_internal_loop_end(music);
+    } else if (music_playing) {
+        retval = music_internal_loop_end(music_playing);
+    } else {
+        Mix_SetError("Music isn't playing");
+        retval = -1.0;
+    }
+    Mix_UnlockAudio();
+
+    return(retval);
+}
+
+/* Get Loop end position */
+static double music_internal_loop_length(Mix_Music *music)
+{
+    if (music->interface->LoopLength) {
+        return music->interface->LoopLength(music->context);
+    }
+    return -1;
+}
+double Mix_GetMusicLoopLengthTime(Mix_Music *music)
+{
+    double retval;
+
+    Mix_LockAudio();
+    if (music) {
+        retval = music_internal_loop_length(music);
+    } else if (music_playing) {
+        retval = music_internal_loop_length(music_playing);
+    } else {
+        Mix_SetError("Music isn't playing");
+        retval = -1.0;
+    }
+    Mix_UnlockAudio();
+
+    return(retval);
+}
+
+
+
 /* Set the music's initial volume */
 static void music_internal_initialize_volume(void)
 {
