@@ -354,7 +354,7 @@ static FLAC__StreamDecoderWriteStatus flac_write_music_cb(
     music->pcm_pos += (FLAC__int64) frame->header.blocksize;
     if (music->loop && (music->play_count != 1) &&
         (music->pcm_pos >= music->loop_end)) {
-        amount -= (music->pcm_pos - music->loop_end) * channels * sizeof(*data);
+        amount -= (music->pcm_pos - music->loop_end) * channels * (int)sizeof(*data);
         music->loop_flag = SDL_TRUE;
     }
 
@@ -589,6 +589,13 @@ static void FLAC_SetVolume(void *context, int volume)
     music->volume = volume;
 }
 
+/* Get the volume for an FLAC stream */
+static int FLAC_GetVolume(void *context)
+{
+    FLAC_Music *music = (FLAC_Music *)context;
+    return music->volume;
+}
+
 /* Start playback of a given FLAC stream */
 static int FLAC_Play(void *context, int play_count)
 {
@@ -621,7 +628,7 @@ static int FLAC_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 
     if (music->loop_flag) {
         music->pcm_pos = music->loop_start;
-        if (flac.FLAC__stream_decoder_seek_absolute(music->flac_decoder, music->loop_start) ==
+        if (flac.FLAC__stream_decoder_seek_absolute(music->flac_decoder, (FLAC__uint64)music->loop_start) ==
                 FLAC__STREAM_DECODER_SEEK_ERROR) {
             SDL_SetError("FLAC__stream_decoder_seek_absolute() failed");
             flac.FLAC__stream_decoder_flush(music->flac_decoder);
@@ -718,6 +725,7 @@ Mix_MusicInterface Mix_MusicInterface_FLAC =
     FLAC_CreateFromRW,
     NULL,   /* CreateFromFile */
     FLAC_SetVolume,
+    FLAC_GetVolume,
     FLAC_Play,
     NULL,   /* IsPlaying */
     FLAC_GetAudio,

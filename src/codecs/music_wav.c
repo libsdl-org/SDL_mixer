@@ -221,6 +221,12 @@ static void WAV_SetVolume(void *context, int volume)
     music->volume = volume;
 }
 
+static int WAV_GetVolume(void *context)
+{
+    WAV_Music *music = (WAV_Music *)context;
+    return music->volume;
+}
+
 /* Start playback of a given WAV stream */
 static int WAV_Play(void *context, int play_count)
 {
@@ -1092,6 +1098,7 @@ Mix_MusicInterface Mix_MusicInterface_WAV =
     WAV_CreateFromRW,
     NULL,   /* CreateFromFile */
     WAV_SetVolume,
+    WAV_GetVolume,
     WAV_Play,
     NULL,   /* IsPlaying */
     WAV_GetAudio,

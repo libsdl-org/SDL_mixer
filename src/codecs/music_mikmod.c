@@ -369,6 +369,13 @@ static void MIKMOD_SetVolume(void *context, int volume)
     mikmod.Player_SetVolume((SWORD)volume);
 }
 
+/* Set the volume for a MOD stream */
+static int MIKMOD_GetVolume(void *context)
+{
+    MIKMOD_Music *music = (MIKMOD_Music *)context;
+    return music->volume;
+}
+
 /* Start playback of a given MOD stream */
 static int MIKMOD_Play(void *context, int play_count)
 {
@@ -478,6 +485,7 @@ Mix_MusicInterface Mix_MusicInterface_MIKMOD =
     MIKMOD_CreateFromRW,
     NULL,   /* CreateFromFile */
     MIKMOD_SetVolume,
+    MIKMOD_GetVolume,
     MIKMOD_Play,
     MIKMOD_IsPlaying,
     MIKMOD_GetAudio,

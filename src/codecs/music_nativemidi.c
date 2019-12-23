@@ -96,6 +96,7 @@ Mix_MusicInterface Mix_MusicInterface_NATIVEMIDI =
     NATIVEMIDI_CreateFromRW,
     NULL,   /* CreateFromFile */
     NATIVEMIDI_SetVolume,
+    NULL,   /* GetVolume */
     NATIVEMIDI_Play,
     NATIVEMIDI_IsPlaying,
     NULL,   /* GetAudio */
