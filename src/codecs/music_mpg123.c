@@ -502,6 +502,7 @@ Mix_MusicInterface Mix_MusicInterface_MPG123 =
     NULL,   /* LoopStart */
     NULL,   /* LoopEnd */
     NULL,   /* LoopLength */
+    NULL,   /* GetMetaTag */
     NULL,   /* Pause */
     NULL,   /* Resume */
     NULL,   /* Stop */

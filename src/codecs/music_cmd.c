@@ -285,6 +285,7 @@ Mix_MusicInterface Mix_MusicInterface_CMD =
     NULL,   /* LoopStart */
     NULL,   /* LoopEnd */
     NULL,   /* LoopLength */
+    NULL,   /* GetMetaTag */
     MusicCMD_Pause,
     MusicCMD_Resume,
     MusicCMD_Stop,

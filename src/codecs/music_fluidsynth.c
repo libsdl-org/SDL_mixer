@@ -315,6 +315,7 @@ Mix_MusicInterface Mix_MusicInterface_FLUIDSYNTH =
     NULL,   /* LoopStart */
     NULL,   /* LoopEnd */
     NULL,   /* LoopLength */
+    NULL,   /* GetMetaTag */
     NULL,   /* Pause */
     NULL,   /* Resume */
     FLUIDSYNTH_Stop,

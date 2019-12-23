@@ -213,6 +213,17 @@ extern DECLSPEC SDL_bool SDLCALL Mix_HasMusicDecoder(const char *name);
 */
 extern DECLSPEC Mix_MusicType SDLCALL Mix_GetMusicType(const Mix_Music *music);
 
+/* Get music title from meta-tag if possible. If title tag is empty, filename will be returned */
+extern DECLSPEC const char *SDLCALL Mix_GetMusicTitle(const Mix_Music *music);
+/* Get music title from meta-tag if possible */
+extern DECLSPEC const char *SDLCALL Mix_GetMusicTitleTag(const Mix_Music *music);
+/* Get music artist from meta-tag if possible */
+extern DECLSPEC const char *SDLCALL Mix_GetMusicArtistTag(const Mix_Music *music);
+/* Get music album from meta-tag if possible */
+extern DECLSPEC const char *SDLCALL Mix_GetMusicAlbumTag(const Mix_Music *music);
+/* Get music copyright from meta-tag if possible */
+extern DECLSPEC const char *SDLCALL Mix_GetMusicCopyrightTag(const Mix_Music *music);
+
 /* Set a function that is called after all mixing is performed.
    This can be used to provide real-time visual display of the audio stream
    or add a custom mixer filter for the stream data.
