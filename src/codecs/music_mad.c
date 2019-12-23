@@ -474,6 +474,9 @@ Mix_MusicInterface Mix_MusicInterface_MAD =
     MAD_Seek,
     NULL,   /* Tell */
     NULL,   /* Duration */
+    NULL,   /* LoopStart */
+    NULL,   /* LoopEnd */
+    NULL,   /* LoopLength */
     NULL,   /* Pause */
     NULL,   /* Resume */
     NULL,   /* Stop */

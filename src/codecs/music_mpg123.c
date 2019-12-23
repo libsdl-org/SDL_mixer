@@ -499,6 +499,9 @@ Mix_MusicInterface Mix_MusicInterface_MPG123 =
     MPG123_Seek,
     MPG123_Tell,
     MPG123_Duration,
+    NULL,   /* LoopStart */
+    NULL,   /* LoopEnd */
+    NULL,   /* LoopLength */
     NULL,   /* Pause */
     NULL,   /* Resume */
     NULL,   /* Stop */

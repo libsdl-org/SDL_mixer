@@ -473,6 +473,33 @@ static double OPUS_Duration(void *context)
     return music->full_length / 48000.0;
 }
 
+static double OPUS_LoopStart(void *music_p)
+{
+    OPUS_music *music = (OPUS_music *)music_p;
+    if (music->loop > 0) {
+        return (double)music->loop_start / 48000.0;
+    }
+    return -1.0;
+}
+
+static double OPUS_LoopEnd(void *music_p)
+{
+    OPUS_music *music = (OPUS_music *)music_p;
+    if (music->loop > 0) {
+        return (double)music->loop_end / 48000.0;
+    }
+    return -1.0;
+}
+
+static double OPUS_LoopLength(void *music_p)
+{
+    OPUS_music *music = (OPUS_music *)music_p;
+    if (music->loop > 0) {
+        return (double)music->loop_len / 48000.0;
+    }
+    return -1.0;
+}
+
 /* Close the given Opus stream */
 static void OPUS_Delete(void *context)
 {
@@ -510,6 +537,9 @@ Mix_MusicInterface Mix_MusicInterface_Opus =
     OPUS_Seek,
     OPUS_Tell,
     OPUS_Duration,
+    OPUS_LoopStart,
+    OPUS_LoopEnd,
+    OPUS_LoopLength,
     NULL,   /* Pause */
     NULL,   /* Resume */
     NULL,   /* Stop */

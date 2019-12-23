@@ -103,6 +103,9 @@ Mix_MusicInterface Mix_MusicInterface_NATIVEMIDI =
     NULL,   /* Seek */
     NULL,   /* Tell */
     NULL,   /* Duration */
+    NULL,   /* LoopStart */
+    NULL,   /* LoopEnd */
+    NULL,   /* LoopLength */
     NATIVEMIDI_Pause,
     NATIVEMIDI_Resume,
     NATIVEMIDI_Stop,

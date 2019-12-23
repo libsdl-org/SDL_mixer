@@ -492,6 +492,9 @@ Mix_MusicInterface Mix_MusicInterface_MIKMOD =
     MIKMOD_Seek,
     NULL,   /* Tell */
     NULL,   /* Duration */
+    NULL,   /* LoopStart */
+    NULL,   /* LoopEnd */
+    NULL,   /* LoopLength */
     NULL,   /* Pause */
     NULL,   /* Resume */
     MIKMOD_Stop,

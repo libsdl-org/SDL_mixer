@@ -699,6 +699,33 @@ static double FLAC_Duration(void *context)
     return (double)music->full_length / music->sample_rate;
 }
 
+static double FLAC_LoopStart(void *music_p)
+{
+    FLAC_Music *music = (FLAC_Music *)music_p;
+    if (music->loop > 0) {
+        return (double)music->loop_start / music->sample_rate;
+    }
+    return -1.0;
+}
+
+static double FLAC_LoopEnd(void *music_p)
+{
+    FLAC_Music *music = (FLAC_Music *)music_p;
+    if (music->loop > 0) {
+        return (double)music->loop_end / music->sample_rate;
+    }
+    return -1.0;
+}
+
+static double FLAC_LoopLength(void *music_p)
+{
+    FLAC_Music *music = (FLAC_Music *)music_p;
+    if (music->loop > 0) {
+        return (double)music->loop_len / music->sample_rate;
+    }
+    return -1.0;
+}
+
 /* Close the given FLAC_Music object */
 static void FLAC_Delete(void *context)
 {
@@ -738,6 +765,9 @@ Mix_MusicInterface Mix_MusicInterface_FLAC =
     FLAC_Seek,
     FLAC_Tell,
     FLAC_Duration,
+    FLAC_LoopStart,
+    FLAC_LoopEnd,
+    FLAC_LoopLength,
     NULL,   /* Pause */
     NULL,   /* Resume */
     NULL,   /* Stop */

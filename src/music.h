@@ -91,6 +91,15 @@ typedef struct
     /* Get Music duration (in seconds) */
     double (*Duration)(void *music);
 
+    /* Tell a loop start position (in seconds) */
+    double (*LoopStart)(void *music);
+
+    /* Tell a loop end position (in seconds) */
+    double (*LoopEnd)(void *music);
+
+    /* Tell a loop length position (in seconds) */
+    double (*LoopLength)(void *music);
+
     /* Pause playing music */
     void (*Pause)(void *music);
 
