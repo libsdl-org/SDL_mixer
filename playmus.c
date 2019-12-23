@@ -118,6 +118,13 @@ int main(int argc, char *argv[])
     int rwops = 0;
     int i;
     const char *typ;
+    const char *tag_title = NULL;
+    const char *tag_artist = NULL;
+    const char *tag_album = NULL;
+    const char *tag_copyright = NULL;
+    double loop_start, loop_end, loop_length, current_position;
+
+    (void) argc;
 
     /* Initialize variables */
     audio_rate = MIX_DEFAULT_FREQUENCY;
@@ -250,14 +257,47 @@ int main(int argc, char *argv[])
         }
         SDL_Log("Detected music type: %s", typ);
 
+        tag_title = Mix_GetMusicTitleTag(music);
+        if (tag_title && SDL_strlen(tag_title) > 0) {
+            SDL_Log("Title: %s", tag_title);
+        }
+
+        tag_artist = Mix_GetMusicArtistTag(music);
+        if (tag_artist && SDL_strlen(tag_artist) > 0) {
+            SDL_Log("Artist: %s", tag_artist);
+        }
+
+        tag_album = Mix_GetMusicAlbumTag(music);
+        if (tag_album && SDL_strlen(tag_album) > 0) {
+            SDL_Log("Album: %s", tag_album);
+        }
+
+        tag_copyright = Mix_GetMusicCopyrightTag(music);
+        if (tag_copyright && SDL_strlen(tag_copyright) > 0) {
+            SDL_Log("Copyright: %s", tag_copyright);
+        }
+
+        loop_start = Mix_GetMusicLoopStartTime(music);
+        loop_end = Mix_GetMusicLoopEndTime(music);
+        loop_length = Mix_GetMusicLoopLengthTime(music);
+
         /* Play and then exit */
         SDL_Log("Playing %s, duration %f\n", argv[i], Mix_MusicDuration(music));
+        if (loop_start > 0.0 && loop_end > 0.0 && loop_length > 0.0) {
+            SDL_Log("Loop points: start %g s, end %g s, length %g s\n", loop_start, loop_end, loop_length);
+        }
         Mix_FadeInMusic(music,looping,2000);
         while (!next_track && (Mix_PlayingMusic() || Mix_PausedMusic())) {
             if(interactive)
                 Menu();
-            else
+            else {
+                current_position = Mix_GetMusicPosition(music);
+                if (current_position >= 0.0) {
+                    printf("Position: %g seconds             \r", current_position);
+                    fflush(stdout);
+                }
                 SDL_Delay(100);
+            }
         }
         Mix_FreeMusic(music);
         music = NULL;
