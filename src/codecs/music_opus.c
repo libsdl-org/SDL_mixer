@@ -460,6 +460,12 @@ static int OPUS_Seek(void *context, double time)
     return 0;
 }
 
+static double OPUS_Tell(void *context)
+{
+    OPUS_music *music = (OPUS_music *)context;
+    return (double)(opus.op_pcm_tell(music->of)) / 48000.0;
+}
+
 /* Return music duration in seconds */
 static double OPUS_Duration(void *context)
 {
@@ -502,6 +508,7 @@ Mix_MusicInterface Mix_MusicInterface_Opus =
     NULL,   /* IsPlaying */
     OPUS_GetAudio,
     OPUS_Seek,
+    OPUS_Tell,
     OPUS_Duration,
     NULL,   /* Pause */
     NULL,   /* Resume */

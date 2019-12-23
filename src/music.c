@@ -795,6 +795,32 @@ int Mix_SetMusicPosition(double position)
     return(retval);
 }
 
+/* Set the playing music position */
+static double music_internal_position_get(Mix_Music *music)
+{
+    if (music->interface->Tell) {
+        return music->interface->Tell(music->context);
+    }
+    return -1;
+}
+double Mix_GetMusicPosition(Mix_Music *music)
+{
+    double retval;
+
+    Mix_LockAudio();
+    if (music) {
+        retval = music_internal_position_get(music);
+    } else if (music_playing) {
+        retval = music_internal_position_get(music_playing);
+    } else {
+        Mix_SetError("Music isn't playing");
+        retval = -1.0;
+    }
+    Mix_UnlockAudio();
+
+    return(retval);
+}
+
 static double music_internal_duration(Mix_Music *music)
 {
     if (music->interface->Duration) {
@@ -809,14 +835,13 @@ double Mix_MusicDuration(Mix_Music *music)
     double retval;
 
     Mix_LockAudio();
-
     if (music) {
         retval = music_internal_duration(music);
     } else if (music_playing) {
         retval = music_internal_duration(music_playing);
     } else {
         Mix_SetError("music is NULL and no playing music");
-        retval = -1;
+        retval = -1.0;
     }
     Mix_UnlockAudio();
 

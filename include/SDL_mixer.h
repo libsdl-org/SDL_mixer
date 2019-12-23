@@ -611,6 +611,12 @@ extern DECLSPEC int SDLCALL Mix_PausedMusic(void);
 */
 extern DECLSPEC int SDLCALL Mix_SetMusicPosition(double position);
 
+/*
+    Get the time current position of music stream
+    returns -1.0 if this feature is not supported for some codec
+ */
+extern DECLSPEC double SDLCALL Mix_GetMusicPosition(Mix_Music *music);
+
 /* Check the status of a specific channel.
    If the specified channel is -1, check all channels.
 */

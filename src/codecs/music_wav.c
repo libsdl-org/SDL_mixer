@@ -585,6 +585,13 @@ static int WAV_Seek(void *context, double position)
     return 0;
 }
 
+static double WAV_Tell(void *context)
+{
+    WAV_Music *music = (WAV_Music *)context;
+    Sint64 phys_pos = SDL_RWtell(music->src);
+    return (double)(phys_pos - music->start) / (double)(music->spec.freq * music->samplesize);
+}
+
 /* Return music duration in seconds */
 static double WAV_Duration(void *context)
 {
@@ -1103,6 +1110,7 @@ Mix_MusicInterface Mix_MusicInterface_WAV =
     NULL,   /* IsPlaying */
     WAV_GetAudio,
     WAV_Seek,   /* Seek */
+    WAV_Tell,   /* Tell */
     WAV_Duration,
     NULL,   /* Pause */
     NULL,   /* Resume */
