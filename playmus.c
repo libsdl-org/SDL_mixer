@@ -67,6 +67,7 @@ void Usage(char *argv0)
     SDL_Log("Usage: %s [-i] [-l] [-8] [-f32] [-r rate] [-c channels] [-b buffers] [-v N] [-rwops] <musicfile>\n", argv0);
 }
 
+/*#define SEEK_TEST */
 void Menu(void)
 {
     char buf[10];
@@ -75,6 +76,13 @@ void Menu(void)
     fflush(stdin);
     if (scanf("%s",buf) == 1) {
         switch(buf[0]){
+#if defined(SEEK_TEST)
+        case '0': Mix_SetMusicPosition(0); break;
+        case '1': Mix_SetMusicPosition(10);break;
+        case '2': Mix_SetMusicPosition(20);break;
+        case '3': Mix_SetMusicPosition(30);break;
+        case '4': Mix_SetMusicPosition(40);break;
+#endif /* SEEK_TEST */
         case 'p': case 'P':
             Mix_PauseMusic();
             break;
