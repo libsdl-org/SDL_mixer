@@ -308,6 +308,8 @@ mad_seek(mad_data *mp3_mad, double position) {
 	mp3_mad->output_end = 0;
 
 	MP3_RWseek(&mp3_mad->mp3file, 0, RW_SEEK_SET);
+	/* Avoid junk chunk be played after seek -- Vitaly Novichkov */
+	memset (mp3_mad->input_buffer, 0, sizeof(mp3_mad->input_buffer));
   }
 
   /* Now we have to skip frames until we come to the right one.
