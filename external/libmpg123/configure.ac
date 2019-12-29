@@ -10,8 +10,8 @@ AC_PREREQ(2.57)
 dnl ############# Initialisation
 AC_INIT([mpg123], [1.22.4], [mpg123-devel@lists.sourceforge.net])
 dnl Increment API_VERSION when the API gets changes (new functions).
-API_VERSION=41
-LIB_PATCHLEVEL=2
+API_VERSION=42
+LIB_PATCHLEVEL=0
 dnl Since we want to be backwards compatible, both sides get set to API_VERSION.
 LIBMPG123_VERSION=$API_VERSION:$LIB_PATCHLEVEL:$API_VERSION
 AC_SUBST(LIBMPG123_VERSION)
@@ -21,9 +21,7 @@ AC_CONFIG_SRCDIR(src/libmpg123.c)
 AC_CONFIG_AUX_DIR(build)
 AC_CONFIG_MACRO_DIR([m4])
 AM_MAINTAINER_MODE
-cflags_save="$CFLAGS"
 AC_CANONICAL_HOST
-CFLAGS="$cflags_save"
 
 dnl Version 1.7 of automake is recommended
 AM_INIT_AUTOMAKE(1.7)
@@ -75,12 +73,10 @@ if test "x$all_static" = xyes; then
 	AC_MSG_WARN( Use -static in LDFLAGS for all-static linking! Your compiler may blow up on that -all-static. )
 fi
 
-cflags_save="$CFLAGS"
 AM_PROG_AS
 AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_CPP
-CFLAGS="$cflags_save"
 AC_PROG_INSTALL
 dnl "Checking for egrep is broken after removal of libltdl stuff... checks use $EGREP, so searching it here."
 AC_PROG_EGREP
@@ -1268,13 +1264,6 @@ dnl Not disabling buffer for float mode... check that this is OK now!
   ;;
   *)
   	AC_MSG_ERROR([Unknown CPU type '$cpu_type'])
-  ;;
-esac
-
-case $host in
-  x86_64-apple-darwin*)
-    ADD_CFLAGS="$ADD_CFLAGS -mmacosx-version-min=10.5"
-    ADD_LDFLAGS="$ADD_LDFLAGS -mmacosx-version-min=10.5"
   ;;
 esac
 

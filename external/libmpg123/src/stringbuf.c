@@ -58,6 +58,12 @@ int attribute_align_arg mpg123_resize_string(mpg123_string* sb, size_t new)
 		{
 			sb->p = t;
 			sb->size = new;
+			if(sb->size < sb->fill)
+			{
+				// Cut short the existing data, properly.
+				sb->fill = sb->size;
+				sb->p[sb->fill-1] = 0;
+			}
 			return 1;
 		}
 		else return 0;

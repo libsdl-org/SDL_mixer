@@ -2595,8 +2595,8 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
-API_VERSION=41
-LIB_PATCHLEVEL=2
+API_VERSION=42
+LIB_PATCHLEVEL=0
 LIBMPG123_VERSION=$API_VERSION:$LIB_PATCHLEVEL:$API_VERSION
 
 
@@ -2655,7 +2655,6 @@ fi
   MAINT=$MAINTAINER_MODE_TRUE
 
 
-cflags_save="$CFLAGS"
 # Make sure we can run config.sub.
 $SHELL "$ac_aux_dir/config.sub" sun4 >/dev/null 2>&1 ||
   as_fn_error $? "cannot run $SHELL $ac_aux_dir/config.sub" "$LINENO" 5
@@ -2727,7 +2726,6 @@ IFS=$ac_save_IFS
 case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
 
-CFLAGS="$cflags_save"
 
 am__api_version='1.14'
 
@@ -3367,7 +3365,6 @@ if test "x$all_static" = xyes; then
 $as_echo "$as_me: WARNING: Use -static in LDFLAGS for all-static linking! Your compiler may blow up on that -all-static. " >&2;}
 fi
 
-cflags_save="$CFLAGS"
 DEPDIR="${am__leading_dot}deps"
 
 ac_config_commands="$ac_config_commands depfiles"
@@ -5406,7 +5403,6 @@ ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
-CFLAGS="$cflags_save"
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for grep that handles long lines and -e" >&5
 $as_echo_n "checking for grep that handles long lines and -e... " >&6; }
@@ -11130,7 +11126,7 @@ _LT_EOF
 	cat $export_symbols | $prefix_cmds >> $output_objdir/$libname.def~
 	$CC -Zdll -Zcrtdll -o $output_objdir/$soname $libobjs $deplibs $compiler_flags $output_objdir/$libname.def~
 	emximp -o $lib $output_objdir/$libname.def'
-      old_archive_From_new_cmds='emximp -o $output_objdir/${libname}_dll.a $output_objdir/$libname.def'
+      old_archive_from_new_cmds='emximp -o $output_objdir/${libname}_dll.a $output_objdir/$libname.def'
       enable_shared_with_static_runtimes=yes
       file_list_spec='@'
       ;;
@@ -11985,7 +11981,7 @@ $as_echo "$lt_cv_irix_exported_symbol" >&6; }
 	cat $export_symbols | $prefix_cmds >> $output_objdir/$libname.def~
 	$CC -Zdll -Zcrtdll -o $output_objdir/$soname $libobjs $deplibs $compiler_flags $output_objdir/$libname.def~
 	emximp -o $lib $output_objdir/$libname.def'
-      old_archive_From_new_cmds='emximp -o $output_objdir/${libname}_dll.a $output_objdir/$libname.def'
+      old_archive_from_new_cmds='emximp -o $output_objdir/${libname}_dll.a $output_objdir/$libname.def'
       enable_shared_with_static_runtimes=yes
       file_list_spec='@'
       ;;
@@ -15986,13 +15982,6 @@ $as_echo "no" >&6; }
   ;;
   *)
   	as_fn_error $? "Unknown CPU type '$cpu_type'" "$LINENO" 5
-  ;;
-esac
-
-case $host in
-  x86_64-apple-darwin*)
-    ADD_CFLAGS="$ADD_CFLAGS -mmacosx-version-min=10.5"
-    ADD_LDFLAGS="$ADD_LDFLAGS -mmacosx-version-min=10.5"
   ;;
 esac
 

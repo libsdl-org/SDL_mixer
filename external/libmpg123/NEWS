@@ -1,4 +1,4 @@
-1.22.x-sezero (libmpg123 updates)
+1.22.x-sezero (changes made by sezero)
 ---
 - Added nasm versions of x86 asm sources.
 - Open Watcom and MSVC6 compatibility.
@@ -8,6 +8,8 @@
 
 1.22.x-sezero (backports)
 ---
+- Make mpg123_resize_string() terminate the string if shrinking (fill now
+  limited to new size).
 - Reset the flag for having a frame to decode before trying to
   parse a new one. This prevents very unkind behaviour (crashes)
   when combinging mpg123_scan() with decoding later on for damaged

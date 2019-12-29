@@ -82,10 +82,9 @@ subdir = .
 DIST_COMMON = INSTALL NEWS README AUTHORS ChangeLog \
 	$(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/configure $(am__configure_deps) \
-	$(top_srcdir)/build/mkinstalldirs $(srcdir)/libmpg123.pc.in \
-	COPYING TODO build/compile build/config.guess build/config.sub \
-	build/depcomp build/install-sh build/missing \
-	build/mkinstalldirs build/ltmain.sh \
+	$(srcdir)/libmpg123.pc.in COPYING TODO build/compile \
+	build/config.guess build/config.sub build/depcomp \
+	build/install-sh build/missing build/ltmain.sh \
 	$(top_srcdir)/build/compile $(top_srcdir)/build/config.guess \
 	$(top_srcdir)/build/config.sub $(top_srcdir)/build/install-sh \
 	$(top_srcdir)/build/ltmain.sh $(top_srcdir)/build/missing
@@ -98,7 +97,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
-mkinstalldirs = $(SHELL) $(top_srcdir)/build/mkinstalldirs
+mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/src/config.h
 CONFIG_CLEAN_FILES = libmpg123.pc
 CONFIG_CLEAN_VPATH_FILES =
