@@ -1,6 +1,8 @@
 Changes in libmpg123 libtool interface versions...
 
-(backports from 42.0.42)
+42.0.42
+	- added mpg123_framelength()
+	  Now mpg123_position() is truly obsolete!
 	- hardened string API to not crash if given NULL pointers
 	  (except mpg123_init_string())
 	- equalizer feature optional

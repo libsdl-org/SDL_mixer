@@ -4,7 +4,7 @@
 ## see COPYING and AUTHORS files in distribution or http://mpg123.org
 ## initially written by Nicholas J. Humfrey
 
-#AM_CFLAGS = @AUDIO_CFLAGS@
+#AM_CFLAGS = 
 #AM_LDFLAGS = 
 AM_CPPFLAGS = -I$(top_srcdir)/src
 

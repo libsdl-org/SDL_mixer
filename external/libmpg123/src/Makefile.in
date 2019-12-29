@@ -82,8 +82,8 @@ host_triplet = @host@
 EXTRA_PROGRAMS = testcpu$(EXEEXT)
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(srcdir)/config.h.in $(top_srcdir)/build/mkinstalldirs \
-	$(srcdir)/mpg123.h.in $(top_srcdir)/build/depcomp
+	$(srcdir)/config.h.in $(srcdir)/mpg123.h.in \
+	$(top_srcdir)/build/depcomp
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
 	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
@@ -91,7 +91,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
-mkinstalldirs = $(SHELL) $(top_srcdir)/build/mkinstalldirs
+mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES = mpg123.h
 CONFIG_CLEAN_VPATH_FILES =
@@ -350,7 +350,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 
-#AM_CFLAGS = @AUDIO_CFLAGS@
+#AM_CFLAGS = 
 #AM_LDFLAGS = 
 AM_CPPFLAGS = -I$(top_srcdir)/src
 EXTRA_DIST = mpg123.h.in

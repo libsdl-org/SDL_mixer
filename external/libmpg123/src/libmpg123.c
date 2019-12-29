@@ -1312,6 +1312,31 @@ int attribute_align_arg mpg123_set_filesize(mpg123_handle *mh, off_t size)
 	return MPG123_OK;
 }
 
+off_t attribute_align_arg mpg123_framelength(mpg123_handle *mh)
+{
+	int b;
+	if(mh == NULL)
+		return MPG123_ERR;
+	b = init_track(mh);
+	if(b<0)
+		return b;
+	if(mh->track_frames > 0)
+		return mh->track_frames;
+	if(mh->rdat.filelen > 0)
+	{ /* A bad estimate. Ignoring tags 'n stuff. */
+		double bpf = mh->mean_framesize > 0.
+			? mh->mean_framesize
+			: compute_bpf(mh);
+		return (off_t)((double)(mh->rdat.filelen)/bpf+0.5);
+	}
+	/* Last resort: No view of the future, can at least count the frames that
+	   were already parsed. */
+	if(mh->num > -1)
+		return mh->num+1;
+	/* Giving up. */
+	return MPG123_ERR;
+}
+
 off_t attribute_align_arg mpg123_length(mpg123_handle *mh)
 {
 	int b;
