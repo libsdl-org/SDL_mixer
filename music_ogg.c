@@ -133,7 +133,7 @@ static void OGG_getsome(OGG_music *music)
 #ifdef OGG_USE_TREMOR
 	len = vorbis.ov_read(&music->vf, data, sizeof(data), &section);
 #else
-	len = vorbis.ov_read(&music->vf, data, sizeof(data), 0, 2, 1, &section);
+	len = vorbis.ov_read(&music->vf, data, sizeof(data), SDL_BYTEORDER == SDL_BIG_ENDIAN, 2, 1, &section);
 #endif
 	if ( len <= 0 ) {
 		if ( len == 0 ) {
@@ -146,7 +146,7 @@ static void OGG_getsome(OGG_music *music)
 		vorbis_info *vi;
 
 		vi = vorbis.ov_info(&music->vf, -1);
-		SDL_BuildAudioCVT(cvt, AUDIO_S16, vi->channels, vi->rate,
+		SDL_BuildAudioCVT(cvt, AUDIO_S16SYS, vi->channels, vi->rate,
 		                       mixer.format,mixer.channels,mixer.freq);
 		if ( cvt->buf ) {
 			SDL_free(cvt->buf);
