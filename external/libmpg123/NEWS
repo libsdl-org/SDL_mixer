@@ -8,6 +8,8 @@
 
 1.22.x-sezero (backports)
 ---
+- Fix accurate (--enable-int-quality) and s32 x86-64 assembly for Windows ABI
+  (thanks to Robert Kausch of fre:ac). The accurate code just crashed before.
 - Make mpg123_resize_string() terminate the string if shrinking (fill now
   limited to new size).
 - Reset the flag for having a frame to decode before trying to
