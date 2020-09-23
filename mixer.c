@@ -34,6 +34,7 @@
 #include "load_voc.h"
 #include "load_ogg.h"
 #include "load_flac.h"
+#include "dynamic_fluidsynth.h"
 #include "dynamic_flac.h"
 #include "dynamic_mod.h"
 #include "dynamic_mp3.h"
@@ -1499,4 +1500,3 @@ int Mix_UnregisterAllEffects(int channel)
 }
 
 /* end of mixer.c ... */
-
