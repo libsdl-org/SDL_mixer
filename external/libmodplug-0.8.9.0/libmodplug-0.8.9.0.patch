@@ -7,6 +7,7 @@ synced with libmodplug git -- with further changes, including:
 - removed experimental file save support: no one uses it, ever.
 - removed irrelevant/dead modplug tracker/player code: not enabled ever.
 - load_med.cpp: fix an old incorrect logic in boundary check.
+- merge libmodplug github PR/50 (fix broken bitshifts in X86_Convert32To24)
 - merge libmodplug github PR/46 (unbalanced pragma pack fix)
 - merge libmodplug github PR/39 (case-sensitive STM signature checks)
 - merge libmodplug github PR/45 (_MSC_VER ifdef corrections)
@@ -440,6 +441,26 @@ index d693d20..7aad373 100644
  // Clip and convert to 24 bit
  __declspec(naked) DWORD MPPASMCALL X86_Convert32To24(LPVOID lp16, int *pBuffer, DWORD lSampleCount, LPLONG lpMin, LPLONG lpMax)
  //------------------------------------------------------------------------------
+@@ -1887,13 +1893,13 @@ DWORD MPPASMCALL X86_Convert32To24(LPVOID lp16, int *pBuffer, DWORD lSampleCount
+ 			vumax = n;
+ 		p = n >> (8-MIXING_ATTENUATION) ; // 24-bit signed
+ #ifdef WORDS_BIGENDIAN
+-		buf[i*3+0] = p & 0xFF0000 >> 24;
+-		buf[i*3+1] = p & 0x00FF00 >> 16 ;
+-		buf[i*3+2] = p & 0x0000FF ;
++		buf[i*3+0] = (p >> 16) & 0xFF;
++		buf[i*3+1] = (p >> 8)  & 0xFF;
++		buf[i*3+2] = (p >> 0)  & 0xFF;
+ #else
+-		buf[i*3+0] = p & 0x0000FF ;
+-		buf[i*3+1] = p & 0x00FF00 >> 16;
+-		buf[i*3+2] = p & 0xFF0000 >> 24;
++		buf[i*3+0] = (p >> 0)  & 0xFF;
++		buf[i*3+1] = (p >> 8)  & 0xFF;
++		buf[i*3+2] = (p >> 16) & 0xFF;
+ #endif
+ 	}
+ 	*lpMin = vumin;
 @@ -1902,7 +1908,7 @@ DWORD MPPASMCALL X86_Convert32To24(LPVOID lp16, int *pBuffer, DWORD lSampleCount
  }
  #endif
