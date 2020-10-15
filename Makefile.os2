@@ -1,0 +1,178 @@
+# Open Watcom makefile to build SDL2mix.dll for OS/2
+# wmake -f Makefile.os2
+#
+# Remember to edit DEPS_INC and DEPS_LIB below to meet
+# your own environment!.
+
+LIBNAME = SDL2mix
+VERSION = 2.0.4
+
+TITLENAME = $(LIBNAME) $(VERSION)
+
+# change DEPS_INC in order to point to the dependency headers.
+DEPS_INC=-IC:\SDL2DEV\h\SDL2 -IC:\SDL2DEV\h
+# change DEPS_LIB in order to point to the dependency libraries.
+DEPS_LIB=C:\SDL2DEV\lib
+
+# wav music support
+USE_WAV=yes
+# ogg/vorbis music support
+USE_OGG=yes
+# use integer-only Tremor (libvorbisidec) instead of libvorbis?
+USE_TREMOR=no
+# flac music support
+USE_FLAC=yes
+# opus music support
+USE_OPUS=yes
+# mp3 music support (using libmad)
+#USE_MP3=no
+# mp3 music support (using mpg123)
+USE_MPG123=yes
+# midi music support (using timidity)
+USE_MIDI=yes
+# midi music support (using fluidsynth)
+USE_FLUIDSYNTH=yes
+# tracker music support (using libmikmod)
+USE_MOD=yes
+# tracker music support (using libmodplug)
+USE_MODPLUG=no
+
+LIBFILE = $(LIBNAME).lib
+DLLFILE = $(LIBNAME).dll
+LNKFILE = $(LIBNAME).lnk
+
+SRCS = compat.c effect_position.c effects_internal.c effect_stereoreverse.c mixer.c music.c
+# codec sources:
+SRCS+= load_aiff.c load_voc.c music_wav.c &
+       mp3utils.c music_mad.c music_mpg123.c &
+       music_ogg.c music_opus.c music_flac.c &
+       music_mikmod.c music_modplug.c &
+       music_fluidsynth.c music_timidity.c
+# timidity sources:
+SRCS+= common.c instrum.c mix.c output.c playmidi.c readmidi.c resample.c tables.c timidity.c
+
+OBJS = $(SRCS:.c=.obj)
+
+LIBS = SDL2.lib
+
+CFLAGS_BASE = -bt=os2 -d0 -q -bm -5s -fp5 -fpi87 -sg -oteanbmier -ei -j
+# warnings:
+CFLAGS_BASE+= -wx
+# include paths:
+CFLAGS_BASE+= -I"$(%WATCOM)/h/os2" -I"$(%WATCOM)/h"
+CFLAGS_BASE+= -Iinclude -Isrc -I"src/codecs" -I"src/codecs/timidity" $(DEPS_INC)
+CFLAGS = $(CFLAGS_BASE)
+# to build a dll:
+CFLAGS+= -bd
+# for DECLSPEC:
+CFLAGS+= -DBUILD_SDL
+
+!ifeq USE_MIDI yes
+CFLAGS+= -DMUSIC_MID_TIMIDITY
+!endif
+!ifeq USE_FLUIDSYNTH yes
+CFLAGS+= -DMUSIC_MID_FLUIDSYNTH
+LIBS+= fluidsyn.lib
+!endif
+
+!ifeq USE_WAV yes
+CFLAGS+= -DMUSIC_WAV
+!endif
+
+!ifeq USE_TREMOR yes
+VORBIS_LIBS=vorbisidec.lib
+!else
+VORBIS_LIBS=vorbisfile.lib vorbis.lib
+!endif
+!ifeq USE_OGG yes
+CFLAGS+= -DMUSIC_OGG
+!ifeq USE_TREMOR yes
+CFLAGS+= -DOGG_USE_TREMOR
+!endif
+LIBS+= $(VORBIS_LIBS)
+LIBS+= ogg.lib
+!endif
+
+!ifeq USE_FLAC yes
+CFLAGS+= -DMUSIC_FLAC
+LIBS+= FLAC.lib
+!endif
+
+!ifeq USE_OPUS yes
+CFLAGS+= -DMUSIC_OPUS
+LIBS+= opusfile.lib opus.lib
+!ifneq USE_OGG yes
+LIBS+= ogg.lib
+!endif
+!endif
+
+!ifeq USE_MP3 yes
+CFLAGS+= -DMUSIC_MP3_MAD
+LIBS+= mad.lib
+!endif
+!ifeq USE_MPG123 yes
+CFLAGS+= -DMUSIC_MP3_MPG123
+LIBS+= mpg123.lib
+!endif
+
+!ifeq USE_MOD yes
+CFLAGS+= -DMUSIC_MOD_MIKMOD
+LIBS+= mikmod.lib
+!endif
+!ifeq USE_MODPLUG yes
+CFLAGS+= -DMUSIC_MOD_MODPLUG
+LIBS+= modplug.lib
+!endif
+
+all: $(DLLFILE) playwave.exe playmus.exe
+
+$(LIBFILE): $(DLLFILE)
+  @echo * Create library: $@...
+  wlib -b -n -q -c -pa -s -t -zld -ii -io $@ $(DLLFILE)
+
+$(DLLFILE): $(OBJS) $(LNKFILE)
+  @echo * Link: $@
+  wlink @$(LNKFILE)
+
+$(LNKFILE):
+  @%create $@
+  @%append $@ SYSTEM os2v2_dll INITINSTANCE TERMINSTANCE
+  @%append $@ NAME $(LIBNAME)
+  @for %i in ($(OBJS)) do @%append $@ FILE %i
+  @%append $@ OPTION QUIET
+  @%append $@ OPTION DESCRIPTION '@$#libsdl org:$(VERSION)$#@Simple DirectMedia Layer Mixer'
+  @%append $@ LIBPATH $(DEPS_LIB)
+  @for %i in ($(LIBS)) do @%append $@ LIB %i
+  @%append $@ OPTION MAP=$*
+  @%append $@ OPTION ELIMINATE
+  @%append $@ OPTION MANYAUTODATA
+  @%append $@ OPTION OSNAME='OS/2 and eComStation'
+  @%append $@ OPTION SHOWDEAD
+
+.c: ./src;./src/codecs;./src/codecs/timidity;
+
+.c.obj:
+  wcc386 $(CFLAGS) -fo=$^@ $<
+
+playmus.obj: playmus.c
+  wcc386 $(CFLAGS_BASE) -fo=$^@ $<
+
+playwave.obj: playwave.c
+  wcc386 $(CFLAGS_BASE) -fo=$^@ $<
+
+playmus.exe: $(LIBFILE) playmus.obj
+  wlink SYS os2v2 OP q LIBPATH $(DEPS_LIB) LIBR {$(LIBFILE) SDL2.lib} F {playmus.obj}  N playmus.exe
+
+playwave.exe: $(LIBFILE) playwave.obj
+  wlink SYS os2v2 OP q LIBPATH $(DEPS_LIB) LIBR {$(LIBFILE) SDL2.lib} F {playwave.obj} N playwave.exe
+
+clean: .SYMBOLIC
+  @echo * Clean: $(TITLENAME)
+  @if exist *.obj rm *.obj
+  @if exist *.err rm *.err
+  @if exist $(LNKFILE) rm $(LNKFILE)
+distclean: .SYMBOLIC clean
+  @if exist $(DLLFILE) rm $(DLLFILE)
+  @if exist $(LIBFILE) rm $(LIBFILE)
+  @if exist *.map rm *.map
+  @if exist *.exe rm *.exe
