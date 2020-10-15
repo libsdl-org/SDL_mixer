@@ -29,9 +29,9 @@ USE_OPUS=yes
 # mp3 music support (using mpg123)
 USE_MPG123=yes
 # midi music support (using timidity)
-USE_MIDI=yes
+USE_TIMIDITY=yes
 # midi music support (using fluidsynth)
-USE_FLUIDSYNTH=yes
+USE_FLUIDSYNTH=no
 # tracker music support (using libmikmod)
 USE_MOD=yes
 # tracker music support (using libmodplug)
@@ -40,6 +40,7 @@ USE_MODPLUG=no
 LIBFILE = $(LIBNAME).lib
 DLLFILE = $(LIBNAME).dll
 LNKFILE = $(LIBNAME).lnk
+TIMILIB = timidity.lib
 
 SRCS = compat.c effect_position.c effects_internal.c effect_stereoreverse.c mixer.c music.c
 # codec sources:
@@ -49,9 +50,10 @@ SRCS+= load_aiff.c load_voc.c music_wav.c &
        music_mikmod.c music_modplug.c &
        music_fluidsynth.c music_timidity.c
 # timidity sources:
-SRCS+= common.c instrum.c mix.c output.c playmidi.c readmidi.c resample.c tables.c timidity.c
+TIMISRCS = common.c instrum.c mix.c output.c playmidi.c readmidi.c resample.c tables.c timidity.c
 
 OBJS = $(SRCS:.c=.obj)
+TIMIOBJS = $(TIMISRCS:.c=.obj)
 
 LIBS = SDL2.lib
 
@@ -67,8 +69,9 @@ CFLAGS+= -bd
 # for DECLSPEC:
 CFLAGS+= -DBUILD_SDL
 
-!ifeq USE_MIDI yes
+!ifeq USE_TIMIDITY yes
 CFLAGS+= -DMUSIC_MID_TIMIDITY
+LIBS+= $(TIMILIB)
 !endif
 !ifeq USE_FLUIDSYNTH yes
 CFLAGS+= -DMUSIC_MID_FLUIDSYNTH
@@ -130,7 +133,7 @@ $(LIBFILE): $(DLLFILE)
   @echo * Create library: $@...
   wlib -b -n -q -c -pa -s -t -zld -ii -io $@ $(DLLFILE)
 
-$(DLLFILE): $(OBJS) $(LNKFILE)
+$(DLLFILE): $(OBJS) $(TIMILIB) $(LNKFILE)
   @echo * Link: $@
   wlink @$(LNKFILE)
 
@@ -149,7 +152,7 @@ $(LNKFILE):
   @%append $@ OPTION OSNAME='OS/2 and eComStation'
   @%append $@ OPTION SHOWDEAD
 
-.c: ./src;./src/codecs;./src/codecs/timidity;
+.c: ./src;./src/codecs;
 
 .c.obj:
   wcc386 $(CFLAGS) -fo=$^@ $<
@@ -166,10 +169,15 @@ playmus.exe: $(LIBFILE) playmus.obj
 playwave.exe: $(LIBFILE) playwave.obj
   wlink SYS os2v2 OP q LIBPATH $(DEPS_LIB) LIBR {$(LIBFILE) SDL2.lib} F {playwave.obj} N playwave.exe
 
+.c: ./src/codecs/timidity;
+timidity.lib: $(TIMIOBJS)
+  wlib -b -n -q -c -pa -s -t -zld -ii -io $@ $(TIMIOBJS)
+
 clean: .SYMBOLIC
   @echo * Clean: $(TITLENAME)
   @if exist *.obj rm *.obj
   @if exist *.err rm *.err
+  @if exist $(TIMILIB) rm $(TIMILIB)
   @if exist $(LNKFILE) rm $(LNKFILE)
 distclean: .SYMBOLIC clean
   @if exist $(DLLFILE) rm $(DLLFILE)
