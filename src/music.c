@@ -528,7 +528,8 @@ Mix_MusicType detect_music_type(SDL_RWops *src)
     }
 
     if (SDL_memcmp(magic, "ID3", 3) == 0 ||
-        (magic[0] == 0xFF && (magic[1] & 0xFE) == 0xFA)) {
+    /* see: https://bugzilla.libsdl.org/show_bug.cgi?id=5322 */
+        (magic[0] == 0xFF && (magic[1] & 0xE6) == 0xE2)) {
         return MUS_MP3;
     }
 
