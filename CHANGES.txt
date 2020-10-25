@@ -1,4 +1,8 @@
 2.0.5:
+David Gow - Fri Oct 23 23:01:00 2020
+ * Fixed mp3 file detection.
+Ozkan Sezer - Sat Jun 27 00:50:04 2020
+ * Fixed divide by zero crash in voc_get_block().
 Matthias Gatto - Tue Dec 17 21:55:00 2019
  * Add Mix_MusicDuration() to return music duration in seconds.
 Vitaly Novichkov - Tue Dec 17 15:50:02 2019
