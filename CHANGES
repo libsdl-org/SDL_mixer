@@ -1,16 +1,57 @@
 1.2.13:
-Ozkan Sezer - Thu, 05 Sep 2019 23:10:00
- * Backports of several fixes from SDL_mixer-2.0.x
-Ozkan Sezer - Wed, 10 Oct 2018 14:56:10
- * Removed smpeg support for mp3 music, now that it's replaced by libmpg123
-Ozkan Sezer - Sun, 07 Oct 2018 08:50:02
- * Fixed mp3 mad decoder to skip tags, which otherwise would lead to crashes
-Franc[e]sco - Thu, 20 Jul 2017 20:03:19
- * Added support for MP3 playback using mpg123
-Sam Lantinga - Sat Aug 23 10:57:26 2014
- * Fixed floating point exception in Mix_Volume()
-Paul P Komkoff Jr - Sun Jul 22 16:12:28 PDT 2012
- * Fixed malloc/free mismatch in the MikMod driver
+- MP3: Added playback support using libmpg123 and removed deprecated
+  smpeg support.
+- MP3, mad decoder: skip tags, which otherwise would lead to crashes
+  (bug #4295)
+- MP3, mad decoder: avoid a junk chunk be played after seek
+- VOC loader: fixed divide by zero crash in voc_get_block (bug #4604)
+- Ogg loader: provide audio using the host endianness (bug #5187)
+- Ogg loader: fixed ov_time_seek() signature for libvorbisidec
+- Ogg loader: fixed seek with tremor (libvorbisidec) (bug #1807)
+- WAV loader: fixed double free in LoadWAVStream (bug #2604)
+- WAV loader: fixed possible memory overflow in Mix_LoadWAV_RW
+  (bug #2670)
+- MOD loader (mikmod): fixed failing to load XM modules (bug #4107)
+- MOD loader (mikmod): fixed malloc/free mismatches
+- Midi (timidity): fixed possible stack corruption during config read
+  (bugs #2872, #2966)
+- Midi (timidity): fixed stack smashing during file play (bug #1905)
+- Midi (timidity): fixed possible file pointer leak during config read
+  (bug #2968)
+- Midi (timidity): fixed a coding mistake in recompute_amp (bug #2969)
+- Native Midi: fixed memory leak in MIDItoStream() (bug #3072)
+- Native Midi (macosx): make sure to set music player's sequence to
+  NULL before disposing music sequence (bug #4573)
+- Native Midi (macosx): use newer apis with newer macOS (bug #1566)
+- Native Midi (windows): fixed possible crash.
+- Midi (fluidsyth): fixed loading MIDI music leaks memory (bug #3018)
+- Midi (fluidsyth): fixed calling Mix_Quit twice leading to segfault
+  (bug #2004)
+- Midi (fluidsyth): fixed no sf2 soundfonts loaded by default (debian
+  bug #715461)
+- Soundfont api functions are public and should always be available
+  (bugs #3071, #3088)
+- Music: fixed Mix_PlayMusic broken logic when loop > 1 (bug #2706)
+- Music: fixed Mix_PlayMusic can't start playing when previous music
+  was paused (bug #4216)
+- Music: call Mix_HookMusicFinished when Mix_HaltMusic is called
+  (bug #1610)
+- Music: fixed memory leak issue in Mix_LoadMUSType_RW (bug #1833)
+- Music, cmd player: added missing NULL check (bug #2970)
+- Mixer: fixed looping behavior and Mix_Playing() result for looping
+  channels
+- Mixer: fixed Mix_FadeOutChannel never setting fade_volume_reset
+  (bug #4770)
+- Mixer: fixed floating point exception in Mix_Volume() (bug #2690)
+- Mixer: fixed compilation error due to a missing include (bug #5296)
+- Public apis respect the SDL calling convention (SDLCALL)
+- Build: fixed configure failing to detect dynamic library support
+  on powerpc64le (bug #3481)
+- Build: fixed Makefile sleeping 3s if configure is outdated
+  (bug #3733)
+- Build: fixed configure selecting wrong lib (bug #2795)
+- Build: fixed ogg support detection in static mode (bug #1604)
+- Updated external libraries with multiple bug/security fixes.
 
 1.2.12:
 Sam Lantinga - Sat Jan 14 22:00:29 2012 -0500
