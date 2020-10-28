@@ -541,6 +541,7 @@ MidiEvent *read_midi_file(MidiSong *song, Sint32 *count, Sint32 *sp)
       return NULL;
     }
 
+  format=tracks=divisions_tmp = -1;
   SDL_RWread(song->rw, &format, 2, 1);
   SDL_RWread(song->rw, &tracks, 2, 1);
   SDL_RWread(song->rw, &divisions_tmp, 2, 1);
