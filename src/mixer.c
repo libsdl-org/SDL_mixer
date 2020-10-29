@@ -282,7 +282,7 @@ mix_channels(void *udata, Uint8 *stream, int len)
                 Uint32 ticks = sdl_ticks - mix_channel[i].ticks_fade;
                 if (ticks >= mix_channel[i].fade_length) {
                     Mix_Volume(i, mix_channel[i].fade_volume_reset); /* Restore the volume */
-                    if(mix_channel[i].fading == MIX_FADING_OUT) {
+                    if (mix_channel[i].fading == MIX_FADING_OUT) {
                         mix_channel[i].playing = 0;
                         mix_channel[i].looping = 0;
                         mix_channel[i].expire = 0;
@@ -800,7 +800,7 @@ Mix_Chunk *Mix_QuickLoad_WAV(Uint8 *mem)
         mem += 4;
         chunk->abuf = mem;
         mem += chunk->alen;
-    } while (memcmp(magic, "data", 4) != 0);
+    } while (SDL_memcmp(magic, "data", 4) != 0);
     chunk->volume = MIX_MAX_VOLUME;
 
     return(chunk);
@@ -1112,7 +1112,7 @@ int Mix_HaltChannel(int which)
             mix_channel[which].looping = 0;
         }
         mix_channel[which].expire = 0;
-        if(mix_channel[which].fading != MIX_NO_FADING) /* Restore volume */
+        if (mix_channel[which].fading != MIX_NO_FADING) /* Restore volume */
             mix_channel[which].volume = mix_channel[which].fade_volume_reset;
         mix_channel[which].fading = MIX_NO_FADING;
         Mix_UnlockAudio();
@@ -1126,7 +1126,7 @@ int Mix_HaltGroup(int tag)
     int i;
 
     for (i=0; i<num_channels; ++i) {
-        if(mix_channel[i].tag == tag) {
+        if (mix_channel[i].tag == tag) {
             Mix_HaltChannel(i);
         }
     }
@@ -1176,7 +1176,7 @@ int Mix_FadeOutGroup(int tag, int ms)
     int i;
     int status = 0;
     for (i=0; i<num_channels; ++i) {
-        if(mix_channel[i].tag == tag) {
+        if (mix_channel[i].tag == tag) {
             status += Mix_FadeOutChannel(i,ms);
         }
     }
@@ -1290,14 +1290,14 @@ void Mix_Resume(int which)
 
         for (i=0; i<num_channels; ++i) {
             if (mix_channel[i].playing > 0) {
-                if(mix_channel[i].expire > 0)
+                if (mix_channel[i].expire > 0)
                     mix_channel[i].expire += sdl_ticks - mix_channel[i].paused;
                 mix_channel[i].paused = 0;
             }
         }
     } else if (which < num_channels) {
         if (mix_channel[which].playing > 0) {
-            if(mix_channel[which].expire > 0)
+            if (mix_channel[which].expire > 0)
                 mix_channel[which].expire += sdl_ticks - mix_channel[which].paused;
             mix_channel[which].paused = 0;
         }
