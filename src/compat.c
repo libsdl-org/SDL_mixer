@@ -19,8 +19,8 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#include <stddef.h>
 #include "compat.h"
+#include <stddef.h>
 
 #if !defined(HAVE_SDL_STRTOKR)
 /*

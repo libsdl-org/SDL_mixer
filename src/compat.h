@@ -22,7 +22,7 @@
 #ifndef COMPAT_H_
 #define COMPAT_H_
 
-#include "SDL.h"
+#include "SDL_version.h"
 
 #if SDL_VERSION_ATLEAST(2,0,12)
 #define HAVE_SDL_STRTOKR
