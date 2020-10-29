@@ -22,7 +22,7 @@
 /* Quiet windows compiler warnings */
 #define _CRT_SECURE_NO_WARNINGS
 
-/* $Id$ */
+#include "SDL_stdinc.h"
 
 #include <stdlib.h>
 #include <stdio.h>

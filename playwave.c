@@ -19,7 +19,7 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-/* $Id$ */
+#include "SDL_stdinc.h"
 
 #include <stdlib.h>
 #include <stdio.h>
