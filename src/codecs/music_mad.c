@@ -221,7 +221,7 @@ static SDL_bool read_next_frame(MAD_Music *music)
            them. */
         if (music->stream.next_frame != NULL) {
             remaining = music->stream.bufend - music->stream.next_frame;
-            memmove(music->input_buffer, music->stream.next_frame, remaining);
+            SDL_memmove(music->input_buffer, music->stream.next_frame, remaining);
             read_start = music->input_buffer + remaining;
             read_size = MAD_INPUT_BUFFER_SIZE - remaining;
 
