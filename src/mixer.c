@@ -19,12 +19,6 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-/* $Id$ */
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "SDL.h"
 
 #include "SDL_mixer.h"

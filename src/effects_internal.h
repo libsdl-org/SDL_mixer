@@ -19,8 +19,6 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-/* $Id$ */
-
 #ifndef INCLUDE_EFFECTS_INTERNAL_H_
 #define INCLUDE_EFFECTS_INTERNAL_H_
 
