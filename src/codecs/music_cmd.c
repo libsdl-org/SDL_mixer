@@ -24,6 +24,10 @@
 
 #ifdef MUSIC_CMD
 
+#ifdef __APPLE__
+#define _DARWIN_C_SOURCE
+#endif
+
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <stdio.h>

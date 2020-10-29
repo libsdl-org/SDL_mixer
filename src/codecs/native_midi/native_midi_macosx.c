@@ -25,6 +25,8 @@
 
 #if __MACOSX__
 
+#include "SDL_stdinc.h"
+
 #include <CoreServices/CoreServices.h>      /* ComponentDescription */
 #include <AudioUnit/AudioUnit.h>
 #include <AudioToolbox/AudioToolbox.h>
@@ -51,8 +53,8 @@ static int latched_volume = MIX_MAX_VOLUME;
 static OSStatus
 GetSequenceLength(MusicSequence sequence, MusicTimeStamp *_sequenceLength)
 {
-    // http://lists.apple.com/archives/Coreaudio-api/2003/Jul/msg00370.html
-    // figure out sequence length
+    /* http://lists.apple.com/archives/Coreaudio-api/2003/Jul/msg00370.html
+     * figure out sequence length */
     UInt32 ntracks, i;
     MusicTimeStamp sequenceLength = 0;
     OSStatus err;
