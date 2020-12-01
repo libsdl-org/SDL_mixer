@@ -86,10 +86,9 @@ GetSequenceLength(MusicSequence sequence, MusicTimeStamp *_sequenceLength)
     return noErr;
 }
 
-
-/* we're looking for the sequence output audiounit. */
 static OSStatus
-GetSequenceAudioUnit(MusicSequence sequence, AudioUnit *aunit)
+GetSequenceAudioUnitMatching(MusicSequence sequence, AudioUnit *aunit,
+                             OSType type, OSType subtype)
 {
     AUGraph graph;
     UInt32 nodecount, i;
@@ -112,17 +111,85 @@ GetSequenceAudioUnit(MusicSequence sequence, AudioUnit *aunit)
 
         if (AUGraphNodeInfo(graph, node, &desc, aunit) != noErr)
             continue;
-        else if (desc.componentType != kAudioUnitType_Output)
+        else if (desc.componentType != type)
             continue;
-        else if (desc.componentSubType != kAudioUnitSubType_DefaultOutput)
+        else if (desc.componentSubType != subtype)
             continue;
 
         return noErr;  /* found it! */
     }
 
+    *aunit = NULL;
     return kAUGraphErr_NodeNotFound;
 }
 
+typedef struct {
+    AudioUnit aunit;
+    SDL_bool soundfont_set;
+    CFURLRef default_url;
+} macosx_load_soundfont_ctx;
+
+static int SDLCALL
+macosx_load_soundfont(const char *path, void *data)
+{
+    CFURLRef url;
+    OSStatus err;
+    macosx_load_soundfont_ctx *ctx = data;
+    if (ctx->soundfont_set)
+        return SDL_FALSE;
+
+    url = CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault,
+                                                  (const UInt8*)path,
+                                                  strlen(path), false);
+    if (!url)
+        return SDL_FALSE;
+
+    err = AudioUnitSetProperty(ctx->aunit, kMusicDeviceProperty_SoundBankURL,
+                               kAudioUnitScope_Global, 0, &url, sizeof(url));
+    CFRelease(url);
+    if (err != noErr) {
+        if (ctx->default_url)
+            err = AudioUnitSetProperty(ctx->aunit,
+                                       kMusicDeviceProperty_SoundBankURL,
+                                       kAudioUnitScope_Global, 0,
+                                       &ctx->default_url, sizeof(CFURLRef));
+        if (err != noErr) {
+            // uh-oh, this might leave the audio unit in an unusable state
+            // (e.g. if the soundfont was an incompatible file type)
+        }
+        return SDL_FALSE;
+    }
+
+    ctx->soundfont_set = SDL_TRUE;
+    return SDL_TRUE;
+}
+
+static void
+SetSequenceSoundFont(MusicSequence sequence)
+{
+    OSStatus err;
+    macosx_load_soundfont_ctx ctx;
+    ctx.soundfont_set = SDL_FALSE;
+    ctx.default_url = NULL;
+
+    CFBundleRef bundle = CFBundleGetBundleWithIdentifier(
+                                   CFSTR("com.apple.audio.units.Components"));
+    if (bundle)
+        ctx.default_url = CFBundleCopyResourceURL(bundle,
+                                                  CFSTR("gs_instruments"),
+                                                  CFSTR("dls"), NULL);
+
+    err = GetSequenceAudioUnitMatching(sequence, &ctx.aunit,
+                                 kAudioUnitType_MusicDevice,
+                                 kAudioUnitSubType_DLSSynth);
+    if (err != noErr)
+        return;
+
+    Mix_EachSoundFont(macosx_load_soundfont, &ctx);
+    if (ctx.default_url)
+        CFRelease(ctx.default_url);
+    return;
+}
 
 int native_midi_detect(void)
 {
@@ -237,7 +304,10 @@ void native_midi_start(NativeMidiSong *song, int loops)
     currentsong->loops = loops;
 
     MusicPlayerPreroll(song->player);
-    GetSequenceAudioUnit(song->sequence, &song->audiounit);
+    GetSequenceAudioUnitMatching(song->sequence, &song->audiounit,
+                                 kAudioUnitType_Output,
+                                 kAudioUnitSubType_DefaultOutput);
+    SetSequenceSoundFont(song->sequence);
 
     vol = latched_volume;
     latched_volume++;  /* just make this not match. */
