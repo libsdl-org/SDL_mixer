@@ -280,14 +280,14 @@ void native_midi_start(NativeMidiSong *song, int loops)
     currentsong->loops = loops;
 
     MusicPlayerPreroll(song->player);
-    MusicPlayerSetTime(song->player, 0);
-    MusicPlayerStart(song->player);
-
     GetSequenceAudioUnit(song->sequence, &song->audiounit);
 
     vol = latched_volume;
     latched_volume++;  /* just make this not match. */
     native_midi_setvolume(vol);
+
+    MusicPlayerSetTime(song->player, 0);
+    MusicPlayerStart(song->player);
 
     SDL_LockAudio();
     SDL_PauseAudio(0);
@@ -342,4 +342,3 @@ const char *native_midi_error(void)
 }
 
 #endif /* Mac OS X native MIDI support */
-
