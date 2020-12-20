@@ -377,4 +377,3 @@ const char *native_midi_error(void)
 }
 
 #endif /* Mac OS X native MIDI support */
-

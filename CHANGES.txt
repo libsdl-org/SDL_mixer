@@ -1,4 +1,6 @@
 2.0.5:
+michaeljosephmaltese - Tue Nov 24 22:07:14 2020
+ * Support setting soundfont via SDL_SOUNDFONTS in OSX native midi
 David Gow - Fri Oct 23 23:01:00 2020
  * Fixed mp3 file detection.
 Ozkan Sezer - Sat Jun 27 00:50:04 2020
