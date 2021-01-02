@@ -677,8 +677,6 @@ AC_SUBST(SDL_VERSION)
 AC_SUBST(SDL_CFLAGS)
 AC_SUBST(SDL_LIBS)
 
-AC_OUTPUT([
-])
 AC_CONFIG_FILES([
     Makefile SDL_mixer.spec SDL_mixer.qpg SDL_mixer.pc
 ])
