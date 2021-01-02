@@ -78,7 +78,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>_USRDLL;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DLL_EXPORT;_USRDLL;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAsWinRT>false</CompileAsWinRT>
@@ -94,7 +94,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <PreprocessorDefinitions>_USRDLL;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";MUSIC_MID_TIMIDITY;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DLL_EXPORT;_USRDLL;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";MUSIC_MID_TIMIDITY;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAsWinRT>false</CompileAsWinRT>
@@ -110,7 +110,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
-      <PreprocessorDefinitions>_USRDLL;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DLL_EXPORT;_USRDLL;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAsWinRT>false</CompileAsWinRT>
@@ -126,7 +126,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <ClCompile>
-      <PreprocessorDefinitions>_USRDLL;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";MUSIC_MID_TIMIDITY;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DLL_EXPORT;_USRDLL;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";MUSIC_MID_TIMIDITY;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <CompileAsWinRT>false</CompileAsWinRT>

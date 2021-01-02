@@ -209,7 +209,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.6\include;..\..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DLL_EXPORT;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -222,7 +222,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.6\include;..\..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DLL_EXPORT;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -235,7 +235,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.6\include;..\..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DLL_EXPORT;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -248,7 +248,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.6\include;..\..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DLL_EXPORT;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -261,7 +261,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.6\include;..\..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DLL_EXPORT;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -274,7 +274,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>..\..\external\libogg-1.3.2\include;..\..\external\libvorbis-1.3.6\include;..\..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DLL_EXPORT;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_OGG;OGG_DYNAMIC="libvorbisfile.dll";MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
