@@ -285,9 +285,10 @@ static void FLUIDSYNTH_Stop(void *context)
 static void FLUIDSYNTH_Delete(void *context)
 {
     FLUIDSYNTH_Music *music = (FLUIDSYNTH_Music *)context;
+    fluid_settings_t *settings = fluidsynth.fluid_synth_get_settings(music->synth);
     fluidsynth.delete_fluid_player(music->player);
-    fluidsynth.delete_fluid_settings(fluidsynth.fluid_synth_get_settings(music->synth));
     fluidsynth.delete_fluid_synth(music->synth);
+    fluidsynth.delete_fluid_settings(settings);
     SDL_free(music);
 }
 
