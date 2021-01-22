@@ -152,10 +152,12 @@ FluidSynthMidiSong *fluidsynth_loadsong_RW(SDL_RWops *rw, int freerw)
 
 void fluidsynth_freesong(FluidSynthMidiSong *song)
 {
+	fluid_settings_t *settings;
 	if (!song) return;
+	settings = fluidsynth.fluid_synth_get_settings(song->synth);
 	fluidsynth.delete_fluid_player(song->player);
-	fluidsynth.delete_fluid_settings(fluidsynth.fluid_synth_get_settings(song->synth));
 	fluidsynth.delete_fluid_synth(song->synth);
+	fluidsynth.delete_fluid_settings(settings);
 	SDL_free(song);
 }
 
