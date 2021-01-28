@@ -28,6 +28,7 @@ struct mp3file_t {
 };
 
 extern int mp3_skiptags(struct mp3file_t *fil);
+extern int MP3_RWinit(struct mp3file_t *fil, SDL_RWops *src);
 extern int MP3_RWread(struct mp3file_t *fil, void *ptr, int size, int maxnum);
 extern int MP3_RWseek(struct mp3file_t *fil, int offset, int whence);
 

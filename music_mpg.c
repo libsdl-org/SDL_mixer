@@ -103,27 +103,23 @@ mpg_data*
 mpg_new_rw(SDL_RWops *src, SDL_AudioSpec* mixer, int freesrc)
 {
     int fmt, result;
-    int pos;
     mpg_data* m = NULL;
 
     if (!Mix_Init(MIX_INIT_MP3)) {
         goto fail;
     }
 
-    m = (mpg_data*)SDL_malloc(sizeof(mpg_data));
+    m = (mpg_data*)SDL_calloc(1, sizeof(mpg_data));
     if (!m) {
         SDL_OutOfMemory();
         goto fail;
     }
 
-    SDL_memset(m, 0, sizeof(mpg_data));
-
-    m->mp3file.rw = src;
     m->freesrc = freesrc;
 
-    pos = SDL_RWtell(src);
-    m->mp3file.length = SDL_RWseek(src, 0, RW_SEEK_END);
-    SDL_RWseek(src, pos, RW_SEEK_SET);
+    if (MP3_RWinit(&m->mp3file, src) < 0) {
+        goto fail;
+    }
     if (mp3_skiptags(&m->mp3file) < 0) {
         Mix_SetError("music_mpg: corrupt mp3 file (bad tags.)");
         goto fail;

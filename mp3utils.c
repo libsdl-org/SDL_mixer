@@ -20,6 +20,7 @@
 */
 
 #include "SDL_stdinc.h"
+#include "SDL_error.h"
 #include "SDL_rwops.h"
 
 #include "mp3utils.h"
@@ -27,6 +28,19 @@
 #if defined(MP3_MAD_MUSIC) || defined(MP3_MUSIC)
 
 /*********************** SDL_RW WITH BOOKKEEPING ************************/
+
+int MP3_RWinit(struct mp3file_t *fil, SDL_RWops *src) {
+    fil->rw = src;
+    fil->start = SDL_RWtell(src);
+    fil->length = SDL_RWseek(src, 0, RW_SEEK_END) - fil->start;
+    fil->pos = 0;
+    if (fil->start < 0 || fil->length < 0) {
+        SDL_Error(SDL_EFSEEK);
+        return -1;
+    }
+    SDL_RWseek(src, fil->start, RW_SEEK_SET);
+    return 0;
+}
 
 int MP3_RWread(struct mp3file_t *fil, void *ptr, int size, int maxnum) {
     int remaining = fil->length - fil->pos;
@@ -54,7 +68,7 @@ int MP3_RWseek(struct mp3file_t *fil, int offset, int whence) {
     ret = SDL_RWseek(fil->rw, fil->start + offset, RW_SEEK_SET);
     if (ret < 0) return ret;
     fil->pos = offset;
-    return (fil->pos - fil->start);
+    return offset;
 }
 
 
