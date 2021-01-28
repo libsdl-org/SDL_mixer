@@ -226,12 +226,15 @@ static void *MPG123_CreateFromRW(SDL_RWops *src, int freesrc)
 
     music = (MPG123_Music*)SDL_calloc(1, sizeof(*music));
     if (!music) {
+        SDL_OutOfMemory();
         return NULL;
     }
-    music->mp3file.src = src;
     music->volume = MIX_MAX_VOLUME;
 
-    music->mp3file.length = SDL_RWsize(src);
+    if (MP3_RWinit(&music->mp3file, src) < 0) {
+        SDL_free(music);
+        return NULL;
+    }
     if (mp3_skiptags(&music->mp3file, SDL_TRUE) < 0) {
         SDL_free(music);
         Mix_SetError("music_mpg123: corrupt mp3 file (bad tags.)");
@@ -298,8 +301,8 @@ static void *MPG123_CreateFromRW(SDL_RWops *src, int freesrc)
         return NULL;
     }
 #ifdef DEBUG_MPG123
-        printf("MPG123 format: %s, channels: %d, rate: %ld\n",
-                mpg123_format_str(encoding), channels, rate);
+    printf("MPG123 format: %s, channels: %d, rate: %ld\n",
+            mpg123_format_str(encoding), channels, rate);
 #endif
 
     format = mpg123_format_to_sdl(encoding);
