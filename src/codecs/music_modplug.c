@@ -72,8 +72,7 @@ static int MODPLUG_Load(void)
         }
 #elif defined(__MACOSX__)
         extern ModPlugFile* ModPlug_Load(const void* data, int size) __attribute__((weak_import));
-        if (ModPlug_Load == NULL)
-        {
+        if (ModPlug_Load == NULL) {
             /* Missing weakly linked framework */
             Mix_SetError("Missing modplug.framework");
             return -1;
@@ -152,7 +151,7 @@ static int MODPLUG_Open(const SDL_AudioSpec *spec)
     settings.mBassRange = 50;
     settings.mSurroundDepth = 0;
     settings.mSurroundDelay = 10;
-    settings.mLoopCount = 0;
+    settings.mLoopCount = -1;
     modplug.ModPlug_SetSettings(&settings);
     return 0;
 }
@@ -270,6 +269,7 @@ static int MODPLUG_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     }
     return 0;
 }
+
 static int MODPLUG_GetAudio(void *context, void *data, int bytes)
 {
     return music_pcm_getaudio(context, data, bytes, MIX_MAX_VOLUME, MODPLUG_GetSome);
