@@ -19,8 +19,6 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-/* $Id: music_mod.h 4211 2008-12-08 00:27:32Z slouken $ */
-
 #ifdef MOD_MUSIC
 
 /* This file supports MOD tracker music streams */
@@ -42,7 +40,7 @@ extern void MOD_setvolume(struct MODULE *music, int volume);
 extern struct MODULE *MOD_new_RW(SDL_RWops *rw, int freerw);
 
 /* Start playback of a given MOD stream */
-extern void MOD_play(struct MODULE *music);
+extern void MOD_play(struct MODULE *music, int volume);
 
 /* Return non-zero if a stream is currently playing */
 extern int MOD_playing(struct MODULE *music);

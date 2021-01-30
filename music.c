@@ -19,8 +19,6 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-/* $Id$ */
-
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -902,7 +900,7 @@ static int music_internal_play(Mix_Music *music, double position)
 #endif
 #ifdef MOD_MUSIC
 	    case MUS_MOD:
-		MOD_play(music->data.module);
+		MOD_play(music->data.module, music_volume);
 		/* Player_SetVolume() does nothing before Player_Start() */
 		music_internal_initialize_volume();
 		break;
