@@ -11,6 +11,7 @@
 - WAV loader: fixed double free in LoadWAVStream (bug #2604)
 - WAV loader: fixed possible memory overflow in Mix_LoadWAV_RW
   (bug #2670)
+- MOD loader (mikmod): fixed volume and loop support (bug #1558)
 - MOD loader (mikmod): fixed failing to load XM modules (bug #4107)
 - MOD loader (mikmod): fixed malloc/free mismatches
 - Midi (timidity): fixed possible stack corruption during config read

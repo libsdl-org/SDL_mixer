@@ -19,8 +19,6 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-/* $Id: music_mod.c 4211 2008-12-08 00:27:32Z slouken $ */
-
 #ifdef MOD_MUSIC
 
 /* This file supports MOD tracker music streams */
@@ -228,15 +226,12 @@ MODULE *MOD_new_RW(SDL_RWops *rw, int freerw)
 		return NULL;
 	}
 
-	/* Stop implicit looping, fade out and other flags. */
+	/* Allow implicit looping, disable fade out and other flags. */
 	module->extspd  = 1;
 	module->panflag = 1;
 	module->wrap    = 0;
-	module->loop    = 0;
-#if 0 /* Don't set fade out by default - unfortunately there's no real way
-to query the status of the song or set trigger actions.  Hum. */
-	module->fadeout = 1;
-#endif
+	module->loop    = 1;
+	module->fadeout = 0;
 
 	if ( freerw ) {
 		SDL_RWclose(rw);
@@ -245,8 +240,9 @@ to query the status of the song or set trigger actions.  Hum. */
 }
 
 /* Start playback of a given MOD stream */
-void MOD_play(MODULE *music)
+void MOD_play(MODULE *music, int volume)
 {
+	music->initvolume = (UBYTE)volume;
 	mikmod.Player_Start(music);
 }
 
