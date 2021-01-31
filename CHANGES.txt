@@ -1,4 +1,14 @@
 2.0.5:
+Ozkan Sezer - Sun Jan 31 10:03:10 2021
+ * Added libxmp support for mod music playback, partially based on
+   work by Vitaly Novichkov
+Ozkan Sezer - Sun Jan 31 00:33:00 2021
+ * Fixed mikmod player reader issue with umx files
+ * Enabled module internal loops in modplug player
+Ozkan Sezer - Thu Jan 28 17:02:25 2021
+ * Respect original mp3 file offset
+Sam Lantinga - Wed Jan 20 10:17:10 2021
+ * Fixed a used-after-free issue in fluidsynth player
 michaeljosephmaltese - Tue Nov 24 22:07:14 2020
  * Support setting soundfont via SDL_SOUNDFONTS in OSX native midi
 David Gow - Fri Oct 23 23:01:00 2020
