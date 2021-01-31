@@ -39,6 +39,7 @@ typedef enum
     MIX_MUSIC_MAD,
     MIX_MUSIC_FLAC,
     MIX_MUSIC_OPUS,
+    MIX_MUSIC_LIBXMP,
     MIX_MUSIC_LAST
 } Mix_MusicAPI;
 

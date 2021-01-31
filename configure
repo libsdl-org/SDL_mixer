@@ -784,6 +784,8 @@ ac_aux_dir
 OPUSFILE_LIBS
 OPUSFILE_CFLAGS
 LIBMIKMOD_CONFIG
+XMP_LIBS
+XMP_CFLAGS
 MODPLUG_LIBS
 MODPLUG_CFLAGS
 SDL2_CONFIG
@@ -901,6 +903,8 @@ enable_music_wave
 enable_music_mod
 enable_music_mod_modplug
 enable_music_mod_modplug_shared
+enable_music_mod_xmp
+enable_music_mod_xmp_shared
 enable_music_mod_mikmod
 enable_music_mod_mikmod_shared
 enable_music_midi
@@ -938,6 +942,8 @@ SDL_CFLAGS
 SDL_LIBS
 MODPLUG_CFLAGS
 MODPLUG_LIBS
+XMP_CFLAGS
+XMP_LIBS
 OPUSFILE_CFLAGS
 OPUSFILE_LIBS'
 
@@ -1566,6 +1572,9 @@ Optional Features:
                           enable MOD music via modplug [[default=yes]]
   --enable-music-mod-modplug-shared
                           dynamically load modplug library [[default=yes]]
+  --enable-music-mod-xmp  enable MOD music via libxmp [[default=no]]
+  --enable-music-mod-xmp-shared
+                          dynamically load xmp library [[default=yes]]
   --enable-music-mod-mikmod
                           enable MOD music via mikmod [[default=no]]
   --enable-music-mod-mikmod-shared
@@ -1631,6 +1640,8 @@ Some influential environment variables:
               C compiler flags for MODPLUG, overriding pkg-config
   MODPLUG_LIBS
               linker flags for MODPLUG, overriding pkg-config
+  XMP_CFLAGS  C compiler flags for XMP, overriding pkg-config
+  XMP_LIBS    linker flags for XMP, overriding pkg-config
   OPUSFILE_CFLAGS
               C compiler flags for OPUSFILE, overriding pkg-config
   OPUSFILE_LIBS
@@ -3939,13 +3950,13 @@ if ${lt_cv_nm_interface+:} false; then :
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:3942: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:3953: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:3945: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:3956: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:3948: output\"" >&5)
+  (eval echo "\"\$as_me:3959: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -5156,7 +5167,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 5159 "configure"' > conftest.$ac_ext
+  echo '#line 5170 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -6986,11 +6997,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:6989: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7000: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:6993: \$? = $ac_status" >&5
+   echo "$as_me:7004: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7325,11 +7336,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7328: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7339: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7332: \$? = $ac_status" >&5
+   echo "$as_me:7343: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7430,11 +7441,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7433: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7444: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:7437: \$? = $ac_status" >&5
+   echo "$as_me:7448: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -7485,11 +7496,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7488: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7499: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:7492: \$? = $ac_status" >&5
+   echo "$as_me:7503: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -9855,7 +9866,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 9858 "configure"
+#line 9869 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -9951,7 +9962,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 9954 "configure"
+#line 9965 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -11915,6 +11926,216 @@ $as_echo "$as_me: WARNING: *** Unable to find ModPlug library (http://modplug-xm
     fi
 fi
 
+# Check whether --enable-music-mod-xmp was given.
+if test "${enable_music_mod_xmp+set}" = set; then :
+  enableval=$enable_music_mod_xmp;
+else
+  enable_music_mod_xmp=no
+fi
+
+# Check whether --enable-music-mod-xmp-shared was given.
+if test "${enable_music_mod_xmp_shared+set}" = set; then :
+  enableval=$enable_music_mod_xmp_shared;
+else
+  enable_music_mod_xmp_shared=yes
+fi
+
+if test x$enable_music_mod = xyes -a x$enable_music_mod_xmp = xyes; then
+
+pkg_failed=no
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for libxmp >= 4.2" >&5
+$as_echo_n "checking for libxmp >= 4.2... " >&6; }
+
+if test -n "$XMP_CFLAGS"; then
+    pkg_cv_XMP_CFLAGS="$XMP_CFLAGS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libxmp >= 4.2\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "libxmp >= 4.2") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_XMP_CFLAGS=`$PKG_CONFIG --cflags "libxmp >= 4.2" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+if test -n "$XMP_LIBS"; then
+    pkg_cv_XMP_LIBS="$XMP_LIBS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libxmp >= 4.2\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "libxmp >= 4.2") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_XMP_LIBS=`$PKG_CONFIG --libs "libxmp >= 4.2" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+
+
+
+if test $pkg_failed = yes; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
+        _pkg_short_errors_supported=yes
+else
+        _pkg_short_errors_supported=no
+fi
+        if test $_pkg_short_errors_supported = yes; then
+	        XMP_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "libxmp >= 4.2" 2>&1`
+        else
+	        XMP_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "libxmp >= 4.2" 2>&1`
+        fi
+	# Put the nasty error message in config.log where it belongs
+	echo "$XMP_PKG_ERRORS" >&5
+
+	            ac_fn_c_check_header_mongrel "$LINENO" "xmp.h" "ac_cv_header_xmp_h" "$ac_includes_default"
+if test "x$ac_cv_header_xmp_h" = xyes; then :
+  have_libxmp_hdr=yes
+fi
+
+
+            { $as_echo "$as_me:${as_lineno-$LINENO}: checking for xmp_load_module_from_memory in -lxmp" >&5
+$as_echo_n "checking for xmp_load_module_from_memory in -lxmp... " >&6; }
+if ${ac_cv_lib_xmp_xmp_load_module_from_memory+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lxmp  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char xmp_load_module_from_memory ();
+int
+main ()
+{
+return xmp_load_module_from_memory ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_xmp_xmp_load_module_from_memory=yes
+else
+  ac_cv_lib_xmp_xmp_load_module_from_memory=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_xmp_xmp_load_module_from_memory" >&5
+$as_echo "$ac_cv_lib_xmp_xmp_load_module_from_memory" >&6; }
+if test "x$ac_cv_lib_xmp_xmp_load_module_from_memory" = xyes; then :
+  have_libxmp_lib=yes;XMP_LIBS="-lxmp"
+fi
+
+
+elif test $pkg_failed = untried; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+	            ac_fn_c_check_header_mongrel "$LINENO" "xmp.h" "ac_cv_header_xmp_h" "$ac_includes_default"
+if test "x$ac_cv_header_xmp_h" = xyes; then :
+  have_libxmp_hdr=yes
+fi
+
+
+            { $as_echo "$as_me:${as_lineno-$LINENO}: checking for xmp_load_module_from_memory in -lxmp" >&5
+$as_echo_n "checking for xmp_load_module_from_memory in -lxmp... " >&6; }
+if ${ac_cv_lib_xmp_xmp_load_module_from_memory+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lxmp  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char xmp_load_module_from_memory ();
+int
+main ()
+{
+return xmp_load_module_from_memory ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_xmp_xmp_load_module_from_memory=yes
+else
+  ac_cv_lib_xmp_xmp_load_module_from_memory=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_xmp_xmp_load_module_from_memory" >&5
+$as_echo "$ac_cv_lib_xmp_xmp_load_module_from_memory" >&6; }
+if test "x$ac_cv_lib_xmp_xmp_load_module_from_memory" = xyes; then :
+  have_libxmp_lib=yes;XMP_LIBS="-lxmp"
+fi
+
+
+else
+	XMP_CFLAGS=$pkg_cv_XMP_CFLAGS
+	XMP_LIBS=$pkg_cv_XMP_LIBS
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+	            have_libxmp_hdr=yes
+            have_libxmp_lib=yes
+
+fi
+
+    if test x$have_libxmp_hdr = xyes -a x$have_libxmp_lib = xyes; then
+        have_libxmp=yes
+        case "$host" in
+            *-*-darwin*)
+                xmp_lib=`find_lib libxmp.dylib`
+                ;;
+            *-*-cygwin* | *-*-mingw32*)
+                xmp_lib=`find_lib "libxmp*.dll"`
+                ;;
+            *)
+                xmp_lib=`find_lib "libxmp[0-9]*.so.*"`
+                if test x$xmp_lib = x; then
+                    xmp_lib=`find_lib "libxmp.so.*"`
+                fi
+                ;;
+        esac
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MOD_XMP $XMP_CFLAGS"
+        if test x$enable_music_mod_xmp_shared = xyes && test x$xmp_lib != x; then
+            echo "-- dynamic libxmp -> $xmp_lib"
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DXMP_DYNAMIC=\\\"$xmp_lib\\\""
+        else
+            EXTRA_LDFLAGS="$EXTRA_LDFLAGS $XMP_LIBS"
+        fi
+    else
+        { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: *** Unable to find xmp library (http://xmp.sourceforge.net/)" >&5
+$as_echo "$as_me: WARNING: *** Unable to find xmp library (http://xmp.sourceforge.net/)" >&2;}
+    fi
+fi
+
 # Check whether --enable-music-mod-mikmod was given.
 if test "${enable_music_mod_mikmod+set}" = set; then :
   enableval=$enable_music_mod_mikmod;
@@ -12047,7 +12268,7 @@ $as_echo "$as_me: WARNING: *** Unable to find MikMod library (http://mikmod.raph
     CFLAGS="$CFLAGS_SAVED"
 fi
 
-if test x$have_libmodplug != xyes -a x$have_libmikmod != xyes ; then
+if test x$have_libmodplug != xyes -a x$have_libmikmod != xyes -a x$have_libxmp != xyes; then
     { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: MOD support disabled" >&5
 $as_echo "$as_me: WARNING: MOD support disabled" >&2;}
 fi
