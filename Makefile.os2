@@ -25,7 +25,7 @@ USE_FLAC=yes
 # opus music support
 USE_OPUS=yes
 # mp3 music support (using libmad)
-#USE_MP3=no
+USE_LIBMAD=no
 # mp3 music support (using mpg123)
 USE_MPG123=yes
 # midi music support (using timidity)
@@ -33,7 +33,9 @@ USE_TIMIDITY=yes
 # midi music support (using fluidsynth)
 USE_FLUIDSYNTH=no
 # tracker music support (using libmikmod)
-USE_MOD=yes
+USE_MIKMOD=no
+# tracker music support (using libxmp)
+USE_XMP=yes
 # tracker music support (using libmodplug)
 USE_MODPLUG=no
 
@@ -47,7 +49,7 @@ SRCS = compat.c effect_position.c effects_internal.c effect_stereoreverse.c mixe
 SRCS+= load_aiff.c load_voc.c music_wav.c &
        mp3utils.c music_mad.c music_mpg123.c &
        music_ogg.c music_opus.c music_flac.c &
-       music_mikmod.c music_modplug.c &
+       music_xmp.c music_mikmod.c music_modplug.c &
        music_fluidsynth.c music_timidity.c
 # timidity sources:
 TIMISRCS = common.c instrum.c mix.c output.c playmidi.c readmidi.c resample.c tables.c timidity.c
@@ -109,7 +111,7 @@ LIBS+= ogg.lib
 !endif
 !endif
 
-!ifeq USE_MP3 yes
+!ifeq USE_LIBMAD yes
 CFLAGS+= -DMUSIC_MP3_MAD
 LIBS+= mad.lib
 !endif
@@ -118,7 +120,11 @@ CFLAGS+= -DMUSIC_MP3_MPG123
 LIBS+= mpg123.lib
 !endif
 
-!ifeq USE_MOD yes
+!ifeq USE_XMP yes
+CFLAGS+= -DMUSIC_MOD_XMP
+LIBS+= libxmp.lib
+!endif
+!ifeq USE_MIKMOD yes
 CFLAGS+= -DMUSIC_MOD_MIKMOD
 LIBS+= mikmod.lib
 !endif
