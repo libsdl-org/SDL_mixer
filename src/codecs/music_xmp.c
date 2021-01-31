@@ -115,7 +115,6 @@ typedef struct
     struct xmp_module_info mi;
     struct xmp_frame_info fi;
     xmp_context ctx;
-    int has_module;
     SDL_AudioStream *stream;
     void *buffer;
     int buffer_size;
@@ -155,7 +154,7 @@ static void libxmp_set_error(int e)
         msg = "Unknown error";
         break;
     }
-    Mix_SetError(msg);
+    Mix_SetError("XMP: %s", msg);
 }
 
 /* Load a libxmp stream from an SDL_RWops object */
@@ -210,8 +209,6 @@ void *XMP_CreateFromRW(SDL_RWops *src, int freesrc)
     if (!music->stream) {
         goto e3;
     }
-
-    music->has_module = 1;
 
     meta_tags_init(&music->tags);
     libxmp.xmp_get_module_info(music->ctx, &music->mi);
