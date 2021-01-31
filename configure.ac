@@ -278,6 +278,49 @@ if test x$enable_music_mod = xyes -a x$enable_music_mod_modplug = xyes; then
     fi
 fi
 
+AC_ARG_ENABLE([music-mod-xmp],
+AS_HELP_STRING([--enable-music-mod-xmp], [enable MOD music via libxmp [[default=no]]]),
+              [], [enable_music_mod_xmp=no])
+AC_ARG_ENABLE([music-mod-xmp-shared],
+AS_HELP_STRING([--enable-music-mod-xmp-shared], [dynamically load xmp library [[default=yes]]]),
+              [], [enable_music_mod_xmp_shared=yes])
+if test x$enable_music_mod = xyes -a x$enable_music_mod_xmp = xyes; then
+    PKG_CHECK_MODULES([XMP], [libxmp >= 4.2], [dnl
+            have_libxmp_hdr=yes
+            have_libxmp_lib=yes
+        ], [dnl
+            AC_CHECK_HEADER([xmp.h], [have_libxmp_hdr=yes])
+            AC_CHECK_LIB([xmp], [xmp_load_module_from_memory], [have_libxmp_lib=yes;XMP_LIBS="-lxmp"])
+        ])
+
+    if test x$have_libxmp_hdr = xyes -a x$have_libxmp_lib = xyes; then
+        have_libxmp=yes
+        case "$host" in
+            *-*-darwin*)
+                xmp_lib=[`find_lib libxmp.dylib`]
+                ;;
+            *-*-cygwin* | *-*-mingw32*)
+                xmp_lib=[`find_lib "libxmp*.dll"`]
+                ;;
+            *)
+                xmp_lib=[`find_lib "libxmp[0-9]*.so.*"`]
+                if test x$xmp_lib = x; then
+                    xmp_lib=[`find_lib "libxmp.so.*"`]
+                fi
+                ;;
+        esac
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MOD_XMP $XMP_CFLAGS"
+        if test x$enable_music_mod_xmp_shared = xyes && test x$xmp_lib != x; then
+            echo "-- dynamic libxmp -> $xmp_lib"
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DXMP_DYNAMIC=\\\"$xmp_lib\\\""
+        else
+            EXTRA_LDFLAGS="$EXTRA_LDFLAGS $XMP_LIBS"
+        fi
+    else
+        AC_MSG_WARN([*** Unable to find xmp library (http://xmp.sourceforge.net/)])
+    fi
+fi
+
 AC_ARG_ENABLE([music-mod-mikmod],
 AS_HELP_STRING([--enable-music-mod-mikmod], [enable MOD music via mikmod [[default=no]]]),
               [], [enable_music_mod_mikmod=no])
@@ -345,7 +388,7 @@ return 1;
     CFLAGS="$CFLAGS_SAVED"
 fi
 
-if test x$have_libmodplug != xyes -a x$have_libmikmod != xyes ; then
+if test x$have_libmodplug != xyes -a x$have_libmikmod != xyes -a x$have_libxmp != xyes; then
     AC_MSG_WARN([MOD support disabled])
 fi
 
