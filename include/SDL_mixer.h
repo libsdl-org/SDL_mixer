@@ -578,7 +578,7 @@ extern DECLSPEC int SDLCALL Mix_Volume(int channel, int volume);
 extern DECLSPEC int SDLCALL Mix_VolumeChunk(Mix_Chunk *chunk, int volume);
 extern DECLSPEC int SDLCALL Mix_VolumeMusic(int volume);
 /* Get the current volume value in the range of 0-128 of a music stream */
-extern DECLSPEC int SDLCALL Mix_GetVolumeMusicStream(Mix_Music *music);
+extern DECLSPEC int SDLCALL Mix_GetMusicVolume(Mix_Music *music);
 
 /* Halt playing of a particular channel */
 extern DECLSPEC int SDLCALL Mix_HaltChannel(int channel);

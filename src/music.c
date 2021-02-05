@@ -1059,8 +1059,6 @@ double Mix_GetMusicLoopLengthTime(Mix_Music *music)
     return(retval);
 }
 
-
-
 /* Set the music's initial volume */
 static void music_internal_initialize_volume(void)
 {
@@ -1098,7 +1096,7 @@ int Mix_VolumeMusic(int volume)
     return(prev_volume);
 }
 
-int Mix_GetVolumeMusicStream(Mix_Music *music)
+int Mix_GetMusicVolume(Mix_Music *music)
 {
     int prev_volume;
 
@@ -1270,13 +1268,13 @@ int Mix_SetMusicCMD(const char *command)
 int Mix_SetSynchroValue(int i)
 {
     /* Not supported by any players at this time */
-    return(-1);
+    return -1;
 }
 
 int Mix_GetSynchroValue(void)
 {
     /* Not supported by any players at this time */
-    return(-1);
+    return -1;
 }
 
 
