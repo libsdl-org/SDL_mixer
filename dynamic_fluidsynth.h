@@ -30,9 +30,14 @@ typedef struct {
 	int loaded;
 	void *handle;
 
+#if (FLUIDSYNTH_VERSION_MAJOR >= 2)
+	void (*delete_fluid_player)(fluid_player_t*);
+	void (*delete_fluid_synth)(fluid_synth_t*);
+#else
 	int (*delete_fluid_player)(fluid_player_t*);
-	void (*delete_fluid_settings)(fluid_settings_t*);
 	int (*delete_fluid_synth)(fluid_synth_t*);
+#endif
+	void (*delete_fluid_settings)(fluid_settings_t*);
 	int (*fluid_player_add)(fluid_player_t*, const char*);
 	int (*fluid_player_add_mem)(fluid_player_t*, const void*, size_t);
 	int (*fluid_player_get_status)(fluid_player_t*);

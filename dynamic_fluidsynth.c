@@ -48,9 +48,14 @@ int Mix_InitFluidSynth()
 		if ( fluidsynth.handle == NULL ) return -1;
 #endif
 
+#if (FLUIDSYNTH_VERSION_MAJOR >= 2)
+		FLUIDSYNTH_LOADER(delete_fluid_player, void (*)(fluid_player_t*));
+		FLUIDSYNTH_LOADER(delete_fluid_synth, void (*)(fluid_synth_t*));
+#else
 		FLUIDSYNTH_LOADER(delete_fluid_player, int (*)(fluid_player_t*));
-		FLUIDSYNTH_LOADER(delete_fluid_settings, void (*)(fluid_settings_t*));
 		FLUIDSYNTH_LOADER(delete_fluid_synth, int (*)(fluid_synth_t*));
+#endif
+		FLUIDSYNTH_LOADER(delete_fluid_settings, void (*)(fluid_settings_t*));
 		FLUIDSYNTH_LOADER(fluid_player_add, int (*)(fluid_player_t*, const char*));
 		FLUIDSYNTH_LOADER(fluid_player_add_mem, int (*)(fluid_player_t*, const void*, size_t));
 		FLUIDSYNTH_LOADER(fluid_player_get_status, int (*)(fluid_player_t*));
