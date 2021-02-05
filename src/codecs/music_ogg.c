@@ -578,6 +578,7 @@ Mix_MusicInterface Mix_MusicInterface_OGG =
     OGG_Play,
     NULL,   /* IsPlaying */
     OGG_GetAudio,
+    NULL,   /* Jump */
     OGG_Seek,
     OGG_Tell,
     OGG_Duration,

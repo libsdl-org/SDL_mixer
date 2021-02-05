@@ -549,6 +549,7 @@ Mix_MusicInterface Mix_MusicInterface_Opus =
     OPUS_Play,
     NULL,   /* IsPlaying */
     OPUS_GetAudio,
+    NULL,   /* Jump */
     OPUS_Seek,
     OPUS_Tell,
     OPUS_Duration,

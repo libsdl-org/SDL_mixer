@@ -1199,6 +1199,7 @@ Mix_MusicInterface Mix_MusicInterface_WAV =
     WAV_Play,
     NULL,   /* IsPlaying */
     WAV_GetAudio,
+    NULL,       /* Jump */
     WAV_Seek,   /* Seek */
     WAV_Tell,   /* Tell */
     WAV_Duration,

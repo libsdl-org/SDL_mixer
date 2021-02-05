@@ -445,6 +445,14 @@ static int MIKMOD_GetAudio(void *context, void *data, int bytes)
     return music_pcm_getaudio(context, data, bytes, MIX_MAX_VOLUME, MIKMOD_GetSome);
 }
 
+/* Jump to a given order */
+static int MIKMOD_Jump(void *context, int order)
+{
+    (void)context;
+    mikmod.Player_SetPosition((UWORD)order);
+    return 0;
+}
+
 /* Jump (seek) to a given position (time is in seconds) */
 static int MIKMOD_Seek(void *context, double position)
 {
@@ -502,6 +510,7 @@ Mix_MusicInterface Mix_MusicInterface_MIKMOD =
     MIKMOD_Play,
     MIKMOD_IsPlaying,
     MIKMOD_GetAudio,
+    MIKMOD_Jump,
     MIKMOD_Seek,
     NULL,   /* Tell */
     NULL,   /* Duration */

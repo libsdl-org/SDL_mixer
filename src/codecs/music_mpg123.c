@@ -498,6 +498,7 @@ Mix_MusicInterface Mix_MusicInterface_MPG123 =
     MPG123_Play,
     NULL,   /* IsPlaying */
     MPG123_GetAudio,
+    NULL,   /* Jump */
     MPG123_Seek,
     MPG123_Tell,
     MPG123_Duration,

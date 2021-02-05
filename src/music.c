@@ -901,6 +901,26 @@ int Mix_PlayMusic(Mix_Music *music, int loops)
     return Mix_FadeInMusicPos(music, loops, 0, 0.0);
 }
 
+/* Jump to a given order in mod music. */
+int Mix_ModMusicJumpToOrder(int order)
+{
+    int retval = -1;
+
+    Mix_LockAudio();
+    if (music_playing) {
+        if (music_playing->interface->Jump) {
+            retval = music_playing->interface->Jump(music_playing->context, order);
+        } else {
+            Mix_SetError("Jump not implemented for music type");
+        }
+    } else {
+        Mix_SetError("Music isn't playing");
+    }
+    Mix_UnlockAudio();
+
+    return retval;
+}
+
 /* Set the playing music position */
 int music_internal_position(double position)
 {

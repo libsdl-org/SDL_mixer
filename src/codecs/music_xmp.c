@@ -41,6 +41,7 @@ typedef struct {
     void (*xmp_end_player)(xmp_context);
     void (*xmp_get_module_info)(xmp_context, struct xmp_module_info *);
     int (*xmp_play_buffer)(xmp_context, void *, int, int);
+    int (*xmp_set_position)(xmp_context, int);
     int (*xmp_seek_time)(xmp_context, int);
     void (*xmp_get_frame_info)(xmp_context, struct xmp_frame_info *);
     void (*xmp_stop_module)(xmp_context);
@@ -83,6 +84,7 @@ static int XMP_Load(void)
         FUNCTION_LOADER(xmp_end_player, void(*)(xmp_context))
         FUNCTION_LOADER(xmp_get_module_info, void(*)(xmp_context,struct xmp_module_info*))
         FUNCTION_LOADER(xmp_play_buffer, int(*)(xmp_context,void*,int,int))
+        FUNCTION_LOADER(xmp_set_position, int(*)(xmp_context,int))
         FUNCTION_LOADER(xmp_seek_time, int(*)(xmp_context,int))
         FUNCTION_LOADER(xmp_get_frame_info, void(*)(xmp_context,struct xmp_frame_info*))
         FUNCTION_LOADER(xmp_stop_module, void(*)(xmp_context))
@@ -303,6 +305,13 @@ static int XMP_GetAudio(void *context, void *data, int bytes)
     return music_pcm_getaudio(context, data, bytes, music->volume, XMP_GetSome);
 }
 
+/* Jump to a given order */
+static int XMP_Jump(void *context, int order)
+{
+    XMP_Music *music = (XMP_Music *)context;
+    return libxmp.xmp_set_position(music->ctx, order);
+}
+
 /* Jump (seek) to a given position */
 static int XMP_Seek(void *context, double pos)
 {
@@ -369,6 +378,7 @@ Mix_MusicInterface Mix_MusicInterface_XMP =
     XMP_Play,
     NULL,   /* IsPlaying */
     XMP_GetAudio,
+    XMP_Jump,
     XMP_Seek,
     XMP_Tell,
     XMP_Duration,
