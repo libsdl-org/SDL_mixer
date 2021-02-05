@@ -786,6 +786,7 @@ Mix_MusicInterface Mix_MusicInterface_FLAC =
     FLAC_Play,
     NULL,   /* IsPlaying */
     FLAC_GetAudio,
+    NULL,   /* Jump */
     FLAC_Seek,
     FLAC_Tell,
     FLAC_Duration,

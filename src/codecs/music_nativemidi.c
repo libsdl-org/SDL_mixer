@@ -100,6 +100,7 @@ Mix_MusicInterface Mix_MusicInterface_NATIVEMIDI =
     NATIVEMIDI_Play,
     NATIVEMIDI_IsPlaying,
     NULL,   /* GetAudio */
+    NULL,   /* Jump */
     NULL,   /* Seek */
     NULL,   /* Tell */
     NULL,   /* Duration */

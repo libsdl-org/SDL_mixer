@@ -108,6 +108,9 @@ typedef struct
     /* Get music data, returns the number of bytes left */
     int (*GetAudio)(void *music, void *data, int bytes);
 
+    /* Jump to a given order in mod music */
+    int (*Jump)(void *music, int order);
+
     /* Seek to a play position (in seconds) */
     int (*Seek)(void *music, double position);
 

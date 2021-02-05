@@ -473,6 +473,7 @@ Mix_MusicInterface Mix_MusicInterface_MAD =
     MAD_Play,
     NULL,   /* IsPlaying */
     MAD_GetAudio,
+    NULL,   /* Jump */
     MAD_Seek,
     NULL,   /* Tell */
     NULL,   /* Duration */

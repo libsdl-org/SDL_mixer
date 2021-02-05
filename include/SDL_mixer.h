@@ -614,6 +614,12 @@ extern DECLSPEC void SDLCALL Mix_ResumeMusic(void);
 extern DECLSPEC void SDLCALL Mix_RewindMusic(void);
 extern DECLSPEC int SDLCALL Mix_PausedMusic(void);
 
+/* Jump to a given order in mod music.
+   Returns 0 if successful, or -1 if failed or isn't implemented.
+   Only for MOD music formats.
+ */
+extern DECLSPEC int SDLCALL Mix_ModMusicJumpToOrder(int order);
+
 /* Set the current position in the music stream.
    This returns 0 if successful, or -1 if it failed or isn't implemented.
    This function is only implemented for MOD music formats (set pattern

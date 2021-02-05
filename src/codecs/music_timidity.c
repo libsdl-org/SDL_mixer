@@ -255,6 +255,7 @@ Mix_MusicInterface Mix_MusicInterface_TIMIDITY =
     TIMIDITY_Play,
     NULL,   /* IsPlaying */
     TIMIDITY_GetAudio,
+    NULL,   /* Jump */
     TIMIDITY_Seek,
     NULL,   /* Tell */
     TIMIDITY_Duration,
