@@ -1,4 +1,6 @@
 2.0.5:
+Ozkan Sezer - Fri Feb 05 14:33:50 2021
+ * Added Mix_ModMusicJumpToOrder for mod music formats
 Ozkan Sezer - Sun Jan 31 10:03:10 2021
  * Added libxmp support for mod music playback, partially based on
    work by Vitaly Novichkov
