@@ -26,6 +26,7 @@
 #include "SDL_loadso.h"
 
 #include "music_ogg.h"
+#include "utils.h"
 
 #define OV_EXCLUDE_STATIC_CALLBACKS
 #if defined(OGG_HEADER)
@@ -227,49 +228,6 @@ static int OGG_UpdateSection(OGG_music *music)
         return -1;
     }
     return 0;
-}
-
-/* Parse time string of the form HH:MM:SS.mmm and return equivalent sample
- * position */
-static ogg_int64_t parse_time(char *time, long samplerate_hz)
-{
-    char *num_start, *p;
-    ogg_int64_t result = 0;
-    char c; int val;
-
-    /* Time is directly expressed as a sample position */
-    if (SDL_strchr(time, ':') == NULL) {
-        return SDL_strtoll(time, NULL, 10);
-    }
-
-    result = 0;
-    num_start = time;
-
-    for (p = time; *p != '\0'; ++p) {
-        if (*p == '.' || *p == ':') {
-            c = *p; *p = '\0';
-            if ((val = SDL_atoi(num_start)) < 0)
-                return -1;
-            result = result * 60 + val;
-            num_start = p + 1;
-            *p = c;
-        }
-
-        if (*p == '.') {
-            return result * samplerate_hz
-                + (ogg_int64_t) (SDL_atof(p) * samplerate_hz);
-        }
-    }
-
-    if ((val = SDL_atoi(num_start)) < 0) return -1;
-    return (result * 60 + val) * samplerate_hz;
-}
-
-static SDL_bool is_loop_tag(const char *tag)
-{
-    char buf[5];
-    SDL_strlcpy(buf, tag, 5);
-    return SDL_strcasecmp(buf, "LOOP") == 0;
 }
 
 /* Load an OGG stream from an SDL_RWops object */

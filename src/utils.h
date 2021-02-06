@@ -22,6 +22,9 @@
 #ifndef UTILS_H_
 #define UTILS_H_
 
+/* misc helper routines */
+
+#include "SDL_stdinc.h"
 #include "SDL_version.h"
 
 #if SDL_VERSION_ATLEAST(2,0,12)
@@ -31,4 +34,12 @@
 extern char *SDL_strtokr(char *s1, const char *s2, char **saveptr);
 #endif
 
+/* Is given tag a loop tag? */
+extern SDL_bool is_loop_tag(const char *tag);
+
+/* Parse time string of the form HH:MM:SS.mmm and return equivalent sample
+ * position */
+extern Sint64 parse_time(char *time, long samplerate_hz);
+
 #endif /* UTILS_H_ */
+
