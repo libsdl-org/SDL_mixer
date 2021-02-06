@@ -41,7 +41,7 @@
 #include "music_flac.h"
 #include "native_midi/native_midi.h"
 
-#include "compat.h"
+#include "utils.h"
 
 /* Check to make sure we are building with a new enough SDL */
 #if SDL_COMPILEDVERSION < SDL_VERSIONNUM(2, 0, 7)
@@ -1437,7 +1437,7 @@ int Mix_EachSoundFont(int (SDLCALL *function)(const char*, void*), void *data)
         return 0;
     }
 
-#if defined(_WIN32)||defined(__OS2__)
+#if defined(_WIN32) || defined(__OS2__)
 #define PATHSEP ";"
 #else
 #define PATHSEP ":;"

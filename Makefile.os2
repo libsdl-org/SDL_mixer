@@ -44,7 +44,7 @@ DLLFILE = $(LIBNAME).dll
 LNKFILE = $(LIBNAME).lnk
 TIMILIB = timidity.lib
 
-SRCS = compat.c effect_position.c effects_internal.c effect_stereoreverse.c mixer.c music.c
+SRCS = utils.c effect_position.c effects_internal.c effect_stereoreverse.c mixer.c music.c
 # codec sources:
 SRCS+= load_aiff.c load_voc.c music_wav.c &
        mp3utils.c music_mad.c music_mpg123.c &

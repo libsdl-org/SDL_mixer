@@ -19,8 +19,8 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef COMPAT_H_
-#define COMPAT_H_
+#ifndef UTILS_H_
+#define UTILS_H_
 
 #include "SDL_version.h"
 
@@ -31,4 +31,4 @@
 extern char *SDL_strtokr(char *s1, const char *s2, char **saveptr);
 #endif
 
-#endif /* COMPAT_H_ */
+#endif /* UTILS_H_ */
