@@ -63,8 +63,8 @@ CFLAGS_BASE = -bt=os2 -d0 -q -bm -5s -fp5 -fpi87 -sg -oteanbmier -ei -j
 # warnings:
 CFLAGS_BASE+= -wx
 # include paths:
-CFLAGS_BASE+= -I"$(%WATCOM)/h/os2" -I"$(%WATCOM)/h"
 CFLAGS_BASE+= -Iinclude -Isrc -I"src/codecs" -I"src/codecs/timidity" $(DEPS_INC)
+CFLAGS_BASE+= -I"$(%WATCOM)/h/os2" -I"$(%WATCOM)/h"
 CFLAGS = $(CFLAGS_BASE)
 # to build a dll:
 CFLAGS+= -bd
