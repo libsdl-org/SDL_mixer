@@ -28,6 +28,7 @@
 #include "SDL_assert.h"
 
 #include "music_flac.h"
+#include "utils.h"
 
 #include <FLAC/stream_decoder.h>
 
@@ -363,50 +364,6 @@ static FLAC__StreamDecoderWriteStatus flac_write_music_cb(
     SDL_stack_free(data);
 
     return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
-}
-
-/* Parse time string of the form HH:MM:SS.mmm and return equivalent sample
- * position */
-static FLAC__int64 parse_time(char *time, unsigned samplerate_hz)
-{
-    char *num_start, *p;
-    FLAC__int64 result = 0;
-    char c; int val;
-
-    /* Time is directly expressed as a sample position */
-    if (SDL_strchr(time, ':') == NULL) {
-        return SDL_strtoll(time, NULL, 10);
-    }
-
-    result = 0;
-    num_start = time;
-
-    for (p = time; *p != '\0'; ++p) {
-        if (*p == '.' || *p == ':') {
-            c = *p; *p = '\0';
-            if ((val = SDL_atoi(num_start)) < 0)
-                return -1;
-            result = result * 60 + val;
-            num_start = p + 1;
-            *p = c;
-        }
-
-        if (*p == '.') {
-            double val_f = SDL_atof(p);
-            if (val_f < 0) return -1;
-            return result * samplerate_hz + (FLAC__int64) (val_f * samplerate_hz);
-        }
-    }
-
-    if ((val = SDL_atoi(num_start)) < 0) return -1;
-    return (result * 60 + val) * samplerate_hz;
-}
-
-static SDL_bool is_loop_tag(const char *tag)
-{
-    char buf[5];
-    SDL_strlcpy(buf, tag, 5);
-    return SDL_strcasecmp(buf, "LOOP") == 0;
 }
 
 static void flac_metadata_music_cb(
