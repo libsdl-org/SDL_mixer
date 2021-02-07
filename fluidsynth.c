@@ -67,7 +67,7 @@ int fluidsynth_init(SDL_AudioSpec *mixer)
 	if (freq < 8000) {
 		freq = 11025;
 	}
-	else if (freq > 96000)
+	else if (freq > 96000) {
 		freq = 44100;
 	}
 
