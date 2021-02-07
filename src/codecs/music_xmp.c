@@ -31,12 +31,19 @@
 #include <xmp.h>
 #endif
 
+/* libxmp >= 4.5.0 constified several funcs */
+#if (XMP_VERCODE < 0x040500)
+#define LIBXMP_CONST
+#else
+#define LIBXMP_CONST const
+#endif
+
 typedef struct {
     int loaded;
     void *handle;
 
     xmp_context (*xmp_create_context)(void);
-    int (*xmp_load_module_from_memory)(xmp_context, void *, long);
+    int (*xmp_load_module_from_memory)(xmp_context, LIBXMP_CONST void *, long);
     int (*xmp_start_player)(xmp_context, int, int);
     void (*xmp_end_player)(xmp_context);
     void (*xmp_get_module_info)(xmp_context, struct xmp_module_info *);
@@ -79,7 +86,7 @@ static int XMP_Load(void)
         }
 #endif
         FUNCTION_LOADER(xmp_create_context, xmp_context(*)(void))
-        FUNCTION_LOADER(xmp_load_module_from_memory, int(*)(xmp_context,void *,long))
+        FUNCTION_LOADER(xmp_load_module_from_memory, int(*)(xmp_context,LIBXMP_CONST void *,long))
         FUNCTION_LOADER(xmp_start_player, int(*)(xmp_context,int,int))
         FUNCTION_LOADER(xmp_end_player, void(*)(xmp_context))
         FUNCTION_LOADER(xmp_get_module_info, void(*)(xmp_context,struct xmp_module_info*))
