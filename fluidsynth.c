@@ -63,14 +63,6 @@ int fluidsynth_init(SDL_AudioSpec *mixer)
 	channels = mixer->channels;
 	freq = mixer->freq;
 
-	/* fluidsynth limits: */
-	if (freq < 8000) {
-		freq = 11025;
-	}
-	else if (freq > 96000) {
-		freq = 44100;
-	}
-
 	return 0;
 }
 
