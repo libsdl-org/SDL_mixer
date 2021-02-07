@@ -1,4 +1,7 @@
 2.0.5:
+Ozkan Sezer - Sun Feb 07 03:10:10 2021
+ * fixed distorted MIDI playback with FluidSynth if the sample rate
+   is out of library's limits
 Ozkan Sezer - Fri Feb 05 14:33:50 2021
  * Added Mix_ModMusicJumpToOrder for mod music formats
 Ozkan Sezer - Sun Jan 31 10:03:10 2021
