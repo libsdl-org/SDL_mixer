@@ -40,7 +40,7 @@ if (ANDROID)
         add_subdirectory(external/libogg-1.3.2)
         add_subdirectory(external/libvorbisidec-1.2.1)
         include_directories(external/libvorbisidec-1.2.1)
-        target_link_libraries(SDL2_mixer PRIVATE vorbisfile vorbisidec ogg)
+        target_link_libraries(SDL2_mixer PRIVATE vorbisidec ogg)
     endif()
 
     if (SUPPORT_MP3_MPG123)
