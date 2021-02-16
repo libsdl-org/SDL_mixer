@@ -1,6 +1,4 @@
-syntax:regexp
-^build
-syntax:glob
+build*
 autom4te*
 config.cache
 config.log
@@ -24,3 +22,5 @@ xcuserdata
 *.xcworkspace
 SDL2_mixer.pc
 SDL2_mixer.spec
+.vs
+.vscode
