@@ -166,7 +166,7 @@ static void SDLCALL _Eff_position_u8_c4(int chan, void *stream, int len, void *u
     }
 
     if (args->room_angle == 0)
-    for (i = 0; i < len; i += sizeof (Uint8) * 6) {
+    for (i = 0; i < len; i += sizeof (Uint8) * 4) {
         /* must adjust the sample so that 0 is the center */
         *ptr = (Uint8) ((Sint8) ((((float) (Sint8) (*ptr - 128))
             * args->left_f) * args->distance_f) + 128);
@@ -182,7 +182,7 @@ static void SDLCALL _Eff_position_u8_c4(int chan, void *stream, int len, void *u
         ptr++;
     }
     else if (args->room_angle == 90)
-    for (i = 0; i < len; i += sizeof (Uint8) * 6) {
+    for (i = 0; i < len; i += sizeof (Uint8) * 4) {
         /* must adjust the sample so that 0 is the center */
         *ptr = (Uint8) ((Sint8) ((((float) (Sint8) (*ptr - 128))
             * args->right_f) * args->distance_f) + 128);
@@ -198,7 +198,7 @@ static void SDLCALL _Eff_position_u8_c4(int chan, void *stream, int len, void *u
         ptr++;
     }
     else if (args->room_angle == 180)
-    for (i = 0; i < len; i += sizeof (Uint8) * 6) {
+    for (i = 0; i < len; i += sizeof (Uint8) * 4) {
         /* must adjust the sample so that 0 is the center */
         *ptr = (Uint8) ((Sint8) ((((float) (Sint8) (*ptr - 128))
             * args->right_rear_f) * args->distance_f) + 128);
@@ -214,7 +214,7 @@ static void SDLCALL _Eff_position_u8_c4(int chan, void *stream, int len, void *u
         ptr++;
     }
     else if (args->room_angle == 270)
-    for (i = 0; i < len; i += sizeof (Uint8) * 6) {
+    for (i = 0; i < len; i += sizeof (Uint8) * 4) {
         /* must adjust the sample so that 0 is the center */
         *ptr = (Uint8) ((Sint8) ((((float) (Sint8) (*ptr - 128))
             * args->left_rear_f) * args->distance_f) + 128);
