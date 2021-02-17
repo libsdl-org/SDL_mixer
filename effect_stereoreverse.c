@@ -50,7 +50,6 @@
 */
 
 
-
 /*
  * Stereo reversal effect...this one's pretty straightforward...
  */
@@ -65,7 +64,6 @@ static void SDLCALL _Eff_reversestereo16(int chan, void *stream, int len, void *
         *ptr = (((*ptr) & 0xFFFF0000) >> 16) | (((*ptr) & 0x0000FFFF) << 16);
     }
 }
-
 
 static void SDLCALL _Eff_reversestereo8(int chan, void *stream, int len, void *udata)
 {
@@ -86,7 +84,6 @@ static void SDLCALL _Eff_reversestereo8(int chan, void *stream, int len, void *u
     }
 }
 
-
 int Mix_SetReverseStereo(int channel, int flip)
 {
     Mix_EffectFunc_t f = NULL;
@@ -104,17 +101,11 @@ int Mix_SetReverseStereo(int channel, int flip)
             Mix_SetError("Unsupported audio format");
             return(0);
         }
-
-        if (!flip) {
-            return(Mix_UnregisterEffect(channel, f));
-        } else {
-            return(Mix_RegisterEffect(channel, f, NULL, NULL));
-        }
+        if (!flip) return Mix_UnregisterEffect(channel, f);
+        return(Mix_RegisterEffect(channel, f, NULL, NULL));
     }
 
     return(1);
 }
 
-
 /* end of effect_stereoreverse.c ... */
-

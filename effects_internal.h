@@ -19,8 +19,6 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-/* $Id$ */
-
 #ifndef _INCLUDE_EFFECTS_INTERNAL_H_
 #define _INCLUDE_EFFECTS_INTERNAL_H_
 
@@ -49,12 +47,9 @@ int _Mix_RegisterEffect_locked(int channel, Mix_EffectFunc_t f,
 int _Mix_UnregisterEffect_locked(int channel, Mix_EffectFunc_t f);
 int _Mix_UnregisterAllEffects_locked(int channel);
 
-
 /* Set up for C function definitions, even when using C++ */
 #ifdef __cplusplus
 }
 #endif
 
-
-#endif
-
+#endif /* _INCLUDE_EFFECTS_INTERNAL_H_ */
