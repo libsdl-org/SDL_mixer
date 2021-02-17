@@ -34,7 +34,7 @@
     #include <unistd.h>
     struct timeval tv1;
     struct timeval tv2;
-
+    
     gettimeofday(&tv1, NULL);
 
         ... do your thing here ...
@@ -100,7 +100,6 @@ static void SDLCALL _Eff_reversestereo8(int chan, void *stream, int len, void *u
                (((*ptr) & 0xFF000000) >> 8) | (((*ptr) & 0x00FF0000) << 8);
     }
 }
-
 
 int Mix_SetReverseStereo(int channel, int flip)
 {
