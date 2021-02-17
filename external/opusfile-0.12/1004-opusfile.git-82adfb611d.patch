@@ -1,0 +1,29 @@
+From 82adfb611d2c8c7f070297210c2b9854490887e5 Mon Sep 17 00:00:00 2001
+From: "Timothy B. Terriberry" <tterribe@xiph.org>
+Date: Tue, 15 Dec 2020 16:23:16 -0800
+Subject: [PATCH] Fix intermediate overflow in op_pcm_total().
+
+Although link enumeration ensures the return value is in range, the
+ order of operations allows the intermediate value pcm_total+diff
+ to overflow the range of a 64-bit int.
+Add parentheses to ensure this does not happen.
+Thanks to Felcia Lim for the report.
+
+Fixes #2330
+---
+ src/opusfile.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/opusfile.c b/src/opusfile.c
+index 5bf9f91..144e02c 100644
+--- a/src/opusfile.c
++++ b/src/opusfile.c
+@@ -1753,7 +1753,7 @@ ogg_int64_t op_pcm_total(const OggOpusFile *_of,int _li){
+   }
+   OP_ALWAYS_TRUE(!op_granpos_diff(&diff,
+    links[_li].pcm_end,links[_li].pcm_start));
+-  return pcm_total+diff-links[_li].head.pre_skip;
++  return pcm_total+(diff-links[_li].head.pre_skip);
+ }
+ 
+ const OpusHead *op_head(const OggOpusFile *_of,int _li){

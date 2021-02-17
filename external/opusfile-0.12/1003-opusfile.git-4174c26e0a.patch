@@ -1,0 +1,50 @@
+From 4174c26e0aaab19d01afdea0a46f7f95fdc6b3e6 Mon Sep 17 00:00:00 2001
+From: Timothy B. Terriberry <tterribe@xiph.org>
+Date: Tue, 13 Oct 2020 12:30:41 -0700
+Subject: [PATCH] Fix short-circuit test when seeking in short files
+
+When a file is very, very short (i.e., only one packet) and uses
+ end-trimming, the apparent granule position preceding the first
+ sample in the first packet can underflow.
+We were computing this value by subtracting the packet duration
+ from the computed per-packet granule position and expecting this
+ computation to always succeed.
+Because it could fail in the presence of end-trimming on the first
+ packet (ironically, exactly the situation where the short-circuit
+ is helpful), it would leave the value uninitialized, and then use
+ it in a comparison, which is undefined behavior.
+The correct solution is to check for failure and force the previous
+ page's granule position to 0 in this case.
+---
+ src/opusfile.c |   15 +++++++++++++--
+ 1 files changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/src/opusfile.c b/src/opusfile.c
+index 0d09e97..5bf9f91 100644
+--- a/src/opusfile.c
++++ b/src/opusfile.c
+@@ -2358,8 +2358,19 @@ static int op_pcm_seek_page(OggOpusFile *_of,
+               For very small files (with all of the data in a single page,
+                generally 1 second or less), we can loop them continuously
+                without seeking at all.*/
+-            OP_ALWAYS_TRUE(!op_granpos_add(&prev_page_gp,_of->op[0].granulepos,
+-             -op_get_packet_duration(_of->op[0].packet,_of->op[0].bytes)));
++            if(op_granpos_add(&prev_page_gp,_of->op[0].granulepos,
++             -op_get_packet_duration(_of->op[0].packet,_of->op[0].bytes))<0) {
++              /*We validate/sanitize the per-packet timestamps, so the only way
++                 we should fail to calculate a granule position for the
++                 previous page is if the first page with completed packets in
++                 the stream is also the last, and end-trimming causes the
++                 apparent granule position preceding the first sample in the
++                 first packet to underflow.
++                The starting PCM offset is then 0 by spec mandate (see also:
++                 op_find_initial_pcm_offset()).*/
++              OP_ASSERT(_of->op[0].e_o_s);
++              prev_page_gp=0;
++            }
+             if(op_granpos_cmp(prev_page_gp,_target_gp)<=0){
+               /*Don't call op_decode_clear(), because it will dump our
+                  packets.*/
+-- 
+1.7.1
+

@@ -1,0 +1,69 @@
+From 729c88e74b21f01a3ef4fae37602255c242aa029 Mon Sep 17 00:00:00 2001
+From: "Timothy B. Terriberry" <tterribe@xiph.org>
+Date: Tue, 15 Dec 2020 17:32:34 -0800
+Subject: [PATCH] Fix an incorrect assertion in op_pcm_seek_page().
+
+When we were checking the current file offset to see if we should
+ use it as the starting bisection point, we assumed that offset was
+ larger than the start of the data range for that link (and
+ consequently, inside the bisection range).
+If there is a random page earlier in the file that happens to use
+ the same serial number as a link we identified later in the file
+ at file open time, and we had stopped reading there before the
+ seek, then this assumption might not be true.
+
+Ironically, it was not the case that contained the assertion that
+ had trouble with such an offset.
+It would fail the check that we were cutting off more than half the
+ range, since we were actually cutting off a negative amount, and
+ fall back to the midpoint of the link as the first bisection
+ point.
+However, the case below that (where the target comes after the
+ current timestamp), we might have erroneously cut off the entire
+ range (setting end to offset, which was less than begin), causing
+ the seek to immediately fail.
+
+Instead, validate the curent offset against both ends of the link
+ before attempting to use it as the initial bisection point.
+Thanks to Felicia Lim for the report.
+
+Fixes #2331
+---
+ src/opusfile.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/src/opusfile.c b/src/opusfile.c
+index 144e02c..ca219b2 100644
+--- a/src/opusfile.c
++++ b/src/opusfile.c
+@@ -2310,13 +2310,18 @@ static int op_pcm_seek_page(OggOpusFile *_of,
+       opus_int64 offset;
+       int        op_count;
+       op_count=_of->op_count;
+-      /*The only way the offset can be invalid _and_ we can fail the granule
++      /*The offset can be out of range if we were reading through the stream
++         and encountered a page with the granule position for another link
++         outside of the data range identified during link enumeration when we
++         were opening the file.
++        We will just ignore the current position in that case.
++        The only way the offset can be valid _and_ we can fail the granule
+          position checks below is if someone changed the contents of the last
+          page since we read it.
+-        We'd be within our rights to just return OP_EBADLINK in that case, but
+-         we'll simply ignore the current position instead.*/
++        We'd be within our rights to just return OP_EBADLINK, but instead we'll
++         simply ignore the current position in that case, too.*/
+       offset=_of->offset;
+-      if(op_count>0&&OP_LIKELY(offset<=end)){
++      if(op_count>0&&OP_LIKELY(begin<=offset&&offset<=end)){
+         ogg_int64_t gp;
+         /*Make sure the timestamp is valid.
+           The granule position might be -1 if we collected the packets from a
+@@ -2332,7 +2337,6 @@ static int op_pcm_seek_page(OggOpusFile *_of,
+             Otherwise it appears using the whole link range to estimate the
+              first seek location gives better results, on average.*/
+           if(diff<0){
+-            OP_ASSERT(offset>=begin);
+             if(offset-begin>=end-begin>>1||diff>-OP_CUR_TIME_THRESH){
+               best=begin=offset;
+               best_gp=pcm_start=gp;

@@ -1,6 +1,5 @@
 ; vorbisenc.def
 ;
-LIBRARY
 
 EXPORTS
 vorbis_encode_init

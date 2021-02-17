@@ -1,0 +1,55 @@
+From f94a1764b0dcdd84ee8c13c040de9f4c1a67e4df Mon Sep 17 00:00:00 2001
+From: Timothy B. Terriberry <tterribe@xiph.org>
+Date: Tue, 15 Sep 2020 19:13:05 -0700
+Subject: [PATCH] Fix a possible divide-by-zero.
+
+We were attempting to ensure a minimum spacing between granule
+ positions when guessing the start of a link location.
+However, we took a strictly-positive granule position, added a
+ fixed increment with op_granpos_add(), and checked if
+ op_granpos_add() failed.
+op_granpos_add() only fails if the sum would have overflowed past
+ zero, which can never happen when adding two strictly positive
+ granule positions.
+Instead, we need to check if the result becomes negative (which is
+ a legal granule position, but violates our assumptions in the
+ search).
+
+Thanks to Felicia Lim for the report.
+---
+ src/opusfile.c |   11 +++++------
+ 1 files changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/src/opusfile.c b/src/opusfile.c
+index 3c47eb5..0d09e97 100644
+--- a/src/opusfile.c
++++ b/src/opusfile.c
+@@ -1057,9 +1057,11 @@ static opus_int64 op_predict_link_start(const OpusSeekRecord *_sr,int _nsr,
+     ogg_uint32_t serialno1;
+     opus_int64   offset1;
+     /*If the granule position is negative, either it's invalid or we'd cause
+-       overflow.*/
++       overflow.
++      If it is larger than OP_INT64_MAX-OP_GP_SPACING_MIN, then no positive
++       granule position would satisfy our minimum spacing requirements below.*/
+     gp1=_sr[sri].gp;
+-    if(gp1<0)continue;
++    if(gp1<0||gp1>OP_INT64_MAX-OP_GP_SPACING_MIN)continue;
+     /*We require some minimum distance between granule positions to make an
+        estimate.
+       We don't actually know what granule position scheme is being used,
+@@ -1067,10 +1069,7 @@ static opus_int64 op_predict_link_start(const OpusSeekRecord *_sr,int _nsr,
+       Therefore we require a minimum spacing between them, with the
+        expectation that while bitrates and granule position increments might
+        vary locally in quite complex ways, they are globally smooth.*/
+-    if(OP_UNLIKELY(op_granpos_add(&gp2_min,gp1,OP_GP_SPACING_MIN)<0)){
+-      /*No granule position would satisfy us.*/
+-      continue;
+-    }
++    gp2_min=gp1+OP_GP_SPACING_MIN;
+     offset1=_sr[sri].offset;
+     serialno1=_sr[sri].serialno;
+     for(srj=sri;srj-->0;){
+-- 
+1.7.1
+
