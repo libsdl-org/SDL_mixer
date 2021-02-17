@@ -981,8 +981,6 @@ static BOOL IT_Load(BOOL curious)
 	if(!AllocTracks()) return 0;
 
 	for(t=0;t<of.numpat;t++) {
-		UWORD packlen;
-
 		/* seek to pattern position */
 		if(!paraptr[mh->insnum+mh->smpnum+t]) { /* 0 -> empty 64 row pattern */
 			of.pattrows[t]=64;
@@ -995,8 +993,7 @@ static BOOL IT_Load(BOOL curious)
 			}
 		} else {
 			_mm_fseek(modreader,((long)paraptr[mh->insnum+mh->smpnum+t]),SEEK_SET);
-			packlen=_mm_read_I_UWORD(modreader);
-			(void)packlen; /* unused */
+			(void) _mm_read_I_UWORD(modreader);			/* packlen */
 			of.pattrows[t]=_mm_read_I_UWORD(modreader);
 			_mm_read_I_ULONG(modreader);
 			if(!IT_ReadPattern(of.pattrows[t])) return 0;

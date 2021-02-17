@@ -84,10 +84,11 @@ typedef struct MODNOTE {
 static CHAR protracker[] = "Protracker";
 static CHAR startrekker[] = "Startrekker";
 static CHAR fasttracker[] = "Fasttracker";
-static CHAR oktalyser[] = "Oktalyser";
+static CHAR octalyser[] = "Octalyser";
 static CHAR oktalyzer[] = "Oktalyzer";
 static CHAR taketracker[] = "TakeTracker";
 static CHAR orpheus[] = "Imago Orpheus (MOD format)";
+static CHAR modsgrave[] = "Mod's Grave";
 
 static MODULEHEADER *mh = NULL;
 static MODNOTE *patbuf = NULL;
@@ -102,7 +103,7 @@ static BOOL MOD_CheckType(UBYTE *id, UBYTE *numchn, CHAR **descr)
 	modtype = trekker = 0;
 
 	/* Protracker and variants */
-	if ((!memcmp(id, "M.K.", 4)) || (!memcmp(id, "M!K!", 4))) {
+	if ((!memcmp(id, "M.K.", 4)) || (!memcmp(id, "M!K!", 4)) || (!memcmp(id, "M&K!", 4))) {
 		*descr = protracker;
 		modtype = 0;
 		*numchn = 4;
@@ -132,11 +133,11 @@ static BOOL MOD_CheckType(UBYTE *id, UBYTE *numchn, CHAR **descr)
 		return 1;
 	}
 
-	/* Oktalyser (Atari) */
-	if (!memcmp(id, "CD81", 4)) {
-		*descr = oktalyser;
+	/* Octalyser (Atari) */
+	if (!memcmp(id, "CD81", 4) || !memcmp(id, "CD61", 4)) {
+		*descr = octalyser;
 		modtype = 1;
-		*numchn = 8;
+		*numchn = id[2] - '0';
 		return 1;
 	}
 
@@ -366,6 +367,15 @@ static BOOL MOD_Load(BOOL curious)
 	SAMPLE *q;
 	MSAMPINFO *s;
 	CHAR *descr;
+	BOOL maybewow = 1;
+	ULONG samplelength = 0;
+	ULONG filelength;
+	ULONG pos;
+
+	pos = _mm_ftell(modreader);
+	_mm_fseek(modreader, 0, SEEK_END);
+	filelength = _mm_ftell(modreader);
+	_mm_fseek(modreader, pos, SEEK_SET);
 
 	/* try to read module header */
 	_mm_read_string((CHAR *)mh->songname, 20, modreader);
@@ -380,6 +390,11 @@ static BOOL MOD_Load(BOOL curious)
 		s->volume = _mm_read_UBYTE(modreader);
 		s->reppos = _mm_read_M_UWORD(modreader);
 		s->replen = _mm_read_M_UWORD(modreader);
+		/* Mod's Grave .WOW files are converted from .669 and thus
+		   do not have sample finetune or volume. */
+		samplelength += (ULONG)s->length << 1;
+		if (s->length && (s->finetune != 0x00 || s->volume != 0x40))
+			maybewow = 0;
 	}
 
 	mh->songlength = _mm_read_UBYTE(modreader);
@@ -391,6 +406,10 @@ static BOOL MOD_Load(BOOL curious)
 	mh->magic1 = _mm_read_UBYTE(modreader);
 	_mm_read_UBYTES(mh->positions, 128, modreader);
 	_mm_read_UBYTES(mh->magic2, 4, modreader);
+
+	/* Mod's Grave .WOW files always use 0x00 for the "restart" byte. */
+	if (mh->magic1 != 0x00)
+		maybewow = 0;
 
 	if (_mm_eof(modreader)) {
 		_mm_errno = MMERR_LOADING_HEADER;
@@ -441,6 +460,24 @@ static BOOL MOD_Load(BOOL curious)
 				of.numpos = t + 1;
 		}
 	of.numpat++;
+
+	/* Mod's Grave .WOW files have an M.K. signature but they're actually 8 channel.
+	   The only way to distinguish them from a 4-channel M.K. file is to check the
+	   length of the .MOD against the expected length of a .WOW file with the same
+	   number of patterns as this file. To make things harder, Mod's Grave occasionally
+	   adds an extra byte to .WOW files and sometimes .MOD authors pad their files.
+	   Prior checks for WOW behavior should help eliminate false positives here.
+
+	   Also note the length check relies on counting samples with a length word=1 to work. */
+	if (modtype == 0 && maybewow == 1) {
+		ULONG wowlength = MODULEHEADERSIZE + 4 + samplelength + of.numpat * (64 * 4 * 8);
+		if ((filelength & ~1) == wowlength) {
+			modtype = 1;
+			descr = modsgrave;
+			of.numchn = 8;
+		}
+	}
+
 	of.numtrk = of.numpat * of.numchn;
 
 	if (!AllocPositions(of.numpos))

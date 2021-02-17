@@ -48,6 +48,8 @@ extern int fprintf(FILE *, const char *, ...);
 
 /*========== Module information */
 
+#define MEDNOTECNT 120
+
 typedef struct MEDHEADER {
 	ULONG id;
 	ULONG modlen;
@@ -137,6 +139,19 @@ typedef struct MEDINSTINFO {
 	UBYTE name[40];
 } MEDINSTINFO;
 
+enum MEDINSTTYPE {
+	INST_HYBRID	= -2,
+	INST_SYNTH	= -1,
+	INST_SAMPLE	= 0,
+	INST_IFFOCT_5	= 1,
+	INST_IFFOCT_3	= 2,
+	INST_IFFOCT_2	= 3,
+	INST_IFFOCT_4	= 4,
+	INST_IFFOCT_6	= 5,
+	INST_IFFOCT_7	= 6,
+	INST_EXTSAMPLE	= 7
+};
+
 /*========== Loader variables */
 
 #define MMD0_string 0x4D4D4430
@@ -149,8 +164,11 @@ static ULONG *ba = NULL;
 static MMD0NOTE *mmd0pat = NULL;
 static MMD1NOTE *mmd1pat = NULL;
 
+static UBYTE medversion;
 static BOOL decimalvolumes;
 static BOOL bpmtempos;
+static BOOL is8channel;
+static UWORD rowsperbeat;
 
 #define d0note(row,col) mmd0pat[((row)*(UWORD)of.numchn)+(col)]
 #define d1note(row,col) mmd1pat[((row)*(UWORD)of.numchn)+(col)]
@@ -191,52 +209,115 @@ static void MED_Cleanup(void)
 	_mm_free(mmd1pat);
 }
 
-static void EffectCvt(UBYTE eff, UBYTE dat)
+static UWORD MED_ConvertTempo(UWORD tempo)
+{
+	/* MED tempos 1-10 are compatibility tempos that are converted to different values.
+	   These were determined by testing with OctaMED 2.00 and roughly correspond to the
+	   formula: (195 + speed/2) / speed. Despite being "tracker compatible" these really
+	   are supposed to change the tempo and NOT the speed. These are tempo-mode only. */
+	static const UBYTE tempocompat[11] =
+	{
+		0, 195, 97, 65, 49, 39, 32, 28, 24, 22, 20
+	};
+
+	/* MEDs with 8 channels do something completely different with their tempos.
+	   This behavior completely overrides BPM mode timing when it is enabled.
+	   Table stolen from libxmp ;-( */
+	static const UBYTE tempo8channel[11] =
+	{
+		0, 47, 43, 40, 37, 35, 32, 30, 29, 27, 26
+	};
+
+	ULONG result;
+
+	if (bpmtempos && !is8channel) {
+		/* Convert MED BPM into ProTracker-compatible BPM. All that really needs to be done
+		   here is the BPM needs to be multiplied by (rows per beat)/(PT rows per beat = 4).
+		   BPM mode doesn't have compatibility tempos like tempo mode but OctaMED does
+		   something unusual with BPM<=2 that was found in electrosound 64.med. */
+		result = (tempo > 2) ? ((ULONG)tempo * rowsperbeat + 2) / 4 : 125;
+	} else {
+		if (is8channel) {
+			tempo = tempo < 10 ? tempo : 10;
+			tempo = tempo8channel[tempo];
+		}
+		if (tempo >= 1 && tempo <= 10)
+			tempo = tempocompat[tempo];
+
+		/* Convert MED tempo into ProTracker-compatble BPM. */
+		result = ((ULONG)tempo * 125) / 33;
+	}
+
+	return result < 65535 ? result : 65535;
+}
+
+static void EffectCvt(UBYTE note, UBYTE eff, UBYTE dat)
 {
 	switch (eff) {
-		/* 0x0 0x1 0x2 0x3 0x4 PT effects */
-	  case 0x5:				/* PT vibrato with speed/depth nibbles swapped */
-		UniPTEffect(0x4, (dat >> 4) | ((dat & 0xf) << 4));
+	  /* 0x0: arpeggio */
+	  case 0x1:				/* portamento up (PT compatible, ignore 0) */
+		if (dat)
+			UniPTEffect(0x1, dat);
 		break;
-		/* 0x6 0x7 not used */
-	  case 0x6:
-	  case 0x7:
+	  case 0x2:				/* portamento down (PT compatible, ignore 0) */
+		if (dat)
+			UniPTEffect(0x2, dat);
 		break;
-	  case 0x8:				/* midi hold/decay */
+	  /* 0x3: tone portamento */
+	  case 0x4:				/* vibrato (~2x the speed/depth of PT vibrato) */
+		UniWriteByte(UNI_MEDEFFECT_VIB);
+		UniWriteByte((dat & 0xf0) >> 3);
+		UniWriteByte((dat & 0x0f) << 1);
 		break;
-	  case 0x9:
-		if (bpmtempos) {
-			if (!dat)
-				dat = of.initspeed;
+	  case 0x5:				/* tone portamento + volslide (MMD0: old vibrato) */
+		if (medversion == 0) {
+			/* Approximate conversion, probably wrong.
+			   The entire param is depth and the rate is fixed. */
+			UniWriteByte(UNI_MEDEFFECT_VIB);
+			UniWriteByte(0x16);
+			UniWriteByte((dat + 3) >> 2);
+			break;
+		}
+		UniPTEffect(eff, dat);
+		break;
+	  /* 0x6: vibrato + volslide */
+	  /* 0x7: tremolo */
+	  case 0x8:				/* set hold/decay (FIXME- hold/decay not implemented) */
+		break;
+	  case 0x9:				/* set speed */
+		/* TODO: Rarely MED modules request values of 0x00 or >0x20. In most Amiga versions
+		   these behave as speed=(param & 0x1F) ? (param & 0x1F) : 32. From Soundstudio 2
+		   up, these have different behavior. Since the docs/UI insist you shouldn't use
+		   these values and not many modules use these, just ignore them for now. */
+		if (dat >= 0x01 && dat <= 0x20) {
 			UniEffect(UNI_S3MEFFECTA, dat);
-		} else {
-			if (dat <= 0x20) {
-				if (!dat)
-					dat = of.initspeed;
-				else
-					dat /= 4;
-				UniPTEffect(0xf, dat);
-			} else
-				UniEffect(UNI_MEDSPEED, ((UWORD)dat * 125) / (33 * 4));
 		}
 		break;
-		/* 0xa 0xb PT effects */
+	  /* 0xa: volslide */
+	  /* 0xb: position jump */
 	  case 0xc:
 		if (decimalvolumes)
 			dat = (dat >> 4) * 10 + (dat & 0xf);
 		UniPTEffect(0xc, dat);
 		break;
+	  case 0xa:
 	  case 0xd:				/* same as PT volslide */
+		/* if both nibbles are set, a slide up is performed. */
+		if ((dat & 0xf) && (dat & 0xf0))
+			dat &= 0xf0;
 		UniPTEffect(0xa, dat);
 		break;
-	  case 0xe:				/* synth jmp - midi */
+	  case 0xe:				/* synth jump (FIXME- synth instruments not implemented) */
 		break;
 	  case 0xf:
 		switch (dat) {
-		  case 0:				/* patternbreak */
+		  case 0:			/* patternbreak */
 			UniPTEffect(0xd, 0);
 			break;
 		  case 0xf1:			/* play note twice */
+			/* Note: OctaMED 6.00d and up will not play FF1/FF3 effects when
+			   they are used on a line without a note. Since MMD2/MMD3 support is
+			   theoretical at this point, allow these unconditionally for now. */
 			UniWriteByte(UNI_MEDEFFECTF1);
 			break;
 		  case 0xf2:			/* delay note */
@@ -245,6 +326,15 @@ static void EffectCvt(UBYTE eff, UBYTE dat)
 		  case 0xf3:			/* play note three times */
 			UniWriteByte(UNI_MEDEFFECTF3);
 			break;
+		  case 0xf8:			/* hardware filter off */
+			UniPTEffect(0xe, 0x01);
+			break;
+		  case 0xf9:			/* hardware filter on */
+			UniPTEffect(0xe, 0x00);
+			break;
+		  case 0xfd:			/* set pitch */
+			UniWriteByte(UNI_MEDEFFECT_FD);
+			break;
 		  case 0xfe:			/* stop playing */
 			UniPTEffect(0xb, of.numpat);
 			break;
@@ -252,18 +342,65 @@ static void EffectCvt(UBYTE eff, UBYTE dat)
 			UniPTEffect(0xc, 0);
 			break;
 		  default:
-			if (dat <= 10)
-				UniPTEffect(0xf, dat);
-			else if (dat <= 240) {
-				if (bpmtempos)
-					UniPTEffect(0xf, (dat < 32) ? 32 : dat);
-				else
-					UniEffect(UNI_MEDSPEED, ((UWORD)dat * 125) / 33);
-			}
+			if (dat <= 240)
+				UniEffect(UNI_MEDSPEED, MED_ConvertTempo(dat));
 		}
 		break;
-	  default:					/* all normal PT effects are handled here */
-		UniPTEffect(eff, dat);
+	  case 0x11:				/* fine portamento up */
+		/* fine portamento of 0 does nothing. */
+		if (dat)
+			UniEffect(UNI_XMEFFECTE1, dat);
+		break;
+	  case 0x12:				/* fine portamento down */
+		if (dat)
+			UniEffect(UNI_XMEFFECTE2, dat);
+		break;
+	  case 0x14:				/* vibrato (PT compatible depth, ~2x speed) */
+		UniWriteByte(UNI_MEDEFFECT_VIB);
+		UniWriteByte((dat & 0xf0) >> 3);
+		UniWriteByte((dat & 0x0f));
+		break;
+	  case 0x15:				/* set finetune */
+		/* Valid values are 0x0 to 0x7 and 0xF8 to 0xFF. */
+		if (dat <= 0x7 || dat >= 0xF8)
+			UniPTEffect(0xe, 0x50 | (dat & 0xF));
+		break;
+	  case 0x16:				/* loop */
+		UniEffect(UNI_MEDEFFECT_16, dat);
+		break;
+	  case 0x18:				/* cut note */
+		UniEffect(UNI_MEDEFFECT_18, dat);
+		break;
+	  case 0x19:				/* sample offset */
+		UniPTEffect(0x9, dat);
+		break;
+	  case 0x1a:				/* fine volslide up */
+		/* volslide of 0 does nothing. */
+		if (dat)
+			UniEffect(UNI_XMEFFECTEA, dat);
+		break;
+	  case 0x1b:				/* fine volslide down */
+		if (dat)
+			UniEffect(UNI_XMEFFECTEB, dat);
+		break;
+	  case 0x1d:				/* pattern break */
+		UniPTEffect(0xd, dat);
+		break;
+	  case 0x1e:				/* pattern delay */
+		UniEffect(UNI_MEDEFFECT_1E, dat);
+		break;
+	  case 0x1f:				/* combined delay-retrigger */
+		/* This effect does nothing on lines without a note. */
+		if (note)
+			UniEffect(UNI_MEDEFFECT_1F, dat);
+		break;
+	  default:
+		if (eff < 0x10)
+			UniPTEffect(eff, dat);
+#ifdef MIKMOD_DEBUG
+		else
+			fprintf(stderr, "unsupported OctaMED command %u\n", eff);
+#endif
 		break;
 	}
 }
@@ -280,14 +417,14 @@ static UBYTE *MED_Convert1(int count, int col)
 
 		note = n->a & 0x7f;
 		inst = n->b & 0x3f;
-		eff = n->c & 0xf;
+		eff = n->c;
 		dat = n->d;
 
 		if (inst)
 			UniInstrument(inst - 1);
 		if (note)
-			UniNote(note + 3 * OCTAVE - 1);
-		EffectCvt(eff, dat);
+			UniNote(note - 1);
+		EffectCvt(note, eff, dat);
 		UniNewline();
 	}
 	return UniDup();
@@ -315,8 +452,8 @@ static UBYTE *MED_Convert0(int count, int col)
 		if (inst)
 			UniInstrument(inst - 1);
 		if (note)
-			UniNote(note + 3 * OCTAVE - 1);
-		EffectCvt(eff, dat);
+			UniNote(note - 1);
+		EffectCvt(note, eff, dat);
 		UniNewline();
 	}
 	return UniDup();
@@ -369,6 +506,8 @@ static BOOL LoadMEDPatterns(void)
 				mmdp->b = _mm_read_UBYTE(modreader);
 				mmdp->c = _mm_read_UBYTE(modreader);
 			}
+			/* Skip tracks this block doesn't use. */
+			for (col = numtracks; col < of.numchn; col++, mmdp++) {}
 		}
 
 		for (col = 0; col < of.numchn; col++)
@@ -428,6 +567,8 @@ static BOOL LoadMMD1Patterns(void)
 				mmdp->c = _mm_read_UBYTE(modreader);
 				mmdp->d = _mm_read_UBYTE(modreader);
 			}
+			/* Skip tracks this block doesn't use. */
+			for (col = numtracks; col < of.numchn; col++, mmdp++) {}
 		}
 
 		for (col = 0; col < of.numchn; col++)
@@ -438,9 +579,10 @@ static BOOL LoadMMD1Patterns(void)
 
 static BOOL MED_Load(BOOL curious)
 {
-	int t;
+	int t, i;
 	ULONG sa[64];
 	MEDINSTHEADER s;
+	INSTRUMENT *d;
 	SAMPLE *q;
 	MEDSAMPLE *mss;
 
@@ -530,7 +672,7 @@ static BOOL MED_Load(BOOL curious)
 			_mm_errno = MMERR_NOT_A_MODULE;
 			return 0;
 		}
-		/* truncate insane songnamelen (fail instead??) */
+		/* truncate insane songnamelen (fail instead?) */
 		if (me->songnamelen > 256)
 			me->songnamelen = 256;
 	}
@@ -564,46 +706,18 @@ static BOOL MED_Load(BOOL curious)
 	}
 
 	decimalvolumes = (ms->flags & 0x10) ? 0 : 1;
+	is8channel = (ms->flags & 0x40) ? 1 : 0;
 	bpmtempos = (ms->flags2 & 0x20) ? 1 : 0;
 
 	if (bpmtempos) {
-		int bpmlen = (ms->flags2 & 0x1f) + 1;
+		rowsperbeat = (ms->flags2 & 0x1f) + 1;
 		of.initspeed = ms->tempo2;
-		of.inittempo = ms->deftempo * bpmlen / 4;
-
-		if (bpmlen != 4) {
-			/* Let's do some math : compute GCD of BPM beat length and speed */
-			int a, b;
-
-			a = bpmlen;
-			b = ms->tempo2;
-
-			if (a > b) {
-				t = b;
-				b = a;
-				a = t;
-			}
-			while ((a != b) && (a)) {
-				t = a;
-				a = b - a;
-				b = t;
-				if (a > b) {
-					t = b;
-					b = a;
-					a = t;
-				}
-			}
-
-			of.initspeed /= b;
-			of.inittempo = ms->deftempo * bpmlen / (4 * b);
-		}
+		of.inittempo = MED_ConvertTempo(ms->deftempo);
 	} else {
 		of.initspeed = ms->tempo2;
-		of.inittempo = ms->deftempo ? ((UWORD)ms->deftempo * 125) / 33 : 128;
-		if ((ms->deftempo <= 10) && (ms->deftempo))
-			of.inittempo = (of.inittempo * 33) / 6;
-		of.flags |= UF_HIGHBPM;
+		of.inittempo = ms->deftempo ? MED_ConvertTempo(ms->deftempo) : 128;
 	}
+	of.flags |= UF_HIGHBPM;
 	MED_Version[12] = mh->id;
 	of.modtype = _mm_strdup(MED_Version);
 	of.numchn = 0;				/* will be counted later */
@@ -627,18 +741,29 @@ static BOOL MED_Load(BOOL curious)
 		ReadComment(me->annolen);
 	}
 
-	if (!AllocSamples())
+	/* TODO: should do an initial scan for IFFOCT instruments to determine the
+	   actual number of samples (instead of assuming 1-to-1). */
+	if (!AllocSamples() || !AllocInstruments())
 		return 0;
+
+	of.flags |= UF_INST;
 	q = of.samples;
+	d = of.instruments;
 	for (t = 0; t < of.numins; t++) {
 		q->flags = SF_SIGNED;
 		q->volume = 64;
+		s.type = INST_SAMPLE;
 		if (sa[t]) {
 			_mm_fseek(modreader, sa[t], SEEK_SET);
 			s.length = _mm_read_M_ULONG(modreader);
 			s.type = _mm_read_M_SWORD(modreader);
 
-			if (s.type) {
+			switch (s.type) {
+			  case INST_SAMPLE:
+			  case INST_EXTSAMPLE:
+				break;
+
+			  default:
 #ifdef MIKMOD_DEBUG
 				fprintf(stderr, "\rNon-sample instruments not supported in MED loader yet\n");
 #endif
@@ -661,6 +786,9 @@ static BOOL MED_Load(BOOL curious)
 
 			if (ms->sample[t].replen > 1)
 				q->flags |= SF_LOOP;
+
+			if(ms->sample[t].svol <= 64)
+				q->volume = ms->sample[t].svol;
 
 			/* don't load sample if length>='MMD0'...
 			   such kluges make libmikmod's code unique !!! */
@@ -691,18 +819,53 @@ static BOOL MED_Load(BOOL curious)
 			_mm_fseek(modreader, me->iinfo + t * me->i_ext_entrsz, SEEK_SET);
 			_mm_read_UBYTES(ii.name, 40, modreader);
 			q->samplename = DupStr((char*)ii.name, 40, 1);
-		} else
+			d->insname = DupStr((char*)ii.name, 40, 1);
+		} else {
 			q->samplename = NULL;
+			d->insname = NULL;
+		}
+
+		/* Instrument transpose tables. */
+		for (i = 0; i < MEDNOTECNT; i++) {
+			int note = i + 3 * OCTAVE + ms->sample[t].strans + ms->playtransp;
+
+			/* TODO: IFFOCT instruments... */
+			switch (s.type) {
+			  case INST_EXTSAMPLE:
+				/* TODO: not clear if this has the same wrapping behavior as regular samples.
+				   This is a MMD2/MMD3 extension so it has not been tested. */
+				note -= 2 * OCTAVE;
+				/* fall-through */
+
+			  case INST_SAMPLE:
+				/* TODO: in MMD2/MMD3 mixing mode, these wrapping transforms don't apply. */
+				if (note >= 10 * OCTAVE) {
+					/* Buggy octaves 8 through A wrap to 2 octaves below octave 1.
+					   Technically they're also a finetune step higher but that's safe
+					   to ignore. */
+					note -= 9 * OCTAVE;
+				} else if (note >= 6 * OCTAVE) {
+					/* Octaves 4 through 7 repeat octave 3. */
+					note = (note % 12) + 5 * OCTAVE;
+				}
+				d->samplenumber[i] = t;
+				d->samplenote[i] = note<0 ? 0 : note>255 ? 255 : note;
+				break;
+			}
+		}
 
 		q++;
+		d++;
 	}
 
 	if (mh->id == MMD0_string) {
+		medversion = 0;
 		if (!LoadMEDPatterns()) {
 			_mm_errno = MMERR_LOADING_PATTERN;
 			return 0;
 		}
 	} else if (mh->id == MMD1_string) {
+		medversion = 1;
 		if (!LoadMMD1Patterns()) {
 			_mm_errno = MMERR_LOADING_PATTERN;
 			return 0;

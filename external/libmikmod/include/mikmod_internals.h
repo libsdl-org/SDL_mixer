@@ -121,7 +121,7 @@ extern void* _mm_calloc(size_t,size_t);
         if(_mm_mutex_##name)\
             DosReleaseMutexSem(_mm_mutex_##name)
 
-#elif defined(_WIN32)
+#elif defined(_WIN32)||defined(__CYGWIN__)
 #include <windows.h>
 #define DECLARE_MUTEX(name) \
         extern HANDLE _mm_mutex_##name
@@ -350,6 +350,26 @@ enum {
     UNI_MEDEFFECTF3,/* play note three times */
  /* Oktalyzer effects */
     UNI_OKTARP,     /* arpeggio */
+
+ /* Last effect supported by old modules in the UNI format. */
+    UNI_FORMAT_LAST,
+
+ /* Scream Tracker effects */
+    UNI_S3MEFFECTH,    /* vibrato */
+ /* Impulse Tracker effects */
+    UNI_ITEFFECTH_OLD, /* vibrato (old) */
+    UNI_ITEFFECTU_OLD, /* fine vibrato (old) */
+ /* GDM effects. */
+    UNI_GDMEFFECT4,    /* vibrato */
+    UNI_GDMEFFECT7,    /* tremolo */
+    UNI_GDMEFFECT14,   /* fine vibrato */
+ /* OctaMED effects. */
+    UNI_MEDEFFECT_VIB, /* MED vibrato */
+    UNI_MEDEFFECT_FD,  /* set pitch */
+    UNI_MEDEFFECT_16,  /* loop */
+    UNI_MEDEFFECT_18,  /* stop note */
+    UNI_MEDEFFECT_1E,  /* pattern delay */
+    UNI_MEDEFFECT_1F,  /* note delay and retrigger */
 
     UNI_LAST
 };

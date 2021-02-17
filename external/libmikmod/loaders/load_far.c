@@ -93,6 +93,7 @@ static	FARHEADER2 *mh2 = NULL;
 static	FARNOTE *pat = NULL;
 
 static	const unsigned char FARSIG[4+3]={'F','A','R',0xfe,13,10,26};
+static  const UWORD FAR_MAXPATSIZE=(256*16*4)+2;
 
 /*========== Loader code */
 
@@ -131,7 +132,7 @@ static UBYTE *FAR_ConvertTrack(FARNOTE* n,int rows)
 			UniInstrument(n->ins);
 			UniNote(n->note+3*OCTAVE-1);
 		}
-		if (n->vol&0xf) UniPTEffect(0xc,(n->vol&0xf)<<2);
+		if (n->vol>=0x01 && n->vol<=0x10) UniPTEffect(0xc,(n->vol - 1)<<2);
 		if (n->eff)
 			switch(n->eff>>4) {
 				case 0x3: /* porta to note */
@@ -242,18 +243,19 @@ static BOOL FAR_Load(BOOL curious)
 	if(!AllocPatterns()) return 0;
 
 	for(t=0;t<of.numpat;t++) {
-		UBYTE rows=0;
-		UBYTE tempo;
+		UWORD rows=0;
 
 		memset(pat,0,256*16*4*sizeof(FARNOTE));
 		if(mh2->patsiz[t]) {
-			rows  = _mm_read_UBYTE(modreader);
-			tempo = _mm_read_UBYTE(modreader);
-			(void)tempo; /* unused */
+			/* Break position byte is always 1 less than the final row index,
+			   i.e. it is 2 less than the total row count. */
+			rows  = _mm_read_UBYTE(modreader) + 2;
+			_mm_skip_BYTE(modreader);	/* tempo */
 
 			crow = pat;
 			/* file often allocates 64 rows even if there are less in pattern */
-			if (mh2->patsiz[t]<2+(rows*16*4)) {
+			/* Also, don't allow more than 256 rows. */
+			if (mh2->patsiz[t]<2+(rows*16*4) || rows>256 || mh2->patsiz[t]>FAR_MAXPATSIZE) {
 				_mm_errno = MMERR_LOADING_PATTERN;
 				return 0;
 			}

@@ -83,7 +83,7 @@ static int (*alsa_pcm_sw_params_sizeof)(void);
 static int (*alsa_pcm_hw_params_sizeof)(void);
 static int (*alsa_pcm_open)(snd_pcm_t**, const char *, int, int);
 static int (*alsa_pcm_close)(snd_pcm_t*);
-static int (*alsa_pcm_drain)(snd_pcm_t*);
+static int (*alsa_pcm_nonblock)(snd_pcm_t*, int);
 static int (*alsa_pcm_drop)(snd_pcm_t*);
 static int (*alsa_pcm_start)(snd_pcm_t *);
 static snd_pcm_sframes_t (*alsa_pcm_writei)(snd_pcm_t*,const void*,snd_pcm_uframes_t);
@@ -108,7 +108,7 @@ static void* libasound = NULL;
 #define alsa_pcm_resume				snd_pcm_resume
 #define alsa_pcm_prepare			snd_pcm_prepare
 #define alsa_pcm_close				snd_pcm_close
-#define alsa_pcm_drain				snd_pcm_drain
+#define alsa_pcm_nonblock			snd_pcm_nonblock
 #define alsa_pcm_drop				snd_pcm_drop
 #define alsa_pcm_start				snd_pcm_start
 #define alsa_pcm_open				snd_pcm_open
@@ -158,7 +158,7 @@ static int ALSA_Link(void)
 	if (!(alsa_pcm_hw_params_get_period_size = dlsym(libasound,"snd_pcm_hw_params_get_period_size"))) return 1;
 	if (!(alsa_pcm_open = dlsym(libasound,"snd_pcm_open"))) return 1;
 	if (!(alsa_pcm_close = dlsym(libasound,"snd_pcm_close"))) return 1;
-	if (!(alsa_pcm_drain = dlsym(libasound,"snd_pcm_drain"))) return 1;
+	if (!(alsa_pcm_nonblock = dlsym(libasound,"snd_pcm_nonblock"))) return 1;
 	if (!(alsa_pcm_drop = dlsym(libasound,"snd_pcm_drop"))) return 1;
 	if (!(alsa_pcm_start = dlsym(libasound,"snd_pcm_start"))) return 1;
 	if (!(alsa_pcm_writei = dlsym(libasound,"snd_pcm_writei"))) return 1;
@@ -184,7 +184,7 @@ static void ALSA_Unlink(void)
 	alsa_pcm_hw_params_get_buffer_size = NULL;
 	alsa_pcm_hw_params_get_period_size = NULL;
 	alsa_pcm_close = NULL;
-	alsa_pcm_drain = NULL;
+	alsa_pcm_nonblock = NULL;
 	alsa_pcm_drop = NULL;
 	alsa_pcm_start = NULL;
 	alsa_pcm_open = NULL;
@@ -247,6 +247,10 @@ static int ALSA_Init_internal(void)
 		_mm_errno = MMERR_OPENING_AUDIO;
 		goto END;
 	}
+
+	/* Switch to blocking mode for playback */
+	/* Note: this must happen before hw/sw params are set. */
+	alsa_pcm_nonblock(pcm_h, 0);
 
 	snd_pcm_hw_params_alloca(&hwparams);
 	err = alsa_pcm_hw_params_any(pcm_h, hwparams);
@@ -323,7 +327,7 @@ static void ALSA_Exit_internal(void)
 	enabled = 0;
 	VC_Exit();
 	if (pcm_h) {
-		alsa_pcm_drain(pcm_h);
+		alsa_pcm_drop(pcm_h);
 		alsa_pcm_close(pcm_h);
 		pcm_h = NULL;
 	}
@@ -338,14 +342,13 @@ static void ALSA_Exit(void)
 #endif
 }
 
-/* Underrun and suspend recovery - from alsa-lib:test/pcm.c
- */
+/* snd_pcm_recover() is available in alsa-lib >= 1.0.11 */
 static int xrun_recovery(snd_pcm_t *handle, int err)
 {
+	if (err == -EINTR) return 0;
 	if (err == -EPIPE) {	/* under-run */
 		err = alsa_pcm_prepare(handle);
-		if (err < 0)
-			dbgprint(stderr, "Can't recover from underrun, prepare failed: %s\n", snd_strerror(err));
+		if (err < 0) return err;
 		return 0;
 	}
 	else if (err == -ESTRPIPE) {
@@ -353,8 +356,7 @@ static int xrun_recovery(snd_pcm_t *handle, int err)
 			sleep(1);	/* wait until the suspend flag is released */
 		if (err < 0) {
 			err = alsa_pcm_prepare(handle);
-			if (err < 0)
-				dbgprint(stderr, "Can't recover from suspend, prepare failed: %s\n", snd_strerror(err));
+			if (err < 0) return err;
 		}
 		return 0;
 	}

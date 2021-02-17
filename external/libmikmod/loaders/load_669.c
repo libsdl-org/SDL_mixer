@@ -327,7 +327,7 @@ static BOOL S69_Load(BOOL curious)
 
 		current->samplename=DupStr(sample.filename,13,1);
 		current->seekpos=0;
-		current->speed=0;
+		current->speed=128; /* Used as finetune when UF_XMPERIODS is enabled; 128 is centered. */
 		current->length=sample.length;
 		current->loopstart=sample.loopbeg;
 		current->loopend=sample.loopend;

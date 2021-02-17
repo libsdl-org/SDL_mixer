@@ -8,7 +8,7 @@ dnl AM_PATH_ESD([MINIMUM-VERSION, [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]]])
 dnl Test for ESD, and define ESD_CFLAGS and ESD_LIBS
 dnl
 AC_DEFUN([AM_PATH_ESD],
-[dnl 
+[dnl
 dnl Get the cflags and libraries from the esd-config script
 dnl
 AC_ARG_WITH(esd-prefix,[  --with-esd-prefix=PFX   Prefix where ESD is installed (optional)],
@@ -38,8 +38,6 @@ AC_ARG_ENABLE(esdtest, [  --disable-esdtest       Do not try to compile and run 
   if test "$ESD_CONFIG" = "no" ; then
     no_esd=yes
   else
-    AC_LANG_SAVE
-    AC_LANG_C
     ESD_CFLAGS=`$ESD_CONFIG $esdconf_args --cflags`
     ESD_LIBS=`$ESD_CONFIG $esdconf_args --libs`
 
@@ -50,6 +48,7 @@ AC_ARG_ENABLE(esdtest, [  --disable-esdtest       Do not try to compile and run 
     esd_micro_version=`$ESD_CONFIG $esd_config_args --version | \
            sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\3/'`
     if test "x$enable_esdtest" = "xyes" ; then
+      AC_LANG_PUSH([C])
       ac_save_CFLAGS="$CFLAGS"
       ac_save_LIBS="$LIBS"
       CFLAGS="$CFLAGS $ESD_CFLAGS"
@@ -59,38 +58,19 @@ dnl Now check if the installed ESD is sufficiently new. (Also sanity
 dnl checks the results of esd-config to some extent
 dnl
       rm -f conf.esdtest
-      AC_TRY_RUN([
+      AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <esd.h>
 
-char*
-my_strdup (char *str)
-{
-  char *new_str;
-
-  if (str)
-    {
-      new_str = (char *) malloc ((strlen (str) + 1) * sizeof(char));
-      strcpy (new_str, str);
-    }
-  else
-    new_str = NULL;
-
-  return new_str;
-}
-
-int main ()
+int main (void)
 {
   int major, minor, micro;
-  char *tmp_version;
+  FILE *fp = fopen("conf.esdtest", "w");
 
-  system ("touch conf.esdtest");
+  if (fp) fclose(fp);
 
-  /* HP/UX 9 (%@#!) writes to sscanf strings */
-  tmp_version = my_strdup("$min_esd_version");
-  if (sscanf(tmp_version, "%d.%d.%d", &major, &minor, &micro) != 3) {
+  if (sscanf("$min_esd_version", "%d.%d.%d", &major, &minor, &micro) != 3) {
      printf("%s, bad version string\n", "$min_esd_version");
      exit(1);
    }
@@ -112,16 +92,15 @@ int main ()
       return 1;
     }
 }
-
-],, no_esd=yes,[echo $ac_n "cross compiling; assumed OK... $ac_c"])
+]])], [], [no_esd=yes], [echo $ac_n "cross compiling; assumed OK... $ac_c"])
        CFLAGS="$ac_save_CFLAGS"
        LIBS="$ac_save_LIBS"
-       AC_LANG_RESTORE
+       AC_LANG_POP([C])
      fi
   fi
   if test "x$no_esd" = x ; then
      AC_MSG_RESULT(yes)
-     ifelse([$2], , :, [$2])     
+     ifelse([$2], , :, [$2])
   else
      AC_MSG_RESULT(no)
      if test "$ESD_CONFIG" = "no" ; then
@@ -136,12 +115,11 @@ int main ()
           echo "*** Could not run ESD test program, checking why..."
           CFLAGS="$CFLAGS $ESD_CFLAGS"
           LIBS="$LIBS $ESD_LIBS"
-          AC_LANG_SAVE
-          AC_LANG_C
-          AC_TRY_LINK([
+          AC_LANG_PUSH([C])
+          AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <stdio.h>
 #include <esd.h>
-],      [ return 0; ],
+]], [[ return 0; ]])],
         [ echo "*** The test program compiled, but did not run. This usually means"
           echo "*** that the run-time linker is not finding ESD or finding the wrong"
           echo "*** version of ESD. If it is not finding ESD, you'll need to set your"
@@ -157,7 +135,7 @@ int main ()
           echo "*** may want to edit the esd-config script: $ESD_CONFIG" ])
           CFLAGS="$ac_save_CFLAGS"
           LIBS="$ac_save_LIBS"
-          AC_LANG_RESTORE
+          AC_LANG_POP([C])
        fi
      fi
      ESD_CFLAGS=""

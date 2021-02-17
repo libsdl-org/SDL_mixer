@@ -87,7 +87,7 @@ MIKMODAPI extern long MikMod_GetVersion(void);
  *  ========== Dependency platform headers
  */
 
-#ifdef _WIN32
+#if defined(_WIN32)||defined(__CYGWIN__)
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif

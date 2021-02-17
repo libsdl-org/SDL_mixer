@@ -20,8 +20,6 @@
 
 /*==============================================================================
 
-  $Id: drv_ds.c,v 1.1.1.1 2004/06/01 12:16:17 raph Exp $
-
   Driver for output on win32 platforms using DirectSound
 
 ==============================================================================*/
@@ -43,7 +41,18 @@
 #include <memory.h>
 #include <string.h>
 
+/* Including dsound.h breaks in MSYS2 unless windows.h is
+ * explicitly included first (without WIN32_LEAN_AND_MEAN).
+ */
+#include <windows.h>
+
 #define INITGUID
+#if defined(__LCC__)||defined(__WATCOMC__)
+#include <guiddef.h>
+#else
+#include <basetyps.h> /* guiddef.h not in all SDKs, e.g. mingw.org */
+#endif
+
 #include <dsound.h>
 
 #ifdef __WATCOMC__
@@ -55,7 +64,6 @@
  * https://github.com/open-watcom/open-watcom-v2/commit/961ef1ff756f3ec5a7248cefcae00a6ecaa97ff4
  * Therefore, we define and use a local copy of IID_IDirectSoundNotify here.
  */
-#include <guiddef.h>
 DEFINE_GUID(IID_IDirectSoundNotify,0xB0210783,0x89cd,0x11d0,0xAF,0x08,0x00,0xA0,0xC9,0x25,0xCD,0x16);
 #endif
 

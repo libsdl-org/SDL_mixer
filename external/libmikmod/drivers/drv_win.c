@@ -49,15 +49,40 @@ typedef DWORD DWORD_PTR;
 #endif
 #endif
 
-#define NUMBUFFERS	6				/* number of buffers */
-#define BUFFERSIZE	120				/* buffer size in milliseconds */
+#define MINBUFFERS		2			/* min number of buffers */
+#define MAXBUFFERS		16			/* max number of buffers */
+#define MINBUFFERSIZE_MS	50			/* min buffer size in milliseconds */
+#define MAXBUFFERSIZE_MS	1000			/* max buffer size in milliseconds */
+
+#define DEFAULT_NUMBUFFERS	2
+#define DEFAULT_BUFFERSIZE_MS	120
 
 static HWAVEOUT	hwaveout;
-static WAVEHDR	header[NUMBUFFERS];
-static HPSTR	buffer[NUMBUFFERS];		/* pointers to buffers */
+static WAVEHDR	header[MAXBUFFERS];
+static HPSTR	buffer[MAXBUFFERS];		/* pointers to buffers */
 static WORD	buffersout;				/* number of buffers playing/about to be played */
 static WORD	nextbuffer;				/* next buffer to be mixed */
 static ULONG	buffersize;				/* buffer size in bytes */
+static ULONG	buffersize_ms = DEFAULT_BUFFERSIZE_MS;	/* configured buffer size in milliseconds */
+static ULONG	numbuffers = DEFAULT_NUMBUFFERS;	/* configured number of buffers */
+
+static void WIN_CommandLine(CHAR *cmdline)
+{
+	CHAR *ptr;
+
+	if((ptr = MD_GetAtom("buffer",cmdline,0)) != NULL) {
+		buffersize_ms = atoi(ptr);
+		if(buffersize_ms < MINBUFFERSIZE_MS || buffersize_ms > MAXBUFFERSIZE_MS)
+			buffersize_ms = DEFAULT_BUFFERSIZE_MS;
+		free(ptr);
+	}
+	if((ptr = MD_GetAtom("count",cmdline,0)) != NULL) {
+		numbuffers = atoi(ptr);
+		if(numbuffers < MINBUFFERS || numbuffers > MAXBUFFERS)
+			numbuffers = DEFAULT_NUMBUFFERS;
+		free(ptr);
+	}
+}
 
 /* converts Windows error to libmikmod error */
 static int WIN_GetError(MMRESULT mmr)
@@ -115,9 +140,9 @@ static int WIN_Init(void)
 		return 1;
 	}
 
-	buffersize=md_mixfreq*samplesize*BUFFERSIZE/1000;
+	buffersize=md_mixfreq*samplesize*buffersize_ms/1000;
 
-	for (n=0;n<NUMBUFFERS;n++) {
+	for (n=0;n<numbuffers;n++) {
 		buffer[n]=_mm_malloc(buffersize);
 		header[n].lpData=buffer[n];
 		header[n].dwBufferLength=buffersize;
@@ -142,7 +167,7 @@ static void WIN_Exit(void)
 
 	VC_Exit();
 	if (hwaveout) {
-		for (n=0;n<NUMBUFFERS;n++) {
+		for (n=0;n<numbuffers;n++) {
 			if (header[n].dwFlags&WHDR_PREPARED)
 				waveOutUnprepareHeader(hwaveout,&header[n],sizeof(WAVEHDR));
 			_mm_free(buffer[n]);
@@ -156,12 +181,12 @@ static void WIN_Update(void)
 {
 	ULONG done;
 
-	while (buffersout<NUMBUFFERS) {
+	while (buffersout<numbuffers) {
 		done=VC_WriteBytes((SBYTE*)buffer[nextbuffer],buffersize);
 		if (!done) break;
 		header[nextbuffer].dwBufferLength=done;
 		waveOutWrite(hwaveout,&header[nextbuffer],sizeof(WAVEHDR));
-		if (++nextbuffer>=NUMBUFFERS) nextbuffer%=NUMBUFFERS;
+		if (++nextbuffer>=numbuffers) nextbuffer%=numbuffers;
 		++buffersout;
 	}
 }
@@ -179,7 +204,7 @@ MIKMODAPI MDRIVER drv_win={
 	0,255,
 	"winmm",
 
-	NULL,
+	WIN_CommandLine,
 	WIN_IsThere,
 	VC_SampleLoad,
 	VC_SampleUnload,

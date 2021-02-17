@@ -219,7 +219,7 @@ static UBYTE *GDM_ConvertTrack(GDMNOTE*tr)
 
 		if ((ins)&&(ins!=255))
 			UniInstrument(ins-1);
-		if (note!=255) {
+		if (note && note!=255) {
 			UniNote(((note>>4)*OCTAVE)+(note&0xf)-1);
 		}
 		for (i=0;i<4;i++) {
@@ -235,18 +235,18 @@ static UBYTE *GDM_ConvertTrack(GDMNOTE*tr)
 					UniEffect(UNI_ITEFFECTG,inf);
 					break;
 				case 4:	/* vibrato */
-					UniEffect(UNI_ITEFFECTH,inf);
+					UniEffect(UNI_GDMEFFECT4,inf);
 					break;
 				case 5:	/* portamento+volslide */
 					UniEffect(UNI_ITEFFECTG,0);
 					UniEffect(UNI_S3MEFFECTD,inf);
 					break;
 				case 6:	/* vibrato+volslide */
-					UniEffect(UNI_ITEFFECTH,0);
+					UniEffect(UNI_GDMEFFECT4,0);
 					UniEffect(UNI_S3MEFFECTD,inf);
 					break;
 				case 7:	/* tremolo */
-					UniEffect(UNI_S3MEFFECTR,inf);
+					UniEffect(UNI_GDMEFFECT7,inf);
 					break;
 				case 8:	/* tremor */
 					UniEffect(UNI_S3MEFFECTI,inf);
@@ -269,37 +269,29 @@ static UBYTE *GDM_ConvertTrack(GDMNOTE*tr)
 				case 0x0e:	/* extended */
 					switch (inf&0xf0) {
 						case 0x10:	/* fine portamento up */
-							UniEffect(UNI_S3MEFFECTF, 0x0f|((inf<<4)&0x0f));
+							UniEffect(UNI_S3MEFFECTF, 0xf0|(inf&0x0f));
 							break;
 						case 0x20:	/* fine portamento down */
 							UniEffect(UNI_S3MEFFECTE, 0xf0|(inf&0x0f));
 							break;
 						case 0x30:	/* glissando control */
-							UniEffect(SS_GLISSANDO, inf&0x0f);
-							break;
 						case 0x40:	/* vibrato waveform */
-							UniEffect(SS_VIBWAVE, inf&0x0f);
-							break;
 						case 0x50:	/* set c4spd */
-							UniEffect(SS_FINETUNE, inf&0x0f);
-							break;
 						case 0x60:	/* loop fun */
-							UniEffect(UNI_ITEFFECTS0, (inf&0x0f)|0xb0);
-							break;
 						case 0x70:	/* tremolo waveform */
-							UniEffect(SS_TREMWAVE, inf&0x0f);
+							UniPTEffect(0xe, inf);
 							break;
 						case 0x80:	/* extra fine porta up */
-							UniEffect(UNI_S3MEFFECTF, 0x0e|((inf<<4)&0x0f));
+							UniEffect(UNI_S3MEFFECTF, 0xe0|(inf&0x0f));
 							break;
 						case 0x90:	/* extra fine porta down */
 							UniEffect(UNI_S3MEFFECTE, 0xe0|(inf&0x0f));
 							break;
 						case 0xa0:	/* fine volslide up */
-							UniEffect(UNI_S3MEFFECTD, 0x0f|((inf<<4)&0x0f));
+							UniEffect(UNI_S3MEFFECTD, 0x0f|((inf&0x0f)<<4));
 							break;
 						case 0xb0:	/* fine volslide down */
-							UniEffect(UNI_S3MEFFECTE, 0xf0|(inf&0x0f));
+							UniEffect(UNI_S3MEFFECTD, 0xf0|(inf&0x0f));
 							break;
 						case 0xc0:	/* note cut */
 						case 0xd0:	/* note delay */
@@ -318,18 +310,15 @@ static UBYTE *GDM_ConvertTrack(GDMNOTE*tr)
 					UniEffect(UNI_S3MEFFECTQ,inf);
 					break;
 				case 0x13:	/* set global volume */
-					UniEffect(UNI_XMEFFECTG,inf<<1);
+					UniEffect(UNI_XMEFFECTG,inf);
 					break;
 				case 0x14:	/* fine vibrato */
-					UniEffect(UNI_ITEFFECTU,inf);
+					UniEffect(UNI_GDMEFFECT14,inf);
 					break;
 				case 0x1e:	/* special */
 					switch (inf&0xf0) {
-						case 8:	/* set pan position */
-							if (inf >=128)
-								UniPTEffect(0x08,255);
-							else
-								UniPTEffect(0x08,inf<<1);
+						case 0x80:	/* set pan position */
+							UniPTEffect(0xe,inf);
 							break;
 					}
 					break;
@@ -470,16 +459,21 @@ static BOOL GDM_Load(BOOL curious)
 		q->length=s.length;
 		q->loopstart=s.loopbeg;
 		q->loopend=s.loopend;
-		q->volume=s.vol;
-		q->panning=s.pan;
+		q->volume=64;
 		q->seekpos=position;
 
 		position +=s.length;
 
+		/* Only use the sample volume byte if bit 2 is set. When bit 3 is set,
+		   the sample panning is supposed to be used, but 2GDM isn't capable
+		   of making a GDM using this feature; the panning byte is always 0xFF
+		   or junk. Likewise, bit 5 is unused (supposed to be LZW compression). */
 		if (s.flags&1)
 			q->flags |=SF_LOOP;
 		if (s.flags&2)
 			q->flags |=SF_16BITS;
+		if ((s.flags&4) && s.vol<=64)
+			q->volume=s.vol;
 		if (s.flags&16)
 			q->flags |=SF_STEREO;
 		q++;

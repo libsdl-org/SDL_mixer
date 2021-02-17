@@ -1,3 +1,48 @@
+Summary of changes between libmikmod 3.1.21 and libmikmod 3.1.22:
+========================================================================
+
+libmikmod v3.1.22 was released on ???? ??, ????.
+
+- Fix high cpu usage in ALSA output driver (reported by David Lindsay.)
+- Add WinMM driver (drv_win) command line options for buffer size and
+  count (github bug #29, PR #30.)
+- Merge vibrato tables/math, fix tremolo ramp down, fix IT vibrato.
+  (github PR #28.)
+- Fix XM fine volume slide effects (was broken between libmikmod-3.1.6
+  and 3.1.7 - github PR #20.)
+- Fix MOD retrigger (E9x) effect bug that would cause it to always
+  retrigger on tick 1. (github bug #21, PR #22.)
+- Fix handling of FAR pattern break byte (github bug #5.)
+- Add support for Mod's Grave WOW files to MOD loader (github bug #7.)
+- Check M&K! and CD61 signatures in Octalyser modules (github PR #12.)
+- Don't load STM samples with volume==0, fix sample offset calculation
+  (github bug #6.)
+- Fix volume event handling for FAR modules. (github PR #14.)
+- Fix GDM empty notes, fine volslide/portamento, and sample volume.
+  (github PR #15.)
+- Fix GDM set pan position effect. (github PR #27.)
+- Fix MED 9xx command in tempo mode and various BPM mode bugs (github
+  bug #17).
+- Implement missing OctaMED effects and fix several other MED effects
+  (github bug #19, PR #23.)
+- Add support for MED song/instrument transpose and octave wrapping.
+  (github bug #24, PR #25.)
+- Fix note tuning for 669 modules. (github PR #16.)
+- DoPTEffectB, DoPTEffectD: bounds-check the jump target.
+- StartEnvelope: workaround invalid envelopes with 0 pts.
+- Sanity-check that position values can't be higher than patterns in
+  several loaders.
+- Fix access to uninitialized memory in M15, IT, STM and STMIK loaders
+  in case of short files.
+- Refuse zero instrument and pattern numbers in STMIK loader.
+- Several build and portability fixes/updates.
+
+Thanks to:
+- Lionel Debroux, for providing fuzz files which helped finding defects.
+- Alice Rowan (Lachesis), for providing FAR, GDM, STM, and other loader
+  fixes.
+
+
 Summary of changes between libmikmod 3.1.20 and libmikmod 3.1.21:
 ========================================================================
 

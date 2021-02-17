@@ -201,7 +201,7 @@ static UBYTE* readtrack(void)
 					opcode++;
 			}
 
-			if((!opcode)||(opcode>=UNI_LAST)) {
+			if((!opcode)||(opcode>=UNI_FORMAT_LAST)) {
 				free(t);
 				return NULL;
 			}

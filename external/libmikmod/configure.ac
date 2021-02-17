@@ -52,6 +52,7 @@ libmikmod_hpux=no
 
 case $host_os in
 	mingw*) libmikmod_mingw=yes ;;
+	msys*) libmikmod_mingw=yes ;;
 	cygwin*) libmikmod_cygwin=yes ;;
 	linux*) libmikmod_linux=yes ;;
 	darwin*) libmikmod_darwin=yes ;;
@@ -371,12 +372,11 @@ fi])
 # ===================
 
 AC_PROG_CC
+AC_PROG_EGREP
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
-#LT_INIT([win32-dll])
-AC_LIBTOOL_WIN32_DLL
-AC_PROG_LIBTOOL
+LT_INIT([win32-dll])
 
 # =============================================================
 # Check for typedefs, structures, and compiler characteristics.
@@ -386,10 +386,9 @@ AC_PROG_GCC_TRADITIONAL
 AC_C_CONST
 AC_C_INLINE
 AC_CACHE_CHECK([if compiler understands the signed keyword],[libmikmod_cv_gcc_signed],
-	AC_LANG_SAVE
-	AC_LANG_C
+	AC_LANG_PUSH([C])
 	AC_TRY_COMPILE(,[signed int t = 0;],[libmikmod_cv_gcc_signed=yes],[libmikmod_cv_gcc_signed=no])
-	AC_LANG_RESTORE)
+	AC_LANG_POP([C]))
 if test $libmikmod_cv_gcc_signed = no
 then
 	AC_DEFINE(signed,,[Define to empty if compiler does not understand the `signed' keyword.])
@@ -458,8 +457,7 @@ then
 	AC_CACHE_CHECK([wherever dynamically loaded symbols need underscores],[libmikmod_cv_dynload_underscores],
 		libmikmod_oldlibs=$LIBS
 		LIBS="$LIBS $libmikmod_dllib"
-		AC_LANG_SAVE
-		AC_LANG_C
+		AC_LANG_PUSH([C])
 		AC_TRY_RUN(
 [#include <dlfcn.h>
 #ifndef RTLD_GLOBAL
@@ -476,7 +474,7 @@ int main(void) {
 			[libmikmod_cv_dynload_underscores=yes],
 			[libmikmod_cv_dynload_underscores=no],
 			[libmikmod_cv_dynload_underscores=no])
-		AC_LANG_RESTORE
+		AC_LANG_POP([C])
 		LIBS=$libmikmod_oldlibs
 	)
 	if test $libmikmod_cv_dynload_underscores = yes
@@ -499,13 +497,12 @@ then
 	AC_CACHE_CHECK([if compiler recognizes -pthread],[libmikmod_cv_gcc_pthread],
 		ac_save_CFLAGS=$CFLAGS
 		CFLAGS="$CFLAGS -pthread"
-		AC_LANG_SAVE
-		AC_LANG_C
+		AC_LANG_PUSH([C])
 		AC_TRY_LINK([#include <pthread.h>],
 			[int p = pthread_create(NULL,NULL,NULL,NULL);],
 			[libmikmod_cv_gcc_pthread=yes],
 			[libmikmod_cv_gcc_pthread=no])
-		AC_LANG_RESTORE
+		AC_LANG_POP([C])
 		CFLAGS=$ac_save_CFLAGS
 	)
 	if test $libmikmod_cv_gcc_pthread = yes
@@ -543,13 +540,13 @@ fi
 # Windows audio
 # ---------------------
 case $host_os in
- mingw*|cygwin*)
+ mingw*|msys*|cygwin*)
 	# do a windows.h check, just in case..
 	AC_CHECK_HEADERS([windows.h],,[AC_MSG_ERROR([Targeting windows, but windows.h not available])])
 	if test $libmikmod_driver_ds = yes
 	then
 		libmikmod_driver_ds=no
-		AC_CHECK_HEADERS([dsound.h],[libmikmod_driver_ds=yes])
+		AC_CHECK_HEADERS([dsound.h],[libmikmod_driver_ds=yes],[],[#include <windows.h>])
 	fi
 	;;
 
@@ -859,7 +856,7 @@ then
 fi
 
 # If compiling with gcc, use adequate optimization flags
-if test $ac_cv_prog_gcc = yes
+if test $ac_cv_c_compiler_gnu = yes
 then
 	# On at least x86 platforms, gcc 2.7.2.1 and earlier won't work if -O3 (or
 	# -finline-functions) are used. Versions 2.7.2.3, 2.8.x and egcs are ok
@@ -947,14 +944,13 @@ fi
 ac_save_CFLAGS="$CFLAGS"
 CFLAGS="$CFLAGS -fvisibility=hidden -Werror"
 AC_CACHE_CHECK([if compiler supports visibility attributes],[libmikmod_cv_gcc_visibility],
-	AC_LANG_SAVE
-	AC_LANG_C
+	AC_LANG_PUSH([C])
 	AC_TRY_COMPILE([void foo(void);
 __attribute__((visibility("default"))) void foo(void) {}],
 		[],
 		[libmikmod_cv_gcc_visibility=yes],
 		[libmikmod_cv_gcc_visibility=no])
-	AC_LANG_RESTORE)
+	AC_LANG_POP([C]))
 # we want symbol -fvisibility for elf targets, however it works
 # with darwin/macho too.  other than that, windows, dos, os/2, amiga
 # do not need it:  for any such targets, the -Werror switch is

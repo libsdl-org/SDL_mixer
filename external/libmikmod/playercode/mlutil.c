@@ -186,9 +186,12 @@ void S3MIT_ProcessCmd(UBYTE cmd, UBYTE inf, unsigned int flags)
 					UniEffect(UNI_ITEFFECTG,inf);
 				break;
 			case 8: /* Hxy vibrato */
-				if (flags & S3MIT_OLDSTYLE)
-					UniPTEffect(0x4,inf);
-				else
+				if (flags & S3MIT_OLDSTYLE) {
+					if (flags & S3MIT_IT)
+						UniEffect(UNI_ITEFFECTH_OLD,inf);
+					else
+						UniEffect(UNI_S3MEFFECTH,inf);
+				} else
 					UniEffect(UNI_ITEFFECTH,inf);
 				break;
 			case 9: /* Ixy tremor, ontime x, offtime y */
@@ -201,9 +204,12 @@ void S3MIT_ProcessCmd(UBYTE cmd, UBYTE inf, unsigned int flags)
 				UniPTEffect(0x0,inf);
 				break;
 			case 0xb: /* Kxy Dual command H00 & Dxy */
-				if (flags & S3MIT_OLDSTYLE)
-					UniPTEffect(0x4,0);
-				else
+				if (flags & S3MIT_OLDSTYLE) {
+					if (flags & S3MIT_IT)
+						UniEffect(UNI_ITEFFECTH_OLD,0);
+					else
+						UniEffect(UNI_S3MEFFECTH,0);
+				} else
 					UniEffect(UNI_ITEFFECTH,0);
 				UniEffect(UNI_S3MEFFECTD,inf);
 				break;
@@ -263,9 +269,12 @@ void S3MIT_ProcessCmd(UBYTE cmd, UBYTE inf, unsigned int flags)
 				}
 				break;
 			case 0x15: /* Uxy Fine Vibrato speed x, depth y */
-				if(flags & S3MIT_OLDSTYLE)
-					UniEffect(UNI_S3MEFFECTU,inf);
-				else
+				if(flags & S3MIT_OLDSTYLE) {
+					if (flags & S3MIT_IT)
+						UniEffect(UNI_ITEFFECTU_OLD,inf);
+					else
+						UniEffect(UNI_S3MEFFECTU,inf);
+				} else
 					UniEffect(UNI_ITEFFECTU,inf);
 				break;
 			case 0x16: /* Vxx Set Global Volume */

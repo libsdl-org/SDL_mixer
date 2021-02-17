@@ -253,7 +253,8 @@ static BOOL STM_LoadPatterns(void)
 static BOOL STM_Load(BOOL curious)
 {
 	int t;
-	ULONG MikMod_ISA; /* We must generate our own ISA, it's not stored in stm */
+	ULONG samplestart;
+	ULONG sampleend;
 	SAMPLE *q;
 
 	/* try to read stm header */
@@ -329,8 +330,10 @@ static BOOL STM_Load(BOOL curious)
 
 	if(!AllocSamples()) return 0;
 	if(!STM_LoadPatterns()) return 0;
-	MikMod_ISA=_mm_ftell(modreader);
-	MikMod_ISA=(MikMod_ISA+15)&0xfffffff0;	/* normalize */
+
+	samplestart=_mm_ftell(modreader);
+	_mm_fseek(modreader,0,SEEK_END);
+	sampleend=_mm_ftell(modreader);
 
 	for(q=of.samples,t=0;t<of.numsmp;t++,q++) {
 		/* load sample info */
@@ -338,13 +341,35 @@ static BOOL STM_Load(BOOL curious)
 		q->speed      = (mh->sample[t].c2spd * 8363) / 8448;
 		q->volume     = mh->sample[t].volume;
 		q->length     = mh->sample[t].length;
-		if (/*!mh->sample[t].volume || */q->length==1) q->length=0;
+		if (!mh->sample[t].volume || q->length==1) q->length=0;
 		q->loopstart  = mh->sample[t].loopbeg;
 		q->loopend    = mh->sample[t].loopend;
-		q->seekpos    = MikMod_ISA;
+		q->seekpos    = mh->sample[t].reserved << 4;
 
-		MikMod_ISA+=q->length;
-		MikMod_ISA=(MikMod_ISA+15)&0xfffffff0;	/* normalize */
+		/* Sanity checks to make sure samples are bounded within the file. */
+		if(q->length) {
+			if(q->seekpos<samplestart) {
+#ifdef MIKMOD_DEBUG
+				fprintf(stderr,"rejected sample # %d (seekpos=%u < samplestart=%u)\n",t,q->seekpos,samplestart);
+#endif
+				_mm_errno = MMERR_LOADING_SAMPLEINFO;
+				return 0;
+			}
+			/* Some .STMs seem to rely on allowing truncated samples... */
+			if(q->seekpos>=sampleend) {
+#ifdef MIKMOD_DEBUG
+				fprintf(stderr,"truncating sample # %d from length %u to 0\n",t,q->length);
+#endif
+				q->seekpos = q->length = 0;
+			} else if(q->seekpos+q->length>sampleend) {
+#ifdef MIKMOD_DEBUG
+				fprintf(stderr,"truncating sample # %d from length %u to %u\n",t,q->length,sampleend - q->seekpos);
+#endif
+				q->length = sampleend - q->seekpos;
+			}
+		}
+		else
+			q->seekpos = 0;
 
 		/* contrary to the STM specs, sample data is signed */
 		q->flags = SF_SIGNED;
