@@ -151,11 +151,10 @@ BOOL CSoundFile::ReadFAR(const BYTE *lpStream, DWORD dwMemLength)
 				m->instr = ins + 1;
 				m->note = note + 36;
 			}
-			if (vol & 0x0F)
+			if (vol >= 0x01 && vol <= 0x10)
 			{
 				m->volcmd = VOLCMD_VOLUME;
-				m->vol = (vol & 0x0F) << 2;
-				if (m->vol <= 4) m->vol = 0;
+				m->vol = (vol - 1) << 2;
 			}
 			switch(eff & 0xF0)
 			{

@@ -44,13 +44,6 @@ case "$host" in
 esac
 AC_SUBST(LT_LDFLAGS)
 
-# require 10.5+ for osx/x86_64 builds
-case "$host" in
-	x86_64-*-darwin*)
-		CXXFLAGS="$CXXFLAGS -mmacosx-version-min=10.5"
-		LDFLAGS="$LDFLAGS -mmacosx-version-min=10.5" ;;
-esac
-
 # symbol visibility
 ac_save_CXXFLAGS="$CXXFLAGS"
 CXXFLAGS="$CXXFLAGS -fvisibility=hidden -Werror"

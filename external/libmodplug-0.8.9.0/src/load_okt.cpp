@@ -43,7 +43,7 @@ BOOL CSoundFile::ReadOKT(const BYTE *lpStream, DWORD dwMemLength)
 {
 	const OKTFILEHEADER *pfh = (OKTFILEHEADER *)lpStream;
 	DWORD dwMemPos = sizeof(OKTFILEHEADER);
-	UINT nsamples = 0, npatterns = 0, norders = 0;
+	UINT nsamples = 0, norders = 0;//, npatterns = 0
 
 	if ((!lpStream) || (dwMemLength < 1024)) return FALSE;
 	if ((pfh->okta != 0x41544B4F) || (pfh->song != 0x474E4F53)
@@ -88,7 +88,7 @@ BOOL CSoundFile::ReadOKT(const BYTE *lpStream, DWORD dwMemLength)
 	if (dwMemPos >= dwMemLength) return TRUE;
 	if (*((DWORD *)(lpStream + dwMemPos)) == 0x4E454C53)
 	{
-		npatterns = lpStream[dwMemPos+9];
+	//	npatterns = lpStream[dwMemPos+9];
 		dwMemPos += bswapBE32(*((DWORD *)(lpStream + dwMemPos + 4))) + 8;
 	}
 	// PLEN
@@ -104,7 +104,7 @@ BOOL CSoundFile::ReadOKT(const BYTE *lpStream, DWORD dwMemLength)
 	{
 		UINT orderlen = norders;
 		if (orderlen >= MAX_ORDERS) orderlen = MAX_ORDERS-1;
-		for (UINT i=0; i<orderlen; i++) Order[i] = lpStream[dwMemPos+10+i];
+		for (UINT i=0; i<orderlen; i++) Order[i] = lpStream[dwMemPos+8+i];
 		for (UINT j=orderlen; j>1; j--) { if (Order[j-1]) break; Order[j-1] = 0xFF; }
 		dwMemPos += bswapBE32(*((DWORD *)(lpStream + dwMemPos + 4))) + 8;
 	}

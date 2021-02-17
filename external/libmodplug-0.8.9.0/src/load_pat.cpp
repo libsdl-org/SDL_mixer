@@ -397,10 +397,10 @@ void pat_init_patnames(void)
 			isdrumset = 0;
 			_mm_fgets(mmcfg, line, PATH_MAX);
 			while( !_mm_feof(mmcfg) ) {
-			if( isdigit(line[0]) || (isblank(line[0]) && isdigit(line[1])) ) {
-				p = line;
+			p = line;
+			while ( isspace(*p) ) p ++;
+			if( isdigit(p[0]) ) {
 				// get pat number
-				while ( isspace(*p) ) p ++;
 				i = atoi(p);
 				while ( isdigit(*p) ) p ++;
 				while ( isspace(*p) ) p ++;
@@ -428,10 +428,24 @@ void pat_init_patnames(void)
 					*q++ = '\0';
 				}
 			}
-			if( !strncmp(line,"drumset",7) ) isdrumset = 1;
-			if( !strncmp(line,"source",6) && nsources < 5 ) {
+			else if( !strncmp(p,"bank",4) ) isdrumset = 0;
+			else if( !strncmp(p,"drumset",7) ) isdrumset = 1;
+			else if( !strncmp(p,"soundfont",9) ) {
+				fprintf(stderr, "warning: soundfont directive unsupported!\n");
+			}
+			else if( !strncmp(p,"dir",3) )  {
+				p += 3;
+				while ( isspace(*p) ) p ++;
+				q = p + strlen(p);
+				if(q > p) {
+					--q;
+					while ( q > p && isspace(*q) ) *(q--) = 0;
+					strncpy(pathforpat, p, PATH_MAX);
+				}
+			}
+			else if( !strncmp(p,"source",6) && nsources < 5 ) {
 				q = cfgsources[nsources];
-				p = &line[7];
+				p += 6;
 				while ( isspace(*p) ) p ++;
 				pfnlen = 0;
 				while ( *p && *p != '#' && !isspace(*p) && pfnlen < 128 ) {
@@ -469,9 +483,9 @@ void pat_init_patnames(void)
 
 static char *pat_build_path(char *fname, int pat)
 {
-	char *ps;
+	char *ps, *p;
 	char *patfile = midipat[pat];
-	int isabspath = (patfile[0] == '/');
+	int has_ext = 0, isabspath = (patfile[0] == '/');
 	if ( isabspath ) patfile ++;
 	ps = strrchr(patfile, ':');
 	if( ps ) {
@@ -479,7 +493,9 @@ static char *pat_build_path(char *fname, int pat)
 		strcpy(strrchr(fname, ':'), ".pat");
 		return ps;
 	}
-	sprintf(fname, "%s%c%s.pat", isabspath ? "" : pathforpat, DIRDELIM, patfile);
+	p = strrchr(patfile, '.');
+	if(p && !strcasecmp(p, ".pat")) has_ext = 1;
+	sprintf(fname, "%s%c%s%s", isabspath ? "" : pathforpat, DIRDELIM, patfile, has_ext ? "" : ".pat");
 	return 0;
 }
 

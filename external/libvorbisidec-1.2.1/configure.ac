@@ -4,7 +4,8 @@ dnl ------------------------------------------------
 dnl Initialization and Versioning
 dnl ------------------------------------------------
 
-AC_INIT(mdct.c)
+AC_INIT
+AC_CONFIG_SRCDIR([mdct.c])
 AC_CONFIG_MACRO_DIR([m4])
 
 AC_CANONICAL_HOST
@@ -26,9 +27,9 @@ AC_SUBST(V_LIB_CURRENT)
 AC_SUBST(V_LIB_REVISION)
 AC_SUBST(V_LIB_AGE)
 
-dnl --------------------------------------------------  
+dnl --------------------------------------------------
 dnl Check for programs
-dnl --------------------------------------------------  
+dnl --------------------------------------------------
 
 dnl save $CFLAGS since AC_PROG_CC likes to insert "-g -O2"
 dnl if $CFLAGS is blank
@@ -37,8 +38,18 @@ AC_PROG_CC
 AC_PROG_CPP
 CFLAGS="$cflags_save"
 
-AC_LIBTOOL_WIN32_DLL
-AC_PROG_LIBTOOL
+dnl AC_LIBTOOL_WIN32_DLL
+dnl AC_PROG_LIBTOOL
+LT_INIT([win32-dll])
+
+# Test whenever ld supports -version-script
+dnl AC_PROG_LD
+dnl AC_PROG_LD_GNU
+LT_PATH_LD
+
+dnl check endianism
+AC_C_BIGENDIAN
+
 
 dnl --------------------------------------------------
 dnl Set build flags based on environment
@@ -49,9 +60,9 @@ dnl Set some target options
 cflags_save="$CFLAGS"
 ldflags_save="$LDFLAGS"
 if test -z "$GCC"; then
-        case $host in 
+        case $host in
         arm-*-*)
-                DEBUG="-g -D_ARM_ASSEM_" 
+                DEBUG="-g -D_ARM_ASSEM_"
                 CFLAGS="-O -D_ARM_ASSEM_"
                 PROFILE="-p -g -O -D_ARM_ASSEM_" ;;
         *)
@@ -61,7 +72,7 @@ if test -z "$GCC"; then
         esac
 else
 
-        case $host in 
+        case $host in
         arm-*-*)
                 DEBUG="-g -Wall -D__NO_MATH_INLINES -fsigned-char -D_ARM_ASSEM_"
                 CFLAGS="-O2 -D_ARM_ASSEM_ -fsigned-char"
@@ -77,20 +88,12 @@ CFLAGS="$CFLAGS $cflags_save -D_REENTRANT"
 LDFLAGS="$LDFLAGS $ldflags_save"
 
 
-# Test whenever ld supports -version-script
-AC_PROG_LD
-AC_PROG_LD_GNU
-
-# check endianism
-AC_C_BIGENDIAN
-
 dnl --------------------------------------------------
-dnl Options 
+dnl Options
 dnl --------------------------------------------------
 
-AC_ARG_ENABLE(
-   low-accuracy,
-   [  --enable-low-accuracy   enable 32 bit only multiply operations],
+AC_ARG_ENABLE(low-accuracy,
+   AS_HELP_STRING([--enable-low-accuracy], [enable 32 bit only multiply operations]),
    CFLAGS="$CFLAGS -D_LOW_ACCURACY_"
 )
 
@@ -135,19 +138,24 @@ AC_FUNC_ALLOCA
 AC_FUNC_MEMCMP
 
 AC_MSG_CHECKING(for C99 variable-size arrays)
-AC_TRY_COMPILE( [], [static int x; char a[++x]; a[sizeof a - 1] = 0; int N; return a[0];],
-[has_var_arrays=yes;AC_DEFINE([VAR_ARRAYS], [], [Use C99 variable-size arrays])
-],
-has_var_arrays=no
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]],
+  [[static int x; char a[++x]; a[sizeof a - 1] = 0; int N; return a[0];]] )],
+  [has_var_arrays=yes;AC_DEFINE([VAR_ARRAYS],[],[Use C99 variable-size arrays])],
+  [has_var_arrays=no]
 )
 AC_MSG_RESULT($has_var_arrays)
 
 
-# do this last after all checks, because Version_script is not generated yet.
+dnl --------------------------------------------------
+dnl Version script (exported symbols control.)
+dnl --------------------------------------------------
+
+SHLIB_VERSION_ARG=""
 if test "x$lt_cv_prog_gnu_ld" = "xyes"; then
    SHLIB_VERSION_ARG="-Wl,--version-script=Version_script"
-   LDFLAGS="$LDFLAGS $SHLIB_VERSION_ARG"
 fi
+AC_SUBST(SHLIB_VERSION_ARG)
+
 
 dnl --------------------------------------------------
 dnl Do substitutions
@@ -159,4 +167,5 @@ AC_SUBST(LIBS)
 AC_SUBST(DEBUG)
 AC_SUBST(PROFILE)
 
-AC_OUTPUT(Makefile Version_script vorbisidec.pc)
+AC_CONFIG_FILES([Makefile Version_script vorbisidec.pc])
+AC_OUTPUT
