@@ -669,8 +669,8 @@ static InstrumentLayer *load_instrument(const char *name, int font_type, int per
         {
 	  goto fail;
 	}
-      sp->data = safe_malloc(sp->data_length + 1);
-      lp->size += sp->data_length + 1;
+      sp->data = safe_malloc(sp->data_length + 2);
+      lp->size += sp->data_length + 2;
 
       if (1 != fread(sp->data, sp->data_length, 1, fp))
 	goto fail;
@@ -822,7 +822,7 @@ static InstrumentLayer *load_instrument(const char *name, int font_type, int per
 	uint8 *gulp,*ulp;
 	int16 *swp;
 	int l=sp->data_length >> FRACTION_BITS;
-	gulp=ulp=safe_malloc(l+1);
+	gulp=ulp=safe_malloc(l+2);
 	swp=(int16 *)sp->data;
 	while(l--)
 	  *ulp++ = (*swp++ >> 8) & 0xFF;
