@@ -2041,7 +2041,9 @@ int Mix_SetPosition(int channel, Sint16 angle, Uint8 distance)
     if (f == NULL)
         return(0);
 
-    angle = SDL_abs(angle) % 360;  /* make angle between 0 and 359. */
+    /* make angle between 0 and 359. */
+    angle %= 360;
+    if (angle < 0) angle += 360;
 
     Mix_LockAudio();
     args = get_position_arg(channel);
