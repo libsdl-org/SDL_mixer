@@ -115,7 +115,7 @@ case "$host" in
         #VERSION_SOURCES="$srcdir/version.rc"
         EXE=".exe"
 	;;
-    *-*-cygwin* | *-*-mingw32*)
+    *-*-cygwin* | *-*-mingw*)
         VERSION_SOURCES="$srcdir/version.rc"
         EXE=".exe"
         if test "$build" != "$host"; then # cross-compiling
@@ -263,14 +263,13 @@ if test x$enable_music_mod = xyes; then
 
 int main(int argc, char **argv)
 {
-long maj=$libmikmod_maj,min=$libmikmod_min,rev=$libmikmod_rev,ver=MikMod_GetVersion();
-/*printf("(%d.%d.%d) ",ver>>16,(ver>>8)&0xff,ver&0xff);*/
-if(ver>=((maj<<16)|(min<<8)|(rev))) {
-    printf("yes\n");
-    return 0;
-}
-printf("no\n*** libmikmod is older than %d.%d.%d, not using.\n",maj,min,rev);
-return 1;
+  long maj=$libmikmod_maj,min=$libmikmod_min,rev=$libmikmod_rev,ver=MikMod_GetVersion();
+  if (ver>=((maj<<16)|(min<<8)|(rev))) {
+      printf("yes\n");
+      return 0;
+  }
+  printf("no\n*** libmikmod is older than %d.%d.%d, not using.\n",maj,min,rev);
+  return 1;
 }
 ], [], [have_libmikmod=no], [echo $ac_n "cross compiling; assumed OK... $ac_c"])
     fi
@@ -280,7 +279,7 @@ return 1;
             *-*-darwin*)
                 mikmod_lib=[`find_lib libmikmod.dylib`]
                 ;;
-            *-*-cygwin* | *-*-mingw32*)
+            *-*-cygwin* | *-*-mingw*)
                 mikmod_lib=[`find_lib "libmikmod*.dll"`]
                 ;;
             *)
@@ -352,7 +351,7 @@ AS_HELP_STRING([--enable-music-native-midi], [enable native MIDI music output [[
             *mingw32ce*)
                 use_music_native_midi=no
                 ;;
-            *-*-cygwin* | *-*-mingw32*)
+            *-*-cygwin* | *-*-mingw*)
                 use_music_native_midi=yes
                 EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lwinmm"
                 ;;
@@ -388,7 +387,7 @@ AS_HELP_STRING([--enable-music-fluidsynth-shared], [dynamically load FluidSynth 
                 *-*-darwin*)
                     fluidsynth_lib=[`find_lib libfluidsynth.dylib`]
                     ;;
-                *-*-cygwin* | *-*-mingw32*)
+                *-*-cygwin* | *-*-mingw*)
                     fluidsynth_lib=[`find_lib "fluidsynth*.dll"`]
                     ;;
                 *)
@@ -432,7 +431,7 @@ if test x$enable_music_ogg = xyes; then
                 *-*-darwin*)
                     ogg_lib=[`find_lib libvorbisidec.dylib`]
                     ;;
-                *-*-cygwin* | *-*-mingw32*)
+                *-*-cygwin* | *-*-mingw*)
                     ogg_lib=[`find_lib "vorbisidec*.dll"`]
                     ;;
                 *)
@@ -462,7 +461,7 @@ if test x$enable_music_ogg = xyes; then
                 *-*-darwin*)
                     ogg_lib=[`find_lib libvorbisfile.dylib`]
                     ;;
-                *-*-cygwin* | *-*-mingw32*)
+                *-*-cygwin* | *-*-mingw*)
                     ogg_lib=[`find_lib "libvorbisfile*.dll"`]
                     ;;
                 *)
@@ -523,7 +522,7 @@ if test x$enable_music_flac = xyes; then
                 *-*-darwin*)
                     flac_lib=[`find_lib libFLAC.dylib`]
                     ;;
-                *-*-cygwin* | *-*-mingw32*)
+                *-*-cygwin* | *-*-mingw*)
                     flac_lib=[`find_lib "libFLAC-*.dll"`]
                     ;;
                 *)
@@ -567,7 +566,7 @@ if test x$enable_music_mp3 = xyes; then
             *-*-darwin*)
                 mpg123_lib=[`find_lib libmpg123.dylib`]
                 ;;
-            *-*-cygwin* | *-*-mingw32*)
+            *-*-cygwin* | *-*-mingw*)
                 mpg123_lib=[`find_lib "libmpg123*.dll"`]
                 ;;
             *)
