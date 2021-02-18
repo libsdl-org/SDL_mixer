@@ -389,6 +389,9 @@ AS_HELP_STRING([--enable-music-fluidsynth-shared], [dynamically load FluidSynth 
                     ;;
                 *-*-cygwin* | *-*-mingw*)
                     fluidsynth_lib=[`find_lib "fluidsynth*.dll"`]
+                    if test x$fluidsynth_lib = x; then
+                        fluidsynth_lib=[`find_lib "libfluidsynth*.dll"`]
+                    fi
                     ;;
                 *)
                     fluidsynth_lib=[`find_lib "libfluidsynth[0-9]*.so.*"`]
@@ -433,6 +436,9 @@ if test x$enable_music_ogg = xyes; then
                     ;;
                 *-*-cygwin* | *-*-mingw*)
                     ogg_lib=[`find_lib "vorbisidec*.dll"`]
+                    if test x$ogg_lib = x; then
+                        ogg_lib=[`find_lib "libvorbisidec*.dll"`]
+                    fi
                     ;;
                 *)
                     ogg_lib=[`find_lib "libvorbisidec[0-9]*.so.*"`]
