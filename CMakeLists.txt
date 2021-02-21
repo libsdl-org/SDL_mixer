@@ -62,7 +62,7 @@ if (ANDROID)
         target_link_libraries(SDL2_mixer PRIVATE timidity)
     endif()
 
-    target_include_directories(SDL2_mixer PUBLIC .)
+    target_include_directories(SDL2_mixer PUBLIC include)
     target_link_libraries(SDL2_mixer PRIVATE SDL2)
 else()
 
