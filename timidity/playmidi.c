@@ -1743,5 +1743,6 @@ void Timidity_Close(void)
   }
   free_instruments();
   free_pathlist();
+  memset(voice, 0, sizeof(voice));
 }
 
