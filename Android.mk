@@ -1,6 +1,9 @@
 # Save the local path
 SDL_MIXER_LOCAL_PATH := $(call my-dir)
 
+# Enable this if you want to support loading WAV music
+SUPPORT_WAV ?= true
+
 # Enable this if you want to support loading FLAC music with libFLAC
 SUPPORT_FLAC ?= true
 FLAC_LIBRARY_PATH := external/flac-1.3.3
@@ -73,6 +76,10 @@ LOCAL_CFLAGS :=
 LOCAL_LDLIBS :=
 LOCAL_STATIC_LIBRARIES :=
 LOCAL_SHARED_LIBRARIES := SDL2
+
+ifeq ($(SUPPORT_WAV),true)
+    LOCAL_CFLAGS += -DMUSIC_WAV
+endif
 
 ifeq ($(SUPPORT_FLAC),true)
     LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(FLAC_LIBRARY_PATH)/include
