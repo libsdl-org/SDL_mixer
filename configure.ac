@@ -54,8 +54,18 @@ dnl Set up the compiler and linker flags
 case "$host" in
     *-*-cygwin*)
         # We build SDL on cygwin without the UNIX emulation layer
-        BASE_CFLAGS="-I/usr/include/mingw -mno-cygwin"
-        BASE_LDFLAGS="-mno-cygwin"
+        BASE_CFLAGS="-I/usr/include/mingw"
+        BASE_LDFLAGS=""
+        AC_MSG_CHECKING(for GCC -mno-cygwin option)
+        save_CFLAGS="$CFLAGS"
+        CFLAGS="$save_CFLAGS -mno-cygwin"
+        AC_TRY_COMPILE([],[],[have_no_cygwin=yes],[have_no_cygwin=no])
+        AC_MSG_RESULT($have_no_cygwin)
+        CFLAGS="$save_CFLAGS"
+        if test x$have_no_cygwin = xyes; then
+            BASE_CFLAGS="$BASE_CFLAGS -mno-cygwin"
+            BASE_LDFLAGS="-mno-cygwin"
+        fi
         ;;
     *)
         BASE_CFLAGS="-D_GNU_SOURCE=1"
