@@ -1564,53 +1564,53 @@ Optional Features:
                           optimize for fast installation [default=yes]
   --disable-libtool-lock  avoid locking (might break parallel builds)
   --enable-dependency-tracking
-                          Use gcc -MMD -MT dependency tracking [[default=yes]]
+                          Use gcc -MMD -MT dependency tracking [default=yes]
   --disable-sdltest       Do not try to compile and run a test SDL program
-  --enable-music-cmd      support an external music player [[default=yes]]
-  --enable-music-wave     enable streaming WAVE music [[default=yes]]
-  --enable-music-mod      enable MOD music [[default=yes]]
+  --enable-music-cmd      support an external music player [default=yes]
+  --enable-music-wave     enable streaming WAVE music [default=yes]
+  --enable-music-mod      enable MOD music [default=yes]
   --enable-music-mod-modplug
-                          enable MOD music via modplug [[default=yes]]
+                          enable MOD music via modplug [default=yes]
   --enable-music-mod-modplug-shared
-                          dynamically load modplug library [[default=yes]]
-  --enable-music-mod-xmp  enable MOD music via libxmp [[default=no]]
+                          dynamically load modplug library [default=yes]
+  --enable-music-mod-xmp  enable MOD music via libxmp [default=no]
   --enable-music-mod-xmp-lite
                           use libxmp-lite instead of libxmp [default=no]
   --enable-music-mod-xmp-shared
-                          dynamically load xmp library [[default=yes]]
+                          dynamically load xmp library [default=yes]
   --enable-music-mod-mikmod
-                          enable MOD music via mikmod [[default=no]]
+                          enable MOD music via mikmod [default=no]
   --enable-music-mod-mikmod-shared
-                          dynamically load mikmod library [[default=yes]]
-  --enable-music-midi     enable MIDI music [[default=yes]]
+                          dynamically load mikmod library [default=yes]
+  --enable-music-midi     enable MIDI music [default=yes]
   --enable-music-midi-timidity
-                          enable timidity MIDI output [[default=yes]]
+                          enable timidity MIDI output [default=yes]
   --enable-music-midi-native
-                          enable native MIDI music output [[default=yes]]
+                          enable native MIDI music output [default=yes]
   --enable-music-midi-fluidsynth
-                          enable FluidSynth MIDI output [[default=yes]]
+                          enable FluidSynth MIDI output [default=yes]
   --enable-music-midi-fluidsynth-shared
-                          dynamically load FluidSynth library [[default=yes]]
-  --enable-music-ogg      enable Ogg Vorbis music [[default=yes]]
+                          dynamically load FluidSynth library [default=yes]
+  --enable-music-ogg      enable Ogg Vorbis music [default=yes]
   --enable-music-ogg-tremor
-                          enable OGG Vorbis music via libtremor [[default=no]]
+                          enable OGG Vorbis music via libtremor [default=no]
   --enable-music-ogg-shared
-                          dynamically load Ogg Vorbis library [[default=yes]]
-  --enable-music-flac     enable FLAC music [[default=yes]]
+                          dynamically load Ogg Vorbis library [default=yes]
+  --enable-music-flac     enable FLAC music [default=yes]
   --enable-music-flac-shared
-                          dynamically load FLAC library [[default=yes]]
-  --enable-music-mp3      enable MP3 music [[default=yes]]
+                          dynamically load FLAC library [default=yes]
+  --enable-music-mp3      enable MP3 music [default=yes]
   --enable-music-mp3-mad-gpl
-                          enable MP3 music via libmad GPL code [[default=no]]
+                          enable MP3 music via libmad GPL code [default=no]
   --enable-music-mp3-mad-gpl-dithering
-                          enable MP3 music via libmad GPL code [[default=yes]]
+                          enable MP3 music via libmad GPL code [default=yes]
   --enable-music-mp3-mpg123
-                          enable MP3 music via libmpg123 [[default=yes]]
+                          enable MP3 music via libmpg123 [default=yes]
   --enable-music-mp3-mpg123-shared
-                          dynamically load libmpg123 library [[default=yes]]
-  --enable-music-opus     enable Opus music [[default=yes]]
+                          dynamically load libmpg123 library [default=yes]
+  --enable-music-opus     enable Opus music [default=yes]
   --enable-music-opus-shared
-                          dynamically load opusfile library [[default=yes]]
+                          dynamically load opusfile library [default=yes]
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
