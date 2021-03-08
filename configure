@@ -1546,37 +1546,37 @@ Optional Features:
                           optimize for fast installation [default=yes]
   --disable-libtool-lock  avoid locking (might break parallel builds)
   --enable-dependency-tracking
-                          Use gcc -MMD -MT dependency tracking [[default=yes]]
+                          Use gcc -MMD -MT dependency tracking [default=yes]
   --disable-sdltest       Do not try to compile and run a test SDL program
-  --enable-music-cmd      support an external music player [[default=yes]]
-  --enable-music-wave     enable streaming WAVE music [[default=yes]]
-  --enable-music-mod      enable MOD music via mikmod [[default=yes]]
+  --enable-music-cmd      support an external music player [default=yes]
+  --enable-music-wave     enable streaming WAVE music [default=yes]
+  --enable-music-mod      enable MOD music via mikmod [default=yes]
   --enable-music-mod-shared
-                          dynamically load MOD support [[default=yes]]
+                          dynamically load MOD support [default=yes]
   --enable-music-mod-modplug
-                          enable MOD music via modplug [[default=no]]
-  --enable-music-midi     enable MIDI music via timidity [[default=yes]]
+                          enable MOD music via modplug [default=no]
+  --enable-music-midi     enable MIDI music via timidity [default=yes]
   --enable-music-timidity-midi
-                          enable timidity MIDI output [[default=yes]]
+                          enable timidity MIDI output [default=yes]
   --enable-music-native-midi
-                          enable native MIDI music output [[default=yes]]
+                          enable native MIDI music output [default=yes]
   --enable-music-fluidsynth-midi
-                          enable FluidSynth MIDI output [[default=yes]]
+                          enable FluidSynth MIDI output [default=yes]
   --enable-music-fluidsynth-shared
-                          dynamically load FluidSynth support [[default=yes]]
-  --enable-music-ogg      enable Ogg Vorbis music [[default=yes]]
+                          dynamically load FluidSynth support [default=yes]
+  --enable-music-ogg      enable Ogg Vorbis music [default=yes]
   --enable-music-ogg-tremor
-                          enable OGG Vorbis music via libtremor [[default=no]]
+                          enable OGG Vorbis music via libtremor [default=no]
   --enable-music-ogg-shared
-                          dynamically load Ogg Vorbis support [[default=yes]]
-  --enable-music-flac     enable FLAC music [[default=yes]]
+                          dynamically load Ogg Vorbis support [default=yes]
+  --enable-music-flac     enable FLAC music [default=yes]
   --enable-music-flac-shared
-                          dynamically load FLAC support [[default=yes]]
-  --enable-music-mp3      enable MP3 music via libmpg123 [[default=yes]]
+                          dynamically load FLAC support [default=yes]
+  --enable-music-mp3      enable MP3 music via libmpg123 [default=yes]
   --enable-music-mp3-shared
-                          dynamically load MP3 support [[default=yes]]
+                          dynamically load MP3 support [default=yes]
   --enable-music-mp3-mad-gpl
-                          enable MP3 music via libmad GPL code [[default=no]]
+                          enable MP3 music via libmad GPL code [default=no]
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]

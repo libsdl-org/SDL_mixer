@@ -89,8 +89,8 @@ AC_C_CONST
 
 dnl See whether we can use gcc style dependency tracking
 AC_ARG_ENABLE(dependency-tracking,
-AS_HELP_STRING([--enable-dependency-tracking],
-               [Use gcc -MMD -MT dependency tracking [[default=yes]]]),
+[AS_HELP_STRING([--enable-dependency-tracking],
+               [Use gcc -MMD -MT dependency tracking [default=yes]])],
               , enable_dependency_tracking=yes)
 if test x$enable_dependency_tracking = xyes; then
     have_gcc_mmd_mt=no
@@ -210,7 +210,7 @@ dnl Check command-line options
 CheckVisibilityHidden
 
 AC_ARG_ENABLE([music-cmd],
-AS_HELP_STRING([--enable-music-cmd], [support an external music player [[default=yes]]]),
+[AS_HELP_STRING([--enable-music-cmd], [support an external music player [default=yes]])],
               [], [enable_music_cmd=detect])
 if test "x$enable_music_cmd" != xno; then
     AC_CHECK_FUNCS([fork vfork])
@@ -230,7 +230,7 @@ if test "x$enable_music_cmd" != xno; then
 fi
 
 AC_ARG_ENABLE([music-wave],
-AS_HELP_STRING([--enable-music-wave], [enable streaming WAVE music [[default=yes]]]),
+[AS_HELP_STRING([--enable-music-wave], [enable streaming WAVE music [default=yes]])],
               [], [enable_music_wave=yes])
 if test x$enable_music_wave = xyes; then
     SOURCES="$SOURCES $srcdir/wavestream.c"
@@ -238,10 +238,10 @@ if test x$enable_music_wave = xyes; then
 fi
 
 AC_ARG_ENABLE([music-mod],
-AS_HELP_STRING([--enable-music-mod], [enable MOD music via mikmod [[default=yes]]]),
+[AS_HELP_STRING([--enable-music-mod], [enable MOD music via mikmod [default=yes]])],
               [], [enable_music_mod=yes])
 AC_ARG_ENABLE([music-mod-shared],
-AS_HELP_STRING([--enable-music-mod-shared], [dynamically load MOD support [[default=yes]]]),
+[AS_HELP_STRING([--enable-music-mod-shared], [dynamically load MOD support [default=yes]])],
               [], [enable_music_mod_shared=yes])
 if test x$enable_music_mod = xyes; then
     have_libmikmod=no
@@ -305,7 +305,7 @@ int main(int argc, char **argv)
 fi
 
 AC_ARG_ENABLE([music-mod-modplug],
-AS_HELP_STRING([--enable-music-mod-modplug], [enable MOD music via modplug [[default=no]]]),
+[AS_HELP_STRING([--enable-music-mod-modplug], [enable MOD music via modplug [default=no]])],
               [], [enable_music_mod_modplug=no])
 if test x$enable_music_mod_modplug = xyes; then
     PKG_CHECK_MODULES([MODPLUG], [libmodplug >= 0.8.7], [dnl
@@ -331,19 +331,19 @@ if test x$have_libmikmod != xyes -a x$have_libmodplug != xyes ; then
 fi
 
 AC_ARG_ENABLE([music-midi],
-AS_HELP_STRING([--enable-music-midi], [enable MIDI music via timidity [[default=yes]]]),
+[AS_HELP_STRING([--enable-music-midi], [enable MIDI music via timidity [default=yes]])],
               [], [enable_music_midi=yes])
 if test x$enable_music_midi = xyes; then
     EXTRA_CFLAGS="$EXTRA_CFLAGS -DMID_MUSIC"
     AC_ARG_ENABLE([music-timidity-midi],
-AS_HELP_STRING([--enable-music-timidity-midi], [enable timidity MIDI output [[default=yes]]]),
+[AS_HELP_STRING([--enable-music-timidity-midi], [enable timidity MIDI output [default=yes]])],
                   [], [enable_music_timidity_midi=yes])
     if test x$enable_music_timidity_midi = xyes; then
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DUSE_TIMIDITY_MIDI -I\$(srcdir)/timidity"
         SOURCES="$SOURCES $srcdir/timidity/*.c"
     fi
     AC_ARG_ENABLE([music-native-midi],
-AS_HELP_STRING([--enable-music-native-midi], [enable native MIDI music output [[default=yes]]]),
+[AS_HELP_STRING([--enable-music-native-midi], [enable native MIDI music output [default=yes]])],
                   [], [enable_music_native_midi=yes])
     if test x$enable_music_native_midi = xyes; then
         use_music_native_midi=no
@@ -374,10 +374,10 @@ AS_HELP_STRING([--enable-music-native-midi], [enable native MIDI music output [[
         fi
     fi
     AC_ARG_ENABLE([music-fluidsynth-midi],
-AS_HELP_STRING([--enable-music-fluidsynth-midi], [enable FluidSynth MIDI output [[default=yes]]]),
+[AS_HELP_STRING([--enable-music-fluidsynth-midi], [enable FluidSynth MIDI output [default=yes]])],
                   [], [enable_music_fluidsynth_midi=yes])
     AC_ARG_ENABLE([music-fluidsynth-shared],
-AS_HELP_STRING([--enable-music-fluidsynth-shared], [dynamically load FluidSynth support [[default=yes]]]),
+[AS_HELP_STRING([--enable-music-fluidsynth-shared], [dynamically load FluidSynth support [default=yes]])],
                   [], [enable_music_fluidsynth_shared=yes])
     if test x$enable_music_fluidsynth_midi = xyes; then
         AC_CHECK_HEADER([fluidsynth.h], [have_fluidsynth_hdr=yes])
@@ -416,13 +416,13 @@ AS_HELP_STRING([--enable-music-fluidsynth-shared], [dynamically load FluidSynth 
 fi
 
 AC_ARG_ENABLE([music-ogg],
-AS_HELP_STRING([--enable-music-ogg], [enable Ogg Vorbis music [[default=yes]]]),
+[AS_HELP_STRING([--enable-music-ogg], [enable Ogg Vorbis music [default=yes]])],
               [], [enable_music_ogg=yes])
 AC_ARG_ENABLE(music-ogg-tremor,
-AS_HELP_STRING([--enable-music-ogg-tremor], [enable OGG Vorbis music via libtremor [[default=no]]]),
+[AS_HELP_STRING([--enable-music-ogg-tremor], [enable OGG Vorbis music via libtremor [default=no]])],
               [], enable_music_ogg_tremor=no)
 AC_ARG_ENABLE([music-ogg-shared],
-AS_HELP_STRING([--enable-music-ogg-shared], [dynamically load Ogg Vorbis support [[default=yes]]]),
+[AS_HELP_STRING([--enable-music-ogg-shared], [dynamically load Ogg Vorbis support [default=yes]])],
               [], [enable_music_ogg_shared=yes])
 if test x$enable_music_ogg = xyes; then
     LIBS_SAVED="$LIBS"
@@ -495,11 +495,11 @@ fi
 
 libflac_ver=8
 AC_ARG_ENABLE([music-flac],
-AS_HELP_STRING([--enable-music-flac], [enable FLAC music [[default=yes]]]),
+[AS_HELP_STRING([--enable-music-flac], [enable FLAC music [default=yes]])],
               [], [enable_music_flac=yes])
 AC_ARG_ENABLE([music-flac-shared],
-AS_HELP_STRING([--enable-music-flac-shared],
-              [dynamically load FLAC support [[default=yes]]]),
+[AS_HELP_STRING([--enable-music-flac-shared],
+              [dynamically load FLAC support [default=yes]])],
               [], [enable_music_flac_shared=yes])
 if test x$enable_music_flac = xyes; then
     AC_CHECK_HEADER([FLAC/export.h], [have_flac_export=yes])
@@ -557,10 +557,10 @@ AC_CHECK_HEADERS([signal.h], [EXTRA_CFLAGS="$EXTRA_CFLAGS -DHAVE_SIGNAL_H"])
 AC_CHECK_FUNCS(setbuf, [EXTRA_CFLAGS="$EXTRA_CFLAGS -DHAVE_SETBUF"])
 
 AC_ARG_ENABLE(music-mp3,
-AS_HELP_STRING([--enable-music-mp3], [enable MP3 music via libmpg123 [[default=yes]]]),
+[AS_HELP_STRING([--enable-music-mp3], [enable MP3 music via libmpg123 [default=yes]])],
               [], enable_music_mp3=yes)
 AC_ARG_ENABLE([music-mp3-shared],
-AS_HELP_STRING([--enable-music-mp3-shared], [dynamically load MP3 support [[default=yes]]]),
+[AS_HELP_STRING([--enable-music-mp3-shared], [dynamically load MP3 support [default=yes]])],
               [], [enable_music_mp3_shared=yes])
 have_mpg123=no
 if test x$enable_music_mp3 = xyes; then
@@ -593,7 +593,7 @@ if test x$enable_music_mp3 = xyes; then
 fi
 
 AC_ARG_ENABLE(music-mp3-mad-gpl,
-AS_HELP_STRING([--enable-music-mp3-mad-gpl], [enable MP3 music via libmad GPL code [[default=no]]]),
+[AS_HELP_STRING([--enable-music-mp3-mad-gpl], [enable MP3 music via libmad GPL code [default=no]])],
                   [], [enable_music_mp3_mad_gpl=no])
 have_libmad=no
 if test x$enable_music_mp3_mad_gpl = xyes; then
