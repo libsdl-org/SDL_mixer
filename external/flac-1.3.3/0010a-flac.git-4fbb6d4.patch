@@ -1,0 +1,78 @@
+From 4fbb6d4f2ecf2a96c17ea9880108409f852c08a9 Mon Sep 17 00:00:00 2001
+From: Thomas BERNARD <miniupnp@free.fr>
+Date: Sun, 9 Feb 2020 23:04:08 +0100
+Subject: [PATCH] fix build under Mac OS X with PowerPC CPU
+
+revert 44036c9a9b45d03373fe90e9c112852bfc054c51 because auxv.h is only
+available under Linux and FreeBSD.
+---
+ configure.ac      |  4 ++--
+ src/libFLAC/cpu.c | 17 ++++++++++++-----
+ 2 files changed, 14 insertions(+), 7 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 5eb6b9af4..4a95cb8bd 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -144,7 +144,7 @@ case "$host_cpu" in
+ 	powerpc64|powerpc64le)
+ 		cpu_ppc64=true
+ 		cpu_ppc=true
+-		AC_CHECK_HEADER(sys/auxv.h, AC_DEFINE(FLAC__CPU_PPC))
++		AC_DEFINE(FLAC__CPU_PPC)
+ 		AH_TEMPLATE(FLAC__CPU_PPC, [define if building for PowerPC])
+ 		AC_DEFINE(FLAC__CPU_PPC64)
+ 		AH_TEMPLATE(FLAC__CPU_PPC64, [define if building for PowerPC64])
+@@ -152,7 +152,7 @@ case "$host_cpu" in
+ 		;;
+ 	powerpc|powerpcle)
+ 		cpu_ppc=true
+-		AC_CHECK_HEADER(sys/auxv.h, AC_DEFINE(FLAC__CPU_PPC))
++		AC_DEFINE(FLAC__CPU_PPC)
+ 		AH_TEMPLATE(FLAC__CPU_PPC, [define if building for PowerPC])
+ 		asm_optimisation=$asm_opt
+ 		;;
+diff --git a/src/libFLAC/cpu.c b/src/libFLAC/cpu.c
+index c90b89999..8b92f4c76 100644
+--- a/src/libFLAC/cpu.c
++++ b/src/libFLAC/cpu.c
+@@ -54,8 +54,10 @@
+ #endif
+ 
+ #if defined FLAC__CPU_PPC
++#if defined(__linux__) || (defined(__FreeBSD__) && (__FreeBSD__ >= 12))
+ #include <sys/auxv.h>
+ #endif
++#endif
+ 
+ #if (defined FLAC__CPU_IA32 || defined FLAC__CPU_X86_64) && (defined FLAC__HAS_NASM || FLAC__HAS_X86INTRIN) && !defined FLAC__NO_ASM
+ 
+@@ -251,18 +253,23 @@ ppc_cpu_info (FLAC__CPUInfo *info)
+ 	} else if (getauxval(AT_HWCAP2) & PPC_FEATURE2_ARCH_2_07) {
+ 		info->ppc.arch_2_07 = true;
+ 	}
+-#elif defined(__FreeBSD__)
++#elif defined(__FreeBSD__) && (__FreeBSD__ >= 12)
+ 	long hwcaps;
++	/* elf_aux_info() appeared in FreeBSD 12.0 */
+ 	elf_aux_info(AT_HWCAP2, &hwcaps, sizeof(hwcaps));
+-#else
+-#error Unsupported platform! Please add support for reading ppc hwcaps.
+-#endif
+-
+ 	if (hwcaps & PPC_FEATURE2_ARCH_3_00) {
+ 		info->ppc.arch_3_00 = true;
+ 	} else if (hwcaps & PPC_FEATURE2_ARCH_2_07) {
+ 		info->ppc.arch_2_07 = true;
+ 	}
++#elif defined(__APPLE__)
++	/* no Mac OS X version supports CPU with Power AVI v2.07 or better */
++	info->ppc.arch_2_07 = false;
++	info->ppc.arch_3_00 = false;
++#else
++#error Unsupported platform! Please add support for reading ppc hwcaps.
++#endif
++
+ #else
+ 	info->ppc.arch_2_07 = false;
+ 	info->ppc.arch_3_00 = false;

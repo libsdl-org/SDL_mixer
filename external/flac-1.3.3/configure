@@ -18616,12 +18616,7 @@ case "$host_cpu" in
 	powerpc64|powerpc64le)
 		cpu_ppc64=true
 		cpu_ppc=true
-		ac_fn_c_check_header_mongrel "$LINENO" "sys/auxv.h" "ac_cv_header_sys_auxv_h" "$ac_includes_default"
-if test "x$ac_cv_header_sys_auxv_h" = xyes; then :
-  $as_echo "#define FLAC__CPU_PPC 1" >>confdefs.h
-
-fi
-
+		$as_echo "#define FLAC__CPU_PPC 1" >>confdefs.h
 
 
 		$as_echo "#define FLAC__CPU_PPC64 1" >>confdefs.h
@@ -18631,12 +18626,7 @@ fi
 		;;
 	powerpc|powerpcle)
 		cpu_ppc=true
-		ac_fn_c_check_header_mongrel "$LINENO" "sys/auxv.h" "ac_cv_header_sys_auxv_h" "$ac_includes_default"
-if test "x$ac_cv_header_sys_auxv_h" = xyes; then :
-  $as_echo "#define FLAC__CPU_PPC 1" >>confdefs.h
-
-fi
-
+		$as_echo "#define FLAC__CPU_PPC 1" >>confdefs.h
 
 
 		asm_optimisation=$asm_opt
