@@ -552,5 +552,4 @@ FLAC__bool add_residual_partitioned_rice_(FLAC__BitWriter *bw, const FLAC__int32
 		return true;
 	}
 }
-
 #endif /* FLAC_INCLUDE_ENCODER */

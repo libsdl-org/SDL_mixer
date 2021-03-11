@@ -36,8 +36,8 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "private/bitmath.h"
 #include "private/bitreader.h"
+#include "private/bitmath.h"
 #include "private/crc.h"
 #include "private/macros.h"
 #include "FLAC/assert.h"

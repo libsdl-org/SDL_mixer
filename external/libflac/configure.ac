@@ -288,12 +288,6 @@ if test x$ac_cv_c_compiler_gnu = xyes ; then
 	if test "x$GCC_MAJOR_VERSION$GCC_MINOR_VERSION" = "x42" ; then
 		XIPH_ADD_CFLAGS([-fgnu89-inline])
 		fi
-
-	case "$host" in
-		x86_64-*-darwin*) CFLAGS="$CFLAGS -mmacosx-version-min=10.5"
-				 LDFLAGS="$LDFLAGS -mmacosx-version-min=10.5" ;;
-	 esac
-
 	fi
 
 XIPH_ADD_CFLAGS([-Wextra])
