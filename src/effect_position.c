@@ -1785,7 +1785,7 @@ static void set_amplitudes(int channels, int angle, int room_angle)
     int left = 255, right = 255;
     int left_rear = 255, right_rear = 255, center = 255;
 
-    angle = SDL_abs(angle) % 360;  /* make angle between 0 and 359. */
+    /* our only caller Mix_SetPosition() already makes angle between 0 and 359. */
 
     if (channels == 2)
     {
