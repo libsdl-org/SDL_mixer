@@ -286,7 +286,7 @@ static int read_config_file(const char *name)
       if ((words < 2) || (*w[0] < '0' || *w[0] > '9'))
       {
 	SNDDBG(("%s: line %d: syntax error\n", name, line));
-	continue;
+	goto fail;
       }
       i=atoi(w[0]);
       if (i<0 || i>127)
