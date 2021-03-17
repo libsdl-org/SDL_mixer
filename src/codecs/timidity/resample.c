@@ -552,8 +552,10 @@ void pre_resample(MidiSong *song, Sample *sp)
   }
 
   dest = newdata = (Sint16 *) SDL_malloc((newlen >> (FRACTION_BITS - 1)) + 2);
-  if (!dest)
+  if (!dest) {
+    song->oom = 1;
     return;
+  }
 
   if (--count)
     *dest++ = src[0];

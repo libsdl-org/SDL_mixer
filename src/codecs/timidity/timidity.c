@@ -189,7 +189,8 @@ static int read_config_file(const char *name, int rcf_count)
 	goto fail;
       }
       for (i=1; i<words; i++) {
-	add_to_pathlist(w[i], SDL_strlen(w[i]));
+	if (add_to_pathlist(w[i], SDL_strlen(w[i])) < 0)
+	  goto fail;
       }
     }
     else if (!SDL_strcmp(w[0], "source"))
@@ -234,7 +235,9 @@ static int read_config_file(const char *name, int rcf_count)
       if (!master_drumset[i])
       {
 	master_drumset[i] = SDL_calloc(1, sizeof(ToneBank));
+	if (!master_drumset[i]) goto fail;
 	master_drumset[i]->tone = SDL_calloc(128, sizeof(ToneBankElement));
+	if (!master_drumset[i]->tone) goto fail;
       }
       bank=master_drumset[i];
     }
@@ -255,7 +258,9 @@ static int read_config_file(const char *name, int rcf_count)
       if (!master_tonebank[i])
       {
 	master_tonebank[i] = SDL_calloc(1, sizeof(ToneBank));
+	if (!master_tonebank[i]) goto fail;
 	master_tonebank[i]->tone = SDL_calloc(128, sizeof(ToneBankElement));
+	if (!master_tonebank[i]->tone) goto fail;
       }
       bank=master_tonebank[i];
     }
@@ -283,6 +288,7 @@ static int read_config_file(const char *name, int rcf_count)
       SDL_free(bank->tone[i].name);
       sz = SDL_strlen(w[1])+1;
       bank->tone[i].name = SDL_malloc(sz);
+      if (!bank->tone[i].name) goto fail;
       SDL_memcpy(bank->tone[i].name,w[1],sz);
       bank->tone[i].note=bank->tone[i].amp=bank->tone[i].pan=
       bank->tone[i].strip_loop=bank->tone[i].strip_envelope=
@@ -378,62 +384,106 @@ fail:
   return r;
 }
 
-int Timidity_Init_NoConfig(void)
+#if defined(_WIN32)||defined(__CYGWIN__)||defined(__OS2__)
+/* FIXME: What about C:FOO ? */
+static SDL_INLINE char *get_last_dirsep (const char *p) {
+  char *p1 = SDL_strrchr(p, '/');
+  char *p2 = SDL_strrchr(p, '\\');
+  if (!p1) return p2;
+  if (!p2) return p1;
+  return (p1 > p2)? p1 : p2;
+}
+#else /* assumed UNIX-ish : */
+static SDL_INLINE char *get_last_dirsep (const char *p) {
+  return SDL_strrchr(p, '/');
+}
+#endif
+
+static int init_alloc_banks(void)
 {
   /* Allocate memory for the standard tonebank and drumset */
   master_tonebank[0] = SDL_calloc(1, sizeof(ToneBank));
+  if (!master_tonebank[0]) goto _nomem;
   master_tonebank[0]->tone = SDL_calloc(128, sizeof(ToneBankElement));
+  if (!master_tonebank[0]->tone) goto _nomem;
 
   master_drumset[0] = SDL_calloc(1, sizeof(ToneBank));
+  if (!master_drumset[0]) goto _nomem;
   master_drumset[0]->tone = SDL_calloc(128, sizeof(ToneBankElement));
+  if (!master_drumset[0]->tone) goto _nomem;
 
   return 0;
+_nomem:
+  SNDDBG(("Out of memory\n"));
+  Timidity_Exit ();
+  return -2;
+}
+
+static int init_begin_config(const char *cf)
+{
+  const char *p = get_last_dirsep(cf);
+  if (p != NULL)
+      return add_to_pathlist(cf, p - cf + 1); /* including DIRSEP */
+  return 0;
+}
+
+static int init_with_config(const char *cf)
+{
+  int rc = init_begin_config(cf);
+  if (rc != 0) {
+      Timidity_Exit ();
+      return rc;
+  }
+  rc = read_config_file(cf, 0);
+  if (rc != 0) {
+      Timidity_Exit ();
+  }
+  return rc;
+}
+
+int Timidity_Init_NoConfig(void)
+{
+  master_tonebank[0] = NULL;
+  master_drumset[0] = NULL;
+  return init_alloc_banks();
 }
 
 int Timidity_Init(const char *config_file)
 {
-  const char *p;
-
-  Timidity_Init_NoConfig();
-
-  if (config_file == NULL || *config_file == '\0')
-      config_file = TIMIDITY_CFG;
-
-  p = SDL_strrchr(config_file, '/');
-#if defined(__WIN32__)||defined(__OS2__)
-  if (!p) p = SDL_strrchr(config_file, '\\');
-#endif
-  if (p != NULL)
-    add_to_pathlist(config_file, p - config_file + 1);
-
-  if (read_config_file(config_file, 0) < 0) {
-      Timidity_Exit();
-      return -1;
+  int rc = Timidity_Init_NoConfig();
+  if (rc != 0) {
+      return rc;
   }
-  return 0;
+  if (config_file == NULL || *config_file == '\0') {
+      return init_with_config(TIMIDITY_CFG);
+  }
+  return init_with_config(config_file);
 }
 
-MidiSong *Timidity_LoadSong(SDL_RWops *rw, SDL_AudioSpec *audio)
+static void do_song_load(SDL_RWops *rw, SDL_AudioSpec *audio, MidiSong **out)
 {
   MidiSong *song;
   int i;
 
+  *out = NULL;
   if (rw == NULL)
-      return NULL;
+      return;
 
   /* Allocate memory for the song */
   song = (MidiSong *)SDL_calloc(1, sizeof(*song));
   if (song == NULL)
-      return NULL;
+      return;
 
   for (i = 0; i < MAXBANK; i++)
   {
     if (master_tonebank[i]) {
       song->tonebank[i] = SDL_calloc(1, sizeof(ToneBank));
+      if (!song->tonebank[i]) goto fail;
       song->tonebank[i]->tone = master_tonebank[i]->tone;
     }
     if (master_drumset[i]) {
       song->drumset[i] = SDL_calloc(1, sizeof(ToneBank));
+      if (!song->drumset[i]) goto fail;
       song->drumset[i]->tone = master_drumset[i]->tone;
     }
   }
@@ -456,8 +506,7 @@ MidiSong *Timidity_LoadSong(SDL_RWops *rw, SDL_AudioSpec *audio)
       song->encoding |= PE_MONO;
   else if (audio->channels > 2) {
       SDL_SetError("Surround sound not supported");
-      SDL_free(song);
-      return NULL;
+      goto fail;
   }
   switch (audio->format) {
   case AUDIO_S8:
@@ -489,13 +538,14 @@ MidiSong *Timidity_LoadSong(SDL_RWops *rw, SDL_AudioSpec *audio)
     break;
   default:
     SDL_SetError("Unsupported audio format");
-    SDL_free(song);
-    return NULL;
+    goto fail;
   }
 
   song->buffer_size = audio->samples;
   song->resample_buffer = SDL_malloc(audio->samples * sizeof(sample_t));
+  if (!song->resample_buffer) goto fail;
   song->common_buffer = SDL_malloc(audio->samples * 2 * sizeof(Sint32));
+  if (!song->common_buffer) goto fail;
 
   song->control_ratio = audio->freq / CONTROLS_PER_SECOND;
   if (song->control_ratio < 1)
@@ -510,10 +560,8 @@ MidiSong *Timidity_LoadSong(SDL_RWops *rw, SDL_AudioSpec *audio)
       &song->samples);
 
   /* Make sure everything is okay */
-  if (!song->events) {
-    SDL_free(song);
-    return(NULL);
-  }
+  if (!song->events)
+    goto fail;
 
   song->default_instrument = NULL;
   song->default_program = DEFAULT_PROGRAM;
@@ -523,12 +571,25 @@ MidiSong *Timidity_LoadSong(SDL_RWops *rw, SDL_AudioSpec *audio)
 
   load_missing_instruments(song);
 
-  return(song);
+  if (! song->oom)
+      *out = song;
+  else {
+fail: Timidity_FreeSong(song);
+  }
+}
+
+MidiSong *Timidity_LoadSong(SDL_RWops *rw, SDL_AudioSpec *audio)
+{
+  MidiSong *song;
+  do_song_load(rw, audio, &song);
+  return song;
 }
 
 void Timidity_FreeSong(MidiSong *song)
 {
   int i;
+
+  if (!song) return;
 
   free_instruments(song);
 

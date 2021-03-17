@@ -26,12 +26,13 @@ static void free_instrument(Instrument *ip)
   Sample *sp;
   int i;
   if (!ip) return;
-  for (i=0; i<ip->samples; i++)
-    {
+  if (ip->sample) {
+    for (i=0; i<ip->samples; i++) {
       sp=&(ip->sample[i]);
       SDL_free(sp->data);
     }
-  SDL_free(ip->sample);
+    SDL_free(ip->sample);
+  }
   SDL_free(ip);
 }
 
@@ -42,7 +43,6 @@ static void free_bank(MidiSong *song, int dr, int b)
   for (i=0; i<MAXBANK; i++)
     if (bank->instrument[i])
       {
-	/* Not that this could ever happen, of course */
 	if (bank->instrument[i] != MAGIC_LOAD_INSTRUMENT)
 	  free_instrument(bank->instrument[i]);
 	bank->instrument[i]=0;
@@ -141,7 +141,8 @@ static void reverse_data(Sint16 *sp, Sint32 ls, Sint32 le)
    undefined.
 
    TODO: do reverse loops right */
-static Instrument *load_instrument(MidiSong *song, const char *name,
+static void load_instrument(MidiSong *song, const char *name,
+				   Instrument **out,
 				   int percussion, int panning,
 				   int amp, int note_to_use,
 				   int strip_loop, int strip_envelope,
@@ -155,7 +156,8 @@ static Instrument *load_instrument(MidiSong *song, const char *name,
   static char *patch_ext[] = PATCH_EXT_LIST;
 
   (void)percussion; /* unused */
-  if (!name) return 0;
+  *out = NULL;
+  if (!name) return;
 
   /* Open patch file */
   if ((rw=open_file(name)) == NULL)
@@ -172,7 +174,7 @@ static Instrument *load_instrument(MidiSong *song, const char *name,
   if (rw == NULL)
     {
       SNDDBG(("Instrument `%s' can't be found.\n", name));
-      return 0;
+      return;
     }
 
   SNDDBG(("Loading instrument %s\n", tmp));
@@ -186,28 +188,30 @@ static Instrument *load_instrument(MidiSong *song, const char *name,
 						      differences are */
     {
       SNDDBG(("%s: not an instrument\n", name));
-      SDL_RWclose(rw);
-      return 0;
+      goto badpat;
     }
 
   if (tmp[82] != 1 && tmp[82] != 0) /* instruments. To some patch makers,
 				       0 means 1 */
     {
       SNDDBG(("Can't handle patches with %d instruments\n", tmp[82]));
-      SDL_RWclose(rw);
-      return 0;
+      goto badpat;
     }
 
   if (tmp[151] != 1 && tmp[151] != 0) /* layers. What's a layer? */
     {
       SNDDBG(("Can't handle instruments with %d layers\n", tmp[151]));
-      SDL_RWclose(rw);
-      return 0;
+      goto badpat;
     }
 
-  ip=SDL_malloc(sizeof(Instrument));
+  *out=SDL_malloc(sizeof(Instrument));
+  ip = *out;
+  if (!ip) goto nomem;
+
   ip->samples = tmp[198];
   ip->sample = SDL_malloc(sizeof(Sample) * ip->samples);
+  if (!ip->sample) goto nomem;
+
   for (i=0; i<ip->samples; i++)
     {
       Uint8 fractions;
@@ -216,28 +220,19 @@ static Instrument *load_instrument(MidiSong *song, const char *name,
       Uint8 tmpchar;
 
 #define READ_CHAR(thing)					\
-  if (1 != SDL_RWread(rw, &tmpchar, 1, 1))  goto fail;		\
+  if (1 != SDL_RWread(rw, &tmpchar, 1, 1))  goto badread;	\
   thing = tmpchar;
 #define READ_SHORT(thing)					\
-  if (1 != SDL_RWread(rw, &tmpshort, 2, 1)) goto fail;		\
+  if (1 != SDL_RWread(rw, &tmpshort, 2, 1)) goto badread;	\
   thing = SDL_SwapLE16(tmpshort);
 #define READ_LONG(thing)					\
-  if (1 != SDL_RWread(rw, &tmplong, 4, 1)) g oto fail;		\
+  if (1 != SDL_RWread(rw, &tmplong, 4, 1))  goto badread;	\
   thing = (Sint32)SDL_SwapLE32((Uint32)tmplong);
 
       SDL_RWseek(rw, 7, RW_SEEK_CUR); /* Skip the wave name */
 
       if (1 != SDL_RWread(rw, &fractions, 1, 1))
-	{
-	fail:
-	  SNDDBG(("Error reading sample %d\n", i));
-	  for (j=0; j<i; j++)
-	    SDL_free(ip->sample[j].data);
-	  SDL_free(ip->sample);
-	  SDL_free(ip);
-	  SDL_RWclose(rw);
-	  return 0;
-	}
+	goto badread;
 
       sp=&(ip->sample[i]);
 
@@ -259,7 +254,8 @@ static Instrument *load_instrument(MidiSong *song, const char *name,
 	sp->panning=(Uint8)(panning & 0x7F);
 
       /* envelope, tremolo, and vibrato */
-      if (18 != SDL_RWread(rw, tmp, 1, 18)) goto fail; 
+      if (18 != SDL_RWread(rw, tmp, 1, 18))
+	goto badread;
 
       if (!tmp[13] || !tmp[14])
 	{
@@ -369,8 +365,10 @@ static Instrument *load_instrument(MidiSong *song, const char *name,
 
       /* Then read the sample data */
       sp->data = (sample_t *) SDL_malloc(sp->data_length+4);
+      if (!sp->data) goto nomem;
+
       if (1 != SDL_RWread(rw, sp->data, sp->data_length, 1))
-	goto fail;
+	goto badread;
 
       if (!(sp->modes & MODES_16BIT)) /* convert to 16-bit data */
 	{
@@ -381,6 +379,7 @@ static Instrument *load_instrument(MidiSong *song, const char *name,
 	  sp->loop_start *= 2;
 	  sp->loop_end *= 2;
 	  tmp16 = new16 = (Uint16 *) SDL_malloc(sp->data_length+4);
+	  if (!new16) goto nomem;
 	  while (k--)
 	    *tmp16++ = (Uint16)(*cp++) << 8;
 	  SDL_free(sp->data);
@@ -476,8 +475,10 @@ static Instrument *load_instrument(MidiSong *song, const char *name,
 
       /* If this instrument will always be played on the same note,
 	 and it's not looped, we can resample it now. */
-      if (sp->note_to_use && !(sp->modes & MODES_LOOPING))
+      if (sp->note_to_use && !(sp->modes & MODES_LOOPING)) {
 	pre_resample(song, sp);
+	if (song->oom) goto fail;
+      }
 
       if (strip_tail==1)
 	{
@@ -488,7 +489,18 @@ static Instrument *load_instrument(MidiSong *song, const char *name,
     }
 
   SDL_RWclose(rw);
-  return ip;
+  return;
+
+nomem:
+  song->oom=1;
+  goto fail;
+badread:
+  SNDDBG(("Error reading sample %d\n", i));
+fail:
+  free_instrument (ip);
+badpat:
+  SDL_RWclose(rw);
+  *out = NULL;
 }
 
 static int fill_bank(MidiSong *song, int dr, int b)
@@ -530,9 +542,11 @@ static int fill_bank(MidiSong *song, int dr, int b)
 	      bank->instrument[i] = 0;
 	      errors++;
 	    }
-	  else if (!(bank->instrument[i] =
-		     load_instrument(song,
+	  else
+	  {
+		load_instrument(song,
 				     bank->tone[i].name, 
+				     &bank->instrument[i],
 				     (dr) ? 1 : 0,
 				     bank->tone[i].pan,
 				     bank->tone[i].amp,
@@ -545,13 +559,14 @@ static int fill_bank(MidiSong *song, int dr, int b)
 				     (bank->tone[i].strip_envelope != -1) ? 
 				     bank->tone[i].strip_envelope :
 				     ((dr) ? 1 : -1),
-				     bank->tone[i].strip_tail )))
-	    {
-	      SNDDBG(("Couldn't load instrument %s (%s %d, program %d)\n",
+				     bank->tone[i].strip_tail);
+	    if (!bank->instrument[i]) {
+		SNDDBG(("Couldn't load instrument %s (%s %d, program %d)\n",
 		   bank->tone[i].name,
 		   (dr)? "drum set" : "tone bank", b, i));
 	      errors++;
 	    }
+	  }
 	}
     }
   return errors;
@@ -584,10 +599,9 @@ void free_instruments(MidiSong *song)
 
 int set_default_instrument(MidiSong *song, const char *name)
 {
-  Instrument *ip;
-  if (!(ip=load_instrument(song, name, 0, -1, -1, -1, 0, 0, 0)))
+  load_instrument(song, name, &song->default_instrument, 0, -1, -1, -1, 0, 0, 0);
+  if (!song->default_instrument)
     return -1;
-  song->default_instrument = ip;
   song->default_program = SPECIAL_PROGRAM;
   return 0;
 }

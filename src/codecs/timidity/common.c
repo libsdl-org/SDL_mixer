@@ -81,22 +81,20 @@ SDL_RWops *open_file(const char *name)
 }
 
 /* This adds a directory to the path list */
-void add_to_pathlist(const char *s, size_t l)
+int add_to_pathlist(const char *s, size_t l)
 {
   PathList *plp = SDL_malloc(sizeof(PathList));
-
-  if (plp == NULL)
-      return;
-
+  if (plp == NULL) return -2;
   plp->path = SDL_malloc(l + 1);
   if (plp->path == NULL) {
       SDL_free (plp);
-      return;
+      return -2;
   }
   SDL_memcpy(plp->path, s, l);
   plp->path[l] = 0;
   plp->next = pathlist;
   pathlist = plp;
+  return 0;
 }
 
 void free_pathlist(void)

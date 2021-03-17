@@ -106,6 +106,7 @@ typedef struct _MidiEventList {
 } MidiEventList;
 
 typedef struct {
+    int oom; /* malloc() failed */
     int playing;
     SDL_RWops *rw;
     Sint32 rate;

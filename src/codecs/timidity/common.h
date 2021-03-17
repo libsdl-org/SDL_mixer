@@ -9,5 +9,5 @@
 */
 
 extern SDL_RWops *open_file(const char *name);
-extern void add_to_pathlist(const char *s, size_t len);
+extern int add_to_pathlist(const char *s, size_t len);
 extern void free_pathlist(void);

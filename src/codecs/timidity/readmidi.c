@@ -53,11 +53,17 @@ static int dumpstring(SDL_RWops *rw, Sint32 len, Uint8 type)
     "Text event: ", "Text: ", "Copyright: ", "Track name: ",
     "Instrument: ", "Lyric: ", "Marker: ", "Cue point: " };
   signed char *s = SDL_malloc(len+1);
+  if (!s)
+    {
+      SDL_RWseek(song->rw, len, RW_SEEK_CUR);/* should I ? */
+      return -1;
+    }
   if (len != (Sint32) SDL_RWread(rw, s, 1, len))
     {
       SDL_free(s);
       return -1;
     }
+
   s[len]='\0';
   while (len--)
     {
@@ -72,6 +78,7 @@ static int dumpstring(SDL_RWops *rw, Sint32 len, Uint8 type)
 
 #define MIDIEVENT(at,t,ch,pa,pb)				\
   newlist = (MidiEventList *) SDL_malloc(sizeof(MidiEventList));\
+  if (!newlist) {song->oom = 1; return NULL;}			\
   newlist->event.time = at;					\
   newlist->event.type = t;					\
   newlist->event.channel = ch;					\
@@ -364,6 +371,11 @@ static MidiEvent *groom_list(MidiSong *song, Sint32 divisions,Sint32 *eventsp,
 
   /* This may allocate a bit more than we need */
   groomed_list=lp=SDL_malloc(sizeof(MidiEvent) * (song->event_count+1));
+  if (!groomed_list) {
+    song->oom=1;
+    free_midi_list(song);
+    return NULL;
+  }
   meep=song->evlist;
 
   our_event_count=0;
@@ -579,6 +591,10 @@ MidiEvent *read_midi_file(MidiSong *song, Sint32 *count, Sint32 *sp)
 
   /* Put a do-nothing event first in the list for easier processing */
   song->evlist=SDL_calloc(1, sizeof(MidiEventList));
+  if (!song->evlist) {
+    song->oom=1;
+    return NULL;
+  }
   song->event_count++;
 
   switch(format)
