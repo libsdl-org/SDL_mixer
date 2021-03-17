@@ -7,14 +7,6 @@
     it under the terms of the Perl Artistic License, available in COPYING.
 */
 
-#if HAVE_CONFIG_H
-#  include <config.h>
-#endif
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "SDL.h"
 
 #include "options.h"
@@ -63,7 +55,7 @@ static int dumpstring(SDL_RWops *rw, Sint32 len, Uint8 type)
   signed char *s=safe_malloc(len+1);
   if (len != (Sint32) SDL_RWread(rw, s, 1, len))
     {
-      free(s);
+      SDL_free(s);
       return -1;
     }
   s[len]='\0';
@@ -73,7 +65,7 @@ static int dumpstring(SDL_RWops *rw, Sint32 len, Uint8 type)
 	s[len]='.';
     }
   SNDDBG(("%s%s", label[(type>7) ? 0 : type], s));
-  free(s);
+  SDL_free(s);
   return 0;
 }
 #endif
@@ -292,7 +284,7 @@ static int read_track(MidiSong *song, int append)
     }
   len=(Sint32)SDL_SwapBE32((Uint32)len);
   next_pos = SDL_RWtell(song->rw) + len;
-  if (memcmp(tmp, "MTrk", 4))
+  if (SDL_memcmp(tmp, "MTrk", 4))
     {
       SNDDBG(("Corrupt MIDI file.\n"));
       return -2;
@@ -334,7 +326,7 @@ static void free_midi_list(MidiSong *song)
   while (meep)
     {
       next=meep->next;
-      free(meep);
+      SDL_free(meep);
       meep=next;
     }
   song->evlist=NULL;
@@ -473,7 +465,7 @@ static MidiEvent *groom_list(MidiSong *song, Sint32 divisions,Sint32 *eventsp,
 	  _overflow:
 	      SNDDBG(("Overflow in sample counter\n"));
 	      free_midi_list(song);
-	      free(groomed_list);
+	      SDL_free(groomed_list);
 	      return NULL;
 	    }
 	  st += samples_to_do;
@@ -523,9 +515,9 @@ MidiEvent *read_midi_file(MidiSong *song, Sint32 *count, Sint32 *sp)
       SNDDBG(("Not a MIDI file!\n"));
       return NULL;
     }
-  if (memcmp(tmp, "RIFF", 4) == 0) { /* RMID ?? */
-    if (SDL_RWread(song->rw, tmp, 1, 4) != 4 || memcmp(tmp, "RMID", 4) != 0 ||
-	SDL_RWread(song->rw, tmp, 1, 4) != 4 || memcmp(tmp, "data", 4) != 0 ||
+  if (SDL_memcmp(tmp, "RIFF", 4) == 0) { /* RMID ?? */
+    if (SDL_RWread(song->rw, tmp, 1, 4) != 4 || SDL_memcmp(tmp, "RMID", 4) != 0 ||
+	SDL_RWread(song->rw, tmp, 1, 4) != 4 || SDL_memcmp(tmp, "data", 4) != 0 ||
 	SDL_RWread(song->rw, tmp, 1, 4) != 4 ||
 	/* SMF must begin from here onwards: */
 	SDL_RWread(song->rw, tmp, 1, 4) != 4 || SDL_RWread(song->rw, &len, 4, 1) != 1)
@@ -535,7 +527,7 @@ MidiEvent *read_midi_file(MidiSong *song, Sint32 *count, Sint32 *sp)
       }
   }
   len=(Sint32)SDL_SwapBE32((Uint32)len);
-  if (memcmp(tmp, "MThd", 4) || len < 6)
+  if (SDL_memcmp(tmp, "MThd", 4) || len < 6)
     {
       SNDDBG(("Not a MIDI file!\n"));
       return NULL;
@@ -582,7 +574,7 @@ MidiEvent *read_midi_file(MidiSong *song, Sint32 *count, Sint32 *sp)
 
   /* Put a do-nothing event first in the list for easier processing */
   song->evlist=safe_malloc(sizeof(MidiEventList));
-  memset(song->evlist, 0, sizeof(MidiEventList));
+  SDL_memset(song->evlist, 0, sizeof(MidiEventList));
   song->event_count++;
 
   switch(format)

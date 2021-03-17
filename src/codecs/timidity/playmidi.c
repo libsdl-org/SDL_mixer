@@ -10,14 +10,6 @@
 
 */
 
-#if HAVE_CONFIG_H
-#  include <config.h>
-#endif
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "SDL.h"
 
 #include "timidity.h"
@@ -589,7 +581,7 @@ static void skip_to(MidiSong *song, Sint32 until_time)
 static void do_compute_data(MidiSong *song, Sint32 count)
 {
   int i;
-  memset(song->buffer_pointer, 0, 
+  SDL_memset(song->buffer_pointer, 0, 
 	 (song->encoding & PE_MONO) ? (count * 4) : (count * 8));
   for (i = 0; i < song->voices; i++)
     {

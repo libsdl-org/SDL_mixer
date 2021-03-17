@@ -9,14 +9,6 @@
     common.c
 */
 
-#if HAVE_CONFIG_H
-#  include <config.h>
-#endif
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "SDL.h"
 
 #include "options.h"
@@ -61,22 +53,26 @@ SDL_RWops *open_file(const char *name)
   {
     char current_filename[1024];
     PathList *plp = pathlist;
+    char *p;
     size_t l;
 
     while (plp)  /* Try along the path then */
       {
 	*current_filename = 0;
-	l = strlen(plp->path);
+	p = current_filename;
+	l = SDL_strlen(plp->path);
+	if(l >= sizeof(current_filename) - 3) l = 0;
 	if(l)
 	  {
-	    strcpy(current_filename, plp->path);
-	    if(!is_dirsep(current_filename[l - 1]))
+	    SDL_memcpy(current_filename, plp->path, l);
+	    p += l;
+	    if(!is_dirsep(p[-1]))
 	    {
-	      current_filename[l] = CHAR_DIRSEP;
-	      current_filename[l + 1] = '\0';
+	      *p++ = CHAR_DIRSEP;
+	       l++;
 	    }
 	  }
-	strcat(current_filename, name);
+	SDL_strlcpy(p, name, sizeof(current_filename) - l);
 	SNDDBG(("Trying to open %s\n", current_filename));
 	if ((rw = SDL_RWFromFile(current_filename, "rb")))
 	  return rw;
@@ -94,7 +90,7 @@ void *safe_malloc(size_t count)
 {
   void *p;
 
-  p = malloc(count);
+  p = SDL_malloc(count);
   if (p == NULL) {
     SNDDBG(("Sorry. Couldn't malloc %d bytes.\n", count));
   }
@@ -112,10 +108,10 @@ void add_to_pathlist(const char *s, size_t l)
 
   plp->path = safe_malloc(l + 1);
   if (plp->path == NULL) {
-      free (plp);
+      SDL_free (plp);
       return;
   }
-  memcpy(plp->path, s, l);
+  SDL_memcpy(plp->path, s, l);
   plp->path[l] = 0;
   plp->next = pathlist;
   pathlist = plp;
@@ -128,8 +124,8 @@ void free_pathlist(void)
 
     while (plp) {
 	next = plp->next;
-	free(plp->path);
-	free(plp);
+	SDL_free(plp->path);
+	SDL_free(plp);
 	plp = next;
     }
     pathlist = NULL;

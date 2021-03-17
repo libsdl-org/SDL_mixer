@@ -12,14 +12,6 @@
 
 */
 
-#if HAVE_CONFIG_H
-#  include <config.h>
-#endif
-
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-
 #include "SDL.h"
 
 #include "timidity.h"
@@ -37,10 +29,10 @@ static void free_instrument(Instrument *ip)
   for (i=0; i<ip->samples; i++)
     {
       sp=&(ip->sample[i]);
-      free(sp->data);
+      SDL_free(sp->data);
     }
-  free(ip->sample);
-  free(ip);
+  SDL_free(ip->sample);
+  SDL_free(ip);
 }
 
 static void free_bank(MidiSong *song, int dr, int b)
@@ -170,13 +162,9 @@ static Instrument *load_instrument(MidiSong *song, char *name, int percussion,
       /* Try with various extensions */
       for (i=0; patch_ext[i]; i++)
 	{
-	  if (strlen(name)+strlen(patch_ext[i])<1024)
-	    {
-	      strcpy(tmp, name);
-	      strcat(tmp, patch_ext[i]);
+	      SDL_snprintf(tmp, sizeof(tmp), "%s%s", name, patch_ext[i]);
 	      if ((rw=open_file(tmp)) != NULL)
 		  break;
-	    }
 	}
     }
 
@@ -192,8 +180,8 @@ static Instrument *load_instrument(MidiSong *song, char *name, int percussion,
      of magic offsets. This could be rewritten... */
 
   if ((239 != SDL_RWread(rw, tmp, 1, 239)) ||
-      (memcmp(tmp, "GF1PATCH110\0ID#000002", 22) &&
-       memcmp(tmp, "GF1PATCH100\0ID#000002", 22))) /* don't know what the
+      (SDL_memcmp(tmp, "GF1PATCH110\0ID#000002", 22) &&
+       SDL_memcmp(tmp, "GF1PATCH100\0ID#000002", 22))) /* don't know what the
 						      differences are */
     {
       SNDDBG(("%s: not an instrument\n", name));
@@ -243,9 +231,9 @@ static Instrument *load_instrument(MidiSong *song, char *name, int percussion,
 	fail:
 	  SNDDBG(("Error reading sample %d\n", i));
 	  for (j=0; j<i; j++)
-	    free(ip->sample[j].data);
-	  free(ip->sample);
-	  free(ip);
+	    SDL_free(ip->sample[j].data);
+	  SDL_free(ip->sample);
+	  SDL_free(ip);
 	  SDL_RWclose(rw);
 	  return 0;
 	}
@@ -352,7 +340,7 @@ static Instrument *load_instrument(MidiSong *song, char *name, int percussion,
 	      sp->modes &= ~(MODES_SUSTAIN|MODES_ENVELOPE);
 	      SNDDBG((" - No loop, removing sustain and envelope\n"));
 	    }
-	  else if (!memcmp(tmp, "??????", 6) || tmp[11] >= 100) 
+	  else if (!SDL_memcmp(tmp, "??????", 6) || tmp[11] >= 100) 
 	    {
 	      /* Envelope rates all maxed out? Envelope end at a high "offset"?
 		 That's a weird envelope. Take it out. */
@@ -394,7 +382,7 @@ static Instrument *load_instrument(MidiSong *song, char *name, int percussion,
 	  tmp16 = new16 = (Uint16 *) safe_malloc(sp->data_length+4);
 	  while (k--)
 	    *tmp16++ = (Uint16)(*cp++) << 8;
-	  free(sp->data);
+	  SDL_free(sp->data);
 	  sp->data = (sample_t *)new16;
 	}
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
