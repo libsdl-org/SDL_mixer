@@ -636,7 +636,7 @@ void Timidity_Start(MidiSong *song)
 
 void Timidity_Seek(MidiSong *song, Uint32 ms)
 {
-    skip_to(song, (ms * song->rate) / 1000);
+  skip_to(song, (ms * (song->rate / 100)) / 10);
 }
 
 Uint32 Timidity_GetSongLength(MidiSong *song)
