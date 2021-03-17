@@ -33,7 +33,12 @@
 #endif
 
 /* The paths in this list will be tried whenever we're reading a file */
-static PathList *pathlist = NULL; /* This is a linked list */
+typedef struct _PathList {
+  char *path;
+  struct _PathList *next;
+} PathList;
+
+static PathList *pathlist = NULL;
 
 /* This is meant to find and open files for reading */
 SDL_RWops *open_file(const char *name)
@@ -106,12 +111,11 @@ void add_to_pathlist(const char *s, size_t l)
       return;
 
   plp->path = safe_malloc(l + 1);
-  if (plp->path == NULL)
-  {
+  if (plp->path == NULL) {
       free (plp);
       return;
   }
-  strncpy(plp->path, s, l);
+  memcpy(plp->path, s, l);
   plp->path[l] = 0;
   plp->next = pathlist;
   pathlist = plp;
@@ -122,8 +126,7 @@ void free_pathlist(void)
     PathList *plp = pathlist;
     PathList *next;
 
-    while (plp)
-    {
+    while (plp) {
 	next = plp->next;
 	free(plp->path);
 	free(plp);

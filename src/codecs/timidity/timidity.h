@@ -100,9 +100,9 @@ typedef struct {
     Uint8 channel, type, a, b;
 } MidiEvent;
 
-typedef struct {
+typedef struct _MidiEventList {
     MidiEvent event;
-    void *next;
+    struct _MidiEventList *next;
 } MidiEventList;
 
 typedef struct {

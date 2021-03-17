@@ -69,8 +69,7 @@
 
 #define MAX_AMPLIFICATION 800
 
-/* You could specify a complete path, e.g. "/etc/timidity.cfg", and
-   then specify the library directory in the configuration file. */
+/* The TiMidity configuration file */
 #ifndef TIMIDITY_CFG
 #define TIMIDITY_CFG "timidity.cfg"
 #endif
@@ -98,4 +97,5 @@
   #define PI 3.14159265358979323846
 #endif
 
+/* for very loud debug output: */
 #define SNDDBG(X)
