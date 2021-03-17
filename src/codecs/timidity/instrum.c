@@ -141,8 +141,9 @@ static void reverse_data(Sint16 *sp, Sint32 ls, Sint32 le)
    undefined.
 
    TODO: do reverse loops right */
-static Instrument *load_instrument(MidiSong *song, char *name, int percussion,
-				   int panning, int amp, int note_to_use,
+static Instrument *load_instrument(MidiSong *song, const char *name,
+				   int percussion, int panning,
+				   int amp, int note_to_use,
 				   int strip_loop, int strip_envelope,
 				   int strip_tail)
 {
@@ -214,15 +215,15 @@ static Instrument *load_instrument(MidiSong *song, char *name, int percussion,
       Uint16 tmpshort;
       Uint8 tmpchar;
 
-#define READ_CHAR(thing) \
-      if (1 != SDL_RWread(rw, &tmpchar, 1, 1)) goto fail; \
-      thing = tmpchar;
-#define READ_SHORT(thing) \
-      if (1 != SDL_RWread(rw, &tmpshort, 2, 1)) goto fail; \
-      thing = SDL_SwapLE16(tmpshort);
-#define READ_LONG(thing) \
-      if (1 != SDL_RWread(rw, &tmplong, 4, 1)) goto fail; \
-      thing = (Sint32)SDL_SwapLE32((Uint32)tmplong);
+#define READ_CHAR(thing)					\
+  if (1 != SDL_RWread(rw, &tmpchar, 1, 1))  goto fail;		\
+  thing = tmpchar;
+#define READ_SHORT(thing)					\
+  if (1 != SDL_RWread(rw, &tmpshort, 2, 1)) goto fail;		\
+  thing = SDL_SwapLE16(tmpshort);
+#define READ_LONG(thing)					\
+  if (1 != SDL_RWread(rw, &tmplong, 4, 1)) g oto fail;		\
+  thing = (Sint32)SDL_SwapLE32((Uint32)tmplong);
 
       SDL_RWseek(rw, 7, RW_SEEK_CUR); /* Skip the wave name */
 
@@ -581,7 +582,7 @@ void free_instruments(MidiSong *song)
     }
 }
 
-int set_default_instrument(MidiSong *song, char *name)
+int set_default_instrument(MidiSong *song, const char *name)
 {
   Instrument *ip;
   if (!(ip=load_instrument(song, name, 0, -1, -1, -1, 0, 0, 0)))

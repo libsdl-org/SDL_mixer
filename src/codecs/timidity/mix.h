@@ -1,5 +1,4 @@
 /*
-
     TiMidity -- Experimental MIDI to WAVE converter
     Copyright (C) 1995 Tuukka Toivonen <toivonen@clinet.fi>
 
@@ -7,7 +6,6 @@
     it under the terms of the Perl Artistic License, available in COPYING.
 
     mix.h
-
 */
 
 extern void mix_voice(MidiSong *song, Sint32 *buf, int v, Sint32 c);

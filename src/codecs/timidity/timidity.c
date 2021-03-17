@@ -21,7 +21,7 @@
 
 #include "tables.h"
 
-ToneBank *master_tonebank[MAXBANK], *master_drumset[MAXBANK];
+static ToneBank *master_tonebank[MAXBANK], *master_drumset[MAXBANK];
 
 static char def_instr_name[256] = "";
 
@@ -62,20 +62,24 @@ static char *RWgets(SDL_RWops *rw, char *s, int size)
 static int read_config_file(const char *name)
 {
   SDL_RWops *rw;
-  char tmp[1024], *w[MAXWORDS], *cp;
+  char tmp[1024];
+  char *w[MAXWORDS], *cp;
   char *endp;
-  ToneBank *bank=0;
-  int i, j, k, line=0, words;
+  ToneBank *bank;
+  int i, j, k, line, words;
   static int rcf_count=0;
 
   if (rcf_count>50)
   {
     SNDDBG(("Probable source loop in configuration files\n"));
-    return (-1);
+    return -1;
   }
 
   if (!(rw=open_file(name)))
    return -1;
+
+  bank = NULL;
+  line = 0;
 
   while (RWgets(rw, tmp, sizeof(tmp)))
   {
@@ -99,98 +103,85 @@ static int read_config_file(const char *name)
       w[words]=SDL_strtokr(NULL, " \t\240", &endp);
     }
 
-        /*
-         * TiMidity++ adds a number of extensions to the config file format.
-         * Many of them are completely irrelevant to SDL_sound, but at least
-         * we shouldn't choke on them.
-         *
-         * Unfortunately the documentation for these extensions is often quite
-         * vague, gramatically strange or completely absent.
-         */
-    if (
-           !SDL_strcmp(w[0], "comm")      /* "comm" program second        */
-        || !SDL_strcmp(w[0], "HTTPproxy") /* "HTTPproxy" hostname:port    */
-        || !SDL_strcmp(w[0], "FTPproxy")  /* "FTPproxy" hostname:port     */
-        || !SDL_strcmp(w[0], "mailaddr")  /* "mailaddr" your-mail-address */
-        || !SDL_strcmp(w[0], "opt")       /* "opt" timidity-options       */
-       )
+    /* TiMidity++ adds a number of extensions to the config file format.
+     * Many of them are completely irrelevant to SDL_sound, but at least
+     * we shouldn't choke on them.
+     *
+     * Unfortunately the documentation for these extensions is often quite
+     * vague, gramatically strange or completely absent.
+     */
+    if (!SDL_strcmp(w[0], "comm")      /* "comm" program second        */ ||
+        !SDL_strcmp(w[0], "HTTPproxy") /* "HTTPproxy" hostname:port    */ ||
+        !SDL_strcmp(w[0], "FTPproxy")  /* "FTPproxy" hostname:port     */ ||
+        !SDL_strcmp(w[0], "mailaddr")  /* "mailaddr" your-mail-address */ ||
+        !SDL_strcmp(w[0], "opt")       /* "opt" timidity-options       */  )
     {
-            /*
-             * + "comm" sets some kind of comment -- the documentation is too
-             *   vague for me to understand at this time.
-             * + "HTTPproxy", "FTPproxy" and "mailaddr" are for reading data
-             *   over a network, rather than from the file system.
-             * + "opt" specifies default options for TiMidity++.
-             *
-             * These are all quite useless for our version of TiMidity, so
-             * they can safely remain no-ops.
-             */
-    } else if (!SDL_strcmp(w[0], "timeout")) /* "timeout" program second */
+      /* + "comm" sets some kind of comment -- the documentation is too
+       *   vague for me to understand at this time.
+       * + "HTTPproxy", "FTPproxy" and "mailaddr" are for reading data
+       *   over a network, rather than from the file system.
+       * + "opt" specifies default options for TiMidity++.
+       *
+       * Quite useless for us, so they can safely remain no-ops.
+       */
+    }
+    else if (!SDL_strcmp(w[0], "timeout")) /* "timeout" program second */
     {
-            /*
-             * Specifies a timeout value of the program. A number of seconds
-             * before TiMidity kills the note. This may be useful to implement
-             * later, but I don't see any urgent need for it.
-             */
-        SNDDBG(("FIXME: Implement \"timeout\" in TiMidity config.\n"));
-    } else if (!SDL_strcmp(w[0], "copydrumset")  /* "copydrumset" drumset */
-               || !SDL_strcmp(w[0], "copybank")) /* "copybank" bank       */
+      /* Specifies a timeout value of the program. A number of seconds
+       * before TiMidity kills the note. No urgent need for it.
+       */
+      SNDDBG(("FIXME: Implement \"timeout\" in TiMidity config.\n"));
+    }
+    else if (!SDL_strcmp(w[0], "copydrumset")  /* "copydrumset" drumset */ ||
+             !SDL_strcmp(w[0], "copybank")) /* "copybank" bank       */
     {
-            /*
-             * Copies all the settings of the specified drumset or bank to
-             * the current drumset or bank. May be useful later, but not a
-             * high priority.
-             */
-        SNDDBG(("FIXME: Implement \"%s\" in TiMidity config.\n", w[0]));
-    } else if (!SDL_strcmp(w[0], "undef")) /* "undef" progno */
+      /* Copies all the settings of the specified drumset or bank to
+       * the current drumset or bank. May be useful later, but not a
+       * high priority.
+       */
+      SNDDBG(("FIXME: Implement \"%s\" in TiMidity config.\n", w[0]));
+    }
+    else if (!SDL_strcmp(w[0], "undef")) /* "undef" progno */
     {
-            /*
-             * Undefines the tone "progno" of the current tone bank (or
-             * drum set?). Not a high priority.
-             */
-        SNDDBG(("FIXME: Implement \"undef\" in TiMidity config.\n"));
-    } else if (!SDL_strcmp(w[0], "altassign")) /* "altassign" prog1 prog2 ... */
+      /* Undefines the tone "progno" of the current tone bank (or
+       * drum set?). Not a high priority.
+       */
+      SNDDBG(("FIXME: Implement \"undef\" in TiMidity config.\n"));
+    }
+    else if (!SDL_strcmp(w[0], "altassign")) /* "altassign" prog1 prog2 ... */
     {
-            /*
-             * Sets the alternate assign for drum set. Whatever that's
-             * supposed to mean.
-             */
-        SNDDBG(("FIXME: Implement \"altassign\" in TiMidity config.\n"));
-    } else if (!SDL_strcmp(w[0], "soundfont")
-               || !SDL_strcmp(w[0], "font"))
+      /* Sets the alternate assign for drum set. Whatever that's
+       * supposed to mean.
+       */
+      SNDDBG(("FIXME: Implement \"altassign\" in TiMidity config.\n"));
+    }
+    else if (!SDL_strcmp(w[0], "soundfont") ||
+             !SDL_strcmp(w[0], "font"))
     {
-            /*
-             * I can't find any documentation for these, but I guess they're
-             * an alternative way of loading/unloading instruments.
-             * 
-             * "soundfont" sf_file "remove"
-             * "soundfont" sf_file ["order=" order] ["cutoff=" cutoff]
-             *                     ["reso=" reso] ["amp=" amp]
-             * "font" "exclude" bank preset keynote
-             * "font" "order" order bank preset keynote
-             */
-        SNDDBG(("FIXME: Implmement \"%s\" in TiMidity config.\n", w[0]));
-    } else if (!SDL_strcmp(w[0], "progbase"))
+      /* "soundfont" sf_file "remove"
+       * "soundfont" sf_file ["order=" order] ["cutoff=" cutoff]
+       *                     ["reso=" reso] ["amp=" amp]
+       * "font" "exclude" bank preset keynote
+       * "font" "order" order bank preset keynote
+       */
+      SNDDBG(("FIXME: Implmement \"%s\" in TiMidity config.\n", w[0]));
+    }
+    else if (!SDL_strcmp(w[0], "progbase"))
     {
-            /*
-             * The documentation for this makes absolutely no sense to me, but
-             * apparently it sets some sort of base offset for tone numbers.
-             * Why anyone would want to do this is beyond me.
-             */
-        SNDDBG(("FIXME: Implement \"progbase\" in TiMidity config.\n"));
-    } else if (!SDL_strcmp(w[0], "map")) /* "map" name set1 elem1 set2 elem2 */
+      /* The documentation for this makes absolutely no sense to me, but
+       * apparently it sets some sort of base offset for tone numbers.
+       */
+      SNDDBG(("FIXME: Implement \"progbase\" in TiMidity config.\n"));
+    }
+    else if (!SDL_strcmp(w[0], "map")) /* "map" name set1 elem1 set2 elem2 */
     {
-            /*
-             * This extension is the one we will need to implement, as it is
-             * used by the "eawpats". Unfortunately I cannot find any
-             * documentation whatsoever for it, but it looks like it's used
-             * for remapping one instrument to another somehow.
-             */
-        SNDDBG(("FIXME: Implement \"map\" in TiMidity config.\n"));
+      /* This one is used by the "eawpats". Looks like it's used
+       * for remapping one instrument to another somehow.
+       */
+      SNDDBG(("FIXME: Implement \"map\" in TiMidity config.\n"));
     }
 
-        /* Standard TiMidity config */
-    
+    /* Standard TiMidity config */
     else if (!SDL_strcmp(w[0], "dir"))
     {
       if (words < 2)
@@ -198,8 +189,9 @@ static int read_config_file(const char *name)
 	SNDDBG(("%s: line %d: No directory given\n", name, line));
 	goto fail;
       }
-      for (i=1; i<words; i++)
+      for (i=1; i<words; i++) {
 	add_to_pathlist(w[i], SDL_strlen(w[i]));
+      }
     }
     else if (!SDL_strcmp(w[0], "source"))
     {
@@ -442,13 +434,11 @@ MidiSong *Timidity_LoadSong(SDL_RWops *rw, SDL_AudioSpec *audio)
 
   for (i = 0; i < MAXBANK; i++)
   {
-    if (master_tonebank[i])
-    {
+    if (master_tonebank[i]) {
       song->tonebank[i] = SDL_calloc(1, sizeof(ToneBank));
       song->tonebank[i]->tone = master_tonebank[i]->tone;
     }
-    if (master_drumset[i])
-    {
+    if (master_drumset[i]) {
       song->drumset[i] = SDL_calloc(1, sizeof(ToneBank));
       song->drumset[i]->tone = master_drumset[i]->tone;
     }
@@ -477,42 +467,42 @@ MidiSong *Timidity_LoadSong(SDL_RWops *rw, SDL_AudioSpec *audio)
   }
   switch (audio->format) {
   case AUDIO_S8:
-	  song->write = s32tos8;
-	  break;
+    song->write = s32tos8;
+    break;
   case AUDIO_U8:
-	  song->write = s32tou8;
-	  break;
+    song->write = s32tou8;
+    break;
   case AUDIO_S16LSB:
-	  song->write = s32tos16l;
-	  break;
+    song->write = s32tos16l;
+    break;
   case AUDIO_S16MSB:
-	  song->write = s32tos16b;
-	  break;
+    song->write = s32tos16b;
+    break;
   case AUDIO_U16LSB:
-	  song->write = s32tou16l;
-	  break;
+    song->write = s32tou16l;
+    break;
   case AUDIO_U16MSB:
-	  song->write = s32tou16b;
-	  break;
+    song->write = s32tou16b;
+    break;
   case AUDIO_S32LSB:
-	  song->write = s32tos32l;
-	  break;
+    song->write = s32tos32l;
+    break;
   case AUDIO_S32MSB:
-	  song->write = s32tos32b;
-	  break;
+    song->write = s32tos32b;
+    break;
   case AUDIO_F32SYS:
-	  song->write = s32tof32;
-	  break;
+    song->write = s32tof32;
+    break;
   default:
-	  SDL_SetError("Unsupported audio format");
-	  SDL_free(song);
-	  return NULL;
+    SDL_SetError("Unsupported audio format");
+    SDL_free(song);
+    return NULL;
   }
 
   song->buffer_size = audio->samples;
   song->resample_buffer = SDL_malloc(audio->samples * sizeof(sample_t));
   song->common_buffer = SDL_malloc(audio->samples * 2 * sizeof(Sint32));
-  
+
   song->control_ratio = audio->freq / CONTROLS_PER_SECOND;
   if (song->control_ratio < 1)
       song->control_ratio = 1;
@@ -525,17 +515,13 @@ MidiSong *Timidity_LoadSong(SDL_RWops *rw, SDL_AudioSpec *audio)
   song->events = read_midi_file(song, &(song->groomed_event_count),
       &song->samples);
 
-  /* The RWops can safely be closed at this point, but let's make that the
-   * responsibility of the caller.
-   */
-  
   /* Make sure everything is okay */
   if (!song->events) {
     SDL_free(song);
     return(NULL);
   }
 
-  song->default_instrument = 0;
+  song->default_instrument = NULL;
   song->default_program = DEFAULT_PROGRAM;
 
   if (*def_instr_name)
@@ -552,17 +538,15 @@ void Timidity_FreeSong(MidiSong *song)
 
   free_instruments(song);
 
-  for (i = 0; i < 128; i++)
-  {
-    if (song->tonebank[i])
-      SDL_free(song->tonebank[i]);
-    if (song->drumset[i])
-      SDL_free(song->drumset[i]);
+  for (i = 0; i < 128; i++) {
+    SDL_free(song->tonebank[i]);
+    SDL_free(song->drumset[i]);
   }
-  
+
   SDL_free(song->common_buffer);
   SDL_free(song->resample_buffer);
   SDL_free(song->events);
+
   SDL_free(song);
 }
 
@@ -570,32 +554,23 @@ void Timidity_Exit(void)
 {
   int i, j;
 
-  for (i = 0; i < MAXBANK; i++)
-  {
-    if (master_tonebank[i])
-    {
+  for (i = 0; i < MAXBANK; i++) {
+    if (master_tonebank[i]) {
       ToneBankElement *e = master_tonebank[i]->tone;
-      if (e != NULL)
-      {
-        for (j = 0; j < 128; j++)
-        {
-          if (e[j].name != NULL)
-            SDL_free(e[j].name);
+      if (e != NULL) {
+        for (j = 0; j < 128; j++) {
+          SDL_free(e[j].name);
         }
         SDL_free(e);
       }
       SDL_free(master_tonebank[i]);
       master_tonebank[i] = NULL;
     }
-    if (master_drumset[i])
-    {
+    if (master_drumset[i]) {
       ToneBankElement *e = master_drumset[i]->tone;
-      if (e != NULL)
-      {
-        for (j = 0; j < 128; j++)
-        {
-          if (e[j].name != NULL)
-            SDL_free(e[j].name);
+      if (e != NULL) {
+        for (j = 0; j < 128; j++) {
+          SDL_free(e[j].name);
         }
         SDL_free(e);
       }

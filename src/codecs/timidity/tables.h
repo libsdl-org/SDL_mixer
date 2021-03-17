@@ -1,5 +1,4 @@
-/* 
-
+/*
     TiMidity -- Experimental MIDI to WAVE converter
     Copyright (C) 1995 Tuukka Toivonen <toivonen@clinet.fi>
 
