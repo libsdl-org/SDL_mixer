@@ -154,8 +154,8 @@ macosx_load_soundfont(const char *path, void *data)
                                        kAudioUnitScope_Global, 0,
                                        &ctx->default_url, sizeof(CFURLRef));
         if (err != noErr) {
-            // uh-oh, this might leave the audio unit in an unusable state
-            // (e.g. if the soundfont was an incompatible file type)
+            /* uh-oh, this might leave the audio unit in an unusable state
+               (e.g. if the soundfont was an incompatible file type) */
         }
         return SDL_FALSE;
     }
