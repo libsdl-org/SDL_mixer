@@ -558,7 +558,7 @@ void pre_resample(MidiSong *song, Sample *sp)
     return;
   }
 
-  dest = newdata = (Sint16 *) safe_malloc((newlen >> (FRACTION_BITS - 1)) + 2);
+  dest = newdata = (Sint16 *) SDL_malloc((newlen >> (FRACTION_BITS - 1)) + 2);
   if (!dest)
     return;
 

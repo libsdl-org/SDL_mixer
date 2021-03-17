@@ -246,10 +246,8 @@ static int read_config_file(const char *name)
       }
       if (!master_drumset[i])
       {
-	master_drumset[i] = safe_malloc(sizeof(ToneBank));
-	SDL_memset(master_drumset[i], 0, sizeof(ToneBank));
-	master_drumset[i]->tone = safe_malloc(128 * sizeof(ToneBankElement));
-	SDL_memset(master_drumset[i]->tone, 0, 128 * sizeof(ToneBankElement));
+	master_drumset[i] = SDL_calloc(1, sizeof(ToneBank));
+	master_drumset[i]->tone = SDL_calloc(128, sizeof(ToneBankElement));
       }
       bank=master_drumset[i];
     }
@@ -269,10 +267,8 @@ static int read_config_file(const char *name)
       }
       if (!master_tonebank[i])
       {
-	master_tonebank[i] = safe_malloc(sizeof(ToneBank));
-	SDL_memset(master_tonebank[i], 0, sizeof(ToneBank));
-	master_tonebank[i]->tone = safe_malloc(128 * sizeof(ToneBankElement));
-	SDL_memset(master_tonebank[i]->tone, 0, 128 * sizeof(ToneBankElement));
+	master_tonebank[i] = SDL_calloc(1, sizeof(ToneBank));
+	master_tonebank[i]->tone = SDL_calloc(128, sizeof(ToneBankElement));
       }
       bank=master_tonebank[i];
     }
@@ -300,7 +296,7 @@ static int read_config_file(const char *name)
       if (bank->tone[i].name)
 	SDL_free(bank->tone[i].name);
       sz = SDL_strlen(w[1])+1;
-      bank->tone[i].name=safe_malloc(sz);
+      bank->tone[i].name=SDL_malloc(sz);
       SDL_memcpy(bank->tone[i].name,w[1],sz);
       bank->tone[i].note=bank->tone[i].amp=bank->tone[i].pan=
       bank->tone[i].strip_loop=bank->tone[i].strip_envelope=
@@ -399,15 +395,11 @@ fail:
 int Timidity_Init_NoConfig(void)
 {
   /* Allocate memory for the standard tonebank and drumset */
-  master_tonebank[0] = safe_malloc(sizeof(ToneBank));
-  SDL_memset(master_tonebank[0], 0, sizeof(ToneBank));
-  master_tonebank[0]->tone = safe_malloc(128 * sizeof(ToneBankElement));
-  SDL_memset(master_tonebank[0]->tone, 0, 128 * sizeof(ToneBankElement));
+  master_tonebank[0] = SDL_calloc(1, sizeof(ToneBank));
+  master_tonebank[0]->tone = SDL_calloc(128, sizeof(ToneBankElement));
 
-  master_drumset[0] = safe_malloc(sizeof(ToneBank));
-  SDL_memset(master_drumset[0], 0, sizeof(ToneBank));
-  master_drumset[0]->tone = safe_malloc(128 * sizeof(ToneBankElement));
-  SDL_memset(master_drumset[0]->tone, 0, 128 * sizeof(ToneBankElement));
+  master_drumset[0] = SDL_calloc(1, sizeof(ToneBank));
+  master_drumset[0]->tone = SDL_calloc(128, sizeof(ToneBankElement));
 
   return 0;
 }
@@ -444,23 +436,20 @@ MidiSong *Timidity_LoadSong(SDL_RWops *rw, SDL_AudioSpec *audio)
       return NULL;
 
   /* Allocate memory for the song */
-  song = (MidiSong *)safe_malloc(sizeof(*song));
+  song = (MidiSong *)SDL_calloc(1, sizeof(*song));
   if (song == NULL)
       return NULL;
-  SDL_memset(song, 0, sizeof(*song));
 
   for (i = 0; i < MAXBANK; i++)
   {
     if (master_tonebank[i])
     {
-      song->tonebank[i] = safe_malloc(sizeof(ToneBank));
-      SDL_memset(song->tonebank[i], 0, sizeof(ToneBank));
+      song->tonebank[i] = SDL_calloc(1, sizeof(ToneBank));
       song->tonebank[i]->tone = master_tonebank[i]->tone;
     }
     if (master_drumset[i])
     {
-      song->drumset[i] = safe_malloc(sizeof(ToneBank));
-      SDL_memset(song->drumset[i], 0, sizeof(ToneBank));
+      song->drumset[i] = SDL_calloc(1, sizeof(ToneBank));
       song->drumset[i]->tone = master_drumset[i]->tone;
     }
   }
@@ -521,8 +510,8 @@ MidiSong *Timidity_LoadSong(SDL_RWops *rw, SDL_AudioSpec *audio)
   }
 
   song->buffer_size = audio->samples;
-  song->resample_buffer = safe_malloc(audio->samples * sizeof(sample_t));
-  song->common_buffer = safe_malloc(audio->samples * 2 * sizeof(Sint32));
+  song->resample_buffer = SDL_malloc(audio->samples * sizeof(sample_t));
+  song->common_buffer = SDL_malloc(audio->samples * 2 * sizeof(Sint32));
   
   song->control_ratio = audio->freq / CONTROLS_PER_SECOND;
   if (song->control_ratio < 1)

@@ -1,5 +1,4 @@
 /*
-
     TiMidity -- Experimental MIDI to WAVE converter
     Copyright (C) 1995 Tuukka Toivonen <toivonen@clinet.fi>
 
@@ -37,16 +36,15 @@ SDL_RWops *open_file(const char *name)
 {
   SDL_RWops *rw;
 
-  if (!name || !(*name))
-    {
+  if (!name || !(*name)) {
       SNDDBG(("Attempted to open nameless file.\n"));
-      return 0;
-    }
+      return NULL;
+  }
 
   /* First try the given name */
 
   SNDDBG(("Trying to open %s\n", name));
-  if ((rw = SDL_RWFromFile(name, "rb")))
+  if ((rw = SDL_RWFromFile(name, "rb")) != NULL)
     return rw;
 
   if (!is_abspath(name))
@@ -56,18 +54,15 @@ SDL_RWops *open_file(const char *name)
     char *p;
     size_t l;
 
-    while (plp)  /* Try along the path then */
-      {
+    while (plp) { /* Try along the path then */
 	*current_filename = 0;
 	p = current_filename;
 	l = SDL_strlen(plp->path);
 	if(l >= sizeof(current_filename) - 3) l = 0;
-	if(l)
-	  {
+	if(l) {
 	    SDL_memcpy(current_filename, plp->path, l);
 	    p += l;
-	    if(!is_dirsep(p[-1]))
-	    {
+	    if(!is_dirsep(p[-1])) {
 	      *p++ = CHAR_DIRSEP;
 	       l++;
 	    }
@@ -79,34 +74,21 @@ SDL_RWops *open_file(const char *name)
 	plp = plp->next;
       }
   }
-  
+
   /* Nothing could be opened. */
   SNDDBG(("Could not open %s\n", name));
-  return 0;
-}
-
-/* This'll allocate memory or die. */
-void *safe_malloc(size_t count)
-{
-  void *p;
-
-  p = SDL_malloc(count);
-  if (p == NULL) {
-    SNDDBG(("Sorry. Couldn't malloc %d bytes.\n", count));
-  }
-
-  return p;
+  return NULL;
 }
 
 /* This adds a directory to the path list */
 void add_to_pathlist(const char *s, size_t l)
 {
-  PathList *plp = safe_malloc(sizeof(PathList));
+  PathList *plp = SDL_malloc(sizeof(PathList));
 
   if (plp == NULL)
       return;
 
-  plp->path = safe_malloc(l + 1);
+  plp->path = SDL_malloc(l + 1);
   if (plp->path == NULL) {
       SDL_free (plp);
       return;

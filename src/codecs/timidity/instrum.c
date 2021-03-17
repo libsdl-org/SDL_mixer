@@ -204,9 +204,9 @@ static Instrument *load_instrument(MidiSong *song, char *name, int percussion,
       return 0;
     }
 
-  ip=safe_malloc(sizeof(Instrument));
+  ip=SDL_malloc(sizeof(Instrument));
   ip->samples = tmp[198];
-  ip->sample = safe_malloc(sizeof(Sample) * ip->samples);
+  ip->sample = SDL_malloc(sizeof(Sample) * ip->samples);
   for (i=0; i<ip->samples; i++)
     {
       Uint8 fractions;
@@ -367,7 +367,7 @@ static Instrument *load_instrument(MidiSong *song, char *name, int percussion,
 	}
 
       /* Then read the sample data */
-      sp->data = (sample_t *) safe_malloc(sp->data_length+4);
+      sp->data = (sample_t *) SDL_malloc(sp->data_length+4);
       if (1 != SDL_RWread(rw, sp->data, sp->data_length, 1))
 	goto fail;
 
@@ -379,7 +379,7 @@ static Instrument *load_instrument(MidiSong *song, char *name, int percussion,
 	  sp->data_length *= 2;
 	  sp->loop_start *= 2;
 	  sp->loop_end *= 2;
-	  tmp16 = new16 = (Uint16 *) safe_malloc(sp->data_length+4);
+	  tmp16 = new16 = (Uint16 *) SDL_malloc(sp->data_length+4);
 	  while (k--)
 	    *tmp16++ = (Uint16)(*cp++) << 8;
 	  SDL_free(sp->data);
