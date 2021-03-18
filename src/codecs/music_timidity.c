@@ -216,6 +216,12 @@ static int TIMIDITY_Seek(void *context, double position)
     return 0;
 }
 
+static double TIMIDITY_Tell(void *context)
+{
+    TIMIDITY_Music *music = (TIMIDITY_Music *)context;
+    return Timidity_GetSongTime(music->song) / 1000.0;
+}
+
 static double TIMIDITY_Duration(void *context)
 {
     TIMIDITY_Music *music = (TIMIDITY_Music *)context;
@@ -257,7 +263,7 @@ Mix_MusicInterface Mix_MusicInterface_TIMIDITY =
     TIMIDITY_GetAudio,
     NULL,   /* Jump */
     TIMIDITY_Seek,
-    NULL,   /* Tell */
+    TIMIDITY_Tell,
     TIMIDITY_Duration,
     NULL,   /* LoopStart */
     NULL,   /* LoopEnd */

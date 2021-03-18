@@ -646,6 +646,13 @@ Uint32 Timidity_GetSongLength(MidiSong *song)
   return retvalue;
 }
 
+Uint32 Timidity_GetSongTime(MidiSong *song)
+{
+  Uint32 retvalue = (song->current_sample / song->rate) * 1000;
+  retvalue       += (song->current_sample % song->rate) * 1000 / song->rate;
+  return retvalue;
+}
+
 int Timidity_PlaySome(MidiSong *song, void *stream, Sint32 len)
 {
   Sint32 start_sample, end_sample, samples;

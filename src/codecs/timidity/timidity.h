@@ -155,6 +155,7 @@ extern MidiSong *Timidity_LoadSong(SDL_RWops *rw, SDL_AudioSpec *audio);
 extern void Timidity_Start(MidiSong *song);
 extern void Timidity_Seek(MidiSong *song, Uint32 ms);
 extern Uint32 Timidity_GetSongLength(MidiSong *song); /* returns millseconds */
+extern Uint32 Timidity_GetSongTime(MidiSong *song);   /* returns millseconds */
 extern void Timidity_FreeSong(MidiSong *song);
 extern void Timidity_Exit(void);
 
