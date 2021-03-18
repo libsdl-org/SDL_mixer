@@ -1,5 +1,4 @@
 /*
-
     TiMidity -- Experimental MIDI to WAVE converter
     Copyright (C) 1995 Tuukka Toivonen <toivonen@clinet.fi>
 
@@ -7,7 +6,6 @@
     it under the terms of the Perl Artistic License, available in COPYING.
 
     playmidi.c -- random stuff in need of rearrangement
-
 */
 
 #include "SDL.h"
@@ -630,6 +628,11 @@ void Timidity_Start(MidiSong *song)
   song->playing = 1;
   adjust_amplification(song);
   skip_to(song, 0);
+}
+
+int Timidity_IsActive(MidiSong *song)
+{
+  return song->playing;
 }
 
 void Timidity_Seek(MidiSong *song, Uint32 ms)
