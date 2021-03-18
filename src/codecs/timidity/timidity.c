@@ -73,7 +73,7 @@ static int read_config_file(const char *name, int rcf_count)
     return -1;
   }
 
-  if (!(rw=open_file(name)))
+  if (!(rw=timi_openfile(name)))
    return -1;
 
   bank = NULL;
@@ -189,7 +189,7 @@ static int read_config_file(const char *name, int rcf_count)
 	goto fail;
       }
       for (i=1; i<words; i++) {
-	if (add_to_pathlist(w[i], SDL_strlen(w[i])) < 0)
+	if (timi_add_pathlist(w[i], SDL_strlen(w[i])) < 0)
 	  goto fail;
       }
     }
@@ -423,7 +423,7 @@ static int init_begin_config(const char *cf)
 {
   const char *p = get_last_dirsep(cf);
   if (p != NULL)
-      return add_to_pathlist(cf, p - cf + 1); /* including DIRSEP */
+      return timi_add_pathlist(cf, p - cf + 1); /* including DIRSEP */
   return 0;
 }
 
@@ -510,31 +510,31 @@ static void do_song_load(SDL_RWops *rw, SDL_AudioSpec *audio, MidiSong **out)
   }
   switch (audio->format) {
   case AUDIO_S8:
-    song->write = s32tos8;
+    song->write = timi_s32tos8;
     break;
   case AUDIO_U8:
-    song->write = s32tou8;
+    song->write = timi_s32tou8;
     break;
   case AUDIO_S16LSB:
-    song->write = s32tos16l;
+    song->write = timi_s32tos16l;
     break;
   case AUDIO_S16MSB:
-    song->write = s32tos16b;
+    song->write = timi_s32tos16b;
     break;
   case AUDIO_U16LSB:
-    song->write = s32tou16l;
+    song->write = timi_s32tou16l;
     break;
   case AUDIO_U16MSB:
-    song->write = s32tou16b;
+    song->write = timi_s32tou16b;
     break;
   case AUDIO_S32LSB:
-    song->write = s32tos32l;
+    song->write = timi_s32tos32l;
     break;
   case AUDIO_S32MSB:
-    song->write = s32tos32b;
+    song->write = timi_s32tos32b;
     break;
   case AUDIO_F32SYS:
-    song->write = s32tof32;
+    song->write = timi_s32tof32;
     break;
   default:
     SDL_SetError("Unsupported audio format");
@@ -634,5 +634,5 @@ void Timidity_Exit(void)
     }
   }
 
-  free_pathlist();
+  timi_free_pathlist();
 }

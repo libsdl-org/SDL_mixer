@@ -8,6 +8,7 @@
 
 #include "SDL.h"
 
+#include "common.h"
 #include "tables.h"
 
 const Sint32 freq_table[128]=

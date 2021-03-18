@@ -8,13 +8,24 @@
     tables.h
 */
 
+#ifndef TIMIDITY_TABLES_H
+#define TIMIDITY_TABLES_H
+
 #if defined(HAVE_LIBC) && defined(__WATCOMC__) /* Watcom has issues... */
 #define SDL_sin  sin
 #endif
-#define sine(x) (SDL_sin((2*PI/1024.0) * (x)))
+#define timi_sine(x) (SDL_sin((2*PI/1024.0) * (x)))
 
 #define SINE_CYCLE_LENGTH 1024
+
+#define freq_table TIMI_NAMESPACE(freq_table)
+#define vol_table TIMI_NAMESPACE(vol_table)
+#define bend_fine TIMI_NAMESPACE(bend_fine)
+#define bend_coarse TIMI_NAMESPACE(bend_coarse)
+
 extern const Sint32 freq_table[];
 extern const double vol_table[];
 extern const double bend_fine[];
 extern const double bend_coarse[];
+
+#endif /* TIMIDITY_TABLES_H */

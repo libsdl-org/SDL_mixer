@@ -14,6 +14,7 @@
 #include "common.h"
 #include "instrum.h"
 #include "playmidi.h"
+#include "readmidi.h"
 
 /* Computes how many (fractional) samples one MIDI delta-time unit contains */
 static void compute_sample_increment(MidiSong *song, Sint32 tempo,

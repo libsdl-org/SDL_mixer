@@ -12,6 +12,7 @@
 
 #include "timidity.h"
 #include "options.h"
+#include "common.h"
 #include "instrum.h"
 #include "playmidi.h"
 #include "output.h"
@@ -76,12 +77,12 @@ void apply_envelope_to_amp(MidiSong *song, int v)
 	  ramp *= (float)vol_table[song->voice[v].envelope_volume>>23];
 	}
 
-      la = (Sint32)FSCALE(lamp,AMP_BITS);
+      la = (Sint32)TIM_FSCALE(lamp,AMP_BITS);
 
       if (la>MAX_AMP_VALUE)
 	la=MAX_AMP_VALUE;
 
-      ra = (Sint32)FSCALE(ramp,AMP_BITS);
+      ra = (Sint32)TIM_FSCALE(ramp,AMP_BITS);
       if (ra>MAX_AMP_VALUE)
 	ra=MAX_AMP_VALUE;
 
@@ -95,7 +96,7 @@ void apply_envelope_to_amp(MidiSong *song, int v)
       if (song->voice[v].sample->modes & MODES_ENVELOPE)
 	lamp *= (float)vol_table[song->voice[v].envelope_volume>>23];
 
-      la = (Sint32)FSCALE(lamp,AMP_BITS);
+      la = (Sint32)TIM_FSCALE(lamp,AMP_BITS);
 
       if (la>MAX_AMP_VALUE)
 	la=MAX_AMP_VALUE;
@@ -145,9 +146,9 @@ static void update_tremolo(MidiSong *song, int v)
      song->voice[v].tremolo_phase -= SINE_CYCLE_LENGTH<<RATE_SHIFT;  */
 
   song->voice[v].tremolo_volume = (float) 
-    (1.0 - FSCALENEG((sine(song->voice[v].tremolo_phase >> RATE_SHIFT) + 1.0)
-		    * depth * TREMOLO_AMPLITUDE_TUNING,
-		    17));
+    (1.0 - TIM_FSCALENEG((timi_sine(song->voice[v].tremolo_phase >> RATE_SHIFT) + 1.0)
+			  * depth * TREMOLO_AMPLITUDE_TUNING,
+			 17));
 
   /* I'm not sure about the +1.0 there -- it makes tremoloed voices'
      volumes on average the lower the higher the tremolo amplitude. */

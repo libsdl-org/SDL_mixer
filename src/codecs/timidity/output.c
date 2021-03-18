@@ -18,7 +18,7 @@
 /*****************************************************************/
 /* Some functions to convert signed 32-bit data to other formats */
 
-void s32tos8(void *dp, Sint32 *lp, Sint32 c)
+void timi_s32tos8(void *dp, Sint32 *lp, Sint32 c)
 {
   Sint8 *cp=(Sint8 *)(dp);
   Sint32 l;
@@ -31,7 +31,7 @@ void s32tos8(void *dp, Sint32 *lp, Sint32 c)
     }
 }
 
-void s32tou8(void *dp, Sint32 *lp, Sint32 c)
+void timi_s32tou8(void *dp, Sint32 *lp, Sint32 c)
 {
   Uint8 *cp=(Uint8 *)(dp);
   Sint32 l;
@@ -44,7 +44,7 @@ void s32tou8(void *dp, Sint32 *lp, Sint32 c)
     }
 }
 
-void s32tos16(void *dp, Sint32 *lp, Sint32 c)
+void timi_s32tos16(void *dp, Sint32 *lp, Sint32 c)
 {
   Sint16 *sp=(Sint16 *)(dp);
   Sint32 l;
@@ -57,7 +57,7 @@ void s32tos16(void *dp, Sint32 *lp, Sint32 c)
     }
 }
 
-void s32tou16(void *dp, Sint32 *lp, Sint32 c)
+void timi_s32tou16(void *dp, Sint32 *lp, Sint32 c)
 {
   Uint16 *sp=(Uint16 *)(dp);
   Sint32 l;
@@ -70,7 +70,7 @@ void s32tou16(void *dp, Sint32 *lp, Sint32 c)
     }
 }
 
-void s32tos16x(void *dp, Sint32 *lp, Sint32 c)
+void timi_s32tos16x(void *dp, Sint32 *lp, Sint32 c)
 {
   Sint16 *sp=(Sint16 *)(dp);
   Sint32 l;
@@ -83,7 +83,7 @@ void s32tos16x(void *dp, Sint32 *lp, Sint32 c)
     }
 }
 
-void s32tou16x(void *dp, Sint32 *lp, Sint32 c)
+void timi_s32tou16x(void *dp, Sint32 *lp, Sint32 c)
 {
   Uint16 *sp=(Uint16 *)(dp);
   Sint32 l;
@@ -96,7 +96,7 @@ void s32tou16x(void *dp, Sint32 *lp, Sint32 c)
     }
 }
 
-void s32tof32(void *dp, Sint32 *lp, Sint32 c)
+void timi_s32tof32(void *dp, Sint32 *lp, Sint32 c)
 {
   float *sp=(float *)(dp);
   while (c--)
@@ -105,7 +105,7 @@ void s32tof32(void *dp, Sint32 *lp, Sint32 c)
     }
 }
 
-void s32tos32(void *dp, Sint32 *lp, Sint32 c)
+void timi_s32tos32(void *dp, Sint32 *lp, Sint32 c)
 {
   Sint32 *sp=(Sint32 *)(dp);
   while (c--)
@@ -114,7 +114,7 @@ void s32tos32(void *dp, Sint32 *lp, Sint32 c)
     }
 }
 
-void s32tos32x(void *dp, Sint32 *lp, Sint32 c)
+void timi_s32tos32x(void *dp, Sint32 *lp, Sint32 c)
 {
   Sint32 *sp=(Sint32 *)(dp);
   while (c--)

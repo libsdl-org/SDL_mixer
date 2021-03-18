@@ -14,6 +14,7 @@
 
 #include "timidity.h"
 #include "options.h"
+#include "common.h"
 #include "instrum.h"
 #include "playmidi.h"
 #include "output.h"
@@ -147,11 +148,11 @@ static void recompute_freq(MidiSong *song, int v)
 		  song->channel[song->voice[v].channel].pitchfactor);
     }
 
-  a = FSCALE(((double)(song->voice[v].sample->sample_rate) *
-	      (double)(song->voice[v].frequency)) /
-	     ((double)(song->voice[v].sample->root_freq) *
-	      (double)(song->rate)),
-	     FRACTION_BITS);
+  a = TIM_FSCALE(((double)(song->voice[v].sample->sample_rate) *
+		  (double)(song->voice[v].frequency)) /
+		 ((double)(song->voice[v].sample->root_freq) *
+		  (double)(song->rate)),
+		 FRACTION_BITS);
 
   if (sign)
     a = -a; /* need to preserve the loop direction */
@@ -176,32 +177,32 @@ static void recompute_amp(MidiSong *song, int v)
 	  song->voice[v].panned=PANNED_CENTER;
 
 	  song->voice[v].left_amp=
-	    FSCALENEG((double)(tempamp) * song->voice[v].sample->volume * song->master_volume,
-		      21);
+	    TIM_FSCALENEG((double)(tempamp) * song->voice[v].sample->volume * song->master_volume,
+			  21);
 	}
       else if (song->voice[v].panning<5)
 	{
 	  song->voice[v].panned = PANNED_LEFT;
 
 	  song->voice[v].left_amp=
-	    FSCALENEG((double)(tempamp) * song->voice[v].sample->volume * song->master_volume,
-		      20);
+	    TIM_FSCALENEG((double)(tempamp) * song->voice[v].sample->volume * song->master_volume,
+			  20);
 	}
       else if (song->voice[v].panning>123)
 	{
 	  song->voice[v].panned = PANNED_RIGHT;
 
 	  song->voice[v].left_amp= /* left_amp will be used */
-	    FSCALENEG((double)(tempamp) * song->voice[v].sample->volume * song->master_volume,
-		      20);
+	    TIM_FSCALENEG((double)(tempamp) * song->voice[v].sample->volume * song->master_volume,
+			  20);
 	}
       else
 	{
 	  song->voice[v].panned = PANNED_MYSTERY;
 
 	  song->voice[v].left_amp=
-	    FSCALENEG((double)(tempamp) * song->voice[v].sample->volume * song->master_volume,
-		      27);
+	    TIM_FSCALENEG((double)(tempamp) * song->voice[v].sample->volume * song->master_volume,
+			  27);
 	  song->voice[v].right_amp = song->voice[v].left_amp * (song->voice[v].panning);
 	  song->voice[v].left_amp *= (float)(127 - song->voice[v].panning);
 	}
@@ -211,8 +212,8 @@ static void recompute_amp(MidiSong *song, int v)
       song->voice[v].panned = PANNED_CENTER;
 
       song->voice[v].left_amp=
-	FSCALENEG((double)(tempamp) * song->voice[v].sample->volume * song->master_volume,
-		  21);
+	TIM_FSCALENEG((double)(tempamp) * song->voice[v].sample->volume * song->master_volume,
+		      21);
     }
 }
 

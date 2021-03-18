@@ -8,6 +8,9 @@
     instrum.h
 */
 
+#ifndef TIMIDITY_INSTRUM_H
+#define TIMIDITY_INSTRUM_H
+
 /* Bits in modes: */
 #define MODES_16BIT	(1<<0)
 #define MODES_UNSIGNED	(1<<1)
@@ -23,6 +26,12 @@
 
 #define SPECIAL_PROGRAM -1
 
+#define load_missing_instruments TIMI_NAMESPACE(load_missing_instruments)
+#define free_instruments TIMI_NAMESPACE(free_instruments)
+#define set_default_instrument TIMI_NAMESPACE(set_default_instrument)
+
 extern int load_missing_instruments(MidiSong *song);
 extern void free_instruments(MidiSong *song);
 extern int set_default_instrument(MidiSong *song, const char *name);
+
+#endif /* TIMIDITY_INSTRUM_H */

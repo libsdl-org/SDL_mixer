@@ -93,8 +93,8 @@ static Sint32 convert_vibrato_sweep(MidiSong *song, Uint8 sweep,
     return 0;
 
   return
-    (Sint32) (FSCALE((double) (vib_control_ratio) * SWEEP_TUNING, SWEEP_SHIFT)
-	     / (double)(song->rate * sweep));
+    (Sint32) (TIM_FSCALE((double) (vib_control_ratio) * SWEEP_TUNING, SWEEP_SHIFT)
+			 / (double)(song->rate * sweep));
 
   /* this was overflowing with seashore.pat
 
@@ -160,13 +160,13 @@ static void load_instrument(MidiSong *song, const char *name,
   if (!name) return;
 
   /* Open patch file */
-  if ((rw=open_file(name)) == NULL)
+  if ((rw=timi_openfile(name)) == NULL)
     {
       /* Try with various extensions */
       for (i=0; patch_ext[i]; i++)
 	{
 	      SDL_snprintf(tmp, sizeof(tmp), "%s%s", name, patch_ext[i]);
-	      if ((rw=open_file(tmp)) != NULL)
+	      if ((rw=timi_openfile(tmp)) != NULL)
 		  break;
 	}
     }
