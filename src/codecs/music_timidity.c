@@ -250,6 +250,12 @@ static void TIMIDITY_Delete(void *context)
     SDL_free(music);
 }
 
+static void TIMIDITY_Stop(void *context)
+{
+    TIMIDITY_Music *music = (TIMIDITY_Music *)context;
+    Timidity_Stop(music->song);
+}
+
 Mix_MusicInterface Mix_MusicInterface_TIMIDITY =
 {
     "TIMIDITY",
@@ -277,7 +283,7 @@ Mix_MusicInterface Mix_MusicInterface_TIMIDITY =
     NULL,   /* GetMetaTag */
     NULL,   /* Pause */
     NULL,   /* Resume */
-    NULL,   /* Stop */
+    TIMIDITY_Stop,
     TIMIDITY_Delete,
     TIMIDITY_Close,
     NULL    /* Unload */
