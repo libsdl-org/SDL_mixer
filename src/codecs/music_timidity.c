@@ -277,7 +277,7 @@ Mix_MusicInterface Mix_MusicInterface_TIMIDITY =
     NULL,   /* GetMetaTag */
     NULL,   /* Pause */
     NULL,   /* Resume */
-    NULL,   /* Stop */
+    TIMIDITY_Stop,
     TIMIDITY_Delete,
     TIMIDITY_Close,
     NULL    /* Unload */

@@ -630,6 +630,11 @@ void Timidity_Start(MidiSong *song)
   skip_to(song, 0);
 }
 
+void Timidity_Stop(MidiSong *song)
+{
+  song->playing = 0;
+}
+
 int Timidity_IsActive(MidiSong *song)
 {
   return song->playing;
