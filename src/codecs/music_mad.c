@@ -483,7 +483,7 @@ static SDL_bool decode_frame(MAD_Music *music)
         if (music->audiostream) {
             SDL_FreeAudioStream(music->audiostream);
         }
-        music->audiostream = SDL_NewAudioStream(AUDIO_S16, (Uint8)pcm->channels, (int)pcm->samplerate,
+        music->audiostream = SDL_NewAudioStream(AUDIO_S16SYS, (Uint8)pcm->channels, (int)pcm->samplerate,
                                                 music_spec.format, music_spec.channels, music_spec.freq);
         if (!music->audiostream) {
             return SDL_FALSE;
