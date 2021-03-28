@@ -266,55 +266,57 @@ static void *OGG_CreateFromRW(SDL_RWops *src, int freesrc)
         return NULL;
     }
 
-    vc = vorbis.ov_comment(&music->vf, -1);
     rate = music->vi.rate;
-    for (i = 0; i < vc->comments; i++) {
-        char *param = SDL_strdup(vc->user_comments[i]);
-        char *argument = param;
-        char *value = SDL_strchr(param, '=');
-        if (value == NULL) {
-            value = param + SDL_strlen(param);
+    vc = vorbis.ov_comment(&music->vf, -1);
+    if (vc != NULL) {
+        for (i = 0; i < vc->comments; i++) {
+            char *param = SDL_strdup(vc->user_comments[i]);
+            char *argument = param;
+            char *value = SDL_strchr(param, '=');
+            if (value == NULL) {
+                value = param + SDL_strlen(param);
+            } else {
+                *(value++) = '\0';
+            }
+
+            /* Want to match LOOP-START, LOOP_START, etc. Remove - or _ from
+             * string if it is present at position 4. */
+            if (_Mix_IsLoopTag(argument) && ((argument[4] == '_') || (argument[4] == '-'))) {
+                SDL_memmove(argument + 4, argument + 5, SDL_strlen(argument) - 4);
+            }
+
+            if (SDL_strcasecmp(argument, "LOOPSTART") == 0)
+                music->loop_start = _Mix_ParseTime(value, rate);
+            else if (SDL_strcasecmp(argument, "LOOPLENGTH") == 0) {
+                music->loop_len = SDL_strtoll(value, NULL, 10);
+                is_loop_length = SDL_TRUE;
+            } else if (SDL_strcasecmp(argument, "LOOPEND") == 0) {
+                music->loop_end = _Mix_ParseTime(value, rate);
+                is_loop_length = SDL_FALSE;
+            } else if (SDL_strcasecmp(argument, "TITLE") == 0) {
+                meta_tags_set(&music->tags, MIX_META_TITLE, value);
+            } else if (SDL_strcasecmp(argument, "ARTIST") == 0) {
+                meta_tags_set(&music->tags, MIX_META_ARTIST, value);
+            } else if (SDL_strcasecmp(argument, "ALBUM") == 0) {
+                meta_tags_set(&music->tags, MIX_META_ALBUM, value);
+            } else if (SDL_strcasecmp(argument, "COPYRIGHT") == 0) {
+                meta_tags_set(&music->tags, MIX_META_COPYRIGHT, value);
+            }
+            SDL_free(param);
+        }
+
+        if (is_loop_length) {
+            music->loop_end = music->loop_start + music->loop_len;
         } else {
-            *(value++) = '\0';
+            music->loop_len = music->loop_end - music->loop_start;
         }
 
-        /* Want to match LOOP-START, LOOP_START, etc. Remove - or _ from
-         * string if it is present at position 4. */
-        if (_Mix_IsLoopTag(argument) && ((argument[4] == '_') || (argument[4] == '-'))) {
-            SDL_memmove(argument + 4, argument + 5, SDL_strlen(argument) - 4);
+        /* Ignore invalid loop tag */
+        if (music->loop_start < 0 || music->loop_len < 0 || music->loop_end < 0) {
+            music->loop_start = 0;
+            music->loop_len = 0;
+            music->loop_end = 0;
         }
-
-        if (SDL_strcasecmp(argument, "LOOPSTART") == 0)
-            music->loop_start = _Mix_ParseTime(value, rate);
-        else if (SDL_strcasecmp(argument, "LOOPLENGTH") == 0) {
-            music->loop_len = SDL_strtoll(value, NULL, 10);
-            is_loop_length = SDL_TRUE;
-        } else if (SDL_strcasecmp(argument, "LOOPEND") == 0) {
-            music->loop_end = _Mix_ParseTime(value, rate);
-            is_loop_length = SDL_FALSE;
-        } else if (SDL_strcasecmp(argument, "TITLE") == 0) {
-            meta_tags_set(&music->tags, MIX_META_TITLE, value);
-        } else if (SDL_strcasecmp(argument, "ARTIST") == 0) {
-            meta_tags_set(&music->tags, MIX_META_ARTIST, value);
-        } else if (SDL_strcasecmp(argument, "ALBUM") == 0) {
-            meta_tags_set(&music->tags, MIX_META_ALBUM, value);
-        } else if (SDL_strcasecmp(argument, "COPYRIGHT") == 0) {
-            meta_tags_set(&music->tags, MIX_META_COPYRIGHT, value);
-        }
-        SDL_free(param);
-    }
-
-    if (is_loop_length) {
-        music->loop_end = music->loop_start + music->loop_len;
-    } else {
-        music->loop_len = music->loop_end - music->loop_start;
-    }
-
-    /* Ignore invalid loop tag */
-    if (music->loop_start < 0 || music->loop_len < 0 || music->loop_end < 0) {
-        music->loop_start = 0;
-        music->loop_len = 0;
-        music->loop_end = 0;
     }
 
     full_length = vorbis.ov_pcm_total(&music->vf, -1);
