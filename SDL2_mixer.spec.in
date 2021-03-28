@@ -30,7 +30,7 @@ of music, mixed by the popular MikMod MOD, Timidity MIDI, Ogg Vorbis,
 Tremor, libmpg123 and libmad MP3 libraries.
 
 %prep
-%setup 
+%setup
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{prefix}
@@ -45,7 +45,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%doc README.txt CHANGES.txt COPYING.txt
+%doc README.txt CHANGES.txt LICENSE.txt
 %{prefix}/lib/lib*.so.*
 
 %files devel
@@ -57,7 +57,7 @@ rm -rf $RPM_BUILD_ROOT
 %{prefix}/lib/pkgconfig/*.pc
 
 %changelog
-* Wed Jan 19 2000 Sam Lantinga 
+* Wed Jan 19 2000 Sam Lantinga
 - converted to get package information from configure
 * Sun Jan 16 2000 Hakan Tandogan <hakan@iconsult.com>
 - initial spec file

@@ -50,5 +50,5 @@ and Xcode-iOS/SDL_mixer.xcodeproj in your application, add the SDL/include
 and SDL_mixer directories to your "Header Search Paths" setting, then add the
 libSDL2.a and libSDL2_mixer.a to your "Link Binary with Libraries" setting.
 
-This library is under the zlib license, see the file "COPYING.txt" for details.
+This library is under the zlib license, see the file "LICENSE.txt" for details.
 
