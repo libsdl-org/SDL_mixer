@@ -19,6 +19,10 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
+/* Functions to discard MP3 tags -
+ * written by O.Sezer <sezero@users.sourceforge.net>, put into public domain.
+ */
+
 #include "SDL_stdinc.h"
 #include "SDL_error.h"
 #include "SDL_rwops.h"
