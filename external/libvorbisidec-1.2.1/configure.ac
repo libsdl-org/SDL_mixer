@@ -93,14 +93,20 @@ dnl Options
 dnl --------------------------------------------------
 
 AC_ARG_ENABLE(low-accuracy,
-   AS_HELP_STRING([--enable-low-accuracy], [enable 32 bit only multiply operations]),
+   [AS_HELP_STRING([--enable-low-accuracy], [enable 32 bit only multiply operations])],
    CFLAGS="$CFLAGS -D_LOW_ACCURACY_"
+)
+
+AC_ARG_ENABLE(alloca,
+   [AS_HELP_STRING([--disable-alloca], [disable alloca and only use variable-length arrays])],,
+   [enable_alloca=yes]
 )
 
 dnl --------------------------------------------------
 dnl Check for headers
 dnl --------------------------------------------------
 
+AC_CHECK_HEADERS(sys/types.h)
 AC_CHECK_HEADER(memory.h,CFLAGS="$CFLAGS -DUSE_MEMORY_H",:)
 
 dnl --------------------------------------------------
@@ -131,11 +137,12 @@ then
 fi
 
 dnl --------------------------------------------------
-dnl Check for library functions
+dnl Stack allocation mode
 dnl --------------------------------------------------
 
-AC_FUNC_ALLOCA
-AC_FUNC_MEMCMP
+if test "x$enable_alloca" = "xyes"; then
+  AC_FUNC_ALLOCA
+fi
 
 AC_MSG_CHECKING(for C99 variable-size arrays)
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]],

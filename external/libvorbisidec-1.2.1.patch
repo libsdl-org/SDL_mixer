@@ -10,7 +10,7 @@ diff -u /dev/null libvorbisidec-1.2.1/Android.mk
 +
 +LOCAL_C_INCLUDES :=
 +
-+LOCAL_CFLAGS := -DHAVE_ALLOCA -DVAR_ARRAYS
++LOCAL_CFLAGS := -DHAVE_ALLOCA -DVAR_ARRAYS -DHAVE_SYS_TYPES_H
 +
 +ifeq ($(TARGET_ARCH),arm)
 +	LOCAL_CFLAGS += -D_ARM_ASSEM_

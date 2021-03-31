@@ -1,4 +1,3 @@
-#
 # Export file for libvorbisidec
 #
 # Only the symbols listed in the global section will be callable from
@@ -9,6 +8,7 @@
 {
 	global:
 		ov_clear;
+		ov_fopen;
 		ov_open;
 		ov_open_callbacks;
 		ov_test;
