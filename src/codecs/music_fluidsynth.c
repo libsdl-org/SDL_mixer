@@ -311,6 +311,7 @@ static void FLUIDSYNTH_Delete(void *context)
     if (music->stream) {
         SDL_FreeAudioStream(music->stream);
     }
+    SDL_free(music->buffer);
     SDL_free(music);
 }
 
