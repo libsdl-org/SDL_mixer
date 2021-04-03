@@ -220,6 +220,7 @@ static FLUIDSYNTH_Music *FLUIDSYNTH_LoadMusic(void *data)
             } else {
                 Mix_SetError("Failed to create FluidSynth settings");
             }
+            SDL_free(music->buffer);
         } else {
             SDL_OutOfMemory();
         }
