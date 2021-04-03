@@ -46,7 +46,7 @@
 #    include "timidity.h"
 #  endif
 #  ifdef USE_FLUIDSYNTH_MIDI
-#    include "fluidsynth.h"
+#    include "music_fluidsynth.h"
 #  endif
 #  ifdef USE_NATIVE_MIDI
 #    include "native_midi.h"

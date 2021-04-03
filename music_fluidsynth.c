@@ -28,7 +28,7 @@
 #include <sys/types.h>
 
 #include "SDL_mixer.h"
-#include "fluidsynth.h"
+#include "music_fluidsynth.h"
 
 static Uint16 format;
 static Uint8 channels;

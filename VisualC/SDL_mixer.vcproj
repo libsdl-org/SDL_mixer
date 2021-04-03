@@ -604,11 +604,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\fluidsynth.c"
+			RelativePath="..\music_fluidsynth.c"
 			>
 		</File>
 		<File
-			RelativePath="..\fluidsynth.h"
+			RelativePath="..\music_fluidsynth.h"
 			>
 		</File>
 		<File

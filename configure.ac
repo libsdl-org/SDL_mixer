@@ -400,7 +400,7 @@ if test x$enable_music_midi = xyes; then
                     fi
                     ;;
             esac
-            SOURCES="$SOURCES $srcdir/dynamic_fluidsynth.c $srcdir/fluidsynth.c"
+            SOURCES="$SOURCES $srcdir/dynamic_fluidsynth.c $srcdir/music_fluidsynth.c"
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DUSE_FLUIDSYNTH_MIDI"
             if test x$enable_music_fluidsynth_shared = xyes && test x$fluidsynth_lib != x; then
                 echo "-- dynamic libfluidsyth -> $fluidsynth_lib"

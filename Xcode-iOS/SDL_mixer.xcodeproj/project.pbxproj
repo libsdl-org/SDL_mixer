@@ -21,8 +21,8 @@
 		AA5F0F0914B6A6490036992F /* dynamic_fluidsynth.c in Sources */ = {isa = PBXBuildFile; fileRef = AA5F0F0214B6A6490036992F /* dynamic_fluidsynth.c */; };
 		AA5F0F0A14B6A6490036992F /* dynamic_fluidsynth.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5F0F0314B6A6490036992F /* dynamic_fluidsynth.h */; };
 		AA5F0F0B14B6A6490036992F /* dynamic_mod.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5F0F0414B6A6490036992F /* dynamic_mod.h */; };
-		AA5F0F0C14B6A6490036992F /* fluidsynth.c in Sources */ = {isa = PBXBuildFile; fileRef = AA5F0F0514B6A6490036992F /* fluidsynth.c */; };
-		AA5F0F0D14B6A6490036992F /* fluidsynth.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5F0F0614B6A6490036992F /* fluidsynth.h */; };
+		AA5F0F0C14B6A6490036992F /* music_fluidsynth.c in Sources */ = {isa = PBXBuildFile; fileRef = AA5F0F0514B6A6490036992F /* music_fluidsynth.c */; };
+		AA5F0F0D14B6A6490036992F /* music_fluidsynth.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5F0F0614B6A6490036992F /* music_fluidsynth.h */; };
 		AA5F0F0E14B6A6490036992F /* music_modplug.c in Sources */ = {isa = PBXBuildFile; fileRef = AA5F0F0714B6A6490036992F /* music_modplug.c */; };
 		AA5F0F0F14B6A6490036992F /* music_modplug.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5F0F0814B6A6490036992F /* music_modplug.h */; };
 		BE1FA90C07AF96B2004B6283 /* music_cmd.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC1B87B012FB8CD7F000001 /* music_cmd.h */; };
@@ -127,8 +127,8 @@
 		AA5F0F0214B6A6490036992F /* dynamic_fluidsynth.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dynamic_fluidsynth.c; path = ../dynamic_fluidsynth.c; sourceTree = "<group>"; };
 		AA5F0F0314B6A6490036992F /* dynamic_fluidsynth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dynamic_fluidsynth.h; path = ../dynamic_fluidsynth.h; sourceTree = "<group>"; };
 		AA5F0F0414B6A6490036992F /* dynamic_mod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dynamic_mod.h; path = ../dynamic_mod.h; sourceTree = "<group>"; };
-		AA5F0F0514B6A6490036992F /* fluidsynth.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fluidsynth.c; path = ../fluidsynth.c; sourceTree = "<group>"; };
-		AA5F0F0614B6A6490036992F /* fluidsynth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fluidsynth.h; path = ../fluidsynth.h; sourceTree = "<group>"; };
+		AA5F0F0514B6A6490036992F /* music_fluidsynth.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = music_fluidsynth.c; path = ../music_fluidsynth.c; sourceTree = "<group>"; };
+		AA5F0F0614B6A6490036992F /* music_fluidsynth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = music_fluidsynth.h; path = ../music_fluidsynth.h; sourceTree = "<group>"; };
 		AA5F0F0714B6A6490036992F /* music_modplug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = music_modplug.c; path = ../music_modplug.c; sourceTree = "<group>"; };
 		AA5F0F0814B6A6490036992F /* music_modplug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = music_modplug.h; path = ../music_modplug.h; sourceTree = "<group>"; };
 		B2A42D0E03FAC6A400A8000A /* load_ogg.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = load_ogg.c; path = ../load_ogg.c; sourceTree = SOURCE_ROOT; };
@@ -210,8 +210,8 @@
 				F567D63C01CD881401F3E8B9 /* effect_stereoreverse.c */,
 				F567D63D01CD881401F3E8B9 /* effects_internal.c */,
 				F567D63E01CD881401F3E8B9 /* effects_internal.h */,
-				AA5F0F0514B6A6490036992F /* fluidsynth.c */,
-				AA5F0F0614B6A6490036992F /* fluidsynth.h */,
+				AA5F0F0514B6A6490036992F /* music_fluidsynth.c */,
+				AA5F0F0614B6A6490036992F /* music_fluidsynth.h */,
 				F567D64701CD88A701F3E8B9 /* load_aiff.c */,
 				F567D64801CD88A701F3E8B9 /* load_aiff.h */,
 				00938E2B108A37800009CF19 /* load_flac.c */,
@@ -305,7 +305,7 @@
 				00938E57108A397A0009CF19 /* dynamic_ogg.h in Headers */,
 				AA5F0F0A14B6A6490036992F /* dynamic_fluidsynth.h in Headers */,
 				AA5F0F0B14B6A6490036992F /* dynamic_mod.h in Headers */,
-				AA5F0F0D14B6A6490036992F /* fluidsynth.h in Headers */,
+				AA5F0F0D14B6A6490036992F /* music_fluidsynth.h in Headers */,
 				AA5F0F0F14B6A6490036992F /* music_modplug.h in Headers */,
 				639090F923A5305400D5554E /* music_mpg.h in Headers */,
 				639090FD23A5306500D5554E /* mp3utils.h in Headers */,
@@ -406,7 +406,7 @@
 				00938E53108A397A0009CF19 /* dynamic_flac.c in Sources */,
 				00938E55108A397A0009CF19 /* dynamic_mod.c in Sources */,
 				AA5F0F0914B6A6490036992F /* dynamic_fluidsynth.c in Sources */,
-				AA5F0F0C14B6A6490036992F /* fluidsynth.c in Sources */,
+				AA5F0F0C14B6A6490036992F /* music_fluidsynth.c in Sources */,
 				AA5F0F0E14B6A6490036992F /* music_modplug.c in Sources */,
 				639090F823A5305400D5554E /* music_mpg.c in Sources */,
 				639090FC23A5306500D5554E /* mp3utils.c in Sources */,
