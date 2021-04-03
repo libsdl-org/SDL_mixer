@@ -8,7 +8,11 @@ SDL_mixer.qpg
 SDL_mixer.spec
 libtool
 
-build/*
+/build/*
+build-*
 # Ignore these when swwitching between branches
 SDL2_mixer.pc
 SDL2_mixer.spec
+/aclocal.m4
+*.user
+
