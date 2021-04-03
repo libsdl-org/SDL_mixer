@@ -219,10 +219,9 @@ static FLUIDSYNTH_Music *FLUIDSYNTH_LoadMusic(void *data)
         goto fail;
     }
 
-    ret = (fluidsynth.fluid_player_add_mem(music->player, rw_mem, rw_size) == FLUID_OK);
+    ret = fluidsynth.fluid_player_add_mem(music->player, rw_mem, rw_size);
     SDL_free(rw_mem);
-
-    if (!ret) {
+    if (ret != FLUID_OK) {
         Mix_SetError("FluidSynth failed to load in-memory song");
         goto fail;
     }
@@ -316,19 +315,15 @@ static void FLUIDSYNTH_Delete(void *context)
     if (music->player) {
         fluidsynth.delete_fluid_player(music->player);
     }
-
     if (music->synth) {
         fluidsynth.delete_fluid_synth(music->synth);
     }
-
     if (music->settings) {
         fluidsynth.delete_fluid_settings(music->settings);
     }
-
     if (music->stream) {
         SDL_FreeAudioStream(music->stream);
     }
-
     if (music->buffer) {
         SDL_free(music->buffer);
     }
