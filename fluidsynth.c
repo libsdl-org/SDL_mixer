@@ -66,84 +66,87 @@ int fluidsynth_init(SDL_AudioSpec *mixer)
 	return 0;
 }
 
-static FluidSynthMidiSong *fluidsynth_loadsong_common(int (*function)(FluidSynthMidiSong*, void*), void *data)
+static FluidSynthMidiSong *fluidsynth_loadsong_common(SDL_RWops *rw)
 {
 	FluidSynthMidiSong *song;
-	fluid_settings_t *settings = NULL;
+	off_t rw_offset;
+	size_t rw_size;
+	char *rw_mem;
+	int ret;
 
 	if (!Mix_Init(MIX_INIT_FLUIDSYNTH)) {
 		return NULL;
 	}
 
-	if ((song = SDL_malloc(sizeof(FluidSynthMidiSong)))) {
-		memset(song, 0, sizeof(FluidSynthMidiSong));
-
-		if (SDL_BuildAudioCVT(&song->convert, AUDIO_S16, 2, freq, format, channels, freq) >= 0) {
-			if ((settings = fluidsynth.new_fluid_settings())) {
-				fluidsynth.fluid_settings_setnum(settings, "synth.sample-rate", (double) freq);
-
-				if ((song->synth = fluidsynth.new_fluid_synth(settings))) {
-					if (Mix_EachSoundFont(fluidsynth_load_soundfont, (void*) song->synth)) {
-						if ((song->player = fluidsynth.new_fluid_player(song->synth))) {
-							if (function(song, data)) return song;
-							fluidsynth.delete_fluid_player(song->player);
-						} else {
-							Mix_SetError("Failed to create FluidSynth player");
-						}
-					}
-					fluidsynth.delete_fluid_synth(song->synth);
-				} else {
-					Mix_SetError("Failed to create FluidSynth synthesizer");
-				}
-				fluidsynth.delete_fluid_settings(settings);
-			} else {
-				Mix_SetError("Failed to create FluidSynth settings");
-			}
-		} else {
-			Mix_SetError("Failed to set up audio conversion");
-		}
-		SDL_free(song);
-	} else {
+	if (!(song = SDL_malloc(sizeof(FluidSynthMidiSong)))) {
 		Mix_SetError("Insufficient memory for song");
+		return NULL;
 	}
-	return NULL;
-}
 
-static int fluidsynth_loadsong_RW_internal(FluidSynthMidiSong *song, void *data)
-{
-	off_t offset;
-	size_t size;
-	char *buffer;
-	SDL_RWops *rw = (SDL_RWops*) data;
+	SDL_memset(song, 0, sizeof(FluidSynthMidiSong));
 
-	offset = SDL_RWtell(rw);
+	if (SDL_BuildAudioCVT(&song->convert, AUDIO_S16, 2, freq, format, channels, freq) < 0) {
+		Mix_SetError("Failed to set up audio conversion");
+		goto fail;
+	}
+
+	if (!(song->settings = fluidsynth.new_fluid_settings())) {
+		Mix_SetError("Failed to create FluidSynth settings");
+		goto fail;
+	}
+
+	fluidsynth.fluid_settings_setnum(song->settings, "synth.sample-rate", (double)freq);
+
+	if (!(song->synth = fluidsynth.new_fluid_synth(song->settings))) {
+		Mix_SetError("Failed to create FluidSynth synthesizer");
+		goto fail;
+	}
+
+	if (!Mix_EachSoundFont(fluidsynth_load_soundfont, song->synth)) {
+		goto fail;
+	}
+
+	if (!(song->player = fluidsynth.new_fluid_player(song->synth))) {
+		Mix_SetError("Failed to create FluidSynth player");
+		goto fail;
+	}
+
+	rw_offset = SDL_RWtell(rw);
 	SDL_RWseek(rw, 0, RW_SEEK_END);
-	size = SDL_RWtell(rw) - offset;
-	SDL_RWseek(rw, offset, RW_SEEK_SET);
+	rw_size = SDL_RWtell(rw) - rw_offset;
+	SDL_RWseek(rw, rw_offset, RW_SEEK_SET);
 
-	if ((buffer = (char*) SDL_malloc(size))) {
-		if(SDL_RWread(rw, buffer, size, 1) == 1) {
-			if (fluidsynth.fluid_player_add_mem(song->player, buffer, size) == FLUID_OK) {
-				SDL_free(buffer);
-				return 1;
-			} else {
-				Mix_SetError("FluidSynth failed to load in-memory song");
-			}
-		} else {
-			Mix_SetError("Failed to read in-memory song");
-		}
-		SDL_free(buffer);
-	} else {
+	if (!(rw_mem = (char*) SDL_malloc(rw_size))) {
 		Mix_SetError("Insufficient memory for song");
+		goto fail;
 	}
-	return 0;
+
+	if(SDL_RWread(rw, rw_mem, rw_size, 1) != 1) {
+		SDL_free(rw_mem);
+		Mix_SetError("Failed to read in-memory song");
+		goto fail;
+	}
+
+	ret = fluidsynth.fluid_player_add_mem(song->player, rw_mem, rw_size);
+	SDL_free(rw_mem);
+
+	if (ret != FLUID_OK) {
+		Mix_SetError("FluidSynth failed to load in-memory song");
+		goto fail;
+	}
+
+	return song;
+
+fail:
+	fluidsynth_freesong(song);
+	return NULL;
 }
 
 FluidSynthMidiSong *fluidsynth_loadsong_RW(SDL_RWops *rw, int freerw)
 {
 	FluidSynthMidiSong *song;
 
-	song = fluidsynth_loadsong_common(fluidsynth_loadsong_RW_internal, (void*) rw);
+	song = fluidsynth_loadsong_common(rw);
 	if (freerw) {
 		SDL_RWclose(rw);
 	}
@@ -152,12 +155,18 @@ FluidSynthMidiSong *fluidsynth_loadsong_RW(SDL_RWops *rw, int freerw)
 
 void fluidsynth_freesong(FluidSynthMidiSong *song)
 {
-	fluid_settings_t *settings;
-	if (!song) return;
-	settings = fluidsynth.fluid_synth_get_settings(song->synth);
-	fluidsynth.delete_fluid_player(song->player);
-	fluidsynth.delete_fluid_synth(song->synth);
-	fluidsynth.delete_fluid_settings(settings);
+	if (!song) {
+		return;
+	}
+	if (song->player) {
+		fluidsynth.delete_fluid_player(song->player);
+	}
+	if (song->synth) {
+		fluidsynth.delete_fluid_synth(song->synth);
+	}
+	if (song->settings) {
+		fluidsynth.delete_fluid_settings(song->settings);
+	}
 	SDL_free(song);
 }
 
