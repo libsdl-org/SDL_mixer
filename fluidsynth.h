@@ -34,6 +34,7 @@
 typedef struct {
 	SDL_AudioCVT convert;
 	fluid_synth_t *synth;
+	fluid_settings_t *settings;
 	fluid_player_t* player;
 } FluidSynthMidiSong;
 
