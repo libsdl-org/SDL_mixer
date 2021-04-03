@@ -672,12 +672,14 @@ Mix_Music *Mix_LoadMUSType_RW(SDL_RWops *rw, Mix_MusicType type, int freesrc)
 #ifdef MID_MUSIC
 	case MUS_MID:
 		music->type = MUS_MID;
+		music->error = 1;
 #ifdef USE_NATIVE_MIDI
 		if ( native_midi_ok ) {
 			music->data.nativemidi = native_midi_loadsong_RW(rw, freesrc);
 			if ( music->data.nativemidi == NULL ) {
 				Mix_SetError("%s", native_midi_error());
-				music->error = 1;
+			} else {
+				music->error = 0;
 			}
 			break;
 		}
@@ -685,8 +687,8 @@ Mix_Music *Mix_LoadMUSType_RW(SDL_RWops *rw, Mix_MusicType type, int freesrc)
 #ifdef USE_FLUIDSYNTH_MIDI
 		if ( fluidsynth_ok ) {
 			music->data.fluidsynthmidi = fluidsynth_loadsong_RW(rw, freesrc);
-			if ( music->data.fluidsynthmidi == NULL ) {
-				music->error = 1;
+			if ( music->data.fluidsynthmidi != NULL ) {
+				music->error = 0;
 			}
 			break;
 		}
@@ -696,11 +698,11 @@ Mix_Music *Mix_LoadMUSType_RW(SDL_RWops *rw, Mix_MusicType type, int freesrc)
 			music->data.midi = Timidity_LoadSong_RW(rw, freesrc);
 			if ( music->data.midi == NULL ) {
 				Mix_SetError("%s", Timidity_Error());
-				music->error = 1;
+			} else {
+				music->error = 0;
 			}
 		} else {
 			Mix_SetError("%s", Timidity_Error());
-			music->error = 1;
 		}
 #endif
 		break;
