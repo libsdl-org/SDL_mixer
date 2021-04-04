@@ -36,6 +36,9 @@ typedef struct {
 	fluid_synth_t *synth;
 	fluid_settings_t *settings;
 	fluid_player_t* player;
+	int len_available;
+	Uint8 *snd_available;
+	int playing;
 } FluidSynthMidiSong;
 
 int fluidsynth_init(SDL_AudioSpec *mixer);
@@ -45,7 +48,7 @@ void fluidsynth_start(FluidSynthMidiSong *song);
 void fluidsynth_stop(FluidSynthMidiSong *song);
 int fluidsynth_active(FluidSynthMidiSong *song);
 void fluidsynth_setvolume(FluidSynthMidiSong *song, int volume);
-int fluidsynth_playsome(FluidSynthMidiSong *song, void *stream, int len);
+int fluidsynth_playsome(FluidSynthMidiSong *song, Uint8 *stream, int len);
 
 #endif /* USE_FLUIDSYNTH_MIDI */
 

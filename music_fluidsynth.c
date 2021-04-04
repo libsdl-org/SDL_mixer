@@ -34,6 +34,8 @@ static Uint16 format;
 static Uint8 channels;
 static int freq;
 
+#define CVT_BUFSIZE 4096
+
 int SDLCALL fluidsynth_check_soundfont(const char *path, void *data)
 {
 	FILE *file = fopen(path, "r");
@@ -72,6 +74,7 @@ static FluidSynthMidiSong *fluidsynth_loadsong_common(SDL_RWops *rw)
 	off_t rw_offset;
 	size_t rw_size;
 	char *rw_mem;
+	int src_freq;
 	int ret;
 
 	if (!Mix_Init(MIX_INIT_FLUIDSYNTH)) {
@@ -85,8 +88,21 @@ static FluidSynthMidiSong *fluidsynth_loadsong_common(SDL_RWops *rw)
 
 	SDL_memset(song, 0, sizeof(FluidSynthMidiSong));
 
-	if (SDL_BuildAudioCVT(&song->convert, AUDIO_S16, 2, freq, format, channels, freq) < 0) {
+	/* fluidsynth limits: */
+	src_freq = freq;
+	if (src_freq < 8000) {
+		src_freq = 8000;
+	}
+	else if (src_freq > 96000) {
+		src_freq = 48000;
+	}
+	if (SDL_BuildAudioCVT(&song->convert, AUDIO_S16SYS, 2, src_freq, format, channels, freq) < 0) {
 		Mix_SetError("Failed to set up audio conversion");
+		goto fail;
+	}
+	song->convert.buf = SDL_malloc(CVT_BUFSIZE * song->convert.len_mult);
+	if (!song->convert.buf) {
+		Mix_SetError("Insufficient memory for song");
 		goto fail;
 	}
 
@@ -95,7 +111,7 @@ static FluidSynthMidiSong *fluidsynth_loadsong_common(SDL_RWops *rw)
 		goto fail;
 	}
 
-	fluidsynth.fluid_settings_setnum(song->settings, "synth.sample-rate", (double)freq);
+	fluidsynth.fluid_settings_setnum(song->settings, "synth.sample-rate", (double)src_freq);
 
 	if (!(song->synth = fluidsynth.new_fluid_synth(song->settings))) {
 		Mix_SetError("Failed to create FluidSynth synthesizer");
@@ -167,6 +183,7 @@ void fluidsynth_freesong(FluidSynthMidiSong *song)
 	if (song->settings) {
 		fluidsynth.delete_fluid_settings(song->settings);
 	}
+	SDL_free(song->convert.buf);
 	SDL_free(song);
 }
 
@@ -174,11 +191,13 @@ void fluidsynth_start(FluidSynthMidiSong *song)
 {
 	fluidsynth.fluid_player_set_loop(song->player, 1);
 	fluidsynth.fluid_player_play(song->player);
+	song->playing = 1;
 }
 
 void fluidsynth_stop(FluidSynthMidiSong *song)
 {
 	fluidsynth.fluid_player_stop(song->player);
+	song->playing = 0;
 }
 
 int fluidsynth_active(FluidSynthMidiSong *song)
@@ -192,43 +211,49 @@ void fluidsynth_setvolume(FluidSynthMidiSong *song, int volume)
 	fluidsynth.fluid_synth_set_gain(song->synth, (float) (volume * 1.2 / MIX_MAX_VOLUME));
 }
 
-int fluidsynth_playsome(FluidSynthMidiSong *song, void *dest, int dest_len)
+static void fluid_get_samples(FluidSynthMidiSong *song)
 {
-	int result = -1;
-	int frames = dest_len / channels / ((format & 0xFF) / 8);
-	int src_len = frames * 4; /* 16-bit stereo */
-	void *src = dest;
+	Uint8 data[CVT_BUFSIZE];
+	SDL_AudioCVT *cvt;
 
-	if (dest_len < src_len) {
-		if (!(src = SDL_malloc(src_len))) {
-			Mix_SetError("Insufficient memory for audio conversion");
-			return result;
-		}
-	}
-
-	if (fluidsynth.fluid_synth_write_s16(song->synth, frames, src, 0, 2, src, 1, 2) != FLUID_OK) {
+	if (fluidsynth.fluid_synth_write_s16(song->synth, CVT_BUFSIZE / 4, data, 0, 2, data, 1, 2) != FLUID_OK) {
+		fluidsynth_stop(song);
 		Mix_SetError("Error generating FluidSynth audio");
-		goto finish;
+		return;
 	}
 
-	song->convert.buf = src;
-	song->convert.len = src_len;
+	cvt = &song->convert;
+	memcpy(cvt->buf, data, CVT_BUFSIZE);
+	if (cvt->needed) {
+		cvt->len = CVT_BUFSIZE;
+		SDL_ConvertAudio(cvt);
+	} else {
+		cvt->len_cvt = CVT_BUFSIZE;
+	}
+	song->len_available = cvt->len_cvt;
+	song->snd_available = cvt->buf;
+}
 
-	if (SDL_ConvertAudio(&song->convert) < 0) {
-		Mix_SetError("Error during audio conversion");
-		goto finish;
+int fluidsynth_playsome(FluidSynthMidiSong *song, Uint8 *dest, int len)
+{
+	int mixable;
+
+	while (len > 0 && song->playing) {
+		if (!song->len_available) {
+			fluid_get_samples(song);
+		}
+		mixable = len;
+		if (mixable > song->len_available) {
+			mixable = song->len_available;
+		}
+		memcpy(dest, song->snd_available, mixable);
+		song->len_available -= mixable;
+		song->snd_available += mixable;
+		len -= mixable;
+		dest += mixable;
 	}
 
-	if (src != dest)
-		memcpy(dest, src, dest_len);
-
-	result = 0;
-
-finish:
-	if (src != dest)
-		SDL_free(src);
-
-	return result;
+	return len;
 }
 
 #endif /* USE_FLUIDSYNTH_MIDI */

@@ -26,6 +26,7 @@
 - Native Midi (macosx): use newer apis with newer macOS (bug #1566)
 - Native Midi (macosx): set volume before start playing (bug #5356)
 - Native Midi (windows): fixed possible crash.
+- Midi (fluidsyth): respect synth.sample-rate limits (bug #3969)
 - Midi (fluidsyth): fixed loading MIDI music leaks memory (bug #3018)
 - Midi (fluidsyth): fixed calling Mix_Quit twice leading to segfault
   (bug #2004)
