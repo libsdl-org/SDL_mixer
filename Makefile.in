@@ -47,7 +47,7 @@ LT_RELEASE  = @LT_RELEASE@
 LT_REVISION = @LT_REVISION@
 LT_LDFLAGS  = -no-undefined -rpath $(libdir) -release $(LT_RELEASE) -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
-all: $(srcdir)/configure Makefile $(objects) $(objects)/$(TARGET) $(objects)/playwave$(EXE) $(objects)/playmus$(EXE)
+all: $(srcdir)/configure Makefile $(objects)/$(TARGET) $(objects)/playwave$(EXE) $(objects)/playmus$(EXE)
 
 $(srcdir)/configure: $(srcdir)/configure.ac
 	@echo "Warning, configure is out of date, please re-run autogen.sh"
@@ -55,8 +55,9 @@ $(srcdir)/configure: $(srcdir)/configure.ac
 Makefile: $(srcdir)/Makefile.in
 	$(SHELL) config.status $@
 
-$(objects):
-	$(SHELL) $(auxdir)/mkinstalldirs $@
+$(objects)/.created:
+	$(SHELL) $(auxdir)/mkinstalldirs $(objects)
+	touch $@
 
 .PHONY: all install install-hdrs install-lib install-bin uninstall uninstall-hdrs uninstall-lib uninstall-bin clean distclean dist
 
@@ -78,7 +79,7 @@ install-hdrs:
 	done
 	$(SHELL) $(auxdir)/mkinstalldirs $(libdir)/pkgconfig
 	$(INSTALL) -m 644 SDL_mixer.pc $(libdir)/pkgconfig/
-install-lib: $(objects) $(objects)/$(TARGET)
+install-lib: $(objects)/$(TARGET)
 	$(SHELL) $(auxdir)/mkinstalldirs $(libdir)
 	$(LIBTOOL) --mode=install $(INSTALL) $(objects)/$(TARGET) $(libdir)/$(TARGET)
 install-bin:
