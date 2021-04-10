@@ -530,7 +530,7 @@ if test x$enable_music_ogg = xyes; then
                 echo "-- dynamic libvorbisidec -> $ogg_lib"
                 EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_DYNAMIC=\\\"$ogg_lib\\\""
             else
-                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lvorbisidec -lvorbis"
+                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lvorbisidec"
             fi
         else
             AC_MSG_WARN([*** Unable to find Ogg Vorbis Tremor library (http://www.xiph.org/)])
