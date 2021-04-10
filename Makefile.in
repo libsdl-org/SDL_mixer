@@ -61,7 +61,7 @@ $(objects)/.created:
 .PHONY: all install install-hdrs install-lib install-bin uninstall uninstall-hdrs uninstall-lib uninstall-bin clean distclean dist
 
 $(objects)/$(TARGET): $(OBJECTS) $(VERSION_OBJECTS)
-	$(LIBTOOL) --mode=link $(CC) -o $@ $(OBJECTS) $(VERSION_OBJECTS) $(LDFLAGS) $(EXTRA_LDFLAGS) $(LT_LDFLAGS)
+	$(LIBTOOL) --mode=link $(CC) -o $@ $(OBJECTS) $(VERSION_OBJECTS) $(LDFLAGS) $(SDL_LIBS) $(EXTRA_LDFLAGS) $(LT_LDFLAGS)
 
 $(objects)/playwave$(EXE): $(objects)/playwave.lo $(objects)/$(TARGET)
 	$(LIBTOOL) --mode=link $(CC) -o $@ $(objects)/playwave.lo $(SDL_CFLAGS) $(objects)/$(TARGET) $(SDL_LIBS) $(LDFLAGS)

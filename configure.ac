@@ -194,7 +194,6 @@ AM_PATH_SDL2($SDL_VERSION,
             AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])
 )
 EXTRA_CFLAGS="$EXTRA_CFLAGS $SDL_CFLAGS"
-EXTRA_LDFLAGS="$EXTRA_LDFLAGS $SDL_LIBS"
 
 dnl Check for math library
 AC_CHECK_LIB(m, pow, [LIBM="-lm"])
