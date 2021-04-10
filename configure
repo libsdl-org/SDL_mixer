@@ -12221,7 +12221,7 @@ fi
                 echo "-- dynamic libvorbisidec -> $ogg_lib"
                 EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_DYNAMIC=\\\"$ogg_lib\\\""
             else
-                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lvorbisidec -lvorbis"
+                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lvorbisidec"
             fi
         else
             { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: *** Unable to find Ogg Vorbis Tremor library (http://www.xiph.org/)" >&5
@@ -12614,14 +12614,14 @@ OBJECTS=`echo $SOURCES`
 DEPENDS=`echo $SOURCES`
 OBJECTS=`echo "$OBJECTS" | sed 's,[^ ]*/\([^ ]*\)\.c,$(objects)/\1.lo,g'`
 DEPENDS=`echo "$DEPENDS" | sed 's,\([^ ]*\)/\([^ ]*\)\.c,\\
-$(objects)/\2.lo: \1/\2.c\\
+$(objects)/\2.lo: \1/\2.c \$(objects)/.created\\
 	\$(LIBTOOL) --mode=compile \$(CC) \$(CFLAGS) \$(EXTRA_CFLAGS) '"$DEPENDENCY_TRACKING_OPTIONS"' -c \$< -o \$@,g'`
 
 OBJECTS_CXX=`echo $SOURCES_CXX`
 DEPENDS_CXX=`echo $SOURCES_CXX`
 OBJECTS_CXX=`echo "$OBJECTS_CXX" | sed 's,[^ ]*/\([^ ]*\)\.cpp,$(objects)/\1.lo,g'`
 DEPENDS_CXX=`echo "$DEPENDS_CXX" | sed 's,\([^ ]*\)/\([^ ]*\)\.cpp,\\
-$(objects)/\2.lo: \1/\2.cpp\\
+$(objects)/\2.lo: \1/\2.cpp \$(objects)/.created\\
 	\$(LIBTOOL) --mode=compile \$(CXX) \$(CFLAGS) \$(EXTRA_CFLAGS) '"$DEPENDENCY_TRACKING_OPTIONS"' -c \$< -o \$@,g'`
 OBJECTS="$OBJECTS $OBJECTS_CXX"
 DEPENDS="$DEPENDS $DEPENDS_CXX"
@@ -12631,7 +12631,7 @@ VERSION_OBJECTS=`echo $VERSION_SOURCES`
 VERSION_DEPENDS=`echo $VERSION_SOURCES`
 VERSION_OBJECTS=`echo "$VERSION_OBJECTS" | sed 's,[^ ]*/\([^ ]*\)\.rc,$(objects)/\1.o,g'`
 VERSION_DEPENDS=`echo "$VERSION_DEPENDS" | sed 's,\([^ ]*\)/\([^ ]*\)\.rc,\\
-$(objects)/\2.o: \1/\2.rc\\
+$(objects)/\2.o: \1/\2.rc \$(objects)/.created\\
 	\$(WINDRES) \$< \$@,g'`
 VERSION_DEPENDS=`echo "$VERSION_DEPENDS" | sed 's,\\$,\\\\$,g'`
 
@@ -12640,7 +12640,7 @@ PLAYWAVE_OBJECTS=`echo $PLAYWAVE_SOURCES`
 PLAYWAVE_DEPENDS=`echo $PLAYWAVE_SOURCES`
 PLAYWAVE_OBJECTS=`echo "$PLAYWAVE_OBJECTS" | sed 's,[^ ]*/\([^ ]*\)\.c,$(objects)/\1.lo,g'`
 PLAYWAVE_DEPENDS=`echo "$PLAYWAVE_DEPENDS" | sed 's,\([^ ]*\)/\([^ ]*\)\.c,\\
-$(objects)/\2.lo: \1/\2.c\\
+$(objects)/\2.lo: \1/\2.c \$(objects)/.created\\
 	\$(LIBTOOL) --mode=compile \$(CC) \$(CFLAGS) \$(EXTRA_CFLAGS) '"$DEPENDENCY_TRACKING_OPTIONS"' -c \$< -o \$@,g'`
 PLAYWAVE_DEPENDS=`echo "$PLAYWAVE_DEPENDS" | sed 's,\\$,\\\\$,g'`
 
@@ -12649,7 +12649,7 @@ PLAYMUS_OBJECTS=`echo $PLAYMUS_SOURCES`
 PLAYMUS_DEPENDS=`echo $PLAYMUS_SOURCES`
 PLAYMUS_OBJECTS=`echo "$PLAYMUS_OBJECTS" | sed 's,[^ ]*/\([^ ]*\)\.c,$(objects)/\1.lo,g'`
 PLAYMUS_DEPENDS=`echo "$PLAYMUS_DEPENDS" | sed 's,\([^ ]*\)/\([^ ]*\)\.c,\\
-$(objects)/\2.lo: \1/\2.c\\
+$(objects)/\2.lo: \1/\2.c \$(objects)/.created\\
 	\$(LIBTOOL) --mode=compile \$(CC) \$(CFLAGS) \$(EXTRA_CFLAGS) '"$DEPENDENCY_TRACKING_OPTIONS"' -c \$< -o \$@,g'`
 PLAYMUS_DEPENDS=`echo "$PLAYMUS_DEPENDS" | sed 's,\\$,\\\\$,g'`
 
