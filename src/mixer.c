@@ -1083,9 +1083,11 @@ int Mix_Volume(int which, int volume)
 /* Set volume of a particular chunk */
 int Mix_VolumeChunk(Mix_Chunk *chunk, int volume)
 {
-    int prev_volume;
-
-    prev_volume = chunk->volume;
+    if (chunk == NULL) {
+        return(-1);
+    }
+  
+    int prev_volume = chunk->volume;
     if (volume >= 0) {
         if (volume > MIX_MAX_VOLUME) {
             volume = MIX_MAX_VOLUME;
