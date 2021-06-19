@@ -7,6 +7,7 @@
 #include "stdafx.h"
 #include <stdlib.h>
 #include "sndfile.h"
+#define SNDFX_C
 #include "tables.h"
 
 #ifdef _MSC_VER
@@ -23,7 +24,6 @@ DWORD CSoundFile::GetLength(BOOL bAdjust, BOOL bTotal)
 	UINT nMusicSpeed=m_nDefaultSpeed, nMusicTempo=m_nDefaultTempo, nNextRow=0;
 	UINT nMaxRow = 0, nMaxPattern = 0, nNextStartRow = 0;
 	LONG nGlbVol = m_nDefaultGlobalVolume, nOldGlbVolSlide = 0;
-	BYTE samples[MAX_CHANNELS];
 	BYTE instr[MAX_CHANNELS];
 	BYTE notes[MAX_CHANNELS];
 	BYTE vols[MAX_CHANNELS];
@@ -37,7 +37,6 @@ DWORD CSoundFile::GetLength(BOOL bAdjust, BOOL bTotal)
 	memset(patloop, 0, sizeof(patloop));
 	memset(oldparam, 0, sizeof(oldparam));
 	memset(chnvols, 64, sizeof(chnvols));
-	memset(samples, 0, sizeof(samples));
 	for (UINT icv=0; icv<m_nChannels; icv++)
 		chnvols[icv] = ChnSettings[icv].nVolume;
 	nMaxRow = m_nNextRow;

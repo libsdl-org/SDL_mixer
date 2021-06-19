@@ -159,7 +159,12 @@ if (BUILD_SHARED_LIBS)
 endif()
 
 # install the library:
-install(TARGETS modplug DESTINATION lib)
+include (GNUInstallDirs)
+install(TARGETS modplug
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
 
 # install the headers:
 install(FILES
@@ -167,18 +172,18 @@ install(FILES
   ${HEADERS_CXX}
 
   DESTINATION
-  include/libmodplug
+  ${CMAKE_INSTALL_INCLUDEDIR}/libmodplug
 )
 
 if (NOT WIN32)
-  set(prefix "${CMAKE_INSTALL_PREFIX}")
-  set(exec_prefix "${CMAKE_INSTALL_PREFIX}")
-  set(libdir "${CMAKE_INSTALL_PREFIX}/lib")
-  set(includedir "${CMAKE_INSTALL_PREFIX}/include")
+  set(prefix ${CMAKE_INSTALL_PREFIX})
+  set(exec_prefix ${CMAKE_INSTALL_PREFIX})
+  set(libdir ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
+  set(includedir ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR})
   configure_file(libmodplug.pc.in libmodplug.pc)
 
   # install pkg-config file:
   install(FILES "${PROJECT_BINARY_DIR}/libmodplug.pc"
-    DESTINATION lib/pkgconfig
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
   )
 endif (NOT WIN32)

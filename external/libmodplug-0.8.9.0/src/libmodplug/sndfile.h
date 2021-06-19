@@ -644,7 +644,6 @@ public:
 	BOOL TestMID(LPCBYTE lpStream, DWORD dwMemLength);
 	BOOL ReadPAT(LPCBYTE lpStream, DWORD dwMemLength);
 	BOOL TestPAT(LPCBYTE lpStream, DWORD dwMemLength);
-	// Save Functions
 	// MOD Convert function
 	void ConvertModCommand(MODCOMMAND *) const;
 	void S3MConvert(MODCOMMAND *m, BOOL bIT) const;
