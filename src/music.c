@@ -611,6 +611,7 @@ Mix_Music *Mix_LoadMUS(const char *file)
                     SDL_strcasecmp(ext, "DBM") == 0 ||
                     SDL_strcasecmp(ext, "DSM") == 0 ||
                     SDL_strcasecmp(ext, "FAR") == 0 ||
+                    SDL_strcasecmp(ext, "GDM") == 0 ||
                     SDL_strcasecmp(ext, "IT") == 0 ||
                     SDL_strcasecmp(ext, "MED") == 0 ||
                     SDL_strcasecmp(ext, "MDL") == 0 ||
