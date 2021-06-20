@@ -176,6 +176,7 @@
 		AA5314B71FE0FE2E0025C9BE /* music_mpg123.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE406251F9609BC00EDAF53 /* music_mpg123.c */; };
 		AA5314B81FE0FE2E0025C9BE /* load_far.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA60215517653A9800662B9C /* load_far.cpp */; };
 		AA5314B91FE0FE2E0025C9BE /* load_it.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA60215617653A9800662B9C /* load_it.cpp */; };
+		AA5314BA1FE0FE2E0025C9BE /* load_gdm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA60215717653A9800662B9C /* load_gdm.cpp */; };
 		AA5314BB1FE0FE2E0025C9BE /* load_mdl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA60215817653A9800662B9C /* load_mdl.cpp */; };
 		AA5314BC1FE0FE2E0025C9BE /* bitwriter.c in Sources */ = {isa = PBXBuildFile; fileRef = AA1C71231F9BC91C00A6BC31 /* bitwriter.c */; };
 		AA5314BD1FE0FE2E0025C9BE /* load_med.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA60215917653A9800662B9C /* load_med.cpp */; };
@@ -235,6 +236,7 @@
 		AA60217917653A9800662B9C /* load_dsm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA60215417653A9800662B9C /* load_dsm.cpp */; };
 		AA60217A17653A9800662B9C /* load_far.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA60215517653A9800662B9C /* load_far.cpp */; };
 		AA60217B17653A9800662B9C /* load_it.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA60215617653A9800662B9C /* load_it.cpp */; };
+		AA60217C17653A9800662B9C /* load_gdm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA60215717653A9800662B9C /* load_gdm.cpp */; };
 		AA60217D17653A9800662B9C /* load_mdl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA60215817653A9800662B9C /* load_mdl.cpp */; };
 		AA60217E17653A9800662B9C /* load_med.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA60215917653A9800662B9C /* load_med.cpp */; };
 		AA60217F17653A9800662B9C /* load_mid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA60215A17653A9800662B9C /* load_mid.cpp */; };
@@ -394,6 +396,7 @@
 		AA60215417653A9800662B9C /* load_dsm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_dsm.cpp; path = src/load_dsm.cpp; sourceTree = "<group>"; };
 		AA60215517653A9800662B9C /* load_far.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_far.cpp; path = src/load_far.cpp; sourceTree = "<group>"; };
 		AA60215617653A9800662B9C /* load_it.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_it.cpp; path = src/load_it.cpp; sourceTree = "<group>"; };
+		AA60215717653A9800662B9C /* load_gdm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_gdm.cpp; path = src/load_gdm.cpp; sourceTree = "<group>"; };
 		AA60215817653A9800662B9C /* load_mdl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_mdl.cpp; path = src/load_mdl.cpp; sourceTree = "<group>"; };
 		AA60215917653A9800662B9C /* load_med.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_med.cpp; path = src/load_med.cpp; sourceTree = "<group>"; };
 		AA60215A17653A9800662B9C /* load_mid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_mid.cpp; path = src/load_mid.cpp; sourceTree = "<group>"; };
@@ -701,6 +704,7 @@
 				AA60215417653A9800662B9C /* load_dsm.cpp */,
 				AA60215517653A9800662B9C /* load_far.cpp */,
 				AA60215617653A9800662B9C /* load_it.cpp */,
+				AA60215717653A9800662B9C /* load_gdm.cpp */,
 				AA60215817653A9800662B9C /* load_mdl.cpp */,
 				AA60215917653A9800662B9C /* load_med.cpp */,
 				AA60215A17653A9800662B9C /* load_mid.cpp */,
@@ -1075,6 +1079,7 @@
 				AA5314B71FE0FE2E0025C9BE /* music_mpg123.c in Sources */,
 				AA5314B81FE0FE2E0025C9BE /* load_far.cpp in Sources */,
 				AA5314B91FE0FE2E0025C9BE /* load_it.cpp in Sources */,
+				AA5314BA1FE0FE2E0025C9BE /* load_gdm.cpp in Sources */,
 				AA5314BB1FE0FE2E0025C9BE /* load_mdl.cpp in Sources */,
 				AA5314BC1FE0FE2E0025C9BE /* bitwriter.c in Sources */,
 				AA5314BD1FE0FE2E0025C9BE /* load_med.cpp in Sources */,
@@ -1189,6 +1194,7 @@
 				AAE406451F9609BD00EDAF53 /* music_mpg123.c in Sources */,
 				AA60217A17653A9800662B9C /* load_far.cpp in Sources */,
 				AA60217B17653A9800662B9C /* load_it.cpp in Sources */,
+				AA60217C17653A9800662B9C /* load_gdm.cpp in Sources */,
 				AA60217D17653A9800662B9C /* load_mdl.cpp in Sources */,
 				AA1C71411F9BC92000A6BC31 /* bitwriter.c in Sources */,
 				AA60217E17653A9800662B9C /* load_med.cpp in Sources */,

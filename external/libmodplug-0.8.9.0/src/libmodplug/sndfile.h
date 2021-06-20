@@ -70,6 +70,7 @@ typedef const BYTE * LPCBYTE;
 #define MOD_TYPE_J2B		0x800000
 #define MOD_TYPE_ABC		0x1000000
 #define MOD_TYPE_PAT		0x2000000
+#define MOD_TYPE_GDM		0x40000000 // Fake type
 #define MOD_TYPE_UMX		0x80000000 // Fake type
 #define MAX_MODTYPE		24
 
@@ -637,6 +638,7 @@ public:
 	BOOL ReadAMF(LPCBYTE lpStream, DWORD dwMemLength);
 	BOOL ReadMT2(LPCBYTE lpStream, DWORD dwMemLength);
 	BOOL ReadPSM(LPCBYTE lpStream, DWORD dwMemLength);
+	BOOL ReadGDM(LPCBYTE lpStream, DWORD dwMemLength);
 	BOOL ReadUMX(LPCBYTE lpStream, DWORD dwMemLength);
 	BOOL ReadABC(LPCBYTE lpStream, DWORD dwMemLength);
 	BOOL TestABC(LPCBYTE lpStream, DWORD dwMemLength);

@@ -1,7 +1,7 @@
-diff -ruN libmodplug-0.8.9.0.orig/Android.mk libmodplug-0.8.9.0/Android.mk
---- libmodplug-0.8.9.0.orig/Android.mk	1969-12-31 16:00:00.000000000 -0800
-+++ libmodplug-0.8.9.0/Android.mk	2017-10-22 11:43:42.132552241 -0700
-@@ -0,0 +1,46 @@
+diff -ruN /dev/null libmodplug-0.8.9.0/Android.mk
+--- /dev/null
++++ libmodplug-0.8.9.0/Android.mk
+@@ -0,0 +1,47 @@
 +LOCAL_PATH := $(call my-dir)
 +
 +include $(CLEAR_VARS)
@@ -22,6 +22,7 @@ diff -ruN libmodplug-0.8.9.0.orig/Android.mk libmodplug-0.8.9.0/Android.mk
 +    src/load_dmf.cpp \
 +    src/load_dsm.cpp \
 +    src/load_far.cpp \
++    src/load_gdm.cpp \
 +    src/load_it.cpp \
 +    src/load_mdl.cpp \
 +    src/load_med.cpp \
@@ -48,3 +49,4 @@ diff -ruN libmodplug-0.8.9.0.orig/Android.mk libmodplug-0.8.9.0/Android.mk
 +    src/sndmix.cpp
 +
 +include $(BUILD_STATIC_LIBRARY)
+

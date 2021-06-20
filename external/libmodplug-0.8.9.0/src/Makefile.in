@@ -141,7 +141,7 @@ am_libmodplug_la_OBJECTS = sndmix.lo sndfile.lo snd_fx.lo snd_flt.lo \
 	load_okt.lo load_mtm.lo load_mod.lo load_med.lo load_mdl.lo \
 	load_it.lo load_far.lo load_dsm.lo load_dmf.lo load_dbm.lo \
 	load_ams.lo load_amf.lo load_669.lo load_mt2.lo load_psm.lo \
-	load_abc.lo load_mid.lo load_pat.lo modplug.lo
+	load_gdm.lo load_abc.lo load_mid.lo load_pat.lo modplug.lo
 libmodplug_la_OBJECTS = $(am_libmodplug_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -170,19 +170,19 @@ am__depfiles_remade = ./$(DEPDIR)/fastmix.Plo ./$(DEPDIR)/load_669.Plo \
 	./$(DEPDIR)/load_abc.Plo ./$(DEPDIR)/load_amf.Plo \
 	./$(DEPDIR)/load_ams.Plo ./$(DEPDIR)/load_dbm.Plo \
 	./$(DEPDIR)/load_dmf.Plo ./$(DEPDIR)/load_dsm.Plo \
-	./$(DEPDIR)/load_far.Plo ./$(DEPDIR)/load_it.Plo \
-	./$(DEPDIR)/load_mdl.Plo ./$(DEPDIR)/load_med.Plo \
-	./$(DEPDIR)/load_mid.Plo ./$(DEPDIR)/load_mod.Plo \
-	./$(DEPDIR)/load_mt2.Plo ./$(DEPDIR)/load_mtm.Plo \
-	./$(DEPDIR)/load_okt.Plo ./$(DEPDIR)/load_pat.Plo \
-	./$(DEPDIR)/load_psm.Plo ./$(DEPDIR)/load_ptm.Plo \
-	./$(DEPDIR)/load_s3m.Plo ./$(DEPDIR)/load_stm.Plo \
-	./$(DEPDIR)/load_ult.Plo ./$(DEPDIR)/load_umx.Plo \
-	./$(DEPDIR)/load_wav.Plo ./$(DEPDIR)/load_xm.Plo \
-	./$(DEPDIR)/mmcmp.Plo ./$(DEPDIR)/modplug.Plo \
-	./$(DEPDIR)/snd_dsp.Plo ./$(DEPDIR)/snd_flt.Plo \
-	./$(DEPDIR)/snd_fx.Plo ./$(DEPDIR)/sndfile.Plo \
-	./$(DEPDIR)/sndmix.Plo
+	./$(DEPDIR)/load_far.Plo ./$(DEPDIR)/load_gdm.Plo \
+	./$(DEPDIR)/load_it.Plo ./$(DEPDIR)/load_mdl.Plo \
+	./$(DEPDIR)/load_med.Plo ./$(DEPDIR)/load_mid.Plo \
+	./$(DEPDIR)/load_mod.Plo ./$(DEPDIR)/load_mt2.Plo \
+	./$(DEPDIR)/load_mtm.Plo ./$(DEPDIR)/load_okt.Plo \
+	./$(DEPDIR)/load_pat.Plo ./$(DEPDIR)/load_psm.Plo \
+	./$(DEPDIR)/load_ptm.Plo ./$(DEPDIR)/load_s3m.Plo \
+	./$(DEPDIR)/load_stm.Plo ./$(DEPDIR)/load_ult.Plo \
+	./$(DEPDIR)/load_umx.Plo ./$(DEPDIR)/load_wav.Plo \
+	./$(DEPDIR)/load_xm.Plo ./$(DEPDIR)/mmcmp.Plo \
+	./$(DEPDIR)/modplug.Plo ./$(DEPDIR)/snd_dsp.Plo \
+	./$(DEPDIR)/snd_flt.Plo ./$(DEPDIR)/snd_fx.Plo \
+	./$(DEPDIR)/sndfile.Plo ./$(DEPDIR)/sndmix.Plo
 am__mv = mv -f
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -415,6 +415,7 @@ libmodplug_la_SOURCES = tables.h         \
                         load_669.cpp       \
                         load_mt2.cpp       \
                         load_psm.cpp       \
+                        load_gdm.cpp       \
                         load_abc.cpp       \
                         load_mid.cpp       \
                         load_pat.cpp       \
@@ -527,6 +528,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/load_dmf.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/load_dsm.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/load_far.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/load_gdm.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/load_it.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/load_mdl.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/load_med.Plo@am__quote@ # am--include-marker
@@ -743,6 +745,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/load_dmf.Plo
 	-rm -f ./$(DEPDIR)/load_dsm.Plo
 	-rm -f ./$(DEPDIR)/load_far.Plo
+	-rm -f ./$(DEPDIR)/load_gdm.Plo
 	-rm -f ./$(DEPDIR)/load_it.Plo
 	-rm -f ./$(DEPDIR)/load_mdl.Plo
 	-rm -f ./$(DEPDIR)/load_med.Plo
@@ -821,6 +824,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/load_dmf.Plo
 	-rm -f ./$(DEPDIR)/load_dsm.Plo
 	-rm -f ./$(DEPDIR)/load_far.Plo
+	-rm -f ./$(DEPDIR)/load_gdm.Plo
 	-rm -f ./$(DEPDIR)/load_it.Plo
 	-rm -f ./$(DEPDIR)/load_mdl.Plo
 	-rm -f ./$(DEPDIR)/load_med.Plo
