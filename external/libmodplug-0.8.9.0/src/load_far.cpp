@@ -5,7 +5,7 @@
 */
 
 ////////////////////////////////////////
-// Farandole (FAR) module loader	  //
+// Farandole (FAR) module loader      //
 ////////////////////////////////////////
 #include "stdafx.h"
 #include "sndfile.h"
@@ -113,8 +113,6 @@ BOOL CSoundFile::ReadFAR(const BYTE *lpStream, DWORD dwMemLength)
 	dwMemPos += headerlen - (869 + stlen);
 	if (dwMemPos >= dwMemLength) return TRUE;
 
-	// end byteswap of pattern data
-
 	WORD *patsiz = (WORD *)pmh2->patsiz;
 	for (UINT ipat=0; ipat<256; ipat++) if (patsiz[ipat])
 	{
@@ -125,6 +123,7 @@ BOOL CSoundFile::ReadFAR(const BYTE *lpStream, DWORD dwMemLength)
 			continue;
 		}
 		if (dwMemPos + patlen >= dwMemLength) return TRUE;
+		UINT max  = (patlen - 2) & ~3;
 		UINT rows = (patlen - 2) >> 6;
 		if (!rows)
 		{
@@ -133,13 +132,12 @@ BOOL CSoundFile::ReadFAR(const BYTE *lpStream, DWORD dwMemLength)
 		}
 		if (rows > 256) rows = 256;
 		if (rows < 16) rows = 16;
+		if (max > rows*16*4) max = rows*16*4;
 		PatternSize[ipat] = rows;
 		if ((Patterns[ipat] = AllocatePattern(rows, m_nChannels)) == NULL) return TRUE;
 		MODCOMMAND *m = Patterns[ipat];
 		UINT patbrk = lpStream[dwMemPos];
 		const BYTE *p = lpStream + dwMemPos + 2;
-		UINT max = rows*16*4;
-		if (max > patlen-2) max = patlen-2;
 		for (UINT len=0; len<max; len += 4, m++)
 		{
 			BYTE note = p[len];
@@ -235,10 +233,10 @@ BOOL CSoundFile::ReadFAR(const BYTE *lpStream, DWORD dwMemLength)
 		dwMemPos += sizeof(FARSAMPLE);
 		m_nSamples = ismp + 1;
 		memcpy(m_szNames[ismp+1], pfs->samplename, 32);
-		const DWORD length = bswapLE32( pfs->length ) ; /* endian fix - Toad */
-		pins->nLength = length ;
-		pins->nLoopStart = bswapLE32(pfs->reppos) ;
-		pins->nLoopEnd = bswapLE32(pfs->repend) ;
+		const DWORD length = bswapLE32(pfs->length); /* endian fix - Toad */
+		pins->nLength = length;
+		pins->nLoopStart = bswapLE32(pfs->reppos);
+		pins->nLoopEnd = bswapLE32(pfs->repend);
 		pins->nFineTune = 0;
 		pins->nC4Speed = 8363*2;
 		pins->nGlobalVol = 64;
@@ -261,4 +259,3 @@ BOOL CSoundFile::ReadFAR(const BYTE *lpStream, DWORD dwMemLength)
 	}
 	return TRUE;
 }
-

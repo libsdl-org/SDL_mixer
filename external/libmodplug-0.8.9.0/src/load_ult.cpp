@@ -155,11 +155,12 @@ BOOL CSoundFile::ReadUlt(const BYTE *lpStream, DWORD dwMemLength)
 			UINT row = 0;
 			while (row < 64)
 			{
-				if (dwMemPos + 6 > dwMemLength) return TRUE;
+				if (dwMemPos + 5 > dwMemLength) return TRUE;
 				UINT rep = 1;
 				UINT note = lpStream[dwMemPos++];
 				if (note == 0xFC)
 				{
+					if (dwMemPos + 7 > dwMemLength) return TRUE;
 					rep = lpStream[dwMemPos];
 					note = lpStream[dwMemPos+1];
 					dwMemPos += 2;

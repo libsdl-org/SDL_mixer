@@ -315,8 +315,12 @@ BOOL CSoundFile::ReadAMF(LPCBYTE lpStream, const DWORD dwMemLength)
 			PatternSize[iOrd] = 64;
 			if (pfh->version >= 14)
 			{
+				if (dwMemPos + m_nChannels * sizeof(USHORT) + 2 > dwMemLength) return FALSE;
 				PatternSize[iOrd] = bswapLE16(*(USHORT *)(lpStream+dwMemPos));
 				dwMemPos += 2;
+			} else
+			{
+				if (dwMemPos + m_nChannels * sizeof(USHORT) > dwMemLength) return FALSE;
 			}
 			ptracks[iOrd] = (USHORT *)(lpStream+dwMemPos);
 			dwMemPos += m_nChannels * sizeof(USHORT);

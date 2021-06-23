@@ -1046,11 +1046,12 @@ UINT CSoundFile::ReadSample(MODINSTRUMENT *pIns, UINT nFlags, LPCSTR lpMemFile, 
 		{
 			const char *psrc = lpMemFile;
 			char packcharacter = lpMemFile[8], *pdest = (char *)pIns->pSample;
-			len += bswapLE32(*((LPDWORD)(lpMemFile+4)));
-			if (len > dwMemLength) len = dwMemLength;
+			UINT smplen = bswapLE32(*((LPDWORD)(lpMemFile+4)));
+			if (smplen > dwMemLength - 9) smplen = dwMemLength - 9;
+			len += smplen;
 			UINT dmax = pIns->nLength;
 			if (pIns->uFlags & CHN_16BIT) dmax <<= 1;
-			AMSUnpack(psrc+9, len-9, pdest, dmax, packcharacter);
+			AMSUnpack(psrc+9, smplen, pdest, dmax, packcharacter);
 		}
 		break;
 

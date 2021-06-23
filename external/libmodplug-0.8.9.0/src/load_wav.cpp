@@ -24,9 +24,9 @@ BOOL CSoundFile::ReadWav(const BYTE *lpStream, DWORD dwMemLength)
 //---------------------------------------------------------------
 {
 	DWORD dwMemPos = 0;
-	WAVEFILEHEADER *phdr = (WAVEFILEHEADER *)lpStream;
-	WAVEFORMATHEADER *pfmt = (WAVEFORMATHEADER *)(lpStream + sizeof(WAVEFILEHEADER));
-	if ((!lpStream) || (dwMemLength < (DWORD)sizeof(WAVEFILEHEADER))) return FALSE;
+	const WAVEFILEHEADER *phdr = (WAVEFILEHEADER *)lpStream;
+	const WAVEFORMATHEADER *pfmt = (WAVEFORMATHEADER *)(lpStream + sizeof(WAVEFILEHEADER));
+	if ((!lpStream) || (dwMemLength < sizeof(WAVEFILEHEADER)+sizeof(WAVEFORMATHEADER))) return FALSE;
 	if ((phdr->id_RIFF != IFFID_RIFF) || (phdr->id_WAVE != IFFID_WAVE)
 	 || (pfmt->id_fmt != IFFID_fmt)) return FALSE;
 	dwMemPos = sizeof(WAVEFILEHEADER) + 8 + pfmt->hdrlen;
@@ -38,11 +38,12 @@ BOOL CSoundFile::ReadWav(const BYTE *lpStream, DWORD dwMemLength)
 	 || (pfmt->bitspersample & 7)
 	 || (pfmt->bitspersample < 8)
 	 || (pfmt->bitspersample > 32))  return FALSE;
-	WAVEDATAHEADER *pdata;
+	const WAVEDATAHEADER *pdata;
 	for (;;)
 	{
 		pdata = (WAVEDATAHEADER *)(lpStream + dwMemPos);
 		if (pdata->id_data == IFFID_data) break;
+		if (pdata->length >= dwMemLength || dwMemPos > dwMemLength - pdata->length) return FALSE;
 		dwMemPos += pdata->length + 8;
 		if (dwMemPos >= dwMemLength - 8) return FALSE;
 	}

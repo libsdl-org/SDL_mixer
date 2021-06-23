@@ -87,11 +87,12 @@ BOOL CSoundFile::ReadDMF(const BYTE *lpStream, DWORD dwMemLength)
 //---------------------------------------------------------------
 {
 	const DMFHEADER *pfh = (DMFHEADER *)lpStream;
-	DMFINFO *psi;
-	DMFSEQU *sequ;
+	const DMFINFO *psi;
+	const DMFPATT *patt;
+	const DMFSEQU *sequ;
 	DWORD dwMemPos;
 	BYTE infobyte[32];
-	BYTE smplflags[MAX_SAMPLES], hasSMPI = 0;
+	BYTE smplflags[MAX_SAMPLES], hasSMPI = 0, hasSMPD = 0;
 
 	if ((!lpStream) || (dwMemLength < 1024)) return FALSE;
 	if ((pfh->id != 0x464d4444) || (!pfh->version) || (pfh->version & 0xF0)) return FALSE;
@@ -115,7 +116,7 @@ BOOL CSoundFile::ReadDMF(const BYTE *lpStream, DWORD dwMemLength)
 		case 0x47534d43:
 			psi = (DMFINFO *)(lpStream+dwMemPos);
 			if (id == 0x47534d43) dwMemPos++;
-			if ((psi->infosize > dwMemLength) || (psi->infosize + dwMemPos + 8 > dwMemLength)) goto dmfexit;
+			if ((psi->infosize > dwMemLength) || (dwMemPos + 8 > dwMemLength - psi->infosize)) goto dmfexit;
 			if ((psi->infosize >= 8) && (!m_lpszSongComments))
 			{
 			    m_lpszSongComments = new char[psi->infosize]; // changed from CHAR
@@ -138,9 +139,10 @@ BOOL CSoundFile::ReadDMF(const BYTE *lpStream, DWORD dwMemLength)
 		// "SEQU"
 		case 0x55514553:
 			sequ = (DMFSEQU *)(lpStream+dwMemPos);
-			if ((sequ->seqsize >= dwMemLength) || (dwMemPos + sequ->seqsize + 12 > dwMemLength)) goto dmfexit;
+			if ((sequ->seqsize >= dwMemLength) || (dwMemPos + 8 > dwMemLength - sequ->seqsize)) goto dmfexit;
+			if (sequ->seqsize >= 4)
 			{
-				UINT nseq = sequ->seqsize >> 1;
+				UINT nseq = (sequ->seqsize - 4) >> 1;
 				if (nseq >= MAX_ORDERS-1) nseq = MAX_ORDERS-1;
 				if (sequ->loopstart < nseq) m_nRestartPos = sequ->loopstart;
 				for (UINT i=0; i<nseq; i++) Order[i] = (BYTE)sequ->sequ[i];
@@ -150,12 +152,12 @@ BOOL CSoundFile::ReadDMF(const BYTE *lpStream, DWORD dwMemLength)
 
 		// "PATT"
 		case 0x54544150:
-			if (!m_nChannels)
+			patt = (DMFPATT *)(lpStream+dwMemPos);
+			if ((patt->patsize >= dwMemLength) || (dwMemPos + 8 > dwMemLength - patt->patsize)) goto dmfexit;
+			if (patt->patsize >= 4 && !m_nChannels)
 			{
-				DMFPATT *patt = (DMFPATT *)(lpStream+dwMemPos);
 				UINT numpat;
 				DWORD dwPos = dwMemPos + 11;
-				if ((patt->patsize >= dwMemLength) || (dwMemPos + patt->patsize + 8 > dwMemLength)) goto dmfexit;
 				numpat = patt->numpat;
 				if (numpat > MAX_PATTERNS) numpat = MAX_PATTERNS;
 				m_nChannels = patt->tracks;
@@ -164,7 +166,8 @@ BOOL CSoundFile::ReadDMF(const BYTE *lpStream, DWORD dwMemLength)
 				if (m_nChannels < 4) m_nChannels = 4;
 				for (UINT npat=0; npat<numpat; npat++)
 				{
-					DMFTRACK *pt = (DMFTRACK *)(lpStream+dwPos);
+					const DMFTRACK *pt = (DMFTRACK *)(lpStream+dwPos);
+					if (dwPos + 8 >= dwMemLength) break;
 				#ifdef DMFLOG
 					Log("Pattern #%d: %d tracks, %d rows\n", npat, pt->tracks, pt->ticks);
 				#endif
@@ -174,7 +177,7 @@ BOOL CSoundFile::ReadDMF(const BYTE *lpStream, DWORD dwMemLength)
 					if (ticks > 256) ticks = 256;
 					if (ticks < 16) ticks = 16;
 					dwPos += 8;
-					if ((pt->jmpsize >= dwMemLength) || (dwPos + pt->jmpsize + 4 >= dwMemLength)) break;
+					if ((pt->jmpsize >= dwMemLength) || (dwPos + 4 > dwMemLength - pt->jmpsize)) break;
 					PatternSize[npat] = (WORD)ticks;
 					MODCOMMAND *m = AllocatePattern(PatternSize[npat], m_nChannels);
 					if (!m) goto dmfexit;
@@ -193,6 +196,7 @@ BOOL CSoundFile::ReadDMF(const BYTE *lpStream, DWORD dwMemLength)
 						// Parse track global effects
 						if (!glbinfobyte)
 						{
+							if (d+1 > dwPos) break;
 							BYTE info = lpStream[d++];
 							BYTE infoval = 0;
 							if ((info & 0x80) && (d < dwPos)) glbinfobyte = lpStream[d++];
@@ -214,17 +218,24 @@ BOOL CSoundFile::ReadDMF(const BYTE *lpStream, DWORD dwMemLength)
 						// Parse channels
 						for (UINT i=0; i<tracks; i++) if (!infobyte[i])
 						{
+							if (d+1 > dwPos) break;
 							MODCOMMAND cmd = {0,0,0,0,0,0};
 							BYTE info = lpStream[d++];
-							if (info & 0x80) infobyte[i] = lpStream[d++];
+							if (info & 0x80)
+							{
+								if (d+1 > dwPos) break;
+								infobyte[i] = lpStream[d++];
+							}
 							// Instrument
 							if (info & 0x40)
 							{
+								if (d+1 > dwPos) break;
 								cmd.instr = lpStream[d++];
 							}
 							// Note
 							if (info & 0x20)
 							{
+								if (d+1 > dwPos) break;
 								cmd.note = lpStream[d++];
 								if ((cmd.note) && (cmd.note < 0xfe)) cmd.note &= 0x7f;
 								if ((cmd.note) && (cmd.note < 128)) cmd.note += 24;
@@ -232,12 +243,15 @@ BOOL CSoundFile::ReadDMF(const BYTE *lpStream, DWORD dwMemLength)
 							// Volume
 							if (info & 0x10)
 							{
+								if (d+1 > dwPos) break;
 								cmd.volcmd = VOLCMD_VOLUME;
 								cmd.vol = (lpStream[d++]+3)>>2;
 							}
 							// Effect 1
 							if (info & 0x08)
 							{
+								if (d+2 > dwPos) break;
+
 								BYTE efx = lpStream[d++];
 								BYTE eval = lpStream[d++];
 								switch(efx)
@@ -259,6 +273,8 @@ BOOL CSoundFile::ReadDMF(const BYTE *lpStream, DWORD dwMemLength)
 							// Effect 2
 							if (info & 0x04)
 							{
+								if (d+2 > dwPos) break;
+
 								BYTE efx = lpStream[d++];
 								BYTE eval = lpStream[d++];
 								switch(efx)
@@ -289,6 +305,8 @@ BOOL CSoundFile::ReadDMF(const BYTE *lpStream, DWORD dwMemLength)
 							// Effect 3
 							if (info & 0x02)
 							{
+								if (d+2 > dwPos) break;
+
 								BYTE efx = lpStream[d++];
 								BYTE eval = lpStream[d++];
 								switch(efx)
@@ -372,22 +390,24 @@ BOOL CSoundFile::ReadDMF(const BYTE *lpStream, DWORD dwMemLength)
 				#endif
 					if (dwPos + 8 >= dwMemLength) break;
 				}
-				dwMemPos += patt->patsize + 8;
 			}
+			dwMemPos += patt->patsize + 8;
 			break;
 
 		// "SMPI": Sample Info
 		case 0x49504d53:
 			{
 				hasSMPI = 1;
-				DMFSMPI *pds = (DMFSMPI *)(lpStream+dwMemPos);
-				if (pds->size <= dwMemLength - dwMemPos)
+				const DMFSMPI *pds = (DMFSMPI *)(lpStream+dwMemPos);
+				if ((pds->size >= dwMemLength) || (dwMemPos + 8 > dwMemLength - pds->size)) goto dmfexit;
+				if (pds->size >= 1)
 				{
 					DWORD dwPos = dwMemPos + 9;
 					m_nSamples = pds->samples;
 					if (m_nSamples >= MAX_SAMPLES) m_nSamples = MAX_SAMPLES-1;
 					for (UINT iSmp=1; iSmp<=m_nSamples; iSmp++)
 					{
+						if (dwPos >= dwMemPos + pds->size + 8) break;
 						UINT namelen = lpStream[dwPos];
 						smplflags[iSmp] = 0;
 						if (dwPos+namelen+1+sizeof(DMFSAMPLE) > dwMemPos+pds->size+8) break;
@@ -398,7 +418,7 @@ BOOL CSoundFile::ReadDMF(const BYTE *lpStream, DWORD dwMemLength)
 							m_szNames[iSmp][rlen] = 0;
 						}
 						dwPos += namelen + 1;
-						DMFSAMPLE *psh = (DMFSAMPLE *)(lpStream+dwPos);
+						const DMFSAMPLE *psh = (DMFSAMPLE *)(lpStream+dwPos);
 						MODINSTRUMENT *psmp = &Ins[iSmp];
 						psmp->nLength = psh->len;
 						psmp->nLoopStart = psh->loopstart;
@@ -425,7 +445,7 @@ BOOL CSoundFile::ReadDMF(const BYTE *lpStream, DWORD dwMemLength)
 			{
 				DWORD dwPos = dwMemPos + 8;
 				UINT ismpd = 0;
-				for (UINT iSmp=1; iSmp<=m_nSamples; iSmp++)
+				for (UINT iSmp=1; iSmp<=m_nSamples && !hasSMPD; iSmp++)
 				{
 					ismpd++;
 					DWORD pksize;
@@ -458,6 +478,7 @@ BOOL CSoundFile::ReadDMF(const BYTE *lpStream, DWORD dwMemLength)
 					}
 					dwPos += pksize;
 				}
+				hasSMPD = 1;
 				dwMemPos = dwPos;
 			}
 			break;
@@ -520,8 +541,8 @@ static BYTE DMFReadBits(DMF_HTREE *tree, UINT nbits)
 		{
 			tree->bitnum--;
 		} else
-		{
-			tree->bitbuf = (tree->ibuf < tree->ibufmax) ? *(tree->ibuf++) : 0;
+		if (tree->ibuf < tree->ibufmax) {
+			tree->bitbuf = *(tree->ibuf++);
 			tree->bitnum = 7;
 		}
 		if (tree->bitbuf & 1) x |= bitv;
@@ -576,14 +597,24 @@ int DMFUnpack(LPBYTE psample, LPBYTE ibuf, LPBYTE ibufmax, UINT maxlen)
 	DMF_HTREE tree;
 	UINT actnode;
 	BYTE value, sign, delta = 0;
-	
+
 	memset(&tree, 0, sizeof(tree));
 	tree.ibuf = ibuf;
 	tree.ibufmax = ibufmax;
 	DMFNewNode(&tree);
 	value = 0;
+
+	if (tree.ibuf >= ibufmax) return tree.ibuf - ibuf;
+
 	for (UINT i=0; i<maxlen; i++)
 	{
+		if ((tree.ibuf >= tree.ibufmax) && (!tree.bitnum))
+		{
+		#ifdef DMFLOG
+			Log("DMFUnpack: unexpected EOF at output byte %d / %d\n", i, maxlen);
+		#endif
+			break;
+		}
 		actnode = 0;
 		sign = DMFReadBits(&tree, 1);
 		do

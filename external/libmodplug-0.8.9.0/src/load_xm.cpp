@@ -190,13 +190,14 @@ BOOL CSoundFile::ReadXM(const BYTE *lpStream, DWORD dwMemLength)
 					UINT vol = 0;
 					if (b & 0x80)
 					{
-						if (b & 1) p->note = src[j++];
-						if (b & 2) p->instr = src[j++];
-						if (b & 4) vol = src[j++];
-						if (b & 8) p->command = src[j++];
-						if (b & 16) p->param = src[j++];
+						if ((b & 1)  && j < packsize) p->note = src[j++];
+						if ((b & 2)  && j < packsize) p->instr = src[j++];
+						if ((b & 4)  && j < packsize) vol = src[j++];
+						if ((b & 8)  && j < packsize) p->command = src[j++];
+						if ((b & 16) && j < packsize) p->param = src[j++];
 					} else
 					{
+						if (j + 5 > packsize) break;
 						p->note = b;
 						p->instr = src[j++];
 						vol = src[j++];
@@ -278,16 +279,18 @@ BOOL CSoundFile::ReadXM(const BYTE *lpStream, DWORD dwMemLength)
 		DWORD samplesize[32];
 		UINT samplemap[32];
 		WORD nsamples;
+		DWORD pihlen;
 
 		if (dwMemPos + sizeof(XMINSTRUMENTHEADER) >= dwMemLength) return TRUE;
 		pih = (XMINSTRUMENTHEADER *)(lpStream+dwMemPos);
-		if (dwMemPos + bswapLE32(pih->size) > dwMemLength) return TRUE;
+		pihlen = bswapLE32(pih->size);
+		if (pihlen >= dwMemLength || dwMemPos > dwMemLength - pihlen) return TRUE;
 		if ((Headers[iIns] = new INSTRUMENTHEADER) == NULL) continue;
 		memset(Headers[iIns], 0, sizeof(INSTRUMENTHEADER));
 		memcpy(Headers[iIns]->name, pih->name, 22);
 		if ((nsamples = pih->samples) > 0)
 		{
-			if (dwMemPos + sizeof(XMSAMPLEHEADER) > dwMemLength) return TRUE;
+			if (dwMemPos + sizeof(XMINSTRUMENTHEADER) + sizeof(XMSAMPLEHEADER) > dwMemLength) return TRUE;
 			memcpy(&xmsh, lpStream+dwMemPos+sizeof(XMINSTRUMENTHEADER), sizeof(XMSAMPLEHEADER));
 			xmsh.shsize = bswapLE32(xmsh.shsize);
 			for (int i = 0; i < 24; ++i) {
@@ -296,10 +299,10 @@ BOOL CSoundFile::ReadXM(const BYTE *lpStream, DWORD dwMemLength)
 			}
 			xmsh.volfade = bswapLE16(xmsh.volfade);
 			xmsh.res = bswapLE16(xmsh.res);
-			dwMemPos += bswapLE32(pih->size);
+			dwMemPos += pihlen;
 		} else
 		{
-			if (bswapLE32(pih->size)) dwMemPos += bswapLE32(pih->size);
+			if (pihlen) dwMemPos += pihlen;
 			else dwMemPos += sizeof(XMINSTRUMENTHEADER);
 			continue;
 		}
@@ -436,7 +439,7 @@ BOOL CSoundFile::ReadXM(const BYTE *lpStream, DWORD dwMemLength)
 		for (UINT ins=0; ins<nsamples; ins++)
 		{
 			if ((dwMemPos + sizeof(xmss) > dwMemLength)
-			 || (dwMemPos + xmsh.shsize > dwMemLength)) return TRUE;
+			 || (xmsh.shsize >= dwMemLength) || (dwMemPos > dwMemLength - xmsh.shsize)) return TRUE;
 			memcpy(&xmss, lpStream+dwMemPos, sizeof(xmss));
 			xmss.samplen = bswapLE32(xmss.samplen);
 			xmss.loopstart = bswapLE32(xmss.loopstart);
@@ -533,6 +536,7 @@ BOOL CSoundFile::ReadXM(const BYTE *lpStream, DWORD dwMemLength)
 	{
 		UINT len = *((DWORD *)(lpStream+dwMemPos+4));
 		dwMemPos += 8;
+		if (len >= dwMemLength || dwMemPos > dwMemLength - len) return TRUE;
 		if (len == sizeof(MODMIDICFG))
 		{
 			memcpy(&m_MidiCfg, lpStream+dwMemPos, len);
@@ -544,7 +548,8 @@ BOOL CSoundFile::ReadXM(const BYTE *lpStream, DWORD dwMemLength)
 	{
 		UINT len = *((DWORD *)(lpStream+dwMemPos+4));
 		dwMemPos += 8;
-		if ((dwMemPos + len <= dwMemLength) && (len <= MAX_PATTERNS*MAX_PATTERNNAME) && (len >= MAX_PATTERNNAME))
+		if (len >= dwMemLength || dwMemPos > dwMemLength - len) return TRUE;
+		if ((len <= MAX_PATTERNS*MAX_PATTERNNAME) && (len >= MAX_PATTERNNAME))
 		{
 			m_lpszPatternNames = new char[len];
 
@@ -561,7 +566,8 @@ BOOL CSoundFile::ReadXM(const BYTE *lpStream, DWORD dwMemLength)
 	{
 		UINT len = *((DWORD *)(lpStream+dwMemPos+4));
 		dwMemPos += 8;
-		if ((dwMemPos + len <= dwMemLength) && (len <= MAX_BASECHANNELS*MAX_CHANNELNAME))
+		if (len >= dwMemLength || dwMemPos > dwMemLength - len) return TRUE;
+		if (len <= MAX_BASECHANNELS*MAX_CHANNELNAME)
 		{
 			UINT n = len / MAX_CHANNELNAME;
 			for (UINT i=0; i<n; i++)

@@ -59,7 +59,7 @@ BOOL CSoundFile::ReadOKT(const BYTE *lpStream, DWORD dwMemLength)
 	// Reading samples
 	for (UINT smp=1; smp <= nsamples; smp++)
 	{
-		if (dwMemPos >= dwMemLength) return TRUE;
+		if (dwMemPos + sizeof(OKTSAMPLE) >= dwMemLength) return TRUE;
 		if (smp < MAX_SAMPLES)
 		{
 			OKTSAMPLE *psmp = (OKTSAMPLE *)(lpStream + dwMemPos);
@@ -78,32 +78,35 @@ BOOL CSoundFile::ReadOKT(const BYTE *lpStream, DWORD dwMemLength)
 		dwMemPos += sizeof(OKTSAMPLE);
 	}
 	// SPEE
-	if (dwMemPos >= dwMemLength) return TRUE;
+	if (dwMemPos + 10 > dwMemLength) return TRUE;
 	if (*((DWORD *)(lpStream + dwMemPos)) == 0x45455053)
 	{
 		m_nDefaultSpeed = lpStream[dwMemPos+9];
 		dwMemPos += bswapBE32(*((DWORD *)(lpStream + dwMemPos + 4))) + 8;
 	}
 	// SLEN
-	if (dwMemPos >= dwMemLength) return TRUE;
+	if (dwMemPos + 10 > dwMemLength) return TRUE;
 	if (*((DWORD *)(lpStream + dwMemPos)) == 0x4E454C53)
 	{
+		if (dwMemPos + 10 > dwMemLength) return TRUE;
 	//	npatterns = lpStream[dwMemPos+9];
 		dwMemPos += bswapBE32(*((DWORD *)(lpStream + dwMemPos + 4))) + 8;
 	}
 	// PLEN
-	if (dwMemPos >= dwMemLength) return TRUE;
+	if (dwMemPos + 10 > dwMemLength) return TRUE;
 	if (*((DWORD *)(lpStream + dwMemPos)) == 0x4E454C50)
 	{
+		if (dwMemPos + 10 > dwMemLength) return TRUE;
 		norders = lpStream[dwMemPos+9];
 		dwMemPos += bswapBE32(*((DWORD *)(lpStream + dwMemPos + 4))) + 8;
 	}
 	// PATT
-	if (dwMemPos >= dwMemLength) return TRUE;
+	if (dwMemPos + 8 > dwMemLength) return TRUE;
 	if (*((DWORD *)(lpStream + dwMemPos)) == 0x54544150)
 	{
 		UINT orderlen = norders;
 		if (orderlen >= MAX_ORDERS) orderlen = MAX_ORDERS-1;
+		if (dwMemPos + 8 + orderlen > dwMemLength) return TRUE;
 		for (UINT i=0; i<orderlen; i++) Order[i] = lpStream[dwMemPos+8+i];
 		for (UINT j=orderlen; j>1; j--) { if (Order[j-1]) break; Order[j-1] = 0xFF; }
 		dwMemPos += bswapBE32(*((DWORD *)(lpStream + dwMemPos + 4))) + 8;

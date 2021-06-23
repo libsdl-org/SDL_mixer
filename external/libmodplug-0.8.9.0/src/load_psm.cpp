@@ -98,7 +98,7 @@ static void swap_PSMSAMPLE(PSMSAMPLE* p){
 BOOL CSoundFile::ReadPSM(LPCBYTE lpStream, DWORD dwMemLength)
 //-----------------------------------------------------------
 {
-	PSMCHUNK pfh = *(const PSMCHUNK *)lpStream;
+	PSMCHUNK pfh;
 	DWORD dwMemPos, dwSongPos;
 //	DWORD smpnames[MAX_SAMPLES];
 	DWORD patptrs[MAX_PATTERNS];
@@ -108,6 +108,7 @@ BOOL CSoundFile::ReadPSM(LPCBYTE lpStream, DWORD dwMemLength)
 	if (dwMemLength < 256) return FALSE;
 
 	// Swap chunk
+	pfh = *(const PSMCHUNK *)lpStream;
 	swap_PSMCHUNK(&pfh);
 
 	// Chunk0: "PSM ",filesize,"FILE"
@@ -279,14 +280,17 @@ BOOL CSoundFile::ReadPSM(LPCBYTE lpStream, DWORD dwMemLength)
 	{
 		PSMPATTERN pPsmPat = *(const PSMPATTERN *)(lpStream+patptrs[nPat]+8);
 		swap_PSMPATTERN(&pPsmPat);
-		ULONG len = *(DWORD *)(lpStream+patptrs[nPat]+4) - 12;
+		PSMCHUNK pchunk = *(const PSMCHUNK *)(lpStream+patptrs[nPat]);
+		swap_PSMCHUNK(&pchunk);
+
+		ULONG len = pchunk.len - 12;
 		UINT nRows = pPsmPat.rows;
 		if (len > pPsmPat.size) len = pPsmPat.size;
 		if ((nRows < 64) || (nRows > 256)) nRows = 64;
 		PatternSize[nPat] = nRows;
 		if ((Patterns[nPat] = AllocatePattern(nRows, m_nChannels)) == NULL) break;
 		MODCOMMAND *m = Patterns[nPat];
-		BYTE *p = pPsmPat.data;
+		const BYTE *p = lpStream + patptrs[nPat] + 20;
 		MODCOMMAND *sp, dummy;
 		UINT pos = 0;
 		UINT row = 0;
@@ -331,7 +335,8 @@ BOOL CSoundFile::ReadPSM(LPCBYTE lpStream, DWORD dwMemLength)
 				//if (!nPat) Log("note+ins: %02X.%02X\n", note, nins);
 				if ((!nPat) && (nins >= m_nSamples)) Log("WARNING: invalid instrument number (%d)\n", nins);
 			#endif
-				sp->instr = samplemap[nins];
+				if (nins < MAX_SAMPLES)
+					sp->instr = samplemap[nins];
 			}
 			// Volume
 			if ((flags & 0x20) && (pos < len))

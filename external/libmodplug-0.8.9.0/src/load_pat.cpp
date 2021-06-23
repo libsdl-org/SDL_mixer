@@ -199,7 +199,7 @@ int pat_numinstr(void)
 
 int pat_smptogm(int smp)
 {
-	if( smp < MAXSMP )
+	if( smp && smp < MAXSMP && pat_gm_used[smp - 1] < MAXSMP )
 		return pat_gm_used[smp - 1];
 	return 1;
 }
