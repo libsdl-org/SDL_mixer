@@ -402,12 +402,12 @@ BOOL CSoundFile::ReadMDL(const BYTE *lpStream, DWORD dwMemLength)
 			dwPos = dwMemPos;
 			for (i=1; i<=m_nSamples; i++) if ((Ins[i].nLength) && (!Ins[i].pSample) && (smpinfo[i] != 3) && (dwPos < dwMemLength))
 			{
-				const BYTE *pp = lpStream + dwPos;
 				MODINSTRUMENT *pins = &Ins[i];
 				UINT flags = (pins->uFlags & CHN_16BIT) ? RS_PCM16S : RS_PCM8S;
+				pp = lpStream + dwPos;
 				if (!smpinfo[i])
 				{
-					dwPos += ReadSample(pins, flags, (LPSTR)pp, dwMemLength - dwPos);
+					dwPos += ReadSample(pins, flags, (LPCSTR)pp, dwMemLength - dwPos);
 				} else
 				{
 					DWORD dwLen = pp[0] | (pp[1] << 8) | (pp[2] << 16) | (pp[3] << 24); pp += 4;
@@ -415,7 +415,7 @@ BOOL CSoundFile::ReadMDL(const BYTE *lpStream, DWORD dwMemLength)
 					if ((dwLen <= dwMemLength) && (dwPos <= dwMemLength - dwLen) && (dwLen > 4))
 					{
 						flags = (pins->uFlags & CHN_16BIT) ? RS_MDL16 : RS_MDL8;
-						ReadSample(pins, flags, (LPSTR)pp, dwLen);
+						ReadSample(pins, flags, (LPCSTR)pp, dwLen);
 					}
 					dwPos += dwLen;
 				}

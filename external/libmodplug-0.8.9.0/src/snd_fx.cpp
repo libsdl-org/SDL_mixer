@@ -701,7 +701,7 @@ void CSoundFile::CheckNNA(UINT nChn, UINT instr, int note, BOOL bForceCut)
 		UINT n = GetNNAChannel(nChn);
 		if (n)
 		{
-			MODCHANNEL *p = &Chn[n];
+			p = &Chn[n];
 			// Copy Channel
 			*p = *pChn;
 			p->dwFlags &= ~(CHN_VIBRATO|CHN_TREMOLO|CHN_PANBRELLO|CHN_MUTE|CHN_PORTAMENTO);
