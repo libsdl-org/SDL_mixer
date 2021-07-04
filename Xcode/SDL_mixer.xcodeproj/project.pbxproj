@@ -15,8 +15,8 @@
 		639008C92385A822009019FA /* utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 639008C72385A822009019FA /* utils.h */; };
 		639197F1239FE66700F1D8F8 /* mp3utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 639197EF239FE66700F1D8F8 /* mp3utils.c */; };
 		639197F2239FE66700F1D8F8 /* mp3utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 639197F0239FE66700F1D8F8 /* mp3utils.h */; };
-		63CD6ADC20D52DE20096FB34 /* Opus.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 630FBD7620D52063009867AB /* Opus.framework */; };
-		63CD6ADD20D52DE90096FB34 /* OpusFile.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 630FBD7C20D5206E009867AB /* OpusFile.framework */; };
+		63CD6ADC20D52DE20096FB34 /* Opus.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 630FBD7620D52063009867AB /* Opus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		63CD6ADD20D52DE90096FB34 /* OpusFile.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 630FBD7C20D5206E009867AB /* OpusFile.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		AA6021301765383B00662B9C /* modplug.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = AA60212F1765382200662B9C /* modplug.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		AA644290175AA7C900A2125A /* mpg123.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = AA64428E175AA7A500A2125A /* mpg123.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		AA6442D3175B181D00A2125A /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA6442D2175B181D00A2125A /* AudioUnit.framework */; };
@@ -521,7 +521,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0900;
+				LastUpgradeCheck = 1250;
 			};
 			buildConfigurationList = 00B7E497097EC6B300826121 /* Build configuration list for PBXProject "SDL_mixer" */;
 			compatibilityVersion = "Xcode 3.2";
