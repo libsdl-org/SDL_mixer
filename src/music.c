@@ -221,6 +221,17 @@ const char *Mix_GetMusicDecoder(int index)
     return(music_decoders[index]);
 }
 
+SDL_bool Mix_HasMusicDecoder(const char *name)
+{
+    int index;
+    for (index = 0; index < num_decoders; ++index) {
+        if (SDL_strcasecmp(name, music_decoders[index]) == 0) {
+                return SDL_TRUE;
+        }
+    }
+    return SDL_FALSE;
+}
+
 static void add_music_decoder(const char *decoder)
 {
     void *ptr;
