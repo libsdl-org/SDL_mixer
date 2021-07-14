@@ -636,6 +636,7 @@ LIBOBJS
 MODPLUG_LIBRARY_VERSION
 EXPORT_CXX_FALSE
 EXPORT_CXX_TRUE
+LIBS_PRIVATE
 LT_LDFLAGS
 LT_SYS_LIBRARY_PATH
 OTOOL64
@@ -8632,16 +8633,11 @@ $as_echo "$lt_cv_ld_force_load" >&6; }
       _lt_dar_allow_undefined='$wl-undefined ${wl}suppress' ;;
     darwin1.*)
       _lt_dar_allow_undefined='$wl-flat_namespace $wl-undefined ${wl}suppress' ;;
-    darwin*) # darwin 5.x on
-      # if running on 10.5 or later, the deployment target defaults
-      # to the OS version, if on x86, and 10.4, the deployment
-      # target defaults to 10.4. Don't you love it?
-      case ${MACOSX_DEPLOYMENT_TARGET-10.0},$host in
-	10.0,*86*-darwin8*|10.0,*-darwin[91]*)
-	  _lt_dar_allow_undefined='$wl-undefined ${wl}dynamic_lookup' ;;
-	10.[012][,.]*)
+    darwin*)
+      case $MACOSX_DEPLOYMENT_TARGET,$host in
+	10.[012],*|,*powerpc*-darwin[5-8]*)
 	  _lt_dar_allow_undefined='$wl-flat_namespace $wl-undefined ${wl}suppress' ;;
-	10.*)
+	*)
 	  _lt_dar_allow_undefined='$wl-undefined ${wl}dynamic_lookup' ;;
       esac
     ;;
@@ -16739,17 +16735,6 @@ fi
 
 done
 
-for ac_func in sinf
-do :
-  ac_fn_cxx_check_func "$LINENO" "sinf" "ac_cv_func_sinf"
-if test "x$ac_cv_func_sinf" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_SINF 1
-_ACEOF
-
-fi
-done
-
 
 CXXFLAGS="$CXXFLAGS -fno-exceptions -Wall -ffast-math -fno-common -D_REENTRANT"
 
@@ -16762,6 +16747,75 @@ case "$host" in
 		LT_LDFLAGS=""
 		;;
 esac
+
+
+LIBS_PRIVATE=-lstdc++
+LIBM=
+case "${host_os}" in
+*djgpp)
+  ;;
+darwin*|haiku*|beos*|cegcc*|pw32*)
+  ;;
+mingw*|cygwin*)
+  LIBS_PRIVATE="-luser32 ${LIBS_PRIVATE}"
+  ;;
+*) { $as_echo "$as_me:${as_lineno-$LINENO}: checking for pow in -lm" >&5
+$as_echo_n "checking for pow in -lm... " >&6; }
+if ${ac_cv_lib_m_pow+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lm  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char pow ();
+int
+main (void)
+{
+return pow ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_m_pow=yes
+else
+  ac_cv_lib_m_pow=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_m_pow" >&5
+$as_echo "$ac_cv_lib_m_pow" >&6; }
+if test "x$ac_cv_lib_m_pow" = xyes; then :
+  LIBM="-lm"
+fi
+
+  if test x$LIBM != x; then
+    LIBS="${LIBS} ${LIBM}"
+    LIBS_PRIVATE="${LIBS_PRIVATE} ${LIBM}"
+  fi
+  ;;
+esac
+
+for ac_func in sinf
+do :
+  ac_fn_cxx_check_func "$LINENO" "sinf" "ac_cv_func_sinf"
+if test "x$ac_cv_func_sinf" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_SINF 1
+_ACEOF
+
+fi
+done
 
 
 # symbol visibility

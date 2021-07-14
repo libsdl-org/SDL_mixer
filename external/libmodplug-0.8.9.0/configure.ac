@@ -29,7 +29,6 @@ LT_INIT([win32-dll])
 
 AC_HEADER_STDC
 AC_CHECK_HEADERS([inttypes.h stdint.h malloc.h])
-AC_CHECK_FUNCS(sinf)
 
 CXXFLAGS="$CXXFLAGS -fno-exceptions -Wall -ffast-math -fno-common -D_REENTRANT"
 
@@ -43,6 +42,30 @@ case "$host" in
 		;;
 esac
 AC_SUBST(LT_LDFLAGS)
+
+LIBS_PRIVATE=-lstdc++
+LIBM=
+case "${host_os}" in
+dnl Djgpp has all c89 math funcs in libc.a
+*djgpp)
+  ;;
+dnl These systems don't have libm or don't need it (list based on libtool)
+darwin*|haiku*|beos*|cegcc*|pw32*)
+  ;;
+dnl MinGW and Cygwin don't need libm, either
+mingw*|cygwin*)
+  LIBS_PRIVATE="-luser32 ${LIBS_PRIVATE}"
+  ;;
+dnl All others:
+*) AC_CHECK_LIB(m, pow, LIBM="-lm")
+  if test x$LIBM != x; then
+    LIBS="${LIBS} ${LIBM}"
+    LIBS_PRIVATE="${LIBS_PRIVATE} ${LIBM}"
+  fi
+  ;;
+esac
+AC_SUBST(LIBS_PRIVATE)
+AC_CHECK_FUNCS(sinf)
 
 # symbol visibility
 ac_save_CXXFLAGS="$CXXFLAGS"

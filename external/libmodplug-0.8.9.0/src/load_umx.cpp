@@ -159,16 +159,19 @@ static int read_typname(const BYTE *membase, LONG memlen,
 			int idx, char *out)
 {
 	int i, s;
-	long l;
+	long l, ofs, siz;
 	char buf[64];
 
 	if (idx >= hdr->name_count) return -1;
-	buf[63] = '\0';
+	memset(buf, 0, 64);
 	for (i = 0, l = 0; i <= idx; i++) {
-		memcpy(buf, membase + hdr->name_offset + l, 63);
+		if ((ofs = hdr->name_offset + l) >= memlen)
+			return -1;
+		if ((siz = memlen - ofs) > 63) siz = 63;
+		memcpy(buf, membase + ofs, siz);
 		if (hdr->file_version >= 64) {
 			s = *(signed char *)buf; /* numchars *including* terminator */
-			if (s <= 0 || s > 64) return -1;
+			if (s <= 0) return -1;
 			l += s + 5;	/* 1 for buf[0], 4 for int32_t name_flags */
 		} else {
 			l += (long)strlen(buf);
@@ -187,6 +190,12 @@ static int probe_umx   (const BYTE *membase, LONG memlen,
 	int i, idx, t;
 	LONG s, pos;
 	char buf[64];
+
+	if (hdr->name_offset	>= memlen ||
+	    hdr->export_offset	>= memlen ||
+	    hdr->import_offset	>= memlen) {
+		return -1;
+	}
 
 	/* Find the offset and size of the first IT, S3M or XM
 	 * by parsing the exports table. The umx files should
@@ -248,11 +257,11 @@ static int probe_header (void *header)
 		return -1;
 	}
 	if (hdr->name_count	< 0	||
-	    hdr->name_offset	< 0	||
 	    hdr->export_count	< 0	||
-	    hdr->export_offset	< 0	||
 	    hdr->import_count	< 0	||
-	    hdr->import_offset	< 0	) {
+	    hdr->name_offset	< 36	||
+	    hdr->export_offset	< 36	||
+	    hdr->import_offset	< 36	) {
 		return -1;
 	}
 

@@ -176,7 +176,15 @@ install(FILES
   ${CMAKE_INSTALL_INCLUDEDIR}/libmodplug
 )
 
-if (NOT WIN32)
+if (NOT MSVC)
+  if(MINGW OR CYGWIN)
+    set(LIBS_PRIVATE "-luser32 -lstdc++")
+  else()
+    set(LIBS_PRIVATE "-lstdc++")
+    if(MATH_LIB)
+      set(LIBS_PRIVATE "${LIBS_PRIVATE} -lm")
+    endif()
+  endif()
   set(prefix ${CMAKE_INSTALL_PREFIX})
   set(exec_prefix ${CMAKE_INSTALL_PREFIX})
   set(libdir ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
@@ -187,4 +195,4 @@ if (NOT WIN32)
   install(FILES "${PROJECT_BINARY_DIR}/libmodplug.pc"
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
   )
-endif (NOT WIN32)
+endif ()
