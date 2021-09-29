@@ -702,6 +702,7 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
 
     /* Find out what kind of audio file this is */
     if (SDL_RWread(src, magic, 1, 4) != 4) {
+        SDL_free(chunk);
         if (freesrc) {
             SDL_RWclose(src);
         }
