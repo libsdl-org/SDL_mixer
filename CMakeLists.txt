@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.1.0)
 project(SDL2_mixer C)
 
 # FIXME: CMAKE SUPPORT IN SDL2_mixer IS VERY INCOMPLETE YET !!!
