@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 2.8.12)
 project(SDL_mixer C)
 
+# FIXME: make it able build against system codec libraries, too.
+#
+# FIXME: test accross different target platforms.
+
 # FIXME: missing CMakeLists.txt for MPG123
 set(SUPPORT_MP3_MPG123 OFF CACHE BOOL "" FORCE)
 
