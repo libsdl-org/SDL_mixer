@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(SDL_mixer C)
+project(SDL2_mixer C)
 
-# FIXME: make it able build against system codec libraries, too.
+# FIXME: CMAKE SUPPORT IN SDL2_mixer IS VERY INCOMPLETE YET !!!
 #
+# FIXME: make it able build against system codec libraries, too.
+# FIXME: handle library versioning.
 # FIXME: test accross different target platforms.
 #
 # FIXME: missing CMakeLists.txt for MPG123
