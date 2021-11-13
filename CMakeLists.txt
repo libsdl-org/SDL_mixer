@@ -4,7 +4,7 @@ project(SDL_mixer C)
 # FIXME: make it able build against system codec libraries, too.
 #
 # FIXME: test accross different target platforms.
-
+#
 # FIXME: missing CMakeLists.txt for MPG123
 set(SUPPORT_MP3_MPG123 OFF CACHE BOOL "" FORCE)
 
@@ -12,7 +12,7 @@ option(SUPPORT_FLAC "Support loading FLAC music with libFLAC" OFF)
 option(SUPPORT_OGG "Support loading OGG Vorbis music via Tremor" OFF)
 option(SUPPORT_MP3_MPG123 "Support loading MP3 music via MPG123" OFF)
 option(SUPPORT_MOD_MODPLUG "Support loading MOD music via modplug" OFF)
-option(SUPPORT_MID_TIMIDITY "Support TiMidity" OFF)
+option(SUPPORT_MID_TIMIDITY "Support loading MIDI music via TiMidity" OFF)
 
 option(BUILD_SHARED_LIBS "Enable shared library" ON)
 
@@ -64,10 +64,9 @@ endif()
 
 if (SUPPORT_MID_TIMIDITY)
     add_definitions(-DMUSIC_MID_TIMIDITY)
-    add_subdirectory(timidity)
+    add_subdirectory(src/codecs/timidity)
     target_link_libraries(SDL2_mixer PRIVATE timidity)
 endif()
 
 target_include_directories(SDL2_mixer PUBLIC include)
 target_link_libraries(SDL2_mixer PRIVATE ${SDL2_LIBRARIES} ${SDL2_LIBRARY})
-
