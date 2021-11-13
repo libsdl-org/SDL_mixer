@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.0.0)
 project(SDL_mixer C)
 
 # FIXME: make it able build against system codec libraries, too.
@@ -14,9 +14,14 @@ option(SUPPORT_MP3_MPG123 "Support loading MP3 music via MPG123" OFF)
 option(SUPPORT_MOD_MODPLUG "Support loading MOD music via modplug" OFF)
 option(SUPPORT_MID_TIMIDITY "Support TiMidity" OFF)
 
+option(BUILD_SHARED_LIBS "Enable shared library" ON)
+
+find_package(SDL2 REQUIRED)
+include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_INCLUDE_DIR})
+
 include_directories(include src src/codecs)
 
-add_library(SDL2_mixer SHARED)
+add_library(SDL2_mixer)
 
 target_sources(SDL2_mixer PRIVATE
         src/effect_position.c src/effects_internal.c src/effect_stereoreverse.c
@@ -64,5 +69,5 @@ if (SUPPORT_MID_TIMIDITY)
 endif()
 
 target_include_directories(SDL2_mixer PUBLIC include)
-target_link_libraries(SDL2_mixer PRIVATE SDL2)
+target_link_libraries(SDL2_mixer PRIVATE ${SDL2_LIBRARIES} ${SDL2_LIBRARY})
 

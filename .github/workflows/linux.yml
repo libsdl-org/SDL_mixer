@@ -1,0 +1,71 @@
+name: linux
+
+on:
+  push:
+    branches:
+      - "*"
+    paths-ignore:
+      - "**.md"
+  pull_request:
+    branches:
+      - "*"
+  workflow_dispatch:
+
+jobs:
+  build-cmake:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: ["gcc", "clang"]
+        shared: [YES, NO]
+        build_type: [Release]
+
+    steps:
+      - name: "Checkout Code"
+        uses: actions/checkout@v2
+        with:
+          submodules: "recursive"
+          fetch-depth: 0
+
+      - name: dependencies
+        run: |
+          sudo apt -y update
+          sudo apt -y install ninja-build libsdl2-dev
+
+      - name: Configure CMake
+        env:
+          CC: ${{matrix.compiler}}
+        run: |
+          cmake -S . -B build -D CMAKE_BUILD_TYPE=${{matrix.build_type}} \
+                -G Ninja -D BUILD_SHARED_LIBS=${{matrix.shared}}
+
+      - name: Build CMake
+        run: ninja -C build
+  build-make:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: ["gcc", "clang"]
+
+    steps:
+      - name: "Checkout Code"
+        uses: actions/checkout@v2
+        with:
+          submodules: "recursive"
+          fetch-depth: 0
+
+      - name: dependencies
+        run: |
+          sudo apt -y update
+          sudo apt -y install libsdl2-dev
+
+      - name: Configure make
+        env:
+          CC: ${{matrix.compiler}}
+        run: |
+          ./configure
+
+      - name: Build make
+        run: make -j2
