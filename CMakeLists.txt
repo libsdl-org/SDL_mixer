@@ -10,6 +10,7 @@ project(SDL2_mixer C)
 # FIXME: missing CMakeLists.txt for MPG123
 set(SUPPORT_MP3_MPG123 OFF CACHE BOOL "" FORCE)
 
+option(SUPPORT_WAV "Support loading WAVE music" ON)
 option(SUPPORT_FLAC "Support loading FLAC music with libFLAC" OFF)
 option(SUPPORT_OGG "Support loading OGG Vorbis music via Tremor" OFF)
 option(SUPPORT_MP3_MPG123 "Support loading MP3 music via MPG123" OFF)
@@ -29,12 +30,18 @@ target_sources(SDL2_mixer PRIVATE
         src/effect_position.c src/effects_internal.c src/effect_stereoreverse.c
         src/mixer.c src/music.c src/utils.c
         src/codecs/load_aiff.c src/codecs/load_voc.c
-        src/codecs/music_cmd.c src/codecs/music_flac.c
-        src/codecs/music_fluidsynth.c src/codecs/music_mad.c
-        src/codecs/music_mikmod.c src/codecs/music_modplug.c
-        src/codecs/music_mpg123.c src/codecs/music_nativemidi.c
+        src/codecs/music_cmd.c
+        src/codecs/music_wav.c src/codecs/music_flac.c
+        src/codecs/music_mad.c src/codecs/music_mpg123.c
         src/codecs/music_ogg.c src/codecs/music_opus.c
-        src/codecs/music_timidity.c src/codecs/music_wav.c)
+        src/codecs/music_mikmod.c src/codecs/music_modplug.c
+        src/codecs/music_xmp.c
+        src/codecs/music_fluidsynth.c src/codecs/music_timidity.c
+        src/codecs/music_nativemidi.c)
+
+if (SUPPORT_WAV)
+    add_definitions(-DMUSIC_WAV)
+endif()
 
 if (SUPPORT_FLAC)
     add_definitions(-DMUSIC_FLAC)
