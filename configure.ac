@@ -27,19 +27,21 @@ AC_SUBST(INTERFACE_AGE)
 AC_SUBST(BINARY_AGE)
 AC_SUBST(VERSION)
 
-# libtool versioning
+dnl libtool versioning
 LT_INIT([win32-dll])
 
 LT_RELEASE=$MAJOR_VERSION.$MINOR_VERSION
 LT_CURRENT=`expr $MICRO_VERSION - $INTERFACE_AGE`
 LT_REVISION=$INTERFACE_AGE
 LT_AGE=`expr $BINARY_AGE - $INTERFACE_AGE`
+LT_EXTRA="" dnl for OS2 dll name
 m4_pattern_allow([^LT_])
 
 AC_SUBST(LT_RELEASE)
 AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)
 AC_SUBST(LT_AGE)
+AC_SUBST(LT_EXTRA)
 
 dnl Detect the canonical build and host environments
 dnl AC_CANONICAL_HOST
@@ -66,6 +68,15 @@ case "$host" in
             BASE_CFLAGS="$BASE_CFLAGS -mno-cygwin"
             BASE_LDFLAGS="-mno-cygwin"
         fi
+        ;;
+    *-*-os2*)
+        # disable static builds on os/2
+        enable_static=no
+        # -DBUILD_SDL is needed for DECLSPEC
+        BASE_CFLAGS="-DBUILD_SDL"
+        BASE_LDFLAGS=""
+        # OS/2 does not support a DLL name longer than 8 characters.
+        LT_EXTRA="-os2dllname SDL2mix"
         ;;
     *)
         BASE_CFLAGS="-D_GNU_SOURCE=1"
@@ -128,6 +139,9 @@ case "$host" in
                 ac_default_prefix=$BUILD_PREFIX
             fi
         fi
+        ;;
+    *-*-os2*)
+        EXE=".exe"
         ;;
     *)
         EXE=""
