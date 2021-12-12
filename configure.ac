@@ -48,8 +48,10 @@ dnl AC_CANONICAL_HOST
 
 dnl Check for tools
 AC_PROG_CC
+AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
+AC_PROG_RANLIB
 LT_PROG_RC
 
 dnl Set up the compiler and linker flags
