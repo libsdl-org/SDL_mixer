@@ -1279,7 +1279,7 @@ void Mix_Pause(int which)
             }
         }
     } else if (which < num_channels) {
-        if (Mix_Playing((which)) {
+        if (Mix_Playing(which)) {
             mix_channel[which].paused = sdl_ticks;
         }
     }
