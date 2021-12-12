@@ -650,7 +650,7 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
     }
     if (!SDL_RWread(wave->src, data, chunk_length, 1)) {
         Mix_SetError("Couldn't read %d bytes from WAV file", chunk_length);
-        return SDL_FALSE;
+        goto done;
     }
     format = (WaveFMT *)data;
 
@@ -785,6 +785,7 @@ static SDL_bool ParseSMPL(WAV_Music *wave, Uint32 chunk_length)
     }
     if (!SDL_RWread(wave->src, data, chunk_length, 1)) {
         Mix_SetError("Couldn't read %d bytes from WAV file", chunk_length);
+        SDL_free(data);
         return SDL_FALSE;
     }
     chunk = (SamplerChunk *)data;
@@ -835,6 +836,7 @@ static SDL_bool ParseLIST(WAV_Music *wave, Uint32 chunk_length)
 
     if (!SDL_RWread(wave->src, data, chunk_length, 1)) {
         Mix_SetError("Couldn't read %d bytes from WAV file", chunk_length);
+        SDL_free(data);
         return SDL_FALSE;
     }
 
