@@ -11129,6 +11129,7 @@ case "$host" in
         # We build SDL on cygwin without the UNIX emulation layer
         BASE_CFLAGS="-I/usr/include/mingw"
         BASE_LDFLAGS=""
+        have_no_cygwin=no
         { $as_echo "$as_me:${as_lineno-$LINENO}: checking for GCC -mno-cygwin option" >&5
 $as_echo_n "checking for GCC -mno-cygwin option... " >&6; }
         save_CFLAGS="$CFLAGS"
@@ -11146,8 +11147,6 @@ main ()
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
   have_no_cygwin=yes
-else
-  have_no_cygwin=no
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: $have_no_cygwin" >&5
@@ -11293,15 +11292,12 @@ int
 main ()
 {
 
-
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
-
-    have_gcc_mmd_mt=yes
-
+  have_gcc_mmd_mt=yes
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: $have_gcc_mmd_mt" >&5
@@ -11359,15 +11355,12 @@ int
 main ()
 {
 
-
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
-
-    have_gcc_fvisibility=yes
-
+  have_gcc_fvisibility=yes
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: $have_gcc_fvisibility" >&5
@@ -13045,15 +13038,12 @@ int
 main ()
 {
 
-
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
-
-    have_libmad=yes
-
+  have_libmad=yes
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: $have_libmad" >&5
