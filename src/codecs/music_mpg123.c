@@ -62,7 +62,11 @@ typedef struct {
 } mpg123_loader;
 
 static mpg123_loader mpg123 = {
-    0, NULL
+    0, NULL,
+    NULL, NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, NULL, NULL,
+    NULL, NULL
 };
 
 #ifdef MPG123_DYNAMIC
