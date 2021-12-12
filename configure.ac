@@ -363,7 +363,7 @@ if test x$enable_music_mod = xyes -a x$enable_music_mod_mikmod = xyes; then
         LIBS="$LIBS `$LIBMIKMOD_CONFIG --libs`"
         have_libmikmod=yes
         AC_MSG_CHECKING([for libmikmod - version >= $libmikmod_ver])
-        AC_TRY_RUN([
+        AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include "mikmod.h"
 #include "stdio.h"
 
@@ -377,7 +377,7 @@ int main(int argc, char **argv)
   printf("no\n*** libmikmod is older than %d.%d.%d, not using.\n",maj,min,rev);
   return 1;
 }
-], [], [have_libmikmod=no], [echo $ac_n "cross compiling; assumed OK... $ac_c"])
+]])],[],[have_libmikmod=no],[echo $ac_n "cross compiling; assumed OK... $ac_c"])
     fi
 
     if test x$have_libmikmod = xyes; then
