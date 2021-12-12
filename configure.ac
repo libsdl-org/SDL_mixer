@@ -297,7 +297,7 @@ AC_ARG_ENABLE([music-mod-xmp],
 [AS_HELP_STRING([--enable-music-mod-xmp], [enable MOD music via libxmp [default=no]])],
               [], [enable_music_mod_xmp=no])
 AC_ARG_ENABLE([music-mod-xmp-lite],
-[AC_HELP_STRING([--enable-music-mod-xmp-lite], [use libxmp-lite instead of libxmp [default=no]])],
+[AS_HELP_STRING([--enable-music-mod-xmp-lite], [use libxmp-lite instead of libxmp [default=no]])],
               [], [enable_music_mod_xmp_lite=no])
 AC_ARG_ENABLE([music-mod-xmp-shared],
 [AS_HELP_STRING([--enable-music-mod-xmp-shared], [dynamically load xmp library [default=yes]])],
