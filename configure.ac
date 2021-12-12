@@ -61,7 +61,7 @@ case "$host" in
         AC_MSG_CHECKING(for GCC -mno-cygwin option)
         save_CFLAGS="$CFLAGS"
         CFLAGS="$save_CFLAGS -mno-cygwin"
-        AC_TRY_COMPILE([],[],[have_no_cygwin=yes],[have_no_cygwin=no])
+        AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[have_no_cygwin=yes],[have_no_cygwin=no])
         AC_MSG_RESULT($have_no_cygwin)
         CFLAGS="$save_CFLAGS"
         if test x$have_no_cygwin = xyes; then
@@ -111,14 +111,14 @@ AC_ARG_ENABLE(dependency-tracking,
 if test x$enable_dependency_tracking = xyes; then
     have_gcc_mmd_mt=no
     AC_MSG_CHECKING(for GCC -MMD -MT option)
-    AC_TRY_COMPILE([
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
     #if !defined(__GNUC__) || __GNUC__ < 3
     #error Dependency tracking requires GCC 3.0 or newer
     #endif
-    ],[
-    ],[
+    ]], [[
+    ]])],[
     have_gcc_mmd_mt=yes
-    ])
+    ],[])
     AC_MSG_RESULT($have_gcc_mmd_mt)
 
     if test x$have_gcc_mmd_mt = xyes; then
@@ -164,14 +164,14 @@ CheckVisibilityHidden()
     visibility_CFLAGS="-fvisibility=hidden"
     save_CFLAGS="$CFLAGS"
     CFLAGS="$save_CFLAGS $visibility_CFLAGS -Werror"
-    AC_TRY_COMPILE([
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
     #if !defined(__GNUC__) || __GNUC__ < 4
     #error SDL only uses visibility attributes in GCC 4 or newer
     #endif
-    ],[
-    ],[
+    ]], [[
+    ]])],[
     have_gcc_fvisibility=yes
-    ])
+    ],[])
     AC_MSG_RESULT($have_gcc_fvisibility)
     CFLAGS="$save_CFLAGS"
 
@@ -597,15 +597,15 @@ if test x$enable_music_flac = xyes; then
         LIBS_SAVED="$LIBS"
         LIBS="-lFLAC"
         AC_MSG_CHECKING([for libflac so-name version >= $libflac_ver])
-        AC_TRY_COMPILE([
+        AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include "FLAC/export.h"
 #include "stdio.h"
-],[
+]], [[
 #if defined(FLAC_API_VERSION_CURRENT) && (FLAC_API_VERSION_CURRENT >= $libflac_ver)
 #else
 #error "old-flac"
 #endif
-], have_flac_ver=yes, have_flac_ver=no)
+]])],[have_flac_ver=yes],[have_flac_ver=no])
         LIBS="$LIBS_SAVED"
         AC_MSG_RESULT($have_flac_ver)
     fi
@@ -655,12 +655,12 @@ AC_ARG_ENABLE(music-mp3-mad-gpl-dithering,
 if test x$enable_music_mp3 = xyes -a x$enable_music_mp3_mad_gpl = xyes; then
     AC_MSG_CHECKING(for libmad headers)
     have_libmad=no
-    AC_TRY_COMPILE([
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
      #include "mad.h"
-    ],[
-    ],[
+    ]], [[
+    ]])],[
     have_libmad=yes
-    ])
+    ],[])
     AC_MSG_RESULT($have_libmad)
     if test x$have_libmad = xyes; then
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MP3_MAD"
