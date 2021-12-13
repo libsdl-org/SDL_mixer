@@ -196,7 +196,7 @@ static void *WAV_CreateFromRW(SDL_RWops *src, int freesrc)
         Mix_SetError("Unknown WAVE format");
     }
     if (!loaded) {
-        SDL_free(music);
+        WAV_Delete(music);
         return NULL;
     }
     music->buffer = (Uint8*)SDL_malloc(music->spec.size);
