@@ -1548,14 +1548,13 @@ static void SDLCALL _Eff_position_f32sys_c6(int chan, void *stream, int len, voi
 
 static void init_position_args(position_args *args)
 {
-    SDL_memset(args, '\0', sizeof (position_args));
     args->in_use = 0;
     args->room_angle = 0;
     args->left_u8 = args->right_u8 = args->distance_u8 = 255;
     args->left_f  = args->right_f  = args->distance_f  = 1.0f;
     args->left_rear_u8 = args->right_rear_u8 = args->center_u8 = args->lfe_u8 = 255;
     args->left_rear_f = args->right_rear_f = args->center_f = args->lfe_f = 1.0f;
-    Mix_QuerySpec(NULL, NULL, (int *) &args->channels);
+    Mix_QuerySpec(NULL, NULL, &args->channels);
 }
 
 static position_args *get_position_arg(int channel)
