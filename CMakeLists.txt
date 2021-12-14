@@ -19,8 +19,9 @@ option(SUPPORT_MID_TIMIDITY "Support loading MIDI music via TiMidity" OFF)
 
 option(BUILD_SHARED_LIBS "Enable shared library" ON)
 
-find_package(SDL2 REQUIRED)
-include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_INCLUDE_DIR})
+if (NOT ANDROID AND NOT (TARGET SDL2 OR TARGET SDL2-static))
+	find_package(SDL2 REQUIRED)
+endif()
 
 include_directories(include src src/codecs)
 
@@ -78,4 +79,4 @@ if (SUPPORT_MID_TIMIDITY)
 endif()
 
 target_include_directories(SDL2_mixer PUBLIC include)
-target_link_libraries(SDL2_mixer PRIVATE ${SDL2_LIBRARIES} ${SDL2_LIBRARY})
+target_link_libraries(SDL2_mixer PRIVATE SDL2::SDL2)
