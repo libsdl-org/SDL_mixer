@@ -1317,13 +1317,13 @@ int Mix_Paused(int which)
         int status = 0;
         int i;
         for(i=0; i < num_channels; ++i) {
-            if (mix_channel[i].paused) {
+            if (Mix_Playing(i) && mix_channel[i].paused) {
                 ++ status;
             }
         }
         return(status);
     } else if (which < num_channels) {
-        return(mix_channel[which].paused != 0);
+        return(Mix_Playing(which) && mix_channel[which].paused != 0);
     } else {
         return(0);
     }
