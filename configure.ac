@@ -153,11 +153,16 @@ dnl set this to use on systems that use lib64 instead of lib
 base_libdir=`echo \${libdir} | sed 's/.*\/\(.*\)/\1/; q'`
 
 dnl See if GCC's -fvisibility=hidden is supported (gcc4 and later, usually).
-dnl  Details of this flag are here: http://gcc.gnu.org/wiki/Visibility
 CheckVisibilityHidden()
 {
     AC_MSG_CHECKING(for GCC -fvisibility=hidden option)
     have_gcc_fvisibility=no
+    case "$host" in
+    *-*-cygwin* | *-*-mingw* | *-*-os2*)
+        AC_MSG_RESULT([ignored for $host_os])
+        return
+        ;;
+    esac
 
     visibility_CFLAGS="-fvisibility=hidden"
     save_CFLAGS="$CFLAGS"
@@ -174,7 +179,6 @@ CheckVisibilityHidden()
         EXTRA_CFLAGS="$EXTRA_CFLAGS $visibility_CFLAGS"
     fi
 }
-
 
 dnl Function to find a library in the compiler search path
 find_lib()
@@ -205,6 +209,9 @@ AM_PATH_SDL2($SDL_VERSION,
 EXTRA_CFLAGS="$EXTRA_CFLAGS $SDL_CFLAGS"
 EXTRA_LDFLAGS="$EXTRA_LDFLAGS $SDL_LIBS"
 
+dnl check for GCC visibility attributes
+CheckVisibilityHidden
+
 dnl Check for math library
 AC_CHECK_LIB(m, pow, [LIBM="-lm"])
 
@@ -212,8 +219,6 @@ AC_CHECK_HEADERS([signal.h], [EXTRA_CFLAGS="$EXTRA_CFLAGS -DHAVE_SIGNAL_H"])
 AC_CHECK_FUNCS(setbuf, [EXTRA_CFLAGS="$EXTRA_CFLAGS -DHAVE_SETBUF"])
 
 dnl Check command-line options
-
-CheckVisibilityHidden
 
 AC_ARG_ENABLE([music-cmd],
 [AS_HELP_STRING([--enable-music-cmd], [support an external music player [default=yes]])],

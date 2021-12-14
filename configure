@@ -11340,6 +11340,13 @@ CheckVisibilityHidden()
     { $as_echo "$as_me:${as_lineno-$LINENO}: checking for GCC -fvisibility=hidden option" >&5
 $as_echo_n "checking for GCC -fvisibility=hidden option... " >&6; }
     have_gcc_fvisibility=no
+    case "$host" in
+    *-*-cygwin* | *-*-mingw* | *-*-os2*)
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: ignored for $host_os" >&5
+$as_echo "ignored for $host_os" >&6; }
+        return
+        ;;
+    esac
 
     visibility_CFLAGS="-fvisibility=hidden"
     save_CFLAGS="$CFLAGS"
@@ -11371,7 +11378,6 @@ $as_echo "$have_gcc_fvisibility" >&6; }
         EXTRA_CFLAGS="$EXTRA_CFLAGS $visibility_CFLAGS"
     fi
 }
-
 
 find_lib()
 {
@@ -11835,6 +11841,8 @@ rm -f core conftest.err conftest.$ac_objext \
 EXTRA_CFLAGS="$EXTRA_CFLAGS $SDL_CFLAGS"
 EXTRA_LDFLAGS="$EXTRA_LDFLAGS $SDL_LIBS"
 
+CheckVisibilityHidden
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for pow in -lm" >&5
 $as_echo_n "checking for pow in -lm... " >&6; }
 if ${ac_cv_lib_m_pow+:} false; then :
@@ -11900,8 +11908,6 @@ fi
 done
 
 
-
-CheckVisibilityHidden
 
 # Check whether --enable-music-cmd was given.
 if test "${enable_music_cmd+set}" = set; then :
