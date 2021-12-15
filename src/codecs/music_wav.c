@@ -91,9 +91,10 @@ typedef struct {
     Uint32  byterate;       /* Average bytes per second */
     Uint16  blockalign;     /* Bytes per sample block */
     Uint16  bitspersample;      /* One of 8, 12, 16, or 4 for ADPCM */
-} WaveFMTHeader;
+} WaveFMT;
 
 typedef struct {
+    WaveFMT format;
     Uint16  cbSize;
     union {
         Uint16 validbitspersample; /* bits of precision */
@@ -106,12 +107,7 @@ typedef struct {
     Uint16 sub_data2;
     Uint16 sub_data3;
     Uint8  sub_data[8];
-} WaveFMTex;
-
-typedef struct {
-    WaveFMTHeader format;
-    WaveFMTex formatEx;
-} _WaveFMT;
+} WaveFMTEx;
 
 typedef struct {
     Uint32 identifier;
@@ -639,7 +635,7 @@ static void WAV_Delete(void *context)
 static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
 {
     SDL_AudioSpec *spec = &wave->spec;
-    _WaveFMT fmt;
+    WaveFMTEx fmt;
     int bits;
 
     if (chunk_length < sizeof(fmt.format)) {
@@ -665,7 +661,7 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
             Mix_SetError("Wave format chunk too small");
             return SDL_FALSE;
         }
-        wave->encoding = (Uint16)SDL_SwapLE32(fmt.formatEx.subencoding);
+        wave->encoding = (Uint16)SDL_SwapLE32(fmt.subencoding);
     }
 
     /* Decode the audio data format */
