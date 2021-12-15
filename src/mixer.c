@@ -636,7 +636,7 @@ static SDL_AudioSpec *Mix_LoadMusic_RW(SDL_RWops *src, int freesrc, SDL_AudioSpe
     Mix_UnlockAudio();
 
     if (count > 0) {
-        *audio_len = (count - 1) * fragment_size + fragment->size;
+        *audio_len = (count - 1) * fragment_size + last->size;
         *audio_buf = (Uint8 *)SDL_malloc(*audio_len);
         if (*audio_buf) {
             Uint8 *dst = *audio_buf;
