@@ -687,7 +687,7 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
         default:
             /* but NOT this */
             Mix_SetError("Unknown WAVE data format");
-            goto done;
+            return SDL_FALSE;
     }
     spec->freq = (int)SDL_SwapLE32(fmt.format.frequency);
     bits = (int) SDL_SwapLE16(fmt.format.bitspersample);
