@@ -636,6 +636,7 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
 {
     SDL_AudioSpec *spec = &wave->spec;
     WaveFMTEx fmt;
+    size_t size;
     int bits;
 
     if (chunk_length < sizeof(fmt.format)) {
@@ -643,12 +644,12 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
         return SDL_FALSE;
     }
 
-    bits = chunk_length >= sizeof(fmt) ? sizeof(fmt) : sizeof(fmt.format);
-    if (!SDL_RWread(wave->src, &fmt, bits, 1)) {
+    size = (chunk_length >= sizeof(fmt)) ? sizeof(fmt) : sizeof(fmt.format);
+    if (!SDL_RWread(wave->src, &fmt, size, 1)) {
         Mix_SetError("Couldn't read %d bytes from WAV file", chunk_length);
         return SDL_FALSE;
     }
-    chunk_length -= bits;
+    chunk_length -= size;
     if (chunk_length != 0 && !SDL_RWseek(wave->src, chunk_length, RW_SEEK_CUR)) {
         Mix_SetError("Couldn't read %d bytes from WAV file", chunk_length);
         return SDL_FALSE;
@@ -657,7 +658,7 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
     wave->encoding = SDL_SwapLE16(fmt.format.encoding);
 
     if (wave->encoding == EXT_CODE) {
-        if (bits < sizeof(fmt)) {
+        if (size < sizeof(fmt)) {
             Mix_SetError("Wave format chunk too small");
             return SDL_FALSE;
         }
