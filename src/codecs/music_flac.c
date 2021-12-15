@@ -69,9 +69,7 @@ typedef struct {
                         FLAC__MetadataType type);
 } flac_loader;
 
-static flac_loader flac = {
-    0, NULL
-};
+static flac_loader flac;
 
 #ifdef FLAC_DYNAMIC
 #define FUNCTION_LOADER(FUNC, SIG) \

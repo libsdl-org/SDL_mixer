@@ -56,9 +56,7 @@ typedef struct {
     void (*xmp_free_context)(xmp_context);
 } xmp_loader;
 
-static xmp_loader libxmp = {
-    0, NULL
-};
+static xmp_loader libxmp;
 
 #ifdef XMP_DYNAMIC
 #define FUNCTION_LOADER(FUNC, SIG) \

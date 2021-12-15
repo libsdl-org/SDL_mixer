@@ -62,9 +62,7 @@ typedef struct {
     fluid_synth_t* (*new_fluid_synth)(fluid_settings_t*);
 } fluidsynth_loader;
 
-static fluidsynth_loader fluidsynth = {
-    0, NULL
-};
+static fluidsynth_loader fluidsynth;
 
 #ifdef FLUIDSYNTH_DYNAMIC
 #define FUNCTION_LOADER(FUNC, SIG) \
