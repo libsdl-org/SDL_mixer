@@ -69,9 +69,7 @@ typedef struct {
     UBYTE* md_volume;
 } mikmod_loader;
 
-static mikmod_loader mikmod = {
-    0, NULL
-};
+static mikmod_loader mikmod;
 
 #ifdef MIKMOD_DYNAMIC
 #define FUNCTION_LOADER(FUNC, SIG) \

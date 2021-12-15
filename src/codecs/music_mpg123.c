@@ -61,13 +61,7 @@ typedef struct {
     const char* (*mpg123_strerror)(mpg123_handle *mh);
 } mpg123_loader;
 
-static mpg123_loader mpg123 = {
-    0, NULL,
-    NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL
-};
+static mpg123_loader mpg123;
 
 #ifdef MPG123_DYNAMIC
 #define FUNCTION_LOADER(FUNC, SIG) \

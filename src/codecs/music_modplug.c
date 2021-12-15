@@ -47,10 +47,7 @@ typedef struct {
     const char* (*ModPlug_GetName)(ModPlugFile* file);
 } modplug_loader;
 
-static modplug_loader modplug = {
-    0, NULL
-};
-
+static modplug_loader modplug;
 
 static ModPlug_Settings settings;
 

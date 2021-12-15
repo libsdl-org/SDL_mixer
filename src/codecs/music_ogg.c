@@ -61,12 +61,7 @@ typedef struct {
     ogg_int64_t (*ov_pcm_tell)(OggVorbis_File *vf);
 } vorbis_loader;
 
-static vorbis_loader vorbis = {
-    0, NULL,
-    NULL, NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, NULL,
-    NULL
-};
+static vorbis_loader vorbis;
 
 #ifdef OGG_DYNAMIC
 #define FUNCTION_LOADER(FUNC, SIG) \
