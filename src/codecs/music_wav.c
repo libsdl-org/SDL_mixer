@@ -640,7 +640,6 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
 {
     SDL_AudioSpec *spec = &wave->spec;
     _WaveFMT fmt;
-    Uint8 *data;
     int bits;
 
     if (chunk_length < sizeof(fmt.format)) {
