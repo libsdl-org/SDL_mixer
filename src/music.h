@@ -18,10 +18,10 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_mixer.h"
-
 #ifndef MUSIC_H_
 #define MUSIC_H_
+
+#include "SDL_mixer.h"
 
 /* Supported music APIs, in order of preference */
 
