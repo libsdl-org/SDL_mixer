@@ -219,11 +219,9 @@ void *XMP_CreateFromRW(SDL_RWops *src, int freesrc)
 
     meta_tags_init(&music->tags);
     libxmp.xmp_get_module_info(music->ctx, &music->mi);
-
     if (music->mi.mod->name[0]) {
         meta_tags_set(&music->tags, MIX_META_TITLE, music->mi.mod->name);
     }
-
     if (music->mi.comment) {
         meta_tags_set(&music->tags, MIX_META_COPYRIGHT, music->mi.comment);
     }
