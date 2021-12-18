@@ -204,6 +204,7 @@ static void *WAV_CreateFromRW(SDL_RWops *src, int freesrc)
     }
     music->buffer = (Uint8*)SDL_malloc(music->spec.size);
     if (!music->buffer) {
+        SDL_OutOfMemory();
         WAV_Delete(music);
         return NULL;
     }
