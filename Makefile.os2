@@ -24,7 +24,7 @@ USE_TREMOR=no
 USE_FLAC=yes
 # opus music support
 USE_OPUS=yes
-# mp3 music support (using libmad)
+# mp3 music support (using libmad - Note: GPL license!)
 USE_LIBMAD=no
 # mp3 music support (using mpg123)
 USE_MPG123=yes
@@ -149,7 +149,7 @@ $(LNKFILE):
   @%append $@ NAME $(LIBNAME)
   @for %i in ($(OBJS)) do @%append $@ FILE %i
   @%append $@ OPTION QUIET
-  @%append $@ OPTION DESCRIPTION '@$#libsdl org:$(VERSION)$#@Simple DirectMedia Layer Mixer'
+  @%append $@ OPTION DESCRIPTION '@$#libsdl org:$(VERSION)$#@Simple DirectMedia Layer Mixer Library'
   @%append $@ LIBPATH $(DEPS_LIB)
   @for %i in ($(LIBS)) do @%append $@ LIB %i
   @%append $@ OPTION MAP=$*
