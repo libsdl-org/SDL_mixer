@@ -65,7 +65,7 @@ static void *MusicCMD_CreateFromFile(const char *file)
     /* Allocate and fill the music structure */
     music = (MusicCMD *)SDL_calloc(1, sizeof *music);
     if (music == NULL) {
-        Mix_SetError("Out of memory");
+        Mix_OutOfMemory();
         return NULL;
     }
     music->file = SDL_strdup(file);
