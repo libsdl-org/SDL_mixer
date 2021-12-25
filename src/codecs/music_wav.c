@@ -243,7 +243,7 @@ static int WAV_Play(void *context, int play_count)
         loop->current_play_count = loop->initial_play_count;
     }
     music->play_count = play_count;
-    if (SDL_RWseek(music->src, music->start, RW_SEEK_SET) == -1) {
+    if (SDL_RWseek(music->src, music->start, RW_SEEK_SET) < 0) {
         return -1;
     }
     return 0;
@@ -547,7 +547,7 @@ static int WAV_GetSome(void *context, void *data, int bytes, SDL_bool *done)
             if (loop->current_play_count > 0) {
                 --loop->current_play_count;
             }
-            if (SDL_RWseek(music->src, loop_start, RW_SEEK_SET) == -1)
+            if (SDL_RWseek(music->src, loop_start, RW_SEEK_SET) < 0)
                 return -1;
             looped = SDL_TRUE;
         }
@@ -587,7 +587,7 @@ static int WAV_Seek(void *context, double position)
     destpos -= dest_offset % sample_size;
     if (destpos > music->stop)
         return -1;
-    if (SDL_RWseek(music->src, destpos, RW_SEEK_SET) == -1)
+    if (SDL_RWseek(music->src, destpos, RW_SEEK_SET) < 0)
         return -1;
     return 0;
 }
@@ -653,7 +653,7 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
         return SDL_FALSE;
     }
     chunk_length -= size;
-    if (chunk_length != 0 && SDL_RWseek(wave->src, chunk_length, RW_SEEK_CUR) == -1) {
+    if (chunk_length != 0 && SDL_RWseek(wave->src, chunk_length, RW_SEEK_CUR) < 0) {
         Mix_SetError("Couldn't read %d bytes from WAV file", chunk_length);
         return SDL_FALSE;
     }
@@ -750,7 +750,7 @@ static SDL_bool ParseDATA(WAV_Music *wave, Uint32 chunk_length)
 {
     wave->start = SDL_RWtell(wave->src);
     wave->stop = wave->start + chunk_length;
-    if (SDL_RWseek(wave->src, chunk_length, RW_SEEK_CUR) == -1)
+    if (SDL_RWseek(wave->src, chunk_length, RW_SEEK_CUR) < 0)
         return SDL_FALSE;
     return SDL_TRUE;
 }
@@ -919,7 +919,7 @@ static SDL_bool LoadWAVMusic(WAV_Music *wave)
                 return SDL_FALSE;
             break;
         default:
-            if (SDL_RWseek(src, chunk_length, RW_SEEK_CUR) == -1)
+            if (SDL_RWseek(src, chunk_length, RW_SEEK_CUR) < 0)
                 return SDL_FALSE;
             break;
         }
@@ -1076,7 +1076,7 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
             /* Unknown/unsupported chunk: we just skip over */
             break;
         }
-    } while (next_chunk < file_length && SDL_RWseek(src, next_chunk, RW_SEEK_SET) != -1);
+    } while (next_chunk < file_length && SDL_RWseek(src, next_chunk, RW_SEEK_SET) >= 0);
 
     if (!found_SSND) {
         Mix_SetError("Bad AIFF/AIFF-C file (no SSND chunk)");
