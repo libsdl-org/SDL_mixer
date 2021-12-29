@@ -10,7 +10,7 @@ diff -ruN /dev/null libmodplug-0.8.9.0/Android.mk
 +
 +LOCAL_C_INCLUDES := $(LOCAL_PATH)/src $(LOCAL_PATH)/src/libmodplug
 +
-+LOCAL_CFLAGS += -DHAVE_SETENV -DHAVE_SINF -DHAVE_STDINT_H
++LOCAL_CFLAGS += -DHAVE_SETENV -DHAVE_SINF -DHAVE_STDINT_H -DMMCMP_SUPPORT
 +
 +LOCAL_SRC_FILES += \
 +    src/fastmix.cpp \

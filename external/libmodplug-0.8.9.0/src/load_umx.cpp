@@ -5,7 +5,7 @@
  * Written by O. Sezer <sezero@users.sourceforge.net>
  * UPKG parsing partially based on Unreal Media Ripper (UMR) v0.3
  * by Andy Ward <wardwh@swbell.net>, with additional updates
- * by O. Sezer - see git repo at https://github.com/sezero/umr/
+ * by O. Sezer - see git repo at https://github.com/sezero/umr.git
  * Retrieves the offset, size and object type directly from umx.
 */
 
@@ -183,6 +183,16 @@ static int read_typname(const BYTE *membase, LONG memlen,
 	return 0;
 }
 
+static void umx_strupr(char *str)
+{
+	while (*str) {
+		if (*str >= 'a' && *str <= 'z') {
+		    *str -= ('a' - 'A');
+		}
+		str++;
+	}
+}
+
 static int probe_umx   (const BYTE *membase, LONG memlen,
 			const struct upkg_hdr *hdr,
 			LONG *ofs, LONG *objsize)
@@ -224,8 +234,9 @@ static int probe_umx   (const BYTE *membase, LONG memlen,
 	if (s <= 0 || s > memlen - pos) return -1;
 
 	if (read_typname(membase, memlen, hdr, t, buf) < 0) return -1;
+	umx_strupr(buf);
 	for (i = 0; mustype[i] != NULL; i++) {
-		if (!strcasecmp(buf, mustype[i])) {
+		if (!strcmp(buf, mustype[i])) {
 			t = i;
 			break;
 		}
@@ -265,7 +276,7 @@ static int probe_header (void *header)
 		return -1;
 	}
 
-#if 0
+#if 1 /* no need being overzealous */
 	return 0;
 #else
 	switch (hdr->file_version) {
@@ -283,7 +294,7 @@ static int probe_header (void *header)
 	}
 
 	return -1;/* Unknown upkg version for an UMX */
-#endif
+#endif /* #if 0  */
 }
 
 static int process_upkg (const BYTE *membase, LONG memlen,

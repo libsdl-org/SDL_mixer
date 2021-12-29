@@ -125,8 +125,8 @@ fi
 
 AC_ARG_ENABLE([mmcmp],
     [AS_HELP_STRING([--enable-mmcmp],
-                    [compile with mmcmp and pp20 decompression support [[default=no]]])],,
-    [enable_mmcmp=no])
+                    [compile with mmcmp and pp20 decompression support [[default=yes]]])],,
+    [enable_mmcmp=yes])
 if test x$enable_mmcmp = xyes; then
     AC_DEFINE(MMCMP_SUPPORT, 1, [Enable mmcmp and pp20 decompression support.])
 fi
