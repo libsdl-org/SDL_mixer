@@ -1,4 +1,7 @@
 2.0.5:
+Nate Houghton - Fri Dec 31 22:33:21 2021
+ * Update Mix_Init() return value to match documentation, including
+   MIXER_INIT_* flags for already-initialized modules
 Ozkan Sezer - Sun Feb 07 03:10:10 2021
  * fixed distorted MIDI playback with FluidSynth if the sample rate
    is out of library's limits
