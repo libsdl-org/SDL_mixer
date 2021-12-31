@@ -164,9 +164,53 @@ const SDL_version *Mix_Linked_Version(void)
     return(&linked_version);
 }
 
+/*
+ * Returns a bitmap of already loaded modules (MIX_INIT_* flags).
+ *
+ * Note that functions other than Mix_Init() may cause a module to get loaded
+ * (hence the looping over the interfaces instead of maintaining a set of flags
+ * just in Mix_Init() and Mix_Quit()).
+ */
+static int get_loaded_mix_init_flags(void)
+{
+    int i;
+    int loaded_init_flags = 0;
+
+    for (i = 0; i < get_num_music_interfaces(); ++i) {
+        Mix_MusicInterface *interface;
+
+        interface = get_music_interface(i);
+        if (interface->loaded) {
+            switch (interface->type) {
+            case MUS_FLAC:
+                loaded_init_flags |= MIX_INIT_FLAC;
+                break;
+            case MUS_MOD:
+                loaded_init_flags |= MIX_INIT_MOD;
+                break;
+            case MUS_MP3:
+                loaded_init_flags |= MIX_INIT_MP3;
+                break;
+            case MUS_OGG:
+                loaded_init_flags |= MIX_INIT_OGG;
+                break;
+            case MUS_MID:
+                loaded_init_flags |= MIX_INIT_MID;
+                break;
+            case MUS_OPUS:
+                loaded_init_flags |= MIX_INIT_OPUS;
+                break;
+            }
+        }
+    }
+
+    return loaded_init_flags;
+}
+
 int Mix_Init(int flags)
 {
     int result = 0;
+    int already_loaded = get_loaded_mix_init_flags();
 
     if (flags & MIX_INIT_FLAC) {
         if (load_music_type(MUS_FLAC)) {
@@ -216,6 +260,8 @@ int Mix_Init(int flags)
             Mix_SetError("MIDI support not available");
         }
     }
+    result |= already_loaded;
+
     return result;
 }
 
