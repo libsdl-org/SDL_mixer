@@ -9,4 +9,5 @@ Version: @VERSION@
 Requires: sdl >= @SDL_VERSION@
 Libs: -L${libdir} -lSDL_mixer
 Cflags: -I${includedir}/SDL
-
+Requires.private: @PC_REQUIRES@
+Libs.private: @PC_LIBS@
