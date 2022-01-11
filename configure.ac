@@ -380,8 +380,13 @@ if test x$enable_music_midi = xyes; then
 [AS_HELP_STRING([--enable-music-fluidsynth-shared], [dynamically load FluidSynth support [default=yes]])],
                   [], [enable_music_fluidsynth_shared=yes])
     if test x$enable_music_fluidsynth_midi = xyes; then
-        AC_CHECK_HEADER([fluidsynth.h], [have_fluidsynth_hdr=yes])
-        AC_CHECK_LIB([fluidsynth], [fluid_player_add_mem], [have_fluidsynth_lib=yes])
+        PKG_CHECK_MODULES([FLUIDSYNTH], [fluidsynth], [dnl
+                have_fluidsynth_hdr=yes
+                have_fluidsynth_lib=yes
+            ], [dnl
+                AC_CHECK_HEADER([fluidsynth.h], [have_fluidsynth_hdr=yes])
+                AC_CHECK_LIB([fluidsynth], [fluid_player_add_mem], [have_fluidsynth_lib=yes;FLUIDSYNTH_LIBS="-lfluidsynth"])
+            ])
         if test x$have_fluidsynth_hdr = xyes -a x$have_fluidsynth_lib = xyes; then
             case "$host" in
                 *-*-darwin*)
@@ -401,12 +406,12 @@ if test x$enable_music_midi = xyes; then
                     ;;
             esac
             SOURCES="$SOURCES $srcdir/dynamic_fluidsynth.c $srcdir/music_fluidsynth.c"
-            EXTRA_CFLAGS="$EXTRA_CFLAGS -DUSE_FLUIDSYNTH_MIDI"
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DUSE_FLUIDSYNTH_MIDI $FLUIDSYNTH_CFLAGS"
             if test x$enable_music_fluidsynth_shared = xyes && test x$fluidsynth_lib != x; then
                 echo "-- dynamic libfluidsyth -> $fluidsynth_lib"
                 EXTRA_CFLAGS="$EXTRA_CFLAGS -DFLUIDSYNTH_DYNAMIC=\\\"$fluidsynth_lib\\\""
             else
-                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lfluidsynth"
+                EXTRA_LDFLAGS="$EXTRA_LDFLAGS $FLUIDSYNTH_LIBS"
             fi
         else
             AC_MSG_WARN([*** Unable to find FluidSynth library (http://www.fluidsynth.org/)])
@@ -427,8 +432,13 @@ AC_ARG_ENABLE([music-ogg-shared],
 if test x$enable_music_ogg = xyes; then
     LIBS_SAVED="$LIBS"
     if test x$enable_music_ogg_tremor = xyes; then
-        AC_CHECK_HEADER([tremor/ivorbisfile.h], [have_tremor_hdr=yes])
-        AC_CHECK_LIB([vorbisidec], [ov_open_callbacks], [have_tremor_lib=yes], [], [-logg])
+        PKG_CHECK_MODULES([TREMOR], [vorbisidec], [dnl
+                have_tremor_hdr=yes
+                have_tremor_lib=yes
+            ], [dnl
+                AC_CHECK_HEADER([tremor/ivorbisfile.h], [have_tremor_hdr=yes])
+                AC_CHECK_LIB([vorbisidec], [ov_open_callbacks], [have_tremor_lib=yes;TREMOR_LIBS="-lvorbisidec -logg"], [], [-logg])
+            ])
         if test x$have_tremor_hdr = xyes -a x$have_tremor_lib = xyes; then
             case "$host" in
                 *-*-darwin*)
@@ -448,20 +458,25 @@ if test x$enable_music_ogg = xyes; then
                     ;;
             esac
             SOURCES="$SOURCES $srcdir/*_ogg.c"
-            EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_MUSIC -DOGG_USE_TREMOR"
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_MUSIC -DOGG_USE_TREMOR $TREMOR_CFLAGS"
             if test x$enable_music_ogg_shared = xyes && test x$ogg_lib != x; then
                 echo "-- dynamic libvorbisidec -> $ogg_lib"
                 EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_DYNAMIC=\\\"$ogg_lib\\\""
             else
-                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lvorbisidec"
+                EXTRA_LDFLAGS="$EXTRA_LDFLAGS $TREMOR_LIBS"
             fi
         else
             AC_MSG_WARN([*** Unable to find Ogg Vorbis Tremor library (http://www.xiph.org/)])
             AC_MSG_WARN([Ogg Vorbis support disabled])
         fi
     else
-        AC_CHECK_HEADER([vorbis/vorbisfile.h], [have_ogg_hdr=yes])
-        AC_CHECK_LIB([vorbisfile], [ov_open_callbacks], [have_ogg_lib=yes], [], [-lvorbis -logg -lm])
+        PKG_CHECK_MODULES([VORBIS], [vorbisfile], [dnl
+                have_ogg_hdr=yes
+                have_ogg_lib=yes
+            ], [dnl
+                AC_CHECK_HEADER([vorbis/vorbisfile.h], [have_ogg_hdr=yes])
+                AC_CHECK_LIB([vorbisfile], [ov_open_callbacks], [have_ogg_lib=yes;VORBIS_LIBS="-lvorbisfile -lvorbis -logg -lm"], [], [-lvorbis -logg -lm])
+            ])
         if test x$have_ogg_hdr = xyes -a x$have_ogg_lib = xyes; then
             case "$host" in
                 *-*-darwin*)
@@ -478,12 +493,12 @@ if test x$enable_music_ogg = xyes; then
                     ;;
             esac
             SOURCES="$SOURCES $srcdir/*_ogg.c"
-            EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_MUSIC"
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_MUSIC $VORBIS_CFLAGS"
             if test x$enable_music_ogg_shared = xyes && test x$ogg_lib != x; then
                 echo "-- dynamic libvorbisfile -> $ogg_lib"
                 EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_DYNAMIC=\\\"$ogg_lib\\\""
             else
-                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lvorbisfile -lvorbis -logg -lm"
+                EXTRA_LDFLAGS="$EXTRA_LDFLAGS $VORBIS_LIBS"
             fi
         else
             AC_MSG_WARN([*** Unable to find Ogg Vorbis library (http://www.xiph.org/)])
@@ -521,8 +536,13 @@ if test x$enable_music_flac = xyes; then
     fi
 
     if test x$have_flac_ver = xyes; then
-        AC_CHECK_HEADER([FLAC/stream_decoder.h], [have_flac_hdr=yes])
-        AC_CHECK_LIB([FLAC], [FLAC__stream_decoder_new], [have_flac_lib=yes])
+        PKG_CHECK_MODULES([FLAC], [flac], [dnl
+                have_flac_hdr=yes
+                have_flac_lib=yes
+            ], [dnl
+                AC_CHECK_HEADER([FLAC/stream_decoder.h], [have_flac_hdr=yes])
+                AC_CHECK_LIB([FLAC], [FLAC__stream_decoder_new], [have_flac_lib=yes;FLAC_LIBS="-lFLAC"])
+            ])
         if test x$have_flac_hdr = xyes -a x$have_flac_lib = xyes; then    
             case "$host" in
                 *-*-darwin*)
@@ -539,12 +559,12 @@ if test x$enable_music_flac = xyes; then
                     ;;
             esac
             SOURCES="$SOURCES $srcdir/*_flac.c"
-            EXTRA_CFLAGS="$EXTRA_CFLAGS -DFLAC_MUSIC"
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DFLAC_MUSIC $FLAC_CFLAGS"
             if test x$enable_music_flac_shared = xyes && test x$flac_lib != x; then
                 echo "-- dynamic libFLAC -> $flac_lib"
                 EXTRA_CFLAGS="$EXTRA_CFLAGS -DFLAC_DYNAMIC=\\\"$flac_lib\\\""
             else
-                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lFLAC"
+                EXTRA_LDFLAGS="$EXTRA_LDFLAGS $FLAC_LIBS"
             fi
         fi
     else
@@ -564,8 +584,13 @@ AC_ARG_ENABLE([music-mp3-shared],
               [], [enable_music_mp3_shared=yes])
 have_mpg123=no
 if test x$enable_music_mp3 = xyes; then
-    AC_CHECK_HEADER([mpg123.h], [have_mpg123_hdr=yes])
-    AC_CHECK_LIB([mpg123], [mpg123_replace_reader_handle], [have_mpg123_lib=yes])
+    PKG_CHECK_MODULES([MPG123], [libmpg123], [dnl
+            have_mpg123_hdr=yes
+            have_mpg123_lib=yes
+        ], [dnl
+            AC_CHECK_HEADER([mpg123.h], [have_mpg123_hdr=yes])
+            AC_CHECK_LIB([mpg123], [mpg123_replace_reader_handle], [have_mpg123_lib=yes;MPG123_LIBS="-lmpg123"])
+        ])
     if test x$have_mpg123_hdr = xyes -a x$have_mpg123_lib = xyes; then
         have_mpg123=yes
         case "$host" in
@@ -580,12 +605,12 @@ if test x$enable_music_mp3 = xyes; then
                 ;;
         esac
         SOURCES="$SOURCES $srcdir/*_mp3.c $srcdir/*_mpg.c"
-        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMP3_MUSIC"
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMP3_MUSIC $MPG123_CFLAGS"
         if test x$enable_music_mp3_shared = xyes && test x$mpg123_lib != x; then
             echo "-- dynamic libmpg123 -> $mpg123_lib"
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DMPG123_DYNAMIC=\\\"$mpg123_lib\\\""
         else
-            EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lmpg123"
+            EXTRA_LDFLAGS="$EXTRA_LDFLAGS $MPG123_LIBS"
         fi
     else
         AC_MSG_WARN([*** Unable to find mpg123 library (https://www.mpg123.de)])
