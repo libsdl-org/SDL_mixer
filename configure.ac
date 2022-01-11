@@ -296,6 +296,7 @@ int main(int argc, char **argv)
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DMOD_DYNAMIC=\\\"$mikmod_lib\\\""
         else
             EXTRA_LDFLAGS="$EXTRA_LDFLAGS `$LIBMIKMOD_CONFIG --libs`"
+            PC_LIBS="$PC_LIBS `$LIBMIKMOD_CONFIG --libs`"
         fi
     else
         AC_MSG_WARN([*** Unable to find MikMod library (http://mikmod.raphnet.net/)])
@@ -311,6 +312,7 @@ if test x$enable_music_mod_modplug = xyes; then
     PKG_CHECK_MODULES([MODPLUG], [libmodplug >= 0.8.7], [dnl
             have_libmodplug_hdr=yes
             have_libmodplug_lib=yes
+            have_libmodplug_pc=yes
         ], [dnl
             AC_CHECK_HEADER([libmodplug/modplug.h], [have_libmodplug_hdr=yes])
             AC_CHECK_LIB([modplug], [ModPlug_Load], [have_libmodplug_lib=yes;MODPLUG_LIBS="-lmodplug"])
@@ -321,6 +323,11 @@ if test x$enable_music_mod_modplug = xyes; then
         SOURCES="$SOURCES $srcdir/music_modplug.c"
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMODPLUG_MUSIC $MODPLUG_CFLAGS"
         EXTRA_LDFLAGS="$EXTRA_LDFLAGS $MODPLUG_LIBS"
+        if test x$have_libmodplug_pc = xyes; then
+            PC_REQUIRES="$PC_REQUIRES libmodplug"
+        else
+            PC_LIBS="$PC_LIBS $MODPLUG_LIBS"
+        fi
     else
         AC_MSG_WARN([*** Unable to find ModPlug library (http://modplug-xmms.sourceforge.net/)])
     fi
@@ -354,14 +361,17 @@ if test x$enable_music_midi = xyes; then
             *-*-cygwin* | *-*-mingw*)
                 use_music_native_midi=yes
                 EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lwinmm"
+                PC_LIBS="$PC_LIBS -lwinmm"
                 ;;
             *-*-darwin*)
                 use_music_native_midi=yes
                 EXTRA_LDFLAGS="$EXTRA_LDFLAGS -Wl,-framework,AudioToolbox -Wl,-framework,AudioUnit -Wl,-framework,CoreServices"
+                PC_LIBS="$PC_LIBS -Wl,-framework,AudioToolbox -Wl,-framework,AudioUnit -Wl,-framework,CoreServices"
                 ;;
             *-*-haiku*)
                 use_music_native_midi=yes_cpp
                 EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lmidi" 
+                PC_LIBS="$PC_LIBS -lmidi"
                 ;;
         esac
         if test x$use_music_native_midi = xyes; then
@@ -383,6 +393,7 @@ if test x$enable_music_midi = xyes; then
         PKG_CHECK_MODULES([FLUIDSYNTH], [fluidsynth], [dnl
                 have_fluidsynth_hdr=yes
                 have_fluidsynth_lib=yes
+                have_fluidsynth_pc=yes
             ], [dnl
                 AC_CHECK_HEADER([fluidsynth.h], [have_fluidsynth_hdr=yes])
                 AC_CHECK_LIB([fluidsynth], [fluid_player_add_mem], [have_fluidsynth_lib=yes;FLUIDSYNTH_LIBS="-lfluidsynth"])
@@ -412,6 +423,11 @@ if test x$enable_music_midi = xyes; then
                 EXTRA_CFLAGS="$EXTRA_CFLAGS -DFLUIDSYNTH_DYNAMIC=\\\"$fluidsynth_lib\\\""
             else
                 EXTRA_LDFLAGS="$EXTRA_LDFLAGS $FLUIDSYNTH_LIBS"
+                if test x$have_fluidsynth_pc = xyes; then
+                    PC_REQUIRES="$PC_REQUIRES fluidsynth"
+                else
+                    PC_LIBS="$PC_LIBS $FLUIDSYNTH_LIBS"
+                fi
             fi
         else
             AC_MSG_WARN([*** Unable to find FluidSynth library (http://www.fluidsynth.org/)])
@@ -435,6 +451,7 @@ if test x$enable_music_ogg = xyes; then
         PKG_CHECK_MODULES([TREMOR], [vorbisidec], [dnl
                 have_tremor_hdr=yes
                 have_tremor_lib=yes
+                have_tremor_pc=yes
             ], [dnl
                 AC_CHECK_HEADER([tremor/ivorbisfile.h], [have_tremor_hdr=yes])
                 AC_CHECK_LIB([vorbisidec], [ov_open_callbacks], [have_tremor_lib=yes;TREMOR_LIBS="-lvorbisidec -logg"], [], [-logg])
@@ -464,6 +481,11 @@ if test x$enable_music_ogg = xyes; then
                 EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_DYNAMIC=\\\"$ogg_lib\\\""
             else
                 EXTRA_LDFLAGS="$EXTRA_LDFLAGS $TREMOR_LIBS"
+                if test x$have_tremor_pc = xyes; then
+                    PC_REQUIRES="$PC_REQUIRES vorbisidec"
+                else
+                    PC_LIBS="$PC_LIBS $TREMOR_LIBS"
+                fi
             fi
         else
             AC_MSG_WARN([*** Unable to find Ogg Vorbis Tremor library (http://www.xiph.org/)])
@@ -473,6 +495,7 @@ if test x$enable_music_ogg = xyes; then
         PKG_CHECK_MODULES([VORBIS], [vorbisfile], [dnl
                 have_ogg_hdr=yes
                 have_ogg_lib=yes
+                have_ogg_pc=yes
             ], [dnl
                 AC_CHECK_HEADER([vorbis/vorbisfile.h], [have_ogg_hdr=yes])
                 AC_CHECK_LIB([vorbisfile], [ov_open_callbacks], [have_ogg_lib=yes;VORBIS_LIBS="-lvorbisfile -lvorbis -logg -lm"], [], [-lvorbis -logg -lm])
@@ -499,6 +522,11 @@ if test x$enable_music_ogg = xyes; then
                 EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_DYNAMIC=\\\"$ogg_lib\\\""
             else
                 EXTRA_LDFLAGS="$EXTRA_LDFLAGS $VORBIS_LIBS"
+                if test x$have_ogg_pc = xyes; then
+                    PC_REQUIRES="$PC_REQUIRES vorbisfile"
+                else
+                    PC_LIBS="$PC_LIBS $VORBIS_LIBS"
+                fi
             fi
         else
             AC_MSG_WARN([*** Unable to find Ogg Vorbis library (http://www.xiph.org/)])
@@ -539,6 +567,7 @@ if test x$enable_music_flac = xyes; then
         PKG_CHECK_MODULES([FLAC], [flac], [dnl
                 have_flac_hdr=yes
                 have_flac_lib=yes
+                have_flac_pc=yes
             ], [dnl
                 AC_CHECK_HEADER([FLAC/stream_decoder.h], [have_flac_hdr=yes])
                 AC_CHECK_LIB([FLAC], [FLAC__stream_decoder_new], [have_flac_lib=yes;FLAC_LIBS="-lFLAC"])
@@ -565,6 +594,11 @@ if test x$enable_music_flac = xyes; then
                 EXTRA_CFLAGS="$EXTRA_CFLAGS -DFLAC_DYNAMIC=\\\"$flac_lib\\\""
             else
                 EXTRA_LDFLAGS="$EXTRA_LDFLAGS $FLAC_LIBS"
+                if test x$have_flac_pc = xyes; then
+                    PC_REQUIRES="$PC_REQUIRES flac"
+                else
+                    PC_LIBS="$PC_LIBS $FLAC_LIBS"
+                fi
             fi
         fi
     else
@@ -587,6 +621,7 @@ if test x$enable_music_mp3 = xyes; then
     PKG_CHECK_MODULES([MPG123], [libmpg123], [dnl
             have_mpg123_hdr=yes
             have_mpg123_lib=yes
+            have_mpg123_pc=yes
         ], [dnl
             AC_CHECK_HEADER([mpg123.h], [have_mpg123_hdr=yes])
             AC_CHECK_LIB([mpg123], [mpg123_replace_reader_handle], [have_mpg123_lib=yes;MPG123_LIBS="-lmpg123"])
@@ -611,6 +646,11 @@ if test x$enable_music_mp3 = xyes; then
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DMPG123_DYNAMIC=\\\"$mpg123_lib\\\""
         else
             EXTRA_LDFLAGS="$EXTRA_LDFLAGS $MPG123_LIBS"
+            if test x$have_mpg123_pc = xyes; then
+                PC_REQUIRES="$PC_REQUIRES libmpg123"
+            else
+                PC_LIBS="$PC_LIBS $MPG123_LIBS"
+            fi
         fi
     else
         AC_MSG_WARN([*** Unable to find mpg123 library (https://www.mpg123.de)])
@@ -634,6 +674,7 @@ if test x$enable_music_mp3_mad_gpl = xyes; then
         SOURCES="$SOURCES $srcdir/music_mad.c"
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMP3_MAD_MUSIC"
         EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lmad"
+        PC_LIBS="$PC_LIBS -lmad"
     else
         AC_MSG_WARN([*** Unable to find MAD library (http://www.underbit.com/products/mad/)])
     fi
@@ -705,6 +746,8 @@ AC_SUBST(WINDRES)
 AC_SUBST(SDL_VERSION)
 AC_SUBST(SDL_CFLAGS)
 AC_SUBST(SDL_LIBS)
+AC_SUBST(PC_REQUIRES)
+AC_SUBST(PC_LIBS)
 
 AC_CONFIG_FILES([
     Makefile SDL_mixer.spec SDL_mixer.qpg SDL_mixer.pc
