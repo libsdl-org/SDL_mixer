@@ -429,7 +429,14 @@ void CSoundFile::NoteChange(UINT nChn, int note, BOOL bPorta, BOOL bResetEnv)
 	if (note >= 0x80)	// 0xFE or invalid note => key off
 	{
 		// Key Off
-		KeyOff(nChn);
+		if (note < 0xFD && m_nType == MOD_TYPE_IT)
+		{
+			if (m_nInstruments)
+				pChn->dwFlags |= CHN_NOTEFADE;
+		} else
+		{
+			KeyOff(nChn);
+		}
 		// Note Cut
 		if (note == 0xFE)
 		{

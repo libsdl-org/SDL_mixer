@@ -97,6 +97,7 @@ void CSoundFile::S3MConvert(MODCOMMAND *m, BOOL bIT) const
 	case 'X':	command = CMD_PANNING8; break;
 	case 'Y':	command = CMD_PANBRELLO; break;
 	case 'Z':	command = CMD_MIDI; break;
+	case '\\':  command = CMD_MIDI; break;
 	default:	command = 0;
 	}
 	m->command = command;
