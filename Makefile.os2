@@ -59,7 +59,7 @@ TIMIOBJS = $(TIMISRCS:.c=.obj)
 
 LIBS = SDL2.lib
 
-CFLAGS_BASE = -bt=os2 -d0 -q -bm -5s -fp5 -fpi87 -sg -oteanbmier -ei -j
+CFLAGS_BASE = -bt=os2 -d0 -q -bm -5s -fp5 -fpi87 -sg -oeatxh -ei -j
 # warnings:
 CFLAGS_BASE+= -wx
 # newer OpenWatcom versions enable W303 by default
@@ -187,6 +187,7 @@ clean: .SYMBOLIC
   @if exist *.err rm *.err
   @if exist $(TIMILIB) rm $(TIMILIB)
   @if exist $(LNKFILE) rm $(LNKFILE)
+
 distclean: .SYMBOLIC clean
   @if exist $(DLLFILE) rm $(DLLFILE)
   @if exist $(LIBFILE) rm $(LIBFILE)
