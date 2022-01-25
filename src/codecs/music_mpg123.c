@@ -263,15 +263,15 @@ static void *MPG123_CreateFromRW(SDL_RWops *src, int freesrc)
         rwops_read, rwops_seek, rwops_cleanup
     );
     if (result != MPG123_OK) {
-        MPG123_Delete(music);
         Mix_SetError("mpg123_replace_reader_handle: %s", mpg_err(music->handle, result));
+        MPG123_Delete(music);
         return NULL;
     }
 
     result = mpg123.mpg123_format_none(music->handle);
     if (result != MPG123_OK) {
-        MPG123_Delete(music);
         Mix_SetError("mpg123_format_none: %s", mpg_err(music->handle, result));
+        MPG123_Delete(music);
         return NULL;
     }
 
@@ -290,15 +290,15 @@ static void *MPG123_CreateFromRW(SDL_RWops *src, int freesrc)
 
     result = mpg123.mpg123_open_handle(music->handle, &music->mp3file);
     if (result != MPG123_OK) {
-        MPG123_Delete(music);
         Mix_SetError("mpg123_open_handle: %s", mpg_err(music->handle, result));
+        MPG123_Delete(music);
         return NULL;
     }
 
     result = mpg123.mpg123_getformat(music->handle, &rate, &channels, &encoding);
     if (result != MPG123_OK) {
-        MPG123_Delete(music);
         Mix_SetError("mpg123_getformat: %s", mpg_err(music->handle, result));
+        MPG123_Delete(music);
         return NULL;
     }
 #ifdef DEBUG_MPG123
