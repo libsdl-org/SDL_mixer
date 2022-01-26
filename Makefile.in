@@ -1,4 +1,4 @@
-# Makefile to build and install the SDL_mixer library
+# Makefile to build and install the SDL_mixer library.
 
 top_builddir = .
 srcdir  = @srcdir@
@@ -20,7 +20,7 @@ distfile = $(distdir).tar.gz
 EXE	= @EXE@
 SHELL	= @SHELL@
 CC      = @CC@
-CXX     = g++
+CXX     = @CXX@
 CFLAGS  = @BUILD_CFLAGS@
 EXTRA_CFLAGS = @EXTRA_CFLAGS@
 LDFLAGS = @BUILD_LDFLAGS@

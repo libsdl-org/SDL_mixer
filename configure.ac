@@ -46,6 +46,7 @@ dnl AC_CANONICAL_HOST
 
 dnl Check for tools
 AC_PROG_CC
+AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 if test -z "$host_alias"; then
@@ -99,10 +100,7 @@ if test x$enable_dependency_tracking = xyes; then
     #if !defined(__GNUC__) || __GNUC__ < 3
     #error Dependency tracking requires GCC 3.0 or newer
     #endif
-    ],[
-    ],[
-    have_gcc_mmd_mt=yes
-    ])
+    ],[], [have_gcc_mmd_mt=yes])
     AC_MSG_RESULT($have_gcc_mmd_mt)
 
     if test x$have_gcc_mmd_mt = xyes; then
@@ -114,7 +112,7 @@ case "$host" in
     *mingw32ce*)
         #VERSION_SOURCES="$srcdir/version.rc"
         EXE=".exe"
-	;;
+        ;;
     *-*-cygwin* | *-*-mingw*)
         VERSION_SOURCES="$srcdir/version.rc"
         EXE=".exe"
@@ -147,12 +145,47 @@ $srcdir/music.c"
 dnl set this to use on systems that use lib64 instead of lib
 base_libdir=`echo \${libdir} | sed 's/.*\/\(.*\)/\1/; q'`
 
+dnl See if GCC's -Wall is supported.
+CheckWarnAll()
+{
+    AC_MSG_CHECKING(for GCC -Wall option)
+    have_gcc_Wall=no
+
+    save_CFLAGS="$CFLAGS"
+    CFLAGS="$save_CFLAGS -Wall"
+    AC_TRY_COMPILE([int x = 0;],, [have_gcc_Wall=yes])
+    AC_MSG_RESULT($have_gcc_Wall)
+    CFLAGS="$save_CFLAGS"
+
+    if test x$have_gcc_Wall = xyes; then
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -Wall"
+
+dnl Haiku headers use multicharacter constants all over the place. Ignore these warnings when using -Wall.
+        AC_MSG_CHECKING(for necessary GCC -Wno-multichar option)
+        need_gcc_Wno_multichar=no
+        case "$host" in
+            *-*-beos* | *-*-haiku*)
+                need_gcc_Wno_multichar=yes
+                ;;
+        esac
+        AC_MSG_RESULT($need_gcc_Wno_multichar)
+        if test x$need_gcc_Wno_multichar = xyes; then
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -Wno-multichar"
+        fi
+    fi
+}
+
 dnl See if GCC's -fvisibility=hidden is supported (gcc4 and later, usually).
-dnl  Details of this flag are here: http://gcc.gnu.org/wiki/Visibility
 CheckVisibilityHidden()
 {
     AC_MSG_CHECKING(for GCC -fvisibility=hidden option)
     have_gcc_fvisibility=no
+    case "$host" in
+    *-*-cygwin* | *-*-mingw* | *-*-os2*)
+        AC_MSG_RESULT([ignored for $host_os])
+        return
+        ;;
+    esac
 
     visibility_CFLAGS="-fvisibility=hidden"
     save_CFLAGS="$CFLAGS"
@@ -161,10 +194,7 @@ CheckVisibilityHidden()
     #if !defined(__GNUC__) || __GNUC__ < 4
     #error SDL only uses visibility attributes in GCC 4 or newer
     #endif
-    ],[
-    ],[
-    have_gcc_fvisibility=yes
-    ])
+    ],, [have_gcc_fvisibility=yes])
     AC_MSG_RESULT($have_gcc_fvisibility)
     CFLAGS="$save_CFLAGS"
 
@@ -202,12 +232,19 @@ AM_PATH_SDL($SDL_VERSION,
 EXTRA_CFLAGS="$EXTRA_CFLAGS $SDL_CFLAGS"
 EXTRA_LDFLAGS="$EXTRA_LDFLAGS $SDL_LIBS"
 
+dnl check for GCC warning options
+CheckWarnAll
+
+dnl check for GCC visibility attributes
+CheckVisibilityHidden
+
 dnl Check for math library
 AC_CHECK_LIB(m, pow, [LIBM="-lm"])
 
-dnl Check command-line options
+AC_CHECK_HEADERS([signal.h], [EXTRA_CFLAGS="$EXTRA_CFLAGS -DHAVE_SIGNAL_H"])
+AC_CHECK_FUNCS(setbuf, [EXTRA_CFLAGS="$EXTRA_CFLAGS -DHAVE_SETBUF"])
 
-CheckVisibilityHidden
+dnl Check command-line options
 
 AC_ARG_ENABLE([music-cmd],
 [AS_HELP_STRING([--enable-music-cmd], [support an external music player [default=yes]])],
@@ -271,7 +308,7 @@ int main(int argc, char **argv)
   printf("no\n*** libmikmod is older than %d.%d.%d, not using.\n",maj,min,rev);
   return 1;
 }
-], [], [have_libmikmod=no], [echo $ac_n "cross compiling; assumed OK... $ac_c"])
+], [],[have_libmikmod=no],[echo $ac_n "cross compiling; assumed OK... $ac_c"])
     fi
 
     if test x$have_libmikmod = xyes; then
@@ -299,7 +336,7 @@ int main(int argc, char **argv)
             PC_LIBS="$PC_LIBS `$LIBMIKMOD_CONFIG --libs`"
         fi
     else
-        AC_MSG_WARN([*** Unable to find MikMod library (http://mikmod.raphnet.net/)])
+        AC_MSG_WARN([*** Unable to find MikMod library (http://mikmod.sourceforge.net/)])
     fi
     LIBS="$LIBS_SAVED"
     CFLAGS="$CFLAGS_SAVED"
@@ -334,7 +371,7 @@ if test x$enable_music_mod_modplug = xyes; then
 fi
 
 if test x$have_libmikmod != xyes -a x$have_libmodplug != xyes ; then
-	AC_MSG_WARN([MOD support disabled])
+    AC_MSG_WARN([MOD support disabled])
 fi
 
 AC_ARG_ENABLE([music-midi],
@@ -572,7 +609,7 @@ if test x$enable_music_flac = xyes; then
                 AC_CHECK_HEADER([FLAC/stream_decoder.h], [have_flac_hdr=yes])
                 AC_CHECK_LIB([FLAC], [FLAC__stream_decoder_new], [have_flac_lib=yes;FLAC_LIBS="-lFLAC"])
             ])
-        if test x$have_flac_hdr = xyes -a x$have_flac_lib = xyes; then    
+        if test x$have_flac_hdr = xyes -a x$have_flac_lib = xyes; then
             case "$host" in
                 *-*-darwin*)
                     flac_lib=[`find_lib libFLAC.dylib`]
@@ -606,9 +643,6 @@ if test x$enable_music_flac = xyes; then
         AC_MSG_WARN([FLAC support disabled])
     fi
 fi
-
-AC_CHECK_HEADERS([signal.h], [EXTRA_CFLAGS="$EXTRA_CFLAGS -DHAVE_SIGNAL_H"])
-AC_CHECK_FUNCS(setbuf, [EXTRA_CFLAGS="$EXTRA_CFLAGS -DHAVE_SETBUF"])
 
 AC_ARG_ENABLE(music-mp3,
 [AS_HELP_STRING([--enable-music-mp3], [enable MP3 music via libmpg123 [default=yes]])],
@@ -765,7 +799,7 @@ $PLAYWAVE_DEPENDS
 
 -include \$(PLAYMUS_OBJECTS:.lo=.d)
 $PLAYMUS_DEPENDS
-__EOF__ 
+__EOF__
 ], [
 DEPENDS="$DEPENDS"
 VERSION_DEPENDS="$VERSION_DEPENDS"
