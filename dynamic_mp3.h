@@ -38,7 +38,11 @@ typedef struct {
 	int (*mpg123_open_handle)(mpg123_handle *mh, void *iohandle);
 	const char* (*mpg123_plain_strerror)(int errcode);
 	void (*mpg123_rates)(const long **list, size_t *number);
+#if (MPG123_API_VERSION >= 45) /* api (but not abi) change as of mpg123-1.26.0 */
+	int (*mpg123_read)(mpg123_handle *mh, void *outmemory, size_t outmemsize, size_t *done );
+#else
 	int (*mpg123_read)(mpg123_handle *mh, unsigned char *outmemory, size_t outmemsize, size_t *done );
+#endif
 	int (*mpg123_replace_reader_handle)( mpg123_handle *mh, ssize_t (*r_read) (void *, void *, size_t), off_t (*r_lseek)(void *, off_t, int), void (*cleanup)(void*) );
 	off_t (*mpg123_seek)( mpg123_handle *mh, off_t sampleoff, int whence );
 	const char* (*mpg123_strerror)(mpg123_handle *mh);
