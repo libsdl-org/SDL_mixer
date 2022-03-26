@@ -1612,7 +1612,7 @@ UINT CSoundFile::CreateStereoMix(int count)
 }
 
 
-#ifdef MSC_VER
+#ifdef _MSC_VER
 #pragma warning (disable:4100)
 #endif
 
@@ -1705,7 +1705,6 @@ DWORD MPPASMCALL X86_Convert32To8(LPVOID lp8, int *pBuffer, DWORD lSampleCount, 
 	return lSampleCount;
 }
 #endif //MSC_VER, else
-
 
 #if defined(_MSC_VER) && defined(_M_IX86)
 // Clip and convert to 16 bit

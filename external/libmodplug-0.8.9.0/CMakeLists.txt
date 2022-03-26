@@ -75,9 +75,14 @@ if (WIN32)
   add_definitions(-DNOMINMAX)
 endif()
 
-check_include_file("stdint.h" HAVE_STDINT)
-if (HAVE_STDINT)
+check_include_file("stdint.h" HAVE_STDINT_H)
+if (HAVE_STDINT_H)
   add_definitions(-DHAVE_STDINT_H)
+endif()
+
+check_include_file("strings.h" HAVE_STRINGS_H)
+if (HAVE_STRINGS_H)
+  add_definitions(-DHAVE_STRINGS_H)
 endif()
 
 check_function_exists("sinf" HAVE_SINF)

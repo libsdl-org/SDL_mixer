@@ -5,7 +5,7 @@ AM_CXXFLAGS = -DMODPLUG_BUILD=1
 AM_CPPFLAGS = -I$(top_srcdir)/src/libmodplug
 
 lib_LTLIBRARIES = libmodplug.la
-libmodplug_la_LDFLAGS = -version-info $(MODPLUG_LIBRARY_VERSION) $(LT_LDFLAGS)
+libmodplug_la_LDFLAGS = -no-undefined -version-info $(MODPLUG_LIBRARY_VERSION)
 libmodplug_la_SOURCES = tables.h         \
                         sndmix.cpp         \
                         sndfile.cpp        \

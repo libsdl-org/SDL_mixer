@@ -189,21 +189,6 @@ Solution:
 
 
 Problem:
- You have a mod which is rendered incorrectly by ModPlug-XMMS.
-
-Possible cause:
- This could be our fault. :)
-
-Solution:
- First, test the mod using the Windows version of ModPlug, if you can.
- If it sounds wrong there, then send the mod and a bug report to
- Olivier Lapicque <olivierl@jps.net>.  If the mod plays correctly in
- Windows, however, then the bug is my fault.  In that case, e-mail
- me (Konstanty) <konstanty@ieee.org>. (previously Kenton Varda at
- <temporal@gauge3d.org>).
-
-
-Problem:
  I have a problem which is not listed here, or an idea for a cool
  feature.
 

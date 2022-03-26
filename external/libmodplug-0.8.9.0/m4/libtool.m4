@@ -1,3 +1,5 @@
+# Based on libtool-2.4.6 with additional patches.
+#
 # libtool.m4 - Configure libtool for the host system. -*-Autoconf-*-
 #
 #   Copyright (C) 1996-2001, 2003-2015 Free Software Foundation, Inc.
@@ -1068,7 +1070,7 @@ _LT_EOF
     darwin1.*)
       _lt_dar_allow_undefined='$wl-flat_namespace $wl-undefined ${wl}suppress' ;;
     darwin*)
-      case ${MACOSX_DEPLOYMENT_TARGET},$host in
+      case $MACOSX_DEPLOYMENT_TARGET,$host in
         10.[[012]],*|,*powerpc*-darwin[[5-8]]*)
           _lt_dar_allow_undefined='$wl-flat_namespace $wl-undefined ${wl}suppress' ;;
         *)
