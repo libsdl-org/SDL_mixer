@@ -38,7 +38,7 @@
 /* #undef FLAC__HAS_NASM */
 
 /* define if you have the ogg library */
-#define FLAC__HAS_OGG 1
+#define FLAC__HAS_OGG 0
 
 /* define if compiler has __attribute__((target("cpu=power8"))) support */
 /* #undef FLAC__HAS_TARGET_POWER8 */
