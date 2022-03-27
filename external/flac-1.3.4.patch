@@ -278,7 +278,7 @@ diff -u /dev/null flac-1.3.4/android/config.h
 diff -u /dev/null flac-1.3.4/Android.mk
 --- /dev/null
 +++ flac-1.3.4/Android.mk
-@@ -0,0 +1,47 @@
+@@ -0,0 +1,48 @@
 +LOCAL_PATH := $(call my-dir)
 +
 +include $(CLEAR_VARS)
@@ -287,7 +287,10 @@ diff -u /dev/null flac-1.3.4/Android.mk
 +
 +LOCAL_C_INCLUDES := $(LOCAL_PATH)/include \
 +                    $(LOCAL_PATH)/src/libFLAC/include
-+
++#FLAC_OGG_LIBRARY_PATH := ../libogg-1.3.2
++#LOCAL_C_INCLUDES+= $(LOCAL_PATH)/$(FLAC_OGG_LIBRARY_PATH)/include \
++#                   $(LOCAL_PATH)/$(FLAC_OGG_LIBRARY_PATH)/android
++LOCAL_EXPORT_C_INCLUDES += $(LOCAL_C_INCLUDES)
 +LOCAL_CFLAGS := -include $(LOCAL_PATH)/android/config.h
 +
 +LOCAL_SRC_FILES := \
@@ -317,12 +320,10 @@ diff -u /dev/null flac-1.3.4/Android.mk
 +    src/libFLAC/stream_encoder_intrin_ssse3.c \
 +    src/libFLAC/stream_encoder_intrin_avx2.c  \
 +    src/libFLAC/stream_encoder_framing.c \
-+    src/libFLAC/window.c \
-+    src/libFLAC/ogg_decoder_aspect.c \
-+    src/libFLAC/ogg_encoder_aspect.c \
-+    src/libFLAC/ogg_helper.c \
-+    src/libFLAC/ogg_mapping.c
-+
-+LOCAL_EXPORT_C_INCLUDES += $(LOCAL_C_INCLUDES)
++    src/libFLAC/window.c
++#   src/libFLAC/ogg_decoder_aspect.c
++#   src/libFLAC/ogg_encoder_aspect.c
++#   src/libFLAC/ogg_helper.c
++#   src/libFLAC/ogg_mapping.c
 +
 +include $(BUILD_STATIC_LIBRARY)
