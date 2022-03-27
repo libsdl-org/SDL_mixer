@@ -56,8 +56,8 @@ endif()
 
 if (SUPPORT_FLAC)
     target_compile_definitions(SDL2_mixer PRIVATE -DMUSIC_FLAC)
-    add_subdirectory(external/flac-1.3.3)
-    target_include_directories(SDL2_mixer PRIVATE external/flac-1.3.3/include)
+    add_subdirectory(external/flac-1.3.4)
+    target_include_directories(SDL2_mixer PRIVATE external/flac-1.3.4/include)
     target_link_libraries(SDL2_mixer PRIVATE FLAC)
 endif()
 

@@ -688,7 +688,7 @@
 				AA1C71291F9BC91D00A6BC31 /* window.c */,
 			);
 			name = flac;
-			path = "../external/flac-1.3.3";
+			path = "../external/flac-1.3.4";
 			sourceTree = "<group>";
 		};
 		AA60214C17653A5900662B9C /* modplug */ = {
@@ -1325,7 +1325,7 @@
 					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_2)",
 				);
 				HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_1 = "\"$(SRCROOT)/../../SDL/include\"";
-				HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_2 = "\"$(SRCROOT)/../external/libmodplug-0.8.9.0/src\" \"$(SRCROOT)/../external/libmodplug-0.8.9.0/src/libmodplug\" \"$(SRCROOT)/../external/libvorbisidec-1.2.1\" \"$(SRCROOT)/../external/libogg-1.3.2/include\" \"$(SRCROOT)/../external/flac-1.3.3/include\" \"$(SRCROOT)/../external/flac-1.3.3/src/libFLAC/include\"";
+				HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_2 = "\"$(SRCROOT)/../external/libmodplug-0.8.9.0/src\" \"$(SRCROOT)/../external/libmodplug-0.8.9.0/src/libmodplug\" \"$(SRCROOT)/../external/libvorbisidec-1.2.1\" \"$(SRCROOT)/../external/libogg-1.3.2/include\" \"$(SRCROOT)/../external/flac-1.3.4/include\" \"$(SRCROOT)/../external/flac-1.3.4/src/libFLAC/include\"";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1387,7 +1387,7 @@
 					"$(HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_2)",
 				);
 				HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_1 = "\"$(SRCROOT)/../../SDL/include\"";
-				HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_2 = "\"$(SRCROOT)/../external/libmodplug-0.8.9.0/src\" \"$(SRCROOT)/../external/libmodplug-0.8.9.0/src/libmodplug\" \"$(SRCROOT)/../external/libvorbisidec-1.2.1\" \"$(SRCROOT)/../external/libogg-1.3.2/include\" \"$(SRCROOT)/../external/flac-1.3.3/include\" \"$(SRCROOT)/../external/flac-1.3.3/src/libFLAC/include\"";
+				HEADER_SEARCH_PATHS_QUOTED_FOR_PROJECT_2 = "\"$(SRCROOT)/../external/libmodplug-0.8.9.0/src\" \"$(SRCROOT)/../external/libmodplug-0.8.9.0/src/libmodplug\" \"$(SRCROOT)/../external/libvorbisidec-1.2.1\" \"$(SRCROOT)/../external/libogg-1.3.2/include\" \"$(SRCROOT)/../external/flac-1.3.4/include\" \"$(SRCROOT)/../external/flac-1.3.4/src/libFLAC/include\"";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
