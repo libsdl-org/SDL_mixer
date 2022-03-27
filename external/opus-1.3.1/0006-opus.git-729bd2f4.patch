@@ -1,0 +1,25 @@
+From 729bd2f4d43e7a17e5deed098f6593bd6be2e01b Mon Sep 17 00:00:00 2001
+From: Nirbheek Chauhan <nirbheek@centricular.com>
+Date: Sat, 18 Jul 2020 19:16:52 +0530
+Subject: [PATCH] celt: Fix broken SSE pre-processor check due to typo
+
+This broke 5 years ago in 43120f00758219a784f952754f33b9788a8d731b
+
+Signed-off-by: Mark Harris <mark.hsj@gmail.com>
+---
+ celt/x86/pitch_sse.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/celt/x86/pitch_sse.h b/celt/x86/pitch_sse.h
+index e5f87ab51..f7a014b6e 100644
+--- a/celt/x86/pitch_sse.h
++++ b/celt/x86/pitch_sse.h
+@@ -91,7 +91,7 @@ opus_val32 celt_inner_prod_sse2(
+     int               N);
+ #endif
+ 
+-#if defined(OPUS_X86_MAY_HAVE_SSE2) && !defined(FIXED_POINT)
++#if defined(OPUS_X86_MAY_HAVE_SSE) && !defined(FIXED_POINT)
+ opus_val32 celt_inner_prod_sse(
+     const opus_val16 *x,
+     const opus_val16 *y,
