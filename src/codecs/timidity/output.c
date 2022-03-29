@@ -105,6 +105,15 @@ void timi_s32tof32(void *dp, Sint32 *lp, Sint32 c)
     }
 }
 
+void timi_s32tof32x(void* dp, Sint32* lp, Sint32 c)
+{
+    float* sp = (float*)(dp);
+    while (c--)
+    {
+        *sp++ = SDL_SwapFloat((float)(*lp++) / 2147483647.0f);
+    }
+}
+
 void timi_s32tos32(void *dp, Sint32 *lp, Sint32 c)
 {
   Sint32 *sp=(Sint32 *)(dp);

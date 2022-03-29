@@ -576,8 +576,11 @@ static void do_song_load(SDL_RWops *rw, SDL_AudioSpec *audio, MidiSong **out)
   case AUDIO_S32MSB:
     song->write = timi_s32tos32b;
     break;
-  case AUDIO_F32SYS:
-    song->write = timi_s32tof32;
+  case AUDIO_F32LSB:
+    song->write = timi_s32tof32l;
+    break;
+  case AUDIO_F32MSB:
+    song->write = timi_s32tof32b;
     break;
   default:
     SDL_SetError("Unsupported audio format");
