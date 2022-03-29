@@ -576,8 +576,11 @@ static void do_song_load(SDL_IOStream *io, const SDL_AudioSpec *audio, MidiSong 
   case SDL_AUDIO_S32BE:
     song->write = timi_s32tos32b;
     break;
-  case SDL_AUDIO_F32:
-    song->write = timi_s32tof32;
+  case SDL_AUDIO_F32LE:
+    song->write = timi_s32tof32l;
+    break;
+  case SDL_AUDIO_F32BE:
+    song->write = timi_s32tof32b;
     break;
   default:
     SDL_SetError("Unsupported audio format");
