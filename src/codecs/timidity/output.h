@@ -38,6 +38,7 @@ extern void timi_s32tof32(void *dp, Sint32 *lp, Sint32 c);
 extern void timi_s32tos32(void *dp, Sint32 *lp, Sint32 c);
 
 /* byte-exchanged 32-bit */
+extern void timi_s32tof32x(void* dp, Sint32* lp, Sint32 c);
 extern void timi_s32tos32x(void *dp, Sint32 *lp, Sint32 c);
 
 /* little-endian and big-endian specific */
@@ -48,6 +49,8 @@ extern void timi_s32tos32x(void *dp, Sint32 *lp, Sint32 c);
 #define timi_s32tos16b timi_s32tos16x
 #define timi_s32tos32l timi_s32tos32
 #define timi_s32tos32b timi_s32tos32x
+#define timi_s32tof32l timi_s32tof32
+#define timi_s32tof32b timi_s32tof32x
 #else
 #define timi_s32tou16l timi_s32tou16x
 #define timi_s32tou16b timi_s32tou16
@@ -55,6 +58,8 @@ extern void timi_s32tos32x(void *dp, Sint32 *lp, Sint32 c);
 #define timi_s32tos16b timi_s32tos16
 #define timi_s32tos32l timi_s32tos32x
 #define timi_s32tos32b timi_s32tos32
+#define timi_s32tof32l timi_s32tof32x
+#define timi_s32tof32b timi_s32tof32
 #endif
 
 #endif /* TIMIDITY_OUTPUT_H */
