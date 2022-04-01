@@ -90,6 +90,7 @@ endif()
 
 if(WIN32 AND BUILD_SHARED_LIBS)
   target_compile_definitions(SDL2_mixer PRIVATE -DDLL_EXPORT)
+  target_sources(SDL2_mixer PRIVATE version.rc)
 endif()
 
 target_include_directories(SDL2_mixer PUBLIC include)
