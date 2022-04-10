@@ -17,7 +17,8 @@
 int _strnicmp(const char *str1,const char *str2, int n);
 #endif
 
-#ifndef LPCBYTE
+#ifndef _LPCBYTE_DEFINED
+#define _LPCBYTE_DEFINED
 typedef const BYTE * LPCBYTE;
 #endif
 
