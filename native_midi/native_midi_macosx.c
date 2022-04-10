@@ -201,7 +201,7 @@ NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *rw, int freerw)
      * So, we use MusicSequenceLoadSMFData() for powerpc versions
      * but the *WithFlags() on intel which require 10.4 anyway. */
     # if defined(__ppc__) || defined(__POWERPC__)
-    if (MusicSequenceLoadSMFData(song->sequence, data) != noErr)
+    if (MusicSequenceLoadSMFData(retval->sequence, data) != noErr)
         goto fail;
     # else
     if (MusicSequenceLoadSMFDataWithFlags(retval->sequence, data, 0) != noErr)
