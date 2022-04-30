@@ -10,6 +10,20 @@
 		F39CD44A281DC6A4006CF638 /* SDL2.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3ED810E281DC09600C33C5B /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F39CD44B281DC6C8006CF638 /* SDL2_mixer.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3ED80D4281D9ED600C33C5B /* SDL2_mixer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F39CD452281DC9CE006CF638 /* SDL2_mixer.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3ED80D4281D9ED600C33C5B /* SDL2_mixer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F3D87BD8281DF388005DA540 /* FLAC.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87BD7281DF380005DA540 /* FLAC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F3D87BD9281DF388005DA540 /* modplug.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87BD3281DF380005DA540 /* modplug.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F3D87BDA281DF388005DA540 /* mpg123.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87BD4281DF380005DA540 /* mpg123.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F3D87BDB281DF388005DA540 /* Ogg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87BD6281DF380005DA540 /* Ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F3D87BDC281DF388005DA540 /* Opus.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87BD1281DF380005DA540 /* Opus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F3D87BDD281DF388005DA540 /* OpusFile.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87BD5281DF380005DA540 /* OpusFile.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F3D87BDE281DF388005DA540 /* Vorbis.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87BD2281DF380005DA540 /* Vorbis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F3D87BE3281DF423005DA540 /* FLAC.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87BD7281DF380005DA540 /* FLAC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F3D87BE4281DF423005DA540 /* modplug.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87BD3281DF380005DA540 /* modplug.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F3D87BE5281DF423005DA540 /* mpg123.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87BD4281DF380005DA540 /* mpg123.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F3D87BE6281DF423005DA540 /* Ogg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87BD6281DF380005DA540 /* Ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F3D87BE7281DF423005DA540 /* Opus.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87BD1281DF380005DA540 /* Opus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F3D87BE8281DF423005DA540 /* OpusFile.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87BD5281DF380005DA540 /* OpusFile.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F3D87BE9281DF423005DA540 /* Vorbis.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87BD2281DF380005DA540 /* Vorbis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3ED80CB281D9ECB00C33C5B /* playwave.c in Sources */ = {isa = PBXBuildFile; fileRef = F3ED80CA281D9ECB00C33C5B /* playwave.c */; };
 		F3ED80CC281D9ECB00C33C5B /* playwave.c in Sources */ = {isa = PBXBuildFile; fileRef = F3ED80CA281D9ECB00C33C5B /* playwave.c */; };
 		F3ED80DB281D9F2100C33C5B /* playwave.c in Sources */ = {isa = PBXBuildFile; fileRef = F3ED80CA281D9ECB00C33C5B /* playwave.c */; };
@@ -59,6 +73,13 @@
 			files = (
 				F39CD44B281DC6C8006CF638 /* SDL2_mixer.framework in Copy Frameworks */,
 				F39CD44A281DC6A4006CF638 /* SDL2.framework in Copy Frameworks */,
+				F3D87BD8281DF388005DA540 /* FLAC.framework in Copy Frameworks */,
+				F3D87BD9281DF388005DA540 /* modplug.framework in Copy Frameworks */,
+				F3D87BDA281DF388005DA540 /* mpg123.framework in Copy Frameworks */,
+				F3D87BDB281DF388005DA540 /* Ogg.framework in Copy Frameworks */,
+				F3D87BDC281DF388005DA540 /* Opus.framework in Copy Frameworks */,
+				F3D87BDD281DF388005DA540 /* OpusFile.framework in Copy Frameworks */,
+				F3D87BDE281DF388005DA540 /* Vorbis.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -71,6 +92,13 @@
 			files = (
 				F3ED8112281DC11700C33C5B /* SDL2.framework in Copy Frameworks */,
 				F39CD452281DC9CE006CF638 /* SDL2_mixer.framework in Copy Frameworks */,
+				F3D87BE3281DF423005DA540 /* FLAC.framework in Copy Frameworks */,
+				F3D87BE4281DF423005DA540 /* modplug.framework in Copy Frameworks */,
+				F3D87BE5281DF423005DA540 /* mpg123.framework in Copy Frameworks */,
+				F3D87BE6281DF423005DA540 /* Ogg.framework in Copy Frameworks */,
+				F3D87BE7281DF423005DA540 /* Opus.framework in Copy Frameworks */,
+				F3D87BE8281DF423005DA540 /* OpusFile.framework in Copy Frameworks */,
+				F3D87BE9281DF423005DA540 /* Vorbis.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -90,6 +118,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F3D87BD1281DF380005DA540 /* Opus.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Opus.framework; path = ../macOS/Opus.framework; sourceTree = "<group>"; };
+		F3D87BD2281DF380005DA540 /* Vorbis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Vorbis.framework; path = ../macOS/Vorbis.framework; sourceTree = "<group>"; };
+		F3D87BD3281DF380005DA540 /* modplug.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = modplug.framework; path = ../macOS/modplug.framework; sourceTree = "<group>"; };
+		F3D87BD4281DF380005DA540 /* mpg123.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = mpg123.framework; path = ../macOS/mpg123.framework; sourceTree = "<group>"; };
+		F3D87BD5281DF380005DA540 /* OpusFile.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpusFile.framework; path = ../macOS/OpusFile.framework; sourceTree = "<group>"; };
+		F3D87BD6281DF380005DA540 /* Ogg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ogg.framework; path = ../macOS/Ogg.framework; sourceTree = "<group>"; };
+		F3D87BD7281DF380005DA540 /* FLAC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FLAC.framework; path = ../macOS/FLAC.framework; sourceTree = "<group>"; };
 		F3ED80B3281D9E8900C33C5B /* playwave.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = playwave.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3ED80B9281D9E8900C33C5B /* playwave.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = playwave.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3ED80BB281D9E8900C33C5B /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
@@ -195,6 +230,13 @@
 			isa = PBXGroup;
 			children = (
 				F3ED80E4281DA17800C33C5B /* SDL2.framework */,
+				F3D87BD7281DF380005DA540 /* FLAC.framework */,
+				F3D87BD3281DF380005DA540 /* modplug.framework */,
+				F3D87BD4281DF380005DA540 /* mpg123.framework */,
+				F3D87BD6281DF380005DA540 /* Ogg.framework */,
+				F3D87BD1281DF380005DA540 /* Opus.framework */,
+				F3D87BD5281DF380005DA540 /* OpusFile.framework */,
+				F3D87BD2281DF380005DA540 /* Vorbis.framework */,
 			);
 			name = macOS;
 			sourceTree = "<group>";
@@ -407,7 +449,10 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../$(PLATFORM)/SDL2.framework/Headers\"";
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../../include\"",
+					"\"$(SRCROOT)/../$(PLATFORM)/SDL2.framework/Headers\"",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
@@ -425,7 +470,10 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../$(PLATFORM)\"";
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../$(PLATFORM)/SDL2.framework/Headers\"";
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../../include\"",
+					"\"$(SRCROOT)/../$(PLATFORM)/SDL2.framework/Headers\"",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PLATFORM = "";

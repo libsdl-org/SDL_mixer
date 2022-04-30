@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -130,10 +130,10 @@
 		F38233712731966F00F7F527 /* tables.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE883731F97321E007B6569 /* tables.h */; };
 		F38233722731967100F7F527 /* timidity.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE883661F97321C007B6569 /* timidity.c */; };
 		F38233732731967300F7F527 /* timidity.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE883601F97321C007B6569 /* timidity.h */; };
-		F39CD45F281DD663006CF638 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F39CD45C281DD63B006CF638 /* AudioToolbox.framework */; };
-		F39CD460281DD663006CF638 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F39CD45D281DD63B006CF638 /* AudioUnit.framework */; };
-		F39CD461281DD663006CF638 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F39CD45E281DD63C006CF638 /* CoreServices.framework */; };
-		F39CD46A281DD677006CF638 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F39CD469281DD677006CF638 /* SDL2.framework */; };
+		F3D87C09281DFABD005DA540 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87C08281DFABD005DA540 /* AudioToolbox.framework */; };
+		F3D87C0B281DFAD4005DA540 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87C0A281DFAD4005DA540 /* AudioUnit.framework */; platformFilters = (macos, ); };
+		F3D87C0D281DFADB005DA540 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87C0C281DFADB005DA540 /* CoreServices.framework */; };
+		F3D87C0F281DFB02005DA540 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87C0E281DFB02005DA540 /* SDL2.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -212,10 +212,10 @@
 		BE1FA90607AF96B2004B6283 /* SDL2_mixer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SDL2_mixer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE1FA95407AF96B2004B6283 /* libSDL2_mixer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSDL2_mixer.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE1FA95807AF96B3004B6283 /* Create DMG */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Create DMG"; sourceTree = BUILT_PRODUCTS_DIR; };
-		F39CD45C281DD63B006CF638 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
-		F39CD45D281DD63B006CF638 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
-		F39CD45E281DD63C006CF638 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
-		F39CD469281DD677006CF638 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = macOS/SDL2.framework; sourceTree = "<group>"; };
+		F3D87C08281DFABD005DA540 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		F3D87C0A281DFAD4005DA540 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
+		F3D87C0C281DFADB005DA540 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
+		F3D87C0E281DFB02005DA540 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = macOS/SDL2.framework; sourceTree = "<group>"; };
 		F51BFB0101F724BE01D3D55B /* native_midi.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = native_midi.h; sourceTree = "<group>"; };
 		F59C710300D5CB5801000001 /* ReadMe.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = ReadMe.txt; sourceTree = "<group>"; };
 		F59C710400D5CB5801000001 /* Welcome.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Welcome.txt; sourceTree = "<group>"; };
@@ -227,10 +227,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F39CD45F281DD663006CF638 /* AudioToolbox.framework in Frameworks */,
-				F39CD460281DD663006CF638 /* AudioUnit.framework in Frameworks */,
-				F39CD461281DD663006CF638 /* CoreServices.framework in Frameworks */,
-				F39CD46A281DD677006CF638 /* SDL2.framework in Frameworks */,
+				F3D87C09281DFABD005DA540 /* AudioToolbox.framework in Frameworks */,
+				F3D87C0B281DFAD4005DA540 /* AudioUnit.framework in Frameworks */,
+				F3D87C0D281DFADB005DA540 /* CoreServices.framework in Frameworks */,
+				F3D87C0F281DFB02005DA540 /* SDL2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -381,28 +381,12 @@
 		BE1FA8AC07AF95D4004B6283 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				BE1FA8AD07AF95DC004B6283 /* Linked Frameworks */,
+				F3D87C0C281DFADB005DA540 /* CoreServices.framework */,
+				F3D87C0A281DFAD4005DA540 /* AudioUnit.framework */,
+				F3D87C08281DFABD005DA540 /* AudioToolbox.framework */,
+				F3D87C0E281DFB02005DA540 /* SDL2.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		BE1FA8AD07AF95DC004B6283 /* Linked Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				F39CD45B281DD631006CF638 /* macOS */,
-			);
-			name = "Linked Frameworks";
-			sourceTree = "<group>";
-		};
-		F39CD45B281DD631006CF638 /* macOS */ = {
-			isa = PBXGroup;
-			children = (
-				F39CD45C281DD63B006CF638 /* AudioToolbox.framework */,
-				F39CD45D281DD63B006CF638 /* AudioUnit.framework */,
-				F39CD45E281DD63C006CF638 /* CoreServices.framework */,
-				F39CD469281DD677006CF638 /* SDL2.framework */,
-			);
-			name = macOS;
 			sourceTree = "<group>";
 		};
 		F51BFAFD01F724BE01D3D55B /* native_midi */ = {
@@ -795,7 +779,6 @@
 		00B7E490097EC6B300826121 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					MUSIC_CMD,
 					MUSIC_WAV,
@@ -803,19 +786,12 @@
 					MUSIC_MID_NATIVE,
 					MUSIC_MP3_DISABLED,
 				);
-				LIBRARY_STYLE = STATIC;
-				OTHER_LIBTOOL_FLAGS = "";
-				OTHER_REZFLAGS = "";
-				REZ_EXECUTABLE = YES;
-				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
 		00B7E491097EC6B300826121 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				DEBUGGING_SYMBOLS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					MUSIC_CMD,
 					MUSIC_WAV,
@@ -823,11 +799,6 @@
 					MUSIC_MID_NATIVE,
 					MUSIC_MP3_DISABLED,
 				);
-				LIBRARY_STYLE = STATIC;
-				OTHER_LIBTOOL_FLAGS = "";
-				OTHER_REZFLAGS = "";
-				REZ_EXECUTABLE = YES;
-				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -913,7 +884,11 @@
 				);
 				INFOPLIST_FILE = "Info-Framework.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PLATFORM = "";
 				"PLATFORM[sdk=appletvos*]" = tvOS;
@@ -924,7 +899,10 @@
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../include\" \"$(SRCROOT)/../src/codecs\"";
+				USER_HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../include\"",
+					"\"$(SRCROOT)/../src/codecs\"",
+				);
 			};
 			name = Release;
 		};
@@ -968,7 +946,11 @@
 				);
 				INFOPLIST_FILE = "Info-Framework.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
 				PLATFORM = "";
@@ -980,7 +962,10 @@
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../include\" \"$(SRCROOT)/../src/codecs\"";
+				USER_HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../include\"",
+					"\"$(SRCROOT)/../src/codecs\"",
+				);
 			};
 			name = Debug;
 		};
