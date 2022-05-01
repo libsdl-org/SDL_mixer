@@ -52,6 +52,7 @@ AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 LT_PROG_RC
+PKG_PROG_PKG_CONFIG
 
 dnl Set up the compiler and linker flags
 case "$host" in
