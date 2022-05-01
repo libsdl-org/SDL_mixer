@@ -69,14 +69,12 @@
     #define FLAC__SSSE3_SUPPORTED 1
     #define FLAC__SSE4_1_SUPPORTED 1
   #endif
-  #ifdef FLAC__USE_AVX
-    #if (__INTEL_COMPILER >= 1110) /* Intel C++ Compiler 11.1 */
-      #define FLAC__AVX_SUPPORTED 1
-    #endif
-    #if (__INTEL_COMPILER >= 1300) /* Intel C++ Compiler 13.0 */
-      #define FLAC__AVX2_SUPPORTED 1
-      #define FLAC__FMA_SUPPORTED 1
-    #endif
+  #if (__INTEL_COMPILER >= 1110) /* Intel C++ Compiler 11.1 */
+    #define FLAC__AVX_SUPPORTED 1
+  #endif
+  #if (__INTEL_COMPILER >= 1300) /* Intel C++ Compiler 13.0 */
+    #define FLAC__AVX2_SUPPORTED 1
+    #define FLAC__FMA_SUPPORTED 1
   #endif
 #elif defined __clang__ && __has_attribute(__target__) /* clang */
   #define FLAC__SSE_TARGET(x) __attribute__ ((__target__ (x)))
@@ -92,16 +90,14 @@
   #if __has_builtin(__builtin_ia32_pmuldq128)
     #define FLAC__SSE4_1_SUPPORTED 1
   #endif
-  #ifdef FLAC__USE_AVX
-    #if __has_builtin(__builtin_ia32_maxps256)
-      #define FLAC__AVX_SUPPORTED 1
-    #endif
-    #if __has_builtin(__builtin_ia32_pabsd256)
-      #define FLAC__AVX2_SUPPORTED 1
-    #endif
-    #if __has_builtin(__builtin_ia32_vfmaddps)
-      #define FLAC__FMA_SUPPORTED 1
-    #endif
+  #if __has_builtin(__builtin_ia32_maxps256)
+    #define FLAC__AVX_SUPPORTED 1
+  #endif
+  #if __has_builtin(__builtin_ia32_pabsd256)
+    #define FLAC__AVX2_SUPPORTED 1
+  #endif
+  #if __has_builtin(__builtin_ia32_vfmaddps)
+    #define FLAC__FMA_SUPPORTED 1
   #endif
 #elif defined __GNUC__ && !defined __clang__ && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 9)) /* GCC 4.9+ */
   #define FLAC__SSE_TARGET(x) __attribute__ ((__target__ (x)))
@@ -122,14 +118,12 @@
     #define FLAC__SSSE3_SUPPORTED 1
     #define FLAC__SSE4_1_SUPPORTED 1
   #endif
-  #ifdef FLAC__USE_AVX
-    #if (_MSC_FULL_VER >= 160040219) /* MS Visual Studio 2010 SP1 */
-      #define FLAC__AVX_SUPPORTED 1
-    #endif
-    #if (_MSC_VER >= 1700) /* MS Visual Studio 2012 */
-      #define FLAC__AVX2_SUPPORTED 1
-      #define FLAC__FMA_SUPPORTED 1
-    #endif
+  #if (_MSC_FULL_VER >= 160040219) /* MS Visual Studio 2010 SP1 */
+    #define FLAC__AVX_SUPPORTED 1
+  #endif
+  #if (_MSC_VER >= 1700) /* MS Visual Studio 2012 */
+    #define FLAC__AVX2_SUPPORTED 1
+    #define FLAC__FMA_SUPPORTED 1
   #endif
 #else
   #define FLAC__SSE_TARGET(x)
@@ -145,16 +139,14 @@
   #ifdef __SSE4_1__
     #define FLAC__SSE4_1_SUPPORTED 1
   #endif
-  #ifdef FLAC__USE_AVX
-    #ifdef __AVX__
-      #define FLAC__AVX_SUPPORTED 1
-    #endif
-    #ifdef __AVX2__
-      #define FLAC__AVX2_SUPPORTED 1
-    #endif
-    #ifdef __FMA__
-      #define FLAC__FMA_SUPPORTED 1
-    #endif
+  #ifdef __AVX__
+    #define FLAC__AVX_SUPPORTED 1
+  #endif
+  #ifdef __AVX2__
+    #define FLAC__AVX2_SUPPORTED 1
+  #endif
+  #ifdef __FMA__
+    #define FLAC__FMA_SUPPORTED 1
   #endif
 #endif /* compiler version */
 #endif /* intrinsics support */

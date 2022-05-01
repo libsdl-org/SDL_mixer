@@ -44,10 +44,8 @@
 #cmakedefine FLAC__USE_ALTIVEC
 
 /* define to enable use of AVX instructions */
-#cmakedefine WITH_AVX
-#ifdef WITH_AVX
-  #define FLAC__USE_AVX
-#endif
+#cmakedefine01 WITH_AVX
+#define FLAC__USE_AVX WITH_AVX
 
 /* define to enable use of VSX instructions */
 #cmakedefine FLAC__USE_VSX
@@ -178,16 +176,12 @@
 
 #ifndef _FORTIFY_SOURCE
 #cmakedefine DODEFINE_FORTIFY_SOURCE 2
-#ifdef DODEFINE_FORTIFY_SOURCE
 #define _FORTIFY_SOURCE DODEFINE_FORTIFY_SOURCE
-#endif
 #endif
 
 #ifndef _XOPEN_SOURCE
 #cmakedefine DODEFINE_XOPEN_SOURCE 500
-#ifdef DODEFINE_XOPEN_SOURCE
 #define _XOPEN_SOURCE DODEFINE_XOPEN_SOURCE
-#endif
 #endif
 
 /* Enable threading extensions on Solaris.  */
@@ -201,9 +195,7 @@
 /* Enable general extensions on Solaris.  */
 #ifndef __EXTENSIONS__
 #cmakedefine DODEFINE_EXTENSIONS
-#ifdef DODEFINE_EXTENSIONS
 #define __EXTENSIONS__ DODEFINE_EXTENSIONS
-#endif
 #endif
 
 
