@@ -1,0 +1,13 @@
+diff --git a/external/opusfile-0.12/include/opusfile.h b/external/opusfile-0.12/include/opusfile.h
+index 7c1c89e..296d8d9 100644
+--- a/external/opusfile-0.12/include/opusfile.h
++++ b/external/opusfile-0.12/include/opusfile.h
+@@ -107,7 +107,7 @@ extern "C" {
+ # include <stdarg.h>
+ # include <stdio.h>
+ # include <ogg/ogg.h>
+-# include <opus_multistream.h>
++# include <opus/opus_multistream.h>
+ 
+ /**@cond PRIVATE*/
+ 
