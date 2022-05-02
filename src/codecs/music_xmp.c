@@ -65,7 +65,7 @@ static xmp_loader libxmp;
 #else
 #define FUNCTION_LOADER(FUNC, SIG) \
     libxmp.FUNC = FUNC; \
-    if (lib.FUNC == NULL) { Mix_SetError("Missing xmp.framework"); return -1; }
+    if (libxmp.FUNC == NULL) { Mix_SetError("Missing xmp.framework"); return -1; }
 #endif
 
 static int XMP_Load(void)
