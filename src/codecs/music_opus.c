@@ -52,7 +52,8 @@ static opus_loader opus;
     if (opus.FUNC == NULL) { SDL_UnloadObject(opus.handle); return -1; }
 #else
 #define FUNCTION_LOADER(FUNC, SIG) \
-    opus.FUNC = FUNC;
+    opus.FUNC = FUNC; \
+    if (opus.FUNC == NULL) { Mix_SetError("Missing opus.framework"); return -1; }
 #endif
 
 static int OPUS_Load(void)
@@ -61,13 +62,6 @@ static int OPUS_Load(void)
 #ifdef OPUS_DYNAMIC
         opus.handle = SDL_LoadObject(OPUS_DYNAMIC);
         if (opus.handle == NULL) {
-            return -1;
-        }
-#elif defined(__MACOSX__)
-        extern OggOpusFile *op_open_callbacks(void *,const OpusFileCallbacks *,const unsigned char *,size_t,int *) __attribute__((weak_import));
-        if (op_open_callbacks == NULL) {
-            /* Missing weakly linked framework */
-            Mix_SetError("Missing OpusFile.framework");
             return -1;
         }
 #endif

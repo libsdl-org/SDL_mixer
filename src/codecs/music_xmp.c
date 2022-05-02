@@ -64,7 +64,8 @@ static xmp_loader libxmp;
     if (libxmp.FUNC == NULL) { SDL_UnloadObject(libxmp.handle); return -1; }
 #else
 #define FUNCTION_LOADER(FUNC, SIG) \
-    libxmp.FUNC = FUNC;
+    libxmp.FUNC = FUNC; \
+    if (lib.FUNC == NULL) { Mix_SetError("Missing xmp.framework"); return -1; }
 #endif
 
 static int XMP_Load(void)
@@ -73,13 +74,6 @@ static int XMP_Load(void)
 #ifdef XMP_DYNAMIC
         libxmp.handle = SDL_LoadObject(XMP_DYNAMIC);
         if (libxmp.handle == NULL) {
-            return -1;
-        }
-#elif defined(__MACOSX__)
-        extern xmp_context xmp_create_context(void) __attribute__((weak_import));
-        if (xmp_create_context == NULL) {
-            /* Missing weakly linked framework */
-            Mix_SetError("Missing xmp.framework");
             return -1;
         }
 #endif

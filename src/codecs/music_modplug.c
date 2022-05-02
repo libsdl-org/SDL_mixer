@@ -53,7 +53,8 @@ static ModPlug_Settings settings;
     if (modplug.FUNC == NULL) { SDL_UnloadObject(modplug.handle); return -1; }
 #else
 #define FUNCTION_LOADER(FUNC, SIG) \
-    modplug.FUNC = FUNC;
+    modplug.FUNC = FUNC; \
+    if (modplug.FUNC == NULL) { Mix_SetError("Missing libmodplug.framework"); return -1; }
 #endif
 
 static int MODPLUG_Load(void)
@@ -62,13 +63,6 @@ static int MODPLUG_Load(void)
 #ifdef MODPLUG_DYNAMIC
         modplug.handle = SDL_LoadObject(MODPLUG_DYNAMIC);
         if (modplug.handle == NULL) {
-            return -1;
-        }
-#elif defined(__MACOSX__)
-        extern ModPlugFile* ModPlug_Load(const void* data, int size) __attribute__((weak_import));
-        if (ModPlug_Load == NULL) {
-            /* Missing weakly linked framework */
-            Mix_SetError("Missing modplug.framework");
             return -1;
         }
 #endif

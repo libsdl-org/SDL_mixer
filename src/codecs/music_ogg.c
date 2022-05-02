@@ -67,7 +67,8 @@ static vorbis_loader vorbis;
     if (vorbis.FUNC == NULL) { SDL_UnloadObject(vorbis.handle); return -1; }
 #else
 #define FUNCTION_LOADER(FUNC, SIG) \
-    vorbis.FUNC = FUNC;
+    vorbis.FUNC = FUNC; \
+    if (vorbis.FUNC == NULL) { Mix_SetError("Missing vorbis.framework or tremor.framework"); return -1; }
 #endif
 
 static int OGG_Load(void)
@@ -76,14 +77,6 @@ static int OGG_Load(void)
 #ifdef OGG_DYNAMIC
         vorbis.handle = SDL_LoadObject(OGG_DYNAMIC);
         if (vorbis.handle == NULL) {
-            return -1;
-        }
-#elif defined(__MACOSX__)
-        extern int ov_open_callbacks(void*, OggVorbis_File*, const char*, long, ov_callbacks) __attribute__((weak_import));
-        if (ov_open_callbacks == NULL)
-        {
-            /* Missing weakly linked framework */
-            Mix_SetError("Missing Vorbis.framework");
             return -1;
         }
 #endif

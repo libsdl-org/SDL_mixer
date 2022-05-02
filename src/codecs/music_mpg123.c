@@ -77,7 +77,8 @@ static mpg123_loader mpg123;
     if (mpg123.FUNC == NULL) { SDL_UnloadObject(mpg123.handle); return -1; }
 #else
 #define FUNCTION_LOADER(FUNC, SIG) \
-    mpg123.FUNC = FUNC;
+    mpg123.FUNC = FUNC; \
+    if (mpg123.FUNC == NULL) { Mix_SetError("Missing mpg123.framework"); return -1; }
 #endif
 
 static int MPG123_Load(void)
@@ -86,14 +87,6 @@ static int MPG123_Load(void)
 #ifdef MPG123_DYNAMIC
         mpg123.handle = SDL_LoadObject(MPG123_DYNAMIC);
         if (mpg123.handle == NULL) {
-            return -1;
-        }
-#elif defined(__MACOSX__)
-        extern int mpg123_init(void) __attribute__((weak_import));
-        if (mpg123_init == NULL)
-        {
-            /* Missing weakly linked framework */
-            Mix_SetError("Missing mpg123.framework");
             return -1;
         }
 #endif

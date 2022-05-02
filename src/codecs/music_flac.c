@@ -77,7 +77,8 @@ static flac_loader flac;
     if (flac.FUNC == NULL) { SDL_UnloadObject(flac.handle); return -1; }
 #else
 #define FUNCTION_LOADER(FUNC, SIG) \
-    flac.FUNC = FUNC;
+    flac.FUNC = FUNC; \
+    if (flac.FUNC == NULL) { Mix_SetError("Missing FLAC.framework"); return -1; }
 #endif
 
 static int FLAC_Load(void)
@@ -86,14 +87,6 @@ static int FLAC_Load(void)
 #ifdef FLAC_DYNAMIC
         flac.handle = SDL_LoadObject(FLAC_DYNAMIC);
         if (flac.handle == NULL) {
-            return -1;
-        }
-#elif defined(__MACOSX__)
-        extern FLAC__StreamDecoder *FLAC__stream_decoder_new(void) __attribute__((weak_import));
-        if (FLAC__stream_decoder_new == NULL)
-        {
-            /* Missing weakly linked framework */
-            Mix_SetError("Missing FLAC.framework");
             return -1;
         }
 #endif

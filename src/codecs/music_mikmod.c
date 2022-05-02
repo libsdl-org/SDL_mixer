@@ -80,7 +80,8 @@ static mikmod_loader mikmod;
     if (mikmod.NAME == NULL) { SDL_UnloadObject(mikmod.handle); return -1; }
 #else
 #define FUNCTION_LOADER(FUNC, SIG) \
-    mikmod.FUNC = FUNC;
+    mikmod.FUNC = FUNC; \
+    if (mikmod.FUNC == NULL) { Mix_SetError("Missing mikmod.framework"); return -1; }
 #define VARIABLE_LOADER(NAME, SIG) \
     mikmod.NAME = &NAME;
 #endif
@@ -91,14 +92,6 @@ static int MIKMOD_Load(void)
 #ifdef MIKMOD_DYNAMIC
         mikmod.handle = SDL_LoadObject(MIKMOD_DYNAMIC);
         if (mikmod.handle == NULL) {
-            return -1;
-        }
-#elif defined(__MACOSX__)
-        extern void Player_Start(MODULE*) __attribute__((weak_import));
-        if (Player_Start == NULL)
-        {
-            /* Missing weakly linked framework */
-            Mix_SetError("Missing mikmod.framework");
             return -1;
         }
 #endif
