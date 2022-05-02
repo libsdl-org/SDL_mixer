@@ -30,7 +30,11 @@
 #include "mp3utils.h"
 
 #include <stdio.h>      /* For SEEK_SET */
+#ifdef MPG123_HEADER
+#include MPG123_HEADER
+#else
 #include <mpg123.h>
+#endif
 #ifdef _MSC_VER
 typedef ptrdiff_t MIX_SSIZE_T;
 #else

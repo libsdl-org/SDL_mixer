@@ -1,0 +1,14 @@
+//
+//  sources.xcconfig
+//  opus
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+ARM_SOURCES = */arm/*
+
+EXCLUDED_SOURCE_FILE_NAMES = $(ARM_SOURCES)
+INCLUDED_SOURCE_FILE_NAMES =
+INCLUDED_SOURCE_FILE_NAMES[arch=armv7] = $(ARM_SOURCES)
+INCLUDED_SOURCE_FILE_NAMES[arch=arm64] = $(ARM_SOURCES)

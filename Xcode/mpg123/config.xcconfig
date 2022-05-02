@@ -1,0 +1,30 @@
+//
+//  config.xcconfig
+//  mpg123
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+DECODER_CFLAGS_NEON = OPT_NEON REAL_IS_FLOAT
+
+DECODER_SRC_NEON = src/libmpg123/stringbuf.c src/libmpg123/icy.c src/libmpg123/icy2utf8.c src/libmpg123/ntom.c src/libmpg123/synth.c src/libmpg123/synth_8bit.c src/libmpg123/layer1.c src/libmpg123/layer2.c src/libmpg123/layer3.c src/libmpg123/dct36_neon.S src/libmpg123/dct64_neon_float.S src/libmpg123/synth_neon_float.S src/libmpg123/synth_neon_s32.S src/libmpg123/synth_stereo_neon_float.S src/libmpg123/synth_stereo_neon_s32.S src/libmpg123/dct64_neon.S src/libmpg123/synth_neon.S src/libmpg123/synth_stereo_neon.S src/libmpg123/synth_s32.c src/libmpg123/synth_real.c src/libmpg123/feature.c
+
+DECODER_CFLAGS_NEON64 = OPT_MULTI OPT_GENERIC OPT_GENERIC_DITHER OPT_NEON64 REAL_IS_FLOAT
+
+DECODER_SRC_NEON64 = src/libmpg123/stringbuf.c src/libmpg123/icy.c src/libmpg123/icy2utf8.c src/libmpg123/ntom.c src/libmpg123/synth.c src/libmpg123/synth_8bit.c src/libmpg123/layer1.c src/libmpg123/layer2.c src/libmpg123/layer3.c src/libmpg123/dct36_neon64.S src/libmpg123/dct64_neon64_float.S src/libmpg123/synth_neon64_float.S src/libmpg123/synth_neon64_s32.S src/libmpg123/synth_stereo_neon64_float.S src/libmpg123/synth_stereo_neon64_s32.S src/libmpg123/dct64_neon64.S src/libmpg123/synth_neon64.S src/libmpg123/synth_stereo_neon64.S src/libmpg123/synth_s32.c src/libmpg123/synth_real.c src/libmpg123/dither.c src/libmpg123/getcpuflags_arm.c src/libmpg123/check_neon.S src/libmpg123/feature.c
+
+DECODER_CFLAGS_X64 = OPT_MULTI OPT_X86_64 OPT_GENERIC OPT_GENERIC_DITHER REAL_IS_FLOAT OPT_AVX ASMALIGN_BALIGN
+
+DECODER_SRC_X64 = src/libmpg123/stringbuf.c src/libmpg123/icy.c src/libmpg123/icy.h src/libmpg123/icy2utf8.c src/libmpg123/icy2utf8.h src/libmpg123/ntom.c src/libmpg123/synth.c src/libmpg123/synth.h src/libmpg123/synth_8bit.c src/libmpg123/synth_8bit.h src/libmpg123/layer1.c src/libmpg123/layer2.c src/libmpg123/layer3.c src/libmpg123/synth_s32.c src/libmpg123/synth_real.c src/libmpg123/dct36_x86_64.S src/libmpg123/dct64_x86_64_float.S src/libmpg123/synth_x86_64_float.S src/libmpg123/synth_x86_64_s32.S src/libmpg123/synth_stereo_x86_64_float.S src/libmpg123/synth_stereo_x86_64_s32.S src/libmpg123/synth_x86_64.S src/libmpg123/dct64_x86_64.S src/libmpg123/synth_stereo_x86_64.S src/libmpg123/dither.c src/libmpg123/dither.h src/libmpg123/getcpuflags_x86_64.S src/libmpg123/dct36_avx.S src/libmpg123/dct64_avx_float.S src/libmpg123/synth_stereo_avx_float.S src/libmpg123/synth_stereo_avx_s32.S src/libmpg123/dct64_avx.S src/libmpg123/synth_stereo_avx.S src/libmpg123/feature.c
+
+EXCLUDED_SOURCE_FILE_NAMES = $(DECODER_SRC_NEON) $(DECODER_SRC_NEON64) $(DECODER_SRC_X64)
+INCLUDED_SOURCE_FILE_NAMES =
+INCLUDED_SOURCE_FILE_NAMES[arch=armv7] = $(DECODER_SRC_NEON)
+INCLUDED_SOURCE_FILE_NAMES[arch=arm64] = $(DECODER_SRC_NEON64)
+INCLUDED_SOURCE_FILE_NAMES[arch=x86_64] = $(DECODER_SRC_X64)
+
+DECODER_CFLAGS =
+DECODER_CFLAGS[arch=armv7] = $(DECODER_CFLAGS_NEON)
+DECODER_CFLAGS[arch=arm64] = $(DECODER_CFLAGS_NEON64)
+DECODER_CFLAGS[arch=x86_64] = $(DECODER_CFLAGS_X64)

@@ -1,0 +1,30 @@
+//
+//  config.xcconfig
+//  SDL_mixer
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+MUSIC_CMD = MUSIC_CMD
+MUSIC_CMD[sdk=appletv*] =
+
+MUSIC_WAV = MUSIC_WAV
+
+MUSIC_MOD = MUSIC_MOD
+
+MUSIC_MP3_MPG123 = MUSIC_MP3_MPG123
+
+MUSIC_MID = MUSIC_MID
+
+MUSIC_MID_NATIVE =
+MUSIC_MID_NATIVE[sdk=mac*] = MUSIC_MID_NATIVE
+
+MUSIC_OGG = MUSIC_OGG
+
+MUSIC_FLAC = MUSIC_FLAC
+
+MUSIC_OPUS = MUSIC_OPUS
+
+VORBIS_FRAMEWORK = vorbis
+VORBIS_FRAMEWORK[arch=armv7] = tremor

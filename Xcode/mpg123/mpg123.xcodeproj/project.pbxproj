@@ -1,0 +1,629 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 55;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F3968D11281FAF0A00661875 /* stringbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = F3968CD7281FAF0A00661875 /* stringbuf.c */; };
+		F3968D12281FAF0A00661875 /* synth_stereo_neon_s32.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968CD8281FAF0A00661875 /* synth_stereo_neon_s32.S */; };
+		F3968D13281FAF0A00661875 /* equalizer.c in Sources */ = {isa = PBXBuildFile; fileRef = F3968CD9281FAF0A00661875 /* equalizer.c */; };
+		F3968D14281FAF0A00661875 /* synth_neon_s32.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968CDA281FAF0A00661875 /* synth_neon_s32.S */; };
+		F3968D15281FAF0A00661875 /* synth_stereo_x86_64_float.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968CDB281FAF0A00661875 /* synth_stereo_x86_64_float.S */; };
+		F3968D16281FAF0A00661875 /* dct36_neon64.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968CDC281FAF0A00661875 /* dct36_neon64.S */; };
+		F3968D17281FAF0A00661875 /* optimize.c in Sources */ = {isa = PBXBuildFile; fileRef = F3968CDD281FAF0A00661875 /* optimize.c */; };
+		F3968D18281FAF0A00661875 /* synth_stereo_x86_64.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968CDE281FAF0A00661875 /* synth_stereo_x86_64.S */; };
+		F3968D19281FAF0A00661875 /* synth_stereo_avx.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968CDF281FAF0A00661875 /* synth_stereo_avx.S */; };
+		F3968D1A281FAF0A00661875 /* synth_8bit.c in Sources */ = {isa = PBXBuildFile; fileRef = F3968CE0281FAF0A00661875 /* synth_8bit.c */; };
+		F3968D1B281FAF0A00661875 /* frame.c in Sources */ = {isa = PBXBuildFile; fileRef = F3968CE1281FAF0A00661875 /* frame.c */; };
+		F3968D1C281FAF0A00661875 /* getcpuflags_x86_64.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968CE2281FAF0A00661875 /* getcpuflags_x86_64.S */; };
+		F3968D1D281FAF0A00661875 /* synth_s32.c in Sources */ = {isa = PBXBuildFile; fileRef = F3968CE3281FAF0A00661875 /* synth_s32.c */; };
+		F3968D1E281FAF0A00661875 /* format.c in Sources */ = {isa = PBXBuildFile; fileRef = F3968CE4281FAF0A00661875 /* format.c */; };
+		F3968D1F281FAF0A00661875 /* synth_neon64.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968CE5281FAF0A00661875 /* synth_neon64.S */; };
+		F3968D20281FAF0A00661875 /* dct64_neon64.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968CE6281FAF0A00661875 /* dct64_neon64.S */; };
+		F3968D21281FAF0A00661875 /* ntom.c in Sources */ = {isa = PBXBuildFile; fileRef = F3968CE7281FAF0A00661875 /* ntom.c */; };
+		F3968D22281FAF0A00661875 /* dct64.c in Sources */ = {isa = PBXBuildFile; fileRef = F3968CE8281FAF0A00661875 /* dct64.c */; };
+		F3968D23281FAF0A00661875 /* dither.c in Sources */ = {isa = PBXBuildFile; fileRef = F3968CE9281FAF0A00661875 /* dither.c */; };
+		F3968D24281FAF0A00661875 /* index.c in Sources */ = {isa = PBXBuildFile; fileRef = F3968CEA281FAF0A00661875 /* index.c */; };
+		F3968D25281FAF0A00661875 /* dct64_x86_64.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968CEB281FAF0A00661875 /* dct64_x86_64.S */; };
+		F3968D26281FAF0A00661875 /* dct64_avx_float.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968CEC281FAF0A00661875 /* dct64_avx_float.S */; };
+		F3968D27281FAF0A00661875 /* dct36_avx.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968CED281FAF0A00661875 /* dct36_avx.S */; };
+		F3968D28281FAF0A00661875 /* tabinit.c in Sources */ = {isa = PBXBuildFile; fileRef = F3968CEE281FAF0A00661875 /* tabinit.c */; };
+		F3968D29281FAF0A00661875 /* icy.c in Sources */ = {isa = PBXBuildFile; fileRef = F3968CEF281FAF0A00661875 /* icy.c */; };
+		F3968D2A281FAF0A00661875 /* synth_stereo_avx_s32.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968CF0281FAF0A00661875 /* synth_stereo_avx_s32.S */; };
+		F3968D2B281FAF0A00661875 /* layer1.c in Sources */ = {isa = PBXBuildFile; fileRef = F3968CF1281FAF0A00661875 /* layer1.c */; };
+		F3968D2C281FAF0A00661875 /* synth.c in Sources */ = {isa = PBXBuildFile; fileRef = F3968CF2281FAF0A00661875 /* synth.c */; };
+		F3968D2D281FAF0A00661875 /* parse.c in Sources */ = {isa = PBXBuildFile; fileRef = F3968CF3281FAF0A00661875 /* parse.c */; };
+		F3968D2E281FAF0A00661875 /* dct64_x86_64_float.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968CF4281FAF0A00661875 /* dct64_x86_64_float.S */; };
+		F3968D2F281FAF0A00661875 /* feature.c in Sources */ = {isa = PBXBuildFile; fileRef = F3968CF5281FAF0A00661875 /* feature.c */; };
+		F3968D30281FAF0A00661875 /* readers.c in Sources */ = {isa = PBXBuildFile; fileRef = F3968CF6281FAF0A00661875 /* readers.c */; };
+		F3968D31281FAF0A00661875 /* synth_neon64_s32.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968CF7281FAF0A00661875 /* synth_neon64_s32.S */; };
+		F3968D32281FAF0A00661875 /* synth_x86_64_float.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968CF8281FAF0A00661875 /* synth_x86_64_float.S */; };
+		F3968D33281FAF0A00661875 /* dct64_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968CF9281FAF0A00661875 /* dct64_neon.S */; };
+		F3968D34281FAF0A00661875 /* layer2.c in Sources */ = {isa = PBXBuildFile; fileRef = F3968CFA281FAF0A00661875 /* layer2.c */; };
+		F3968D35281FAF0A00661875 /* id3.c in Sources */ = {isa = PBXBuildFile; fileRef = F3968CFB281FAF0A00661875 /* id3.c */; };
+		F3968D36281FAF0A00661875 /* synth_stereo_neon64_float.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968CFC281FAF0A00661875 /* synth_stereo_neon64_float.S */; };
+		F3968D37281FAF0A00661875 /* getcpuflags_arm.c in Sources */ = {isa = PBXBuildFile; fileRef = F3968CFD281FAF0A00661875 /* getcpuflags_arm.c */; };
+		F3968D38281FAF0A00661875 /* icy2utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = F3968CFE281FAF0A00661875 /* icy2utf8.c */; };
+		F3968D39281FAF0A00661875 /* synth_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968CFF281FAF0A00661875 /* synth_neon.S */; };
+		F3968D3A281FAF0A00661875 /* synth_stereo_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968D00281FAF0A00661875 /* synth_stereo_neon.S */; };
+		F3968D3B281FAF0A00661875 /* synth_neon64_float.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968D01281FAF0A00661875 /* synth_neon64_float.S */; };
+		F3968D3C281FAF0A00661875 /* dct36_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968D02281FAF0A00661875 /* dct36_neon.S */; };
+		F3968D3D281FAF0A00661875 /* dct36_x86_64.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968D03281FAF0A00661875 /* dct36_x86_64.S */; };
+		F3968D3E281FAF0A00661875 /* check_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968D04281FAF0A00661875 /* check_neon.S */; };
+		F3968D3F281FAF0A00661875 /* synth_stereo_neon64.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968D05281FAF0A00661875 /* synth_stereo_neon64.S */; };
+		F3968D40281FAF0A00661875 /* libmpg123.c in Sources */ = {isa = PBXBuildFile; fileRef = F3968D06281FAF0A00661875 /* libmpg123.c */; };
+		F3968D41281FAF0A00661875 /* synth_stereo_neon_float.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968D07281FAF0A00661875 /* synth_stereo_neon_float.S */; };
+		F3968D42281FAF0A00661875 /* synth_stereo_neon64_s32.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968D08281FAF0A00661875 /* synth_stereo_neon64_s32.S */; };
+		F3968D43281FAF0A00661875 /* synth_stereo_avx_float.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968D09281FAF0A00661875 /* synth_stereo_avx_float.S */; };
+		F3968D44281FAF0A00661875 /* dct64_avx.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968D0A281FAF0A00661875 /* dct64_avx.S */; };
+		F3968D45281FAF0A00661875 /* synth_real.c in Sources */ = {isa = PBXBuildFile; fileRef = F3968D0B281FAF0A00661875 /* synth_real.c */; };
+		F3968D46281FAF0A00661875 /* synth_stereo_x86_64_s32.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968D0C281FAF0A00661875 /* synth_stereo_x86_64_s32.S */; };
+		F3968D47281FAF0A00661875 /* layer3.c in Sources */ = {isa = PBXBuildFile; fileRef = F3968D0D281FAF0A00661875 /* layer3.c */; };
+		F3968D48281FAF0A00661875 /* synth_x86_64_s32.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968D0E281FAF0A00661875 /* synth_x86_64_s32.S */; };
+		F3968D49281FAF0A00661875 /* dct64_neon64_float.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968D0F281FAF0A00661875 /* dct64_neon64_float.S */; };
+		F3968D4A281FAF0A00661875 /* synth_x86_64.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968D10281FAF0A00661875 /* synth_x86_64.S */; };
+		F3968D4D281FB05200661875 /* compat.c in Sources */ = {isa = PBXBuildFile; fileRef = F3968D4B281FB05200661875 /* compat.c */; };
+		F3968D4E281FB05200661875 /* compat_str.c in Sources */ = {isa = PBXBuildFile; fileRef = F3968D4C281FB05200661875 /* compat_str.c */; };
+		F3968D50281FB25300661875 /* synth_neon_float.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968D4F281FB25300661875 /* synth_neon_float.S */; };
+		F3968D52281FB28C00661875 /* dct64_neon_float.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968D51281FB28C00661875 /* dct64_neon_float.S */; };
+		F3968D54281FB35400661875 /* mpg123.h in Headers */ = {isa = PBXBuildFile; fileRef = F3968D53281FB35400661875 /* mpg123.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3968D56281FB37200661875 /* fmt123.h in Headers */ = {isa = PBXBuildFile; fileRef = F3968D55281FB37200661875 /* fmt123.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3968D59281FB3B300661875 /* README in Resources */ = {isa = PBXBuildFile; fileRef = F3968D57281FB3B300661875 /* README */; };
+		F3968D5A281FB3B300661875 /* COPYING in Resources */ = {isa = PBXBuildFile; fileRef = F3968D58281FB3B300661875 /* COPYING */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		F3968BA5281F855B00661875 /* mpg123.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = mpg123.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F3968CD5281FAA8500661875 /* config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = config.xcconfig; sourceTree = "<group>"; };
+		F3968CD7281FAF0A00661875 /* stringbuf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stringbuf.c; path = "../../external/mpg123-1.25.13/src/libmpg123/stringbuf.c"; sourceTree = "<group>"; };
+		F3968CD8281FAF0A00661875 /* synth_stereo_neon_s32.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_neon_s32.S; path = "../../external/mpg123-1.25.13/src/libmpg123/synth_stereo_neon_s32.S"; sourceTree = "<group>"; };
+		F3968CD9281FAF0A00661875 /* equalizer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = equalizer.c; path = "../../external/mpg123-1.25.13/src/libmpg123/equalizer.c"; sourceTree = "<group>"; };
+		F3968CDA281FAF0A00661875 /* synth_neon_s32.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_neon_s32.S; path = "../../external/mpg123-1.25.13/src/libmpg123/synth_neon_s32.S"; sourceTree = "<group>"; };
+		F3968CDB281FAF0A00661875 /* synth_stereo_x86_64_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_x86_64_float.S; path = "../../external/mpg123-1.25.13/src/libmpg123/synth_stereo_x86_64_float.S"; sourceTree = "<group>"; };
+		F3968CDC281FAF0A00661875 /* dct36_neon64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct36_neon64.S; path = "../../external/mpg123-1.25.13/src/libmpg123/dct36_neon64.S"; sourceTree = "<group>"; };
+		F3968CDD281FAF0A00661875 /* optimize.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = optimize.c; path = "../../external/mpg123-1.25.13/src/libmpg123/optimize.c"; sourceTree = "<group>"; };
+		F3968CDE281FAF0A00661875 /* synth_stereo_x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_x86_64.S; path = "../../external/mpg123-1.25.13/src/libmpg123/synth_stereo_x86_64.S"; sourceTree = "<group>"; };
+		F3968CDF281FAF0A00661875 /* synth_stereo_avx.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_avx.S; path = "../../external/mpg123-1.25.13/src/libmpg123/synth_stereo_avx.S"; sourceTree = "<group>"; };
+		F3968CE0281FAF0A00661875 /* synth_8bit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = synth_8bit.c; path = "../../external/mpg123-1.25.13/src/libmpg123/synth_8bit.c"; sourceTree = "<group>"; };
+		F3968CE1281FAF0A00661875 /* frame.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = frame.c; path = "../../external/mpg123-1.25.13/src/libmpg123/frame.c"; sourceTree = "<group>"; };
+		F3968CE2281FAF0A00661875 /* getcpuflags_x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = getcpuflags_x86_64.S; path = "../../external/mpg123-1.25.13/src/libmpg123/getcpuflags_x86_64.S"; sourceTree = "<group>"; };
+		F3968CE3281FAF0A00661875 /* synth_s32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = synth_s32.c; path = "../../external/mpg123-1.25.13/src/libmpg123/synth_s32.c"; sourceTree = "<group>"; };
+		F3968CE4281FAF0A00661875 /* format.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = format.c; path = "../../external/mpg123-1.25.13/src/libmpg123/format.c"; sourceTree = "<group>"; };
+		F3968CE5281FAF0A00661875 /* synth_neon64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_neon64.S; path = "../../external/mpg123-1.25.13/src/libmpg123/synth_neon64.S"; sourceTree = "<group>"; };
+		F3968CE6281FAF0A00661875 /* dct64_neon64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct64_neon64.S; path = "../../external/mpg123-1.25.13/src/libmpg123/dct64_neon64.S"; sourceTree = "<group>"; };
+		F3968CE7281FAF0A00661875 /* ntom.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ntom.c; path = "../../external/mpg123-1.25.13/src/libmpg123/ntom.c"; sourceTree = "<group>"; };
+		F3968CE8281FAF0A00661875 /* dct64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dct64.c; path = "../../external/mpg123-1.25.13/src/libmpg123/dct64.c"; sourceTree = "<group>"; };
+		F3968CE9281FAF0A00661875 /* dither.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dither.c; path = "../../external/mpg123-1.25.13/src/libmpg123/dither.c"; sourceTree = "<group>"; };
+		F3968CEA281FAF0A00661875 /* index.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = index.c; path = "../../external/mpg123-1.25.13/src/libmpg123/index.c"; sourceTree = "<group>"; };
+		F3968CEB281FAF0A00661875 /* dct64_x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct64_x86_64.S; path = "../../external/mpg123-1.25.13/src/libmpg123/dct64_x86_64.S"; sourceTree = "<group>"; };
+		F3968CEC281FAF0A00661875 /* dct64_avx_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct64_avx_float.S; path = "../../external/mpg123-1.25.13/src/libmpg123/dct64_avx_float.S"; sourceTree = "<group>"; };
+		F3968CED281FAF0A00661875 /* dct36_avx.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct36_avx.S; path = "../../external/mpg123-1.25.13/src/libmpg123/dct36_avx.S"; sourceTree = "<group>"; };
+		F3968CEE281FAF0A00661875 /* tabinit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tabinit.c; path = "../../external/mpg123-1.25.13/src/libmpg123/tabinit.c"; sourceTree = "<group>"; };
+		F3968CEF281FAF0A00661875 /* icy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = icy.c; path = "../../external/mpg123-1.25.13/src/libmpg123/icy.c"; sourceTree = "<group>"; };
+		F3968CF0281FAF0A00661875 /* synth_stereo_avx_s32.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_avx_s32.S; path = "../../external/mpg123-1.25.13/src/libmpg123/synth_stereo_avx_s32.S"; sourceTree = "<group>"; };
+		F3968CF1281FAF0A00661875 /* layer1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = layer1.c; path = "../../external/mpg123-1.25.13/src/libmpg123/layer1.c"; sourceTree = "<group>"; };
+		F3968CF2281FAF0A00661875 /* synth.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = synth.c; path = "../../external/mpg123-1.25.13/src/libmpg123/synth.c"; sourceTree = "<group>"; };
+		F3968CF3281FAF0A00661875 /* parse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = parse.c; path = "../../external/mpg123-1.25.13/src/libmpg123/parse.c"; sourceTree = "<group>"; };
+		F3968CF4281FAF0A00661875 /* dct64_x86_64_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct64_x86_64_float.S; path = "../../external/mpg123-1.25.13/src/libmpg123/dct64_x86_64_float.S"; sourceTree = "<group>"; };
+		F3968CF5281FAF0A00661875 /* feature.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = feature.c; path = "../../external/mpg123-1.25.13/src/libmpg123/feature.c"; sourceTree = "<group>"; };
+		F3968CF6281FAF0A00661875 /* readers.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = readers.c; path = "../../external/mpg123-1.25.13/src/libmpg123/readers.c"; sourceTree = "<group>"; };
+		F3968CF7281FAF0A00661875 /* synth_neon64_s32.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_neon64_s32.S; path = "../../external/mpg123-1.25.13/src/libmpg123/synth_neon64_s32.S"; sourceTree = "<group>"; };
+		F3968CF8281FAF0A00661875 /* synth_x86_64_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_x86_64_float.S; path = "../../external/mpg123-1.25.13/src/libmpg123/synth_x86_64_float.S"; sourceTree = "<group>"; };
+		F3968CF9281FAF0A00661875 /* dct64_neon.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct64_neon.S; path = "../../external/mpg123-1.25.13/src/libmpg123/dct64_neon.S"; sourceTree = "<group>"; };
+		F3968CFA281FAF0A00661875 /* layer2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = layer2.c; path = "../../external/mpg123-1.25.13/src/libmpg123/layer2.c"; sourceTree = "<group>"; };
+		F3968CFB281FAF0A00661875 /* id3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = id3.c; path = "../../external/mpg123-1.25.13/src/libmpg123/id3.c"; sourceTree = "<group>"; };
+		F3968CFC281FAF0A00661875 /* synth_stereo_neon64_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_neon64_float.S; path = "../../external/mpg123-1.25.13/src/libmpg123/synth_stereo_neon64_float.S"; sourceTree = "<group>"; };
+		F3968CFD281FAF0A00661875 /* getcpuflags_arm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = getcpuflags_arm.c; path = "../../external/mpg123-1.25.13/src/libmpg123/getcpuflags_arm.c"; sourceTree = "<group>"; };
+		F3968CFE281FAF0A00661875 /* icy2utf8.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = icy2utf8.c; path = "../../external/mpg123-1.25.13/src/libmpg123/icy2utf8.c"; sourceTree = "<group>"; };
+		F3968CFF281FAF0A00661875 /* synth_neon.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_neon.S; path = "../../external/mpg123-1.25.13/src/libmpg123/synth_neon.S"; sourceTree = "<group>"; };
+		F3968D00281FAF0A00661875 /* synth_stereo_neon.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_neon.S; path = "../../external/mpg123-1.25.13/src/libmpg123/synth_stereo_neon.S"; sourceTree = "<group>"; };
+		F3968D01281FAF0A00661875 /* synth_neon64_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_neon64_float.S; path = "../../external/mpg123-1.25.13/src/libmpg123/synth_neon64_float.S"; sourceTree = "<group>"; };
+		F3968D02281FAF0A00661875 /* dct36_neon.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct36_neon.S; path = "../../external/mpg123-1.25.13/src/libmpg123/dct36_neon.S"; sourceTree = "<group>"; };
+		F3968D03281FAF0A00661875 /* dct36_x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct36_x86_64.S; path = "../../external/mpg123-1.25.13/src/libmpg123/dct36_x86_64.S"; sourceTree = "<group>"; };
+		F3968D04281FAF0A00661875 /* check_neon.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = check_neon.S; path = "../../external/mpg123-1.25.13/src/libmpg123/check_neon.S"; sourceTree = "<group>"; };
+		F3968D05281FAF0A00661875 /* synth_stereo_neon64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_neon64.S; path = "../../external/mpg123-1.25.13/src/libmpg123/synth_stereo_neon64.S"; sourceTree = "<group>"; };
+		F3968D06281FAF0A00661875 /* libmpg123.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = libmpg123.c; path = "../../external/mpg123-1.25.13/src/libmpg123/libmpg123.c"; sourceTree = "<group>"; };
+		F3968D07281FAF0A00661875 /* synth_stereo_neon_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_neon_float.S; path = "../../external/mpg123-1.25.13/src/libmpg123/synth_stereo_neon_float.S"; sourceTree = "<group>"; };
+		F3968D08281FAF0A00661875 /* synth_stereo_neon64_s32.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_neon64_s32.S; path = "../../external/mpg123-1.25.13/src/libmpg123/synth_stereo_neon64_s32.S"; sourceTree = "<group>"; };
+		F3968D09281FAF0A00661875 /* synth_stereo_avx_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_avx_float.S; path = "../../external/mpg123-1.25.13/src/libmpg123/synth_stereo_avx_float.S"; sourceTree = "<group>"; };
+		F3968D0A281FAF0A00661875 /* dct64_avx.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct64_avx.S; path = "../../external/mpg123-1.25.13/src/libmpg123/dct64_avx.S"; sourceTree = "<group>"; };
+		F3968D0B281FAF0A00661875 /* synth_real.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = synth_real.c; path = "../../external/mpg123-1.25.13/src/libmpg123/synth_real.c"; sourceTree = "<group>"; };
+		F3968D0C281FAF0A00661875 /* synth_stereo_x86_64_s32.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_x86_64_s32.S; path = "../../external/mpg123-1.25.13/src/libmpg123/synth_stereo_x86_64_s32.S"; sourceTree = "<group>"; };
+		F3968D0D281FAF0A00661875 /* layer3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = layer3.c; path = "../../external/mpg123-1.25.13/src/libmpg123/layer3.c"; sourceTree = "<group>"; };
+		F3968D0E281FAF0A00661875 /* synth_x86_64_s32.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_x86_64_s32.S; path = "../../external/mpg123-1.25.13/src/libmpg123/synth_x86_64_s32.S"; sourceTree = "<group>"; };
+		F3968D0F281FAF0A00661875 /* dct64_neon64_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct64_neon64_float.S; path = "../../external/mpg123-1.25.13/src/libmpg123/dct64_neon64_float.S"; sourceTree = "<group>"; };
+		F3968D10281FAF0A00661875 /* synth_x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_x86_64.S; path = "../../external/mpg123-1.25.13/src/libmpg123/synth_x86_64.S"; sourceTree = "<group>"; };
+		F3968D4B281FB05200661875 /* compat.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = compat.c; path = "../../external/mpg123-1.25.13/src/compat/compat.c"; sourceTree = "<group>"; };
+		F3968D4C281FB05200661875 /* compat_str.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = compat_str.c; path = "../../external/mpg123-1.25.13/src/compat/compat_str.c"; sourceTree = "<group>"; };
+		F3968D4F281FB25300661875 /* synth_neon_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_neon_float.S; path = "../../external/mpg123-1.25.13/src/libmpg123/synth_neon_float.S"; sourceTree = "<group>"; };
+		F3968D51281FB28C00661875 /* dct64_neon_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct64_neon_float.S; path = "../../external/mpg123-1.25.13/src/libmpg123/dct64_neon_float.S"; sourceTree = "<group>"; };
+		F3968D53281FB35400661875 /* mpg123.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mpg123.h; sourceTree = "<group>"; };
+		F3968D55281FB37200661875 /* fmt123.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmt123.h; path = "../../external/mpg123-1.25.13/src/libmpg123/fmt123.h"; sourceTree = "<group>"; };
+		F3968D57281FB3B300661875 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README; path = "../../external/mpg123-1.25.13/README"; sourceTree = "<group>"; };
+		F3968D58281FB3B300661875 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING; path = "../../external/mpg123-1.25.13/COPYING"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F3968BA2281F855B00661875 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F3968B9B281F855B00661875 = {
+			isa = PBXGroup;
+			children = (
+				F3968CD5281FAA8500661875 /* config.xcconfig */,
+				F3968BA6281F855B00661875 /* Products */,
+				F3968BB1281F95AD00661875 /* Resources */,
+				F3968BB0281F95A600661875 /* Headers */,
+				F3968BAF281F95A000661875 /* Source */,
+			);
+			sourceTree = "<group>";
+		};
+		F3968BA6281F855B00661875 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F3968BA5281F855B00661875 /* mpg123.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F3968BAF281F95A000661875 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				F3968D04281FAF0A00661875 /* check_neon.S */,
+				F3968D4C281FB05200661875 /* compat_str.c */,
+				F3968D4B281FB05200661875 /* compat.c */,
+				F3968CED281FAF0A00661875 /* dct36_avx.S */,
+				F3968D02281FAF0A00661875 /* dct36_neon.S */,
+				F3968CDC281FAF0A00661875 /* dct36_neon64.S */,
+				F3968D03281FAF0A00661875 /* dct36_x86_64.S */,
+				F3968CEC281FAF0A00661875 /* dct64_avx_float.S */,
+				F3968D0A281FAF0A00661875 /* dct64_avx.S */,
+				F3968D51281FB28C00661875 /* dct64_neon_float.S */,
+				F3968CF9281FAF0A00661875 /* dct64_neon.S */,
+				F3968D0F281FAF0A00661875 /* dct64_neon64_float.S */,
+				F3968CE6281FAF0A00661875 /* dct64_neon64.S */,
+				F3968CF4281FAF0A00661875 /* dct64_x86_64_float.S */,
+				F3968CEB281FAF0A00661875 /* dct64_x86_64.S */,
+				F3968CE8281FAF0A00661875 /* dct64.c */,
+				F3968CE9281FAF0A00661875 /* dither.c */,
+				F3968CD9281FAF0A00661875 /* equalizer.c */,
+				F3968CF5281FAF0A00661875 /* feature.c */,
+				F3968CE4281FAF0A00661875 /* format.c */,
+				F3968CE1281FAF0A00661875 /* frame.c */,
+				F3968CFD281FAF0A00661875 /* getcpuflags_arm.c */,
+				F3968CE2281FAF0A00661875 /* getcpuflags_x86_64.S */,
+				F3968CEF281FAF0A00661875 /* icy.c */,
+				F3968CFE281FAF0A00661875 /* icy2utf8.c */,
+				F3968CFB281FAF0A00661875 /* id3.c */,
+				F3968CEA281FAF0A00661875 /* index.c */,
+				F3968CF1281FAF0A00661875 /* layer1.c */,
+				F3968CFA281FAF0A00661875 /* layer2.c */,
+				F3968D0D281FAF0A00661875 /* layer3.c */,
+				F3968D06281FAF0A00661875 /* libmpg123.c */,
+				F3968CE7281FAF0A00661875 /* ntom.c */,
+				F3968CDD281FAF0A00661875 /* optimize.c */,
+				F3968CF3281FAF0A00661875 /* parse.c */,
+				F3968CF6281FAF0A00661875 /* readers.c */,
+				F3968CD7281FAF0A00661875 /* stringbuf.c */,
+				F3968CE0281FAF0A00661875 /* synth_8bit.c */,
+				F3968D4F281FB25300661875 /* synth_neon_float.S */,
+				F3968CDA281FAF0A00661875 /* synth_neon_s32.S */,
+				F3968CFF281FAF0A00661875 /* synth_neon.S */,
+				F3968D01281FAF0A00661875 /* synth_neon64_float.S */,
+				F3968CF7281FAF0A00661875 /* synth_neon64_s32.S */,
+				F3968CE5281FAF0A00661875 /* synth_neon64.S */,
+				F3968D0B281FAF0A00661875 /* synth_real.c */,
+				F3968CE3281FAF0A00661875 /* synth_s32.c */,
+				F3968D09281FAF0A00661875 /* synth_stereo_avx_float.S */,
+				F3968CF0281FAF0A00661875 /* synth_stereo_avx_s32.S */,
+				F3968CDF281FAF0A00661875 /* synth_stereo_avx.S */,
+				F3968D07281FAF0A00661875 /* synth_stereo_neon_float.S */,
+				F3968CD8281FAF0A00661875 /* synth_stereo_neon_s32.S */,
+				F3968D00281FAF0A00661875 /* synth_stereo_neon.S */,
+				F3968CFC281FAF0A00661875 /* synth_stereo_neon64_float.S */,
+				F3968D08281FAF0A00661875 /* synth_stereo_neon64_s32.S */,
+				F3968D05281FAF0A00661875 /* synth_stereo_neon64.S */,
+				F3968CDB281FAF0A00661875 /* synth_stereo_x86_64_float.S */,
+				F3968D0C281FAF0A00661875 /* synth_stereo_x86_64_s32.S */,
+				F3968CDE281FAF0A00661875 /* synth_stereo_x86_64.S */,
+				F3968CF8281FAF0A00661875 /* synth_x86_64_float.S */,
+				F3968D0E281FAF0A00661875 /* synth_x86_64_s32.S */,
+				F3968D10281FAF0A00661875 /* synth_x86_64.S */,
+				F3968CF2281FAF0A00661875 /* synth.c */,
+				F3968CEE281FAF0A00661875 /* tabinit.c */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		F3968BB0281F95A600661875 /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				F3968D55281FB37200661875 /* fmt123.h */,
+				F3968D53281FB35400661875 /* mpg123.h */,
+			);
+			name = Headers;
+			sourceTree = "<group>";
+		};
+		F3968BB1281F95AD00661875 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				F3968D58281FB3B300661875 /* COPYING */,
+				F3968D57281FB3B300661875 /* README */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		F3968BA0281F855B00661875 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3968D56281FB37200661875 /* fmt123.h in Headers */,
+				F3968D54281FB35400661875 /* mpg123.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		F3968BA4281F855B00661875 /* mpg123 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F3968BAC281F855B00661875 /* Build configuration list for PBXNativeTarget "mpg123" */;
+			buildPhases = (
+				F3968BA0281F855B00661875 /* Headers */,
+				F3968BA1281F855B00661875 /* Sources */,
+				F3968BA2281F855B00661875 /* Frameworks */,
+				F3968BA3281F855B00661875 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = mpg123;
+			productName = mpg123;
+			productReference = F3968BA5281F855B00661875 /* mpg123.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F3968B9C281F855B00661875 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1330;
+				TargetAttributes = {
+					F3968BA4281F855B00661875 = {
+						CreatedOnToolsVersion = 13.3.1;
+					};
+				};
+			};
+			buildConfigurationList = F3968B9F281F855B00661875 /* Build configuration list for PBXProject "mpg123" */;
+			compatibilityVersion = "Xcode 13.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = F3968B9B281F855B00661875;
+			productRefGroup = F3968BA6281F855B00661875 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F3968BA4281F855B00661875 /* mpg123 */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F3968BA3281F855B00661875 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3968D5A281FB3B300661875 /* COPYING in Resources */,
+				F3968D59281FB3B300661875 /* README in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F3968BA1281F855B00661875 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3968D30281FAF0A00661875 /* readers.c in Sources */,
+				F3968D1B281FAF0A00661875 /* frame.c in Sources */,
+				F3968D47281FAF0A00661875 /* layer3.c in Sources */,
+				F3968D11281FAF0A00661875 /* stringbuf.c in Sources */,
+				F3968D1A281FAF0A00661875 /* synth_8bit.c in Sources */,
+				F3968D3C281FAF0A00661875 /* dct36_neon.S in Sources */,
+				F3968D48281FAF0A00661875 /* synth_x86_64_s32.S in Sources */,
+				F3968D1F281FAF0A00661875 /* synth_neon64.S in Sources */,
+				F3968D43281FAF0A00661875 /* synth_stereo_avx_float.S in Sources */,
+				F3968D2B281FAF0A00661875 /* layer1.c in Sources */,
+				F3968D15281FAF0A00661875 /* synth_stereo_x86_64_float.S in Sources */,
+				F3968D28281FAF0A00661875 /* tabinit.c in Sources */,
+				F3968D1C281FAF0A00661875 /* getcpuflags_x86_64.S in Sources */,
+				F3968D25281FAF0A00661875 /* dct64_x86_64.S in Sources */,
+				F3968D23281FAF0A00661875 /* dither.c in Sources */,
+				F3968D2F281FAF0A00661875 /* feature.c in Sources */,
+				F3968D40281FAF0A00661875 /* libmpg123.c in Sources */,
+				F3968D34281FAF0A00661875 /* layer2.c in Sources */,
+				F3968D27281FAF0A00661875 /* dct36_avx.S in Sources */,
+				F3968D16281FAF0A00661875 /* dct36_neon64.S in Sources */,
+				F3968D41281FAF0A00661875 /* synth_stereo_neon_float.S in Sources */,
+				F3968D4E281FB05200661875 /* compat_str.c in Sources */,
+				F3968D3E281FAF0A00661875 /* check_neon.S in Sources */,
+				F3968D37281FAF0A00661875 /* getcpuflags_arm.c in Sources */,
+				F3968D3A281FAF0A00661875 /* synth_stereo_neon.S in Sources */,
+				F3968D21281FAF0A00661875 /* ntom.c in Sources */,
+				F3968D3B281FAF0A00661875 /* synth_neon64_float.S in Sources */,
+				F3968D1E281FAF0A00661875 /* format.c in Sources */,
+				F3968D50281FB25300661875 /* synth_neon_float.S in Sources */,
+				F3968D22281FAF0A00661875 /* dct64.c in Sources */,
+				F3968D4D281FB05200661875 /* compat.c in Sources */,
+				F3968D31281FAF0A00661875 /* synth_neon64_s32.S in Sources */,
+				F3968D18281FAF0A00661875 /* synth_stereo_x86_64.S in Sources */,
+				F3968D1D281FAF0A00661875 /* synth_s32.c in Sources */,
+				F3968D3F281FAF0A00661875 /* synth_stereo_neon64.S in Sources */,
+				F3968D3D281FAF0A00661875 /* dct36_x86_64.S in Sources */,
+				F3968D17281FAF0A00661875 /* optimize.c in Sources */,
+				F3968D2A281FAF0A00661875 /* synth_stereo_avx_s32.S in Sources */,
+				F3968D32281FAF0A00661875 /* synth_x86_64_float.S in Sources */,
+				F3968D19281FAF0A00661875 /* synth_stereo_avx.S in Sources */,
+				F3968D14281FAF0A00661875 /* synth_neon_s32.S in Sources */,
+				F3968D24281FAF0A00661875 /* index.c in Sources */,
+				F3968D26281FAF0A00661875 /* dct64_avx_float.S in Sources */,
+				F3968D46281FAF0A00661875 /* synth_stereo_x86_64_s32.S in Sources */,
+				F3968D52281FB28C00661875 /* dct64_neon_float.S in Sources */,
+				F3968D29281FAF0A00661875 /* icy.c in Sources */,
+				F3968D35281FAF0A00661875 /* id3.c in Sources */,
+				F3968D42281FAF0A00661875 /* synth_stereo_neon64_s32.S in Sources */,
+				F3968D20281FAF0A00661875 /* dct64_neon64.S in Sources */,
+				F3968D2E281FAF0A00661875 /* dct64_x86_64_float.S in Sources */,
+				F3968D49281FAF0A00661875 /* dct64_neon64_float.S in Sources */,
+				F3968D4A281FAF0A00661875 /* synth_x86_64.S in Sources */,
+				F3968D38281FAF0A00661875 /* icy2utf8.c in Sources */,
+				F3968D12281FAF0A00661875 /* synth_stereo_neon_s32.S in Sources */,
+				F3968D36281FAF0A00661875 /* synth_stereo_neon64_float.S in Sources */,
+				F3968D2C281FAF0A00661875 /* synth.c in Sources */,
+				F3968D13281FAF0A00661875 /* equalizer.c in Sources */,
+				F3968D45281FAF0A00661875 /* synth_real.c in Sources */,
+				F3968D39281FAF0A00661875 /* synth_neon.S in Sources */,
+				F3968D33281FAF0A00661875 /* dct64_neon.S in Sources */,
+				F3968D2D281FAF0A00661875 /* parse.c in Sources */,
+				F3968D44281FAF0A00661875 /* dct64_avx.S in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		F3968BAA281F855B00661875 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F3968CD5281FAA8500661875 /* config.xcconfig */;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "$(DECODER_CFLAGS)";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/$(CURRENT_ARCH)\"",
+					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/../../external/mpg123-1.25.13/src\"",
+					"\"$(SRCROOT)/../../external/mpg123-1.25.13/src/compat\"",
+					"\"$(SRCROOT)/../../external/mpg123-1.25.13/src/libmpg123\"",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		F3968BAB281F855B00661875 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F3968CD5281FAA8500661875 /* config.xcconfig */;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "$(DECODER_CFLAGS)";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/$(CURRENT_ARCH)\"",
+					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/../../external/mpg123-1.25.13/src\"",
+					"\"$(SRCROOT)/../../external/mpg123-1.25.13/src/compat\"",
+					"\"$(SRCROOT)/../../external/mpg123-1.25.13/src/libmpg123\"",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		F3968BAD281F855B00661875 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.25.13;
+				PRODUCT_BUNDLE_IDENTIFIER = org.mpg123.mpg123;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Debug;
+		};
+		F3968BAE281F855B00661875 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.25.13;
+				PRODUCT_BUNDLE_IDENTIFIER = org.mpg123.mpg123;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F3968B9F281F855B00661875 /* Build configuration list for PBXProject "mpg123" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F3968BAA281F855B00661875 /* Debug */,
+				F3968BAB281F855B00661875 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F3968BAC281F855B00661875 /* Build configuration list for PBXNativeTarget "mpg123" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F3968BAD281F855B00661875 /* Debug */,
+				F3968BAE281F855B00661875 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F3968B9C281F855B00661875 /* Project object */;
+}

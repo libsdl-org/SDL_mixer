@@ -1,0 +1,465 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 55;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F3F70F6C281F6982005AA27D /* sharedbook.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F70F5F281F6982005AA27D /* sharedbook.c */; };
+		F3F70F6D281F6982005AA27D /* window.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F70F60281F6982005AA27D /* window.c */; };
+		F3F70F6E281F6982005AA27D /* floor1.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F70F61281F6982005AA27D /* floor1.c */; };
+		F3F70F6F281F6982005AA27D /* floor0.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F70F62281F6982005AA27D /* floor0.c */; };
+		F3F70F70281F6982005AA27D /* mdct.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F70F63281F6982005AA27D /* mdct.c */; };
+		F3F70F71281F6982005AA27D /* block.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F70F64281F6982005AA27D /* block.c */; };
+		F3F70F72281F6982005AA27D /* vorbisfile.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F70F65281F6982005AA27D /* vorbisfile.c */; };
+		F3F70F73281F6982005AA27D /* registry.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F70F66281F6982005AA27D /* registry.c */; };
+		F3F70F74281F6982005AA27D /* info.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F70F67281F6982005AA27D /* info.c */; };
+		F3F70F75281F6982005AA27D /* res012.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F70F68281F6982005AA27D /* res012.c */; };
+		F3F70F76281F6982005AA27D /* synthesis.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F70F69281F6982005AA27D /* synthesis.c */; };
+		F3F70F77281F6982005AA27D /* mapping0.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F70F6A281F6982005AA27D /* mapping0.c */; };
+		F3F70F78281F6982005AA27D /* codebook.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F70F6B281F6982005AA27D /* codebook.c */; };
+		F3F70F7D281F69A9005AA27D /* ivorbiscodec.h in Headers */ = {isa = PBXBuildFile; fileRef = F3F70F7A281F69A9005AA27D /* ivorbiscodec.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3F70F7E281F69A9005AA27D /* ivorbisfile.h in Headers */ = {isa = PBXBuildFile; fileRef = F3F70F7B281F69A9005AA27D /* ivorbisfile.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3F70F81281F69CA005AA27D /* README in Resources */ = {isa = PBXBuildFile; fileRef = F3F70F7F281F69CA005AA27D /* README */; };
+		F3F70F82281F69CA005AA27D /* COPYING in Resources */ = {isa = PBXBuildFile; fileRef = F3F70F80281F69CA005AA27D /* COPYING */; };
+		F3F70F8A281F69F0005AA27D /* ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F70F88281F69E6005AA27D /* ogg.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F3F70F87281F69E6005AA27D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3F70F83281F69E6005AA27D /* ogg.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F3F70EDA281F61B4005AA27D;
+			remoteInfo = ogg;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		F3F70F52281F686A005AA27D /* tremor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = tremor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F3F70F5F281F6982005AA27D /* sharedbook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sharedbook.c; path = "../../external/libvorbisidec-1.2.1/sharedbook.c"; sourceTree = "<group>"; };
+		F3F70F60281F6982005AA27D /* window.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = window.c; path = "../../external/libvorbisidec-1.2.1/window.c"; sourceTree = "<group>"; };
+		F3F70F61281F6982005AA27D /* floor1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = floor1.c; path = "../../external/libvorbisidec-1.2.1/floor1.c"; sourceTree = "<group>"; };
+		F3F70F62281F6982005AA27D /* floor0.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = floor0.c; path = "../../external/libvorbisidec-1.2.1/floor0.c"; sourceTree = "<group>"; };
+		F3F70F63281F6982005AA27D /* mdct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mdct.c; path = "../../external/libvorbisidec-1.2.1/mdct.c"; sourceTree = "<group>"; };
+		F3F70F64281F6982005AA27D /* block.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = block.c; path = "../../external/libvorbisidec-1.2.1/block.c"; sourceTree = "<group>"; };
+		F3F70F65281F6982005AA27D /* vorbisfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vorbisfile.c; path = "../../external/libvorbisidec-1.2.1/vorbisfile.c"; sourceTree = "<group>"; };
+		F3F70F66281F6982005AA27D /* registry.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = registry.c; path = "../../external/libvorbisidec-1.2.1/registry.c"; sourceTree = "<group>"; };
+		F3F70F67281F6982005AA27D /* info.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = info.c; path = "../../external/libvorbisidec-1.2.1/info.c"; sourceTree = "<group>"; };
+		F3F70F68281F6982005AA27D /* res012.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = res012.c; path = "../../external/libvorbisidec-1.2.1/res012.c"; sourceTree = "<group>"; };
+		F3F70F69281F6982005AA27D /* synthesis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = synthesis.c; path = "../../external/libvorbisidec-1.2.1/synthesis.c"; sourceTree = "<group>"; };
+		F3F70F6A281F6982005AA27D /* mapping0.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mapping0.c; path = "../../external/libvorbisidec-1.2.1/mapping0.c"; sourceTree = "<group>"; };
+		F3F70F6B281F6982005AA27D /* codebook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = codebook.c; path = "../../external/libvorbisidec-1.2.1/codebook.c"; sourceTree = "<group>"; };
+		F3F70F7A281F69A9005AA27D /* ivorbiscodec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ivorbiscodec.h; path = "../../external/libvorbisidec-1.2.1/ivorbiscodec.h"; sourceTree = "<group>"; };
+		F3F70F7B281F69A9005AA27D /* ivorbisfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ivorbisfile.h; path = "../../external/libvorbisidec-1.2.1/ivorbisfile.h"; sourceTree = "<group>"; };
+		F3F70F7F281F69CA005AA27D /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README; path = "../../external/libvorbisidec-1.2.1/README"; sourceTree = "<group>"; };
+		F3F70F80281F69CA005AA27D /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING; path = "../../external/libvorbisidec-1.2.1/COPYING"; sourceTree = "<group>"; };
+		F3F70F83281F69E6005AA27D /* ogg.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ogg.xcodeproj; path = ../ogg/ogg.xcodeproj; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F3F70F4F281F686A005AA27D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3F70F8A281F69F0005AA27D /* ogg.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F3F70F48281F686A005AA27D = {
+			isa = PBXGroup;
+			children = (
+				F3F70F83281F69E6005AA27D /* ogg.xcodeproj */,
+				F3F70F53281F686A005AA27D /* Products */,
+				F3F70F5E281F690B005AA27D /* Resources */,
+				F3F70F5D281F6905005AA27D /* Headers */,
+				F3F70F5C281F68FD005AA27D /* Source */,
+				F3F70F89281F69EF005AA27D /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		F3F70F53281F686A005AA27D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F3F70F52281F686A005AA27D /* tremor.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F3F70F5C281F68FD005AA27D /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				F3F70F64281F6982005AA27D /* block.c */,
+				F3F70F6B281F6982005AA27D /* codebook.c */,
+				F3F70F62281F6982005AA27D /* floor0.c */,
+				F3F70F61281F6982005AA27D /* floor1.c */,
+				F3F70F67281F6982005AA27D /* info.c */,
+				F3F70F6A281F6982005AA27D /* mapping0.c */,
+				F3F70F63281F6982005AA27D /* mdct.c */,
+				F3F70F66281F6982005AA27D /* registry.c */,
+				F3F70F68281F6982005AA27D /* res012.c */,
+				F3F70F5F281F6982005AA27D /* sharedbook.c */,
+				F3F70F69281F6982005AA27D /* synthesis.c */,
+				F3F70F65281F6982005AA27D /* vorbisfile.c */,
+				F3F70F60281F6982005AA27D /* window.c */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		F3F70F5D281F6905005AA27D /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				F3F70F7A281F69A9005AA27D /* ivorbiscodec.h */,
+				F3F70F7B281F69A9005AA27D /* ivorbisfile.h */,
+			);
+			name = Headers;
+			sourceTree = "<group>";
+		};
+		F3F70F5E281F690B005AA27D /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				F3F70F80281F69CA005AA27D /* COPYING */,
+				F3F70F7F281F69CA005AA27D /* README */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		F3F70F84281F69E6005AA27D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F3F70F88281F69E6005AA27D /* ogg.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F3F70F89281F69EF005AA27D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		F3F70F4D281F686A005AA27D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3F70F7D281F69A9005AA27D /* ivorbiscodec.h in Headers */,
+				F3F70F7E281F69A9005AA27D /* ivorbisfile.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		F3F70F51281F686A005AA27D /* tremor */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F3F70F59281F686A005AA27D /* Build configuration list for PBXNativeTarget "tremor" */;
+			buildPhases = (
+				F3F70F4D281F686A005AA27D /* Headers */,
+				F3F70F4E281F686A005AA27D /* Sources */,
+				F3F70F4F281F686A005AA27D /* Frameworks */,
+				F3F70F50281F686A005AA27D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = tremor;
+			productName = tremor;
+			productReference = F3F70F52281F686A005AA27D /* tremor.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F3F70F49281F686A005AA27D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1330;
+				TargetAttributes = {
+					F3F70F51281F686A005AA27D = {
+						CreatedOnToolsVersion = 13.3.1;
+					};
+				};
+			};
+			buildConfigurationList = F3F70F4C281F686A005AA27D /* Build configuration list for PBXProject "tremor" */;
+			compatibilityVersion = "Xcode 13.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = F3F70F48281F686A005AA27D;
+			productRefGroup = F3F70F53281F686A005AA27D /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = F3F70F84281F69E6005AA27D /* Products */;
+					ProjectRef = F3F70F83281F69E6005AA27D /* ogg.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				F3F70F51281F686A005AA27D /* tremor */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		F3F70F88281F69E6005AA27D /* ogg.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = ogg.framework;
+			remoteRef = F3F70F87281F69E6005AA27D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F3F70F50281F686A005AA27D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3F70F82281F69CA005AA27D /* COPYING in Resources */,
+				F3F70F81281F69CA005AA27D /* README in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F3F70F4E281F686A005AA27D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3F70F70281F6982005AA27D /* mdct.c in Sources */,
+				F3F70F78281F6982005AA27D /* codebook.c in Sources */,
+				F3F70F6C281F6982005AA27D /* sharedbook.c in Sources */,
+				F3F70F72281F6982005AA27D /* vorbisfile.c in Sources */,
+				F3F70F6E281F6982005AA27D /* floor1.c in Sources */,
+				F3F70F75281F6982005AA27D /* res012.c in Sources */,
+				F3F70F76281F6982005AA27D /* synthesis.c in Sources */,
+				F3F70F73281F6982005AA27D /* registry.c in Sources */,
+				F3F70F74281F6982005AA27D /* info.c in Sources */,
+				F3F70F71281F6982005AA27D /* block.c in Sources */,
+				F3F70F6D281F6982005AA27D /* window.c in Sources */,
+				F3F70F6F281F6982005AA27D /* floor0.c in Sources */,
+				F3F70F77281F6982005AA27D /* mapping0.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		F3F70F57281F686A005AA27D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = HAVE_CONFIG_H;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)\"";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		F3F70F58281F686A005AA27D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = HAVE_CONFIG_H;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)\"";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		F3F70F5A281F686A005AA27D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.2.1;
+				PRODUCT_BUNDLE_IDENTIFIER = org.xiph.tremor;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Debug;
+		};
+		F3F70F5B281F686A005AA27D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.2.1;
+				PRODUCT_BUNDLE_IDENTIFIER = org.xiph.tremor;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F3F70F4C281F686A005AA27D /* Build configuration list for PBXProject "tremor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F3F70F57281F686A005AA27D /* Debug */,
+				F3F70F58281F686A005AA27D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F3F70F59281F686A005AA27D /* Build configuration list for PBXNativeTarget "tremor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F3F70F5A281F686A005AA27D /* Debug */,
+				F3F70F5B281F686A005AA27D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F3F70F49281F686A005AA27D /* Project object */;
+}

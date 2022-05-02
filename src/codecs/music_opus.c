@@ -28,11 +28,7 @@
 #include "music_opus.h"
 #include "utils.h"
 
-#if defined(OPUS_HEADER)
-#include OPUS_HEADER
-#else
 #include <opus/opusfile.h>
-#endif
 
 typedef struct {
     int loaded;
