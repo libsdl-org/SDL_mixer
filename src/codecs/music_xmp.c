@@ -32,7 +32,14 @@
 #endif
 
 /* libxmp >= 4.5.0 constified several funcs */
+/* and also added load using file callbacks */
 #if (XMP_VERCODE < 0x040500)
+struct xmp_callbacks {
+    unsigned long (*read_func)(void *, unsigned long, unsigned long, void *);
+    int           (*seek_func)(void *, long, int);
+    long          (*tell_func)(void *);
+    int           (*close_func)(void*);
+};
 #define LIBXMP_CONST
 #else
 #define LIBXMP_CONST const
@@ -44,6 +51,7 @@ typedef struct {
 
     xmp_context (*xmp_create_context)(void);
     int (*xmp_load_module_from_memory)(xmp_context, LIBXMP_CONST void *, long);
+    int (*xmp_load_module_from_callbacks)(xmp_context, void *, struct xmp_callbacks);
     int (*xmp_start_player)(xmp_context, int, int);
     void (*xmp_end_player)(xmp_context);
     void (*xmp_get_module_info)(xmp_context, struct xmp_module_info *);
@@ -89,6 +97,13 @@ static int XMP_Load(void)
         FUNCTION_LOADER(xmp_stop_module, void(*)(xmp_context))
         FUNCTION_LOADER(xmp_release_module, void(*)(xmp_context))
         FUNCTION_LOADER(xmp_free_context, void(*)(xmp_context))
+#if defined(XMP_DYNAMIC)
+        libxmp.xmp_load_module_from_callbacks = (int (*)(xmp_context,void*,struct xmp_callbacks)) SDL_LoadFunction(libxmp.handle, "xmp_load_module_from_callbacks");
+#elif (XMP_VERCODE >= 0x040500)
+        libxmp.xmp_load_module_from_callbacks = xmp_load_module_from_callbacks;
+#else
+        libxmp.xmp_load_module_from_callbacks = NULL;
+#endif
     }
     ++libxmp.loaded;
 
@@ -158,13 +173,24 @@ static void libxmp_set_error(int e)
     Mix_SetError("XMP: %s", msg);
 }
 
+static unsigned long xmp_fread(void *dst, unsigned long len, unsigned long nmemb, void *src) {
+    return SDL_RWread((SDL_RWops*)src, dst, len, nmemb);
+}
+static int xmp_fseek(void *src, long offset, int whence) {
+    return (SDL_RWseek((SDL_RWops*)src, offset, whence) < 0)? -1 : 0;
+}
+static long xmp_ftell(void *src) {
+    return SDL_RWtell((SDL_RWops*)src);
+}
+
 /* Load a libxmp stream from an SDL_RWops object */
 void *XMP_CreateFromRW(SDL_RWops *src, int freesrc)
 {
     XMP_Music *music;
-    void *mem;
-    size_t size;
-    int err;
+    struct xmp_callbacks file_callbacks = {
+           xmp_fread, xmp_fseek, xmp_ftell, NULL
+    };
+    int err = 0;
 
     music = (XMP_Music *)SDL_calloc(1, sizeof(*music));
     if (!music) {
@@ -185,16 +211,21 @@ void *XMP_CreateFromRW(SDL_RWops *src, int freesrc)
         goto e1;
     }
 
-    mem = SDL_LoadFile_RW(src, &size, SDL_FALSE);
-    if (mem) {
-        err = libxmp.xmp_load_module_from_memory(music->ctx, mem, (long)size);
-        SDL_free(mem);
-        if (err < 0) {
-            libxmp_set_error(err);
+    if (libxmp.xmp_load_module_from_callbacks) {
+        err = libxmp.xmp_load_module_from_callbacks(music->ctx, src, file_callbacks);
+    } else {
+        size_t size;
+        void *mem = SDL_LoadFile_RW(src, &size, SDL_FALSE);
+        if (!mem) {
+            SDL_OutOfMemory();
             goto e1;
         }
-    } else {
-        SDL_OutOfMemory();
+        err = libxmp.xmp_load_module_from_memory(music->ctx, mem, (long)size);
+        SDL_free(mem);
+    }
+
+    if (err < 0) {
+        libxmp_set_error(err);
         goto e1;
     }
 
