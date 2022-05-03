@@ -56,7 +56,7 @@ static size_t sdl_read_func(void *ptr, size_t size, size_t nmemb, void *datasour
 
 static int sdl_seek_func(void *datasource, ogg_int64_t offset, int whence)
 {
-    return SDL_RWseek((SDL_RWops*)datasource, (int)offset, whence);
+    return (SDL_RWseek((SDL_RWops*)datasource, (int)offset, whence) < 0)? -1 : 0;
 }
 
 static long sdl_tell_func(void *datasource)
