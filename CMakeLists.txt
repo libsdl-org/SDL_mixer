@@ -84,6 +84,17 @@ include_directories(include src src/codecs)
 add_library(SDL2_mixer)
 add_library(SDL2::mixer ALIAS SDL2_mixer)
 
+if (APPLE)
+    # TODO: Use DYLIB_COMPATIBILITY_VERSION, DYLIB_CURRENT_VERSION here
+elseif (UNIX AND NOT ANDROID)
+    # This is compatible with the libtool build
+    set_target_properties(SDL2_mixer PROPERTIES
+           VERSION ${LT_VERSION}
+           SOVERSION ${LT_MAJOR}
+           OUTPUT_NAME "SDL2_mixer-${LT_RELEASE}"
+    )
+endif()
+
 target_sources(SDL2_mixer PRIVATE
         src/effect_position.c src/effects_internal.c src/effect_stereoreverse.c
         src/mixer.c src/music.c src/utils.c
