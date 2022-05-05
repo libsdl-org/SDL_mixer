@@ -5,20 +5,20 @@ AC_CONFIG_AUX_DIR(build-scripts)
 
 dnl Set various version strings - taken gratefully from the GTk sources
 
-# Making releases:
-#   MICRO_VERSION += 1;
-#   INTERFACE_AGE += 1;
-#   BINARY_AGE += 1;
-# if any functions have been added, set INTERFACE_AGE to 0.
-# if backwards compatibility has been broken,
-# set BINARY_AGE and INTERFACE_AGE to 0.
-#
+# See release_checklist.md
 MAJOR_VERSION=2
-MINOR_VERSION=0
-MICRO_VERSION=4
-INTERFACE_AGE=2
-BINARY_AGE=4
+MINOR_VERSION=5
+MICRO_VERSION=0
 VERSION=$MAJOR_VERSION.$MINOR_VERSION.$MICRO_VERSION
+
+BINARY_AGE=`expr $MINOR_VERSION \* 100 + $MICRO_VERSION`
+AS_CASE(["$MINOR_VERSION"],
+  [*@<:@02468@:>@],
+    dnl Stable branch, 2.6.1 -> libSDL2_mixer-2.0.so.0.600.1
+    [INTERFACE_AGE="$MICRO_VERSION"],
+  [*],
+    dnl Development branch, 2.5.1 -> libSDL2_mixer-2.0.so.0.501.0
+    [INTERFACE_AGE=0])
 
 AC_SUBST(MAJOR_VERSION)
 AC_SUBST(MINOR_VERSION)
@@ -30,10 +30,20 @@ AC_SUBST(VERSION)
 dnl libtool versioning
 LT_INIT([win32-dll])
 
-LT_RELEASE=$MAJOR_VERSION.$MINOR_VERSION
-LT_CURRENT=`expr $MICRO_VERSION - $INTERFACE_AGE`
+# For historical reasons, the library name redundantly includes the major
+# version twice: libSDL2_mixer-2.0.so.0.
+# TODO: in SDL 3, stop using -release, which will simplify it to libSDL3_mixer.so.0
+LT_RELEASE=2.0
+
+# Increment this if there is an incompatible change - but if that happens,
+# we should rename the library from SDL2 to SDL3, at which point this would
+# reset to 0 anyway.
+LT_MAJOR=0
+
 LT_REVISION=$INTERFACE_AGE
 LT_AGE=`expr $BINARY_AGE - $INTERFACE_AGE`
+LT_CURRENT=`expr $LT_MAJOR + $LT_AGE`
+
 LT_EXTRA="" dnl for OS2 dll name
 m4_pattern_allow([^LT_])
 
@@ -42,6 +52,11 @@ AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)
 AC_SUBST(LT_AGE)
 AC_SUBST(LT_EXTRA)
+
+dnl For use in static assertions
+AC_DEFINE_UNQUOTED([SDL_BUILD_MAJOR_VERSION], $MAJOR_VERSION, [ ])
+AC_DEFINE_UNQUOTED([SDL_BUILD_MINOR_VERSION], $MINOR_VERSION, [ ])
+AC_DEFINE_UNQUOTED([SDL_BUILD_MICRO_VERSION], $MICRO_VERSION, [ ])
 
 dnl Detect the canonical build and host environments
 dnl AC_CANONICAL_HOST

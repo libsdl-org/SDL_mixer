@@ -33,6 +33,9 @@ jobs:
           sudo apt -y update
           sudo apt -y install ninja-build libsdl2-dev
 
+      - name: Check that versioning is consistent
+        run: ./test-versioning.sh
+
       - name: Configure CMake
         env:
           CC: ${{matrix.compiler}}
