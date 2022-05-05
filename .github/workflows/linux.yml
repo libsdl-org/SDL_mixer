@@ -59,12 +59,17 @@ jobs:
       - name: dependencies
         run: |
           sudo apt -y update
-          sudo apt -y install libsdl2-dev
+          sudo apt -y install \
+            autoconf \
+            libtool \
+            libsdl2-dev \
+            ${NULL+}
 
       - name: Configure make
         env:
           CC: ${{matrix.compiler}}
         run: |
+          ./autogen.sh
           ./configure
 
       - name: Build make
