@@ -74,3 +74,15 @@ jobs:
 
       - name: Build make
         run: make -j2
+
+      - name: Distcheck
+        run: |
+          set -eu
+          parallel="$(getconf _NPROCESSORS_ONLN)"
+          make -j"${parallel}" dist V=1
+          # Similar to Automake `make distcheck`: check that the tarball
+          # release is sufficient to do a new build
+          mkdir distcheck
+          tar -C distcheck -zxf SDL2_mixer-*.tar.gz
+          ( cd distcheck/SDL2_mixer-* && ./configure )
+          make -C distcheck/SDL2_mixer-*
