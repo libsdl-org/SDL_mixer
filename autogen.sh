@@ -1,5 +1,7 @@
 #!/bin/sh
-#
+
+set -e
+
 echo "Generating build information using autoconf"
 echo "This may take a while ..."
 
