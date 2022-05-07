@@ -49,44 +49,44 @@
 
 /* Begin PBXFileReference section */
 		F3F70E67281F442C005AA27D /* FLAC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FLAC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		F3F70E74281F4561005AA27D /* float.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = float.c; path = "../../external/flac-1.3.4/src/libFLAC/float.c"; sourceTree = "<group>"; };
-		F3F70E75281F4561005AA27D /* lpc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lpc.c; path = "../../external/flac-1.3.4/src/libFLAC/lpc.c"; sourceTree = "<group>"; };
-		F3F70E76281F4561005AA27D /* stream_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stream_decoder.c; path = "../../external/flac-1.3.4/src/libFLAC/stream_decoder.c"; sourceTree = "<group>"; };
-		F3F70E77281F4561005AA27D /* fixed_intrin_sse2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fixed_intrin_sse2.c; path = "../../external/flac-1.3.4/src/libFLAC/fixed_intrin_sse2.c"; sourceTree = "<group>"; };
-		F3F70E78281F4561005AA27D /* stream_encoder_intrin_sse2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stream_encoder_intrin_sse2.c; path = "../../external/flac-1.3.4/src/libFLAC/stream_encoder_intrin_sse2.c"; sourceTree = "<group>"; };
-		F3F70E79281F4561005AA27D /* bitmath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bitmath.c; path = "../../external/flac-1.3.4/src/libFLAC/bitmath.c"; sourceTree = "<group>"; };
-		F3F70E7A281F4561005AA27D /* lpc_intrin_sse2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lpc_intrin_sse2.c; path = "../../external/flac-1.3.4/src/libFLAC/lpc_intrin_sse2.c"; sourceTree = "<group>"; };
-		F3F70E7B281F4561005AA27D /* bitreader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bitreader.c; path = "../../external/flac-1.3.4/src/libFLAC/bitreader.c"; sourceTree = "<group>"; };
-		F3F70E7C281F4561005AA27D /* fixed_intrin_ssse3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fixed_intrin_ssse3.c; path = "../../external/flac-1.3.4/src/libFLAC/fixed_intrin_ssse3.c"; sourceTree = "<group>"; };
-		F3F70E7D281F4561005AA27D /* format.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = format.c; path = "../../external/flac-1.3.4/src/libFLAC/format.c"; sourceTree = "<group>"; };
-		F3F70E7E281F4561005AA27D /* stream_encoder_intrin_avx2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stream_encoder_intrin_avx2.c; path = "../../external/flac-1.3.4/src/libFLAC/stream_encoder_intrin_avx2.c"; sourceTree = "<group>"; };
-		F3F70E7F281F4561005AA27D /* memory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = memory.c; path = "../../external/flac-1.3.4/src/libFLAC/memory.c"; sourceTree = "<group>"; };
-		F3F70E80281F4561005AA27D /* stream_encoder_intrin_ssse3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stream_encoder_intrin_ssse3.c; path = "../../external/flac-1.3.4/src/libFLAC/stream_encoder_intrin_ssse3.c"; sourceTree = "<group>"; };
-		F3F70E81281F4561005AA27D /* lpc_intrin_sse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lpc_intrin_sse.c; path = "../../external/flac-1.3.4/src/libFLAC/lpc_intrin_sse.c"; sourceTree = "<group>"; };
-		F3F70E82281F4561005AA27D /* lpc_intrin_avx2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lpc_intrin_avx2.c; path = "../../external/flac-1.3.4/src/libFLAC/lpc_intrin_avx2.c"; sourceTree = "<group>"; };
-		F3F70E83281F4561005AA27D /* window.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = window.c; path = "../../external/flac-1.3.4/src/libFLAC/window.c"; sourceTree = "<group>"; };
-		F3F70E84281F4561005AA27D /* fixed.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fixed.c; path = "../../external/flac-1.3.4/src/libFLAC/fixed.c"; sourceTree = "<group>"; };
-		F3F70E85281F4561005AA27D /* md5.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = md5.c; path = "../../external/flac-1.3.4/src/libFLAC/md5.c"; sourceTree = "<group>"; };
-		F3F70E86281F4561005AA27D /* cpu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cpu.c; path = "../../external/flac-1.3.4/src/libFLAC/cpu.c"; sourceTree = "<group>"; };
-		F3F70E87281F4561005AA27D /* stream_encoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stream_encoder.c; path = "../../external/flac-1.3.4/src/libFLAC/stream_encoder.c"; sourceTree = "<group>"; };
-		F3F70E88281F4561005AA27D /* crc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = crc.c; path = "../../external/flac-1.3.4/src/libFLAC/crc.c"; sourceTree = "<group>"; };
-		F3F70E89281F4561005AA27D /* metadata_object.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = metadata_object.c; path = "../../external/flac-1.3.4/src/libFLAC/metadata_object.c"; sourceTree = "<group>"; };
-		F3F70E8A281F4561005AA27D /* bitwriter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bitwriter.c; path = "../../external/flac-1.3.4/src/libFLAC/bitwriter.c"; sourceTree = "<group>"; };
-		F3F70E8B281F4561005AA27D /* lpc_intrin_sse41.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lpc_intrin_sse41.c; path = "../../external/flac-1.3.4/src/libFLAC/lpc_intrin_sse41.c"; sourceTree = "<group>"; };
-		F3F70E8C281F4561005AA27D /* stream_encoder_framing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stream_encoder_framing.c; path = "../../external/flac-1.3.4/src/libFLAC/stream_encoder_framing.c"; sourceTree = "<group>"; };
-		F3F70E8D281F4561005AA27D /* metadata_iterators.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = metadata_iterators.c; path = "../../external/flac-1.3.4/src/libFLAC/metadata_iterators.c"; sourceTree = "<group>"; };
-		F3F70E8E281F4561005AA27D /* lpc_intrin_vsx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lpc_intrin_vsx.c; path = "../../external/flac-1.3.4/src/libFLAC/lpc_intrin_vsx.c"; sourceTree = "<group>"; };
-		F3F70EAA281F45A9005AA27D /* callback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = callback.h; path = "../../external/flac-1.3.4/include/FLAC/callback.h"; sourceTree = "<group>"; };
-		F3F70EAB281F45A9005AA27D /* stream_decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stream_decoder.h; path = "../../external/flac-1.3.4/include/FLAC/stream_decoder.h"; sourceTree = "<group>"; };
-		F3F70EAC281F45A9005AA27D /* format.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = format.h; path = "../../external/flac-1.3.4/include/FLAC/format.h"; sourceTree = "<group>"; };
-		F3F70EAD281F45A9005AA27D /* assert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = assert.h; path = "../../external/flac-1.3.4/include/FLAC/assert.h"; sourceTree = "<group>"; };
-		F3F70EAE281F45A9005AA27D /* metadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = metadata.h; path = "../../external/flac-1.3.4/include/FLAC/metadata.h"; sourceTree = "<group>"; };
-		F3F70EAF281F45A9005AA27D /* all.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = all.h; path = "../../external/flac-1.3.4/include/FLAC/all.h"; sourceTree = "<group>"; };
-		F3F70EB0281F45A9005AA27D /* stream_encoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stream_encoder.h; path = "../../external/flac-1.3.4/include/FLAC/stream_encoder.h"; sourceTree = "<group>"; };
-		F3F70EB1281F45A9005AA27D /* export.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = export.h; path = "../../external/flac-1.3.4/include/FLAC/export.h"; sourceTree = "<group>"; };
-		F3F70EB2281F45A9005AA27D /* ordinals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ordinals.h; path = "../../external/flac-1.3.4/include/FLAC/ordinals.h"; sourceTree = "<group>"; };
-		F3F70EBC281F45D0005AA27D /* COPYING.Xiph */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING.Xiph; path = "../../external/flac-1.3.4/COPYING.Xiph"; sourceTree = "<group>"; };
-		F3F70EBD281F45D0005AA27D /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README; path = "../../external/flac-1.3.4/README"; sourceTree = "<group>"; };
+		F3F70E74281F4561005AA27D /* float.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = float.c; path = "../../external/flac/src/libFLAC/float.c"; sourceTree = "<group>"; };
+		F3F70E75281F4561005AA27D /* lpc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lpc.c; path = "../../external/flac/src/libFLAC/lpc.c"; sourceTree = "<group>"; };
+		F3F70E76281F4561005AA27D /* stream_decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stream_decoder.c; path = "../../external/flac/src/libFLAC/stream_decoder.c"; sourceTree = "<group>"; };
+		F3F70E77281F4561005AA27D /* fixed_intrin_sse2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fixed_intrin_sse2.c; path = "../../external/flac/src/libFLAC/fixed_intrin_sse2.c"; sourceTree = "<group>"; };
+		F3F70E78281F4561005AA27D /* stream_encoder_intrin_sse2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stream_encoder_intrin_sse2.c; path = "../../external/flac/src/libFLAC/stream_encoder_intrin_sse2.c"; sourceTree = "<group>"; };
+		F3F70E79281F4561005AA27D /* bitmath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bitmath.c; path = "../../external/flac/src/libFLAC/bitmath.c"; sourceTree = "<group>"; };
+		F3F70E7A281F4561005AA27D /* lpc_intrin_sse2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lpc_intrin_sse2.c; path = "../../external/flac/src/libFLAC/lpc_intrin_sse2.c"; sourceTree = "<group>"; };
+		F3F70E7B281F4561005AA27D /* bitreader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bitreader.c; path = "../../external/flac/src/libFLAC/bitreader.c"; sourceTree = "<group>"; };
+		F3F70E7C281F4561005AA27D /* fixed_intrin_ssse3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fixed_intrin_ssse3.c; path = "../../external/flac/src/libFLAC/fixed_intrin_ssse3.c"; sourceTree = "<group>"; };
+		F3F70E7D281F4561005AA27D /* format.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = format.c; path = "../../external/flac/src/libFLAC/format.c"; sourceTree = "<group>"; };
+		F3F70E7E281F4561005AA27D /* stream_encoder_intrin_avx2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stream_encoder_intrin_avx2.c; path = "../../external/flac/src/libFLAC/stream_encoder_intrin_avx2.c"; sourceTree = "<group>"; };
+		F3F70E7F281F4561005AA27D /* memory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = memory.c; path = "../../external/flac/src/libFLAC/memory.c"; sourceTree = "<group>"; };
+		F3F70E80281F4561005AA27D /* stream_encoder_intrin_ssse3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stream_encoder_intrin_ssse3.c; path = "../../external/flac/src/libFLAC/stream_encoder_intrin_ssse3.c"; sourceTree = "<group>"; };
+		F3F70E81281F4561005AA27D /* lpc_intrin_sse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lpc_intrin_sse.c; path = "../../external/flac/src/libFLAC/lpc_intrin_sse.c"; sourceTree = "<group>"; };
+		F3F70E82281F4561005AA27D /* lpc_intrin_avx2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lpc_intrin_avx2.c; path = "../../external/flac/src/libFLAC/lpc_intrin_avx2.c"; sourceTree = "<group>"; };
+		F3F70E83281F4561005AA27D /* window.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = window.c; path = "../../external/flac/src/libFLAC/window.c"; sourceTree = "<group>"; };
+		F3F70E84281F4561005AA27D /* fixed.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fixed.c; path = "../../external/flac/src/libFLAC/fixed.c"; sourceTree = "<group>"; };
+		F3F70E85281F4561005AA27D /* md5.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = md5.c; path = "../../external/flac/src/libFLAC/md5.c"; sourceTree = "<group>"; };
+		F3F70E86281F4561005AA27D /* cpu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cpu.c; path = "../../external/flac/src/libFLAC/cpu.c"; sourceTree = "<group>"; };
+		F3F70E87281F4561005AA27D /* stream_encoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stream_encoder.c; path = "../../external/flac/src/libFLAC/stream_encoder.c"; sourceTree = "<group>"; };
+		F3F70E88281F4561005AA27D /* crc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = crc.c; path = "../../external/flac/src/libFLAC/crc.c"; sourceTree = "<group>"; };
+		F3F70E89281F4561005AA27D /* metadata_object.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = metadata_object.c; path = "../../external/flac/src/libFLAC/metadata_object.c"; sourceTree = "<group>"; };
+		F3F70E8A281F4561005AA27D /* bitwriter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bitwriter.c; path = "../../external/flac/src/libFLAC/bitwriter.c"; sourceTree = "<group>"; };
+		F3F70E8B281F4561005AA27D /* lpc_intrin_sse41.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lpc_intrin_sse41.c; path = "../../external/flac/src/libFLAC/lpc_intrin_sse41.c"; sourceTree = "<group>"; };
+		F3F70E8C281F4561005AA27D /* stream_encoder_framing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stream_encoder_framing.c; path = "../../external/flac/src/libFLAC/stream_encoder_framing.c"; sourceTree = "<group>"; };
+		F3F70E8D281F4561005AA27D /* metadata_iterators.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = metadata_iterators.c; path = "../../external/flac/src/libFLAC/metadata_iterators.c"; sourceTree = "<group>"; };
+		F3F70E8E281F4561005AA27D /* lpc_intrin_vsx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lpc_intrin_vsx.c; path = "../../external/flac/src/libFLAC/lpc_intrin_vsx.c"; sourceTree = "<group>"; };
+		F3F70EAA281F45A9005AA27D /* callback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = callback.h; path = "../../external/flac/include/FLAC/callback.h"; sourceTree = "<group>"; };
+		F3F70EAB281F45A9005AA27D /* stream_decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stream_decoder.h; path = "../../external/flac/include/FLAC/stream_decoder.h"; sourceTree = "<group>"; };
+		F3F70EAC281F45A9005AA27D /* format.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = format.h; path = "../../external/flac/include/FLAC/format.h"; sourceTree = "<group>"; };
+		F3F70EAD281F45A9005AA27D /* assert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = assert.h; path = "../../external/flac/include/FLAC/assert.h"; sourceTree = "<group>"; };
+		F3F70EAE281F45A9005AA27D /* metadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = metadata.h; path = "../../external/flac/include/FLAC/metadata.h"; sourceTree = "<group>"; };
+		F3F70EAF281F45A9005AA27D /* all.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = all.h; path = "../../external/flac/include/FLAC/all.h"; sourceTree = "<group>"; };
+		F3F70EB0281F45A9005AA27D /* stream_encoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stream_encoder.h; path = "../../external/flac/include/FLAC/stream_encoder.h"; sourceTree = "<group>"; };
+		F3F70EB1281F45A9005AA27D /* export.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = export.h; path = "../../external/flac/include/FLAC/export.h"; sourceTree = "<group>"; };
+		F3F70EB2281F45A9005AA27D /* ordinals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ordinals.h; path = "../../external/flac/include/FLAC/ordinals.h"; sourceTree = "<group>"; };
+		F3F70EBC281F45D0005AA27D /* COPYING.Xiph */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING.Xiph; path = "../../external/flac/COPYING.Xiph"; sourceTree = "<group>"; };
+		F3F70EBD281F45D0005AA27D /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README; path = "../../external/flac/README"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -350,8 +350,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/../../external/flac-1.3.4/include\"",
-					"\"$(SRCROOT)/../../external/flac-1.3.4/src/libFLAC/include\"",
+					"\"$(SRCROOT)/../../external/flac/include\"",
+					"\"$(SRCROOT)/../../external/flac/src/libFLAC/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
@@ -415,8 +415,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/../../external/flac-1.3.4/include\"",
-					"\"$(SRCROOT)/../../external/flac-1.3.4/src/libFLAC/include\"",
+					"\"$(SRCROOT)/../../external/flac/include\"",
+					"\"$(SRCROOT)/../../external/flac/src/libFLAC/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;

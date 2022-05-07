@@ -6,7 +6,7 @@
 /* #undef ABI_ALIGN_FUN */
 
 /* Define to use proper rounding. */
-/* #undef ACCURATE_ROUNDING */
+#define ACCURATE_ROUNDING 1
 
 /* Define if building universal (internal helper macro) */
 /* #undef AC_APPLE_UNIVERSAL_BUILD */
@@ -21,13 +21,13 @@
 /* #undef ASMALIGN_EXP */
 
 /* Define if __attribute__((aligned(16))) shall be used */
-#define CCALIGN 1
+/* #undef CCALIGN */
 
 /* Define if debugging is enabled. */
 /* #undef DEBUG */
 
 /* The default audio output module(s) to use */
-#define DEFAULT_OUTPUT_MODULE "coreaudio,openal"
+#define DEFAULT_OUTPUT_MODULE "coreaudio,sdl,openal"
 
 /* Define if building with dynamcally linked libmpg123 */
 #define DYNAMIC_BUILD 1
@@ -77,6 +77,9 @@
 /* Define to 1 if you have the <AudioUnit/AudioUnit.h> header file. */
 #define HAVE_AUDIOUNIT_AUDIOUNIT_H 1
 
+/* Define to 1 if you have the <byteswap.h> header file. */
+/* #undef HAVE_BYTESWAP_H */
+
 /* Define to 1 if you have the <CoreServices/CoreServices.h> header file. */
 #define HAVE_CORESERVICES_CORESERVICES_H 1
 
@@ -98,20 +101,17 @@
 /* Define to 1 if you have the `dlsym' function. */
 #define HAVE_DLSYM 1
 
-/* Define if getaddrinfo accepts the AI_ADDRCONFIG flag */
-#define HAVE_GAI_ADDRCONFIG 1
-
 /* Define to 1 if you have the `getaddrinfo' function. */
 #define HAVE_GETADDRINFO 1
-
-/* Define to 1 if you have the `getpagesize' function. */
-#define HAVE_GETPAGESIZE 1
 
 /* Define to 1 if you have the `getuid' function. */
 #define HAVE_GETUID 1
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
+
+/* Define to 1 if you have the `iswprint' function. */
+#define HAVE_ISWPRINT 1
 
 /* Define to 1 if you have the <langinfo.h> header file. */
 #define HAVE_LANGINFO_H 1
@@ -134,13 +134,16 @@
 /* Define to 1 if you have the <machine/soundcard.h> header file. */
 /* #undef HAVE_MACHINE_SOUNDCARD_H */
 
+/* Define to 1 if you have the `mbstowcs' function. */
+#define HAVE_MBSTOWCS 1
+
 /* Define to 1 if you have the <memory.h> header file. */
 #define HAVE_MEMORY_H 1
 
 /* Define to 1 if you have the `mkfifo' function. */
 #define HAVE_MKFIFO 1
 
-/* Define to 1 if you have a working `mmap' system call. */
+/* Define to 1 if you have the `mmap' function. */
 #define HAVE_MMAP 1
 
 /* Define to 1 if you have the <netdb.h> header file. */
@@ -185,6 +188,18 @@
 /* Define to 1 if you have the `setuid' function. */
 #define HAVE_SETUID 1
 
+/* Define to 1 if you have the `shmat' function. */
+/* #undef HAVE_SHMAT */
+
+/* Define to 1 if you have the `shmctl' function. */
+/* #undef HAVE_SHMCTL */
+
+/* Define to 1 if you have the `shmdt' function. */
+/* #undef HAVE_SHMDT */
+
+/* Define to 1 if you have the `shmget' function. */
+/* #undef HAVE_SHMGET */
+
 /* Define to 1 if you have the <signal.h> header file. */
 #define HAVE_SIGNAL_H 1
 
@@ -221,6 +236,9 @@
 /* Define to 1 if you have the <sys/ioctl.h> header file. */
 #define HAVE_SYS_IOCTL_H 1
 
+/* Define to 1 if you have the <sys/ipc.h> header file. */
+/* #undef HAVE_SYS_IPC_H */
+
 /* Define to 1 if you have the <sys/param.h> header file. */
 #define HAVE_SYS_PARAM_H 1
 
@@ -229,6 +247,9 @@
 
 /* Define to 1 if you have the <sys/select.h> header file. */
 #define HAVE_SYS_SELECT_H 1
+
+/* Define to 1 if you have the <sys/shm.h> header file. */
+/* #undef HAVE_SYS_SHM_H */
 
 /* Define to 1 if you have the <sys/signal.h> header file. */
 #define HAVE_SYS_SIGNAL_H 1
@@ -256,6 +277,18 @@
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #define HAVE_UNISTD_H 1
+
+/* Define to 1 if you have the <wchar.h> header file. */
+#define HAVE_WCHAR_H 1
+
+/* Define to 1 if you have the `wcstombs' function. */
+#define HAVE_WCSTOMBS 1
+
+/* Define to 1 if you have the `wcswidth' function. */
+#define HAVE_WCSWIDTH 1
+
+/* Define to 1 if you have the <wctype.h> header file. */
+#define HAVE_WCTYPE_H 1
 
 /* Define to 1 if you have the <windows.h> header file. */
 /* #undef HAVE_WINDOWS_H */
@@ -331,6 +364,9 @@
 /* Define to disable layer III. */
 /* #undef NO_LAYER3 */
 
+/* Define to disable analyzer info. */
+/* #undef NO_MOREINFO */
+
 /* Define to disable ntom resampling. */
 /* #undef NO_NTOM */
 
@@ -356,7 +392,7 @@
 #define PACKAGE_NAME "mpg123"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "mpg123 1.25.13"
+#define PACKAGE_STRING "mpg123 1.29.3"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "mpg123"
@@ -365,16 +401,22 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.25.13"
+#define PACKAGE_VERSION "1.29.3"
 
 /* Define if portaudio v18 API is wanted. */
 /* #undef PORTAUDIO18 */
+
+/* Define for calculating tables at runtime. */
+/* #undef RUNTIME_TABLES */
 
 /* The size of `int32_t', as computed by sizeof. */
 #define SIZEOF_INT32_T 4
 
 /* The size of `long', as computed by sizeof. */
 #define SIZEOF_LONG 8
+
+/* The size of `off64_t', as computed by sizeof. */
+#define SIZEOF_OFF64_T 0
 
 /* The size of `off_t', as computed by sizeof. */
 #define SIZEOF_OFF_T 8
@@ -388,6 +430,9 @@
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
+/* Define to not duplicate some code for likely cases in libsyn123. */
+/* #undef SYN123_NO_CASES */
+
 /* Define if modules are enabled */
 #define USE_MODULES 1
 
@@ -398,7 +443,7 @@
 /* #undef USE_YASM_FOR_AVX */
 
 /* Version number of package */
-#define VERSION "1.25.13"
+#define VERSION "1.29.3"
 
 /* Define to use Win32 named pipes */
 /* #undef WANT_WIN32_FIFO */
@@ -409,7 +454,10 @@
 /* Define to use Unicode for Windows */
 /* #undef WANT_WIN32_UNICODE */
 
-/* WinXP and above for ipv6 */
+/* Windows UWP build */
+/* #undef WINDOWS_UWP */
+
+/* Windows Vista and later APIs */
 /* #undef WINVER */
 
 /* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
@@ -424,6 +472,9 @@
 # endif
 #endif
 
+/* Define for extreme debugging. */
+/* #undef XDEBUG */
+
 /* Enable large inode numbers on Mac OS X 10.5.  */
 #ifndef _DARWIN_USE_64_BIT_INODE
 # define _DARWIN_USE_64_BIT_INODE 1
@@ -435,7 +486,7 @@
 /* Define for large files, on AIX-style hosts. */
 /* #undef _LARGE_FILES */
 
-/* WinXP and above for ipv6 */
+/* Windows Vista and later APIs */
 /* #undef _WIN32_WINNT */
 
 /* Define to empty if `const' does not conform to ANSI C. */

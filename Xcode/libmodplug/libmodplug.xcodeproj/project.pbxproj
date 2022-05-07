@@ -51,46 +51,46 @@
 
 /* Begin PBXFileReference section */
 		F3968D85281FBB1900661875 /* libmodplug.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = libmodplug.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		F3968D92281FBCC900661875 /* load_mod.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_mod.cpp; path = "../../external/libmodplug-0.8.9.0/src/load_mod.cpp"; sourceTree = "<group>"; };
-		F3968D93281FBCC900661875 /* load_psm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_psm.cpp; path = "../../external/libmodplug-0.8.9.0/src/load_psm.cpp"; sourceTree = "<group>"; };
-		F3968D94281FBCC900661875 /* snd_dsp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = snd_dsp.cpp; path = "../../external/libmodplug-0.8.9.0/src/snd_dsp.cpp"; sourceTree = "<group>"; };
-		F3968D95281FBCC900661875 /* modplug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = modplug.cpp; path = "../../external/libmodplug-0.8.9.0/src/modplug.cpp"; sourceTree = "<group>"; };
-		F3968D96281FBCC900661875 /* sndfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sndfile.cpp; path = "../../external/libmodplug-0.8.9.0/src/sndfile.cpp"; sourceTree = "<group>"; };
-		F3968D97281FBCC900661875 /* load_dsm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_dsm.cpp; path = "../../external/libmodplug-0.8.9.0/src/load_dsm.cpp"; sourceTree = "<group>"; };
-		F3968D98281FBCC900661875 /* load_gdm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_gdm.cpp; path = "../../external/libmodplug-0.8.9.0/src/load_gdm.cpp"; sourceTree = "<group>"; };
-		F3968D99281FBCC900661875 /* load_okt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_okt.cpp; path = "../../external/libmodplug-0.8.9.0/src/load_okt.cpp"; sourceTree = "<group>"; };
-		F3968D9A281FBCC900661875 /* load_abc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_abc.cpp; path = "../../external/libmodplug-0.8.9.0/src/load_abc.cpp"; sourceTree = "<group>"; };
-		F3968D9B281FBCC900661875 /* load_mid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_mid.cpp; path = "../../external/libmodplug-0.8.9.0/src/load_mid.cpp"; sourceTree = "<group>"; };
-		F3968D9C281FBCC900661875 /* load_amf.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_amf.cpp; path = "../../external/libmodplug-0.8.9.0/src/load_amf.cpp"; sourceTree = "<group>"; };
-		F3968D9D281FBCC900661875 /* fastmix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fastmix.cpp; path = "../../external/libmodplug-0.8.9.0/src/fastmix.cpp"; sourceTree = "<group>"; };
-		F3968D9E281FBCCA00661875 /* mmcmp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mmcmp.cpp; path = "../../external/libmodplug-0.8.9.0/src/mmcmp.cpp"; sourceTree = "<group>"; };
-		F3968D9F281FBCCA00661875 /* load_ptm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_ptm.cpp; path = "../../external/libmodplug-0.8.9.0/src/load_ptm.cpp"; sourceTree = "<group>"; };
-		F3968DA0281FBCCA00661875 /* load_669.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_669.cpp; path = "../../external/libmodplug-0.8.9.0/src/load_669.cpp"; sourceTree = "<group>"; };
-		F3968DA1281FBCCA00661875 /* load_dbm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_dbm.cpp; path = "../../external/libmodplug-0.8.9.0/src/load_dbm.cpp"; sourceTree = "<group>"; };
-		F3968DA2281FBCCA00661875 /* load_med.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_med.cpp; path = "../../external/libmodplug-0.8.9.0/src/load_med.cpp"; sourceTree = "<group>"; };
-		F3968DA3281FBCCA00661875 /* snd_flt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = snd_flt.cpp; path = "../../external/libmodplug-0.8.9.0/src/snd_flt.cpp"; sourceTree = "<group>"; };
-		F3968DA4281FBCCA00661875 /* load_pat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_pat.cpp; path = "../../external/libmodplug-0.8.9.0/src/load_pat.cpp"; sourceTree = "<group>"; };
-		F3968DA5281FBCCA00661875 /* load_far.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_far.cpp; path = "../../external/libmodplug-0.8.9.0/src/load_far.cpp"; sourceTree = "<group>"; };
-		F3968DA6281FBCCA00661875 /* load_dmf.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_dmf.cpp; path = "../../external/libmodplug-0.8.9.0/src/load_dmf.cpp"; sourceTree = "<group>"; };
-		F3968DA7281FBCCA00661875 /* load_s3m.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_s3m.cpp; path = "../../external/libmodplug-0.8.9.0/src/load_s3m.cpp"; sourceTree = "<group>"; };
-		F3968DA8281FBCCA00661875 /* sndmix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sndmix.cpp; path = "../../external/libmodplug-0.8.9.0/src/sndmix.cpp"; sourceTree = "<group>"; };
-		F3968DA9281FBCCA00661875 /* snd_fx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = snd_fx.cpp; path = "../../external/libmodplug-0.8.9.0/src/snd_fx.cpp"; sourceTree = "<group>"; };
-		F3968DAA281FBCCA00661875 /* load_it.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_it.cpp; path = "../../external/libmodplug-0.8.9.0/src/load_it.cpp"; sourceTree = "<group>"; };
-		F3968DAB281FBCCA00661875 /* load_ult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_ult.cpp; path = "../../external/libmodplug-0.8.9.0/src/load_ult.cpp"; sourceTree = "<group>"; };
-		F3968DAC281FBCCA00661875 /* load_mdl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_mdl.cpp; path = "../../external/libmodplug-0.8.9.0/src/load_mdl.cpp"; sourceTree = "<group>"; };
-		F3968DAD281FBCCA00661875 /* load_mtm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_mtm.cpp; path = "../../external/libmodplug-0.8.9.0/src/load_mtm.cpp"; sourceTree = "<group>"; };
-		F3968DAE281FBCCA00661875 /* load_stm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_stm.cpp; path = "../../external/libmodplug-0.8.9.0/src/load_stm.cpp"; sourceTree = "<group>"; };
-		F3968DAF281FBCCA00661875 /* load_mt2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_mt2.cpp; path = "../../external/libmodplug-0.8.9.0/src/load_mt2.cpp"; sourceTree = "<group>"; };
-		F3968DB0281FBCCA00661875 /* load_wav.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_wav.cpp; path = "../../external/libmodplug-0.8.9.0/src/load_wav.cpp"; sourceTree = "<group>"; };
-		F3968DB1281FBCCA00661875 /* load_xm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_xm.cpp; path = "../../external/libmodplug-0.8.9.0/src/load_xm.cpp"; sourceTree = "<group>"; };
-		F3968DB2281FBCCA00661875 /* load_ams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_ams.cpp; path = "../../external/libmodplug-0.8.9.0/src/load_ams.cpp"; sourceTree = "<group>"; };
-		F3968DB3281FBCCA00661875 /* load_umx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_umx.cpp; path = "../../external/libmodplug-0.8.9.0/src/load_umx.cpp"; sourceTree = "<group>"; };
-		F3968DD6281FBE0200661875 /* it_defs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = it_defs.h; path = "../../external/libmodplug-0.8.9.0/src/libmodplug/it_defs.h"; sourceTree = "<group>"; };
-		F3968DD7281FBE0200661875 /* stdafx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stdafx.h; path = "../../external/libmodplug-0.8.9.0/src/libmodplug/stdafx.h"; sourceTree = "<group>"; };
-		F3968DD8281FBE0200661875 /* sndfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sndfile.h; path = "../../external/libmodplug-0.8.9.0/src/libmodplug/sndfile.h"; sourceTree = "<group>"; };
-		F3968DDC281FBE1900661875 /* modplug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = modplug.h; path = "../../external/libmodplug-0.8.9.0/src/modplug.h"; sourceTree = "<group>"; };
-		F3968DDE281FBE3400661875 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING; path = "../../external/libmodplug-0.8.9.0/COPYING"; sourceTree = "<group>"; };
-		F3968DDF281FBE3400661875 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README; path = "../../external/libmodplug-0.8.9.0/README"; sourceTree = "<group>"; };
+		F3968D92281FBCC900661875 /* load_mod.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_mod.cpp; path = "../../external/libmodplug/src/load_mod.cpp"; sourceTree = "<group>"; };
+		F3968D93281FBCC900661875 /* load_psm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_psm.cpp; path = "../../external/libmodplug/src/load_psm.cpp"; sourceTree = "<group>"; };
+		F3968D94281FBCC900661875 /* snd_dsp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = snd_dsp.cpp; path = "../../external/libmodplug/src/snd_dsp.cpp"; sourceTree = "<group>"; };
+		F3968D95281FBCC900661875 /* modplug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = modplug.cpp; path = "../../external/libmodplug/src/modplug.cpp"; sourceTree = "<group>"; };
+		F3968D96281FBCC900661875 /* sndfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sndfile.cpp; path = "../../external/libmodplug/src/sndfile.cpp"; sourceTree = "<group>"; };
+		F3968D97281FBCC900661875 /* load_dsm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_dsm.cpp; path = "../../external/libmodplug/src/load_dsm.cpp"; sourceTree = "<group>"; };
+		F3968D98281FBCC900661875 /* load_gdm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_gdm.cpp; path = "../../external/libmodplug/src/load_gdm.cpp"; sourceTree = "<group>"; };
+		F3968D99281FBCC900661875 /* load_okt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_okt.cpp; path = "../../external/libmodplug/src/load_okt.cpp"; sourceTree = "<group>"; };
+		F3968D9A281FBCC900661875 /* load_abc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_abc.cpp; path = "../../external/libmodplug/src/load_abc.cpp"; sourceTree = "<group>"; };
+		F3968D9B281FBCC900661875 /* load_mid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_mid.cpp; path = "../../external/libmodplug/src/load_mid.cpp"; sourceTree = "<group>"; };
+		F3968D9C281FBCC900661875 /* load_amf.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_amf.cpp; path = "../../external/libmodplug/src/load_amf.cpp"; sourceTree = "<group>"; };
+		F3968D9D281FBCC900661875 /* fastmix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fastmix.cpp; path = "../../external/libmodplug/src/fastmix.cpp"; sourceTree = "<group>"; };
+		F3968D9E281FBCCA00661875 /* mmcmp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mmcmp.cpp; path = "../../external/libmodplug/src/mmcmp.cpp"; sourceTree = "<group>"; };
+		F3968D9F281FBCCA00661875 /* load_ptm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_ptm.cpp; path = "../../external/libmodplug/src/load_ptm.cpp"; sourceTree = "<group>"; };
+		F3968DA0281FBCCA00661875 /* load_669.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_669.cpp; path = "../../external/libmodplug/src/load_669.cpp"; sourceTree = "<group>"; };
+		F3968DA1281FBCCA00661875 /* load_dbm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_dbm.cpp; path = "../../external/libmodplug/src/load_dbm.cpp"; sourceTree = "<group>"; };
+		F3968DA2281FBCCA00661875 /* load_med.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_med.cpp; path = "../../external/libmodplug/src/load_med.cpp"; sourceTree = "<group>"; };
+		F3968DA3281FBCCA00661875 /* snd_flt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = snd_flt.cpp; path = "../../external/libmodplug/src/snd_flt.cpp"; sourceTree = "<group>"; };
+		F3968DA4281FBCCA00661875 /* load_pat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_pat.cpp; path = "../../external/libmodplug/src/load_pat.cpp"; sourceTree = "<group>"; };
+		F3968DA5281FBCCA00661875 /* load_far.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_far.cpp; path = "../../external/libmodplug/src/load_far.cpp"; sourceTree = "<group>"; };
+		F3968DA6281FBCCA00661875 /* load_dmf.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_dmf.cpp; path = "../../external/libmodplug/src/load_dmf.cpp"; sourceTree = "<group>"; };
+		F3968DA7281FBCCA00661875 /* load_s3m.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_s3m.cpp; path = "../../external/libmodplug/src/load_s3m.cpp"; sourceTree = "<group>"; };
+		F3968DA8281FBCCA00661875 /* sndmix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sndmix.cpp; path = "../../external/libmodplug/src/sndmix.cpp"; sourceTree = "<group>"; };
+		F3968DA9281FBCCA00661875 /* snd_fx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = snd_fx.cpp; path = "../../external/libmodplug/src/snd_fx.cpp"; sourceTree = "<group>"; };
+		F3968DAA281FBCCA00661875 /* load_it.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_it.cpp; path = "../../external/libmodplug/src/load_it.cpp"; sourceTree = "<group>"; };
+		F3968DAB281FBCCA00661875 /* load_ult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_ult.cpp; path = "../../external/libmodplug/src/load_ult.cpp"; sourceTree = "<group>"; };
+		F3968DAC281FBCCA00661875 /* load_mdl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_mdl.cpp; path = "../../external/libmodplug/src/load_mdl.cpp"; sourceTree = "<group>"; };
+		F3968DAD281FBCCA00661875 /* load_mtm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_mtm.cpp; path = "../../external/libmodplug/src/load_mtm.cpp"; sourceTree = "<group>"; };
+		F3968DAE281FBCCA00661875 /* load_stm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_stm.cpp; path = "../../external/libmodplug/src/load_stm.cpp"; sourceTree = "<group>"; };
+		F3968DAF281FBCCA00661875 /* load_mt2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_mt2.cpp; path = "../../external/libmodplug/src/load_mt2.cpp"; sourceTree = "<group>"; };
+		F3968DB0281FBCCA00661875 /* load_wav.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_wav.cpp; path = "../../external/libmodplug/src/load_wav.cpp"; sourceTree = "<group>"; };
+		F3968DB1281FBCCA00661875 /* load_xm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_xm.cpp; path = "../../external/libmodplug/src/load_xm.cpp"; sourceTree = "<group>"; };
+		F3968DB2281FBCCA00661875 /* load_ams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_ams.cpp; path = "../../external/libmodplug/src/load_ams.cpp"; sourceTree = "<group>"; };
+		F3968DB3281FBCCA00661875 /* load_umx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = load_umx.cpp; path = "../../external/libmodplug/src/load_umx.cpp"; sourceTree = "<group>"; };
+		F3968DD6281FBE0200661875 /* it_defs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = it_defs.h; path = "../../external/libmodplug/src/libmodplug/it_defs.h"; sourceTree = "<group>"; };
+		F3968DD7281FBE0200661875 /* stdafx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stdafx.h; path = "../../external/libmodplug/src/libmodplug/stdafx.h"; sourceTree = "<group>"; };
+		F3968DD8281FBE0200661875 /* sndfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sndfile.h; path = "../../external/libmodplug/src/libmodplug/sndfile.h"; sourceTree = "<group>"; };
+		F3968DDC281FBE1900661875 /* modplug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = modplug.h; path = "../../external/libmodplug/src/modplug.h"; sourceTree = "<group>"; };
+		F3968DDE281FBE3400661875 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING; path = "../../external/libmodplug/COPYING"; sourceTree = "<group>"; };
+		F3968DDF281FBE3400661875 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README; path = "../../external/libmodplug/README"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -363,8 +363,8 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/../../external/libmodplug-0.8.9.0/src\"",
-					"\"$(SRCROOT)/../../external/libmodplug-0.8.9.0/src/libmodplug\"",
+					"\"$(SRCROOT)/../../external/libmodplug/src\"",
+					"\"$(SRCROOT)/../../external/libmodplug/src/libmodplug\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
@@ -433,8 +433,8 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/../../external/libmodplug-0.8.9.0/src\"",
-					"\"$(SRCROOT)/../../external/libmodplug-0.8.9.0/src/libmodplug\"",
+					"\"$(SRCROOT)/../../external/libmodplug/src\"",
+					"\"$(SRCROOT)/../../external/libmodplug/src/libmodplug\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;

@@ -6,20 +6,20 @@ SUPPORT_WAV ?= true
 
 # Enable this if you want to support loading FLAC music with libFLAC
 SUPPORT_FLAC ?= true
-FLAC_LIBRARY_PATH := external/flac-1.3.4
+FLAC_LIBRARY_PATH := external/flac
 
 # Enable this if you want to support loading OGG Vorbis music via Tremor
 SUPPORT_OGG ?= true
-OGG_LIBRARY_PATH := external/libogg-1.3.2
-VORBIS_LIBRARY_PATH := external/libvorbisidec-1.2.1
+OGG_LIBRARY_PATH := external/ogg
+VORBIS_LIBRARY_PATH := external/tremor
 
 # Enable this if you want to support loading MP3 music via MPG123
 SUPPORT_MP3_MPG123 ?= true
-MPG123_LIBRARY_PATH := external/mpg123-1.25.13
+MPG123_LIBRARY_PATH := external/mpg123
 
 # Enable this if you want to support loading MOD music via modplug
 SUPPORT_MOD_MODPLUG ?= true
-MODPLUG_LIBRARY_PATH := external/libmodplug-0.8.9.0
+MODPLUG_LIBRARY_PATH := external/libmodplug
 
 # Enable this if you want to support TiMidity
 SUPPORT_MID_TIMIDITY ?= true

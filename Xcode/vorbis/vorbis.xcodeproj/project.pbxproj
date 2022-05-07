@@ -49,32 +49,32 @@
 /* Begin PBXFileReference section */
 		F3F70EFF281F637A005AA27D /* vorbis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = vorbis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3F70F0C281F649C005AA27D /* ogg.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ogg.xcodeproj; path = ../ogg/ogg.xcodeproj; sourceTree = "<group>"; };
-		F3F70F12281F65B0005AA27D /* analysis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = analysis.c; path = "../../external/libvorbis-1.3.6/lib/analysis.c"; sourceTree = "<group>"; };
-		F3F70F13281F65B0005AA27D /* lsp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lsp.c; path = "../../external/libvorbis-1.3.6/lib/lsp.c"; sourceTree = "<group>"; };
-		F3F70F14281F65B0005AA27D /* codebook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = codebook.c; path = "../../external/libvorbis-1.3.6/lib/codebook.c"; sourceTree = "<group>"; };
-		F3F70F15281F65B0005AA27D /* floor0.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = floor0.c; path = "../../external/libvorbis-1.3.6/lib/floor0.c"; sourceTree = "<group>"; };
-		F3F70F16281F65B1005AA27D /* mdct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mdct.c; path = "../../external/libvorbis-1.3.6/lib/mdct.c"; sourceTree = "<group>"; };
-		F3F70F17281F65B1005AA27D /* info.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = info.c; path = "../../external/libvorbis-1.3.6/lib/info.c"; sourceTree = "<group>"; };
-		F3F70F18281F65B1005AA27D /* mapping0.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mapping0.c; path = "../../external/libvorbis-1.3.6/lib/mapping0.c"; sourceTree = "<group>"; };
-		F3F70F19281F65B1005AA27D /* registry.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = registry.c; path = "../../external/libvorbis-1.3.6/lib/registry.c"; sourceTree = "<group>"; };
-		F3F70F1A281F65B1005AA27D /* floor1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = floor1.c; path = "../../external/libvorbis-1.3.6/lib/floor1.c"; sourceTree = "<group>"; };
-		F3F70F1B281F65B1005AA27D /* vorbisfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vorbisfile.c; path = "../../external/libvorbis-1.3.6/lib/vorbisfile.c"; sourceTree = "<group>"; };
-		F3F70F1C281F65B1005AA27D /* sharedbook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sharedbook.c; path = "../../external/libvorbis-1.3.6/lib/sharedbook.c"; sourceTree = "<group>"; };
-		F3F70F1D281F65B1005AA27D /* psy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = psy.c; path = "../../external/libvorbis-1.3.6/lib/psy.c"; sourceTree = "<group>"; };
-		F3F70F1E281F65B1005AA27D /* window.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = window.c; path = "../../external/libvorbis-1.3.6/lib/window.c"; sourceTree = "<group>"; };
-		F3F70F1F281F65B1005AA27D /* lookup.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lookup.c; path = "../../external/libvorbis-1.3.6/lib/lookup.c"; sourceTree = "<group>"; };
-		F3F70F20281F65B1005AA27D /* synthesis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = synthesis.c; path = "../../external/libvorbis-1.3.6/lib/synthesis.c"; sourceTree = "<group>"; };
-		F3F70F21281F65B1005AA27D /* block.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = block.c; path = "../../external/libvorbis-1.3.6/lib/block.c"; sourceTree = "<group>"; };
-		F3F70F22281F65B1005AA27D /* lpc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lpc.c; path = "../../external/libvorbis-1.3.6/lib/lpc.c"; sourceTree = "<group>"; };
-		F3F70F23281F65B1005AA27D /* bitrate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bitrate.c; path = "../../external/libvorbis-1.3.6/lib/bitrate.c"; sourceTree = "<group>"; };
-		F3F70F24281F65B1005AA27D /* envelope.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = envelope.c; path = "../../external/libvorbis-1.3.6/lib/envelope.c"; sourceTree = "<group>"; };
-		F3F70F25281F65B1005AA27D /* res0.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = res0.c; path = "../../external/libvorbis-1.3.6/lib/res0.c"; sourceTree = "<group>"; };
-		F3F70F26281F65B1005AA27D /* smallft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = smallft.c; path = "../../external/libvorbis-1.3.6/lib/smallft.c"; sourceTree = "<group>"; };
-		F3F70F27281F65B1005AA27D /* vorbisenc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vorbisenc.c; path = "../../external/libvorbis-1.3.6/lib/vorbisenc.c"; sourceTree = "<group>"; };
-		F3F70F3E281F65E2005AA27D /* codec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = codec.h; path = "../../external/libvorbis-1.3.6/include/vorbis/codec.h"; sourceTree = "<group>"; };
-		F3F70F3F281F65E2005AA27D /* vorbisfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vorbisfile.h; path = "../../external/libvorbis-1.3.6/include/vorbis/vorbisfile.h"; sourceTree = "<group>"; };
-		F3F70F40281F65E2005AA27D /* vorbisenc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vorbisenc.h; path = "../../external/libvorbis-1.3.6/include/vorbis/vorbisenc.h"; sourceTree = "<group>"; };
-		F3F70F44281F6607005AA27D /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING; path = "../../external/libvorbis-1.3.6/COPYING"; sourceTree = "<group>"; };
+		F3F70F12281F65B0005AA27D /* analysis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = analysis.c; path = "../../external/vorbis/lib/analysis.c"; sourceTree = "<group>"; };
+		F3F70F13281F65B0005AA27D /* lsp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lsp.c; path = "../../external/vorbis/lib/lsp.c"; sourceTree = "<group>"; };
+		F3F70F14281F65B0005AA27D /* codebook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = codebook.c; path = "../../external/vorbis/lib/codebook.c"; sourceTree = "<group>"; };
+		F3F70F15281F65B0005AA27D /* floor0.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = floor0.c; path = "../../external/vorbis/lib/floor0.c"; sourceTree = "<group>"; };
+		F3F70F16281F65B1005AA27D /* mdct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mdct.c; path = "../../external/vorbis/lib/mdct.c"; sourceTree = "<group>"; };
+		F3F70F17281F65B1005AA27D /* info.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = info.c; path = "../../external/vorbis/lib/info.c"; sourceTree = "<group>"; };
+		F3F70F18281F65B1005AA27D /* mapping0.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mapping0.c; path = "../../external/vorbis/lib/mapping0.c"; sourceTree = "<group>"; };
+		F3F70F19281F65B1005AA27D /* registry.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = registry.c; path = "../../external/vorbis/lib/registry.c"; sourceTree = "<group>"; };
+		F3F70F1A281F65B1005AA27D /* floor1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = floor1.c; path = "../../external/vorbis/lib/floor1.c"; sourceTree = "<group>"; };
+		F3F70F1B281F65B1005AA27D /* vorbisfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vorbisfile.c; path = "../../external/vorbis/lib/vorbisfile.c"; sourceTree = "<group>"; };
+		F3F70F1C281F65B1005AA27D /* sharedbook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sharedbook.c; path = "../../external/vorbis/lib/sharedbook.c"; sourceTree = "<group>"; };
+		F3F70F1D281F65B1005AA27D /* psy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = psy.c; path = "../../external/vorbis/lib/psy.c"; sourceTree = "<group>"; };
+		F3F70F1E281F65B1005AA27D /* window.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = window.c; path = "../../external/vorbis/lib/window.c"; sourceTree = "<group>"; };
+		F3F70F1F281F65B1005AA27D /* lookup.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lookup.c; path = "../../external/vorbis/lib/lookup.c"; sourceTree = "<group>"; };
+		F3F70F20281F65B1005AA27D /* synthesis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = synthesis.c; path = "../../external/vorbis/lib/synthesis.c"; sourceTree = "<group>"; };
+		F3F70F21281F65B1005AA27D /* block.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = block.c; path = "../../external/vorbis/lib/block.c"; sourceTree = "<group>"; };
+		F3F70F22281F65B1005AA27D /* lpc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lpc.c; path = "../../external/vorbis/lib/lpc.c"; sourceTree = "<group>"; };
+		F3F70F23281F65B1005AA27D /* bitrate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bitrate.c; path = "../../external/vorbis/lib/bitrate.c"; sourceTree = "<group>"; };
+		F3F70F24281F65B1005AA27D /* envelope.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = envelope.c; path = "../../external/vorbis/lib/envelope.c"; sourceTree = "<group>"; };
+		F3F70F25281F65B1005AA27D /* res0.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = res0.c; path = "../../external/vorbis/lib/res0.c"; sourceTree = "<group>"; };
+		F3F70F26281F65B1005AA27D /* smallft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = smallft.c; path = "../../external/vorbis/lib/smallft.c"; sourceTree = "<group>"; };
+		F3F70F27281F65B1005AA27D /* vorbisenc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vorbisenc.c; path = "../../external/vorbis/lib/vorbisenc.c"; sourceTree = "<group>"; };
+		F3F70F3E281F65E2005AA27D /* codec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = codec.h; path = "../../external/vorbis/include/vorbis/codec.h"; sourceTree = "<group>"; };
+		F3F70F3F281F65E2005AA27D /* vorbisfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vorbisfile.h; path = "../../external/vorbis/include/vorbis/vorbisfile.h"; sourceTree = "<group>"; };
+		F3F70F40281F65E2005AA27D /* vorbisenc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vorbisenc.h; path = "../../external/vorbis/include/vorbis/vorbisenc.h"; sourceTree = "<group>"; };
+		F3F70F44281F6607005AA27D /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING; path = "../../external/vorbis/COPYING"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -349,7 +349,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/../../external/libvorbis-1.3.6/lib\"",
+					"\"$(SRCROOT)/../../external/vorbis/lib\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
@@ -414,7 +414,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/../../external/libvorbis-1.3.6/lib\"",
+					"\"$(SRCROOT)/../../external/vorbis/lib\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
