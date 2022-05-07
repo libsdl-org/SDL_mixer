@@ -614,7 +614,7 @@ if test x$enable_music_flac = xyes; then
                     flac_lib=[`find_lib libFLAC.dylib`]
                     ;;
                 *-*-cygwin* | *-*-mingw*)
-                    flac_lib=[`find_lib "libFLAC-*.dll"`]
+                    flac_lib=[`find_lib "libFLAC*.dll"`]
                     ;;
                 *)
                     flac_lib=[`find_lib "libFLAC[0-9]*.so.*"`]
