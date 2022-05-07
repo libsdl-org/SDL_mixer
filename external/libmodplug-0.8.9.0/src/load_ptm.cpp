@@ -109,7 +109,7 @@ BOOL CSoundFile::ReadPTM(const BYTE *lpStream, DWORD dwMemLength)
 		MODINSTRUMENT *pins = &Ins[ismp+1];
 		PTMSAMPLE *psmp = (PTMSAMPLE *)(lpStream+dwMemPos);
 
-		lstrcpyn(m_szNames[ismp+1], psmp->samplename, 28);
+		lstrcpynA(m_szNames[ismp+1], psmp->samplename, 28);
 		memcpy(pins->name, psmp->filename, 12);
 		pins->name[12] = 0;
 		pins->nGlobalVol = 64;

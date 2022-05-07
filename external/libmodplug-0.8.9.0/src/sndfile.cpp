@@ -361,13 +361,13 @@ void CSoundFile::ResetMidiCfg()
 //-----------------------------
 {
 	memset(&m_MidiCfg, 0, sizeof(m_MidiCfg));
-	lstrcpy(&m_MidiCfg.szMidiGlb[MIDIOUT_START*32], "FF");
-	lstrcpy(&m_MidiCfg.szMidiGlb[MIDIOUT_STOP*32], "FC");
-	lstrcpy(&m_MidiCfg.szMidiGlb[MIDIOUT_NOTEON*32], "9c n v");
-	lstrcpy(&m_MidiCfg.szMidiGlb[MIDIOUT_NOTEOFF*32], "9c n 0");
-	lstrcpy(&m_MidiCfg.szMidiGlb[MIDIOUT_PROGRAM*32], "Cc p");
-	lstrcpy(&m_MidiCfg.szMidiSFXExt[0], "F0F000z");
-	for (int iz=0; iz<16; iz++) wsprintf(&m_MidiCfg.szMidiZXXExt[iz*32], "F0F001%02X", iz*8);
+	lstrcpyA(&m_MidiCfg.szMidiGlb[MIDIOUT_START*32], "FF");
+	lstrcpyA(&m_MidiCfg.szMidiGlb[MIDIOUT_STOP*32], "FC");
+	lstrcpyA(&m_MidiCfg.szMidiGlb[MIDIOUT_NOTEON*32], "9c n v");
+	lstrcpyA(&m_MidiCfg.szMidiGlb[MIDIOUT_NOTEOFF*32], "9c n 0");
+	lstrcpyA(&m_MidiCfg.szMidiGlb[MIDIOUT_PROGRAM*32], "Cc p");
+	lstrcpyA(&m_MidiCfg.szMidiSFXExt[0], "F0F000z");
+	for (int iz=0; iz<16; iz++) wsprintfA(&m_MidiCfg.szMidiZXXExt[iz*32], "F0F001%02X", iz*8);
 }
 
 
@@ -1389,7 +1389,7 @@ BOOL CSoundFile::SetPatternName(UINT nPat, LPCSTR lpszName)
 	if (nPat >= MAX_PATTERNS) return FALSE;
 	if (lpszName == NULL) return(FALSE);
 
-	if (lpszName) lstrcpyn(szName, lpszName, MAX_PATTERNNAME);
+	if (lpszName) lstrcpynA(szName, lpszName, MAX_PATTERNNAME);
 	szName[MAX_PATTERNNAME-1] = 0;
 	if (!m_lpszPatternNames) m_nPatternNames = 0;
 	if (nPat >= m_nPatternNames)

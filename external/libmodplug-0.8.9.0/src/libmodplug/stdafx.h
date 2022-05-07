@@ -98,9 +98,9 @@ typedef const char* LPCSTR;
 typedef void* PVOID;
 typedef void VOID;
 
-#define lstrcpyn strncpy
-#define lstrcpy strcpy
-#define wsprintf sprintf
+#define lstrcpynA strncpy
+#define lstrcpyA strcpy
+#define wsprintfA sprintf
 
 #define WAVE_FORMAT_PCM 1
 
