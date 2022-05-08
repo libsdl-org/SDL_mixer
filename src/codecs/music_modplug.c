@@ -25,7 +25,11 @@
 
 #include "music_modplug.h"
 
+#ifdef MODPLUG_HEADER
+#include MODPLUG_HEADER
+#else
 #include <libmodplug/modplug.h>
+#endif
 
 typedef struct {
     int loaded;

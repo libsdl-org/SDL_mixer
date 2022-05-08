@@ -59,6 +59,8 @@ jobs:
           pkg-config \
           ${NULL+}
     - uses: actions/checkout@v2
+      with:
+        submodules: recursive
     - name: Check that versioning is consistent
       # We only need to run this once: arbitrarily use the Linux/CMake build
       if: "runner.os == 'Linux' && matrix.platform.cmake"
@@ -70,6 +72,10 @@ jobs:
         cmake -B build \
           -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
           -DCMAKE_VERBOSE_MAKEFILE=ON \
+          -DSUPPORT_FLAC=ON \
+          -DSUPPORT_OGG=ON \
+          -DSUPPORT_MP3_MPG123=ON \
+          -DSUPPORT_MOD_MODPLUG=ON \
           ${{ matrix.platform.cmake }}
     - name: Build
       if: "matrix.platform.cmake"

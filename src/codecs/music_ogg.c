@@ -29,7 +29,9 @@
 #include "utils.h"
 
 #define OV_EXCLUDE_STATIC_CALLBACKS
-#if defined(OGG_USE_TREMOR)
+#if defined(OGG_HEADER)
+#include OGG_HEADER
+#elif defined(OGG_USE_TREMOR)
 #include <tremor/ivorbisfile.h>
 #else
 #include <vorbis/vorbisfile.h>
