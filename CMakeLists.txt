@@ -21,21 +21,20 @@ option(SUPPORT_FLAC "Support loading FLAC music with libFLAC" OFF)
 option(SUPPORT_OGG "Support loading OGG Vorbis music via Tremor" OFF)
 option(SUPPORT_MP3_MPG123 "Support loading MP3 music via MPG123" OFF)
 option(SUPPORT_MOD_MODPLUG "Support loading MOD music via modplug" OFF)
-option(SUPPORT_MID_TIMIDITY "Support loading MIDI music via TiMidity" OFF)
+option(SUPPORT_MID_TIMIDITY "Support loading MIDI music via TiMidity" ON)
 
 option(BUILD_SHARED_LIBS "Enable shared library" ON)
 
 if (NOT ANDROID AND NOT (TARGET SDL2 OR TARGET SDL2-static))
-	find_package(SDL2 REQUIRED)
-
-	if(NOT TARGET SDL2::SDL2)
-	    # SDL < 2.0.12
-	    add_library(SDL2::SDL2 INTERFACE IMPORTED)
+    find_package(SDL2 REQUIRED)
+    if(NOT TARGET SDL2::SDL2)
+        # SDL < 2.0.12
+        add_library(SDL2::SDL2 INTERFACE IMPORTED)
         set_target_properties(SDL2::SDL2 PROPERTIES
             INTERFACE_INCLUDE_DIRECTORIES ${SDL2_INCLUDE_DIRS} ${SDL2_INCLUDE_DIR}
             INTERFACE_LINK_LIBRARIES ${SDL2_LIBRARIES} ${SDL2_LIBRARY}
         )
-	endif()
+    endif()
 endif()
 
 # Calculate a libtool-like version number
@@ -95,6 +94,19 @@ elseif (UNIX AND NOT ANDROID)
     )
 endif()
 
+if(SUPPORT_MID_TIMIDITY)
+    set(TIMIDITY_SRCS
+        src/codecs/timidity/common.c
+        src/codecs/timidity/instrum.c
+        src/codecs/timidity/mix.c
+        src/codecs/timidity/output.c
+        src/codecs/timidity/playmidi.c
+        src/codecs/timidity/readmidi.c
+        src/codecs/timidity/resample.c
+        src/codecs/timidity/tables.c
+        src/codecs/timidity/timidity.c)
+endif()
+
 target_sources(SDL2_mixer PRIVATE
         src/effect_position.c src/effects_internal.c src/effect_stereoreverse.c
         src/mixer.c src/music.c src/utils.c
@@ -106,7 +118,8 @@ target_sources(SDL2_mixer PRIVATE
         src/codecs/music_mikmod.c src/codecs/music_modplug.c
         src/codecs/music_xmp.c
         src/codecs/music_fluidsynth.c src/codecs/music_timidity.c
-        src/codecs/music_nativemidi.c)
+        src/codecs/music_nativemidi.c
+        ${TIMIDITY_SRCS})
 
 if (SUPPORT_WAV)
     target_compile_definitions(SDL2_mixer PRIVATE -DMUSIC_WAV)
@@ -142,8 +155,6 @@ endif()
 
 if (SUPPORT_MID_TIMIDITY)
     target_compile_definitions(SDL2_mixer PRIVATE -DMUSIC_MID_TIMIDITY)
-    add_subdirectory(src/codecs/timidity)
-    target_link_libraries(SDL2_mixer PRIVATE timidity)
 endif()
 
 if(WIN32 AND BUILD_SHARED_LIBS)
