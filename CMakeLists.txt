@@ -125,6 +125,10 @@ if (SUPPORT_WAV)
     target_compile_definitions(SDL2_mixer PRIVATE -DMUSIC_WAV)
 endif()
 
+if (SUPPORT_OGG OR SUPPORT_FLAC)
+    add_subdirectory(external/ogg)
+endif()
+
 if (SUPPORT_FLAC)
     target_compile_definitions(SDL2_mixer PRIVATE -DMUSIC_FLAC)
     add_subdirectory(external/flac)
@@ -134,7 +138,6 @@ endif()
 
 if (SUPPORT_OGG)
     target_compile_definitions(SDL2_mixer PRIVATE -DMUSIC_OGG -DOGG_USE_TREMOR -DOGG_HEADER=<ivorbisfile.h>)
-    add_subdirectory(external/ogg)
     add_subdirectory(external/tremor)
     target_include_directories(SDL2_mixer PRIVATE external/tremor)
     target_link_libraries(SDL2_mixer PRIVATE vorbisidec ogg)
