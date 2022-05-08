@@ -125,11 +125,12 @@ dist $(distfile):
 	$(SHELL) $(auxdir)/mkinstalldirs $(distdir)
 	(cd $(srcdir); tar cf - $(SRC_DIST)) | (cd $(distdir); tar xf -)
 	tar cf - $(GEN_DIST) | (cd $(distdir); tar xf -)
-	rm -rf `find $(distdir)/external -name .git*`
-	rm -rf `find $(distdir)/external -name ci`
-	rm -rf `find $(distdir)/external -name *.yml`
-	rm -f `find $(distdir) -name '.#*'`
-	tar cvf - $(distdir) | gzip --best >$(distfile)
+	-rm -rf `find $(distdir)/external -name '.git*'`
+	-rm -rf `find $(distdir)/external -name '.ci*'`
+	-rm -rf `find $(distdir)/external -name '*.yml'`
+	-rm -rf `find $(distdir)/external -name ci`
+	-rm -f `find $(distdir) -name '.#*'`
+	tar cf - $(distdir) | gzip --best >$(distfile)
 	rm -rf $(distdir)
 
 rpm: $(distfile)
