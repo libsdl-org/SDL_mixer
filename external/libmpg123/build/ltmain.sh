@@ -3648,7 +3648,8 @@ This mode accepts the following additional options:
   -prefer-non-pic   try to build non-PIC objects only
   -shared           do not build a '.o' file suitable for static linking
   -static           only build a '.o' file suitable for static linking
-  -Wc,FLAG          pass FLAG directly to the compiler
+  -Wc,FLAG
+  -Xcompiler FLAG   pass FLAG directly to the compiler
 
 COMPILE-COMMAND is a command to be used in creating a 'standard' object file
 from the given SOURCEFILE.
@@ -3754,6 +3755,8 @@ The following components of LINK-COMMAND are treated specially:
   -weak LIBNAME     declare that the target provides the LIBNAME interface
   -Wc,FLAG
   -Xcompiler FLAG   pass linker-specific FLAG directly to the compiler
+  -Wa,FLAG
+  -Xassembler FLAG  pass linker-specific FLAG directly to the assembler
   -Wl,FLAG
   -Xlinker FLAG     pass linker-specific FLAG directly to the linker
   -XCClinker FLAG   pass link-specific FLAG to the compiler driver (CC)
@@ -6849,6 +6852,13 @@ func_mode_link ()
 	  prev=
 	  continue
 	  ;;
+	xassembler)
+	  func_append compiler_flags " -Xassembler $qarg"
+	  prev=
+	  func_append compile_command " -Xassembler $qarg"
+	  func_append finalize_command " -Xassembler $qarg"
+	  continue
+	  ;;
 	xcclinker)
 	  func_append linker_flags " $qarg"
 	  func_append compiler_flags " $qarg"
@@ -7019,7 +7029,7 @@ func_mode_link ()
 	    # These systems don't actually have a C library (as such)
 	    test X-lc = "X$arg" && continue
 	    ;;
-	  *-*-openbsd* | *-*-freebsd* | *-*-dragonfly* | *-*-bitrig*)
+	  *-*-openbsd* | *-*-freebsd* | *-*-dragonfly* | *-*-bitrig* | *-*-midnightbsd*)
 	    # Do not include libc due to us having libc/libc_r.
 	    test X-lc = "X$arg" && continue
 	    ;;
@@ -7039,7 +7049,7 @@ func_mode_link ()
 	  esac
 	elif test X-lc_r = "X$arg"; then
 	 case $host in
-	 *-*-openbsd* | *-*-freebsd* | *-*-dragonfly* | *-*-bitrig*)
+	 *-*-openbsd* | *-*-freebsd* | *-*-dragonfly* | *-*-bitrig* | *-*-midnightbsd*)
 	   # Do not include libc_r directly, use -pthread flag.
 	   continue
 	   ;;
@@ -7237,6 +7247,11 @@ func_mode_link ()
 	arg=$func_stripname_result
 	;;
 
+      -Xassembler)
+        prev=xassembler
+        continue
+        ;;
+
       -Xcompiler)
 	prev=xcompiler
 	continue
@@ -7276,10 +7291,11 @@ func_mode_link ()
       # -stdlib=*            select c++ std lib with clang
       # -fsanitize=*         Clang/GCC memory and address sanitizer
       # -fuse-ld=*           Linker select flags for GCC
+      # -Wa,*                Pass flags directly to the assembler
       -64|-mips[0-9]|-r[0-9][0-9]*|-xarch=*|-xtarget=*|+DA*|+DD*|-q*|-m*| \
       -t[45]*|-txscale*|-p|-pg|--coverage|-fprofile-*|-F*|@*|-tp=*|--sysroot=*| \
       -O*|-g*|-flto*|-fwhopr*|-fuse-linker-plugin|-fstack-protector*|-stdlib=*| \
-      -specs=*|-fsanitize=*|-fuse-ld=*)
+      -specs=*|-fsanitize=*|-fuse-ld=*|-Wa,*)
         func_quote_for_eval "$arg"
 	arg=$func_quote_for_eval_result
         func_append compile_command " $arg"
@@ -8809,7 +8825,7 @@ func_mode_link ()
 	  #
 	  case $version_type in
 	  # correct linux to gnu/linux during the next big refactor
-	  darwin|freebsd-elf|linux|osf|windows|none)
+	  darwin|freebsd-elf|linux|midnightbsd-elf|osf|windows|none)
 	    func_arith $number_major + $number_minor
 	    current=$func_arith_result
 	    age=$number_minor
@@ -8900,7 +8916,7 @@ func_mode_link ()
 	  versuffix=.$current.$revision
 	  ;;
 
-	freebsd-elf)
+	freebsd-elf | midnightbsd-elf)
 	  func_arith $current - $age
 	  major=.$func_arith_result
 	  versuffix=$major.$age.$revision
@@ -9126,7 +9142,7 @@ func_mode_link ()
 	  *-*-netbsd*)
 	    # Don't link with libc until the a.out ld.so is fixed.
 	    ;;
-	  *-*-openbsd* | *-*-freebsd* | *-*-dragonfly*)
+	  *-*-openbsd* | *-*-freebsd* | *-*-dragonfly* | *-*-midnightbsd*)
 	    # Do not include libc due to us having libc/libc_r.
 	    ;;
 	  *-*-sco3.2v5* | *-*-sco5v6*)

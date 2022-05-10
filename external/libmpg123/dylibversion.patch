@@ -3,7 +3,7 @@ link the osx dylib with compatibility version set to 25.0
 
 --- mpg123-1.22.4/build/ltmain.sh~
 +++ mpg123-1.22.4/build/ltmain.sh
-@@ -8882,15 +8882,15 @@
+@@ -8898,15 +8898,15 @@
  	  # Darwin ld doesn't like 0 for these options...
  	  func_arith $current + 1
  	  minor_current=$func_arith_result

@@ -13,6 +13,8 @@ ASFLAGS  = -fobj -Iasm_nasm/ -D__OS2__
 #ASFLAGS += -DUNDERSCORE
 
 CFLAGS = -zq -bt=os2 -bm -fp5 -fpi87 -mf -oeatxh -w4 -ei -j -zp8
+# newer OpenWatcom versions enable W303 by default
+CFLAGS+= -wcd=303
 # -5s : Pentium stack calling conventions
 CFLAGS+= -5s
 DLLFLAGS=-bd

@@ -84,97 +84,20 @@ AC_C_CONST
 AC_INLINE
 AC_C_BIGENDIAN
 
-dnl ############# Use Libtool for dynamic module loading
-
-modules=auto
-OUTPUT_OBJ="module.\$(OBJEXT)"
-AC_ARG_ENABLE(modules,
-[  --enable-modules=[no/yes] dynamically loadable output modules],
-[
-	if test "x$enableval" = xyes
-	then
-		modules=enabled
-	else
-		modules=disabled
-	fi
-],
-[
-	if test "x$be_static" = "xyes"; then
-		modules=disabled
-	else
-		modules=auto
-	fi
-])
-
 dnl We only want shared libraries by default
 AC_DISABLE_STATIC
 AC_ENABLE_SHARED
 
 if test x"$enable_shared" = xno; then
-	modules=disabled
 	LT_LDFLAGS=
 else
 	AC_DEFINE(DYNAMIC_BUILD, 1, [ Define if building with dynamcally linked libmpg123])
 fi
 
-if test x"$modules" = xdisabled
-then
-	echo "Modules disabled, not checking for libltdl."
-else
-	have_ltdl=no
-	AC_CHECK_LIB( [ltdl], [lt_dlinit],
-		[ AC_CHECK_HEADER( [ltdl.h],
-			[
-				have_ltdl=yes
-				AC_DEFINE(HAVE_LTDL, 1, [ Define if libltdl is available ])
-			],
-			[
-				AC_MSG_WARN([Found ltdl library but NOT the header file on your system])
-			] )
-		],
-		[
-			AC_MSG_WARN([ltdl library not found])
-		]
-	)
-	if test x"$modules" = xenabled -a x"$have_ltdl" = xno; then
-		AC_MSG_ERROR([Modules enabled but no libltdl found! This will not work...])
-	fi
-	if test x"$modules" = xauto; then
-		if test x"$have_ltdl" = xyes; then
-			modules=enabled
-			echo "We found libltdl: Modules enabled."
-		else
-			echo "We did not find libltdl: Modules disabled."
-			modules=disabled
-		fi
-	fi
-fi
-
-if test x"$modules" = xdisabled
-then
-	echo "Modules disabled."
-else
-# Enable module support in source code
-AC_DEFINE( USE_MODULES, 1, [Define if modules are enabled] )
-fi
-
 dnl Configure libtool
 
-#LT_INIT([win32-dll])
-AC_LIBTOOL_WIN32_DLL
-AC_PROG_LIBTOOL
+LT_INIT([win32-dll])
 
-if test x"$modules" = xdisabled
-then
-	echo "Modules still disabled..."
-	MODULE_OBJ="legacy_module.\$(OBJEXT)"
-else
-	MODULE_OBJ="module.\$(OBJEXT)"
-fi
-
-AM_CONDITIONAL( [HAVE_MODULES], [test "x$modules" = xenabled] )
-
-AC_SUBST(MODULE_OBJ)
 AC_SUBST(LT_LDFLAGS)
 AC_SUBST(EXEC_LT_LDFLAGS)
 
@@ -885,7 +808,7 @@ dnl ############## Really basic headers, needed for other checks.
 
 AC_HEADER_STDC
 dnl Is it too paranoid to specifically check for stdint.h and limits.h?
-AC_CHECK_HEADERS([stdio.h stdlib.h string.h unistd.h sched.h sys/ioctl.h sys/types.h stdint.h limits.h inttypes.h sys/time.h sys/wait.h sys/resource.h sys/signal.h signal.h])
+AC_CHECK_HEADERS([stdio.h stdlib.h string.h strings.h unistd.h sched.h sys/ioctl.h sys/types.h stdint.h limits.h inttypes.h sys/time.h sys/wait.h sys/resource.h sys/signal.h signal.h])
 
 dnl ############## Types
 
@@ -1482,12 +1405,8 @@ AM_CONDITIONAL([WIN32_CODES], [ test "x$win32_specific_codes" = xenabled ])
 
 dnl ############## Final Output
 
-# Do that here to prevent the above tests usign -lltdl...
 LIBMPG123_LIBS=$LIBS
 AC_SUBST(LIBMPG123_LIBS)
-if test "x$modules" = xenabled; then
-  LIBS="-lltdl $LIBS"
-fi
 
 AC_CONFIG_FILES([
 	Makefile
@@ -1497,8 +1416,6 @@ AC_CONFIG_FILES([
 ])
 
 AC_OUTPUT
-
-
 
 dnl ############## Display Message
 

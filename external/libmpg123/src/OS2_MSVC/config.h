@@ -55,6 +55,11 @@
 /* Define to 1 if you have the <string.h> header file. */
 #define HAVE_STRING_H 1
 
+/* Define to 1 if you have the <strings.h> header file. */
+#if defined(__WATCOMC__) && (__WATCOMC__ >= 1240)
+#define HAVE_STRINGS_H 1
+#endif
+
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #define HAVE_SYS_STAT_H 1
 
