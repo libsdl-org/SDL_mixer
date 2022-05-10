@@ -113,6 +113,14 @@ const UWORD unioperands[UNI_LAST] = {
 	1, /* UNI_MEDEFFECT_18 */
 	1, /* UNI_MEDEFFECT_1E */
 	1, /* UNI_MEDEFFECT_1F */
+	1, /* UNI_FAREFFECT1 */
+	1, /* UNI_FAREFFECT2 */
+	1, /* UNI_FAREFFECT3 */
+	1, /* UNI_FAREFFECT4 */
+	1, /* UNI_FAREFFECT6 */
+	1, /* UNI_FAREFFECTD */
+	1, /* UNI_FAREFFECTE */
+	1, /* UNI_FAREFFECTF */
 };
 
 /* Sparse description of the internal module format
@@ -275,7 +283,7 @@ void UniNewline(void)
 		unibuf[lastp]+=0x20;
 		unipc = unitt+1;
 	} else {
-		if (UniExpand(unitt-unipc)) {
+		if (UniExpand(len)) {
 			/* current and previous row aren't equal... update the pointers */
 			unibuf[unitt] = len;
 			lastp = unitt;

@@ -187,7 +187,7 @@ MIKMODAPI CHAR* MikMod_InfoDriver(void)
 	MUTEX_LOCK(lists);
 	/* compute size of buffer */
 	for(l = firstdriver; l; l = l->next)
-		len += 4 + (l->next ? 1 : 0) + strlen(l->Version);
+		len += 4 + 1 + strlen(l->Version);
 
 	if(len)
 	  if((list=(CHAR*)_mm_malloc(len*sizeof(CHAR))) != NULL) {
@@ -195,7 +195,8 @@ MIKMODAPI CHAR* MikMod_InfoDriver(void)
 		list[0] = 0;
 		/* list all registered device drivers : */
 		for(t = 1, l = firstdriver; l; l = l->next, t++) {
-		    list_end += sprintf(list_end, "%2d %s%s", t, l->Version, (l->next)? "\n" : "");
+		    list_end += sprintf(list_end, "%2d %s\n", t, l->Version);
+		    if (!l->next) list_end[-1] = 0;
 		}
 	}
 	MUTEX_UNLOCK(lists);

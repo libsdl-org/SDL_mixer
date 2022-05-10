@@ -132,16 +132,17 @@ BOOL ReadLinedComment(UWORD len,UWORD linelen)
 	if (!linelen) return 0;
 	if (!len) return 1;
 
-	if (!(buf = (CHAR *) _mm_malloc(len))) return 0;
 	numlines = (len + linelen - 1) / linelen;
 	cnt = (linelen + 1) * numlines;
-	if (!(storage = (CHAR *) _mm_malloc(cnt + 1))) {
+	buf = (CHAR *) _mm_calloc(1, len);
+	if (!buf) return 0;
+	storage = (CHAR *) _mm_calloc(1, cnt + 1);
+	if (!storage) {
 		free(buf);
 		return 0;
 	}
 
 	_mm_read_UBYTES(buf,len,modreader);
-	storage[cnt] = 0;
 	for (line = 0, fpos = 0, cpos = 0; line < numlines; line++, fpos += linelen, cpos += (linelen + 1))
 	{
 		cnt = len - fpos;

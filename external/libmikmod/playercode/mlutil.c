@@ -221,7 +221,9 @@ void S3MIT_ProcessCmd(UBYTE cmd, UBYTE inf, unsigned int flags)
 				UniEffect(UNI_S3MEFFECTD,inf);
 				break;
 			case 0xd: /* Mxx Set Channel Volume */
-				UniEffect(UNI_ITEFFECTM,inf);
+				/* Ignore invalid values > 64. */
+				if (inf <= 0x40)
+					UniEffect(UNI_ITEFFECTM,inf);
 				break;
 			case 0xe: /* Nxy Slide Channel Volume */
 				UniEffect(UNI_ITEFFECTN,inf);

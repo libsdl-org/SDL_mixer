@@ -398,6 +398,7 @@ static BOOL S3M_Load(BOOL curious)
 		if(s.flags&1) q->flags |= SF_LOOP;
 		if(s.flags&4) q->flags |= SF_16BITS;
 		if(mh->fileformat==1) q->flags |= SF_SIGNED;
+		if(s.pack==4) q->flags |= SF_ADPCM4 | SF_SIGNED; /* MODPlugin ADPCM4. */
 
 		/* don't load sample if it doesn't have the SCRS tag */
 		if(memcmp(s.scrs,"SCRS",4)) q->length = 0;

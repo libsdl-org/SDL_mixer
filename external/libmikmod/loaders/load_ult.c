@@ -182,11 +182,12 @@ static BOOL ULT_Load(BOOL curious)
 		}
 
 		q->samplename=DupStr(s.samplename,32,1);
-		/* The correct formula for the coefficient would be
-		   pow(2,(double)s.finetume/OCTAVE/32768), but to avoid floating point
-		   here, we'll use a first order approximation here.
+		/* The correct formula would be
+		   s.speed * pow(2, (double)s.finetune / (OCTAVE * 32768))
+		   but to avoid libm, we'll use a first order approximation.
 		   1/567290 == Ln(2)/OCTAVE/32768 */
-		q->speed=s.speed+s.speed*(((SLONG)s.speed*(SLONG)s.finetune)/567290);
+		if(!s.finetune) q->speed = s.speed;
+		else q->speed= s.speed*((double)s.finetune/567290.0 + 1.0);
 		q->length    = s.sizeend-s.sizestart;
 		q->volume    = s.volume>>2;
 		q->loopstart = s.loopstart;

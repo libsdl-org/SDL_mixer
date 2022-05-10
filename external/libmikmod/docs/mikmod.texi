@@ -17,7 +17,7 @@
 @syncodeindex tp vr
 @set documentation-version 1.3
 @set documentation-date August 2016
-@set library-version 3.1.21
+@set library-version 3.1.22
 @set authorname Miodrag Vallat
 @set authoraddress miod@@mikmod.org
 

@@ -221,26 +221,29 @@ static UWORD MED_ConvertTempo(UWORD tempo)
 	};
 
 	/* MEDs with 8 channels do something completely different with their tempos.
-	   This behavior completely overrides BPM mode timing when it is enabled.
-	   Table stolen from libxmp ;-( */
+	   This behavior completely overrides normal timing when it is enabled.
+	   NOTE: the tempos used for this are directly from OctaMED Soundstudio 2, but
+	   in older versions the playback speeds differed slightly between NTSC and PAL.
+	   This table seems to have been intended to be a compromise between the two.*/
 	static const UBYTE tempo8channel[11] =
 	{
-		0, 47, 43, 40, 37, 35, 32, 30, 29, 27, 26
+		0, 179, 164, 152, 141, 131, 123, 116, 110, 104, 99
 	};
 
 	ULONG result;
 
-	if (bpmtempos && !is8channel) {
+	if (is8channel) {
+		tempo = tempo < 10 ? tempo : 10;
+		return tempo8channel[tempo];
+	}
+
+	if (bpmtempos) {
 		/* Convert MED BPM into ProTracker-compatible BPM. All that really needs to be done
 		   here is the BPM needs to be multiplied by (rows per beat)/(PT rows per beat = 4).
 		   BPM mode doesn't have compatibility tempos like tempo mode but OctaMED does
 		   something unusual with BPM<=2 that was found in electrosound 64.med. */
 		result = (tempo > 2) ? ((ULONG)tempo * rowsperbeat + 2) / 4 : 125;
 	} else {
-		if (is8channel) {
-			tempo = tempo < 10 ? tempo : 10;
-			tempo = tempo8channel[tempo];
-		}
 		if (tempo >= 1 && tempo <= 10)
 			tempo = tempocompat[tempo];
 

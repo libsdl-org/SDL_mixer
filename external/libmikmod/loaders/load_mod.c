@@ -87,8 +87,10 @@ static CHAR fasttracker[] = "Fasttracker";
 static CHAR octalyser[] = "Octalyser";
 static CHAR oktalyzer[] = "Oktalyzer";
 static CHAR taketracker[] = "TakeTracker";
+static CHAR digitaltracker[] = "Digital Tracker MOD";
 static CHAR orpheus[] = "Imago Orpheus (MOD format)";
 static CHAR modsgrave[] = "Mod's Grave";
+static CHAR unknown[] = "Unknown tracker MOD";
 
 static MODULEHEADER *mh = NULL;
 static MODNOTE *patbuf = NULL;
@@ -159,6 +161,27 @@ static BOOL MOD_CheckType(UBYTE *id, UBYTE *numchn, CHAR **descr)
 			modtype = 1;
 		}
 		*numchn = (id[0] - '0') * 10 + (id[1] - '0');
+		return 1;
+	}
+	/* Taketracker */
+	if (!memcmp(id, "TDZ", 3) && (id[3] >= '1' && id[3] <= '3')) {
+		*descr = taketracker;
+		*numchn = (id[3] - '0');
+		return 1;
+	}
+
+	/* Digital Tracker */
+	if (!memcmp(id, "FA0", 3) && (id[3] == '4' || id[3] == '6' || id[3] == '8')) {
+		*descr = digitaltracker;
+		*numchn = (id[3] - '0');
+		return 1;
+	}
+
+	/* Standard 4-channel MODs with unusual IDs. */
+	if (!memcmp(id, "LARD", 4)		/* judgement_day_gvine.mod */
+		|| !memcmp(id, "NSMS", 4)) {	/* kingdomofpleasure.mod */
+		*descr = unknown;
+		*numchn = 4;
 		return 1;
 	}
 
@@ -371,6 +394,7 @@ static BOOL MOD_Load(BOOL curious)
 	ULONG samplelength = 0;
 	ULONG filelength;
 	ULONG pos;
+	char adpcm[5];
 
 	pos = _mm_ftell(modreader);
 	_mm_fseek(modreader, 0, SEEK_END);
@@ -422,6 +446,12 @@ static BOOL MOD_Load(BOOL curious)
 	if (!(MOD_CheckType(mh->magic2, &of.numchn, &descr))) {
 		_mm_errno = MMERR_NOT_A_MODULE;
 		return 0;
+	}
+	if (descr == digitaltracker) {
+		/* Digital Tracker FA0x modules add four extra bytes after the
+		 * magic. These don't seem to have ever been used for their
+		 * intended purpose (rows per pattern and sample bits/rate). */
+		_mm_read_M_ULONG(modreader);
 	}
 	if (trekker && of.numchn == 8)
 		for (t = 0; t < 128; t++)
@@ -485,12 +515,16 @@ static BOOL MOD_Load(BOOL curious)
 	for (t = 0; t < of.numpos; t++)
 		of.positions[t] = mh->positions[t];
 
+	if (!ML_LoadPatterns())
+		return 0;
+
 	/* Finally, init the sampleinfo structures  */
 	of.numins = of.numsmp = 31;
 	if (!AllocSamples())
 		return 0;
 	s = mh->samples;
 	q = of.samples;
+	pos = _mm_ftell(modreader);
 	for (t = 0; t < of.numins; t++) {
 		/* convert the samplename */
 		q->samplename = DupStr(s->samplename, 23, 1);
@@ -509,14 +543,26 @@ static BOOL MOD_Load(BOOL curious)
 		if (s->replen > 2)
 			q->flags |= SF_LOOP;
 
+		q->seekpos = pos;
+		/* Test for MODPlugin ADPCM. These are indicated by "ADPCM"
+		 * embedded at the start of each sample's data. :( */
+		_mm_read_UBYTES(adpcm, 5, modreader);
+		if (!memcmp(adpcm, "ADPCM", 5)) {
+			q->flags |= SF_ADPCM4;
+			q->seekpos += 5;
+			/* Stored half-length, plus a 16 byte table. */
+			pos += s->length + 16 + 5;
+			_mm_fseek(modreader, s->length + 16, SEEK_CUR);
+		} else {
+			pos += q->length;
+			_mm_fseek(modreader, q->length - 5, SEEK_CUR);
+		}
+
 		s++;
 		q++;
 	}
 
 	of.modtype = _mm_strdup(descr);
-
-	if (!ML_LoadPatterns())
-		return 0;
 
 	return 1;
 }

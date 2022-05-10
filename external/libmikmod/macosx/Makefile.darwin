@@ -40,6 +40,7 @@ CFLAGS+=-ffast-math -fno-common
 CFLAGS+=-fvisibility=hidden -DSYM_VISIBILITY
 #CFLAGS+=-g
 LDFLAGS =-Wl,-single_module
+#LDFLAGS+=-static-libgcc
 #LDFLAGS+=-Wl,-install_name,"@executable_path/../Frameworks/mikmod.framework/Versions/A/mikmod"
 LDFLAGS+=-Wl,-install_name,"@rpath/mikmod.framework/Versions/A/mikmod"
 ### FIXME: versions should be 3.0/3.7, but keeping it as 1.0/1.0

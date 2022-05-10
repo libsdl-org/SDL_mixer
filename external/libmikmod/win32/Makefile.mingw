@@ -43,9 +43,8 @@ LDLIBS=
 CPPFLAGS+=-DHAVE_FCNTL_H -DHAVE_MALLOC_H -DHAVE_LIMITS_H
 CFLAGS=-O2 -Wall
 CFLAGS+=-ffast-math
-#CFLAGS+=-g -mthreads
+#CFLAGS+=-g
 LDFLAGS=
-LDLIBS+=-lm
 
 COMPILE=$(CC) -c $(CFLAGS) $(CPPFLAGS) -I../win32 -I../include
 

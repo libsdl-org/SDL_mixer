@@ -370,6 +370,15 @@ enum {
     UNI_MEDEFFECT_18,  /* stop note */
     UNI_MEDEFFECT_1E,  /* pattern delay */
     UNI_MEDEFFECT_1F,  /* note delay and retrigger */
+ /* Farandole effects. */
+    UNI_FAREFFECT1,    /* Porta up */
+    UNI_FAREFFECT2,    /* Porta down */
+    UNI_FAREFFECT3,    /* Porta to note */
+    UNI_FAREFFECT4,    /* Retrigger */
+    UNI_FAREFFECT6,    /* Vibrato */
+    UNI_FAREFFECTD,    /* Fine tempo down */
+    UNI_FAREFFECTE,    /* Fine tempo up */
+    UNI_FAREFFECTF,    /* Set tempo */
 
     UNI_LAST
 };
@@ -535,6 +544,16 @@ typedef struct MP_CONTROL {
     UBYTE   s3mrtgspeed;/* last used retrig speed */
     UBYTE   s3mrtgslide;/* last used retrig slide */
 
+    UBYTE   fartoneportarunning; /* FAR tone porta (effect 3) is a little bit different than other effects. It should keep running when the effect has first started, even if it is not given on subsequently rows */
+    SLONG   fartoneportaspeed;   /* FAR tone porta increment value */
+    SLONG   farcurrentvalue;     /* Because we're using fixing points as speed and the current period is an integer, we need to store the current value here for next round */
+    UBYTE   farretrigcount;      /* Number of retrigs to do */
+
+    /* These variables are only stored on the first control instance and therefore used globally.
+       The reason they are stored here is to minimize the number of global variables.  */
+    UBYTE   farcurtempo;         /* Farandole current speed */
+    SWORD   fartempobend;        /* Used by the Farandole fine tempo effects and store the current bend value */
+
     UBYTE   glissando;  /* glissando (0 means off) */
     UBYTE   wavecontrol;
 
@@ -565,7 +584,8 @@ typedef struct MP_CONTROL {
     SBYTE   panbspd;    /* "" speed */
     UBYTE   panbdepth;  /* "" depth */
 
-    UWORD   newsamp;    /* set to 1 upon a sample / inst change */
+    UBYTE   newnote;    /* set to 1 if the current row contains a note */
+    UBYTE   newsamp;    /* set to 1 upon a sample / inst change */
     UBYTE   voleffect;  /* Volume Column Effect Memory as used by IT */
     UBYTE   voldata;    /* Volume Column Data Memory */
 

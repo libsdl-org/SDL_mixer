@@ -1,4 +1,4 @@
-Summary of changes between libmikmod 3.1.21 and libmikmod 3.1.22:
+Summary of changes between libmikmod 3.1.21.1 and libmikmod 3.1.22:
 ========================================================================
 
 libmikmod v3.1.22 was released on ???? ??, ????.
@@ -10,14 +10,31 @@ libmikmod v3.1.22 was released on ???? ??, ????.
   (github PR #28.)
 - Fix XM fine volume slide effects (was broken between libmikmod-3.1.6
   and 3.1.7 - github PR #20.)
+- Changed XM effect L to behave correctly (e.g. Graff/ant attack.xm or
+  villgust.xm - github PR #56.)
+- Implement MODPlugin ADPCM4 support (github PR #57 and #61.)
+- Fix playback of Impulse Tracker modules with more than 99 instruments
+  (e.g. many MPT-created ITs -- github bug #33.)
 - Fix MOD retrigger (E9x) effect bug that would cause it to always
   retrigger on tick 1. (github bug #21, PR #22.)
 - Fix handling of FAR pattern break byte (github bug #5.)
 - Add support for Mod's Grave WOW files to MOD loader (github bug #7.)
+- Detect more MOD variants: TDZ#, FA04/6/8, LARD, NSMS (github PR #59.)
 - Check M&K! and CD61 signatures in Octalyser modules (github PR #12.)
 - Don't load STM samples with volume==0, fix sample offset calculation
   (github bug #6.)
 - Fix volume event handling for FAR modules. (github PR #14.)
+- Multiple fixes to FAR modules: (github PR #37)
+  * Fix player to handle empty patterns.
+  * Handle invalid pattern numbers in position list.
+  * Add support for effect 1 and 2 (porta slide up/down).
+  * Implement effect 3 (tone porta) the right way.
+  * Play with the real tempos.
+  * Support for effects D and E (fine tempo up/down).
+  * Fix effect 6 (vibrato).
+  * Fix effect 4 (retrigger) by adding a new effect.
+  * Fix bug in the sample loader when loading 16-bit samples.
+  * Support for restart position.
 - Fix GDM empty notes, fine volslide/portamento, and sample volume.
   (github PR #15.)
 - Fix GDM set pan position effect. (github PR #27.)
@@ -27,19 +44,41 @@ libmikmod v3.1.22 was released on ???? ??, ????.
   (github bug #19, PR #23.)
 - Add support for MED song/instrument transpose and octave wrapping.
   (github bug #24, PR #25.)
+- Use more accurate BPM values for 8-channel mode tempos in OctaMed
+  loader (github PR #26)
+- Allow speed values of 128-255 for S3M/IT/DSMI/GDM/IMF (github PR #42,
+  also see github PR #35.)
+- Multiple fixes to DSMI AMF loader. (github PR #36)
+- Support for version 8, 9, and older AMF 1.0 modules (github PR #51.)
 - Fix note tuning for 669 modules. (github PR #16.)
+- Fix sample loop-end for 669 modules. (See e.g. in 'Lost in Germany',
+  github PR #34.)
+- Fix UltraTracker sample speed calculation. (e.g. 'Break the beat.ult'
+  now plays correctly. github PR #40.)
+- Fix STM blank patterns handling. (github bug #9, PR #55.)
+- Fix sample loop and detection for invalid values in Scream Tracker 2
+  loader. (e.g. N.S. Beat.stm and Batman.stm. github PR #38.)
+- Fix unimod version 4 sample flags. (e.g.: 'hundrapporten!' and
+  'mulla on porkkanaa' modules now play correctly. github bug #47.)
+- Fix unimod version 5 sample flag at bit 6 to be SF_OWNPAN (github
+  bug #47.)
 - DoPTEffectB, DoPTEffectD: bounds-check the jump target.
 - StartEnvelope: workaround invalid envelopes with 0 pts.
 - Sanity-check that position values can't be higher than patterns in
   several loaders.
 - Fix access to uninitialized memory in M15, IT, STM and STMIK loaders
   in case of short files.
+- Fix access to uninitialized memory elsewhere in code (github bug #67.)
 - Refuse zero instrument and pattern numbers in STMIK loader.
+- Fix inverted argument fed to UniExpand in UniNewline (github bug #43).
+- Removed support for lcc-win32 compiler.
 - Several build and portability fixes/updates.
 
 Thanks to:
 - Lionel Debroux, for providing fuzz files which helped finding defects.
-- Alice Rowan (Lachesis), for providing FAR, GDM, STM, and other loader
+- Alice Rowan, for providing DSMI AMF, FAR, GDM, IT, STM, and many other
+  loader fixes.
+- Thomas Neumann, for providing 669, DSMI AMF, STM, UNI and other loader
   fixes.
 
 

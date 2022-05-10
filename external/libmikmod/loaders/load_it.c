@@ -270,7 +270,10 @@ static UBYTE* IT_ConvertTrack(ITNOTE* tr,UWORD numrows)
 				UniNote(note);
 		}
 
-		if((ins)&&(ins<100))
+		/* Impulse Tracker only allows up to 99 instruments and crashes when it
+		   encounters instruments >=100. But the file format supports them just
+		   fine and there are many MPT-created ITs with that many instruments. */
+		if((ins)&&(ins<253))
 			UniInstrument(ins-1);
 		else if(ins==253)
 			UniWriteByte(UNI_KEYOFF);
@@ -695,7 +698,8 @@ static BOOL IT_Load(BOOL curious)
 		if(s.flag&16) q->flags|=SF_LOOP;
 		if(s.flag&64) q->flags|=SF_BIDI;
 
-		if(mh->cwt>=0x200) {
+		if(s.convert==0xff) q->flags|=SF_ADPCM4|SF_SIGNED; /* MODPlugin ADPCM */
+		else if(mh->cwt>=0x200) {
 			if(s.convert&1) q->flags|=SF_SIGNED;
 			if(s.convert&4) q->flags|=SF_DELTA;
 		}

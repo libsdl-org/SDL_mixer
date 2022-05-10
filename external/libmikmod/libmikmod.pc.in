@@ -8,5 +8,5 @@ Description: Library for playing Module Files and for Sound Effects
 Version: @LIBMIKMOD_VERSION@
 URL: http://mikmod.sourceforge.net/
 Libs: -L${libdir} -lmikmod
-Libs.private: -lm
+Libs.private: 
 Cflags: -I${includedir}

@@ -441,6 +441,12 @@ static void FixEnvelope(ENVPT *cur, int pts)
 		}
 }
 
+/* Check for MOD plugin packed samples */
+static BOOL IsSamplePacked()
+{
+	return (s->reserved == 0xad) && !(s->type & 0x30);
+}
+
 static BOOL LoadInstruments(void)
 {
 	long filend,ck;
@@ -624,7 +630,11 @@ static BOOL LoadInstruments(void)
 					_mm_read_string(s->samplename, 22, modreader);
 
 					nextwav[of.numsmp+u]=next;
-					next+=s->length;
+
+					if(IsSamplePacked())
+						next+=((s->length + 1) >> 1) + 16;
+					else
+						next+=s->length;
 				}
 
 				if(mh->version>0x0103) {
@@ -791,6 +801,11 @@ static BOOL XM_Load(BOOL curious)
 		if(s->type&0x3) q->flags|=SF_LOOP;
 		if(s->type&0x2) q->flags|=SF_BIDI;
 		if(s->type&0x10) q->flags|=SF_16BITS;
+
+		if(IsSamplePacked()) {
+			q->flags &= ~SF_DELTA;
+			q->flags |= SF_ADPCM4;
+		}
 	}
 
 	d=of.instruments;

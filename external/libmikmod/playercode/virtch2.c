@@ -788,7 +788,7 @@ int VC2_Init(void)
 		return 1;
 	}
 	if(!vc_tickbuf) {
-		if(!(vc_tickbuf=(SLONG*)_mm_malloc((TICKLSIZE+32)*sizeof(SLONG)))) {
+		if(!(vc_tickbuf=(SLONG*)_mm_calloc((TICKLSIZE+32),sizeof(SLONG)))) {
 			_mm_errno = MMERR_INITIALIZING_MIXER;
 			return 1;
 		}

@@ -221,10 +221,6 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
-/* Define if your system defines random(3) and srandom(3) in math.h instead of
-   stdlib.h */
-#undef SRANDOM_IN_MATH_H
-
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 

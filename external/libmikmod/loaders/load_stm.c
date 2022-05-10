@@ -223,7 +223,7 @@ static UBYTE *STM_ConvertTrack(STMNOTE *n)
 	return UniDup();
 }
 
-static BOOL STM_LoadPatterns(void)
+static BOOL STM_LoadPatterns(int pattoload)
 {
 	int t,s,tracks=0;
 
@@ -231,7 +231,7 @@ static BOOL STM_LoadPatterns(void)
 	if(!AllocTracks()) return 0;
 
 	/* Allocate temporary buffer for loading and converting the patterns */
-	for(t=0;t<of.numpat;t++) {
+	for(t=0;t<pattoload;t++) {
 		for(s=0;s<(64U*of.numchn);s++) {
 			stmbuf[s].note   = _mm_read_UBYTE(modreader);
 			stmbuf[s].insvol = _mm_read_UBYTE(modreader);
@@ -252,6 +252,8 @@ static BOOL STM_LoadPatterns(void)
 
 static BOOL STM_Load(BOOL curious)
 {
+	BOOL blankpattern=0;
+	int pattoload;
 	int t;
 	ULONG samplestart;
 	ULONG sampleend;
@@ -316,20 +318,34 @@ static BOOL STM_Load(BOOL curious)
 	t=0;
 	if(!AllocPositions(0x80)) return 0;
 	/* 99 terminates the patorder list */
-	while((mh->patorder[t]<=99)&&(mh->patorder[t]<mh->numpat)) {
+	while(mh->patorder[t]<99) {
 		of.positions[t]=mh->patorder[t];
+
+		/* Screamtracker 2 treaks patterns >= numpat as blank patterns.
+		 * Example modules: jimmy.stm, Rauno/dogs.stm, Skaven/hevijanis istu maas.stm.
+		 *
+		 * Patterns>=64 have unpredictable behavior in Screamtracker 2,
+		 * but nothing seems to rely on them, so they're OK to blank too.
+		 */
+		if(of.positions[t]>=mh->numpat) {
+			of.positions[t]=mh->numpat;
+			blankpattern=1;
+		}
+
 		if(++t == 0x80) {
 			_mm_errno = MMERR_NOT_A_MODULE;
 			return 0;
 		}
 	}
-	if(mh->patorder[t]<=99) t++;
+	/* Allocate an extra blank pattern if the module references one. */
+	pattoload=of.numpat;
+	if(blankpattern) of.numpat++;
 	of.numpos=t;
 	of.numtrk=of.numpat*of.numchn;
 	of.numins=of.numsmp=31;
 
 	if(!AllocSamples()) return 0;
-	if(!STM_LoadPatterns()) return 0;
+	if(!STM_LoadPatterns(pattoload)) return 0;
 
 	samplestart=_mm_ftell(modreader);
 	_mm_fseek(modreader,0,SEEK_END);
@@ -374,8 +390,13 @@ static BOOL STM_Load(BOOL curious)
 		/* contrary to the STM specs, sample data is signed */
 		q->flags = SF_SIGNED;
 
-		if(q->loopend && q->loopend != 0xffff)
-				q->flags|=SF_LOOP;
+		if(q->loopend && q->loopend != 0xffff && q->loopstart < q->length) {
+			q->flags|=SF_LOOP;
+			if (q->loopend > q->length)
+				q->loopend = q->length;
+		}
+		else
+			q->loopstart = q->loopend = 0;
 	}
 	return 1;
 }

@@ -47,7 +47,7 @@
 #include <windows.h>
 
 #define INITGUID
-#if defined(__LCC__)||defined(__WATCOMC__)
+#if defined(__WATCOMC__)
 #include <guiddef.h>
 #else
 #include <basetyps.h> /* guiddef.h not in all SDKs, e.g. mingw.org */

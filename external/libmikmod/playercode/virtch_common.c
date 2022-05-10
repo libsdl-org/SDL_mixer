@@ -397,7 +397,7 @@ SWORD VC1_SampleLoad(struct SAMPLOAD* sload,int type)
 	SL_SampleSigned(sload);
 	SL_Sample8to16(sload);
 
-	if(!(Samples[handle]=(SWORD*)_mm_malloc((length+20)<<1))) {
+	if(!(Samples[handle]=(SWORD*)_mm_calloc(1,(length+20)<<1))) {
 		_mm_errno = MMERR_SAMPLE_TOO_BIG;
 		return -1;
 	}
