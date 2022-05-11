@@ -581,10 +581,18 @@ AC_ARG_ENABLE([music-flac-shared],
               [dynamically load FLAC support [default=yes]])],
               [], [enable_music_flac_shared=yes])
 if test x$enable_music_flac = xyes; then
-    AC_CHECK_HEADER([FLAC/export.h], [have_flac_export=yes])
-    if test x$have_flac_export = xyes; then
-        LIBS_SAVED="$LIBS"
-        LIBS="-lFLAC"
+    PKG_CHECK_MODULES([FLAC], [flac], [dnl
+            have_flac_hdr=yes
+            have_flac_lib=yes
+            have_flac_pc=yes
+        ], [dnl
+            AC_CHECK_HEADER([FLAC/stream_decoder.h], [have_flac_hdr=yes])
+            AC_CHECK_LIB([FLAC], [FLAC__stream_decoder_new], [have_flac_lib=yes;FLAC_LIBS="-lFLAC"])
+        ])
+
+    if test x$have_flac_hdr = xyes -a x$have_flac_lib = xyes; then
+        save_CFLAGS="$CFLAGS"
+        CFLAGS="$CFLAGS $FLAC_CFLAGS"
         AC_MSG_CHECKING([for libflac so-name version >= $libflac_ver])
         AC_TRY_COMPILE([
 #include "FLAC/export.h"
@@ -595,46 +603,35 @@ if test x$enable_music_flac = xyes; then
 #error "old-flac"
 #endif
 ], have_flac_ver=yes, have_flac_ver=no)
-        LIBS="$LIBS_SAVED"
+        CFLAGS="$save_CFLAGS"
         AC_MSG_RESULT($have_flac_ver)
     fi
-
     if test x$have_flac_ver = xyes; then
-        PKG_CHECK_MODULES([FLAC], [flac], [dnl
-                have_flac_hdr=yes
-                have_flac_lib=yes
-                have_flac_pc=yes
-            ], [dnl
-                AC_CHECK_HEADER([FLAC/stream_decoder.h], [have_flac_hdr=yes])
-                AC_CHECK_LIB([FLAC], [FLAC__stream_decoder_new], [have_flac_lib=yes;FLAC_LIBS="-lFLAC"])
-            ])
-        if test x$have_flac_hdr = xyes -a x$have_flac_lib = xyes; then
-            case "$host" in
-                *-*-darwin*)
-                    flac_lib=[`find_lib libFLAC.dylib`]
-                    ;;
-                *-*-cygwin* | *-*-mingw*)
-                    flac_lib=[`find_lib "libFLAC*.dll"`]
-                    ;;
-                *)
-                    flac_lib=[`find_lib "libFLAC[0-9]*.so.*"`]
-                    if test x$flac_lib = x; then
-                        flac_lib=[`find_lib "libFLAC.so.*"`]
-                    fi
-                    ;;
-            esac
-            SOURCES="$SOURCES $srcdir/*_flac.c"
-            EXTRA_CFLAGS="$EXTRA_CFLAGS -DFLAC_MUSIC $FLAC_CFLAGS"
-            if test x$enable_music_flac_shared = xyes && test x$flac_lib != x; then
-                echo "-- dynamic libFLAC -> $flac_lib"
-                EXTRA_CFLAGS="$EXTRA_CFLAGS -DFLAC_DYNAMIC=\\\"$flac_lib\\\""
-            else
-                EXTRA_LDFLAGS="$EXTRA_LDFLAGS $FLAC_LIBS"
-                if test x$have_flac_pc = xyes; then
-                    PC_REQUIRES="$PC_REQUIRES flac"
-                else
-                    PC_LIBS="$PC_LIBS $FLAC_LIBS"
+        case "$host" in
+            *-*-darwin*)
+                flac_lib=[`find_lib libFLAC.dylib`]
+                ;;
+            *-*-cygwin* | *-*-mingw*)
+                flac_lib=[`find_lib "libFLAC*.dll"`]
+                ;;
+            *)
+                flac_lib=[`find_lib "libFLAC[0-9]*.so.*"`]
+                if test x$flac_lib = x; then
+                    flac_lib=[`find_lib "libFLAC.so.*"`]
                 fi
+                ;;
+        esac
+        SOURCES="$SOURCES $srcdir/*_flac.c"
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -DFLAC_MUSIC $FLAC_CFLAGS"
+        if test x$enable_music_flac_shared = xyes && test x$flac_lib != x; then
+            echo "-- dynamic libFLAC -> $flac_lib"
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DFLAC_DYNAMIC=\\\"$flac_lib\\\""
+        else
+            EXTRA_LDFLAGS="$EXTRA_LDFLAGS $FLAC_LIBS"
+            if test x$have_flac_pc = xyes; then
+                PC_REQUIRES="$PC_REQUIRES flac"
+            else
+                PC_LIBS="$PC_LIBS $FLAC_LIBS"
             fi
         fi
     else
