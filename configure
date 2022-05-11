@@ -17065,48 +17065,6 @@ else
 fi
 
 if test x$enable_music_flac = xyes; then
-    ac_fn_c_check_header_mongrel "$LINENO" "FLAC/export.h" "ac_cv_header_FLAC_export_h" "$ac_includes_default"
-if test "x$ac_cv_header_FLAC_export_h" = xyes; then :
-  have_flac_export=yes
-fi
-
-
-    if test x$have_flac_export = xyes; then
-        LIBS_SAVED="$LIBS"
-        LIBS="-lFLAC"
-        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for libflac so-name version >= $libflac_ver" >&5
-$as_echo_n "checking for libflac so-name version >= $libflac_ver... " >&6; }
-        cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-#include "FLAC/export.h"
-#include "stdio.h"
-
-int
-main ()
-{
-
-#if defined(FLAC_API_VERSION_CURRENT) && (FLAC_API_VERSION_CURRENT >= $libflac_ver)
-#else
-#error "old-flac"
-#endif
-
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  have_flac_ver=yes
-else
-  have_flac_ver=no
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-        LIBS="$LIBS_SAVED"
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: $have_flac_ver" >&5
-$as_echo "$have_flac_ver" >&6; }
-    fi
-
-    if test x$have_flac_ver = xyes; then
 
 pkg_failed=no
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for flac" >&5
@@ -17166,13 +17124,13 @@ fi
 	# Put the nasty error message in config.log where it belongs
 	echo "$FLAC_PKG_ERRORS" >&5
 
-	                ac_fn_c_check_header_mongrel "$LINENO" "FLAC/stream_decoder.h" "ac_cv_header_FLAC_stream_decoder_h" "$ac_includes_default"
+	            ac_fn_c_check_header_mongrel "$LINENO" "FLAC/stream_decoder.h" "ac_cv_header_FLAC_stream_decoder_h" "$ac_includes_default"
 if test "x$ac_cv_header_FLAC_stream_decoder_h" = xyes; then :
   have_flac_hdr=yes
 fi
 
 
-                { $as_echo "$as_me:${as_lineno-$LINENO}: checking for FLAC__stream_decoder_new in -lFLAC" >&5
+            { $as_echo "$as_me:${as_lineno-$LINENO}: checking for FLAC__stream_decoder_new in -lFLAC" >&5
 $as_echo_n "checking for FLAC__stream_decoder_new in -lFLAC... " >&6; }
 if ${ac_cv_lib_FLAC_FLAC__stream_decoder_new+:} false; then :
   $as_echo_n "(cached) " >&6
@@ -17216,13 +17174,13 @@ fi
 elif test $pkg_failed = untried; then
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
-	                ac_fn_c_check_header_mongrel "$LINENO" "FLAC/stream_decoder.h" "ac_cv_header_FLAC_stream_decoder_h" "$ac_includes_default"
+	            ac_fn_c_check_header_mongrel "$LINENO" "FLAC/stream_decoder.h" "ac_cv_header_FLAC_stream_decoder_h" "$ac_includes_default"
 if test "x$ac_cv_header_FLAC_stream_decoder_h" = xyes; then :
   have_flac_hdr=yes
 fi
 
 
-                { $as_echo "$as_me:${as_lineno-$LINENO}: checking for FLAC__stream_decoder_new in -lFLAC" >&5
+            { $as_echo "$as_me:${as_lineno-$LINENO}: checking for FLAC__stream_decoder_new in -lFLAC" >&5
 $as_echo_n "checking for FLAC__stream_decoder_new in -lFLAC... " >&6; }
 if ${ac_cv_lib_FLAC_FLAC__stream_decoder_new+:} false; then :
   $as_echo_n "(cached) " >&6
@@ -17268,37 +17226,71 @@ else
 	FLAC_LIBS=$pkg_cv_FLAC_LIBS
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
-	                have_flac_hdr=yes
-                have_flac_lib=yes
-                have_flac_pc=yes
+	            have_flac_hdr=yes
+            have_flac_lib=yes
+            have_flac_pc=yes
 
 fi
-        if test x$have_flac_hdr = xyes -a x$have_flac_lib = xyes; then
-            case "$host" in
-                *-*-darwin*)
-                    flac_lib=`find_lib libFLAC.dylib`
-                    ;;
-                *-*-cygwin* | *-*-mingw*)
-                    flac_lib=`find_lib "libFLAC*.dll"`
-                    ;;
-                *)
-                    flac_lib=`find_lib "libFLAC[0-9]*.so.*"`
-                    if test x$flac_lib = x; then
-                        flac_lib=`find_lib "libFLAC.so.*"`
-                    fi
-                    ;;
-            esac
-            EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_FLAC $FLAC_CFLAGS"
-            if test x$enable_music_flac_shared = xyes && test x$flac_lib != x; then
-                echo "-- dynamic libFLAC -> $flac_lib"
-                EXTRA_CFLAGS="$EXTRA_CFLAGS -DFLAC_DYNAMIC=\\\"$flac_lib\\\""
-            else
-                EXTRA_LDFLAGS="$EXTRA_LDFLAGS $FLAC_LIBS"
-                if test x$have_flac_pc = xyes; then
-                    PC_REQUIRES="$PC_REQUIRES flac"
-                else
-                    PC_LIBS="$PC_LIBS $FLAC_LIBS"
+
+    if test x$have_flac_hdr = xyes -a x$have_flac_lib = xyes; then
+        save_CFLAGS="$CFLAGS"
+        CFLAGS="$CFLAGS $FLAC_CFLAGS"
+        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for libflac so-name version >= $libflac_ver" >&5
+$as_echo_n "checking for libflac so-name version >= $libflac_ver... " >&6; }
+        cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include "FLAC/export.h"
+#include "stdio.h"
+
+int
+main ()
+{
+
+#if defined(FLAC_API_VERSION_CURRENT) && (FLAC_API_VERSION_CURRENT >= $libflac_ver)
+#else
+#error "old-flac"
+#endif
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  have_flac_ver=yes
+else
+  have_flac_ver=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+        CFLAGS="$save_CFLAGS"
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: $have_flac_ver" >&5
+$as_echo "$have_flac_ver" >&6; }
+    fi
+    if test x$have_flac_ver = xyes; then
+        case "$host" in
+            *-*-darwin*)
+                flac_lib=`find_lib libFLAC.dylib`
+                ;;
+            *-*-cygwin* | *-*-mingw*)
+                flac_lib=`find_lib "libFLAC*.dll"`
+                ;;
+            *)
+                flac_lib=`find_lib "libFLAC[0-9]*.so.*"`
+                if test x$flac_lib = x; then
+                    flac_lib=`find_lib "libFLAC.so.*"`
                 fi
+                ;;
+        esac
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_FLAC $FLAC_CFLAGS"
+        if test x$enable_music_flac_shared = xyes && test x$flac_lib != x; then
+            echo "-- dynamic libFLAC -> $flac_lib"
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DFLAC_DYNAMIC=\\\"$flac_lib\\\""
+        else
+            EXTRA_LDFLAGS="$EXTRA_LDFLAGS $FLAC_LIBS"
+            if test x$have_flac_pc = xyes; then
+                PC_REQUIRES="$PC_REQUIRES flac"
+            else
+                PC_LIBS="$PC_LIBS $FLAC_LIBS"
             fi
         fi
     else
