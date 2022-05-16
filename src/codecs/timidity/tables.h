@@ -11,9 +11,6 @@
 #ifndef TIMIDITY_TABLES_H
 #define TIMIDITY_TABLES_H
 
-#if defined(HAVE_LIBC) && defined(__WATCOMC__) /* Watcom has issues... */
-#define SDL_sin  sin
-#endif
 #define timi_sine(x) (SDL_sin((2*PI/1024.0) * (x)))
 
 #define SINE_CYCLE_LENGTH 1024
