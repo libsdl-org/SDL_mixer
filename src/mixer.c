@@ -278,7 +278,7 @@ static void SDLCALL
 mix_channels(void *udata, Uint8 *stream, int len)
 {
     Uint8 *mix_input;
-    int i, mixable, volume = master_volume = Mix_MasterVolume(-1);
+    int i, mixable, volume = Mix_MasterVolume(-1);
     Uint32 sdl_ticks;
 
     (void)udata;
@@ -1643,9 +1643,7 @@ void Mix_UnlockAudio(void)
 
 int Mix_MasterVolume(int volume)
 {
-    int prev_volume;
-
-    prev_volume = master_volume;
+    int prev_volume = master_volume;
     if (volume < 0) {
         return prev_volume;
     }
