@@ -316,14 +316,14 @@ void SDLCALL music_mixer(void *udata, Uint8 *stream, int len)
         /* Handle fading */
         if (music_playing->fading != MIX_NO_FADING) {
             if (music_playing->fade_step++ < music_playing->fade_steps) {
-                int volume;
+                int volume = Mix_MasterVolume(-1);
                 int fade_step = music_playing->fade_step;
                 int fade_steps = music_playing->fade_steps;
 
                 if (music_playing->fading == MIX_FADING_OUT) {
-                    volume = (music_volume * (fade_steps-fade_step)) / fade_steps;
+                    volume = (volume * (music_volume * (fade_steps-fade_step))) / (fade_steps * MIX_MAX_VOLUME);
                 } else { /* Fading in */
-                    volume = (music_volume * fade_step) / fade_steps;
+                    volume = (volume * (music_volume * fade_step)) / (fade_steps * MIX_MAX_VOLUME);
                 }
                 music_internal_volume(volume);
             } else {
