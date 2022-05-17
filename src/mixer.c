@@ -110,7 +110,7 @@ static void *music_data = NULL;
 static const char **chunk_decoders = NULL;
 static int num_decoders = 0;
 
-static int master_volume = MIX_MAX_VOLUME;
+static SDL_atomic_t master_volume = { MIX_MAX_VOLUME };
 
 int Mix_GetNumChunkDecoders(void)
 {
@@ -278,18 +278,19 @@ static void SDLCALL
 mix_channels(void *udata, Uint8 *stream, int len)
 {
     Uint8 *mix_input;
-    int i, mixable, volume = Mix_MasterVolume(-1);
+    int i, mixable, volume, master_vol;
     Uint32 sdl_ticks;
 
     (void)udata;
 
-#if SDL_VERSION_ATLEAST(1, 3, 0)
     /* Need to initialize the stream in SDL 1.3+ */
     SDL_memset(stream, mixer.silence, (size_t)len);
-#endif
 
     /* Mix the music (must be done before the channels are added) */
     mix_music(music_data, stream, len);
+
+    volume = Mix_MasterVolume(-1);
+    master_vol = volume;
 
     /* Mix any playing channels... */
     sdl_ticks = SDL_GetTicks();
@@ -327,7 +328,7 @@ mix_channels(void *udata, Uint8 *stream, int len)
                 int remaining = len;
                 while (mix_channel[i].playing > 0 && index < len) {
                     remaining = len - index;
-                    volume = (master_volume * (mix_channel[i].volume * mix_channel[i].chunk->volume)) / (MIX_MAX_VOLUME * MIX_MAX_VOLUME);
+                    volume = (master_vol * (mix_channel[i].volume * mix_channel[i].chunk->volume)) / (MIX_MAX_VOLUME * MIX_MAX_VOLUME);
                     mixable = mix_channel[i].playing;
                     if (mixable > remaining) {
                         mixable = remaining;
@@ -1643,14 +1644,14 @@ void Mix_UnlockAudio(void)
 
 int Mix_MasterVolume(int volume)
 {
-    int prev_volume = master_volume;
+    int prev_volume = SDL_AtomicGet(&master_volume);
     if (volume < 0) {
         return prev_volume;
     }
     if (volume > SDL_MIX_MAXVOLUME) {
         volume = SDL_MIX_MAXVOLUME;
     }
-    master_volume = volume;
+    SDL_AtomicSet(&master_volume, volume);
     return(prev_volume);
 }
 
