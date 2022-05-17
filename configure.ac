@@ -1,15 +1,21 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT
+
+dnl Set various version strings - taken gratefully from the GTk sources
+# See release_checklist.md
+m4_define([MAJOR_VERSION_MACRO], [2])
+m4_define([MINOR_VERSION_MACRO], [5])
+m4_define([MICRO_VERSION_MACRO], [1])
+
+AC_INIT([SDL2_mixer],
+        MAJOR_VERSION_MACRO.MINOR_VERSION_MACRO.MICRO_VERSION_MACRO,
+        [https://github.com/libsdl-org/SDL_mixer/issues],
+        [SDL2_mixer])
 AC_CONFIG_SRCDIR([src/mixer.c])
 AC_CONFIG_AUX_DIR(build-scripts)
 
-dnl Set various version strings - taken gratefully from the GTk sources
-
-# See release_checklist.md
-MAJOR_VERSION=2
-MINOR_VERSION=5
-MICRO_VERSION=1
-VERSION=$MAJOR_VERSION.$MINOR_VERSION.$MICRO_VERSION
+AC_SUBST([MAJOR_VERSION], MAJOR_VERSION_MACRO)
+AC_SUBST([MINOR_VERSION], MINOR_VERSION_MACRO)
+AC_SUBST([MICRO_VERSION], MICRO_VERSION_MACRO)
 
 BINARY_AGE=`expr $MINOR_VERSION \* 100 + $MICRO_VERSION`
 AS_CASE(["$MINOR_VERSION"],
@@ -292,6 +298,7 @@ AC_CHECK_FUNCS(setbuf, [EXTRA_CFLAGS="$EXTRA_CFLAGS -DHAVE_SETBUF"])
 
 dnl Check command-line options
 
+SDL2MIXER_CMD=0
 AC_ARG_ENABLE([music-cmd],
 [AS_HELP_STRING([--enable-music-cmd], [support an external music player [default=yes]])],
               [], [enable_music_cmd=detect])
@@ -308,20 +315,24 @@ if test "x$enable_music_cmd" != xno; then
     fi
     if test "x$enable_music_cmd" != xno; then
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_CMD"
+        SDL2MIXER_CMD=1
     fi
 fi
 
+SDL2MIXER_WAVE=0
 AC_ARG_ENABLE([music-wave],
 [AS_HELP_STRING([--enable-music-wave], [enable streaming WAVE music [default=yes]])],
               [], [enable_music_wave=yes])
 if test x$enable_music_wave = xyes; then
     EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_WAV"
+    SDL2MIXER_WAVE=1
 fi
 
 AC_ARG_ENABLE([music-mod],
 [AS_HELP_STRING([--enable-music-mod], [enable MOD music [default=yes]])],
               [], [enable_music_mod=yes])
 
+SDL2MIXER_MOD_MODPLUG=0
 AC_ARG_ENABLE([music-mod-modplug],
 [AS_HELP_STRING([--enable-music-mod-modplug], [enable MOD music via modplug [default=yes]])],
               [], [enable_music_mod_modplug=yes])
@@ -366,11 +377,14 @@ if test x$enable_music_mod = xyes -a x$enable_music_mod_modplug = xyes; then
                 PC_LIBS="$PC_LIBS $MODPLUG_LIBS"
             fi
         fi
+        SDL2MIXER_MOD_MODPLUG=1
     else
         AC_MSG_WARN([*** Unable to find ModPlug library (http://modplug-xmms.sourceforge.net/)])
     fi
 fi
 
+SDL2MIXER_MOD_XMP=0
+SDL2MIXER_MOD_XMP_LITE=0
 AC_ARG_ENABLE([music-mod-xmp],
 [AS_HELP_STRING([--enable-music-mod-xmp], [enable MOD music via libxmp [default=no]])],
               [], [enable_music_mod_xmp=no])
@@ -422,6 +436,10 @@ if test x$enable_music_mod = xyes -a x$enable_music_mod_xmp = xyes; then
                 PC_LIBS="$PC_LIBS $XMP_LIBS"
             fi
         fi
+        SDL2MIXER_MOD_XMP=1
+        if test x$enable_music_mod_xmp_lite = xyes; then
+            SDL2MIXER_MOD_XMP_LITE=1
+        fi
     else
         AC_MSG_WARN([*** Unable to find xmp library (http://xmp.sourceforge.net/)])
     fi
@@ -431,6 +449,9 @@ if test x$have_libmodplug != xyes -a x$have_libxmp != xyes; then
     AC_MSG_WARN([MOD support disabled])
 fi
 
+SDL2MIXER_MIDI_FLUIDSYNTH=0
+SDL2MIXER_MIDI_NATIVE=0
+SDL2MIXER_MIDI_TIMIDITY=0
 AC_ARG_ENABLE([music-midi],
 [AS_HELP_STRING([--enable-music-midi], [enable MIDI music [default=yes]])],
               [], [enable_music_midi=yes])
@@ -448,6 +469,7 @@ if test x$enable_music_midi = xyes; then
         if test x$timidity_cfg != xyes -a x$timidity_cfg != xno; then
                 EXTRA_CFLAGS="$EXTRA_CFLAGS -DTIMIDITY_CFG=\\\"$timidity_cfg\\\""
         fi
+        SDL2MIXER_MIDI_TIMIDITY=1
     fi
     AC_ARG_ENABLE([music-midi-native],
 [AS_HELP_STRING([--enable-music-midi-native], [enable native MIDI music output [default=yes]])],
@@ -474,10 +496,12 @@ if test x$enable_music_midi = xyes; then
         if test x$use_music_midi_native = xyes; then
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MID_NATIVE -I\$(srcdir)/src/codecs/native_midi"
             SOURCES="$SOURCES $srcdir/src/codecs/native_midi/*.c"
+            SDL2MIXER_MIDI_NATIVE=1
         elif test x$use_music_midi_native = xyes_cpp; then
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MID_NATIVE -I\$(srcdir)/src/codecs/native_midi"
             SOURCES="$SOURCES $srcdir/src/codecs/native_midi/*.c"
             SOURCES_CXX="$SOURCES_CXX $srcdir/src/codecs/native_midi/*.cpp"
+            SDL2MIXER_MIDI_NATIVE=1
         fi
     fi
     AC_ARG_ENABLE([music-midi-fluidsynth],
@@ -526,6 +550,7 @@ if test x$enable_music_midi = xyes; then
                     PC_LIBS="$PC_LIBS $FLUIDSYNTH_LIBS"
                 fi
             fi
+            SDL2MIXER_MIDI_FLUIDSYNTH=1
         else
             AC_MSG_WARN([*** Unable to find FluidSynth library (http://www.fluidsynth.org/)])
             AC_MSG_WARN([FluidSynth support disabled])
@@ -543,14 +568,17 @@ AC_ARG_ENABLE([music-ogg],
 [AS_HELP_STRING([--enable-music-ogg], [enable Ogg Vorbis music [default=yes]])],
               [], [enable_music_ogg=yes])
 
+SDL2MIXER_VORBIS_STB=0
 AC_ARG_ENABLE(music-ogg-stb,
 [AS_HELP_STRING([--enable-music-ogg-stb], [enable OGG Vorbis music via stb_vorbis [default=yes]])],
               [], enable_music_ogg_stb=yes)
 if test x$enable_music_ogg = xyes -a x$enable_music_ogg_stb = xyes; then
     have_stb_vorbis=yes
     EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_OGG -DOGG_USE_STB"
+    SDL2MIXER_VORBIS_STB=1
 fi
 
+SDL2MIXER_VORBIS_VORBISFILE=0
 AC_ARG_ENABLE(music-ogg-vorbis,
 [AS_HELP_STRING([--enable-music-ogg-vorbis], [enable OGG Vorbis music via libvorbis [default=no]])],
               [], enable_music_ogg_vorbis=no)
@@ -597,11 +625,13 @@ if test x$enable_music_ogg = xyes -a x$enable_music_ogg_vorbis = xyes; then
                 PC_LIBS="$PC_LIBS $VORBIS_LIBS"
             fi
         fi
+        SDL2MIXER_VORBIS_VORBISFILE=1
     else
         AC_MSG_WARN([*** Unable to find Ogg Vorbis library (http://www.xiph.org/)])
     fi
 fi
 
+SDL2MIXER_VORBIS_TREMOR=0
 AC_ARG_ENABLE(music-ogg-tremor,
 [AS_HELP_STRING([--enable-music-ogg-tremor], [enable OGG Vorbis music via Tremor [default=no]])],
               [], enable_music_ogg_tremor=no)
@@ -651,6 +681,7 @@ if test x$enable_music_ogg = xyes -a x$enable_music_ogg_tremor = xyes; then
                 PC_LIBS="$PC_LIBS $TREMOR_LIBS"
             fi
         fi
+        SDL2MIXER_VORBIS_TREMOR=1
     else
         AC_MSG_WARN([*** Unable to find Ogg Vorbis Tremor library (http://www.xiph.org/)])
     fi
@@ -661,6 +692,7 @@ if test x$enable_music_ogg = xyes -a \
     AC_MSG_WARN([Ogg Vorbis support disabled])
 fi
 
+SDL2MIXER_FLAC_DRFLAC=0
 AC_ARG_ENABLE([music-flac],
 [AS_HELP_STRING([--enable-music-flac], [enable FLAC music [default=yes]])],
               [], [enable_music_flac=yes])
@@ -671,8 +703,10 @@ AC_ARG_ENABLE(music-flac-drflac,
 if test x$enable_music_flac = xyes -a x$enable_music_flac_drflac = xyes; then
     have_drflac=yes
     EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_FLAC_DRFLAC"
+    SDL2MIXER_FLAC_DRFLAC=1
 fi
 
+SDL2MIXER_FLAC_LIBFLAC=0
 AC_ARG_ENABLE(music-flac-libflac,
 [AS_HELP_STRING([--enable-music-flac-libflac], [enable FLAC music via libFLAC [default=no]])],
                   [], [enable_music_flac_libflac=no])
@@ -734,6 +768,7 @@ if test x$enable_music_flac = xyes -a x$enable_music_flac_libflac = xyes; then
                 PC_LIBS="$PC_LIBS $FLAC_LIBS"
             fi
         fi
+        SDL2MIXER_FLAC_LIBFLAC=1
     else
         AC_MSG_WARN([*** Unable to find FLAC library (https://xiph.org/flac/)])
     fi
@@ -748,14 +783,17 @@ AC_ARG_ENABLE(music-mp3,
 [AS_HELP_STRING([--enable-music-mp3], [enable MP3 music [default=yes]])],
               [], enable_music_mp3=yes)
 
+SDL2MIXER_MP3_DRMP3=0
 AC_ARG_ENABLE(music-mp3-drmp3,
 [AS_HELP_STRING([--enable-music-mp3-drmp3], [enable MP3 music via dr_mp3 [default=yes]])],
               [], [enable_music_mp3_drmp3=yes])
 if test x$enable_music_mp3 = xyes -a x$enable_music_mp3_drmp3 = xyes; then
     have_drmp3=yes
     EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MP3_DRMP3"
+    SDL2MIXER_MP3_DRMP3=1
 fi
 
+SDL2MIXER_MP3_MPG123=0
 AC_ARG_ENABLE(music-mp3-mpg123,
 [AS_HELP_STRING([--enable-music-mp3-mpg123], [enable MP3 music via mpg123 [default=no]])],
                   [], [enable_music_mp3_mpg123=no])
@@ -796,6 +834,7 @@ if test x$enable_music_mp3 = xyes -a x$enable_music_mp3_mpg123 = xyes; then
                 PC_LIBS="$PC_LIBS $MPG123_LIBS"
             fi
         fi
+        SDL2MIXER_MP3_MPG123=1
     else
         AC_MSG_WARN([*** Unable to find mpg123 library (https://www.mpg123.de)])
     fi
@@ -805,6 +844,7 @@ if test x$enable_music_mp3 = xyes -a x$have_drmp3 != xyes -a x$have_libmpg123 !=
     AC_MSG_WARN([MP3 support disabled])
 fi
 
+SDL2MIXER_OPUS=0
 AC_ARG_ENABLE([music-opus],
 [AS_HELP_STRING([--enable-music-opus], [enable Opus music [default=yes]])],
               [], [enable_music_opus=yes])
@@ -851,6 +891,7 @@ if test x$enable_music_opus = xyes; then
                 PC_LIBS="$PC_LIBS $OPUSFILE_LIBS"
             fi
         fi
+        SDL2MIXER_OPUS=1
     else
         AC_MSG_WARN([*** Unable to find opusfile library (http://opus-codec.org/)])
         AC_MSG_WARN([Opus support disabled])
@@ -905,6 +946,12 @@ $(objects)/\2.lo: \1/\2.c \$(objects)/.created\\
 	\$(LIBTOOL) --mode=compile \$(CC) \$(CFLAGS) \$(EXTRA_CFLAGS) '"$DEPENDENCY_TRACKING_OPTIONS"' -c \$< -o \$@,g'`
 PLAYMUS_DEPENDS=`echo "$PLAYMUS_DEPENDS" | sed 's,\\$,\\\\$,g'`
 
+dnl Calculate the location of the prefix, relative to the cmake folder
+eval pkg_prefix=$prefix
+eval pkg_cmakedir=$libdir/cmake/SDL2_mixer
+cmake_prefix_relpath="$(echo -n "$pkg_cmakedir" | sed -E "s#^$pkg_prefix##" | sed -E "s#[A-Za-z0-9_ .-]+#..#g")"
+AC_SUBST([cmake_prefix_relpath])
+
 dnl Expand the sources and objects needed to build the library
 AC_SUBST(ac_aux_dir)
 AC_SUBST(OBJECTS)
@@ -922,8 +969,29 @@ AC_SUBST(SDL_LIBS)
 AC_SUBST(PC_REQUIRES)
 AC_SUBST(PC_LIBS)
 
+AC_SUBST(SDL2MIXER_CMD)
+AC_SUBST(SDL2MIXER_FLAC_DRFLAC)
+AC_SUBST(SDL2MIXER_FLAC_LIBFLAC)
+AC_SUBST(SDL2MIXER_MOD_MODPLUG)
+AC_SUBST(SDL2MIXER_MOD_XMP)
+AC_SUBST(SDL2MIXER_MOD_XMP_LITE)
+AC_SUBST(SDL2MIXER_MP3_DRMP3)
+AC_SUBST(SDL2MIXER_MP3_MPG123)
+AC_SUBST(SDL2MIXER_MIDI_FLUIDSYNTH)
+AC_SUBST(SDL2MIXER_MIDI_NATIVE)
+AC_SUBST(SDL2MIXER_MIDI_TIMIDITY)
+AC_SUBST(SDL2MIXER_OPUS)
+AC_SUBST(SDL2MIXER_VORBIS_STB)
+AC_SUBST(SDL2MIXER_VORBIS_TREMOR)
+AC_SUBST(SDL2MIXER_VORBIS_VORBISFILE)
+AC_SUBST(SDL2MIXER_WAVE)
+
 AC_CONFIG_FILES([
-    Makefile SDL2_mixer.spec SDL2_mixer.pc
+Makefile
+SDL2_mixer.spec
+SDL2_mixer.pc
+sdl2_mixer-config.cmake
+sdl2_mixer-config-version.cmake
 ])
 AC_CONFIG_COMMANDS([default],
                    [cat >>Makefile <<__EOF__

@@ -160,8 +160,10 @@ static int MusicCMD_Play(void *context, int play_count)
     music->play_count = play_count;
 #ifdef HAVE_FORK
     music->pid = fork();
-#else
+#elif defined(HAVE_VFORK)
     music->pid = vfork();
+#else
+    music->pid = -1;
 #endif
     switch(music->pid) {
     /* Failed fork() system call */

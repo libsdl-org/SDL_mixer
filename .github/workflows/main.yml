@@ -15,10 +15,16 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { name: Windows (mingw32),      os: windows-latest, shell: 'msys2 {0}', msystem: mingw32, msys-env: mingw-w64-i686 }
-        - { name: Windows (mingw64),      os: windows-latest, shell: 'msys2 {0}', msystem: mingw64, msys-env: mingw-w64-x86_64 }
-        - { name: Linux (CMake),          os: ubuntu-20.04,   shell: sh,   cmake: '-GNinja' }
-        - { name: Linux (autotools),      os: ubuntu-20.04,   shell: sh }
+        - { name: Windows (MSVC+CMake),         os: windows-2019, shell: sh,   cmake: '-DSDL2MIXER_VENDORED=ON -GNinja', msvc: 1, shared: 1, static: 0 }
+        - { name: Windows (mingw32+autotools),  os: windows-latest, shell: 'msys2 {0}', msystem: mingw32, msys-env: mingw-w64-i686, shared: 1, static: 1 }
+        - { name: Windows (mingw64+CMake),      os: windows-latest, shell: 'msys2 {0}', msystem: mingw64, msys-env: mingw-w64-x86_64, shared: 1, static: 0,
+            cmake: '-DSDL2MIXER_VENDORED=OFF -G "Ninja Multi-Config"' }
+        - { name: Linux (autotools),            os: ubuntu-20.04,   shell: sh, shared: 1, static: 1}
+        - { name: Linux (CMake),                os: ubuntu-20.04,   shell: sh, cmake: '-DSDL2MIXER_VENDORED=ON -GNinja', shared: 1, static: 0 }
+        - { name: 'Linux (CMake, static)',      os: ubuntu-20.04,   shell: sh, cmake: '-DSDL2MIXER_VENDORED=ON -DBUILD_SHARED_LIBS=OFF -GNinja', shared: 0, static: 1 }
+        - { name: Macos (autotools),            os: macos-latest,   shell: sh, shared: 1, static: 1 }
+        - { name: Macos (CMake),                os: macos-latest,   shell: sh, cmake: '-DSDL2MIXER_VENDORED=ON -GNinja', shared: 1, static: 0 }
+
 
     steps:
     - name: Set up MSYS2
@@ -39,7 +45,23 @@ jobs:
           ${{ matrix.platform.msys-env }}-opusfile
           ${{ matrix.platform.msys-env }}-ninja
           ${{ matrix.platform.msys-env }}-pkg-config
-
+    - name: Setup Macos dependencies
+      if: runner.os == 'macOS'
+      run: |
+        brew install \
+          sdl2 \
+          autoconf \
+          automake \
+          libtool \
+          ninja \
+          pkg-config \
+          mpg123 \
+          flac \
+          libmodplug \
+          fluidsynth \
+          libvorbis \
+          opusfile \
+          ${NULL+}
     - name: Setup Linux dependencies
       if: runner.os == 'Linux'
       run: |
@@ -61,56 +83,101 @@ jobs:
     - uses: actions/checkout@v2
       with:
         submodules: recursive
+
+    - name: Setup MSVC dependencies
+      if: "matrix.platform.msvc"
+      shell: pwsh
+      run: |
+        echo "::group::Downloading SDL"
+        .github/fetch_sdl_vc.ps1
+        echo "SDL2_DIR=$Env:GITHUB_WORKSPACE/SDL2-devel-VC" >> $Env:GITHUB_ENV
+        echo "::endgroup::"
+        echo "::group::Downloading yasm"
+        .github/fetch_yasm.ps1
+        echo "${{ github.workspace }}" >> $Env:GITHUB_PATH
+        echo "::endgroup::"
+    - name: Setup Ninja for MSVC
+      if: "matrix.platform.msvc"
+      uses: ashutoshvarma/setup-ninja@master
+      with:
+        version: 1.10.2
+    - uses: ilammy/msvc-dev-cmd@v1
+      if: "matrix.platform.msvc"
+      with:
+        arch: x64
+
     - name: Check that versioning is consistent
       # We only need to run this once: arbitrarily use the Linux/CMake build
       if: "runner.os == 'Linux' && matrix.platform.cmake"
       run: ./test-versioning.sh
 
-    - name: Configure CMake
+    - name: Setup (CMake)
+      if: ${{ matrix.platform.cmake && !matrix.platform.msystem && !matrix.platform.msvc }}
+      uses: jwlawson/actions-setup-cmake@v1.12
+      with:
+        cmake-version: '3.16'
+    - name: Configure (CMake)
       if: "matrix.platform.cmake"
       run: |
-        cmake -B build \
+        set -- \
           -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
           -DCMAKE_BUILD_TYPE=Release \
-          -DCMAKE_VERBOSE_MAKEFILE=ON \
-          -DSUPPORT_FLAC=ON \
-          -DSUPPORT_OGG=ON \
-          -DSUPPORT_OPUS=ON \
-          -DSUPPORT_MP3_MPG123=ON \
-          -DSUPPORT_MOD_MODPLUG=ON \
+          -DSDL2MIXER_FLAC=ON \
+          -DSDL2MIXER_FLAC_LIBFLAC=ON \
+          -DSDL2MIXER_VORBIS=VORBISFILE \
+          -DSDL2MIXER_OPUS=ON \
+          -DSDL2MIXER_MP3_MPG123=ON \
+          -DSDL2MIXER_MOD_MODPLUG=ON \
+          -DCMAKE_INSTALL_PREFIX=prefix_cmake \
+          ${NULL+}
+        
+        cmake -B build \
+          "$@" \
           ${{ matrix.platform.cmake }}
-    - name: Build
+    - name: Build (CMake)
       if: "matrix.platform.cmake"
-      run: cmake --build build/ --config Release
-#    - name: Install
-#      if: "matrix.platform.shell == 'sh' && matrix.platform.cmake"
-#      run: |
-#        set -eu
-#        rm -fr DESTDIR-cmake
-#        DESTDIR=$(pwd)/DESTDIR-cmake cmake --install build/ --config Release
-#        ( cd DESTDIR-cmake; find ) | LC_ALL=C sort -u
+      run: |
+        cmake --build build/ --config Release --parallel --verbose
+    - name: Install (CMake)
+      if: "matrix.platform.cmake"
+      run: |
+        set -eu
+        rm -fr prefix_cmake
+        cmake --install build/ --config Release
+        echo "SDL2_mixer_DIR=$(pwd)/prefix_cmake" >> $GITHUB_ENV
+        ( cd prefix_cmake; find . ) | LC_ALL=C sort -u
 
-    - name: Configure Autotools
+    - name: Configure (Autotools)
       if: "! matrix.platform.cmake"
       run: |
         set -eu
         rm -fr build-autotools
         mkdir build-autotools
         ./autogen.sh
-        ( cd build-autotools && ../configure )
-    - name: Build with Autotools
+        set -- -prefix=$(pwd)/prefix_autotools
+        ( cd build-autotools && ../configure "$@" )
+    - name: Build (Autotools)
       if: "! matrix.platform.cmake"
       run: |
         set -eu
         parallel="$(getconf _NPROCESSORS_ONLN)"
         make -j"${parallel}" -C build-autotools V=1
-    - name: Install with Autotools
+    - name: Install (Autotools)
       if: "! matrix.platform.cmake"
       run: |
         set -eu
         curdir="$(pwd)"
         parallel="$(getconf _NPROCESSORS_ONLN)"
-        rm -fr DESTDIR-autotools
-        mkdir DESTDIR-autotools
-        make -j"${parallel}" -C build-autotools install DESTDIR="${curdir}/DESTDIR-autotools" V=1
-        ( cd DESTDIR-autotools; find ) | LC_ALL=C sort -u
+        rm -rf prefix_autotools
+        make -j"${parallel}" -C build-autotools install V=1
+        echo "SDL2_mixer_DIR=$(pwd)/prefix_autotools" >> $GITHUB_ENV
+        ( cd prefix_autotools; find ) | LC_ALL=C sort -u
+
+    - name: Verify CMake configuration files
+      run: |
+        cmake -S cmake/test -B cmake_config_build \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_PREFIX_PATH="${{ env.SDL2_mixer_DIR }};${{ env.SDL2_DIR }}" \
+          -DTEST_SHARED=${{ matrix.platform.shared }} \
+          -DTEST_STATIC=${{ matrix.platform.static }}
+        cmake --build cmake_config_build --verbose --config Release
