@@ -200,6 +200,8 @@ static int get_loaded_mix_init_flags(void)
             case MUS_OPUS:
                 loaded_init_flags |= MIX_INIT_OPUS;
                 break;
+            default:
+                break;
             }
         }
     }
