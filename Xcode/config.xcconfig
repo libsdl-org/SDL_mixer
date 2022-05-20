@@ -6,23 +6,33 @@
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
 
-MUSIC_WAV = MUSIC_WAV
+// Uncomment these lines to enable FLAC support
+// If you do this, you should run external/download.sh to download the decode libraries and add FLAC.framework to your application bundle.
+//CONFIG_PREPROCESSOR_DEFINITIONS = $(inherited) MUSIC_FLAC
+//CONFIG_FRAMEWORK_LDFLAGS = $(inherited) -weak_framework FLAC
 
-MUSIC_MOD = MUSIC_MOD
+// Uncomment these lines to enable native MIDI support on OSX
+//CONFIG_PREPROCESSOR_DEFINITIONS[sdk=mac*] = $(inherited) MUSIC_MID_NATIVE
 
-MUSIC_MP3_MPG123 = MUSIC_MP3_MPG123
+// Uncomment these lines to enable MOD support
+// If you do this, you should run external/download.sh to download the decode libraries and add libmodplug.framework to your application bundle.
+//CONFIG_PREPROCESSOR_DEFINITIONS = $(inherited) MUSIC_MOD
+//CONFIG_FRAMEWORK_LDFLAGS = $(inherited) -weak_framework libmodplug
 
-MUSIC_MID = MUSIC_MID
+// Uncomment these lines to enable MP3 support
+// If you do this, you should run external/download.sh to download the decode libraries and add mpg123.framework to your application bundle.
+//CONFIG_PREPROCESSOR_DEFINITIONS = $(inherited) MUSIC_MP3_MPG123 MPG123_HEADER="<mpg123/mpg123.h>"
+//CONFIG_FRAMEWORK_LDFLAGS = $(inherited) -weak_framework mpg123
 
-MUSIC_MID_NATIVE =
-MUSIC_MID_NATIVE[sdk=mac*] = MUSIC_MID_NATIVE
+// Uncomment these lines to enable Ogg support
+// If you do this, you should run external/download.sh to download the decode libraries and add vorbis.framework and tremor.framework to your application bundle.
+//CONFIG_PREPROCESSOR_DEFINITIONS = $(inherited) MUSIC_OGG
+//CONFIG_PREPROCESSOR_DEFINITIONS[arch=armv7] = $(inherited) OGG_USE_TREMOR
+//VORBIS_FRAMEWORK = vorbis
+//VORBIS_FRAMEWORK[arch=armv7] = tremor
+//CONFIG_FRAMEWORK_LDFLAGS = $(inherited) -weak_framework $(VORBIS_FRAMEWORK)
 
-MUSIC_OGG = MUSIC_OGG
-MUSIC_OGG_USE_TREMOR =
-MUSIC_OGG_USE_TREMOR[arch=armv7] = OGG_USE_TREMOR
-VORBIS_FRAMEWORK = vorbis
-VORBIS_FRAMEWORK[arch=armv7] = tremor
-
-MUSIC_FLAC = MUSIC_FLAC
-
-MUSIC_OPUS = MUSIC_OPUS
+// Uncomment these lines to enable Opus support
+// If you do this, you should run external/download.sh to download the decode libraries and add opus.framework to your application bundle.
+//CONFIG_PREPROCESSOR_DEFINITIONS = $(inherited) MUSIC_OPUS
+//CONFIG_FRAMEWORK_LDFLAGS = $(inherited) -weak_framework opus

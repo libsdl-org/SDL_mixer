@@ -5,24 +5,24 @@ SDL_MIXER_LOCAL_PATH := $(call my-dir)
 SUPPORT_WAV ?= true
 
 # Enable this if you want to support loading FLAC music with libFLAC
-SUPPORT_FLAC ?= true
+SUPPORT_FLAC ?= false
 FLAC_LIBRARY_PATH := external/flac
 
 # Enable this if you want to support loading OGG Vorbis music via Tremor
-SUPPORT_OGG ?= true
+SUPPORT_OGG ?= false
 OGG_LIBRARY_PATH := external/ogg
 VORBIS_LIBRARY_PATH := external/tremor
 
 # Enable this if you want to support loading MP3 music via MPG123
-SUPPORT_MP3_MPG123 ?= true
+SUPPORT_MP3_MPG123 ?= false
 MPG123_LIBRARY_PATH := external/mpg123
 
 # Enable this if you want to support loading MOD music via modplug
-SUPPORT_MOD_MODPLUG ?= true
+SUPPORT_MOD_MODPLUG ?= false
 MODPLUG_LIBRARY_PATH := external/libmodplug
 
 # Enable this if you want to support TiMidity
-SUPPORT_MID_TIMIDITY ?= true
+SUPPORT_MID_TIMIDITY ?= false
 TIMIDITY_LIBRARY_PATH := src/codecs/timidity
 
 
