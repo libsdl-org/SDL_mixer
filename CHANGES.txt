@@ -1,6 +1,6 @@
 2.0.5:
-Sam Lantinga - Fri May 20 11:52:18 2022
- * Fixed division by 0 error in case of quick fade-in fade-out.
+Vitaly Novichkov - Fri May 20 14:45:53 PDT 2022
+ * Added minimp3 codec library for MP3
 Mykola Rubets - Tue May 17 12:59:35 2022
  * Implemented a master volume feature, Mix_MasterVolume added to
    public api.
