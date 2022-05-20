@@ -5,7 +5,7 @@ The latest version of this library is available from:
 http://www.libsdl.org/projects/SDL_mixer/
 
 Due to popular demand, here is a simple multi-channel audio mixer.
-It supports 8 channels of 16 bit stereo audio, plus a single channel of music. It can load VOC and WAV format audio. It can also load FLAC, MIDI, MOD, MP3, Ogg, and Opus audio, depending on build options (see the note below for details.)
+It supports 8 channels of 16 bit stereo audio, plus a single channel of music. It can load MP3, VOC, and WAV format audio. It can also load FLAC, MIDI, MOD, Ogg, and Opus audio, depending on build options (see the note below for details.)
 
 See the header file SDL_mixer.h and the examples playwave.c and playmus.c
 for documentation on this mixer library.
@@ -22,13 +22,13 @@ and unpack them in /usr/local/lib under UNIX, and C:\ under Win32.
 This library is under the zlib license, see the file "LICENSE.txt" for details.
 
 Note:
-Support for FLAC, software MIDI, MOD, MP3, Ogg, and Opus are not included by default because of the size of the decode libraries, but you can get them by running external/download.sh
+Support for FLAC, software MIDI, MOD, Ogg, and Opus are not included by default because of the size of the decode libraries, but you can get them by running external/download.sh
 - When building with CMake, you can enable the appropriate SUPPORT_* options defined in CMakeLists.txt.
 - When building with configure/make, you can build and install them normally and the configure script will detect and use them.
 - When building with Visual Studio, you will need to build the libraries and then add the appropriate LOAD_* preprocessor define to the Visual Studio project.
 - When building with Xcode, you can edit the config at the top of the project to enable them, and you will need to include the appropriate framework in your application.
 - For Android, you can edit the config at the top of Android.mk to enable them.
 
-The default MP3 support is provided using mpg123. SDL_mixer also supports using libmad, but does not use it by default because the libmad license is GPL, which requires your application to also be GPL. If your application has a compatible license, you can enable libmad by passing
+The default MP3 support is provided using minimp3. SDL_mixer also supports using libmad, but does not use it by default because the libmad license is GPL, which requires your application to also be GPL. If your application has a compatible license, you can enable libmad by passing
 	--enable-music-mp3-mad
 to configure, or by defining MUSIC_MP3_MAD

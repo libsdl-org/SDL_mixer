@@ -34,7 +34,6 @@
 #include <opus/opusfile.h>
 #endif
 
-
 typedef struct {
     int loaded;
     void *handle;
@@ -336,6 +335,13 @@ static int OPUS_Play(void *context, int play_count)
     return OPUS_Seek(music, 0.0);
 }
 
+/* Clean-up the output buffer */
+static void OPUS_Stop(void *context)
+{
+    OPUS_music *music = (OPUS_music *)context;
+    SDL_AudioStreamClear(music->stream);
+}
+
 /* Play some of a stream previously started with OPUS_Play() */
 static int OPUS_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 {
@@ -510,7 +516,7 @@ Mix_MusicInterface Mix_MusicInterface_Opus =
     OPUS_GetMetaTag,
     NULL,   /* Pause */
     NULL,   /* Resume */
-    NULL,   /* Stop */
+    OPUS_Stop,
     OPUS_Delete,
     NULL,   /* Close */
     OPUS_Unload

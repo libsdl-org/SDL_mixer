@@ -144,6 +144,7 @@ typedef struct
     size_t buffer_size;
     long sample_rate;
     off_t total_length;
+    Mix_MusicMetaTags tags;
 } MPG123_Music;
 
 
@@ -241,7 +242,8 @@ static void *MPG123_CreateFromRW(SDL_RWops *src, int freesrc)
         SDL_free(music);
         return NULL;
     }
-    if (mp3_skiptags(&music->mp3file, SDL_TRUE) < 0) {
+    meta_tags_init(&music->tags);
+    if (mp3_read_tags(&music->tags, &music->mp3file, SDL_TRUE) < 0) {
         SDL_free(music);
         Mix_SetError("music_mpg123: corrupt mp3 file (bad tags.)");
         return NULL;
@@ -347,6 +349,12 @@ static int MPG123_Play(void *context, int play_count)
     return MPG123_Seek(music, 0.0);
 }
 
+static void MPG123_Stop(void *context)
+{
+    MPG123_Music *music = (MPG123_Music *)context;
+    SDL_AudioStreamClear(music->stream);
+}
+
 /* read some mp3 stream data and convert it for output */
 static int MPG123_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 {
@@ -394,6 +402,7 @@ static int MPG123_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         if (music->stream) {
             SDL_FreeAudioStream(music->stream);
         }
+
         music->stream = SDL_NewAudioStream((SDL_AudioFormat)format, (Uint8)channels, (int)rate,
                                            music_spec.format, music_spec.channels, music_spec.freq);
         if (!music->stream) {
@@ -462,10 +471,17 @@ static double MPG123_Duration(void *context)
     return (double)music->total_length / music->sample_rate;
 }
 
+static const char* MPG123_GetMetaTag(void *context, Mix_MusicMetaTag tag_type)
+{
+    MPG123_Music *music = (MPG123_Music *)context;
+    return meta_tags_get(&music->tags, tag_type);
+}
+
 static void MPG123_Delete(void *context)
 {
     MPG123_Music *music = (MPG123_Music *)context;
 
+    meta_tags_clear(&music->tags);
     if (music->handle) {
         mpg123.mpg123_close(music->handle);
         mpg123.mpg123_delete(music->handle);
@@ -511,10 +527,10 @@ Mix_MusicInterface Mix_MusicInterface_MPG123 =
     NULL,   /* LoopStart */
     NULL,   /* LoopEnd */
     NULL,   /* LoopLength */
-    NULL,   /* GetMetaTag */
+    MPG123_GetMetaTag,
     NULL,   /* Pause */
     NULL,   /* Resume */
-    NULL,   /* Stop */
+    MPG123_Stop,
     MPG123_Delete,
     MPG123_Close,
     MPG123_Unload

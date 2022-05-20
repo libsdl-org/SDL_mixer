@@ -19,11 +19,6 @@
 //CONFIG_PREPROCESSOR_DEFINITIONS = $(inherited) MUSIC_MOD
 //CONFIG_FRAMEWORK_LDFLAGS = $(inherited) -weak_framework libmodplug
 
-// Uncomment these lines to enable MP3 support
-// If you do this, you should run external/download.sh to download the decode libraries and add mpg123.framework to your application bundle.
-//CONFIG_PREPROCESSOR_DEFINITIONS = $(inherited) MUSIC_MP3_MPG123 MPG123_HEADER="<mpg123/mpg123.h>"
-//CONFIG_FRAMEWORK_LDFLAGS = $(inherited) -weak_framework mpg123
-
 // Uncomment these lines to enable Ogg support
 // If you do this, you should run external/download.sh to download the decode libraries and add vorbis.framework and tremor.framework to your application bundle.
 //CONFIG_PREPROCESSOR_DEFINITIONS = $(inherited) MUSIC_OGG

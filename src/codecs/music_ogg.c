@@ -348,6 +348,12 @@ static int OGG_Play(void *context, int play_count)
     return OGG_Seek(music, 0.0);
 }
 
+static void OGG_Stop(void *context)
+{
+    OGG_music *music = (OGG_music *)context;
+    SDL_AudioStreamClear(music->stream);
+}
+
 /* Play some of a stream previously started with OGG_play() */
 static int OGG_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 {
@@ -539,7 +545,7 @@ Mix_MusicInterface Mix_MusicInterface_OGG =
     OGG_GetMetaTag,   /* GetMetaTag */
     NULL,   /* Pause */
     NULL,   /* Resume */
-    NULL,   /* Stop */
+    OGG_Stop,
     OGG_Delete,
     NULL,   /* Close */
     OGG_Unload

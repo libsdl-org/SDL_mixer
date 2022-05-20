@@ -756,6 +756,13 @@ AC_ARG_ENABLE(music-mp3,
 [AS_HELP_STRING([--enable-music-mp3], [enable MP3 music [default=yes]])],
               [], enable_music_mp3=yes)
 
+AC_ARG_ENABLE(music-mp3-minimp3,
+[AS_HELP_STRING([--enable-music-mp3-minimp3], [enable MP3 music via minimp3 [default=yes]])],
+                  [], [enable_music_mp3_minimp3=yes])
+if test x$enable_music_mp3_minimp3 = xyes; then
+    EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MP3_MINIMP3"
+fi
+
 AC_ARG_ENABLE(music-mp3-mad-gpl,
 [AS_HELP_STRING([--enable-music-mp3-mad-gpl], [enable MP3 music via libmad GPL code [default=no]])],
                   [], [enable_music_mp3_mad_gpl=no])
@@ -828,7 +835,7 @@ if test x$enable_music_mp3_mpg123 = xyes; then
     fi
 fi
 
-if test x$have_libmad = xyes -o x$have_libmpg123 = xyes; then
+if test x$enable_music_mp3_minimp3 = xyes -o x$have_libmad = xyes -o x$have_libmpg123 = xyes; then
     :
 else
     AC_MSG_WARN([MP3 support disabled])
