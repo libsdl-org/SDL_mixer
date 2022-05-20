@@ -1,35 +1,35 @@
 2.0.5:
 Sam Lantinga - Fri May 20 11:52:18 2022
-  * Fixed division by 0 error in case of quick fade-in fade-out.
-Mykola Rubets - Tue May 17 12:59:35 2022 +0300
-  * Implemented a master volume feature, Mix_MasterVolume added to
-    public api.
+ * Fixed division by 0 error in case of quick fade-in fade-out.
+Mykola Rubets - Tue May 17 12:59:35 2022
+ * Implemented a master volume feature, Mix_MasterVolume added to
+   public api.
 Ozkan Sezer, Simon McVittie, Cameron Cawley - Wed May 11 17:03:56 2022
-  * Multiple fixes and updates to autotools build system.
+ * Multiple fixes and updates to autotools build system.
 Nate Houghton - Fri Dec 31 22:33:21 2021
  * Update Mix_Init() return value to match documentation, including
    MIXER_INIT_* flags for already-initialized modules
 pionere - Thu Dec 23 12:01:03 2021
-  * fix leak in Mix_FreeChunk + race condition in Mix_HaltChannel
-Vitaly Novichkov - Wed Dec 15 23:22:36 2021 +0300
-  * Fix possible crash in the Mix_LoadMusic_RW
+ * Fixed leak in Mix_FreeChunk + race condition in Mix_HaltChannel
+Vitaly Novichkov - Wed Dec 15 23:22:36 2021
+ * Fixed possible crash in Mix_LoadMusic_RW()
 pionere - Tue Dec 14 10:01:02 2021
-  * do not report a non-playing channel as paused
+ * Do not report a non-playing channel as paused
 pionere - Sun Dec 12 11:47:39 2021
-  * always check 'looping' field to tell if a channel is playing
+ * Always check 'looping' field to tell if a channel is playing
 Dasperal - Mon Nov 22 23:22:30 2021
-  * Added support of quoted strings in Timidity config
+ * Added support of quoted strings in timidity.cfg
 Austin Hurst - Sun Jul 4 20:20:00 2021
-  * Added missing Mix_HasMusicDecoder().
+ * Added missing Mix_HasMusicDecoder().
 Ozkan Sezer - Sat Apr 3 21:56:50 2021
-  * Memory leak fixes and F32 format support to fluidsynth player.
+ * Memory leak fixes and F32 format support to fluidsynth player.
 Ozkan Sezer - Fri Mar 26 21:56:50 2021
-  * Fixes to mp3 (libmad) and opus playback on big-endian systems.
+ * Fixes to mp3 (libmad) and opus playback on big-endian systems.
 Vitaly Novichkov - Thu Feb 18 10:00:37 2021
-  * Add support for the Tell and Duration to MP3 libmad backend.
+ * Added support for Tell and Duration to MP3 libmad backend.
 Ozkan Sezer - Sun Feb 07 03:10:10 2021
- * fixed distorted MIDI playback with FluidSynth if the sample rate
-   is out of library's limits
+ * Fixed distorted MIDI playback with FluidSynth if sample rate is
+   out of library's limits
 Ozkan Sezer - Fri Feb 05 14:33:50 2021
  * Added Mix_ModMusicJumpToOrder for mod music formats
 Ozkan Sezer - Sun Jan 31 10:03:10 2021
@@ -48,7 +48,7 @@ David Gow - Fri Oct 23 23:01:00 2020
 Ozkan Sezer - Sat Jun 27 00:50:04 2020
  * Fixed divide by zero crash in voc_get_block().
 Sergio Padrino - Mon Jun 15 10:08:14 2020
-  * Fixes to ogg playback on big-endian devices.
+ * Fixes to ogg playback on big-endian devices.
 Vitaly Novichkov - Mon Dec 23 14:01:02 2019
  * Added MetaTags api procedures Mix_GetMusicTitle,Mix_GetMusicTitleTag,
    Mix_GetMusicArtistTag,Mix_GetMusicAlbumTag, Mix_GetMusicCopyrightTag.
