@@ -883,7 +883,7 @@ int Mix_FadeInMusicPos(Mix_Music *music, int loops, int ms, double position)
         music->fading = MIX_NO_FADING;
     }
     music->fade_step = 0;
-    music->fade_steps = ms/ms_per_step;
+    music->fade_steps = (ms + ms_per_step - 1) / ms_per_step;
 
     /* Play the puppy */
     Mix_LockAudio();
