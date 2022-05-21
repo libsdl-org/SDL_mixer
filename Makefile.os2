@@ -104,7 +104,7 @@ LIBS+= ogg.lib
 !endif
 
 !ifeq USE_FLAC yes
-CFLAGS+= -DMUSIC_FLAC
+CFLAGS+= -DMUSIC_FLAC_LIBFLAC
 LIBS+= FLAC.lib
 !endif
 

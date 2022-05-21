@@ -6,11 +6,6 @@
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
 
-// Uncomment these lines to enable FLAC support
-// If you do this, you should run external/download.sh to download the decode libraries and add FLAC.framework to your application bundle.
-//CONFIG_PREPROCESSOR_DEFINITIONS = $(inherited) MUSIC_FLAC
-//CONFIG_FRAMEWORK_LDFLAGS = $(inherited) -weak_framework FLAC
-
 // Uncomment these lines to enable native MIDI support on OSX
 //CONFIG_PREPROCESSOR_DEFINITIONS[sdk=mac*] = $(inherited) MUSIC_MID_NATIVE
 

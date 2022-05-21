@@ -693,6 +693,14 @@ AC_ARG_ENABLE([music-flac-shared],
 [AS_HELP_STRING([--enable-music-flac-shared],
               [dynamically load FLAC library [default=yes]])],
               [], [enable_music_flac_shared=yes])
+
+AC_ARG_ENABLE(music-flac-drflac,
+[AS_HELP_STRING([--enable-music-flac-drflac], [enable FLAC music via dr_flac [default=yes]])],
+                  [], [enable_music_flac_drflac=yes])
+if test x$enable_music_flac_drflac = xyes; then
+    EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_FLAC_DRFLAC"
+fi
+
 if test x$enable_music_flac = xyes; then
     PKG_CHECK_MODULES([FLAC], [flac], [dnl
             have_flac_hdr=yes
@@ -734,7 +742,7 @@ if test x$enable_music_flac = xyes; then
                 fi
                 ;;
         esac
-        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_FLAC $FLAC_CFLAGS"
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_FLAC_LIBFLAC $FLAC_CFLAGS"
         if test x$enable_music_flac_shared = xyes && test x$flac_lib != x; then
             echo "-- dynamic libFLAC -> $flac_lib"
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DFLAC_DYNAMIC=\\\"$flac_lib\\\""
@@ -748,8 +756,13 @@ if test x$enable_music_flac = xyes; then
         fi
     else
         AC_MSG_WARN([*** Unable to find FLAC library (http://flac.sourceforge.net/)])
-        AC_MSG_WARN([FLAC support disabled])
     fi
+fi
+
+if test x$enable_music_flac_drflac = xyes -o x$have_libflac = xyes; then
+    :
+else
+    AC_MSG_WARN([FLAC support disabled])
 fi
 
 AC_ARG_ENABLE(music-mp3,

@@ -1,4 +1,6 @@
 2.0.5:
+Sam Lantinga - Fri May 20 21:59:13 PDT 2022
+ * Added support for playing FLAC files using dr_flac
 Sam Lantinga - Fri May 20 20:50:29 PDT 2022
  * Added support for playing MP3 files using dr_mp3
 Mykola Rubets - Tue May 17 12:59:35 2022

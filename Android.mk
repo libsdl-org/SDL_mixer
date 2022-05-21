@@ -4,8 +4,11 @@ SDL_MIXER_LOCAL_PATH := $(call my-dir)
 # Enable this if you want to support loading WAV music
 SUPPORT_WAV ?= true
 
+# Enable this if you want to support loading FLAC music via dr_flac
+SUPPORT_FLAC_DRFLAC ?= true
+
 # Enable this if you want to support loading FLAC music with libFLAC
-SUPPORT_FLAC ?= false
+SUPPORT_FLAC_LIBFLAC ?= false
 FLAC_LIBRARY_PATH := external/flac
 
 # Enable this if you want to support loading OGG Vorbis music via Tremor
@@ -30,7 +33,7 @@ TIMIDITY_LIBRARY_PATH := src/codecs/timidity
 
 
 # Build the library
-ifeq ($(SUPPORT_FLAC),true)
+ifeq ($(SUPPORT_FLAC_LIBFLAC),true)
     include $(SDL_MIXER_LOCAL_PATH)/$(FLAC_LIBRARY_PATH)/Android.mk
 endif
 
@@ -84,9 +87,13 @@ ifeq ($(SUPPORT_WAV),true)
     LOCAL_CFLAGS += -DMUSIC_WAV
 endif
 
-ifeq ($(SUPPORT_FLAC),true)
+ifeq ($(SUPPORT_FLAC_DRFLAC),true)
+    LOCAL_CFLAGS += -DMUSIC_FLAC_DRFLAC
+endif
+
+ifeq ($(SUPPORT_FLAC_LIBFLAC),true)
     LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(FLAC_LIBRARY_PATH)/include
-    LOCAL_CFLAGS += -DMUSIC_FLAC
+    LOCAL_CFLAGS += -DMUSIC_FLAC_LIBFLAC
     LOCAL_STATIC_LIBRARIES += libFLAC
 endif
 

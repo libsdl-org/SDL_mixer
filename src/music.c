@@ -39,6 +39,7 @@
 #include "music_drmp3.h"
 #include "music_mpg123.h"
 #include "music_mad.h"
+#include "music_drflac.h"
 #include "music_flac.h"
 #include "native_midi/native_midi.h"
 
@@ -164,7 +165,10 @@ static Mix_MusicInterface *s_music_interfaces[] =
 #ifdef MUSIC_WAV
     &Mix_MusicInterface_WAV,
 #endif
-#ifdef MUSIC_FLAC
+#ifdef MUSIC_FLAC_DRFLAC
+    &Mix_MusicInterface_DRFLAC,
+#endif
+#ifdef MUSIC_FLAC_LIBFLAC
     &Mix_MusicInterface_FLAC,
 #endif
 #ifdef MUSIC_OGG
