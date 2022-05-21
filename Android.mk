@@ -11,6 +11,9 @@ SUPPORT_FLAC_DRFLAC ?= true
 SUPPORT_FLAC_LIBFLAC ?= false
 FLAC_LIBRARY_PATH := external/flac
 
+# Enable this if you want to support loading OGG Vorbis music via stb_vorbis
+SUPPORT_OGG_STB ?= true
+
 # Enable this if you want to support loading OGG Vorbis music via Tremor
 SUPPORT_OGG ?= false
 OGG_LIBRARY_PATH := external/ogg
@@ -95,6 +98,10 @@ ifeq ($(SUPPORT_FLAC_LIBFLAC),true)
     LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(FLAC_LIBRARY_PATH)/include
     LOCAL_CFLAGS += -DMUSIC_FLAC_LIBFLAC
     LOCAL_STATIC_LIBRARIES += libFLAC
+endif
+
+ifeq ($(SUPPORT_OGG_STB),true)
+    LOCAL_CFLAGS += -DMUSIC_OGG -DOGG_USE_STB
 endif
 
 ifeq ($(SUPPORT_OGG),true)
