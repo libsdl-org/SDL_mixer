@@ -88,7 +88,7 @@ static void DRFLAC_MetaCB(void *context, drflac_metadata *metadata)
     DRFLAC_Music *music = (DRFLAC_Music *)context;
 
     if (metadata->type == DRFLAC_METADATA_BLOCK_TYPE_VORBIS_COMMENT) {
-        int i;
+        drflac_uint32 i;
         char *param, *argument, *value;
         SDL_bool is_loop_length = SDL_FALSE;
         const char *pRunningData = (const char *)metadata->data.vorbis_comment.pComments;
@@ -205,7 +205,7 @@ static void *DRFLAC_CreateFromRW(SDL_RWops *src, int freesrc)
     /* loop_start, loop_end and loop_len get set by metadata callback if tags
      * are present in metadata.
      */
-    if ((music->loop_end > 0) && (music->loop_end <= music->dec->totalPCMFrameCount) &&
+    if ((music->loop_end > 0) && (music->loop_end <= (Sint64)music->dec->totalPCMFrameCount) &&
         (music->loop_start < music->loop_end)) {
         music->loop = 1;
     }
@@ -276,7 +276,7 @@ static int DRFLAC_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     amount = drflac_read_pcm_frames_s16(music->dec, music_spec.samples, music->buffer);
     if (amount > 0) {
         if (music->loop && (music->play_count != 1) &&
-            (music->dec->currentPCMFrame >= music->loop_end)) {
+            ((Sint64)music->dec->currentPCMFrame >= music->loop_end)) {
             amount -= (music->dec->currentPCMFrame - music->loop_end) * sizeof(drflac_int16) * music->channels;
             music->loop_flag = SDL_TRUE;
         }

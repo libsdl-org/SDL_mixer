@@ -380,7 +380,7 @@ static int OGG_Seek(void *context, double time)
     OGG_music *music = (OGG_music *)context;
     int result;
 
-    result = stb_vorbis_seek(music->vf, time * music->vi.sample_rate);
+    result = stb_vorbis_seek(music->vf, (unsigned int)(time * music->vi.sample_rate));
     if (!result) {
         set_ov_error("stb_vorbis_seek", stb_vorbis_get_error(music->vf));
         return -1;

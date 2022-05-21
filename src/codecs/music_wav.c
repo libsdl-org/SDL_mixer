@@ -658,7 +658,7 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
         Mix_SetError("Couldn't read %d bytes from WAV file", chunk_length);
         return SDL_FALSE;
     }
-    chunk_length -= size;
+    chunk_length = (Uint32)(chunk_length - size);
     if (chunk_length != 0 && SDL_RWseek(wave->src, chunk_length, RW_SEEK_CUR) < 0) {
         Mix_SetError("Couldn't read %d bytes from WAV file", chunk_length);
         return SDL_FALSE;
