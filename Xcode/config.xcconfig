@@ -14,14 +14,6 @@
 //CONFIG_PREPROCESSOR_DEFINITIONS = $(inherited) MUSIC_MOD
 //CONFIG_FRAMEWORK_LDFLAGS = $(inherited) -weak_framework libmodplug
 
-// Uncomment these lines to enable Ogg support
-// If you do this, you should run external/download.sh to download the decode libraries and add vorbis.framework and tremor.framework to your application bundle.
-//CONFIG_PREPROCESSOR_DEFINITIONS = $(inherited) MUSIC_OGG
-//CONFIG_PREPROCESSOR_DEFINITIONS[arch=armv7] = $(inherited) OGG_USE_TREMOR
-//VORBIS_FRAMEWORK = vorbis
-//VORBIS_FRAMEWORK[arch=armv7] = tremor
-//CONFIG_FRAMEWORK_LDFLAGS = $(inherited) -weak_framework $(VORBIS_FRAMEWORK)
-
 // Uncomment these lines to enable Opus support
 // If you do this, you should run external/download.sh to download the decode libraries and add opus.framework to your application bundle.
 //CONFIG_PREPROCESSOR_DEFINITIONS = $(inherited) MUSIC_OPUS

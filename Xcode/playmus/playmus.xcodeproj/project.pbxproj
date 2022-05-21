@@ -15,17 +15,13 @@
 		F3968ED128203F5800661875 /* libmodplug.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968E9E282038D700661875 /* libmodplug.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968ED328203F5800661875 /* ogg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EBC2820390500661875 /* ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968ED428203F5800661875 /* opus.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EAA282038E000661875 /* opus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F3968ED628203F5800661875 /* vorbis.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EB6282038FB00661875 /* vorbis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968EEF2820409F00661875 /* SDL2.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EC0282039AC00661875 /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968EF1282040B300661875 /* libmodplug.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968E9E282038D700661875 /* libmodplug.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968EF3282040B300661875 /* ogg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EBC2820390500661875 /* ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968EF4282040B300661875 /* opus.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EAA282038E000661875 /* opus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F3968EF5282040B300661875 /* tremor.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EB0282038F600661875 /* tremor.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F3968EF6282040B300661875 /* vorbis.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EB6282038FB00661875 /* vorbis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968F0F2820428F00661875 /* libmodplug.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968E9E282038D700661875 /* libmodplug.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968F112820428F00661875 /* ogg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EBC2820390500661875 /* ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968F122820428F00661875 /* opus.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EAA282038E000661875 /* opus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F3968F132820428F00661875 /* vorbis.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EB6282038FB00661875 /* vorbis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968F142820428F00661875 /* SDL2.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EC2282039BC00661875 /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F39CD44B281DC6C8006CF638 /* SDL2_mixer.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3ED80D4281D9ED600C33C5B /* SDL2_mixer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3ED80CB281D9ECB00C33C5B /* playmus.c in Sources */ = {isa = PBXBuildFile; fileRef = F3ED80CA281D9ECB00C33C5B /* playmus.c */; };
@@ -53,20 +49,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = F3968A21281F704800661875;
 			remoteInfo = opus;
-		};
-		F3968EAF282038F600661875 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3968EAB282038F600661875 /* tremor.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F3F70F52281F686A005AA27D;
-			remoteInfo = tremor;
-		};
-		F3968EB5282038FB00661875 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3968EB1282038FB00661875 /* vorbis.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F3F70EFF281F637A005AA27D;
-			remoteInfo = vorbis;
 		};
 		F3968EBB2820390500661875 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -110,7 +92,6 @@
 				F3968F0F2820428F00661875 /* libmodplug.framework in Copy Frameworks */,
 				F3968F112820428F00661875 /* ogg.framework in Copy Frameworks */,
 				F3968F122820428F00661875 /* opus.framework in Copy Frameworks */,
-				F3968F132820428F00661875 /* vorbis.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -126,7 +107,6 @@
 				F3968ED128203F5800661875 /* libmodplug.framework in Copy Frameworks */,
 				F3968ED328203F5800661875 /* ogg.framework in Copy Frameworks */,
 				F3968ED428203F5800661875 /* opus.framework in Copy Frameworks */,
-				F3968ED628203F5800661875 /* vorbis.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -142,8 +122,6 @@
 				F3968EF1282040B300661875 /* libmodplug.framework in Copy Frameworks */,
 				F3968EF3282040B300661875 /* ogg.framework in Copy Frameworks */,
 				F3968EF4282040B300661875 /* opus.framework in Copy Frameworks */,
-				F3968EF5282040B300661875 /* tremor.framework in Copy Frameworks */,
-				F3968EF6282040B300661875 /* vorbis.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -153,8 +131,6 @@
 /* Begin PBXFileReference section */
 		F3968E99282038D700661875 /* libmodplug.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libmodplug.xcodeproj; path = ../libmodplug/libmodplug.xcodeproj; sourceTree = "<group>"; };
 		F3968EA5282038E000661875 /* opus.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = opus.xcodeproj; path = ../opus/opus.xcodeproj; sourceTree = "<group>"; };
-		F3968EAB282038F600661875 /* tremor.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = tremor.xcodeproj; path = ../tremor/tremor.xcodeproj; sourceTree = "<group>"; };
-		F3968EB1282038FB00661875 /* vorbis.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = vorbis.xcodeproj; path = ../vorbis/vorbis.xcodeproj; sourceTree = "<group>"; };
 		F3968EB72820390500661875 /* ogg.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ogg.xcodeproj; path = ../ogg/ogg.xcodeproj; sourceTree = "<group>"; };
 		F3968EBE2820392700661875 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../macOS/SDL2.framework; sourceTree = "<group>"; };
 		F3968EC0282039AC00661875 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../iOS/SDL2.framework; sourceTree = "<group>"; };
@@ -215,22 +191,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		F3968EAC282038F600661875 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				F3968EB0282038F600661875 /* tremor.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		F3968EB2282038FB00661875 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				F3968EB6282038FB00661875 /* vorbis.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		F3968EB82820390500661875 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -279,8 +239,6 @@
 				F3968E99282038D700661875 /* libmodplug.xcodeproj */,
 				F3968EB72820390500661875 /* ogg.xcodeproj */,
 				F3968EA5282038E000661875 /* opus.xcodeproj */,
-				F3968EAB282038F600661875 /* tremor.xcodeproj */,
-				F3968EB1282038FB00661875 /* vorbis.xcodeproj */,
 				F3ED80CD281D9ED600C33C5B /* SDL_mixer.xcodeproj */,
 				F3ED80AB281D9E8800C33C5B /* Shared */,
 				F3ED80BA281D9E8900C33C5B /* macOS */,
@@ -429,14 +387,6 @@
 					ProductGroup = F3ED80CE281D9ED600C33C5B /* Products */;
 					ProjectRef = F3ED80CD281D9ED600C33C5B /* SDL_mixer.xcodeproj */;
 				},
-				{
-					ProductGroup = F3968EAC282038F600661875 /* Products */;
-					ProjectRef = F3968EAB282038F600661875 /* tremor.xcodeproj */;
-				},
-				{
-					ProductGroup = F3968EB2282038FB00661875 /* Products */;
-					ProjectRef = F3968EB1282038FB00661875 /* vorbis.xcodeproj */;
-				},
 			);
 			projectRoot = "";
 			targets = (
@@ -460,20 +410,6 @@
 			fileType = wrapper.framework;
 			path = opus.framework;
 			remoteRef = F3968EA9282038E000661875 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F3968EB0282038F600661875 /* tremor.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = tremor.framework;
-			remoteRef = F3968EAF282038F600661875 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F3968EB6282038FB00661875 /* vorbis.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = vorbis.framework;
-			remoteRef = F3968EB5282038FB00661875 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		F3968EBC2820390500661875 /* ogg.framework */ = {

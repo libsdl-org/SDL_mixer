@@ -590,6 +590,9 @@ fi
 AC_ARG_ENABLE([music-ogg],
 [AS_HELP_STRING([--enable-music-ogg], [enable Ogg Vorbis music [default=yes]])],
               [], [enable_music_ogg=yes])
+AC_ARG_ENABLE(music-ogg-stb,
+[AS_HELP_STRING([--enable-music-ogg-stb], [enable OGG Vorbis music via stb_vorbis [default=yes]])],
+              [], enable_music_ogg_stb=yes)
 AC_ARG_ENABLE(music-ogg-tremor,
 [AS_HELP_STRING([--enable-music-ogg-tremor], [enable OGG Vorbis music via libtremor [default=no]])],
               [], enable_music_ogg_tremor=no)
@@ -598,7 +601,9 @@ AC_ARG_ENABLE([music-ogg-shared],
               [], [enable_music_ogg_shared=yes])
 if test x$enable_music_ogg = xyes; then
     LIBS_SAVED="$LIBS"
-    if test x$enable_music_ogg_tremor = xyes; then
+    if test x$enable_music_ogg_stb = xyes; then
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_OGG -DOGG_USE_STB"
+    elif test x$enable_music_ogg_tremor = xyes; then
         PKG_CHECK_MODULES([TREMOR], [vorbisidec], [dnl
                 have_tremor_hdr=yes
                 have_tremor_lib=yes

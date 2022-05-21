@@ -62,6 +62,8 @@
 		F37A8D4F2838A23400C38E95 /* dr_flac.h in Headers */ = {isa = PBXBuildFile; fileRef = F37A8D482838A23400C38E95 /* dr_flac.h */; };
 		F37A8D502838A23400C38E95 /* music_drflac.c in Sources */ = {isa = PBXBuildFile; fileRef = F37A8D492838A23400C38E95 /* music_drflac.c */; };
 		F37A8D512838A23400C38E95 /* music_drflac.c in Sources */ = {isa = PBXBuildFile; fileRef = F37A8D492838A23400C38E95 /* music_drflac.c */; };
+		F37A8DB52838AD1300C38E95 /* music_ogg_stb.c in Sources */ = {isa = PBXBuildFile; fileRef = F37A8DB42838AD1200C38E95 /* music_ogg_stb.c */; };
+		F37A8DB62838AD1300C38E95 /* music_ogg_stb.c in Sources */ = {isa = PBXBuildFile; fileRef = F37A8DB42838AD1200C38E95 /* music_ogg_stb.c */; };
 		F3823337273195CC00F7F527 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 639008C62385A822009019FA /* utils.c */; };
 		F3823338273195CF00F7F527 /* utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 639008C72385A822009019FA /* utils.h */; };
 		F3823339273195D200F7F527 /* effect_position.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE405D01F9607C100EDAF53 /* effect_position.c */; };
@@ -125,26 +127,12 @@
 			remoteGlobalIDString = F3968A21281F704800661875;
 			remoteInfo = opus;
 		};
-		F3968D77281FB66200661875 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3968D72281FB66200661875 /* tremor.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F3F70F52281F686A005AA27D;
-			remoteInfo = tremor;
-		};
 		F3968DEE281FBFE100661875 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F3968DEA281FBFE100661875 /* libmodplug.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = F3968D85281FBB1900661875;
 			remoteInfo = libmodplug;
-		};
-		F3F70F9F281F6DCA005AA27D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3F70F9A281F6DCA005AA27D /* vorbis.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F3F70EFF281F637A005AA27D;
-			remoteInfo = vorbis;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -201,15 +189,14 @@
 		F37A8D472838A23400C38E95 /* dr_mp3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dr_mp3.h; sourceTree = "<group>"; };
 		F37A8D482838A23400C38E95 /* dr_flac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dr_flac.h; sourceTree = "<group>"; };
 		F37A8D492838A23400C38E95 /* music_drflac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_drflac.c; sourceTree = "<group>"; };
+		F37A8DB42838AD1200C38E95 /* music_ogg_stb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_ogg_stb.c; sourceTree = "<group>"; };
 		F3968B90281F817E00661875 /* opus.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = opus.xcodeproj; path = opus/opus.xcodeproj; sourceTree = "<group>"; };
 		F3968D71281FB5E100661875 /* config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = config.xcconfig; sourceTree = "<group>"; };
-		F3968D72281FB66200661875 /* tremor.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = tremor.xcodeproj; path = tremor/tremor.xcodeproj; sourceTree = "<group>"; };
 		F3968DEA281FBFE100661875 /* libmodplug.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libmodplug.xcodeproj; path = libmodplug/libmodplug.xcodeproj; sourceTree = "<group>"; };
 		F3D87C08281DFABD005DA540 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		F3D87C0A281DFAD4005DA540 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		F3D87C0C281DFADB005DA540 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		F3D87C0E281DFB02005DA540 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = macOS/SDL2.framework; sourceTree = "<group>"; };
-		F3F70F9A281F6DCA005AA27D /* vorbis.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = vorbis.xcodeproj; path = vorbis/vorbis.xcodeproj; sourceTree = "<group>"; };
 		F51BFB0101F724BE01D3D55B /* native_midi.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = native_midi.h; sourceTree = "<group>"; };
 		F59C710300D5CB5801000001 /* ReadMe.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = ReadMe.txt; sourceTree = "<group>"; };
 		F59C710400D5CB5801000001 /* Welcome.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Welcome.txt; sourceTree = "<group>"; };
@@ -264,8 +251,6 @@
 				F3968D71281FB5E100661875 /* config.xcconfig */,
 				F3968DEA281FBFE100661875 /* libmodplug.xcodeproj */,
 				F3968B90281F817E00661875 /* opus.xcodeproj */,
-				F3968D72281FB66200661875 /* tremor.xcodeproj */,
-				F3F70F9A281F6DCA005AA27D /* vorbis.xcodeproj */,
 				F59C70FC00D5CB5801000001 /* pkg-support */,
 				0153844A006D81B07F000001 /* Public Headers */,
 				08FB77ACFE841707C02AAC07 /* Library Source */,
@@ -324,6 +309,7 @@
 				AAE405D31F9607C100EDAF53 /* music_mpg123.h */,
 				AAE405D51F9607C100EDAF53 /* music_nativemidi.c */,
 				AAE405DA1F9607C200EDAF53 /* music_nativemidi.h */,
+				F37A8DB42838AD1200C38E95 /* music_ogg_stb.c */,
 				AAE405D91F9607C200EDAF53 /* music_ogg.c */,
 				AAE405D11F9607C100EDAF53 /* music_ogg.h */,
 				630FBD8220D52105009867AB /* music_opus.c */,
@@ -374,26 +360,10 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		F3968D73281FB66200661875 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				F3968D78281FB66200661875 /* tremor.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		F3968DEB281FBFE100661875 /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				F3968DEF281FBFE100661875 /* libmodplug.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		F3F70F9B281F6DCA005AA27D /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				F3F70FA0281F6DCA005AA27D /* vorbis.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -581,14 +551,6 @@
 					ProductGroup = F3968B91281F817E00661875 /* Products */;
 					ProjectRef = F3968B90281F817E00661875 /* opus.xcodeproj */;
 				},
-				{
-					ProductGroup = F3968D73281FB66200661875 /* Products */;
-					ProjectRef = F3968D72281FB66200661875 /* tremor.xcodeproj */;
-				},
-				{
-					ProductGroup = F3F70F9B281F6DCA005AA27D /* Products */;
-					ProjectRef = F3F70F9A281F6DCA005AA27D /* vorbis.xcodeproj */;
-				},
 			);
 			projectRoot = "";
 			targets = (
@@ -607,25 +569,11 @@
 			remoteRef = F3968B96281F817E00661875 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3968D78281FB66200661875 /* tremor.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = tremor.framework;
-			remoteRef = F3968D77281FB66200661875 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		F3968DEF281FBFE100661875 /* libmodplug.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = libmodplug.framework;
 			remoteRef = F3968DEE281FBFE100661875 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F3F70FA0281F6DCA005AA27D /* vorbis.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = vorbis.framework;
-			remoteRef = F3F70F9F281F6DCA005AA27D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -699,6 +647,7 @@
 				AAE405F21F9607C300EDAF53 /* effects_internal.c in Sources */,
 				AAE406021F9607C300EDAF53 /* music_cmd.c in Sources */,
 				AAE405FB1F9607C300EDAF53 /* music_timidity.c in Sources */,
+				F37A8DB52838AD1300C38E95 /* music_ogg_stb.c in Sources */,
 				F37A8D502838A23400C38E95 /* music_drflac.c in Sources */,
 				AAE405F11F9607C300EDAF53 /* music.c in Sources */,
 				AAE405F91F9607C300EDAF53 /* music_nativemidi.c in Sources */,
@@ -730,6 +679,7 @@
 				F382334D2731960400F7F527 /* music_modplug.c in Sources */,
 				F382333F273195E100F7F527 /* music.c in Sources */,
 				F382334B2731960000F7F527 /* music_mikmod.c in Sources */,
+				F37A8DB62838AD1300C38E95 /* music_ogg_stb.c in Sources */,
 				F37A8D512838A23400C38E95 /* music_drflac.c in Sources */,
 				F3823341273195E600F7F527 /* mp3utils.c in Sources */,
 				F3823343273195EB00F7F527 /* music_cmd.c in Sources */,
@@ -843,6 +793,8 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					MUSIC_FLAC_DRFLAC,
 					MUSIC_MP3_DRMP3,
+					MUSIC_OGG,
+					OGG_USE_STB,
 					MUSIC_WAV,
 					"$(CONFIG_PREPROCESSOR_DEFINITIONS)",
 				);
@@ -891,6 +843,8 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					MUSIC_FLAC_DRFLAC,
 					MUSIC_MP3_DRMP3,
+					MUSIC_OGG,
+					OGG_USE_STB,
 					MUSIC_WAV,
 					"$(CONFIG_PREPROCESSOR_DEFINITIONS)",
 				);
