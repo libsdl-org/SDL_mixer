@@ -1,6 +1,6 @@
 2.0.5:
-Vitaly Novichkov - Fri May 20 14:45:53 PDT 2022
- * Added minimp3 codec library for MP3
+Sam Lantinga - Fri May 20 20:50:29 PDT 2022
+ * Added support for playing MP3 files using dr_mp3
 Mykola Rubets - Tue May 17 12:59:35 2022
  * Implemented a master volume feature, Mix_MasterVolume added to
    public api.

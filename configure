@@ -937,7 +937,7 @@ enable_music_ogg_shared
 enable_music_flac
 enable_music_flac_shared
 enable_music_mp3
-enable_music_mp3_minimp3
+enable_music_mp3_drmp3
 enable_music_mp3_mad_gpl
 enable_music_mp3_mad_gpl_dithering
 enable_music_mp3_mpg123
@@ -1632,8 +1632,8 @@ Optional Features:
   --enable-music-flac-shared
                           dynamically load FLAC library [default=yes]
   --enable-music-mp3      enable MP3 music [default=yes]
-  --enable-music-mp3-minimp3
-                          enable MP3 music via minimp3 [default=yes]
+  --enable-music-mp3-drmp3
+                          enable MP3 music via dr_mp3 [default=yes]
   --enable-music-mp3-mad-gpl
                           enable MP3 music via libmad GPL code [default=no]
   --enable-music-mp3-mad-gpl-dithering
@@ -17312,15 +17312,15 @@ else
 fi
 
 
-# Check whether --enable-music-mp3-minimp3 was given.
-if test "${enable_music_mp3_minimp3+set}" = set; then :
-  enableval=$enable_music_mp3_minimp3;
+# Check whether --enable-music-mp3-drmp3 was given.
+if test "${enable_music_mp3_drmp3+set}" = set; then :
+  enableval=$enable_music_mp3_drmp3;
 else
-  enable_music_mp3_minimp3=yes
+  enable_music_mp3_drmp3=yes
 fi
 
-if test x$enable_music_mp3_minimp3 = xyes; then
-    EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MP3_MINIMP3"
+if test x$enable_music_mp3_drmp3 = xyes; then
+    EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MP3_DRMP3"
 fi
 
 # Check whether --enable-music-mp3-mad-gpl was given.
@@ -17589,7 +17589,7 @@ $as_echo "$as_me: WARNING: mpg123 support disabled" >&2;}
     fi
 fi
 
-if test x$enable_music_mp3_minimp3 = xyes -o x$have_libmad = xyes -o x$have_libmpg123 = xyes; then
+if test x$enable_music_mp3_drmp3 = xyes -o x$have_libmad = xyes -o x$have_libmpg123 = xyes; then
     :
 else
     { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: MP3 support disabled" >&5
