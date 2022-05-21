@@ -49,13 +49,13 @@
 /*     1.12    - 2017-11-21 - limit residue begin/end to blocksize/2 to avoid large temp allocs in bad/corrupt files */
 /*     1.11    - 2017-07-23 - fix MinGW compilation */
 /*     1.10    - 2017-03-03 - more robust seeking; fix negative ilog(); clear error in open_memory */
-/*     1.09    - 2016-04-04   //  1.09    - 2016-04-04 - back out  fix from previous version */
+/*     1.09    - 2016-04-04 - back out 'truncation of last frame' fix from previous version */
 /*     1.08    - 2016-04-02 - warnings; setup memory leaks; truncation of last frame */
 /*     1.07    - 2015-01-16 - fixes for crashes on invalid files; warning fixes; const */
 /*     1.06    - 2015-08-31 - full, correct support for seeking API (Dougall Johnson) */
 /*                            some crash fixes when out of memory or with corrupt files */
 /*                            fix some inappropriately signed shifts */
-/*     1.05    - 2015-04-19 - d//     1.05    - 2015-04-19 - dons redundant */
+/*     1.05    - 2015-04-19 - don't define __forceinline if it's redundant */
 /*     1.04    - 2014-08-27 - fix missing const-correct case in API */
 /*     1.03    - 2014-08-07 - warning fixes */
 /*     1.02    - 2014-07-09 - declare qsort comparison as explicitly _cdecl in Windows */
@@ -109,7 +109,7 @@ extern "C" {
 /*  setup_temp_malloc, temp_malloc) to change this behavior, or you */
 /*  can use a simpler allocation model: you pass in a buffer from */
 /*  which stb_vorbis will allocate _all_ its memory (including the */
-/*  tem//  temp memory).  may fail with a VORBIS_outofmem if you */
+/*  temp memory). "open" may fail with a VORBIS_outofmem if you */
 /*  do not pass in enough data; there is no way to determine how */
 /*  much you do need except to succeed (at which point you can */
 /*  query get_info to find the exact amount required. yes I know */
@@ -197,7 +197,7 @@ extern stb_vorbis *stb_vorbis_open_pushdata(
          const stb_vorbis_alloc *alloc_buffer);
 /*  create a vorbis decoder by passing in the initial data block containing */
 /*     the ogg&vorbis headers (you don't need to do parse them, just provide */
-/*    the first//     the first N bytes of the file--yous not enough, see below) */
+/*    the first N bytes of the file--you're told if it's not enough, see below) */
 /*  on success, returns an stb_vorbis *, does not set error, returns the amount of */
 /*     data parsed/consumed on this call in *datablock_memory_consumed_in_bytes; */
 /*  on failure, returns NULL on error and sets *error, does not change *datablock_memory_consumed */
@@ -290,7 +290,7 @@ extern stb_vorbis * stb_vorbis_open_file(FILE *f, int close_handle_on_close,
                                   int *error, const stb_vorbis_alloc *alloc_buffer);
 /*  create an ogg vorbis decoder from an open FILE *, looking for a stream at */
 /*  the _current_ seek point (ftell). on failure, returns NULL and sets *error. */
-/* no//  note that stb_vorbis must  this stream; if you seek it in between */
+/* note that stb_vorbis must "own" this stream; if you seek it in between */
 /*  calls to stb_vorbis, it will become confused. Moreover, if you attempt to */
 /*  perform stb_vorbis_seek_*() operations on this file, it will assume it */
 /*  owns the _entire_ rest of the file after the start point. Use the next */
@@ -299,8 +299,8 @@ extern stb_vorbis * stb_vorbis_open_file(FILE *f, int close_handle_on_close,
 extern stb_vorbis * stb_vorbis_open_file_section(FILE *f, int close_handle_on_close,
                 int *error, const stb_vorbis_alloc *alloc_buffer, unsigned int len);
 /*  create an ogg vorbis decoder from an open FILE *, looking for a stream at */
-/* th//  the _current_ seek point (ftell); the stream will be of length  bytes. */
-/* on//  on failure, returns NULL and sets *error. note that stb_vorbis must  */
+/* the _current_ seek point (ftell); the stream will be of length 'len' bytes. */
+/* on failure, returns NULL and sets *error. note that stb_vorbis must "own" */
 /*  this stream; if you seek it in between calls to stb_vorbis, it will become */
 /*  confused. */
 #endif
@@ -313,7 +313,7 @@ extern stb_vorbis * stb_vorbis_open_rwops_section(SDL_RWops *file, int close_han
 
 extern int stb_vorbis_seek_frame(stb_vorbis *f, unsigned int sample_number);
 extern int stb_vorbis_seek(stb_vorbis *f, Sint64 sample_number);
-/* these functi//  these functions seek in the Vorbis file to (approximately) . */
+/* these functions seek in the Vorbis file to (approximately) 'sample_number'. */
 /*  after calling seek_frame(), the next call to get_frame_*() will include */
 /*  the specified sample. after calling stb_vorbis_seek(), the next call to */
 /*  stb_vorbis_get_samples_* will start with the specified sample. If you */
@@ -379,7 +379,7 @@ extern int stb_vorbis_get_samples_short(stb_vorbis *f, int channels, short **buf
 #endif
 /*  gets num_samples samples, not necessarily on a frame boundary--this requires */
 /*  buffering so you have to supply the buffers. Applies the coercion rules above */
-/* to prod//  to produce  channels. Returns the number of samples stored per channel; */
+/* to produce 'channels' channels. Returns the number of samples stored per channel;  */
 /*  it may be less than requested at the end of the file. If there are no more */
 /*  samples in the file, returns 0. */
 
@@ -484,8 +484,8 @@ enum STBVorbisError
 /*      CRC32. Should that validation fail, it keeps scanning. But it's */
 /*      possible that _while_ streaming through to check the CRC32 of */
 /*      one candidate page, it sees another candidate page. This #define */
-/*     determ//      determines how many  candidate pages it can search */
-/*    //      at once. Note that  pages are typically ~4KB to ~8KB, whereas */
+/*     determines how many "overlapping" candidate pages it can search */
+/*     at once. Note that "real" pages are typically ~4KB to ~8KB, whereas */
 /*      garbage pages could be as big as 64KB, but probably average ~16KB. */
 /*      So don't hose ourselves by scanning an apparent 64KB page and */
 /*      missing a ton of real ones in the interim; so minimum of 2 */
@@ -517,11 +517,11 @@ enum STBVorbisError
 #endif
 
 /*  STB_VORBIS_NO_HUFFMAN_BINARY_SEARCH */
-/*     If the 'fast huffman'//      If the t succeed, then stb_vorbis falls */
+/*     If the 'fast huffman' search doesn't succeed, then stb_vorbis falls */
 /*      back on binary searching for the correct one. This requires storing */
 /*      extra tables with the huffman codes in sorted order. Defining this */
 /*      symbol trades off space for speed by forcing a linear search in the */
-/*     n//      non-fast case, except for  codebooks. */
+/*     non-fast case, except for "sparse" codebooks. */
 /*  #define STB_VORBIS_NO_HUFFMAN_BINARY_SEARCH */
 
 /*  STB_VORBIS_DIVIDES_IN_RESIDUE */
@@ -670,7 +670,7 @@ typedef float codetype;
 
 /*  @NOTE */
 /*  */
-/* Some arrays below are ta//  Some arrays below are tagged s actually */
+/* Some arrays below are tagged "//varies", which means it's actually */
 /*  a variable-sized piece of data, but rather than malloc I assume it's */
 /*  small enough it's better to just allocate it all together with the */
 /*  main thing */
@@ -1041,7 +1041,7 @@ static float square(float x)
 
 /*  this is a weird definition of log2() for which log2(1) = 1, log2(2) = 2, log2(4) = 3 */
 /*  as required by the specification. fast(?) implementation from stb.h */
-/* @OPTIMIZ//  @OPTIMIZE: called multiple times per-packet with ; move to setup */
+/* @OPTIMIZE: called multiple times per-packet with "constants"; move to setup */
 static int ilog(Sint32 n)
 {
    static signed char log2_4[16] = { 0,1,2,2,3,3,3,3,4,4,4,4,4,4,4,4 };
@@ -1089,7 +1089,7 @@ static float float32_unpack(Uint32 x)
 /*  this makes for a very simple generation algorithm. */
 /*  vorbis allows a huffman table with non-sorted lengths. This */
 /*  requires a more sophisticated construction, since symbols in */
-/* order d//  order do not map to huffman codes . */
+/* order do not map to huffman codes "in order". */
 static void add_entry(Codebook *c, Uint32 huff_code, int symbol, int count, int len, Uint32 *values)
 {
    if (!c->sparse) {
@@ -1119,7 +1119,7 @@ static int compute_codewords(Codebook *c, Uint8 *len, int n, Uint32 *values)
    /*  note that the above code treats the first case specially, */
    /*  but it's really the same as the following code, so they */
    /*  could probably be combined (except the initial code is 0, */
-   /* and //  and I use 0 in available[] to mean ) */
+   /* and I use 0 in available[] to mean 'empty') */
    for (i=k+1; i < n; ++i) {
       Uint32 res;
       int z = len[i], y;
@@ -1198,7 +1198,7 @@ static void compute_sorted_huffman(Codebook *c, Uint8 *lengths, Uint32 *values)
 {
    int i, len;
    /*  build a list of all the entries */
-   /* OPTIMIZATION: don't include the sho//  OPTIMIZATION: donll be caught by FAST_HUFFMAN. */
+   /* OPTIMIZATION: don't include the short ones, since they'll be caught by FAST_HUFFMAN. */
    /*  this is kind of a frivolous optimization--I don't see any performance improvement, */
    /*  but it's like 4 extra lines of code, so. */
    if (!c->sparse) {
@@ -1536,7 +1536,7 @@ static int start_page_no_capturepattern(vorb *f)
       for (i=f->segment_count-1; i >= 0; --i)
          if (f->segments[i] < 255)
             break;
-      /* //   is now the index of the _last_ segment of a packet that ends */
+      /* 'i' is now the index of the _last_ segment of a packet that ends */
       if (i >= 0) {
          f->end_seg_with_known_loc = i;
          f->known_loc_for_packet   = loc0;
@@ -2078,7 +2078,7 @@ static float inverse_db_table[256] =
 /*  this specific sequence of operations is specified in the spec (it's */
 /*  drawing integer-quantized frequency-space lines that the encoder */
 /*  expects to be exactly the same) */
-/*     ... also, isn't the whole//      ... also, isns algorithm to NOT */
+/*     ... also, isn't the whole point of Bresenham's algorithm to NOT */
 /*  have to divide in the setup? sigh. */
 #ifndef STB_VORBIS_NO_DEFER_FLOOR
 #define LINE_OP(a,b)   a *= b
@@ -2161,7 +2161,7 @@ static int residue_decode(vorb *f, Codebook *book, float *target, int offset, in
 }
 
 /*  n is 1/2 of the blocksize -- */
-/* specification: "Correct per-vector decod//  specification:  */
+/* specification: "Correct per-vector decode length is [n]/2" */
 static void decode_residue(vorb *f, float *residue_buffers[], int ch, int n, int rn, Uint8 *do_not_decode)
 {
    temp_buffer;
@@ -2415,10 +2415,10 @@ void inverse_mdct_slow(float *buffer, int n, vorb *f, int blocktype)
    float temp[4096];
 
    SDL_memcpy(temp, buffer, n2 * sizeof(float));
-   dct_iv_slow(temp, n2);  /* return//  returns -c */
+   dct_iv_slow(temp, n2);  /* returns -c'-d, a-b' */
 
    for (i=0; i < n4  ; ++i) buffer[i] = temp[i+n4];            /*  a-b' */
-   for (   ; i < n3_4; ++i) buffer[i] = -temp[n3_4 - i - 1];   /* b-a'//  b-a */
+   for (   ; i < n3_4; ++i) buffer[i] = -temp[n3_4 - i - 1];   /* b-a', c+d' */
    for (   ; i < n   ; ++i) buffer[i] = -temp[i - n3_4];       /*  c'+d */
 }
 #endif
@@ -2700,8 +2700,8 @@ static void inverse_mdct(float *buffer, int n, vorb *f, int blocktype)
    /*  twiddle factors */
    float *A = f->A[blocktype];
 
-   /* IMDCT algorithm from "The use of multirate filter banks for coding of hig//  IMDCT algorithm from  */
-   /* See notes about//  See notes about bugs in that paper in less-optimal implementation  after this function. */
+   /* IMDCT algorithm from "The use of multirate filter banks for coding of high quality digital audio" */
+   /* See notes about bugs in that paper in less-optimal implementation 'inverse_mdct_old' after this function. */
 
    /*  kernel from paper */
 
@@ -2715,7 +2715,7 @@ static void inverse_mdct(float *buffer, int n, vorb *f, int blocktype)
    /*  by step 0). inexplicable inefficiency! this became obvious */
    /*  once I combined the passes. */
 
-   /* so there's a missin//  so there here (for adding X to itself). */
+   /*  so there's a missing 'times 2' here (for adding X to itself). */
    /*  this propagates through linearly to the end, where the numbers */
    /*  are 1/2 too small, and need to be compensated for. */
 
@@ -3015,12 +3015,12 @@ void inverse_mdct_naive(float *buffer, int n)
       C[k2+1] = (float) -sin(2*(k2+1)*M_PI/n);
    }
 
-   /* IMDCT algorithm from "The use of multirate filter banks for coding of hig//  IMDCT algorithm from  */
+   /* IMDCT algorithm from "The use of multirate filter banks for coding of high quality digital audio" */
    /*  Note there are bugs in that pseudocode, presumably due to them attempting */
    /*  to rename the arrays nicely rather than representing the way their actual */
    /*  implementation bounces buffers back and forth. As a result, even in the */
-   /* "some formulars correct//   version, a direct implementation fails. These */
-   /* are note//  are noted below as . */
+   /* "some formulars corrected" version, a direct implementation fails. These */
+   /* are noted below as "paper bug". */
 
    /*  copy and reflect spectral data */
    for (k=0; k < n2; ++k) u[k] = buffer[k];
@@ -3111,7 +3111,7 @@ void inverse_mdct_naive(float *buffer, int n)
    s = 0.5; /*  theoretically would be n4 */
 
    /*  [[[ note! the s value of 0.5 is compensated for by the B[] in the current code, */
-   /*   //      so it needs to use the  B values to behave correctly, or else */
+   /*      so it needs to use the "old" B values to behave correctly, or else */
    /*      set s to 1.0 ]]] */
    for (i=0; i < n4  ; ++i) buffer[i] = s * X[i+n4];
    for (   ; i < n3_4; ++i) buffer[i] = -s * X[n3_4 - i - 1];
@@ -3448,7 +3448,7 @@ static int vorbis_decode_packet_rest(vorb *f, int *len, Mode *m, int left_start,
       /*  and decode the size of all current frames--could be done, */
       /*  but presumably it's not a commonly used feature */
       f->current_loc = 0u - n2; /*  start of first frame is positioned for discard (NB this is an intentional unsigned overflow/wrap-around) */
-      /* we //  we might have to discard samples  the next frame too, */
+      /*  we might have to discard samples "from" the next frame too, */
       /*  if we're lapping a large block then a small at the start? */
       f->discard_samples_deferred = n - right_end;
       f->current_loc_valid = SDL_TRUE;
@@ -3464,7 +3464,7 @@ static int vorbis_decode_packet_rest(vorb *f, int *len, Mode *m, int left_start,
          f->discard_samples_deferred = 0;
       }
    } else if (f->previous_length == 0 && f->current_loc_valid) {
-      /* we're recovering from a seek... that mean//  were going to discard */
+      /* we're recovering from a seek... that means we're going to discard */
       /*  the samples from this packet even though we know our position from */
       /*  the last page header, so we need to update the position based on */
       /*  the discarded samples here */
@@ -3521,9 +3521,9 @@ static int vorbis_finish_frame(stb_vorbis *f, int len, int left, int right)
    int prev,i,j;
    /*  we use right&left (the start of the right- and left-window sin()-regions) */
    /*  to determine how much to return, rather than inferring from the rules */
-   /* (sa//  (same result, clearer code);  indicates where our sin() window */
+   /* (same result, clearer code); 'left' indicates where our sin() window */
    /*  starts, therefore where the previous window's right edge starts, and */
-   /* ther//  therefore where to start mixing from the previous buffer.  */
+   /* therefore where to start mixing from the previous buffer. 'right' */
    /*  indicates where our sin() ending-window starts, therefore that's where */
    /*  we start saving, and where our returned-data ends. */
 
@@ -3548,7 +3548,7 @@ static int vorbis_finish_frame(stb_vorbis *f, int len, int left, int right)
    /*  @OPTIMIZE: could avoid this copy by double-buffering the */
    /*  output (flipping previous_window with channel_buffers), but */
    /*  then previous_window would have to be 2x as large, and */
-   /* channel_buffers couldn't be//  channel_buffers couldnre NOT */
+   /* channel_buffers couldn't be temp mem (although they're NOT */
    /*  currently temp mem, they could be (unless we want to level */
    /*  performance by spreading out the computation)) */
    for (i=0; i < f->channels; ++i)
@@ -3602,7 +3602,7 @@ static int is_whole_packet_present(stb_vorbis *f)
       }
       /*  either this continues, or it ends it... */
       if (s == f->segment_count)
-         s = -1; /* set 'crosse//  set  flag */
+         s = -1; /* set 'crosses page' flag */
       if (p > f->stream_end)                     return error(f, VORBIS_need_more_data);
       first = SDL_FALSE;
    }
@@ -3615,7 +3615,7 @@ static int is_whole_packet_present(stb_vorbis *f)
       /*  validate the page */
       if (SDL_memcmp(p, ogg_page_header, 4))         return error(f, VORBIS_invalid_stream);
       if (p[4] != 0)                             return error(f, VORBIS_invalid_stream);
-      if (first) { /* the first segme//  the first segment must NOT have , later ones MUST */
+      if (first) { /* the first segment must NOT have 'continued_packet', later ones MUST */
          if (f->previous_length)
             if ((p[5] & PAGEFLAG_continued_packet))  return error(f, VORBIS_invalid_stream);
          /*  if no previous length, we're resynching, so we can come in on a continued-packet, */
@@ -3634,7 +3634,7 @@ static int is_whole_packet_present(stb_vorbis *f)
             break;
       }
       if (s == n)
-         s = -1; /* set 'crosse//  set  flag */
+         s = -1; /* set 'crosses page' flag */
       if (p > f->stream_end)                     return error(f, VORBIS_need_more_data);
       first = SDL_FALSE;
    }
@@ -4110,7 +4110,7 @@ static int start_decoder(vorb *f)
          }
       }
       /*  precompute the classifications[] array to avoid inner-loop mod/divide */
-      /* call it //  call it  since we already have r->classifications */
+      /*  call it 'classdata' since we already have r->classifications */
       r->classdata = (Uint8 **) setup_malloc(f, sizeof(*r->classdata) * f->codebooks[r->classbook].entries);
       if (!r->classdata) return error(f, VORBIS_outofmem);
       SDL_memset(r->classdata, 0, sizeof(*r->classdata) * f->codebooks[r->classbook].entries);
@@ -4250,7 +4250,7 @@ static int start_decoder(vorb *f)
 
    if (f->alloc.alloc_buffer) {
       SDL_assert(f->temp_offset == f->alloc.alloc_buffer_length_in_bytes);
-      /* check if there's enough temp //  check if theret error later */
+      /* check if there's enough temp memory so we don't error later */
       if (f->setup_offset + sizeof(*f) + f->temp_memory_required > (unsigned) f->temp_offset)
          return error(f, VORBIS_outofmem);
    }
@@ -4797,7 +4797,7 @@ static int seek_to_sample_coarse(stb_vorbis *f, Uint32 sample_number)
 
    left = f->p_first;
    while (left.last_decoded_sample == ~0U) {
-      /* (untested) the fir//  (untested) the first page does not have a  */
+      /* (untested) the first page does not have a 'last_decoded_sample'  */
       set_file_offset(f, left.page_end);
       if (!get_seek_page_info(f, &left)) goto error;
    }
@@ -4861,8 +4861,8 @@ static int seek_to_sample_coarse(stb_vorbis *f, Uint32 sample_number)
          SDL_assert(mid.page_start < right.page_start);
       }
 
-      /* if we've just found the last page again //  if were in a tricky file, */
-      /* and we're close enough (if//  and wet an interpolation probe). */
+      /* if we've just found the last page again then we're in a tricky file, */
+      /* and we're close enough (if it wasn't an interpolation probe). */
       if (mid.page_start == right.page_start) {
          if (probe >= 2 || delta <= 65536)
             break;
@@ -5053,7 +5053,7 @@ Sint64 stb_vorbis_stream_length_in_samples(stb_vorbis *f)
       /*  to will lead to the final page' */
 
       if (!vorbis_find_page(f, &end, &last)) {
-         /* if we can't find//  if we canre hosed! */
+         /* if we can't find a page, we're hosed! */
          f->error = VORBIS_cant_find_last_page;
          f->total_samples = 0xffffffff;
          goto done;
@@ -5063,16 +5063,16 @@ Sint64 stb_vorbis_stream_length_in_samples(stb_vorbis *f)
       last_page_loc = stb_vorbis_get_file_offset(f);
 
       /*  stop when the last_page flag is set, not when we reach eof; */
-      /* this allows//  this allows us to stop short of a  end without */
+      /* this allows us to stop short of a 'file_section' end without */
       /*  explicitly checking the length of the section */
       while (!last) {
          set_file_offset(f, end);
          if (!vorbis_find_page(f, &end, &last)) {
-            /* the last page we fou//  the last page we found didn flag */
+            /* the last page we found didn't have the 'last page' flag */
             /*  set. whoops! */
             break;
          }
-         /* previous_safe = last_page_loc+1; // NOTE: not used after this point, but note for debugging */
+         /* previous_safe = last_page_loc+1; *//* NOTE: not used after this point, but note for debugging */
          last_page_loc = stb_vorbis_get_file_offset(f);
       }
 
