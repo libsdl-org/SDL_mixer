@@ -19,7 +19,7 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-/* This file supports reading of ID3 tags of MP3 files with libID3Tag */
+/* This file provides utility functions to work with MP3 files including reading of tags. */
 
 #ifndef MIX_MP3UTILS_H
 #define MIX_MP3UTILS_H
