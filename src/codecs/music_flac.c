@@ -22,7 +22,7 @@
     ~ Austen Dicken (admin@cvpcs.org)
 */
 
-#ifdef MUSIC_FLAC
+#ifdef MUSIC_FLAC_LIBFLAC
 
 #include "SDL_loadso.h"
 #include "SDL_assert.h"
@@ -757,6 +757,6 @@ Mix_MusicInterface Mix_MusicInterface_FLAC =
     FLAC_Unload
 };
 
-#endif /* MUSIC_FLAC */
+#endif /* MUSIC_FLAC_LIBFLAC */
 
 /* vi: set ts=4 sw=4 expandtab: */
