@@ -56,10 +56,6 @@
 		F37A8D302838924900C38E95 /* music_drmp3.c in Sources */ = {isa = PBXBuildFile; fileRef = F37A8D2C2838924900C38E95 /* music_drmp3.c */; };
 		F37A8D4A2838A23400C38E95 /* music_drflac.h in Headers */ = {isa = PBXBuildFile; fileRef = F37A8D412838A23400C38E95 /* music_drflac.h */; };
 		F37A8D4B2838A23400C38E95 /* music_drflac.h in Headers */ = {isa = PBXBuildFile; fileRef = F37A8D412838A23400C38E95 /* music_drflac.h */; };
-		F37A8D4C2838A23400C38E95 /* dr_mp3.h in Headers */ = {isa = PBXBuildFile; fileRef = F37A8D472838A23400C38E95 /* dr_mp3.h */; };
-		F37A8D4D2838A23400C38E95 /* dr_mp3.h in Headers */ = {isa = PBXBuildFile; fileRef = F37A8D472838A23400C38E95 /* dr_mp3.h */; };
-		F37A8D4E2838A23400C38E95 /* dr_flac.h in Headers */ = {isa = PBXBuildFile; fileRef = F37A8D482838A23400C38E95 /* dr_flac.h */; };
-		F37A8D4F2838A23400C38E95 /* dr_flac.h in Headers */ = {isa = PBXBuildFile; fileRef = F37A8D482838A23400C38E95 /* dr_flac.h */; };
 		F37A8D502838A23400C38E95 /* music_drflac.c in Sources */ = {isa = PBXBuildFile; fileRef = F37A8D492838A23400C38E95 /* music_drflac.c */; };
 		F37A8D512838A23400C38E95 /* music_drflac.c in Sources */ = {isa = PBXBuildFile; fileRef = F37A8D492838A23400C38E95 /* music_drflac.c */; };
 		F37A8DB52838AD1300C38E95 /* music_ogg_stb.c in Sources */ = {isa = PBXBuildFile; fileRef = F37A8DB42838AD1200C38E95 /* music_ogg_stb.c */; };
@@ -186,8 +182,6 @@
 		F37A8D2B2838924900C38E95 /* music_drmp3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_drmp3.h; sourceTree = "<group>"; };
 		F37A8D2C2838924900C38E95 /* music_drmp3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_drmp3.c; sourceTree = "<group>"; };
 		F37A8D412838A23400C38E95 /* music_drflac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_drflac.h; sourceTree = "<group>"; };
-		F37A8D472838A23400C38E95 /* dr_mp3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dr_mp3.h; sourceTree = "<group>"; };
-		F37A8D482838A23400C38E95 /* dr_flac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dr_flac.h; sourceTree = "<group>"; };
 		F37A8D492838A23400C38E95 /* music_drflac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_drflac.c; sourceTree = "<group>"; };
 		F37A8DB42838AD1200C38E95 /* music_ogg_stb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_ogg_stb.c; sourceTree = "<group>"; };
 		F3968B90281F817E00661875 /* opus.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = opus.xcodeproj; path = opus/opus.xcodeproj; sourceTree = "<group>"; };
@@ -281,8 +275,6 @@
 		6398B0BB238528360024EEA1 /* codecs */ = {
 			isa = PBXGroup;
 			children = (
-				F37A8D482838A23400C38E95 /* dr_flac.h */,
-				F37A8D472838A23400C38E95 /* dr_mp3.h */,
 				AAE405BE1F9607BF00EDAF53 /* load_aiff.c */,
 				AAE405D21F9607C100EDAF53 /* load_aiff.h */,
 				AAE405CC1F9607C000EDAF53 /* load_voc.c */,
@@ -406,7 +398,6 @@
 				AAE405E31F9607C300EDAF53 /* music_fluidsynth.h in Headers */,
 				AAE405F31F9607C300EDAF53 /* music_mikmod.h in Headers */,
 				AAE405F61F9607C300EDAF53 /* load_aiff.h in Headers */,
-				F37A8D4E2838A23400C38E95 /* dr_flac.h in Headers */,
 				AAE405E71F9607C300EDAF53 /* load_voc.h in Headers */,
 				AAE405EC1F9607C300EDAF53 /* music_wav.h in Headers */,
 				F37A8D2D2838924900C38E95 /* music_drmp3.h in Headers */,
@@ -423,7 +414,6 @@
 				AAE405E61F9607C300EDAF53 /* music.h in Headers */,
 				F382335F2731963800F7F527 /* native_midi.h in Headers */,
 				BE1FA8CD07AF96B2004B6283 /* SDL_mixer.h in Headers */,
-				F37A8D4C2838A23400C38E95 /* dr_mp3.h in Headers */,
 				AAE405F51F9607C300EDAF53 /* music_ogg.h in Headers */,
 				630FBD8520D5211F009867AB /* music_opus.h in Headers */,
 				639008C92385A822009019FA /* utils.h in Headers */,
@@ -436,7 +426,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3823346273195F300F7F527 /* music_flac.h in Headers */,
-				F37A8D4D2838A23400C38E95 /* dr_mp3.h in Headers */,
 				F382333E273195DF00F7F527 /* mixer.h in Headers */,
 				F382335A2731962600F7F527 /* load_aiff.h in Headers */,
 				F3823348273195F800F7F527 /* music_fluidsynth.h in Headers */,
@@ -445,7 +434,6 @@
 				F382334E2731960700F7F527 /* music_modplug.h in Headers */,
 				F3823340273195E400F7F527 /* music.h in Headers */,
 				F38233522731961400F7F527 /* music_nativemidi.h in Headers */,
-				F37A8D4F2838A23400C38E95 /* dr_flac.h in Headers */,
 				F382334C2731960200F7F527 /* music_mikmod.h in Headers */,
 				F382334A273195FD00F7F527 /* music_mad.h in Headers */,
 				F3823338273195CF00F7F527 /* utils.h in Headers */,

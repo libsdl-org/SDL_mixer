@@ -34,7 +34,7 @@
 #define DRMP3_MALLOC(sz) SDL_malloc((sz))
 #define DRMP3_REALLOC(p, sz) SDL_realloc((p), (sz))
 #define DRMP3_FREE(p) SDL_free((p))
-#include "dr_mp3.h"
+#include "dr_libs/dr_mp3.h"
 
 
 typedef struct {

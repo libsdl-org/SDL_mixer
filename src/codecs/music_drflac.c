@@ -36,7 +36,7 @@
 #define DRFLAC_MALLOC(sz) SDL_malloc((sz))
 #define DRFLAC_REALLOC(p, sz) SDL_realloc((p), (sz))
 #define DRFLAC_FREE(p) SDL_free((p))
-#include "dr_flac.h"
+#include "dr_libs/dr_flac.h"
 
 
 typedef struct {
