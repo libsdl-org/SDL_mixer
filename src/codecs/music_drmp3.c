@@ -38,7 +38,7 @@
 
 
 typedef struct {
-    struct mp3file_t mp3file;
+    struct mp3file_t file;
     drmp3 dec;
     int play_count;
     int freesrc;
@@ -56,14 +56,14 @@ typedef struct {
 static size_t DRMP3_ReadCB(void *context, void *buf, size_t size)
 {
     DRMP3_Music *music = (DRMP3_Music *)context;
-    return MP3_RWread(&music->mp3file, buf, 1, size);
+    return MP3_RWread(&music->file, buf, 1, size);
 }
 
 static drmp3_bool32 DRMP3_SeekCB(void *context, int offset, drmp3_seek_origin origin)
 {
     DRMP3_Music *music = (DRMP3_Music *)context;
     int whence = (origin == drmp3_seek_origin_start) ? RW_SEEK_SET : RW_SEEK_CUR;
-    if (MP3_RWseek(&music->mp3file, offset, whence) < 0) {
+    if (MP3_RWseek(&music->file, offset, whence) < 0) {
         return DRMP3_FALSE;
     }
     return DRMP3_TRUE;
@@ -82,19 +82,19 @@ static void *DRMP3_CreateFromRW(SDL_RWops *src, int freesrc)
     }
     music->volume = MIX_MAX_VOLUME;
 
-    if (MP3_RWinit(&music->mp3file, src) < 0) {
+    if (MP3_RWinit(&music->file, src) < 0) {
         SDL_free(music);
         return NULL;
     }
 
     meta_tags_init(&music->tags);
-    if (mp3_read_tags(&music->tags, &music->mp3file, SDL_FALSE) < 0) {
+    if (mp3_read_tags(&music->tags, &music->file, SDL_FALSE) < 0) {
         SDL_free(music);
         Mix_SetError("music_drmp3: corrupt mp3 file (bad tags).");
         return NULL;
     }
 
-    MP3_RWseek(&music->mp3file, 0, RW_SEEK_SET);
+    MP3_RWseek(&music->file, 0, RW_SEEK_SET);
 
     if (!drmp3_init(&music->dec, DRMP3_ReadCB, DRMP3_SeekCB, music, NULL)) {
         SDL_free(music);
@@ -244,7 +244,7 @@ static void DRMP3_Delete(void *context)
         SDL_free(music->buffer);
     }
     if (music->freesrc) {
-        SDL_RWclose(music->mp3file.src);
+        SDL_RWclose(music->file.src);
     }
     SDL_free(music);
 }
