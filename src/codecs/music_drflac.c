@@ -23,6 +23,8 @@
 
 #include "music_drflac.h"
 #include "mp3utils.h"
+#include "../utils.h"
+
 #include "SDL.h"
 
 #define DR_FLAC_IMPLEMENTATION
@@ -48,7 +50,11 @@ typedef struct {
     drflac_int16 *buffer;
     int buffer_size;
     int channels;
-
+    int loop;
+    SDL_bool loop_flag;
+    Sint64 loop_start;
+    Sint64 loop_end;
+    Sint64 loop_len;
     Mix_MusicMetaTags tags;
 } DRFLAC_Music;
 
@@ -67,6 +73,75 @@ static drflac_bool32 DRFLAC_SeekCB(void *context, int offset, drflac_seek_origin
         return DRFLAC_FALSE;
     }
     return DRFLAC_TRUE;
+}
+
+static void DRFLAC_MetaCB(void *context, drflac_metadata *metadata)
+{
+    DRFLAC_Music *music = (DRFLAC_Music *)context;
+
+    if (metadata->type == DRFLAC_METADATA_BLOCK_TYPE_VORBIS_COMMENT) {
+        int i;
+        char *param, *argument, *value;
+        SDL_bool is_loop_length = SDL_FALSE;
+        const char *pRunningData = (const char *)metadata->data.vorbis_comment.pComments;
+
+        for (i = 0; i < metadata->data.vorbis_comment.commentCount; ++i) {
+            drflac_uint32 commentLength = drflac__le2host_32_ptr_unaligned(pRunningData); pRunningData += 4;
+
+            param = (char *)SDL_malloc(commentLength + 1);
+            if (param) {
+                SDL_memcpy(param, pRunningData, commentLength);
+                param[commentLength] = '\0';
+                argument = param;
+                value = SDL_strchr(param, '=');
+
+                if (value == NULL) {
+                    value = param + SDL_strlen(param);
+                } else {
+                    *(value++) = '\0';
+                }
+
+                /* Want to match LOOP-START, LOOP_START, etc. Remove - or _ from
+                 * string if it is present at position 4. */
+                if (_Mix_IsLoopTag(argument) && ((argument[4] == '_') || (argument[4] == '-'))) {
+                    SDL_memmove(argument + 4, argument + 5, SDL_strlen(argument) - 4);
+                }
+
+                if (SDL_strcasecmp(argument, "LOOPSTART") == 0)
+                    music->loop_start = _Mix_ParseTime(value, music->dec->sampleRate);
+                else if (SDL_strcasecmp(argument, "LOOPLENGTH") == 0) {
+                    music->loop_len = SDL_strtoll(value, NULL, 10);
+                    is_loop_length = SDL_TRUE;
+                } else if (SDL_strcasecmp(argument, "LOOPEND") == 0) {
+                    music->loop_end = _Mix_ParseTime(value, music->dec->sampleRate);
+                    is_loop_length = SDL_FALSE;
+                } else if (SDL_strcasecmp(argument, "TITLE") == 0) {
+                    meta_tags_set(&music->tags, MIX_META_TITLE, value);
+                } else if (SDL_strcasecmp(argument, "ARTIST") == 0) {
+                    meta_tags_set(&music->tags, MIX_META_ARTIST, value);
+                } else if (SDL_strcasecmp(argument, "ALBUM") == 0) {
+                    meta_tags_set(&music->tags, MIX_META_ALBUM, value);
+                } else if (SDL_strcasecmp(argument, "COPYRIGHT") == 0) {
+                    meta_tags_set(&music->tags, MIX_META_COPYRIGHT, value);
+                }
+                SDL_free(param);
+            }
+            pRunningData += commentLength;
+        }
+
+        if (is_loop_length) {
+            music->loop_end = music->loop_start + music->loop_len;
+        } else {
+            music->loop_len = music->loop_end - music->loop_start;
+        }
+
+        /* Ignore invalid loop tag */
+        if (music->loop_start < 0 || music->loop_len < 0 || music->loop_end < 0) {
+            music->loop_start = 0;
+            music->loop_len = 0;
+            music->loop_end = 0;
+        }
+    }
 }
 
 static int DRFLAC_Seek(void *context, double position);
@@ -89,7 +164,7 @@ static void *DRFLAC_CreateFromRW(SDL_RWops *src, int freesrc)
 
     meta_tags_init(&music->tags);
 
-    music->dec = drflac_open(DRFLAC_ReadCB, DRFLAC_SeekCB, music, NULL);
+    music->dec = drflac_open_with_metadata(DRFLAC_ReadCB, DRFLAC_SeekCB, DRFLAC_MetaCB, music, NULL);
     if (!music->dec) {
         SDL_free(music);
         Mix_SetError("music_drflac: corrupt flac file (bad stream).");
@@ -117,6 +192,14 @@ static void *DRFLAC_CreateFromRW(SDL_RWops *src, int freesrc)
         SDL_OutOfMemory();
         SDL_free(music);
         return NULL;
+    }
+
+    /* loop_start, loop_end and loop_len get set by metadata callback if tags
+     * are present in metadata.
+     */
+    if ((music->loop_end > 0) && (music->loop_end <= music->dec->totalPCMFrameCount) &&
+        (music->loop_start < music->loop_end)) {
+        music->loop = 1;
     }
 
     music->freesrc = freesrc;
@@ -168,8 +251,27 @@ static int DRFLAC_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         return 0;
     }
 
+    if (music->loop_flag) {
+        if (!drflac_seek_to_pcm_frame(music->dec, music->loop_start)) {
+            SDL_SetError("drflac_seek_to_pcm_frame() failed");
+            return -1;
+        } else {
+            int play_count = -1;
+            if (music->play_count > 0) {
+                play_count = (music->play_count - 1);
+            }
+            music->play_count = play_count;
+            music->loop_flag = SDL_FALSE;
+        }
+    }
+
     amount = drflac_read_pcm_frames_s16(music->dec, music_spec.samples, music->buffer);
     if (amount > 0) {
+        if (music->loop && (music->play_count != 1) &&
+            (music->dec->currentPCMFrame >= music->loop_end)) {
+            amount -= (music->dec->currentPCMFrame - music->loop_end) * sizeof(drflac_int16) * music->channels;
+            music->loop_flag = SDL_TRUE;
+        }
         if (SDL_AudioStreamPut(music->stream, music->buffer, (int)amount * sizeof(drflac_int16) * music->channels) < 0) {
             return -1;
         }
@@ -218,6 +320,33 @@ static double DRFLAC_Duration(void *context)
     return (double)samples / music->dec->sampleRate;
 }
 
+static double DRFLAC_LoopStart(void *context)
+{
+    DRFLAC_Music *music = (DRFLAC_Music *)context;
+    if (music->loop > 0) {
+        return (double)music->loop_start / music->dec->sampleRate;
+    }
+    return -1.0;
+}
+
+static double DRFLAC_LoopEnd(void *context)
+{
+    DRFLAC_Music *music = (DRFLAC_Music *)context;
+    if (music->loop > 0) {
+        return (double)music->loop_end / music->dec->sampleRate;
+    }
+    return -1.0;
+}
+
+static double DRFLAC_LoopLength(void *context)
+{
+    DRFLAC_Music *music = (DRFLAC_Music *)context;
+    if (music->loop > 0) {
+        return (double)music->loop_len / music->dec->sampleRate;
+    }
+    return -1.0;
+}
+
 static const char* DRFLAC_GetMetaTag(void *context, Mix_MusicMetaTag tag_type)
 {
     DRFLAC_Music *music = (DRFLAC_Music *)context;
@@ -264,9 +393,9 @@ Mix_MusicInterface Mix_MusicInterface_DRFLAC =
     DRFLAC_Seek,
     DRFLAC_Tell,
     DRFLAC_Duration,
-    NULL,   /* LoopStart */
-    NULL,   /* LoopEnd */
-    NULL,   /* LoopLength */
+    DRFLAC_LoopStart,
+    DRFLAC_LoopEnd,
+    DRFLAC_LoopLength,
     DRFLAC_GetMetaTag,
     NULL,   /* Pause */
     NULL,   /* Resume */
