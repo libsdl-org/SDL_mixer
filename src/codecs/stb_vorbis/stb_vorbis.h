@@ -220,7 +220,7 @@ extern int stb_vorbis_decode_frame_pushdata(
 /*      N bytes used, 0 samples output (resynching the stream, keep going) */
 /*      N bytes used, M samples output (one frame of data) */
 /*  note that after opening a file, you will ALWAYS get one N-bytes,0-sample */
-/* frame, //  frame, because Vorbis always  the first frame. */
+/*  frame, because Vorbis always "discards" the first frame. */
 /*  */
 /*  Note that on resynch, stb_vorbis will rarely consume all of the buffer, */
 /*  instead only datablock_length_in_bytes-3 or less. This is because it wants */
@@ -559,8 +559,6 @@ enum STBVorbisError
 /*      requires more memory and is very likely slower, so I don't think */
 /*      you'd ever want to do it except for debugging. */
 /*  #define STB_VORBIS_NO_DEFER_FLOOR */
-
-
 
 
 /* //////////////////////////////////////////////////////////////////////////// */
@@ -1434,7 +1432,7 @@ static void skip(vorb *z, int n)
    #ifndef STB_VORBIS_NO_STDIO
    {
       long x = ftell(z->f);
-      fseek(z->f, x+n, RW_SEEK_SET);
+      fseek(z->f, x+n, SEEK_SET);
    }
    #endif
 }
@@ -1478,10 +1476,10 @@ static int set_file_offset(stb_vorbis *f, unsigned int loc)
    } else {
       loc += f->f_start;
    }
-   if (!fseek(f->f, loc, RW_SEEK_SET))
+   if (!fseek(f->f, loc, SEEK_SET))
       return 1;
    f->eof = 1;
-   fseek(f->f, f->f_start, RW_SEEK_END);
+   fseek(f->f, f->f_start, SEEK_END);
    return 0;
    #endif
 }
@@ -3594,7 +3592,7 @@ static int is_whole_packet_present(stb_vorbis *f)
    int s = f->next_seg, first = SDL_TRUE;
    Uint8 *p = f->stream;
 
-   if (s != -1) { /* if we're not starting the packet with a 'continue on ne//  if we flag */
+   if (s != -1) { /* if we're not starting the packet with a 'continue on next page' flag */
       for (; s < f->segment_count; ++s) {
          p += f->segments[s];
          if (f->segments[s] < 255)               /*  stop at first short segment */
@@ -5158,9 +5156,9 @@ stb_vorbis * stb_vorbis_open_file(FILE *file, int close_on_free, int *error, con
 {
    unsigned int len, start;
    start = (unsigned int) ftell(file);
-   fseek(file, 0, RW_SEEK_END);
+   fseek(file, 0, SEEK_END);
    len = (unsigned int) (ftell(file) - start);
-   fseek(file, start, RW_SEEK_SET);
+   fseek(file, start, SEEK_SET);
    return stb_vorbis_open_file_section(file, close_on_free, error, alloc, len);
 }
 
