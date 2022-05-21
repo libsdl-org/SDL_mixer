@@ -32,11 +32,11 @@
 #define STB_VORBIS_NO_CRT 1
 #define STB_VORBIS_NO_PUSHDATA_API 1
 #define STB_VORBIS_MAX_CHANNELS 6
-#define STBV_CDECL
 #define STB_FORCEINLINE SDL_FORCE_INLINE
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 #define STB_VORBIS_BIG_ENDIAN 1
 #endif
+#define STBV_CDECL SDLCALL /* for SDL_qsort */
 
 #ifdef assert
 #undef assert
@@ -191,7 +191,7 @@ static void *OGG_CreateFromRW(SDL_RWops *src, int freesrc)
     }
 
     music->vi = stb_vorbis_get_info(music->vf);
-    if (music->vi.sample_rate <= 0) {
+    if ((int)music->vi.sample_rate <= 0) {
         Mix_SetError("Invalid sample rate value");
         OGG_Delete(music);
         return NULL;
