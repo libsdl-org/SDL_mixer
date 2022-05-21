@@ -28,6 +28,14 @@
 #include "SDL.h"
 
 #define DR_FLAC_IMPLEMENTATION
+#if defined(__GNUC__) && (__GNUC__ >= 4) && \
+  !(defined(_WIN32) || defined(__EMX__))
+#define DRFLAC_API __attribute__((visibility("hidden")))
+#elif defined(__APPLE__)
+#define DRFLAC_API __private_extern__
+#else
+#define DRFLAC_API /* just in case.. */
+#endif
 #define DR_FLAC_NO_STDIO
 #define DRFLAC_ASSERT(expression)
 #define DRFLAC_COPY_MEMORY(dst, src, sz) SDL_memcpy((dst), (src), (sz))

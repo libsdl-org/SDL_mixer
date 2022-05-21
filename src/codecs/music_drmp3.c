@@ -26,6 +26,14 @@
 #include "SDL.h"
 
 #define DR_MP3_IMPLEMENTATION
+#if defined(__GNUC__) && (__GNUC__ >= 4) && \
+  !(defined(_WIN32) || defined(__EMX__))
+#define DRMP3_API __attribute__((visibility("hidden")))
+#elif defined(__APPLE__)
+#define DRMP3_API __private_extern__
+#else
+#define DRMP3_API /* just in case.. */
+#endif
 #define DR_MP3_NO_STDIO
 #define DRMP3_ASSERT(expression)
 #define DRMP3_COPY_MEMORY(dst, src, sz) SDL_memcpy((dst), (src), (sz))
