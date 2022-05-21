@@ -43,6 +43,7 @@ int mp3dec_decode_frame(mp3dec_t *dec, const uint8_t *mp3, int mp3_bytes, mp3d_s
 #if defined(MINIMP3_IMPLEMENTATION) && !defined(_MINIMP3_IMPLEMENTATION_GUARD)
 #define _MINIMP3_IMPLEMENTATION_GUARD
 
+#include "SDL_stdinc.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -469,7 +470,7 @@ static int L12_dequantize_granule(float *grbuf, bs_t *bs, L12_scale_info *sci, i
 static void L12_apply_scf_384(L12_scale_info *sci, const float *scf, float *dst)
 {
     int i, k;
-    memcpy(dst + 576 + sci->stereo_bands*18, dst + sci->stereo_bands*18, (sci->total_bands - sci->stereo_bands)*18*sizeof(float));
+    SDL_memcpy(dst + 576 + sci->stereo_bands*18, dst + sci->stereo_bands*18, (sci->total_bands - sci->stereo_bands)*18*sizeof(float));
     for (i = 0; i < sci->total_bands; i++, dst += 18, scf += 6)
     {
         for (k = 0; k < 12; k++)
@@ -614,14 +615,14 @@ static void L3_read_scalefactors(uint8_t *scf, uint8_t *ist_pos, const uint8_t *
         int cnt = scf_count[i];
         if (scfsi & 8)
         {
-            memcpy(scf, ist_pos, cnt);
+            SDL_memcpy(scf, ist_pos, cnt);
         } else
         {
             int bits = scf_size[i];
             if (!bits)
             {
-                memset(scf, 0, cnt);
-                memset(ist_pos, 0, cnt);
+                SDL_memset(scf, 0, cnt);
+                SDL_memset(ist_pos, 0, cnt);
             } else
             {
                 int max_scf = (scfsi < 0) ? (1 << bits) - 1 : -1;
@@ -1006,7 +1007,7 @@ static void L3_reorder(float *grbuf, float *scratch, const uint8_t *sfb)
             *dst++ = src[2*len];
         }
     }
-    memcpy(grbuf, scratch, (dst - scratch)*sizeof(float));
+    SDL_memcpy(grbuf, scratch, (dst - scratch)*sizeof(float));
 }
 
 static void L3_antialias(float *grbuf, int nbands)
@@ -1175,8 +1176,8 @@ static void L3_imdct_short(float *grbuf, float *overlap, int nbands)
     for (;nbands > 0; nbands--, overlap += 9, grbuf += 18)
     {
         float tmp[18];
-        memcpy(tmp, grbuf, sizeof(tmp));
-        memcpy(grbuf, overlap, 6*sizeof(float));
+        SDL_memcpy(tmp, grbuf, sizeof(tmp));
+        SDL_memcpy(grbuf, overlap, 6*sizeof(float));
         L3_imdct12(tmp, grbuf + 6, overlap + 6);
         L3_imdct12(tmp + 1, grbuf + 12, overlap + 6);
         L3_imdct12(tmp + 2, overlap, overlap + 6);
@@ -1220,7 +1221,7 @@ static void L3_save_reservoir(mp3dec_t *h, mp3dec_scratch_t *s)
     }
     if (remains > 0)
     {
-        memmove(h->reserv_buf, s->maindata + pos, remains);
+        SDL_memmove(h->reserv_buf, s->maindata + pos, remains);
     }
     h->reserv = remains;
 }
@@ -1229,8 +1230,8 @@ static int L3_restore_reservoir(mp3dec_t *h, bs_t *bs, mp3dec_scratch_t *s, int 
 {
     int frame_bytes = (bs->limit - bs->pos)/8;
     int bytes_have = MINIMP3_MIN(h->reserv, main_data_begin);
-    memcpy(s->maindata, h->reserv_buf + MINIMP3_MAX(0, h->reserv - main_data_begin), MINIMP3_MIN(h->reserv, main_data_begin));
-    memcpy(s->maindata + bytes_have, bs->buf + bs->pos/8, frame_bytes);
+    SDL_memcpy(s->maindata, h->reserv_buf + MINIMP3_MAX(0, h->reserv - main_data_begin), MINIMP3_MIN(h->reserv, main_data_begin));
+    SDL_memcpy(s->maindata + bytes_have, bs->buf + bs->pos/8, frame_bytes);
     bs_init(&s->bs, s->maindata, bytes_have + frame_bytes);
     return h->reserv >= main_data_begin;
 }
@@ -1634,7 +1635,7 @@ static void mp3d_synth_granule(float *qmf_state, float *grbuf, int nbands, int n
         mp3d_DCT_II(grbuf + 576*i, nbands);
     }
 
-    memcpy(lins, qmf_state, sizeof(float)*15*64);
+    SDL_memcpy(lins, qmf_state, sizeof(float)*15*64);
 
     for (i = 0; i < nbands; i += 2)
     {
@@ -1650,7 +1651,7 @@ static void mp3d_synth_granule(float *qmf_state, float *grbuf, int nbands, int n
     } else
 #endif /* MINIMP3_NONSTANDARD_BUT_LOGICAL */
     {
-        memcpy(qmf_state, lins + nbands*64, sizeof(float)*15*64);
+        SDL_memcpy(qmf_state, lins + nbands*64, sizeof(float)*15*64);
     }
 }
 
@@ -1727,7 +1728,7 @@ int mp3dec_decode_frame(mp3dec_t *dec, const uint8_t *mp3, int mp3_bytes, mp3d_s
     }
     if (!frame_size)
     {
-        memset(dec, 0, sizeof(mp3dec_t));
+        SDL_memset(dec, 0, sizeof(mp3dec_t));
         i = mp3d_find_frame(mp3, mp3_bytes, &dec->free_format_bytes, &frame_size);
         if (!frame_size || i + frame_size > mp3_bytes)
         {
@@ -1737,7 +1738,7 @@ int mp3dec_decode_frame(mp3dec_t *dec, const uint8_t *mp3, int mp3_bytes, mp3d_s
     }
 
     hdr = mp3 + i;
-    memcpy(dec->header, hdr, HDR_SIZE);
+    SDL_memcpy(dec->header, hdr, HDR_SIZE);
     info->frame_bytes = i + frame_size;
     info->frame_offset = i;
     info->channels = HDR_IS_MONO(hdr) ? 1 : 2;
@@ -1769,7 +1770,7 @@ int mp3dec_decode_frame(mp3dec_t *dec, const uint8_t *mp3, int mp3_bytes, mp3d_s
         {
             for (igr = 0; igr < (HDR_TEST_MPEG1(hdr) ? 2 : 1); igr++, pcm += 576*info->channels)
             {
-                memset(scratch.grbuf[0], 0, 576*2*sizeof(float));
+                SDL_memset(scratch.grbuf[0], 0, 576*2*sizeof(float));
                 L3_decode(dec, &scratch, scratch.gr_info + igr*info->channels, info->channels);
                 mp3d_synth_granule(dec->qmf_state, scratch.grbuf[0], 18, info->channels, pcm, scratch.syn[0]);
             }
@@ -1783,7 +1784,7 @@ int mp3dec_decode_frame(mp3dec_t *dec, const uint8_t *mp3, int mp3_bytes, mp3d_s
         L12_scale_info sci[1];
         L12_read_scale_info(hdr, bs_frame, sci);
 
-        memset(scratch.grbuf[0], 0, 576*2*sizeof(float));
+        SDL_memset(scratch.grbuf[0], 0, 576*2*sizeof(float));
         for (i = 0, igr = 0; igr < 3; igr++)
         {
             if (12 == (i += L12_dequantize_granule(scratch.grbuf[0] + i, bs_frame, sci, info->layer | 1)))
@@ -1791,7 +1792,7 @@ int mp3dec_decode_frame(mp3dec_t *dec, const uint8_t *mp3, int mp3_bytes, mp3d_s
                 i = 0;
                 L12_apply_scf_384(sci, sci->scf + igr, scratch.grbuf[0]);
                 mp3d_synth_granule(dec->qmf_state, scratch.grbuf[0], 12, info->channels, pcm, scratch.syn[0]);
-                memset(scratch.grbuf[0], 0, 576*2*sizeof(float));
+                SDL_memset(scratch.grbuf[0], 0, 576*2*sizeof(float));
                 pcm += 384*info->channels;
             }
             if (bs_frame->pos > bs_frame->limit)

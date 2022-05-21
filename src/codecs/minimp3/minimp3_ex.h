@@ -293,8 +293,8 @@ int mp3dec_load_cb(mp3dec_t *dec, mp3dec_io_t *io, uint8_t *buf, size_t buf_size
     size_t orig_buf_size = buf_size;
     int to_skip = 0;
     mp3dec_frame_info_t frame_info;
-    memset(info, 0, sizeof(*info));
-    memset(&frame_info, 0, sizeof(frame_info));
+    SDL_memset(info, 0, sizeof(*info));
+    SDL_memset(&frame_info, 0, sizeof(frame_info));
 
     /* skip id3 */
     size_t filled = 0, consumed = 0;
@@ -343,7 +343,7 @@ int mp3dec_load_cb(mp3dec_t *dec, mp3dec_io_t *io, uint8_t *buf, size_t buf_size
         {
             if (!eof && filled - consumed < MINIMP3_BUF_SIZE)
             {   /* keep minimum 10 consecutive mp3 frames (~16KB) worst case */
-                memmove(buf, buf + consumed, filled - consumed);
+                SDL_memmove(buf, buf + consumed, filled - consumed);
                 filled -= consumed;
                 consumed = 0;
                 size_t readed = io->read(buf + filled, buf_size - filled, io->read_data);
@@ -408,7 +408,7 @@ int mp3dec_load_cb(mp3dec_t *dec, mp3dec_io_t *io, uint8_t *buf, size_t buf_size
         allocated += detected_samples*sizeof(mp3d_sample_t);
     else
         allocated += (buf_size/frame_info.frame_bytes)*samples*sizeof(mp3d_sample_t);
-    info->buffer = (mp3d_sample_t*)malloc(allocated);
+    info->buffer = (mp3d_sample_t*)SDL_malloc(allocated);
     if (!info->buffer)
         return MP3D_E_MEMORY;
     /* save info */
@@ -422,7 +422,7 @@ int mp3dec_load_cb(mp3dec_t *dec, mp3dec_io_t *io, uint8_t *buf, size_t buf_size
         if ((allocated - info->samples*sizeof(mp3d_sample_t)) < MINIMP3_MAX_SAMPLES_PER_FRAME*sizeof(mp3d_sample_t))
         {
             allocated *= 2;
-            mp3d_sample_t *alloc_buf = (mp3d_sample_t*)realloc(info->buffer, allocated);
+            mp3d_sample_t *alloc_buf = (mp3d_sample_t*)SDL_realloc(info->buffer, allocated);
             if (!alloc_buf)
                 return MP3D_E_MEMORY;
             info->buffer = alloc_buf;
@@ -431,7 +431,7 @@ int mp3dec_load_cb(mp3dec_t *dec, mp3dec_io_t *io, uint8_t *buf, size_t buf_size
         {
             if (!eof && filled - consumed < MINIMP3_BUF_SIZE)
             {   /* keep minimum 10 consecutive mp3 frames (~16KB) worst case */
-                memmove(buf, buf + consumed, filled - consumed);
+                SDL_memmove(buf, buf + consumed, filled - consumed);
                 filled -= consumed;
                 consumed = 0;
                 size_t readed = io->read(buf + filled, buf_size - filled, io->read_data);
@@ -471,7 +471,7 @@ int mp3dec_load_cb(mp3dec_t *dec, mp3dec_io_t *io, uint8_t *buf, size_t buf_size
                 size_t skip = MINIMP3_MIN(samples, to_skip);
                 to_skip -= skip;
                 samples -= skip;
-                memmove(info->buffer, info->buffer + skip, samples*sizeof(mp3d_sample_t));
+                SDL_memmove(info->buffer, info->buffer + skip, samples*sizeof(mp3d_sample_t));
             }
             info->samples += samples;
             avg_bitrate_kbps += frame_info.bitrate_kbps;
@@ -489,7 +489,7 @@ int mp3dec_load_cb(mp3dec_t *dec, mp3dec_io_t *io, uint8_t *buf, size_t buf_size
     /* reallocate to normal buffer size */
     if (allocated != info->samples*sizeof(mp3d_sample_t))
     {
-        mp3d_sample_t *alloc_buf = (mp3d_sample_t*)realloc(info->buffer, info->samples*sizeof(mp3d_sample_t));
+        mp3d_sample_t *alloc_buf = (mp3d_sample_t*)SDL_realloc(info->buffer, info->samples*sizeof(mp3d_sample_t));
         if (!alloc_buf && info->samples)
             return MP3D_E_MEMORY;
         info->buffer = alloc_buf;
@@ -509,7 +509,7 @@ int mp3dec_iterate_buf(const uint8_t *buf, size_t buf_size, MP3D_ITERATE_CB call
     if (!buf_size)
         return 0;
     mp3dec_frame_info_t frame_info;
-    memset(&frame_info, 0, sizeof(frame_info));
+    SDL_memset(&frame_info, 0, sizeof(frame_info));
     do
     {
         int free_format_bytes = 0, frame_size = 0, ret;
@@ -546,7 +546,7 @@ int mp3dec_iterate_cb(mp3dec_io_t *io, uint8_t *buf, size_t buf_size, MP3D_ITERA
     uint64_t readed = 0;
     mp3dec_frame_info_t frame_info;
     int eof = 0;
-    memset(&frame_info, 0, sizeof(frame_info));
+    SDL_memset(&frame_info, 0, sizeof(frame_info));
     if (filled > MINIMP3_ID3_DETECT_SIZE)
         return MP3D_E_IOERROR;
     if (MINIMP3_ID3_DETECT_SIZE != filled)
@@ -597,7 +597,7 @@ int mp3dec_iterate_cb(mp3dec_io_t *io, uint8_t *buf, size_t buf_size, MP3D_ITERA
         consumed += i + frame_size;
         if (!eof && filled - consumed < MINIMP3_BUF_SIZE)
         {   /* keep minimum 10 consecutive mp3 frames (~16KB) worst case */
-            memmove(buf, buf + consumed, filled - consumed);
+            SDL_memmove(buf, buf + consumed, filled - consumed);
             filled -= consumed;
             consumed = 0;
             size_t readed = io->read(buf + filled, buf_size - filled, io->read_data);
@@ -654,7 +654,7 @@ static int mp3dec_load_index(void *user_data, const uint8_t *frame, int frame_si
             dec->index.capacity = 4096;
         else
             dec->index.capacity *= 2;
-        mp3dec_frame_t *alloc_buf = (mp3dec_frame_t *)realloc((void*)dec->index.frames, sizeof(mp3dec_frame_t)*dec->index.capacity);
+        mp3dec_frame_t *alloc_buf = (mp3dec_frame_t *)SDL_realloc((void*)dec->index.frames, sizeof(mp3dec_frame_t)*dec->index.capacity);
         if (!alloc_buf)
             return MP3D_E_MEMORY;
         dec->index.frames = alloc_buf;
@@ -676,7 +676,7 @@ int mp3dec_ex_open_buf(mp3dec_ex_t *dec, const uint8_t *buf, size_t buf_size, in
 {
     if (!dec || !buf || (size_t)-1 == buf_size || (flags & (~MP3D_FLAGS_MASK)))
         return MP3D_E_PARAM;
-    memset(dec, 0, sizeof(*dec));
+    SDL_memset(dec, 0, sizeof(*dec));
     dec->file.buffer = buf;
     dec->file.size   = buf_size;
     dec->flags       = flags;
@@ -875,7 +875,7 @@ size_t mp3dec_ex_read_frame(mp3dec_ex_t *dec, mp3d_sample_t **buf, mp3dec_frame_
         {
             if (!eof && (dec->input_filled - dec->input_consumed) < MINIMP3_BUF_SIZE)
             {   /* keep minimum 10 consecutive mp3 frames (~16KB) worst case */
-                memmove((uint8_t*)dec->file.buffer, (uint8_t*)dec->file.buffer + dec->input_consumed, dec->input_filled - dec->input_consumed);
+                SDL_memmove((uint8_t*)dec->file.buffer, (uint8_t*)dec->file.buffer + dec->input_consumed, dec->input_filled - dec->input_consumed);
                 dec->input_filled -= dec->input_consumed;
                 dec->input_consumed = 0;
                 size_t readed = dec->io->read((uint8_t*)dec->file.buffer + dec->input_filled, dec->file.size - dec->input_filled, dec->io->read_data);
@@ -956,7 +956,7 @@ size_t mp3dec_ex_read(mp3dec_ex_t *dec, mp3d_sample_t *buf, size_t samples)
         return 0;
     }
     mp3dec_frame_info_t frame_info;
-    memset(&frame_info, 0, sizeof(frame_info));
+    SDL_memset(&frame_info, 0, sizeof(frame_info));
     size_t samples_requested = samples;
     while (samples)
     {
@@ -966,7 +966,7 @@ size_t mp3dec_ex_read(mp3dec_ex_t *dec, mp3d_sample_t *buf, size_t samples)
         {
             break;
         }
-        memcpy(buf, buf_frame, read_samples * sizeof(mp3d_sample_t));
+        SDL_memcpy(buf, buf_frame, read_samples * sizeof(mp3d_sample_t));
         buf += read_samples;
         samples -= read_samples;
     }
@@ -977,14 +977,14 @@ int mp3dec_ex_open_cb(mp3dec_ex_t *dec, mp3dec_io_t *io, int flags)
 {
     if (!dec || !io || (flags & (~MP3D_FLAGS_MASK)))
         return MP3D_E_PARAM;
-    memset(dec, 0, sizeof(*dec));
+    SDL_memset(dec, 0, sizeof(*dec));
 #ifdef MINIMP3_HAVE_RING
     int ret;
     if (ret = mp3dec_open_ring(&dec->file, MINIMP3_IO_SIZE))
         return ret;
 #else
     dec->file.size = MINIMP3_IO_SIZE;
-    dec->file.buffer = (const uint8_t*)malloc(dec->file.size);
+    dec->file.buffer = (const uint8_t*)SDL_malloc(dec->file.size);
     if (!dec->file.buffer)
         return MP3D_E_MEMORY;
 #endif
@@ -1039,7 +1039,7 @@ static int mp3dec_open_file(const char *file_name, mp3dec_map_info_t *map_info)
         return MP3D_E_PARAM;
     int file;
     struct stat st;
-    memset(map_info, 0, sizeof(*map_info));
+    SDL_memset(map_info, 0, sizeof(*map_info));
 retry_open:
     file = open(file_name, O_RDONLY);
     if (file < 0 && (errno == EAGAIN || errno == EINTR))
@@ -1086,7 +1086,7 @@ static int mp3dec_open_ring(mp3dec_map_info_t *map_info, size_t size)
     void *buffer;
     int res;
 #endif
-    memset(map_info, 0, sizeof(*map_info));
+    SDL_memset(map_info, 0, sizeof(*map_info));
 
 #ifdef _SC_PAGESIZE
     page_size = sysconf(_SC_PAGESIZE);
@@ -1169,7 +1169,7 @@ static void mp3dec_close_file(mp3dec_map_info_t *map_info)
 
 static int mp3dec_open_file_h(HANDLE file, mp3dec_map_info_t *map_info)
 {
-    memset(map_info, 0, sizeof(*map_info));
+    SDL_memset(map_info, 0, sizeof(*map_info));
 
     HANDLE mapping = NULL;
     LARGE_INTEGER s;
@@ -1219,7 +1219,7 @@ static int mp3dec_open_file_w(const wchar_t *file_name, mp3dec_map_info_t *map_i
 static void mp3dec_close_file(mp3dec_map_info_t *map_info)
 {
     if (map_info->buffer)
-        free((void *)map_info->buffer);
+        SDL_free((void *)map_info->buffer);
     map_info->buffer = 0;
     map_info->size = 0;
 }
@@ -1228,7 +1228,7 @@ static int mp3dec_open_file(const char *file_name, mp3dec_map_info_t *map_info)
 {
     if (!file_name)
         return MP3D_E_PARAM;
-    memset(map_info, 0, sizeof(*map_info));
+    SDL_memset(map_info, 0, sizeof(*map_info));
     FILE *file = fopen(file_name, "rb");
     if (!file)
         return MP3D_E_IOERROR;
@@ -1242,7 +1242,7 @@ static int mp3dec_open_file(const char *file_name, mp3dec_map_info_t *map_info)
     map_info->size = (size_t)size;
     if (fseek(file, 0, SEEK_SET))
         goto error;
-    map_info->buffer = (uint8_t *)malloc(map_info->size);
+    map_info->buffer = (uint8_t *)SDL_malloc(map_info->size);
     if (!map_info->buffer)
     {
         res = MP3D_E_MEMORY;
@@ -1333,13 +1333,13 @@ void mp3dec_ex_close(mp3dec_ex_t *dec)
         mp3dec_close_ring(&dec->file);
 #else
     if (dec->io && dec->file.buffer)
-        free((void*)dec->file.buffer);
+        SDL_free((void*)dec->file.buffer);
 #endif
     if (dec->is_file)
         mp3dec_close_file(&dec->file);
     if (dec->index.frames)
-        free(dec->index.frames);
-    memset(dec, 0, sizeof(*dec));
+        SDL_free(dec->index.frames);
+    SDL_memset(dec, 0, sizeof(*dec));
 }
 
 #ifdef _WIN32
@@ -1386,11 +1386,11 @@ void mp3dec_ex_close(mp3dec_ex_t *dec)
         mp3dec_close_ring(&dec->file);
 #else
     if (dec->io && dec->file.buffer)
-        free((void*)dec->file.buffer);
+        SDL_free((void*)dec->file.buffer);
 #endif
     if (dec->index.frames)
-        free(dec->index.frames);
-    memset(dec, 0, sizeof(*dec));
+        SDL_free(dec->index.frames);
+    SDL_memset(dec, 0, sizeof(*dec));
 }
 #endif
 
