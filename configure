@@ -15308,7 +15308,7 @@ find_lib()
     done
 }
 
-SDL_VERSION=2.0.7
+SDL_VERSION=2.0.9
 
 # Check whether --with-sdl-prefix was given.
 if test "${with_sdl_prefix+set}" = set; then :

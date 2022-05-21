@@ -25,10 +25,46 @@
 
 #include "music_ogg.h"
 #include "utils.h"
+#include "SDL_assert.h"
 
-#define OV_EXCLUDE_STATIC_CALLBACKS
-#define STB_VORBIS_NO_STDIO
-#define STB_VORBIS_NO_CRT
+#define STB_VORBIS_SDL 1 /* for SDL_mixer-specific stuff. */
+#define STB_VORBIS_NO_STDIO 1
+#define STB_VORBIS_NO_CRT 1
+#define STB_VORBIS_NO_PUSHDATA_API 1
+#define STB_VORBIS_MAX_CHANNELS 6
+#define STBV_CDECL
+#define STB_FORCEINLINE SDL_FORCE_INLINE
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+#define STB_VORBIS_BIG_ENDIAN 1
+#endif
+
+#ifdef assert
+#undef assert
+#endif
+#ifdef memset
+#undef memset
+#endif
+#ifdef memcpy
+#undef memcpy
+#endif
+#define assert SDL_assert
+#define memset SDL_memset
+#define memcmp SDL_memcmp
+#define memcpy SDL_memcpy
+#define qsort SDL_qsort
+#define malloc SDL_malloc
+#define realloc SDL_realloc
+#define free SDL_free
+
+#define pow SDL_pow
+#define floor SDL_floor
+#define ldexp(v, e) SDL_scalbn((v), (e))
+#define abs(x) SDL_abs(x)
+#define cos(x) SDL_cos(x)
+#define sin(x) SDL_sin(x)
+#define log(x) SDL_log(x)
+#define exp(x) SDL_exp(x)
+
 #include "stb_vorbis/stb_vorbis.h"
 
 typedef struct {
