@@ -1,5 +1,5 @@
 2.0.5:
-Wohlstand - Fri May 20 22:19:38 PDT 2022
+Vitaly Novichkov - Fri May 20 22:19:38 PDT 2022
  * Added support for playing Ogg files using stb_vorbis
 Sam Lantinga - Fri May 20 21:59:13 PDT 2022
  * Added support for playing FLAC files using dr_flac
