@@ -17367,8 +17367,8 @@ $as_echo "$have_flac_ver" >&6; }
             fi
         fi
     else
-        { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: *** Unable to find FLAC library (http://flac.sourceforge.net/)" >&5
-$as_echo "$as_me: WARNING: *** Unable to find FLAC library (http://flac.sourceforge.net/)" >&2;}
+        { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: *** Unable to find FLAC library (https://xiph.org/flac/)" >&5
+$as_echo "$as_me: WARNING: *** Unable to find FLAC library (https://xiph.org/flac/)" >&2;}
     fi
 fi
 

@@ -783,7 +783,7 @@ if test x$enable_music_flac = xyes -a x$enable_music_flac_libflac = xyes; then
             fi
         fi
     else
-        AC_MSG_WARN([*** Unable to find FLAC library (http://flac.sourceforge.net/)])
+        AC_MSG_WARN([*** Unable to find FLAC library (https://xiph.org/flac/)])
     fi
 fi
 
