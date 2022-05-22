@@ -280,35 +280,28 @@ AC_ARG_ENABLE([music-mod-shared],
 [AS_HELP_STRING([--enable-music-mod-shared], [dynamically load MOD support [default=yes]])],
               [], [enable_music_mod_shared=yes])
 if test x$enable_music_mod = xyes; then
-    have_libmikmod=no
-    libmikmod_maj=3
-    libmikmod_min=1
-    libmikmod_rev=10
-    libmikmod_ver="$libmikmod_maj.$libmikmod_min.$libmikmod_rev"
+    AC_PATH_PROG(LIBMIKMOD_CONFIG, libmikmod-config, no, [$PATH])
+    AC_SUBST(LIBMIKMOD_CFLAGS)
+    AC_SUBST(LIBMIKMOD_LIBS)
+    if test "$LIBMIKMOD_CONFIG" != "no" ; then
+       test -z "$LIBMIKMOD_CFLAGS" && LIBMIKMOD_CFLAGS=`$LIBMIKMOD_CONFIG --cflags`
+       test -z "$LIBMIKMOD_LIBS" && LIBMIKMOD_LIBS=`$LIBMIKMOD_CONFIG --libs`
+    fi
     CFLAGS_SAVED="$CFLAGS"
     LIBS_SAVED="$LIBS"
-    AC_PATH_PROG(LIBMIKMOD_CONFIG, libmikmod-config, no, [$PATH])
-    if test "$LIBMIKMOD_CONFIG" != "no" ; then
-        CFLAGS="$CFLAGS `$LIBMIKMOD_CONFIG --cflags`"
-        LIBS="$LIBS `$LIBMIKMOD_CONFIG --libs`"
-        have_libmikmod=yes
-        AC_MSG_CHECKING([for libmikmod - version >= $libmikmod_ver])
-        AC_TRY_RUN([
-#include "mikmod.h"
-#include "stdio.h"
+    CFLAGS="$CFLAGS $LIBMIKMOD_CFLAGS"
+    LIBS="$LIBS $LIBMIKMOD_LIBS"
+    AC_MSG_CHECKING([for libmikmod >= 3.1.10])
+    AC_TRY_LINK([#include <mikmod.h>], [
+#if (LIBMIKMOD_VERSION < 0x03010a)
+choke me
+#endif
+Player_LoadGeneric(NULL,0,0);
+], [have_libmikmod=yes],[have_libmikmod=no])
 
-int main(int argc, char **argv)
-{
-  long maj=$libmikmod_maj,min=$libmikmod_min,rev=$libmikmod_rev,ver=MikMod_GetVersion();
-  if (ver>=((maj<<16)|(min<<8)|(rev))) {
-      printf("yes\n");
-      return 0;
-  }
-  printf("no\n*** libmikmod is older than %d.%d.%d, not using.\n",maj,min,rev);
-  return 1;
-}
-], [],[have_libmikmod=no],[echo $ac_n "cross compiling; assumed OK... $ac_c"])
-    fi
+    CFLAGS="$CFLAGS_SAVED"
+    LIBS="$LIBS_SAVED"
+    AC_MSG_RESULT($have_libmikmod)
 
     if test x$have_libmikmod = xyes; then
         case "$host" in
@@ -326,19 +319,17 @@ int main(int argc, char **argv)
                 ;;
         esac
         SOURCES="$SOURCES $srcdir/*_mod.c"
-        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMOD_MUSIC `$LIBMIKMOD_CONFIG --cflags`"
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMOD_MUSIC $LIBMIKMOD_CFLAGS"
         if test x$enable_music_mod_shared = xyes && test x$mikmod_lib != x; then
             echo "-- dynamic libmikmod -> $mikmod_lib"
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DMOD_DYNAMIC=\\\"$mikmod_lib\\\""
         else
-            EXTRA_LDFLAGS="$EXTRA_LDFLAGS `$LIBMIKMOD_CONFIG --libs`"
-            PC_LIBS="$PC_LIBS `$LIBMIKMOD_CONFIG --libs`"
+            EXTRA_LDFLAGS="$EXTRA_LDFLAGS $LIBMIKMOD_LIBS"
+            PC_LIBS="$PC_LIBS $LIBMIKMOD_LIBS"
         fi
     else
         AC_MSG_WARN([*** Unable to find MikMod library (http://mikmod.sourceforge.net/)])
     fi
-    LIBS="$LIBS_SAVED"
-    CFLAGS="$CFLAGS_SAVED"
 fi
 
 AC_ARG_ENABLE([music-mod-modplug],
