@@ -50,6 +50,7 @@
 typedef struct {
     struct mp3file_t file;
     drflac *dec;
+    unsigned sample_rate;
     int play_count;
     int freesrc;
     int volume;
@@ -87,11 +88,15 @@ static void DRFLAC_MetaCB(void *context, drflac_metadata *metadata)
 {
     DRFLAC_Music *music = (DRFLAC_Music *)context;
 
-    if (metadata->type == DRFLAC_METADATA_BLOCK_TYPE_VORBIS_COMMENT) {
-        drflac_uint32 i;
+    if (metadata->type == DRFLAC_METADATA_BLOCK_TYPE_STREAMINFO) {
+        music->sample_rate = metadata->data.streaminfo.sampleRate;
+        music->channels = metadata->data.streaminfo.channels;
+    } else if (metadata->type == DRFLAC_METADATA_BLOCK_TYPE_VORBIS_COMMENT) {
+        drflac_uint32 i, rate;
         char *param, *argument, *value;
         SDL_bool is_loop_length = SDL_FALSE;
         const char *pRunningData = (const char *)metadata->data.vorbis_comment.pComments;
+        rate = music->sample_rate;
 
         for (i = 0; i < metadata->data.vorbis_comment.commentCount; ++i) {
             drflac_uint32 commentLength = drflac__le2host_32_ptr_unaligned(pRunningData); pRunningData += 4;
@@ -116,12 +121,12 @@ static void DRFLAC_MetaCB(void *context, drflac_metadata *metadata)
                 }
 
                 if (SDL_strcasecmp(argument, "LOOPSTART") == 0)
-                    music->loop_start = _Mix_ParseTime(value, music->dec->sampleRate);
+                    music->loop_start = _Mix_ParseTime(value, rate);
                 else if (SDL_strcasecmp(argument, "LOOPLENGTH") == 0) {
                     music->loop_len = SDL_strtoll(value, NULL, 10);
                     is_loop_length = SDL_TRUE;
                 } else if (SDL_strcasecmp(argument, "LOOPEND") == 0) {
-                    music->loop_end = _Mix_ParseTime(value, music->dec->sampleRate);
+                    music->loop_end = _Mix_ParseTime(value, rate);
                     is_loop_length = SDL_FALSE;
                 } else if (SDL_strcasecmp(argument, "TITLE") == 0) {
                     meta_tags_set(&music->tags, MIX_META_TITLE, value);
