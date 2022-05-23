@@ -81,17 +81,6 @@ include_directories(include src src/codecs)
 add_library(SDL2_mixer)
 add_library(SDL2::mixer ALIAS SDL2_mixer)
 
-if (APPLE)
-    # TODO: Use DYLIB_COMPATIBILITY_VERSION, DYLIB_CURRENT_VERSION here
-elseif (UNIX AND NOT ANDROID)
-    # This is compatible with the libtool build
-    set_target_properties(SDL2_mixer PROPERTIES
-           VERSION ${LT_VERSION}
-           SOVERSION ${LT_MAJOR}
-           OUTPUT_NAME "SDL2_mixer-${LT_RELEASE}"
-    )
-endif()
-
 if(SUPPORT_MID_TIMIDITY)
     set(TIMIDITY_SRCS
         src/codecs/timidity/common.c
@@ -185,9 +174,29 @@ if (SUPPORT_MID_TIMIDITY)
     target_compile_definitions(SDL2_mixer PRIVATE -DMUSIC_MID_TIMIDITY)
 endif()
 
-if(WIN32 AND BUILD_SHARED_LIBS)
-  target_compile_definitions(SDL2_mixer PRIVATE -DDLL_EXPORT)
-  target_sources(SDL2_mixer PRIVATE version.rc)
+if(BUILD_SHARED_LIBS)
+    if(WIN32 OR OS2)
+        set_target_properties(SDL2_mixer PROPERTIES PREFIX "")
+    endif()
+    if(APPLE)
+        # TODO: Use DYLIB_COMPATIBILITY_VERSION, DYLIB_CURRENT_VERSION here
+    endif()
+    if(WIN32)
+        target_compile_definitions(SDL2_mixer PRIVATE -DDLL_EXPORT)
+        target_sources(SDL2_mixer PRIVATE version.rc)
+    elseif(OS2)
+        # OS/2 doesn't support a DLL name longer than 8 characters.
+        set_target_properties(SDL2_mixer PROPERTIES
+               OUTPUT_NAME "SDL2mix"
+        )
+    elseif(UNIX AND NOT ANDROID)
+        # This is compatible with the libtool build
+        set_target_properties(SDL2_mixer PROPERTIES
+               VERSION ${LT_VERSION}
+               SOVERSION ${LT_MAJOR}
+               OUTPUT_NAME "SDL2_mixer-${LT_RELEASE}"
+        )
+    endif()
 endif()
 
 target_include_directories(SDL2_mixer PUBLIC include)
