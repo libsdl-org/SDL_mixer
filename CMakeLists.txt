@@ -147,7 +147,7 @@ if (SUPPORT_OGG OR SUPPORT_FLAC OR SUPPORT_OPUS)
 endif()
 
 if (SUPPORT_FLAC)
-    target_compile_definitions(SDL2_mixer PRIVATE -DMUSIC_FLAC)
+    target_compile_definitions(SDL2_mixer PRIVATE -DMUSIC_FLAC_LIBFLAC)
     add_subdirectory(external/flac)
     target_include_directories(SDL2_mixer PRIVATE external/flac/include)
     target_link_libraries(SDL2_mixer PRIVATE FLAC)
