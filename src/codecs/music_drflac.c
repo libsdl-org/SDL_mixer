@@ -50,15 +50,15 @@
 typedef struct {
     struct mp3file_t file;
     drflac *dec;
-    unsigned sample_rate;
     int play_count;
     int freesrc;
     int volume;
     int status;
+    int sample_rate;
+    int channels;
     SDL_AudioStream *stream;
     drflac_int16 *buffer;
     int buffer_size;
-    int channels;
     int loop;
     SDL_bool loop_flag;
     Sint64 loop_start;
@@ -92,11 +92,10 @@ static void DRFLAC_MetaCB(void *context, drflac_metadata *metadata)
         music->sample_rate = metadata->data.streaminfo.sampleRate;
         music->channels = metadata->data.streaminfo.channels;
     } else if (metadata->type == DRFLAC_METADATA_BLOCK_TYPE_VORBIS_COMMENT) {
-        drflac_uint32 i, rate;
+        drflac_uint32 i;
         char *param, *argument, *value;
         SDL_bool is_loop_length = SDL_FALSE;
         const char *pRunningData = (const char *)metadata->data.vorbis_comment.pComments;
-        rate = music->sample_rate;
 
         for (i = 0; i < metadata->data.vorbis_comment.commentCount; ++i) {
             drflac_uint32 commentLength = drflac__le2host_32_ptr_unaligned(pRunningData); pRunningData += 4;
@@ -121,12 +120,12 @@ static void DRFLAC_MetaCB(void *context, drflac_metadata *metadata)
                 }
 
                 if (SDL_strcasecmp(argument, "LOOPSTART") == 0)
-                    music->loop_start = _Mix_ParseTime(value, rate);
+                    music->loop_start = _Mix_ParseTime(value, music->sample_rate);
                 else if (SDL_strcasecmp(argument, "LOOPLENGTH") == 0) {
                     music->loop_len = SDL_strtoll(value, NULL, 10);
                     is_loop_length = SDL_TRUE;
                 } else if (SDL_strcasecmp(argument, "LOOPEND") == 0) {
-                    music->loop_end = _Mix_ParseTime(value, rate);
+                    music->loop_end = _Mix_ParseTime(value, music->sample_rate);
                     is_loop_length = SDL_FALSE;
                 } else if (SDL_strcasecmp(argument, "TITLE") == 0) {
                     meta_tags_set(&music->tags, MIX_META_TITLE, value);
@@ -184,10 +183,10 @@ static void *DRFLAC_CreateFromRW(SDL_RWops *src, int freesrc)
         return NULL;
     }
 
-    music->channels = music->dec->channels;
+    /* We should have channels and sample rate set up here */
     music->stream = SDL_NewAudioStream(AUDIO_S16SYS,
                                        (Uint8)music->channels,
-                                       (int)music->dec->sampleRate,
+                                       music->sample_rate,
                                        music_spec.format,
                                        music_spec.channels,
                                        music_spec.freq);
@@ -315,7 +314,7 @@ static int DRFLAC_GetAudio(void *context, void *data, int bytes)
 static int DRFLAC_Seek(void *context, double position)
 {
     DRFLAC_Music *music = (DRFLAC_Music *)context;
-    drflac_uint64 destpos = (drflac_uint64)(position * music->dec->sampleRate);
+    drflac_uint64 destpos = (drflac_uint64)(position * music->sample_rate);
     drflac_seek_to_pcm_frame(music->dec, destpos);
     return 0;
 }
@@ -323,21 +322,21 @@ static int DRFLAC_Seek(void *context, double position)
 static double DRFLAC_Tell(void *context)
 {
     DRFLAC_Music *music = (DRFLAC_Music *)context;
-    return (double)music->dec->currentPCMFrame / music->dec->sampleRate;
+    return (double)music->dec->currentPCMFrame / music->sample_rate;
 }
 
 static double DRFLAC_Duration(void *context)
 {
     DRFLAC_Music *music = (DRFLAC_Music *)context;
     drflac_uint64 samples = music->dec->totalPCMFrameCount;
-    return (double)samples / music->dec->sampleRate;
+    return (double)samples / music->sample_rate;
 }
 
 static double DRFLAC_LoopStart(void *context)
 {
     DRFLAC_Music *music = (DRFLAC_Music *)context;
     if (music->loop > 0) {
-        return (double)music->loop_start / music->dec->sampleRate;
+        return (double)music->loop_start / music->sample_rate;
     }
     return -1.0;
 }
@@ -346,7 +345,7 @@ static double DRFLAC_LoopEnd(void *context)
 {
     DRFLAC_Music *music = (DRFLAC_Music *)context;
     if (music->loop > 0) {
-        return (double)music->loop_end / music->dec->sampleRate;
+        return (double)music->loop_end / music->sample_rate;
     }
     return -1.0;
 }
@@ -355,7 +354,7 @@ static double DRFLAC_LoopLength(void *context)
 {
     DRFLAC_Music *music = (DRFLAC_Music *)context;
     if (music->loop > 0) {
-        return (double)music->loop_len / music->dec->sampleRate;
+        return (double)music->loop_len / music->sample_rate;
     }
     return -1.0;
 }
