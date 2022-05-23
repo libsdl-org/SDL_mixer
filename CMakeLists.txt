@@ -6,9 +6,6 @@ project(SDL2_mixer C)
 # FIXME: make it able build against system codec libraries, too.
 # FIXME: handle library versioning.
 # FIXME: test accross different target platforms.
-#
-# FIXME: missing CMakeLists.txt for MPG123
-set(SUPPORT_MP3_MPG123 OFF CACHE BOOL "" FORCE)
 
 # See docs/release_checklist.md
 set(MAJOR_VERSION 2)
@@ -172,8 +169,9 @@ endif()
 
 if (SUPPORT_MP3_MPG123)
     target_compile_definitions(SDL2_mixer PRIVATE -DMUSIC_MP3_MPG123)
-    add_subdirectory(external/mpg123)
-    target_link_libraries(SDL2_mixer PRIVATE mpg123)
+    add_subdirectory(external/mpg123/ports/cmake)
+    target_include_directories(SDL2_mixer PRIVATE external/mpg123/ports/cmake/src/libmpg123)
+    target_link_libraries(SDL2_mixer PRIVATE libmpg123)
 endif()
 
 if (SUPPORT_MOD_MODPLUG)
