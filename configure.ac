@@ -8,7 +8,7 @@ dnl Set various version strings - taken gratefully from the GTk sources
 # See release_checklist.md
 MAJOR_VERSION=2
 MINOR_VERSION=5
-MICRO_VERSION=0
+MICRO_VERSION=1
 VERSION=$MAJOR_VERSION.$MINOR_VERSION.$MICRO_VERSION
 
 BINARY_AGE=`expr $MINOR_VERSION \* 100 + $MICRO_VERSION`

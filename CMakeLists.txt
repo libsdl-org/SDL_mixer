@@ -10,7 +10,7 @@ project(SDL2_mixer C)
 # See docs/release_checklist.md
 set(MAJOR_VERSION 2)
 set(MINOR_VERSION 5)
-set(MICRO_VERSION 0)
+set(MICRO_VERSION 1)
 set(FULL_VERSION "${MAJOR_VERSION}.${MINOR_VERSION}.${MICRO_VERSION}")
 
 option(SUPPORT_WAV "Support loading WAVE music" ON)

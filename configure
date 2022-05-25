@@ -2653,7 +2653,7 @@ ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
 # See release_checklist.md
 MAJOR_VERSION=2
 MINOR_VERSION=5
-MICRO_VERSION=0
+MICRO_VERSION=1
 VERSION=$MAJOR_VERSION.$MINOR_VERSION.$MICRO_VERSION
 
 BINARY_AGE=`expr $MINOR_VERSION \* 100 + $MICRO_VERSION`
