@@ -106,7 +106,7 @@ install-hdrs:
 	done
 	$(SHELL) $(auxdir)/mkinstalldirs $(libdir)/pkgconfig
 	$(INSTALL) -m 644 SDL2_mixer.pc $(libdir)/pkgconfig/
-install-lib: $(objects) $(objects)/$(TARGET)
+install-lib: $(objects)/$(TARGET)
 	$(SHELL) $(auxdir)/mkinstalldirs $(libdir)
 	$(LIBTOOL) --mode=install $(INSTALL) $(objects)/$(TARGET) $(libdir)/$(TARGET)
 install-bin:
