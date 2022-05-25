@@ -15210,6 +15210,41 @@ SOURCES=`ls $srcdir/src/*.c $srcdir/src/codecs/*.c | fgrep -v playwave.c | fgrep
 base_bindir=`echo \${bindir} | sed 's/.*\/\(.*\)/\1/; q'`
 base_libdir=`echo \${libdir} | sed 's/.*\/\(.*\)/\1/; q'`
 
+CheckNoUndef()
+{
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for linker option --no-undefined" >&5
+$as_echo_n "checking for linker option --no-undefined... " >&6; }
+    have_no_undefined=no
+    case "${host_os}" in
+    openbsd*) ;;
+    darwin*) have_no_undefined="-Wl,-undefined,error"
+       BUILD_LDFLAGS="$BUILD_LDFLAGS -Wl,-undefined,error" ;;
+    *) save_LDFLAGS="$LDFLAGS"
+       LDFLAGS="$LDFLAGS -Wl,--no-undefined"
+       cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  have_no_undefined=yes
+          BUILD_LDFLAGS="$BUILD_LDFLAGS -Wl,--no-undefined"
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+       LDFLAGS="$save_LDFLAGS"
+       ;;
+    esac
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: $have_no_undefined" >&5
+$as_echo "$have_no_undefined" >&6; }
+}
+
 CheckWarnAll()
 {
     { $as_echo "$as_me:${as_lineno-$LINENO}: checking for GCC -Wall option" >&5
@@ -17883,6 +17918,8 @@ $as_echo "$as_me: WARNING: *** Unable to find opusfile library (http://opus-code
 $as_echo "$as_me: WARNING: Opus support disabled" >&2;}
     fi
 fi
+
+CheckNoUndef
 
 EXTRA_LDFLAGS="$EXTRA_LDFLAGS $LIBM"
 

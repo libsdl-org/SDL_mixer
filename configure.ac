@@ -172,6 +172,25 @@ dnl set this to use on systems that use lib64 instead of lib
 base_bindir=`echo \${bindir} | sed 's/.*\/\(.*\)/\1/; q'`
 base_libdir=`echo \${libdir} | sed 's/.*\/\(.*\)/\1/; q'`
 
+CheckNoUndef()
+{
+AC_MSG_CHECKING(for linker option --no-undefined)
+    have_no_undefined=no
+    case "${host_os}" in
+dnl Skip this on platforms where it is just simply busted
+    openbsd*) ;;
+    darwin*) have_no_undefined="-Wl,-undefined,error"
+       BUILD_LDFLAGS="$BUILD_LDFLAGS -Wl,-undefined,error" ;;
+    *) save_LDFLAGS="$LDFLAGS"
+       LDFLAGS="$LDFLAGS -Wl,--no-undefined"
+       AC_LINK_IFELSE([AC_LANG_PROGRAM],[have_no_undefined=yes
+          BUILD_LDFLAGS="$BUILD_LDFLAGS -Wl,--no-undefined"])
+       LDFLAGS="$save_LDFLAGS"
+       ;;
+    esac
+    AC_MSG_RESULT($have_no_undefined)
+}
+
 dnl See if GCC's -Wall is supported.
 CheckWarnAll()
 {
@@ -922,6 +941,9 @@ if test x$enable_music_opus = xyes; then
         AC_MSG_WARN([Opus support disabled])
     fi
 fi
+
+dnl check for LD --no-undefined option
+CheckNoUndef
 
 EXTRA_LDFLAGS="$EXTRA_LDFLAGS $LIBM"
 
