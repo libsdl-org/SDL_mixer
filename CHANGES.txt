@@ -1,105 +1,59 @@
 2.0.5:
-Vitaly Novichkov - Fri May 20 22:19:38 PDT 2022
  * Added support for playing Ogg files using stb_vorbis
-Sam Lantinga - Fri May 20 21:59:13 PDT 2022
  * Added support for playing FLAC files using dr_flac
-Sam Lantinga - Fri May 20 20:50:29 PDT 2022
  * Added support for playing MP3 files using dr_mp3
-Mykola Rubets - Tue May 17 12:59:35 2022
- * Implemented a master volume feature, Mix_MasterVolume added to
-   public api.
-Ozkan Sezer, Simon McVittie, Cameron Cawley - Wed May 11 17:03:56 2022
+ * Implemented a master volume feature, Mix_MasterVolume added to public api.
  * Multiple fixes and updates to autotools build system.
-Nate Houghton - Fri Dec 31 22:33:21 2021
- * Update Mix_Init() return value to match documentation, including
-   MIXER_INIT_* flags for already-initialized modules
-pionere - Thu Dec 23 12:01:03 2021
+ * Update Mix_Init() return value to match documentation, including MIXER_INIT_* flags for already-initialized modules
  * Fixed leak in Mix_FreeChunk + race condition in Mix_HaltChannel
-Vitaly Novichkov - Wed Dec 15 23:22:36 2021
  * Fixed possible crash in Mix_LoadMusic_RW()
-pionere - Tue Dec 14 10:01:02 2021
  * Do not report a non-playing channel as paused
-pionere - Sun Dec 12 11:47:39 2021
  * Always check 'looping' field to tell if a channel is playing
-Dasperal - Mon Nov 22 23:22:30 2021
  * Added support of quoted strings in timidity.cfg
-Austin Hurst - Sun Jul 4 20:20:00 2021
  * Added missing Mix_HasMusicDecoder().
-Ozkan Sezer - Sat Apr 3 21:56:50 2021
  * Memory leak fixes and F32 format support to fluidsynth player.
-Ozkan Sezer - Fri Mar 26 21:56:50 2021
  * Fixes to mp3 (libmad) and opus playback on big-endian systems.
-Vitaly Novichkov - Thu Feb 18 10:00:37 2021
  * Added support for Tell and Duration to MP3 libmad backend.
-Ozkan Sezer - Sun Feb 07 03:10:10 2021
- * Fixed distorted MIDI playback with FluidSynth if sample rate is
-   out of library's limits
-Ozkan Sezer - Fri Feb 05 14:33:50 2021
+ * Fixed distorted MIDI playback with FluidSynth if sample rate is out of library's limits
  * Added Mix_ModMusicJumpToOrder for mod music formats
-Ozkan Sezer - Sun Jan 31 10:03:10 2021
  * Added libxmp support for mod music playback.
-Ozkan Sezer - Sun Jan 31 00:33:00 2021
  * Fixed mikmod player reader issue with umx files
  * Enabled module internal loops in modplug player
-Ozkan Sezer - Thu Jan 28 17:02:25 2021
  * Respect original mp3 file offset
-Sam Lantinga - Wed Jan 20 10:17:10 2021
  * Fixed a use-after-free issue in fluidsynth player
-michaeljosephmaltese - Tue Nov 24 22:07:14 2020
  * Support setting soundfont via SDL_SOUNDFONTS in OSX native midi
-David Gow - Fri Oct 23 23:01:00 2020
  * Fixed mp3 file detection.
-Ozkan Sezer - Sat Jun 27 00:50:04 2020
  * Fixed divide by zero crash in voc_get_block().
-Sergio Padrino - Mon Jun 15 10:08:14 2020
  * Fixes to ogg playback on big-endian devices.
-Vitaly Novichkov - Mon Dec 23 14:01:02 2019
- * Added MetaTags api procedures Mix_GetMusicTitle,Mix_GetMusicTitleTag,
-   Mix_GetMusicArtistTag,Mix_GetMusicAlbumTag, Mix_GetMusicCopyrightTag.
-Vitaly Novichkov - Mon Dec 23 14:01:02 2019
- * Add loop points information calls Mix_GetMusicLoopStartTime,
-   Mix_GetMusicLoopEndTime and Mix_GetMusicLoopLengthTime.
-Vitaly Novichkov - Mon Dec 23 14:01:02 2019
+ * Added MetaTags api procedures:
+    Mix_GetMusicTitle()
+    Mix_GetMusicTitleTag()
+    Mix_GetMusicArtistTag()
+    Mix_GetMusicAlbumTag()
+    Mix_GetMusicCopyrightTag()
+ * Add functions to get loop point information:
+    Mix_GetMusicLoopStartTime()
+    Mix_GetMusicLoopEndTime()
+    Mix_GetMusicLoopLengthTime()
  * Add Mix_GetMusicVolume and Mix_GetMusicPosition to public api.
-Vitaly Novichkov - Sun Dec 22 17:20:50 2019
  * Avoid playing junk chunk after seek in MP3 with libmad backend.
-Ozkan Sezer - Sun Dec 22 15:55:50 2019
- * Fixes to MP3 Frankenstein streams playback (thanks to Vitaly
-   Novichkov.)
-Matthias Gatto - Tue Dec 17 21:55:00 2019
+ * Fixes to MP3 Frankenstein streams playback (thanks to Vitaly Novichkov.)
  * Add Mix_MusicDuration() to return music duration in seconds.
-Vitaly Novichkov - Tue Dec 17 15:50:02 2019
- * Fixed music_mpg123 seek bug when sample rate of the file and
-   the stream don't match
-Ozkan Sezer - Tue Dec 17 14:56:04 2019
+ * Fixed music_mpg123 seek bug when sample rate of the file and the stream don't match
  * Timidity improvements. New Mix_SetTimidityCfg() public api.
-Ozkan Sezer - Sun Dec 08 10:20:40 2019
  * Improved mp3 tag detection/skipping
-Ozkan Sezer - Thu Dec 05 01:41:50 2019
  * Updated external libraries with multiple bug/security fixes
-Vitaly Novichkov - Wed Dec 04 18:50:02 2019
  * Extended support for WAV files
-Vitaly Novichkov - Tue Nov 26 15:55:50 2019
  * Added looping support for Opus files
-Vitaly Novichkov - Tue, 26 Nov 2019 15:02:51
  * Allow rmid files be opened by native midi
-Vitaly Novichkov - Tue Nov 26 14:37:25 2019
  * Fixed possible crash in win32 native midi
-Vitaly Novichkov - Mon Nov 18 17:10:20 2019
  * Prevent clipping due to volume settings in modplug music
-Michael Day - Mon Nov 18 07:43:52 2019
  * Fixed FLAC initial stutter
-Vitaly Novichkov - Tue Nov 19 12:36:40 2019
  * Reorganized source tree layout
-Michael Day - Sat Nov 16 22:11:29 PST 2019
  * Added looping support for FLAC files
-Michael Day - Fri Nov 01 10:38:35 2019
  * Improved OGG looping support
-Sam Lantinga - Fri Oct 04 18:00:42 2019
  * Fixed loading Opus audio as audio chunks
-Sylvain Becker - Wed Aug 21 09:30:22 2019
  * Fixed Mix_FadeOutChannel() never setting fade_volume_reset
-Ioan Chera - Sat Mar 30 14:07:03 2019
  * Fixed memory leak in macOS native midi code
 
 2.0.4:
