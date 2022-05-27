@@ -5,50 +5,30 @@ The latest version of this library is available from:
 http://www.libsdl.org/projects/SDL_mixer/
 
 Due to popular demand, here is a simple multi-channel audio mixer.
-It supports 8 channels of 16 bit stereo audio, plus a single channel
-of music.
+It supports 8 channels of 16 bit stereo audio, plus a single channel of music. It can load FLAC, MP3, Ogg, VOC, and WAV format audio. It can also load MIDI, MOD, and Opus audio, depending on build options (see the note below for details.)
 
 See the header file SDL_mixer.h and the examples playwave.c and playmus.c
 for documentation on this mixer library.
 
-The mixer can currently load Microsoft WAVE files and Creative Labs VOC
-files as audio samples, it can load FLAC files with libFLAC, it can load
-Ogg Vorbis files with Ogg Vorbis or Tremor libraries, it can load MP3 files
-using mpg123 or libmad, and it can load MIDI files with Timidity,
-FluidSynth, and natively on Windows, Mac OSX, and Linux, and finally it can
-load the following file formats via ModPlug or MikMod: .MOD .S3M .IT .XM.
+The process of mixing MIDI files to wave output is very CPU intensive, so if playing regular WAVE files sound great, but playing MIDI files sound choppy, try using 8-bit audio, mono audio, or lower frequencies.
 
-Tremor decoding is disabled by default; you can enable it by passing
-	--enable-music-ogg-tremor
-to configure, or by defining MUSIC_OGG and OGG_USE_TREMOR.
-
-libmad decoding is disabled by default; you can enable it by passing
-	--enable-music-mp3-mad
-to configure, or by defining MUSIC_MP3_MAD
-vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-WARNING: The license for libmad is GPL, which means that in order to
-         use it your application must also be GPL!
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The process of mixing MIDI files to wave output is very CPU intensive,
-so if playing regular WAVE files sound great, but playing MIDI files
-sound choppy, try using 8-bit audio, mono audio, or lower frequencies.
-
-To play MIDI files using FluidSynth, you'll need to set the SDL_SOUNDFONTS
-environment variable to a Sound Font 2 (.sf2) file containing the musical
-instruments you want to use for MIDI playback.
+To play MIDI files using FluidSynth, you'll need to set the SDL_SOUNDFONTS environment variable to a Sound Font 2 (.sf2) file containing the musical instruments you want to use for MIDI playback.
 (On some Linux distributions you can install the fluid-soundfont-gm package)
 
-To play MIDI files using Timidity, you'll need to get a complete set of
-GUS patches from:
+To play MIDI files using Timidity, you'll need to get a complete set of GUS patches from:
 http://www.libsdl.org/projects/mixer/timidity/timidity.tar.gz
 and unpack them in /usr/local/lib under UNIX, and C:\ under Win32.
 
-iOS:
-In order to use this library on iOS, you should include the SDL.xcodeproj
-and Xcode-iOS/SDL_mixer.xcodeproj in your application, add the SDL/include
-and SDL_mixer directories to your "Header Search Paths" setting, then add the
-libSDL2.a and libSDL2_mixer.a to your "Link Binary with Libraries" setting.
-
 This library is under the zlib license, see the file "LICENSE.txt" for details.
 
+Note:
+Support for software MIDI, MOD, and Opus are not included by default because of the size of the decode libraries, but you can get them by running external/download.sh
+- When building with CMake, you can enable the appropriate SUPPORT_* options defined in CMakeLists.txt.
+- When building with configure/make, you can build and install them normally and the configure script will detect and use them.
+- When building with Visual Studio, you will need to build the libraries and then add the appropriate LOAD_* preprocessor define to the Visual Studio project.
+- When building with Xcode, you can edit the config at the top of the project to enable them, and you will need to include the appropriate framework in your application.
+- For Android, you can edit the config at the top of Android.mk to enable them.
+
+The default MP3 support is provided using dr_mp3. SDL_mixer also supports using libmad, but does not use it by default because the libmad license is GPL, which requires your application to also be GPL. If your application has a compatible license, you can enable libmad by passing
+	--enable-music-mp3-mad
+to configure, or by defining MUSIC_MP3_MAD

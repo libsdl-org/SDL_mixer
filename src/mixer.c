@@ -164,9 +164,55 @@ const SDL_version *Mix_Linked_Version(void)
     return(&linked_version);
 }
 
+/*
+ * Returns a bitmap of already loaded modules (MIX_INIT_* flags).
+ *
+ * Note that functions other than Mix_Init() may cause a module to get loaded
+ * (hence the looping over the interfaces instead of maintaining a set of flags
+ * just in Mix_Init() and Mix_Quit()).
+ */
+static int get_loaded_mix_init_flags(void)
+{
+    int i;
+    int loaded_init_flags = 0;
+
+    for (i = 0; i < get_num_music_interfaces(); ++i) {
+        Mix_MusicInterface *interface;
+
+        interface = get_music_interface(i);
+        if (interface->loaded) {
+            switch (interface->type) {
+            case MUS_FLAC:
+                loaded_init_flags |= MIX_INIT_FLAC;
+                break;
+            case MUS_MOD:
+                loaded_init_flags |= MIX_INIT_MOD;
+                break;
+            case MUS_MP3:
+                loaded_init_flags |= MIX_INIT_MP3;
+                break;
+            case MUS_OGG:
+                loaded_init_flags |= MIX_INIT_OGG;
+                break;
+            case MUS_MID:
+                loaded_init_flags |= MIX_INIT_MID;
+                break;
+            case MUS_OPUS:
+                loaded_init_flags |= MIX_INIT_OPUS;
+                break;
+            default:
+                break;
+            }
+        }
+    }
+
+    return loaded_init_flags;
+}
+
 int Mix_Init(int flags)
 {
     int result = 0;
+    int already_loaded = get_loaded_mix_init_flags();
 
     if (flags & MIX_INIT_FLAC) {
         if (load_music_type(MUS_FLAC)) {
@@ -216,6 +262,8 @@ int Mix_Init(int flags)
             Mix_SetError("MIDI support not available");
         }
     }
+    result |= already_loaded;
+
     return result;
 }
 
@@ -278,7 +326,7 @@ static void SDLCALL
 mix_channels(void *udata, Uint8 *stream, int len)
 {
     Uint8 *mix_input;
-    int i, mixable, volume, master_vol;
+    int i, mixable, master_vol;
     Uint32 sdl_ticks;
 
     (void)udata;
@@ -289,8 +337,7 @@ mix_channels(void *udata, Uint8 *stream, int len)
     /* Mix the music (must be done before the channels are added) */
     mix_music(music_data, stream, len);
 
-    volume = Mix_MasterVolume(-1);
-    master_vol = volume;
+    master_vol = SDL_AtomicGet(&master_volume);
 
     /* Mix any playing channels... */
     sdl_ticks = SDL_GetTicks();
@@ -324,18 +371,18 @@ mix_channels(void *udata, Uint8 *stream, int len)
                 }
             }
             if (mix_channel[i].playing > 0) {
+                int volume = (master_vol * (mix_channel[i].volume * mix_channel[i].chunk->volume)) / (MIX_MAX_VOLUME * MIX_MAX_VOLUME);
                 int index = 0;
                 int remaining = len;
                 while (mix_channel[i].playing > 0 && index < len) {
                     remaining = len - index;
-                    volume = (master_vol * (mix_channel[i].volume * mix_channel[i].chunk->volume)) / (MIX_MAX_VOLUME * MIX_MAX_VOLUME);
                     mixable = mix_channel[i].playing;
                     if (mixable > remaining) {
                         mixable = remaining;
                     }
 
                     mix_input = Mix_DoEffects(i, mix_channel[i].samples, mixable);
-                    SDL_MixAudioFormat(stream+index,mix_input,mixer.format,mixable,volume);
+                    SDL_MixAudioFormat(stream+index, mix_input, mixer.format, mixable, volume);
                     if (mix_input != mix_channel[i].samples)
                         SDL_free(mix_input);
 
@@ -346,6 +393,9 @@ mix_channels(void *udata, Uint8 *stream, int len)
                     /* rcg06072001 Alert app if channel is done playing. */
                     if (!mix_channel[i].playing && !mix_channel[i].looping) {
                         _Mix_channel_done_playing(i);
+
+                        /* Update the volume after the application callback */
+                        volume = (master_vol * (mix_channel[i].volume * mix_channel[i].chunk->volume)) / (MIX_MAX_VOLUME * MIX_MAX_VOLUME);
                     }
                 }
 
@@ -1005,7 +1055,7 @@ int Mix_PlayChannelTimed(int which, Mix_Chunk *chunk, int loops, int ticks)
 
         /* Queue up the audio data for this channel */
         if (which >= 0 && which < num_channels) {
-            Uint32 sdl_ticks = SDL_GetTicks();            
+            Uint32 sdl_ticks = SDL_GetTicks();
             mix_channel[which].samples = chunk->abuf;
             mix_channel[which].playing = (int)chunk->alen;
             mix_channel[which].looping = loops;
@@ -1076,7 +1126,7 @@ int Mix_FadeInChannelTimed(int which, Mix_Chunk *chunk, int loops, int ms, int t
 
         /* Queue up the audio data for this channel */
         if (which >= 0 && which < num_channels) {
-            Uint32 sdl_ticks = SDL_GetTicks();            
+            Uint32 sdl_ticks = SDL_GetTicks();
             mix_channel[which].samples = chunk->abuf;
             mix_channel[which].playing = (int)chunk->alen;
             mix_channel[which].looping = loops;

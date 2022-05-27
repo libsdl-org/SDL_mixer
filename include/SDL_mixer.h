@@ -38,7 +38,7 @@ extern "C" {
 */
 #define SDL_MIXER_MAJOR_VERSION 2
 #define SDL_MIXER_MINOR_VERSION 5
-#define SDL_MIXER_PATCHLEVEL    0
+#define SDL_MIXER_PATCHLEVEL    1
 
 /* This macro can be used to fill a version structure with the compile-time
  * version of the SDL_mixer library.
@@ -590,8 +590,8 @@ extern DECLSPEC int SDLCALL Mix_VolumeMusic(int volume);
 /* Get the current volume value in the range of 0-128 of a music stream */
 extern DECLSPEC int SDLCALL Mix_GetMusicVolume(Mix_Music *music);
 
-/* Set the master volume overall playing channels.
-   This did not affect the member variables channel or chunck volume.
+/* Set the master volume for all channels.
+   This did not affect the member variables of channel or chunk volume.
    If the specified volume is -1, just return the current master volume.
 */
 extern DECLSPEC int SDLCALL Mix_MasterVolume(int volume);

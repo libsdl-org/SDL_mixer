@@ -7,7 +7,7 @@
 LIBNAME = SDL2mix
 MAJOR_VERSION = 2
 MINOR_VERSION = 5
-MICRO_VERSION = 0
+MICRO_VERSION = 1
 VERSION = $(MAJOR_VERSION).$(MINOR_VERSION).$(MICRO_VERSION)
 
 TITLENAME = $(LIBNAME) $(VERSION)
@@ -23,14 +23,20 @@ USE_WAV=yes
 USE_OGG=yes
 # use integer-only Tremor (libvorbisidec) instead of libvorbis?
 USE_TREMOR=no
-# flac music support
+# use stb_vorbis instead of libvorbis?
+USE_STBVORBIS=no
+# flac music support (using libflac)
 USE_FLAC=yes
+# flac music support (using dr_flac)
+USE_DRFLAC=no
 # opus music support
 USE_OPUS=yes
 # mp3 music support (using libmad - Note: GPL license!)
 USE_LIBMAD=no
 # mp3 music support (using mpg123)
 USE_MPG123=yes
+# mp3 music support (using dr_mp3)
+USE_DRMP3=no
 # midi music support (using timidity)
 USE_TIMIDITY=yes
 # midi music support (using fluidsynth)
@@ -50,8 +56,9 @@ TIMILIB = timidity.lib
 SRCS = utils.c effect_position.c effects_internal.c effect_stereoreverse.c mixer.c music.c
 # codec sources:
 SRCS+= load_aiff.c load_voc.c music_wav.c &
-       mp3utils.c music_mad.c music_mpg123.c &
-       music_ogg.c music_opus.c music_flac.c &
+       music_ogg.c music_ogg_stb.c music_opus.c &
+       music_flac.c music_drflac.c mp3utils.c &
+       music_mad.c music_mpg123.c music_drmp3.c &
        music_xmp.c music_mikmod.c music_modplug.c &
        music_fluidsynth.c music_timidity.c
 # timidity sources:
@@ -96,24 +103,29 @@ VORBIS_LIBS=vorbisfile.lib vorbis.lib
 !endif
 !ifeq USE_OGG yes
 CFLAGS+= -DMUSIC_OGG
+!ifeq USE_STBVORBIS yes
+CFLAGS+= -DOGG_USE_STB
+!else
 !ifeq USE_TREMOR yes
 CFLAGS+= -DOGG_USE_TREMOR
 !endif
 LIBS+= $(VORBIS_LIBS)
-LIBS+= ogg.lib
+NEED_LIBOGG=yes
+!endif
 !endif
 
 !ifeq USE_FLAC yes
-CFLAGS+= -DMUSIC_FLAC
+CFLAGS+= -DMUSIC_FLAC_LIBFLAC
 LIBS+= FLAC.lib
+!endif
+!ifeq USE_DRFLAC yes
+CFLAGS+= -DMUSIC_FLAC_DRFLAC
 !endif
 
 !ifeq USE_OPUS yes
 CFLAGS+= -DMUSIC_OPUS
 LIBS+= opusfile.lib opus.lib
-!ifneq USE_OGG yes
-LIBS+= ogg.lib
-!endif
+NEED_LIBOGG=yes
 !endif
 
 !ifeq USE_LIBMAD yes
@@ -123,6 +135,9 @@ LIBS+= mad.lib
 !ifeq USE_MPG123 yes
 CFLAGS+= -DMUSIC_MP3_MPG123
 LIBS+= mpg123.lib
+!endif
+!ifeq USE_DRMP3 yes
+CFLAGS+= -DMUSIC_MP3_DRMP3
 !endif
 
 !ifeq USE_XMP yes
@@ -136,6 +151,10 @@ LIBS+= mikmod.lib
 !ifeq USE_MODPLUG yes
 CFLAGS+= -DMUSIC_MOD_MODPLUG
 LIBS+= modplug.lib
+!endif
+
+!ifeq NEED_LIBOGG yes
+LIBS+= ogg.lib
 !endif
 
 # For the static assertions in mixer.c

@@ -24,7 +24,7 @@
 /* This file supports streaming WAV files */
 
 #include "music_wav.h"
-
+#include "mp3utils.h"
 
 typedef struct {
     SDL_bool active;
@@ -247,6 +247,12 @@ static int WAV_Play(void *context, int play_count)
         return -1;
     }
     return 0;
+}
+
+static void WAV_Stop(void *context)
+{
+    WAV_Music *music = (WAV_Music *)context;
+    SDL_AudioStreamClear(music->stream);
 }
 
 static int fetch_pcm(void *context, int length)
@@ -652,7 +658,7 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
         Mix_SetError("Couldn't read %d bytes from WAV file", chunk_length);
         return SDL_FALSE;
     }
-    chunk_length -= size;
+    chunk_length = (Uint32)(chunk_length - size);
     if (chunk_length != 0 && SDL_RWseek(wave->src, chunk_length, RW_SEEK_CUR) < 0) {
         Mix_SetError("Couldn't read %d bytes from WAV file", chunk_length);
         return SDL_FALSE;
@@ -870,6 +876,33 @@ static SDL_bool ParseLIST(WAV_Music *wave, Uint32 chunk_length)
     return SDL_TRUE;
 }
 
+static SDL_bool ParseID3(WAV_Music *wave, Uint32 chunk_length)
+{
+    SDL_bool loaded = SDL_TRUE;
+
+    Uint8 *data;
+    data = (Uint8 *)SDL_malloc(chunk_length);
+
+    if (!data) {
+        SDL_OutOfMemory();
+        return SDL_FALSE;
+    }
+
+    if (!SDL_RWread(wave->src, data, chunk_length, 1)) {
+        Mix_SetError("Couldn't read %d bytes from WAV file", chunk_length);
+        loaded = SDL_FALSE;
+    }
+
+    if (loaded) {
+        read_id3v2_from_mem(&wave->tags, data, chunk_length);
+    }
+
+    /* done: */
+    SDL_free(data);
+
+    return loaded;
+}
+
 static SDL_bool LoadWAVMusic(WAV_Music *wave)
 {
     SDL_RWops *src = wave->src;
@@ -916,6 +949,10 @@ static SDL_bool LoadWAVMusic(WAV_Music *wave)
             break;
         case LIST:
             if (!ParseLIST(wave, chunk_length))
+                return SDL_FALSE;
+            break;
+        case ID3_:
+            if (!ParseID3(wave, chunk_length))
                 return SDL_FALSE;
             break;
         default:
@@ -1034,6 +1071,11 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
             found_FVER = SDL_TRUE;
             AIFCVersion1 = SDL_ReadBE32(src);
             (void)AIFCVersion1; /* unused */
+            break;
+
+        case AIFF_ID3_:
+            if (!ParseID3(wave, chunk_length))
+                return SDL_FALSE;
             break;
 
         case MARK:
@@ -1214,7 +1256,7 @@ Mix_MusicInterface Mix_MusicInterface_WAV =
     WAV_GetMetaTag,   /* GetMetaTag */
     NULL,   /* Pause */
     NULL,   /* Resume */
-    NULL,   /* Stop */
+    WAV_Stop, /* Stop */
     WAV_Delete,
     NULL,   /* Close */
     NULL    /* Unload */

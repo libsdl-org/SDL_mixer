@@ -153,9 +153,11 @@ typedef struct {
     double total_length;
     int sample_rate;
     int sample_position;
+    Mix_MusicMetaTags tags;
 
     unsigned char input_buffer[MAD_INPUT_BUFFER_SIZE + MAD_BUFFER_GUARD];
 } MAD_Music;
+
 
 static void read_update_buffer(struct mad_stream *stream, MAD_Music *music);
 
@@ -326,7 +328,8 @@ static void *MAD_CreateFromRW(SDL_RWops *src, int freesrc)
         SDL_free(music);
         return NULL;
     }
-    if (mp3_skiptags(&music->mp3file, SDL_FALSE) < 0) {
+    meta_tags_init(&music->tags);
+    if (mp3_read_tags(&music->tags, &music->mp3file, SDL_FALSE) < 0) {
         SDL_free(music);
         Mix_SetError("music_mad: corrupt mp3 file (bad tags.)");
         return NULL;
@@ -365,6 +368,12 @@ static int MAD_Play(void *context, int play_count)
     MAD_Music *music = (MAD_Music *)context;
     music->play_count = play_count;
     return MAD_Seek(music, 0.0);
+}
+
+static void MAD_Stop(void *context)
+{
+    MAD_Music *music = (MAD_Music *)context;
+    SDL_AudioStreamClear(music->audiostream);
 }
 
 
@@ -623,6 +632,12 @@ static double MAD_Duration(void *context)
     return music->total_length;
 }
 
+static const char* MAD_GetMetaTag(void *context, Mix_MusicMetaTag tag_type)
+{
+    MAD_Music *music = (MAD_Music *)context;
+    return meta_tags_get(&music->tags, tag_type);
+}
+
 static void MAD_Delete(void *context)
 {
     MAD_Music *music = (MAD_Music *)context;
@@ -630,6 +645,7 @@ static void MAD_Delete(void *context)
     mad_stream_finish(&music->stream);
     mad_frame_finish(&music->frame);
     mad_synth_finish(&music->synth);
+    meta_tags_clear(&music->tags);
 
     if (music->audiostream) {
         SDL_FreeAudioStream(music->audiostream);
@@ -664,10 +680,10 @@ Mix_MusicInterface Mix_MusicInterface_MAD =
     NULL,   /* LoopStart */
     NULL,   /* LoopEnd */
     NULL,   /* LoopLength */
-    NULL,   /* GetMetaTag */
+    MAD_GetMetaTag,
     NULL,   /* Pause */
     NULL,   /* Resume */
-    NULL,   /* Stop */
+    MAD_Stop,
     MAD_Delete,
     NULL,   /* Close */
     NULL    /* Unload */

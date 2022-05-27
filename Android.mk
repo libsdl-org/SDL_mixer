@@ -4,30 +4,39 @@ SDL_MIXER_LOCAL_PATH := $(call my-dir)
 # Enable this if you want to support loading WAV music
 SUPPORT_WAV ?= true
 
+# Enable this if you want to support loading FLAC music via dr_flac
+SUPPORT_FLAC_DRFLAC ?= true
+
 # Enable this if you want to support loading FLAC music with libFLAC
-SUPPORT_FLAC ?= true
+SUPPORT_FLAC_LIBFLAC ?= false
 FLAC_LIBRARY_PATH := external/flac
 
+# Enable this if you want to support loading OGG Vorbis music via stb_vorbis
+SUPPORT_OGG_STB ?= true
+
 # Enable this if you want to support loading OGG Vorbis music via Tremor
-SUPPORT_OGG ?= true
+SUPPORT_OGG ?= false
 OGG_LIBRARY_PATH := external/ogg
 VORBIS_LIBRARY_PATH := external/tremor
 
+# Enable this if you want to support loading MP3 music via dr_mp3
+SUPPORT_MP3_DRMP3 ?= true
+
 # Enable this if you want to support loading MP3 music via MPG123
-SUPPORT_MP3_MPG123 ?= true
+SUPPORT_MP3_MPG123 ?= false
 MPG123_LIBRARY_PATH := external/mpg123
 
 # Enable this if you want to support loading MOD music via modplug
-SUPPORT_MOD_MODPLUG ?= true
+SUPPORT_MOD_MODPLUG ?= false
 MODPLUG_LIBRARY_PATH := external/libmodplug
 
 # Enable this if you want to support TiMidity
-SUPPORT_MID_TIMIDITY ?= true
+SUPPORT_MID_TIMIDITY ?= false
 TIMIDITY_LIBRARY_PATH := src/codecs/timidity
 
 
 # Build the library
-ifeq ($(SUPPORT_FLAC),true)
+ifeq ($(SUPPORT_FLAC_LIBFLAC),true)
     include $(SDL_MIXER_LOCAL_PATH)/$(FLAC_LIBRARY_PATH)/Android.mk
 endif
 
@@ -81,10 +90,18 @@ ifeq ($(SUPPORT_WAV),true)
     LOCAL_CFLAGS += -DMUSIC_WAV
 endif
 
-ifeq ($(SUPPORT_FLAC),true)
+ifeq ($(SUPPORT_FLAC_DRFLAC),true)
+    LOCAL_CFLAGS += -DMUSIC_FLAC_DRFLAC
+endif
+
+ifeq ($(SUPPORT_FLAC_LIBFLAC),true)
     LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(FLAC_LIBRARY_PATH)/include
-    LOCAL_CFLAGS += -DMUSIC_FLAC
+    LOCAL_CFLAGS += -DMUSIC_FLAC_LIBFLAC
     LOCAL_STATIC_LIBRARIES += libFLAC
+endif
+
+ifeq ($(SUPPORT_OGG_STB),true)
+    LOCAL_CFLAGS += -DMUSIC_OGG -DOGG_USE_STB
 endif
 
 ifeq ($(SUPPORT_OGG),true)
@@ -92,6 +109,10 @@ ifeq ($(SUPPORT_OGG),true)
     LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(VORBIS_LIBRARY_PATH)
     LOCAL_CFLAGS += -DMUSIC_OGG -DOGG_USE_TREMOR -DOGG_HEADER="<ivorbisfile.h>"
     LOCAL_STATIC_LIBRARIES += ogg vorbisidec
+endif
+
+ifeq ($(SUPPORT_MP3_DRMP3),true)
+    LOCAL_CFLAGS += -DMUSIC_MP3_DRMP3
 endif
 
 # This needs to be a shared library to comply with the LGPL license

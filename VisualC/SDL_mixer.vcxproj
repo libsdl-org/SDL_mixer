@@ -79,6 +79,22 @@
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(SolutionDir)..\..\SDL\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\SDL\VisualC\$(PlatformName)\$(Configuration);$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(SolutionDir)..\..\SDL\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\SDL\VisualC\$(PlatformName)\$(Configuration);$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(SolutionDir)..\..\SDL\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\SDL\VisualC\$(PlatformName)\$(Configuration);$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(SolutionDir)..\..\SDL\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\SDL\VisualC\$(PlatformName)\$(Configuration);$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Midl>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -93,7 +109,7 @@
       <AdditionalOptions>/D OGG_DYNAMIC=\"libvorbisfile-3.dll\" %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\include;..\src;..\src\codecs;..\src\codecs\timidity;..\src\codecs\native_midi;external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>DLL_EXPORT;_DEBUG;WIN32;_WINDOWS;MUSIC_WAV;MUSIC_MOD_MODPLUG;MODPLUG_DYNAMIC="libmodplug-1.dll";MUSIC_OGG;OGG_DYNAMIC="libvorbisfile-3.dll";MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";MUSIC_FLAC;FLAC_DYNAMIC="libFLAC-8.dll";MUSIC_MP3_MPG123;MPG123_DYNAMIC="libmpg123-0.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DLL_EXPORT;_DEBUG;WIN32;_WINDOWS;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MOD_MODPLUG;MODPLUG_DYNAMIC="libmodplug-1.dll";MUSIC_MP3_DRMP3;MUSIC_OGG;OGG_USE_STB;MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
@@ -123,7 +139,7 @@
       <AdditionalOptions>/D OGG_DYNAMIC=\"libvorbisfile-3.dll\" %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\include;..\src;..\src\codecs;..\src\codecs\timidity;..\src\codecs\native_midi;external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>DLL_EXPORT;_DEBUG;WIN32;_WINDOWS;MUSIC_WAV;MUSIC_MOD_MODPLUG;MODPLUG_DYNAMIC="libmodplug-1.dll";MUSIC_OGG;OGG_DYNAMIC="libvorbisfile-3.dll";MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";MUSIC_FLAC;FLAC_DYNAMIC="libFLAC-8.dll";MUSIC_MP3_MPG123;MPG123_DYNAMIC="libmpg123-0.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DLL_EXPORT;_DEBUG;WIN32;_WINDOWS;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MOD_MODPLUG;MODPLUG_DYNAMIC="libmodplug-1.dll";MUSIC_MP3_DRMP3;MUSIC_OGG;OGG_USE_STB;MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
@@ -152,7 +168,7 @@
     <ClCompile>
       <AdditionalOptions>/D OGG_DYNAMIC=\"libvorbisfile-3.dll\" %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>..\include;..\src;..\src\codecs;..\src\codecs\timidity;..\src\codecs\native_midi;external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>DLL_EXPORT;NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_MOD_MODPLUG;MODPLUG_DYNAMIC="libmodplug-1.dll";MUSIC_OGG;OGG_DYNAMIC="libvorbisfile-3.dll";MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";MUSIC_FLAC;FLAC_DYNAMIC="libFLAC-8.dll";MUSIC_MP3_MPG123;MPG123_DYNAMIC="libmpg123-0.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DLL_EXPORT;NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MOD_MODPLUG;MODPLUG_DYNAMIC="libmodplug-1.dll";MUSIC_MP3_DRMP3;MUSIC_OGG;OGG_USE_STB;MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
@@ -179,7 +195,7 @@
     <ClCompile>
       <AdditionalOptions>/D OGG_DYNAMIC=\"libvorbisfile-3.dll\" %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>..\include;..\src;..\src\codecs;..\src\codecs\timidity;..\src\codecs\native_midi;external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>DLL_EXPORT;NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_MOD_MODPLUG;MODPLUG_DYNAMIC="libmodplug-1.dll";MUSIC_OGG;OGG_DYNAMIC="libvorbisfile-3.dll";MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";MUSIC_FLAC;FLAC_DYNAMIC="libFLAC-8.dll";MUSIC_MP3_MPG123;MPG123_DYNAMIC="libmpg123-0.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DLL_EXPORT;NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MOD_MODPLUG;MODPLUG_DYNAMIC="libmodplug-1.dll";MUSIC_MP3_DRMP3;MUSIC_OGG;OGG_USE_STB;MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
@@ -195,6 +211,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\include\SDL_mixer.h" />
+    <ClInclude Include="..\src\codecs\music_drflac.h" />
+    <ClInclude Include="..\src\codecs\music_drmp3.h" />
+    <ClInclude Include="..\src\codecs\music_xmp.h" />
     <ClInclude Include="..\src\utils.h" />
     <ClInclude Include="..\src\effects_internal.h" />
     <ClInclude Include="..\src\mixer.h" />
@@ -242,15 +261,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="external\lib\x64\libFLAC-8.dll">
-      <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Copying %(Filename)%(Extension)</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Copying %(Filename)%(Extension)</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
-    </CustomBuild>
     <CustomBuild Include="external\lib\x64\libmodplug-1.dll">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
@@ -280,32 +290,6 @@
     </CustomBuild>
     <CustomBuild Include="external\lib\x64\libopusfile-0.dll">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Copying %(Filename)%(Extension)</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Copying %(Filename)%(Extension)</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="external\lib\x64\libvorbis-0.dll">
-      <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Copying %(Filename)%(Extension)</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Copying %(Filename)%(Extension)</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="external\lib\x64\libvorbisfile-3.dll">
-      <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Copying %(Filename)%(Extension)</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Copying %(Filename)%(Extension)</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="external\lib\x64\LICENSE.FLAC.txt">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Copying %(Filename)%(Extension)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
@@ -345,15 +329,6 @@
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Copying %(Filename)%(Extension)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
     </CustomBuild>
-    <CustomBuild Include="external\lib\x86\libFLAC-8.dll">
-      <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copying %(Filename)%(Extension)</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Copying %(Filename)%(Extension)</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
-    </CustomBuild>
     <CustomBuild Include="external\lib\x86\libmodplug-1.dll">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
@@ -383,32 +358,6 @@
     </CustomBuild>
     <CustomBuild Include="external\lib\x86\libopusfile-0.dll">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copying %(Filename)%(Extension)</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Copying %(Filename)%(Extension)</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="external\lib\x86\libvorbis-0.dll">
-      <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copying %(Filename)%(Extension)</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Copying %(Filename)%(Extension)</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="external\lib\x86\libvorbisfile-3.dll">
-      <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copying %(Filename)%(Extension)</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Copying %(Filename)%(Extension)</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="external\lib\x86\LICENSE.FLAC.txt">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copying %(Filename)%(Extension)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
@@ -450,6 +399,10 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\codecs\music_drflac.c" />
+    <ClCompile Include="..\src\codecs\music_drmp3.c" />
+    <ClCompile Include="..\src\codecs\music_ogg_stb.c" />
+    <ClCompile Include="..\src\codecs\music_xmp.c" />
     <ClCompile Include="..\src\utils.c" />
     <ClCompile Include="..\src\effects_internal.c" />
     <ClCompile Include="..\src\effect_position.c" />
@@ -471,42 +424,6 @@
     <ClCompile Include="..\src\codecs\music_opus.c" />
     <ClCompile Include="..\src\codecs\music_timidity.c" />
     <ClCompile Include="..\src\codecs\music_wav.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="external\lib\x64\libmpg123-0.dll">
-      <FileType>Document</FileType>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Copying %(Filename)%(Extension)</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Copying %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
-    </CustomBuild>
-    <CustomBuild Include="external\lib\x64\LICENSE.mpg123.txt">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Copying %(Filename)%(Extension)</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Copying %(Filename)%(Extension)</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="external\lib\x86\libmpg123-0.dll">
-      <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copying %(Filename)%(Extension)</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Copying %(Filename)%(Extension)</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="external\lib\x86\LICENSE.mpg123.txt">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copying %(Filename)%(Extension)</Message>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Copying %(Filename)%(Extension)</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
-    </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

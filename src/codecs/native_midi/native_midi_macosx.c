@@ -294,9 +294,6 @@ void native_midi_start(NativeMidiSong *song, int loops)
     if (song == NULL)
         return;
 
-    SDL_PauseAudio(1);
-    Mix_UnlockAudio();
-
     if (currentsong)
         MusicPlayerStop(currentsong->player);
 
@@ -315,9 +312,6 @@ void native_midi_start(NativeMidiSong *song, int loops)
 
     MusicPlayerSetTime(song->player, 0);
     MusicPlayerStart(song->player);
-
-    Mix_LockAudio();
-    SDL_PauseAudio(0);
 }
 
 void native_midi_pause(void)
@@ -331,12 +325,8 @@ void native_midi_resume(void)
 void native_midi_stop(void)
 {
     if (currentsong) {
-        SDL_PauseAudio(1);
-        Mix_UnlockAudio();
         MusicPlayerStop(currentsong->player);
         currentsong = NULL;
-        Mix_LockAudio();
-        SDL_PauseAudio(0);
     }
 }
 

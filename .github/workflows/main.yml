@@ -71,9 +71,11 @@ jobs:
       run: |
         cmake -B build \
           -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+          -DCMAKE_BUILD_TYPE=Release \
           -DCMAKE_VERBOSE_MAKEFILE=ON \
           -DSUPPORT_FLAC=ON \
           -DSUPPORT_OGG=ON \
+          -DSUPPORT_OPUS=ON \
           -DSUPPORT_MP3_MPG123=ON \
           -DSUPPORT_MOD_MODPLUG=ON \
           ${{ matrix.platform.cmake }}

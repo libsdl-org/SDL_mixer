@@ -39,23 +39,23 @@
 
 /* Begin PBXFileReference section */
 		F3F70F52281F686A005AA27D /* tremor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = tremor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		F3F70F5F281F6982005AA27D /* sharedbook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sharedbook.c; path = "../../external/tremor/sharedbook.c"; sourceTree = "<group>"; };
-		F3F70F60281F6982005AA27D /* window.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = window.c; path = "../../external/tremor/window.c"; sourceTree = "<group>"; };
-		F3F70F61281F6982005AA27D /* floor1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = floor1.c; path = "../../external/tremor/floor1.c"; sourceTree = "<group>"; };
-		F3F70F62281F6982005AA27D /* floor0.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = floor0.c; path = "../../external/tremor/floor0.c"; sourceTree = "<group>"; };
-		F3F70F63281F6982005AA27D /* mdct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mdct.c; path = "../../external/tremor/mdct.c"; sourceTree = "<group>"; };
-		F3F70F64281F6982005AA27D /* block.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = block.c; path = "../../external/tremor/block.c"; sourceTree = "<group>"; };
-		F3F70F65281F6982005AA27D /* vorbisfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vorbisfile.c; path = "../../external/tremor/vorbisfile.c"; sourceTree = "<group>"; };
-		F3F70F66281F6982005AA27D /* registry.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = registry.c; path = "../../external/tremor/registry.c"; sourceTree = "<group>"; };
-		F3F70F67281F6982005AA27D /* info.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = info.c; path = "../../external/tremor/info.c"; sourceTree = "<group>"; };
-		F3F70F68281F6982005AA27D /* res012.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = res012.c; path = "../../external/tremor/res012.c"; sourceTree = "<group>"; };
-		F3F70F69281F6982005AA27D /* synthesis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = synthesis.c; path = "../../external/tremor/synthesis.c"; sourceTree = "<group>"; };
-		F3F70F6A281F6982005AA27D /* mapping0.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mapping0.c; path = "../../external/tremor/mapping0.c"; sourceTree = "<group>"; };
-		F3F70F6B281F6982005AA27D /* codebook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = codebook.c; path = "../../external/tremor/codebook.c"; sourceTree = "<group>"; };
-		F3F70F7A281F69A9005AA27D /* ivorbiscodec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ivorbiscodec.h; path = "../../external/tremor/ivorbiscodec.h"; sourceTree = "<group>"; };
-		F3F70F7B281F69A9005AA27D /* ivorbisfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ivorbisfile.h; path = "../../external/tremor/ivorbisfile.h"; sourceTree = "<group>"; };
-		F3F70F7F281F69CA005AA27D /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README; path = "../../external/tremor/README"; sourceTree = "<group>"; };
-		F3F70F80281F69CA005AA27D /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING; path = "../../external/tremor/COPYING"; sourceTree = "<group>"; };
+		F3F70F5F281F6982005AA27D /* sharedbook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sharedbook.c; path = ../../external/tremor/sharedbook.c; sourceTree = "<group>"; };
+		F3F70F60281F6982005AA27D /* window.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = window.c; path = ../../external/tremor/window.c; sourceTree = "<group>"; };
+		F3F70F61281F6982005AA27D /* floor1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = floor1.c; path = ../../external/tremor/floor1.c; sourceTree = "<group>"; };
+		F3F70F62281F6982005AA27D /* floor0.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = floor0.c; path = ../../external/tremor/floor0.c; sourceTree = "<group>"; };
+		F3F70F63281F6982005AA27D /* mdct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mdct.c; path = ../../external/tremor/mdct.c; sourceTree = "<group>"; };
+		F3F70F64281F6982005AA27D /* block.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = block.c; path = ../../external/tremor/block.c; sourceTree = "<group>"; };
+		F3F70F65281F6982005AA27D /* vorbisfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vorbisfile.c; path = ../../external/tremor/vorbisfile.c; sourceTree = "<group>"; };
+		F3F70F66281F6982005AA27D /* registry.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = registry.c; path = ../../external/tremor/registry.c; sourceTree = "<group>"; };
+		F3F70F67281F6982005AA27D /* info.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = info.c; path = ../../external/tremor/info.c; sourceTree = "<group>"; };
+		F3F70F68281F6982005AA27D /* res012.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = res012.c; path = ../../external/tremor/res012.c; sourceTree = "<group>"; };
+		F3F70F69281F6982005AA27D /* synthesis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = synthesis.c; path = ../../external/tremor/synthesis.c; sourceTree = "<group>"; };
+		F3F70F6A281F6982005AA27D /* mapping0.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mapping0.c; path = ../../external/tremor/mapping0.c; sourceTree = "<group>"; };
+		F3F70F6B281F6982005AA27D /* codebook.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = codebook.c; path = ../../external/tremor/codebook.c; sourceTree = "<group>"; };
+		F3F70F7A281F69A9005AA27D /* ivorbiscodec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ivorbiscodec.h; path = ../../external/tremor/ivorbiscodec.h; sourceTree = "<group>"; };
+		F3F70F7B281F69A9005AA27D /* ivorbisfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ivorbisfile.h; path = ../../external/tremor/ivorbisfile.h; sourceTree = "<group>"; };
+		F3F70F7F281F69CA005AA27D /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README; path = ../../external/tremor/README; sourceTree = "<group>"; };
+		F3F70F80281F69CA005AA27D /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING; path = ../../external/tremor/COPYING; sourceTree = "<group>"; };
 		F3F70F83281F69E6005AA27D /* ogg.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ogg.xcodeproj; path = ../ogg/ogg.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -313,7 +313,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)\"";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -375,7 +375,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)\"";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";

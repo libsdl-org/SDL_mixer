@@ -40,6 +40,7 @@ typedef struct {
     int  (*ModPlug_Read)(ModPlugFile* file, void* buffer, int size);
     void (*ModPlug_Seek)(ModPlugFile* file, int millisecond);
     void (*ModPlug_SeekOrder)(ModPlugFile* file, int order);
+    int  (*ModPlug_Tell)(ModPlugFile* file);
     int  (*ModPlug_GetLength)(ModPlugFile* file);
     void (*ModPlug_GetSettings)(ModPlug_Settings* settings);
     void (*ModPlug_SetSettings)(const ModPlug_Settings* settings);
@@ -80,6 +81,13 @@ static int MODPLUG_Load(void)
         FUNCTION_LOADER(ModPlug_SetSettings, void (*)(const ModPlug_Settings* settings))
         FUNCTION_LOADER(ModPlug_SetMasterVolume, void (*)(ModPlugFile* file,unsigned int cvol))
         FUNCTION_LOADER(ModPlug_GetName, const char* (*)(ModPlugFile* file))
+#ifdef MODPLUG_DYNAMIC
+        modplug.ModPlug_Tell = (int (*)(ModPlugFile* file)) SDL_LoadFunction(modplug.handle, "ModPlug_Tell");
+#elif defined(MODPLUG_HAS_TELL)
+        modplug.ModPlug_Tell = ModPlug_Tell;
+#else
+        modplug.ModPlug_Tell = NULL;
+#endif
     }
     ++modplug.loaded;
 
@@ -224,6 +232,12 @@ static int MODPLUG_Play(void *context, int play_count)
     return MODPLUG_Seek(music, 0.0);
 }
 
+static void MODPLUG_Stop(void *context)
+{
+    MODPLUG_Music *music = (MODPLUG_Music *)context;
+    SDL_AudioStreamClear(music->stream);
+}
+
 /* Play some of a stream previously started with modplug_play() */
 static int MODPLUG_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 {
@@ -284,6 +298,16 @@ static int MODPLUG_Seek(void *context, double position)
     return 0;
 }
 
+static double MODPLUG_Tell(void *context)
+{
+    if (modplug.ModPlug_Tell) {
+        MODPLUG_Music *music = (MODPLUG_Music *)context;
+        return (double)(modplug.ModPlug_Tell(music->file)) / 1000.0;
+    } else {
+        return -1.0;
+    }
+}
+
 /* Return music duration in seconds */
 static double MODPLUG_Duration(void *context)
 {
@@ -333,7 +357,7 @@ Mix_MusicInterface Mix_MusicInterface_MODPLUG =
     MODPLUG_GetAudio,
     MODPLUG_Jump,
     MODPLUG_Seek,
-    NULL,   /* Tell */
+    MODPLUG_Tell,
     MODPLUG_Duration,
     NULL,   /* LoopStart */
     NULL,   /* LoopEnd */
@@ -341,7 +365,7 @@ Mix_MusicInterface Mix_MusicInterface_MODPLUG =
     MODPLUG_GetMetaTag,
     NULL,   /* Pause */
     NULL,   /* Resume */
-    NULL,   /* Stop */
+    MODPLUG_Stop,
     MODPLUG_Delete,
     NULL,   /* Close */
     MODPLUG_Unload

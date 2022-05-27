@@ -41,6 +41,7 @@ struct _NativeMidiSong {
   Uint16 ppqn;
   int Size;
   int NewPos;
+  SDL_mutex *mutex;
 };
 
 static UINT MidiDevice=MIDI_MAPPER;
@@ -164,31 +165,40 @@ static void MIDItoStream(NativeMidiSong *song, MIDIEvent *evntlist)
 void CALLBACK MidiProc( HMIDIIN hMidi, UINT uMsg, DWORD_PTR dwInstance,
                         DWORD_PTR dwParam1, DWORD_PTR dwParam2 )
 {
+    NativeMidiSong *song = (NativeMidiSong *)dwInstance;
     (void)hMidi;
-    (void)dwInstance;
     (void)dwParam2;
 
+    if (!song) {
+        return;
+    }
+
+    SDL_LockMutex(song->mutex);
     switch( uMsg )
     {
     case MOM_DONE:
-      if ((currentsong->MusicLoaded) && (dwParam1 == (DWORD_PTR)&currentsong->MidiStreamHdr[currentsong->CurrentHdr]))
-        BlockOut(currentsong);
+      if (song->MusicPlaying && song->MusicLoaded && (dwParam1 == (DWORD_PTR)&song->MidiStreamHdr[song->CurrentHdr]))
+        BlockOut(song);
       break;
     case MOM_POSITIONCB:
-      if ((currentsong->MusicLoaded) && (dwParam1 == (DWORD_PTR)&currentsong->MidiStreamHdr[currentsong->CurrentHdr])) {
-        if (currentsong->Loops) {
-          if (currentsong->Loops > 0)
-            --currentsong->Loops;
-          currentsong->NewPos=0;
-          BlockOut(currentsong);
+      if (song->MusicPlaying && song->MusicLoaded && (dwParam1 == (DWORD_PTR)&song->MidiStreamHdr[song->CurrentHdr])) {
+        if (song->Loops) {
+          if (song->Loops > 0)
+            --song->Loops;
+          song->NewPos=0;
+          BlockOut(song);
         } else {
-          currentsong->MusicPlaying=0;
+          song->MusicPlaying=0;
         }
       }
+      break;
+    case MOM_CLOSE:
+      song->MusicPlaying=0;
       break;
     default:
       break;
     }
+    SDL_UnlockMutex(song->mutex);
 }
 
 int native_midi_detect(void)
@@ -226,6 +236,8 @@ NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *src, int freesrc)
 
     FreeMIDIEventList(evntlist);
 
+    newsong->mutex = SDL_CreateMutex();
+
     if (freesrc) {
         SDL_RWclose(src);
     }
@@ -234,15 +246,11 @@ NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *src, int freesrc)
 
 void native_midi_freesong(NativeMidiSong *song)
 {
-  if (hMidiStream)
-  {
-    midiStreamStop(hMidiStream);
-    midiStreamClose(hMidiStream);
-  }
   if (song)
   {
     if (song->NewEvents)
       SDL_free(song->NewEvents);
+    SDL_DestroyMutex(song->mutex);
     SDL_free(song);
   }
 }
@@ -255,7 +263,7 @@ void native_midi_start(NativeMidiSong *song, int loops)
   native_midi_stop();
   if (!hMidiStream)
   {
-    merr=midiStreamOpen(&hMidiStream,&MidiDevice,(DWORD)1,(DWORD_PTR)MidiProc,(DWORD_PTR)0,CALLBACK_FUNCTION);
+    merr=midiStreamOpen(&hMidiStream,&MidiDevice,(DWORD)1,(DWORD_PTR)MidiProc,(DWORD_PTR)song,CALLBACK_FUNCTION);
     if (merr!=MMSYSERR_NOERROR)
     {
       hMidiStream = NULL; /* should I do midiStreamClose(hMidiStream) before? */
@@ -290,12 +298,17 @@ void native_midi_resume(void)
 
 void native_midi_stop(void)
 {
+  NativeMidiSong *song = currentsong;
+
   if (!hMidiStream)
     return;
+
+  SDL_LockMutex(song->mutex);
   midiStreamStop(hMidiStream);
   midiStreamClose(hMidiStream);
   currentsong=NULL;
   hMidiStream = NULL;
+  SDL_UnlockMutex(song->mutex);
 }
 
 int native_midi_active(void)

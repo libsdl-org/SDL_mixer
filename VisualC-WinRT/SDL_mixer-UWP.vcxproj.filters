@@ -1,0 +1,210 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\src\codecs\timidity\common.c">
+      <Filter>Timidity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\timidity\instrum.c">
+      <Filter>Timidity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\timidity\mix.c">
+      <Filter>Timidity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\timidity\output.c">
+      <Filter>Timidity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\timidity\playmidi.c">
+      <Filter>Timidity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\timidity\readmidi.c">
+      <Filter>Timidity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\timidity\resample.c">
+      <Filter>Timidity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\timidity\tables.c">
+      <Filter>Timidity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\timidity\timidity.c">
+      <Filter>Timidity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\effect_position.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\effect_stereoreverse.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\effects_internal.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\load_aiff.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\load_voc.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\mixer.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\mp3utils.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\music.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\music_cmd.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\music_flac.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\music_fluidsynth.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\music_mad.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\music_mikmod.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\music_modplug.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\music_mpg123.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\music_nativemidi.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\music_ogg.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\music_opus.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\music_timidity.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\music_wav.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\utils.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\music_drflac.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\music_drmp3.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\music_ogg_stb.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\music_xmp.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\codecs\timidity\common.h">
+      <Filter>Timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\timidity\instrum.h">
+      <Filter>Timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\timidity\mix.h">
+      <Filter>Timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\timidity\options.h">
+      <Filter>Timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\timidity\output.h">
+      <Filter>Timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\timidity\playmidi.h">
+      <Filter>Timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\timidity\readmidi.h">
+      <Filter>Timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\timidity\resample.h">
+      <Filter>Timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\timidity\tables.h">
+      <Filter>Timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\timidity\timidity.h">
+      <Filter>Timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\utils.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\SDL_mixer.h">
+      <Filter>Public Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\load_aiff.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\load_voc.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\mp3utils.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\music_cmd.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\music_drflac.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\music_drmp3.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\music_flac.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\music_fluidsynth.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\music_mad.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\music_mikmod.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\music_modplug.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\music_mpg123.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\music_nativemidi.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\music_ogg.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\music_opus.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\music_timidity.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\music_wav.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\music_xmp.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Timidity">
+      <UniqueIdentifier>{660dbe57-4c07-417e-9609-12b312726942}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources">
+      <UniqueIdentifier>{e074d5df-046d-48ae-b45a-f472f0bdd965}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Public Headers">
+      <UniqueIdentifier>{9c43d0b0-edae-4dea-bb19-5bd7972e58bc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

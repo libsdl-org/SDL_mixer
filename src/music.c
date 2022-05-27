@@ -36,8 +36,10 @@
 #include "music_timidity.h"
 #include "music_ogg.h"
 #include "music_opus.h"
+#include "music_drmp3.h"
 #include "music_mpg123.h"
 #include "music_mad.h"
+#include "music_drflac.h"
 #include "music_flac.h"
 #include "native_midi/native_midi.h"
 
@@ -163,7 +165,10 @@ static Mix_MusicInterface *s_music_interfaces[] =
 #ifdef MUSIC_WAV
     &Mix_MusicInterface_WAV,
 #endif
-#ifdef MUSIC_FLAC
+#ifdef MUSIC_FLAC_DRFLAC
+    &Mix_MusicInterface_DRFLAC,
+#endif
+#ifdef MUSIC_FLAC_LIBFLAC
     &Mix_MusicInterface_FLAC,
 #endif
 #ifdef MUSIC_OGG
@@ -171,6 +176,9 @@ static Mix_MusicInterface *s_music_interfaces[] =
 #endif
 #ifdef MUSIC_OPUS
     &Mix_MusicInterface_Opus,
+#endif
+#ifdef MUSIC_MP3_DRMP3
+    &Mix_MusicInterface_DRMP3,
 #endif
 #ifdef MUSIC_MP3_MPG123
     &Mix_MusicInterface_MPG123,
@@ -280,6 +288,7 @@ int music_pcm_getaudio(void *context, void *data, int bytes, int volume,
     Uint8 *snd = (Uint8 *)data;
     Uint8 *dst;
     int len = bytes;
+    int zero_cycles = 0;
     SDL_bool done = SDL_FALSE;
 
     if (volume == MIX_MAX_VOLUME) {
@@ -292,6 +301,15 @@ int music_pcm_getaudio(void *context, void *data, int bytes, int volume,
         if (consumed < 0) {
             break;
         }
+        if (consumed == 0) {
+            ++zero_cycles;
+            if (zero_cycles > 1) {
+                /* We went more than one cycle with no data, we're done */
+                done = SDL_TRUE;
+            }
+            continue;
+        }
+        zero_cycles = 0;
 
         if (volume == MIX_MAX_VOLUME) {
             dst += consumed;
@@ -310,9 +328,11 @@ int music_pcm_getaudio(void *context, void *data, int bytes, int volume,
 /* Mixing function */
 void SDLCALL music_mixer(void *udata, Uint8 *stream, int len)
 {
+    SDL_bool done = SDL_FALSE;
+
     (void)udata;
 
-    while (music_playing && music_active && len > 0) {
+    while (music_playing && music_active && len > 0 && !done) {
         /* Handle fading */
         if (music_playing->fading != MIX_NO_FADING) {
             if (music_playing->fade_step++ < music_playing->fade_steps) {
@@ -343,6 +363,7 @@ void SDLCALL music_mixer(void *udata, Uint8 *stream, int len)
             if (left != 0) {
                 /* Either an error or finished playing with data left */
                 music_playing->playing = SDL_FALSE;
+                done = SDL_TRUE;
             }
             if (left > 0) {
                 stream += (len - left);
@@ -817,17 +838,6 @@ static int music_internal_play(Mix_Music *music, int play_count, double position
 {
     int retval = 0;
 
-#if defined(__MACOSX__) && defined(MID_MUSIC_NATIVE)
-    /* This fixes a bug with native MIDI on Mac OS X, where you
-       can't really stop and restart MIDI from the audio callback.
-    */
-    if (music == music_playing && music->api == MIX_MUSIC_NATIVEMIDI) {
-        /* Just a seek suffices to restart playing */
-        music_internal_position(position);
-        return 0;
-    }
-#endif
-
     /* Note the music we're playing */
     if (music_playing) {
         music_internal_halt();
@@ -883,7 +893,7 @@ int Mix_FadeInMusicPos(Mix_Music *music, int loops, int ms, double position)
         music->fading = MIX_NO_FADING;
     }
     music->fade_step = 0;
-    music->fade_steps = ms/ms_per_step;
+    music->fade_steps = (ms + ms_per_step - 1) / ms_per_step;
 
     /* Play the puppy */
     Mix_LockAudio();
