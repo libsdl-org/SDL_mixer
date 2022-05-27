@@ -109,7 +109,6 @@ target_sources(SDL2_mixer PRIVATE
         src/codecs/music_drflac.c
         src/codecs/music_flac.c
         src/codecs/music_drmp3.c
-        src/codecs/music_mad.c
         src/codecs/music_mpg123.c
         src/codecs/mp3utils.c
         src/codecs/music_ogg.c

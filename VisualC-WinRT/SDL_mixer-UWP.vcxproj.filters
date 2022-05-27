@@ -61,9 +61,6 @@
     <ClCompile Include="..\src\codecs\music_fluidsynth.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\codecs\music_mad.c">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\codecs\music_mikmod.c">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -163,9 +160,6 @@
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="..\src\codecs\music_fluidsynth.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\codecs\music_mad.h">
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="..\src\codecs\music_mikmod.h">

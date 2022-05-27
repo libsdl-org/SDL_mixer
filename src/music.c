@@ -183,9 +183,6 @@ static Mix_MusicInterface *s_music_interfaces[] =
 #ifdef MUSIC_MP3_MPG123
     &Mix_MusicInterface_MPG123,
 #endif
-#ifdef MUSIC_MP3_MAD
-    &Mix_MusicInterface_MAD,
-#endif
 #ifdef MUSIC_MOD_XMP
     &Mix_MusicInterface_XMP,
 #endif

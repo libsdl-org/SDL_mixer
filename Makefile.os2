@@ -31,8 +31,6 @@ USE_FLAC=yes
 USE_DRFLAC=no
 # opus music support
 USE_OPUS=yes
-# mp3 music support (using libmad - Note: GPL license!)
-USE_LIBMAD=no
 # mp3 music support (using mpg123)
 USE_MPG123=yes
 # mp3 music support (using dr_mp3)
@@ -58,7 +56,7 @@ SRCS = utils.c effect_position.c effects_internal.c effect_stereoreverse.c mixer
 SRCS+= load_aiff.c load_voc.c music_wav.c &
        music_ogg.c music_ogg_stb.c music_opus.c &
        music_flac.c music_drflac.c mp3utils.c &
-       music_mad.c music_mpg123.c music_drmp3.c &
+       music_mpg123.c music_drmp3.c &
        music_xmp.c music_mikmod.c music_modplug.c &
        music_fluidsynth.c music_timidity.c
 # timidity sources:
@@ -128,10 +126,6 @@ LIBS+= opusfile.lib opus.lib
 NEED_LIBOGG=yes
 !endif
 
-!ifeq USE_LIBMAD yes
-CFLAGS+= -DMUSIC_MP3_MAD
-LIBS+= mad.lib
-!endif
 !ifeq USE_MPG123 yes
 CFLAGS+= -DMUSIC_MP3_MPG123
 LIBS+= mpg123.lib

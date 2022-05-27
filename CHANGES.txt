@@ -12,8 +12,7 @@
  * Added support of quoted strings in timidity.cfg
  * Added missing Mix_HasMusicDecoder().
  * Memory leak fixes and F32 format support to fluidsynth player.
- * Fixes to mp3 (libmad) and opus playback on big-endian systems.
- * Added support for Tell and Duration to MP3 libmad backend.
+ * Fixes to opus playback on big-endian systems.
  * Fixed distorted MIDI playback with FluidSynth if sample rate is out of library's limits
  * Added Mix_ModMusicJumpToOrder for mod music formats
  * Added libxmp support for mod music playback.
@@ -36,7 +35,6 @@
     Mix_GetMusicLoopEndTime()
     Mix_GetMusicLoopLengthTime()
  * Add Mix_GetMusicVolume and Mix_GetMusicPosition to public api.
- * Avoid playing junk chunk after seek in MP3 with libmad backend.
  * Fixes to MP3 Frankenstein streams playback (thanks to Vitaly Novichkov.)
  * Add Mix_MusicDuration() to return music duration in seconds.
  * Fixed music_mpg123 seek bug when sample rate of the file and the stream don't match

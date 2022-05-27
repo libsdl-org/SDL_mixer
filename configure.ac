@@ -859,34 +859,7 @@ if test x$enable_music_mp3 = xyes -a x$enable_music_mp3_mpg123 = xyes; then
     fi
 fi
 
-AC_ARG_ENABLE(music-mp3-mad-gpl,
-[AS_HELP_STRING([--enable-music-mp3-mad-gpl], [enable MP3 music via libmad GPL code [default=no]])],
-                  [], [enable_music_mp3_mad_gpl=no])
-AC_ARG_ENABLE(music-mp3-mad-gpl-dithering,
-[AS_HELP_STRING([--enable-music-mp3-mad-gpl-dithering], [enable MP3 music via libmad GPL code [default=yes]])],
-                  [], [enable_music_mp3_mad_gpl_dithering=yes])
-if test x$enable_music_mp3 = xyes -a x$enable_music_mp3_mad_gpl = xyes; then
-    AC_MSG_CHECKING(for libmad headers)
-    have_libmad=no
-    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-     #include "mad.h"
-    ]],[])], [have_libmad=yes],[])
-    AC_MSG_RESULT($have_libmad)
-    if test x$have_libmad = xyes; then
-        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MP3_MAD"
-        if test x$enable_music_mp3_mad_gpl_dithering = xyes; then
-            AC_MSG_WARN([*** Using GPL libmad and MP3 dithering routines, this build of SDL_mixer is now under the GPL])
-            EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MP3_MAD_GPL_DITHERING"
-        fi
-        EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lmad"
-        PC_LIBS="$PC_LIBS -lmad"
-    else
-        AC_MSG_WARN([*** Unable to find MAD library (http://www.underbit.com/products/mad/)])
-    fi
-fi
-
-if test x$enable_music_mp3 = xyes -a \
-        x$have_drmp3 != xyes -a x$have_libmpg123 != xyes -a x$have_libmad != xyes; then
+if test x$enable_music_mp3 = xyes -a x$have_drmp3 != xyes -a x$have_libmpg123 != xyes; then
     AC_MSG_WARN([MP3 support disabled])
 fi
 
