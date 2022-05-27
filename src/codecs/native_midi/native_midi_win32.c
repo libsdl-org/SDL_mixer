@@ -177,11 +177,11 @@ void CALLBACK MidiProc( HMIDIIN hMidi, UINT uMsg, DWORD_PTR dwInstance,
     switch( uMsg )
     {
     case MOM_DONE:
-      if ((song->MusicLoaded) && (dwParam1 == (DWORD_PTR)&song->MidiStreamHdr[song->CurrentHdr]))
+      if (song->MusicPlaying && song->MusicLoaded && (dwParam1 == (DWORD_PTR)&song->MidiStreamHdr[song->CurrentHdr]))
         BlockOut(song);
       break;
     case MOM_POSITIONCB:
-      if ((song->MusicLoaded) && (dwParam1 == (DWORD_PTR)&song->MidiStreamHdr[song->CurrentHdr])) {
+      if (song->MusicPlaying && song->MusicLoaded && (dwParam1 == (DWORD_PTR)&song->MidiStreamHdr[song->CurrentHdr])) {
         if (song->Loops) {
           if (song->Loops > 0)
             --song->Loops;
@@ -191,6 +191,9 @@ void CALLBACK MidiProc( HMIDIIN hMidi, UINT uMsg, DWORD_PTR dwInstance,
           song->MusicPlaying=0;
         }
       }
+      break;
+    case MOM_CLOSE:
+      song->MusicPlaying=0;
       break;
     default:
       break;
