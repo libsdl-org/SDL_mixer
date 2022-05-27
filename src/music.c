@@ -289,6 +289,7 @@ int music_pcm_getaudio(void *context, void *data, int bytes, int volume,
     Uint8 *dst;
     int len = bytes;
     int zero_cycles = 0;
+    const int MAX_ZERO_CYCLES = 10; /* just try to catch infinite loops */
     SDL_bool done = SDL_FALSE;
 
     if (volume == MIX_MAX_VOLUME) {
@@ -303,8 +304,8 @@ int music_pcm_getaudio(void *context, void *data, int bytes, int volume,
         }
         if (consumed == 0) {
             ++zero_cycles;
-            if (zero_cycles > 1) {
-                /* We went more than one cycle with no data, we're done */
+            if (zero_cycles > MAX_ZERO_CYCLES) {
+                /* We went too many cycles with no data, we're done */
                 done = SDL_TRUE;
             }
             continue;
