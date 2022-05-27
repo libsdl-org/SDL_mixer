@@ -590,8 +590,8 @@ extern DECLSPEC int SDLCALL Mix_VolumeMusic(int volume);
 /* Get the current volume value in the range of 0-128 of a music stream */
 extern DECLSPEC int SDLCALL Mix_GetMusicVolume(Mix_Music *music);
 
-/* Set the master volume.
-   This did not affect the member variables of music, channel or chunck volume.
+/* Set the master volume for all channels.
+   This did not affect the member variables of channel or chunk volume.
    If the specified volume is -1, just return the current master volume.
 */
 extern DECLSPEC int SDLCALL Mix_MasterVolume(int volume);
