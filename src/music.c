@@ -288,6 +288,7 @@ int music_pcm_getaudio(void *context, void *data, int bytes, int volume,
     Uint8 *snd = (Uint8 *)data;
     Uint8 *dst;
     int len = bytes;
+    int zero_cycles = 0;
     SDL_bool done = SDL_FALSE;
 
     if (volume == MIX_MAX_VOLUME) {
@@ -300,6 +301,15 @@ int music_pcm_getaudio(void *context, void *data, int bytes, int volume,
         if (consumed < 0) {
             break;
         }
+        if (consumed == 0) {
+            ++zero_cycles;
+            if (zero_cycles > 1) {
+                /* We went more than one cycle with no data, we're done */
+                done = SDL_TRUE;
+            }
+            continue;
+        }
+        zero_cycles = 0;
 
         if (volume == MIX_MAX_VOLUME) {
             dst += consumed;
@@ -318,9 +328,11 @@ int music_pcm_getaudio(void *context, void *data, int bytes, int volume,
 /* Mixing function */
 void SDLCALL music_mixer(void *udata, Uint8 *stream, int len)
 {
+    SDL_bool done = SDL_FALSE;
+
     (void)udata;
 
-    while (music_playing && music_active && len > 0) {
+    while (music_playing && music_active && len > 0 && !done) {
         /* Handle fading */
         if (music_playing->fading != MIX_NO_FADING) {
             if (music_playing->fade_step++ < music_playing->fade_steps) {
@@ -331,7 +343,7 @@ void SDLCALL music_mixer(void *udata, Uint8 *stream, int len)
                 if (music_playing->fading == MIX_FADING_OUT) {
                     volume = (music_volume * (fade_steps-fade_step)) / fade_steps;
                 } else { /* Fading in */
-                    volume = ( music_volume * fade_step ) / fade_steps;
+                    volume = (music_volume * fade_step) / fade_steps;
                 }
                 music_internal_volume(volume);
             } else {
@@ -351,6 +363,7 @@ void SDLCALL music_mixer(void *udata, Uint8 *stream, int len)
             if (left != 0) {
                 /* Either an error or finished playing with data left */
                 music_playing->playing = SDL_FALSE;
+                done = SDL_TRUE;
             }
             if (left > 0) {
                 stream += (len - left);
