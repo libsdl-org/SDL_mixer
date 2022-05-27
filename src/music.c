@@ -297,7 +297,7 @@ int music_pcm_getaudio(void *context, void *data, int bytes, int volume,
     }
     while (len > 0 && !done) {
         int consumed = GetSome(context, dst, len, &done);
-        if (consumed <= 0) {
+        if (consumed < 0) {
             break;
         }
 
@@ -352,7 +352,7 @@ void SDLCALL music_mixer(void *udata, Uint8 *stream, int len)
                 /* Either an error or finished playing with data left */
                 music_playing->playing = SDL_FALSE;
             }
-            if (left > 0 && left < len) {
+            if (left > 0) {
                 stream += (len - left);
                 len = left;
             } else {
