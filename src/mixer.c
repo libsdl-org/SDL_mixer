@@ -326,7 +326,7 @@ static void SDLCALL
 mix_channels(void *udata, Uint8 *stream, int len)
 {
     Uint8 *mix_input;
-    int i, mixable, volume, master_vol;
+    int i, mixable, master_vol;
     Uint32 sdl_ticks;
 
     (void)udata;
@@ -337,8 +337,7 @@ mix_channels(void *udata, Uint8 *stream, int len)
     /* Mix the music (must be done before the channels are added) */
     mix_music(music_data, stream, len);
 
-    volume = Mix_MasterVolume(-1);
-    master_vol = volume;
+    master_vol = SDL_AtomicGet(&master_volume);
 
     /* Mix any playing channels... */
     sdl_ticks = SDL_GetTicks();
@@ -372,18 +371,18 @@ mix_channels(void *udata, Uint8 *stream, int len)
                 }
             }
             if (mix_channel[i].playing > 0) {
+                int volume = (master_vol * (mix_channel[i].volume * mix_channel[i].chunk->volume)) / (MIX_MAX_VOLUME * MIX_MAX_VOLUME);
                 int index = 0;
                 int remaining = len;
                 while (mix_channel[i].playing > 0 && index < len) {
                     remaining = len - index;
-                    volume = (master_vol * (mix_channel[i].volume * mix_channel[i].chunk->volume)) / (MIX_MAX_VOLUME * MIX_MAX_VOLUME);
                     mixable = mix_channel[i].playing;
                     if (mixable > remaining) {
                         mixable = remaining;
                     }
 
                     mix_input = Mix_DoEffects(i, mix_channel[i].samples, mixable);
-                    SDL_MixAudioFormat(stream+index,mix_input,mixer.format,mixable,volume);
+                    SDL_MixAudioFormat(stream+index, mix_input, mixer.format, mixable, volume);
                     if (mix_input != mix_channel[i].samples)
                         SDL_free(mix_input);
 
@@ -394,6 +393,9 @@ mix_channels(void *udata, Uint8 *stream, int len)
                     /* rcg06072001 Alert app if channel is done playing. */
                     if (!mix_channel[i].playing && !mix_channel[i].looping) {
                         _Mix_channel_done_playing(i);
+
+                        /* Update the volume after the application callback */
+                        volume = (master_vol * (mix_channel[i].volume * mix_channel[i].chunk->volume)) / (MIX_MAX_VOLUME * MIX_MAX_VOLUME);
                     }
                 }
 
