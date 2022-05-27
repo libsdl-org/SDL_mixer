@@ -360,7 +360,7 @@ static int MPG123_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 {
     MPG123_Music *music = (MPG123_Music *)context;
     int filled, result;
-    size_t amount;
+    size_t amount = 0;
     long rate;
     int channels, encoding, format;
 
@@ -412,6 +412,12 @@ static int MPG123_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         break;
 
     case MPG123_DONE:
+        if (amount > 0) {
+            if (SDL_AudioStreamPut(music->stream, music->buffer, (int)amount) < 0) {
+                return -1;
+            }
+            break;
+        }
         if (music->play_count == 1) {
             music->play_count = 0;
             SDL_AudioStreamFlush(music->stream);
