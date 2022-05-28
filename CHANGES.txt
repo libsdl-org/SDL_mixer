@@ -14,9 +14,8 @@
  * Memory leak fixes and F32 format support to fluidsynth player.
  * Fixes to opus playback on big-endian systems.
  * Fixed distorted MIDI playback with FluidSynth if sample rate is out of library's limits
- * Added Mix_ModMusicJumpToOrder for mod music formats
+ * Added Mix_ModMusicJumpToOrder() for mod music formats
  * Added libxmp support for mod music playback.
- * Fixed mikmod player reader issue with umx files
  * Enabled module internal loops in modplug player
  * Respect original mp3 file offset
  * Fixed a use-after-free issue in fluidsynth player

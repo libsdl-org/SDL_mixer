@@ -39,8 +39,6 @@ USE_DRMP3=no
 USE_TIMIDITY=yes
 # midi music support (using fluidsynth)
 USE_FLUIDSYNTH=no
-# tracker music support (using libmikmod)
-USE_MIKMOD=no
 # tracker music support (using libxmp)
 USE_XMP=yes
 # tracker music support (using libmodplug)
@@ -57,7 +55,7 @@ SRCS+= load_aiff.c load_voc.c music_wav.c &
        music_ogg.c music_ogg_stb.c music_opus.c &
        music_flac.c music_drflac.c mp3utils.c &
        music_mpg123.c music_drmp3.c &
-       music_xmp.c music_mikmod.c music_modplug.c &
+       music_xmp.c music_modplug.c &
        music_fluidsynth.c music_timidity.c
 # timidity sources:
 TIMISRCS = common.c instrum.c mix.c output.c playmidi.c readmidi.c resample.c tables.c timidity.c
@@ -137,10 +135,6 @@ CFLAGS+= -DMUSIC_MP3_DRMP3
 !ifeq USE_XMP yes
 CFLAGS+= -DMUSIC_MOD_XMP
 LIBS+= libxmp.lib
-!endif
-!ifeq USE_MIKMOD yes
-CFLAGS+= -DMUSIC_MOD_MIKMOD
-LIBS+= mikmod.lib
 !endif
 !ifeq USE_MODPLUG yes
 CFLAGS+= -DMUSIC_MOD_MODPLUG

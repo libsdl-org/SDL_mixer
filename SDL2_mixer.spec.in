@@ -15,8 +15,8 @@ Prefix: %{_prefix}
 %description
 Due to popular demand, here is a simple multi-channel audio mixer.
 It supports 4 channels of 16 bit stereo audio, plus a single channel
-of music, mixed by the popular MikMod MOD, Timidity MIDI, Ogg Vorbis,
-Tremor, libmpg123 and libmad MP3 libraries.
+of music, mixed by the popular ModPlug, Timidity MIDI, Ogg Vorbis,
+Tremor, and libmpg123 MP3 libraries.
 
 %package devel
 Summary: Libraries, includes and more to develop SDL applications.
@@ -26,8 +26,8 @@ Requires: %{name}
 %description devel
 Due to popular demand, here is a simple multi-channel audio mixer.
 It supports 4 channels of 16 bit stereo audio, plus a single channel
-of music, mixed by the popular MikMod MOD, Timidity MIDI, Ogg Vorbis,
-Tremor, libmpg123 and libmad MP3 libraries.
+of music, mixed by the popular ModPlug, Timidity MIDI, Ogg Vorbis,
+Tremor, and libmpg123 MP3 libraries.
 
 %prep
 %setup

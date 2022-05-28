@@ -149,7 +149,7 @@ typedef enum {
     MUS_OPUS
 } Mix_MusicType;
 
-/* The internal format for a music chunk interpreted via mikmod */
+/* The internal format for a music chunk interpreted via codecs */
 typedef struct _Mix_Music Mix_Music;
 
 /* Open the mixer with a certain audio format */
@@ -681,7 +681,7 @@ extern DECLSPEC int SDLCALL Mix_PlayingMusic(void);
 /* Stop music and set external music playback command */
 extern DECLSPEC int SDLCALL Mix_SetMusicCMD(const char *command);
 
-/* Synchro value is set by MikMod from modules while playing */
+/* Synchro value is set from modules while playing */
 extern DECLSPEC int SDLCALL Mix_SetSynchroValue(int value);
 extern DECLSPEC int SDLCALL Mix_GetSynchroValue(void);
 

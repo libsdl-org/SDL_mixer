@@ -43,7 +43,6 @@
     <ClCompile Include="..\src\codecs\music_cmd.c" />
     <ClCompile Include="..\src\codecs\music_flac.c" />
     <ClCompile Include="..\src\codecs\music_fluidsynth.c" />
-    <ClCompile Include="..\src\codecs\music_mikmod.c" />
     <ClCompile Include="..\src\codecs\music_modplug.c" />
     <ClCompile Include="..\src\codecs\music_mpg123.c" />
     <ClCompile Include="..\src\codecs\music_nativemidi.c" />
@@ -71,7 +70,6 @@
     <ClInclude Include="..\src\codecs\music_drmp3.h" />
     <ClInclude Include="..\src\codecs\music_flac.h" />
     <ClInclude Include="..\src\codecs\music_fluidsynth.h" />
-    <ClInclude Include="..\src\codecs\music_mikmod.h" />
     <ClInclude Include="..\src\codecs\music_modplug.h" />
     <ClInclude Include="..\src\codecs\music_mpg123.h" />
     <ClInclude Include="..\src\codecs\music_nativemidi.h" />

@@ -28,7 +28,6 @@
 
 #include "music_cmd.h"
 #include "music_wav.h"
-#include "music_mikmod.h"
 #include "music_modplug.h"
 #include "music_xmp.h"
 #include "music_nativemidi.h"
@@ -188,9 +187,6 @@ static Mix_MusicInterface *s_music_interfaces[] =
 #endif
 #ifdef MUSIC_MOD_MODPLUG
     &Mix_MusicInterface_MODPLUG,
-#endif
-#ifdef MUSIC_MOD_MIKMOD
-    &Mix_MusicInterface_MIKMOD,
 #endif
 #ifdef MUSIC_MID_FLUIDSYNTH
     &Mix_MusicInterface_FLUIDSYNTH,
@@ -570,8 +566,8 @@ Mix_MusicType detect_music_type(SDL_RWops *src)
     /* Assume MOD format.
      *
      * Apparently there is no way to check if the file is really a MOD,
-     * or there are too many formats supported by MikMod/ModPlug, or
-     * MikMod/ModPlug does this check by itself. */
+     * or there are too many formats supported by libmodplug or libxmp.
+     * The mod library does this check by itself. */
     return MUS_MOD;
 }
 
