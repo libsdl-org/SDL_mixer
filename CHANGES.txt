@@ -1,7 +1,14 @@
 2.0.5:
- * Added support for playing Ogg files using stb_vorbis
- * Added support for playing FLAC files using dr_flac
- * Added support for playing MP3 files using dr_mp3
+ * Added support for playing Ogg files using stb_vorbis, which is now the default Vorbis backend.
+   To use libvorbis instead, configure using --disable-music-ogg-stb --enable-music-ogg-vorbis
+ * Added support for playing FLAC files using dr_flac, which is now the default FLAC mubic backend.
+   To use libflac instead, configure using --disable-music-flac-drflac --enable-music-flac-libflac
+ * Added support for playing MP3 files using dr_mp3, which is now the default MP3 music backend.
+   To use libmpg123 instead, configure using --disable-music-mp3-drmp3 --enable-music-mp3-mpg123
+ * Added libxmp support for mod music playback. Modplug is still the default backend for MOD music.
+   To use libxmp instead, configure using --disable-music-mod-modplug --enable-music-mod-xmp
+ * Removed support for libmad as a MP3 music backend.
+ * Removed support for libmikmod as a MOD music backend.
  * Implemented a master volume feature, Mix_MasterVolume added to public api.
  * Multiple fixes and updates to autotools build system.
  * Update Mix_Init() return value to match documentation, including MIXER_INIT_* flags for already-initialized modules
@@ -15,7 +22,6 @@
  * Fixes to opus playback on big-endian systems.
  * Fixed distorted MIDI playback with FluidSynth if sample rate is out of library's limits
  * Added Mix_ModMusicJumpToOrder() for mod music formats
- * Added libxmp support for mod music playback.
  * Enabled module internal loops in modplug player
  * Respect original mp3 file offset
  * Fixed a use-after-free issue in fluidsynth player
