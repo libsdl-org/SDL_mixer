@@ -384,6 +384,7 @@ SDL_AudioSpec *Mix_LoadVOC_RW (SDL_RWops *src, int freesrc,
     if (!voc_check_header(src))
         goto done;
 
+    SDL_memset(&v, 0, sizeof (vs_t));
     v.rate = VOC_BAD_RATE;
     v.rest = 0;
     v.has_extended = 0;
@@ -399,12 +400,17 @@ SDL_AudioSpec *Mix_LoadVOC_RW (SDL_RWops *src, int freesrc,
         goto done;
     }
 
+    if (v.size == 0) {
+        SDL_SetError("VOC data had invalid word size!");
+        goto done;
+    }
+
     spec->format = ((v.size == ST_SIZE_WORD) ? AUDIO_S16 : AUDIO_U8);
     if (spec->channels == 0)
         spec->channels = v.channels;
 
     *audio_len = v.rest;
-    *audio_buf = SDL_malloc(v.rest);
+    *audio_buf = (v.rest == 0) ? NULL : SDL_malloc(v.rest);
     if (*audio_buf == NULL)
         goto done;
 
