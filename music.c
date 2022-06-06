@@ -751,7 +751,7 @@ void Mix_FreeMusic(Mix_Music *music)
 		SDL_LockAudio();
 		if ( music == music_playing ) {
 			/* Wait for any fade out to finish */
-			while ( music->fading == MIX_FADING_OUT ) {
+			while ( music_active && music->fading == MIX_FADING_OUT ) {
 				SDL_UnlockAudio();
 				SDL_Delay(100);
 				SDL_LockAudio();
