@@ -7,7 +7,7 @@ m4_define([MINOR_VERSION_MACRO], [5])
 m4_define([MICRO_VERSION_MACRO], [1])
 
 AC_INIT([SDL2_mixer],
-        MAJOR_VERSION_MACRO.MINOR_VERSION_MACRO.MICRO_VERSION_MACRO,
+        [MAJOR_VERSION_MACRO.MINOR_VERSION_MACRO.MICRO_VERSION_MACRO],
         [https://github.com/libsdl-org/SDL_mixer/issues],
         [SDL2_mixer])
 AC_CONFIG_SRCDIR([src/mixer.c])
@@ -49,8 +49,8 @@ LT_MAJOR=0
 LT_REVISION=$INTERFACE_AGE
 LT_AGE=`expr $BINARY_AGE - $INTERFACE_AGE`
 LT_CURRENT=`expr $LT_MAJOR + $LT_AGE`
+LT_EXTRA=""
 
-LT_EXTRA="" dnl for OS2 dll name
 m4_pattern_allow([^LT_])
 
 AC_SUBST(LT_RELEASE)
@@ -123,9 +123,6 @@ EXTRA_LDFLAGS="$BASE_LDFLAGS"
 CPPFLAGS="$CPPFLAGS $EXTRA_CFLAGS"
 CFLAGS="$CFLAGS $EXTRA_CFLAGS"
 LDFLAGS="$LDFLAGS $EXTRA_LDFLAGS"
-
-dnl Check for compiler characteristics
-AC_C_CONST
 
 dnl See whether we can use gcc style dependency tracking
 AC_ARG_ENABLE(dependency-tracking,
