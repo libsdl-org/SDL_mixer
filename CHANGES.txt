@@ -1,4 +1,4 @@
-2.0.5:
+2.6.0:
  * Added support for playing Ogg files using stb_vorbis, which is now the default Vorbis backend.
    To use libvorbis instead, configure using --disable-music-ogg-stb --enable-music-ogg-vorbis
  * Added support for playing FLAC files using dr_flac, which is now the default FLAC mubic backend.
@@ -9,27 +9,18 @@
    To use libxmp instead, configure using --disable-music-mod-modplug --enable-music-mod-xmp
  * Removed support for libmad as a MP3 music backend.
  * Removed support for libmikmod as a MOD music backend.
- * Implemented a master volume feature, Mix_MasterVolume added to public api.
- * Multiple fixes and updates to autotools build system.
+ * Added Mix_MasterVolume() for additional volume control over all channels
  * Update Mix_Init() return value to match documentation, including MIXER_INIT_* flags for already-initialized modules
- * Fixed leak in Mix_FreeChunk + race condition in Mix_HaltChannel
- * Fixed possible crash in Mix_LoadMusic_RW()
- * Do not report a non-playing channel as paused
- * Always check 'looping' field to tell if a channel is playing
- * Added support of quoted strings in timidity.cfg
- * Added missing Mix_HasMusicDecoder().
- * Memory leak fixes and F32 format support to fluidsynth player.
- * Fixes to opus playback on big-endian systems.
+ * Added Mix_HasMusicDecoder()
+ * Memory leak fixes and F32 format support to fluidsynth player
  * Fixed distorted MIDI playback with FluidSynth if sample rate is out of library's limits
  * Added Mix_ModMusicJumpToOrder() for mod music formats
  * Enabled module internal loops in modplug player
  * Respect original mp3 file offset
- * Fixed a use-after-free issue in fluidsynth player
  * Support setting soundfont via SDL_SOUNDFONTS in OSX native midi
- * Fixed mp3 file detection.
- * Fixed divide by zero crash in voc_get_block().
- * Fixes to ogg playback on big-endian devices.
- * Added MetaTags api procedures:
+ * Fixed mp3 file detection
+ * Fixes to ogg playback on big-endian devices
+ * Added functions to get metadata information:
     Mix_GetMusicTitle()
     Mix_GetMusicTitleTag()
     Mix_GetMusicArtistTag()
@@ -39,25 +30,19 @@
     Mix_GetMusicLoopStartTime()
     Mix_GetMusicLoopEndTime()
     Mix_GetMusicLoopLengthTime()
- * Add Mix_GetMusicVolume and Mix_GetMusicPosition to public api.
- * Fixes to MP3 Frankenstein streams playback (thanks to Vitaly Novichkov.)
- * Add Mix_MusicDuration() to return music duration in seconds.
+ * Added Mix_GetMusicVolume() and Mix_GetMusicPosition()
+ * Added Mix_MusicDuration() to return music duration in seconds
  * Fixed music_mpg123 seek bug when sample rate of the file and the stream don't match
- * Timidity improvements. New Mix_SetTimidityCfg() public api.
+ * Timidity improvements, added Mix_SetTimidityCfg()
  * Improved mp3 tag detection/skipping
- * Updated external libraries with multiple bug/security fixes
  * Extended support for WAV files
- * Added looping support for Opus files
  * Allow rmid files be opened by native midi
  * Fixed possible crash in win32 native midi
  * Prevent clipping due to volume settings in modplug music
- * Fixed FLAC initial stutter
- * Reorganized source tree layout
+ * Added looping support for Opus files
  * Added looping support for FLAC files
  * Improved OGG looping support
  * Fixed loading Opus audio as audio chunks
- * Fixed Mix_FadeOutChannel() never setting fade_volume_reset
- * Fixed memory leak in macOS native midi code
 
 2.0.4:
 Ozkan Sezer - Wed, 10 Oct 2018 14:56:10
