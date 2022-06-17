@@ -46,7 +46,7 @@ SRC_DIST =			\
 	.gitmodules		\
 	Android.mk		\
 	CMakeLists.txt		\
-	cmake
+	cmake			\
 	Makefile.in		\
 	Makefile.os2		\
 	SDL2_mixer.pc.in	\
