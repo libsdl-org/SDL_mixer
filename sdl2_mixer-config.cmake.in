@@ -71,7 +71,7 @@ set(exec_prefix "@exec_prefix@")
 set(bindir "@bindir@")
 set(includedir "@includedir@")
 set(libdir "@libdir@")
-set(_sdl2mixer_extra_static_libraries "@PC_LIBS@")
+set(_sdl2mixer_extra_static_libraries "@MIXER_LIBS@ @PC_LIBS@")
 string(STRIP "${_sdl2mixer_extra_static_libraries}" _sdl2mixer_extra_static_libraries)
 
 set(_sdl2mixer_bindir   "${bindir}")
