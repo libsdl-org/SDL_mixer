@@ -46,6 +46,7 @@
 		AAE406041F9607C300EDAF53 /* effect_stereoreverse.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE405E01F9607C300EDAF53 /* effect_stereoreverse.c */; };
 		AAE406051F9607C300EDAF53 /* effects_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE405E11F9607C300EDAF53 /* effects_internal.h */; };
 		BE1FA8CD07AF96B2004B6283 /* SDL_mixer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1014BAEA010A4B677F000001 /* SDL_mixer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3249B39285C448100DB9B5C /* CMake in Resources */ = {isa = PBXBuildFile; fileRef = F3249B36285C448100DB9B5C /* CMake */; };
 		F37A8D2D2838924900C38E95 /* music_drmp3.h in Headers */ = {isa = PBXBuildFile; fileRef = F37A8D2B2838924900C38E95 /* music_drmp3.h */; };
 		F37A8D2E2838924900C38E95 /* music_drmp3.h in Headers */ = {isa = PBXBuildFile; fileRef = F37A8D2B2838924900C38E95 /* music_drmp3.h */; };
 		F37A8D2F2838924900C38E95 /* music_drmp3.c in Sources */ = {isa = PBXBuildFile; fileRef = F37A8D2C2838924900C38E95 /* music_drmp3.c */; };
@@ -167,6 +168,7 @@
 		BE1FA90607AF96B2004B6283 /* SDL2_mixer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SDL2_mixer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE1FA95407AF96B2004B6283 /* libSDL2_mixer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSDL2_mixer.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE1FA95807AF96B3004B6283 /* Create DMG */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Create DMG"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F3249B36285C448100DB9B5C /* CMake */ = {isa = PBXFileReference; lastKnownFileType = folder; path = CMake; sourceTree = "<group>"; };
 		F37A8D2B2838924900C38E95 /* music_drmp3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_drmp3.h; sourceTree = "<group>"; };
 		F37A8D2C2838924900C38E95 /* music_drmp3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_drmp3.c; sourceTree = "<group>"; };
 		F37A8D412838A23400C38E95 /* music_drflac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_drflac.h; sourceTree = "<group>"; };
@@ -366,6 +368,7 @@
 		F59C710100D5CB5801000001 /* resources */ = {
 			isa = PBXGroup;
 			children = (
+				F3249B36285C448100DB9B5C /* CMake */,
 				F59C710300D5CB5801000001 /* ReadMe.txt */,
 				F59C710400D5CB5801000001 /* Welcome.txt */,
 			);
@@ -551,6 +554,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3249B39285C448100DB9B5C /* CMake in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
