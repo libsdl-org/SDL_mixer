@@ -46,10 +46,14 @@ SRC_DIST =			\
 	.gitmodules		\
 	Android.mk		\
 	CMakeLists.txt		\
+	cmake
 	Makefile.in		\
 	Makefile.os2		\
 	SDL2_mixer.pc.in	\
 	SDL2_mixer.spec.in	\
+	SDL2_mixerConfig.cmake.in \
+	sdl2_mixer-config-version.cmake.in \
+	sdl2_mixer-config.cmake.in \
 	include/SDL_mixer.h	\
 	VisualC			\
 	VisualC-WinRT		\
