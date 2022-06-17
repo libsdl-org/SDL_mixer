@@ -40,33 +40,34 @@ PLAYWAVE_OBJECTS = @PLAYWAVE_OBJECTS@
 PLAYMUS_OBJECTS = @PLAYMUS_OBJECTS@
 
 SRC_DIST =			\
-	LICENSE.txt		\
-	README.txt		\
-	CHANGES.txt		\
 	.gitmodules		\
 	Android.mk		\
+	CHANGES.txt		\
 	CMakeLists.txt		\
-	cmake			\
+	LICENSE.txt		\
 	Makefile.in		\
 	Makefile.os2		\
+	README.txt		\
 	SDL2_mixer.pc.in	\
 	SDL2_mixer.spec.in	\
 	SDL2_mixerConfig.cmake.in \
-	sdl2_mixer-config-version.cmake.in \
-	sdl2_mixer-config.cmake.in \
-	include/SDL_mixer.h	\
 	VisualC			\
 	VisualC-WinRT		\
 	Xcode			\
 	acinclude		\
 	autogen.sh		\
 	build-scripts		\
+	cmake			\
 	configure		\
 	configure.ac		\
 	external/download.sh	\
-	src			\
+	include/SDL_mixer.h	\
+	mingw			\
 	playmus.c		\
 	playwave.c		\
+	sdl2_mixer-config-version.cmake.in \
+	sdl2_mixer-config.cmake.in \
+	src			\
 	version.rc
 
 GEN_DIST = SDL2_mixer.spec
