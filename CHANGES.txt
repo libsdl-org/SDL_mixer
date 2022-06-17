@@ -1,7 +1,7 @@
 2.6.0:
  * Added support for playing Ogg files using stb_vorbis, which is now the default Vorbis backend.
    To use libvorbis instead, configure using --disable-music-ogg-stb --enable-music-ogg-vorbis
- * Added support for playing FLAC files using dr_flac, which is now the default FLAC mubic backend.
+ * Added support for playing FLAC files using dr_flac, which is now the default FLAC music backend.
    To use libflac instead, configure using --disable-music-flac-drflac --enable-music-flac-libflac
  * Added support for playing MP3 files using dr_mp3, which is now the default MP3 music backend.
    To use libmpg123 instead, configure using --disable-music-mp3-drmp3 --enable-music-mp3-mpg123
