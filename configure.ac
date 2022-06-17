@@ -111,6 +111,7 @@ BUILD_CFLAGS="$CFLAGS $CPPFLAGS -I$srcdir/include -I$srcdir/src -I$srcdir/src/co
 EXTRA_CFLAGS="$INCLUDE $BASE_CFLAGS"
 BUILD_LDFLAGS="$LDFLAGS"
 EXTRA_LDFLAGS="$BASE_LDFLAGS"
+MIXER_LIBS=
 ## These are common directories to find software packages
 #for path in /usr/freeware /usr/pkg /usr/local; do
 #    if test -d $path/include; then
@@ -279,7 +280,6 @@ AM_PATH_SDL2($SDL_VERSION,
             AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])
 )
 EXTRA_CFLAGS="$EXTRA_CFLAGS $SDL_CFLAGS"
-EXTRA_LDFLAGS="$EXTRA_LDFLAGS $SDL_LIBS"
 
 dnl check for GCC warning options
 CheckWarnAll
@@ -367,7 +367,7 @@ if test x$enable_music_mod = xyes -a x$enable_music_mod_modplug = xyes; then
             echo "-- dynamic libmodplug -> $modplug_lib"
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DMODPLUG_DYNAMIC=\\\"$modplug_lib\\\""
         else
-            EXTRA_LDFLAGS="$EXTRA_LDFLAGS $MODPLUG_LIBS"
+            MIXER_LIBS="$MIXER_LIBS $MODPLUG_LIBS"
             if test x$have_libmodplug_pc = xyes; then
                 PC_REQUIRES="$PC_REQUIRES libmodplug"
             else
@@ -426,7 +426,7 @@ if test x$enable_music_mod = xyes -a x$enable_music_mod_xmp = xyes; then
             echo "-- dynamic libxmp -> $xmp_lib"
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DXMP_DYNAMIC=\\\"$xmp_lib\\\""
         else
-            EXTRA_LDFLAGS="$EXTRA_LDFLAGS $XMP_LIBS"
+            MIXER_LIBS="$MIXER_LIBS $XMP_LIBS"
             if test x$have_libxmp_pc = xyes; then
                 PC_REQUIRES="$PC_REQUIRES lib$xmplib"
             else
@@ -476,17 +476,17 @@ if test x$enable_music_midi = xyes; then
         case "$host" in
             *-*-cygwin* | *-*-mingw*)
                 use_music_midi_native=yes
-                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lwinmm"
+                MIXER_LIBS="$MIXER_LIBS -lwinmm"
                 PC_LIBS="$PC_LIBS -lwinmm"
                 ;;
             *-*-darwin*)
                 use_music_midi_native=yes
-                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -Wl,-framework,AudioToolbox -Wl,-framework,AudioUnit -Wl,-framework,CoreServices"
+                MIXER_LIBS="$MIXER_LIBS -Wl,-framework,AudioToolbox -Wl,-framework,AudioUnit -Wl,-framework,CoreServices"
                 PC_LIBS="$PC_LIBS -Wl,-framework,AudioToolbox -Wl,-framework,AudioUnit -Wl,-framework,CoreServices"
                 ;;
             *-*-haiku*)
                 use_music_midi_native=yes_cpp
-                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lmidi"
+                MIXER_LIBS="$MIXER_LIBS -lmidi"
                 PC_LIBS="$PC_LIBS -lmidi"
                 ;;
         esac
@@ -540,7 +540,7 @@ if test x$enable_music_midi = xyes; then
                 echo "-- dynamic libfluidsynth -> $fluidsynth_lib"
                 EXTRA_CFLAGS="$EXTRA_CFLAGS -DFLUIDSYNTH_DYNAMIC=\\\"$fluidsynth_lib\\\""
             else
-                EXTRA_LDFLAGS="$EXTRA_LDFLAGS $FLUIDSYNTH_LIBS"
+                MIXER_LIBS="$MIXER_LIBS $FLUIDSYNTH_LIBS"
                 if test x$have_fluidsynth_pc = xyes; then
                     PC_REQUIRES="$PC_REQUIRES fluidsynth"
                 else
@@ -615,7 +615,7 @@ if test x$enable_music_ogg = xyes -a x$enable_music_ogg_vorbis = xyes; then
             echo "-- dynamic libvorbisfile -> $ogg_lib"
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_DYNAMIC=\\\"$ogg_lib\\\""
         else
-            EXTRA_LDFLAGS="$EXTRA_LDFLAGS $VORBIS_LIBS"
+            MIXER_LIBS="$MIXER_LIBS $VORBIS_LIBS"
             if test x$have_ogg_pc = xyes; then
                 PC_REQUIRES="$PC_REQUIRES vorbisfile"
             else
@@ -671,7 +671,7 @@ if test x$enable_music_ogg = xyes -a x$enable_music_ogg_tremor = xyes; then
             echo "-- dynamic libvorbisidec -> $ogg_lib"
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_DYNAMIC=\\\"$ogg_lib\\\""
         else
-            EXTRA_LDFLAGS="$EXTRA_LDFLAGS $TREMOR_LIBS"
+            MIXER_LIBS="$MIXER_LIBS $TREMOR_LIBS"
             if test x$have_tremor_pc = xyes; then
                 PC_REQUIRES="$PC_REQUIRES vorbisidec"
             else
@@ -758,7 +758,7 @@ if test x$enable_music_flac = xyes -a x$enable_music_flac_libflac = xyes; then
             echo "-- dynamic libFLAC -> $flac_lib"
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DFLAC_DYNAMIC=\\\"$flac_lib\\\""
         else
-            EXTRA_LDFLAGS="$EXTRA_LDFLAGS $FLAC_LIBS"
+            MIXER_LIBS="$MIXER_LIBS $FLAC_LIBS"
             if test x$have_flac_pc = xyes; then
                 PC_REQUIRES="$PC_REQUIRES flac"
             else
@@ -824,7 +824,7 @@ if test x$enable_music_mp3 = xyes -a x$enable_music_mp3_mpg123 = xyes; then
             echo "-- dynamic libmpg123 -> $mpg123_lib"
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DMPG123_DYNAMIC=\\\"$mpg123_lib\\\""
         else
-            EXTRA_LDFLAGS="$EXTRA_LDFLAGS $MPG123_LIBS"
+            MIXER_LIBS="$MIXER_LIBS $MPG123_LIBS"
             if test x$have_mpg123_pc = xyes; then
                 PC_REQUIRES="$PC_REQUIRES libmpg123"
             else
@@ -881,7 +881,7 @@ if test x$enable_music_opus = xyes; then
             echo "-- dynamic opusfile -> $opusfile_lib"
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DOPUS_DYNAMIC=\\\"$opusfile_lib\\\""
         else
-            EXTRA_LDFLAGS="$EXTRA_LDFLAGS $OPUSFILE_LIBS"
+            MIXER_LIBS="$MIXER_LIBS $OPUSFILE_LIBS"
             if test x$have_opusfile_pc = xyes; then
                 PC_REQUIRES="$PC_REQUIRES opusfile"
             else
@@ -898,7 +898,7 @@ fi
 dnl check for LD --no-undefined option
 CheckNoUndef
 
-EXTRA_LDFLAGS="$EXTRA_LDFLAGS $LIBM"
+MIXER_LIBS="$MIXER_LIBS $LIBM"
 
 OBJECTS=`echo $SOURCES`
 DEPENDS=`echo $SOURCES`
@@ -959,6 +959,7 @@ AC_SUBST(BUILD_CFLAGS)
 AC_SUBST(EXTRA_CFLAGS)
 AC_SUBST(BUILD_LDFLAGS)
 AC_SUBST(EXTRA_LDFLAGS)
+AC_SUBST(MIXER_LIBS)
 AC_SUBST(EXE)
 AC_SUBST(SDL_VERSION)
 AC_SUBST(SDL_CFLAGS)
