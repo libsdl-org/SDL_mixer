@@ -13,7 +13,7 @@ datadir	= @datadir@
 mandir	= @mandir@
 auxdir	= @ac_aux_dir@
 distpath = $(srcdir)/..
-distdir = SDL2_mixer-@VERSION@
+distdir = @PACKAGE_NAME@-@PACKAGE_VERSION@
 distfile = $(distdir).tar.gz
 
 @SET_MAKE@
