@@ -51,7 +51,7 @@ else()
     return()
 endif()
 
-set(_sdl2mixer_incdir       "${CMAKE_CURRENT_LIST_DIR}/../include/SDL2")
+set(_sdl2mixer_incdir       "${CMAKE_CURRENT_LIST_DIR}/../include")
 set(_sdl2mixer_library      "${CMAKE_CURRENT_LIST_DIR}/../lib/${_sdl_arch_subdir}/SDL2_mixer.lib")
 set(_sdl2mixer_dll          "${CMAKE_CURRENT_LIST_DIR}/../lib/${_sdl_arch_subdir}/SDL2_mixer.dll")
 
