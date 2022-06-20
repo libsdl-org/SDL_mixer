@@ -375,8 +375,7 @@ extern DECLSPEC void SDLCALL Mix_FreeMusic(Mix_Music *music);
  *
  * This list can change between builds AND runs of the program, if external
  * libraries that add functionality become available. You must successfully
- * call Mix_OpenAudio() before calling these functions. This API is only
- * available in SDL_mixer 1.2.9 and later.
+ * call Mix_OpenAudio() before calling these functions.
  *
  * Appearing in this list doesn't promise your specific audio file will
  * decode...but it's handy to know if you have, say, a functioning Timidity
@@ -1474,9 +1473,9 @@ extern DECLSPEC Mix_Chunk * SDLCALL Mix_GetChunk(int channel);
 /**
  * Close the mixer, halting all playing audio
  *
- * \sa Mix_Init
- *
  * \since This function is available since SDL_mixer 2.0.0.
+ *
+ * \sa Mix_Init
  */
 extern DECLSPEC void SDLCALL Mix_CloseAudio(void);
 
