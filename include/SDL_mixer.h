@@ -346,15 +346,6 @@ extern DECLSPEC void SDLCALL Mix_FreeMusic(Mix_Music *music);
  * call Mix_OpenAudio() before calling these functions. This API is only
  * available in SDL_mixer 1.2.9 and later.
  *
- * ```c
- * // usage...
- * int i;
- * const int total = Mix_GetNumChunkDecoders();
- * for (i = 0; i < total; i++) {
- *     printf("Supported chunk decoder: [%s]\n", Mix_GetChunkDecoder(i));
- * }
- * ```
- *
  * Appearing in this list doesn't promise your specific audio file will
  * decode...but it's handy to know if you have, say, a functioning Timidity
  * install.
