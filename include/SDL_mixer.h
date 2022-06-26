@@ -88,12 +88,15 @@ extern "C" {
      (SDL_MIXER_MAJOR_VERSION > X || SDL_MIXER_MINOR_VERSION > Y || SDL_MIXER_PATCHLEVEL >= Z))
 
 /**
+ * Query the version of SDL_mixer that the program is linked against.
+ *
  * This function gets the version of the dynamically linked SDL_mixer library.
+ * This is separate from the SDL_MIXER_VERSION() macro, which tells you what
+ * version of the SDL_mixer headers you compiled against.
  *
- * it should NOT be used to fill a version structure, instead you should use
- * the SDL_MIXER_VERSION() macro.
+ * This returns static internal data; do not free or modify it!
  *
- * \returns SDL_mixer version
+ * \returns a pointer to the version information.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
@@ -113,23 +116,88 @@ typedef enum
 } MIX_InitFlags;
 
 /**
- * Loads dynamic libraries and prepares them for use.
+ * Initialize SDL_mixer.
+ *
+ * This function loads dynamic libraries that SDL_mixer needs, and prepares
+ * them for use. This must be the first function you call in SDL_mixer, and
+ * if it fails you should not continue with the library.
  *
  * Flags should be one or more flags from MIX_InitFlags OR'd together. It
  * returns the flags successfully initialized, or 0 on failure.
  *
- * \param flags initialization flags
- * \returns flags successfully initialized, or 0 on failure.
+ * Currently, these flags are:
+ *
+ * - `MIX_INIT_FLAC`
+ * - `MIX_INIT_MOD`
+ * - `MIX_INIT_MP3`
+ * - `MIX_INIT_OGG`
+ * - `MIX_INIT_MID`
+ * - `MIX_INIT_OPUS`
+ *
+ * More flags may be added in a future SDL_mixer release.
+ *
+ * This function may need to load external shared libraries to support
+ * various codecs, which means this function can fail to initialize
+ * that support on an otherwise-reasonable system if the library isn't
+ * available; this is not just a question of exceptional circumstances
+ * like running out of memory at startup!
+ *
+ * Note that you may call this function more than once to initialize with
+ * additional flags. The return value will reflect both new flags that
+ * successfully initialized, and also include flags that had previously
+ * been initialized as well.
+ *
+ * As this will return previously-initialized flags, it's legal to call
+ * this with zero (no flags set). This is a safe no-op that can be used
+ * to query the current initialization state without changing it at all.
+ *
+ * Since this returns previously-initialized flags as well as new ones,
+ * and you can call this with zero, you should not check for a zero
+ * return value to determine an error condition. Instead, you should
+ * check to make sure all the flags you require are set in the return
+ * value. If you have are a game with data in a specific format, this
+ * might be a fatal error. If you're a generic media player, perhaps you
+ * are fine with only having WAV and MP3 support and can live without
+ * Opus playback, even if you request support for everything.
+ *
+ * Unlike other SDL satellite libraries, calls to Mix_Init do not stack;
+ * a single call to Mix_Quit() will deinitialize everything and does not
+ * have to be paired with a matching Mix_Init call. For that reason, it's
+ * considered best practices to have a single Mix_Init and Mix_Quit call in
+ * your program. While this isn't required, be aware of the risks of
+ * deviating from that behavior.
+ *
+ * After initializing SDL_mixer, the next step is to open an audio device
+ * to prepare to play sound (with Mix_OpenAudio() or Mix_OpenAudioDevice()),
+ * and load audio data to play with that device.
+ *
+ * \param flags initialization flags, OR'd together.
+ * \returns all currently initialized flags.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  *
  * \sa Mix_Quit
- * \sa MIX_InitFlags
  */
 extern DECLSPEC int SDLCALL Mix_Init(int flags);
 
 /**
- * Unloads libraries loaded with Mix_Init
+ * Deinitialize SDL_mixer.
+ *
+ * This should be the last function you call in SDL_mixer, after freeing
+ * all other resources and closing all audio devices. This will unload any
+ * shared libraries it is using for various codecs.
+ *
+ * After this call, a call to Mix_Init(0) will return 0 (no codecs loaded).
+ *
+ * You can safely call Mix_Init() to reload various codec support after
+ * this call.
+ *
+ * Unlike other SDL satellite libraries, calls to Mix_Init do not stack;
+ * a single call to Mix_Quit() will deinitialize everything and does not
+ * have to be paired with a matching Mix_Init call. For that reason, it's
+ * considered best practices to have a single Mix_Init and Mix_Quit call in
+ * your program. While this isn't required, be aware of the risks of
+ * deviating from that behavior.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  *
@@ -197,39 +265,255 @@ typedef enum {
 typedef struct _Mix_Music Mix_Music;
 
 /**
- * Open the mixer with a certain audio format
+ * Open the default audio device for playback.
  *
- * \param frequency frequency
- * \param format audio format
- * \param channels number of channels
- * \param chunksize chunk size
- * \returns 0 if successful, -1 on error
+ * An audio device is what generates sound, so the app must open one to
+ * make noise.
+ *
+ * This function will check if SDL's audio system is initialized, and
+ * if not, it will initialize it by calling `SDL_Init(SDL_INIT_AUDIO)`
+ * on your behalf. You are free to (and encouraged to!) initialize it
+ * yourself before calling this function, as this gives your program
+ * more control over the process.
+ *
+ * This function might cover all of an application's needs, but for those
+ * that need more flexibility, the more powerful version of this function
+ * is Mix_OpenAudioDevice(). This function is equivalent to calling:
+ *
+ * ```c
+ * Mix_OpenAudioDevice(frequency, format, nchannels, chunksize, NULL,
+ *                     SDL_AUDIO_ALLOW_FREQUENCY_CHANGE |
+ *                     SDL_AUDIO_ALLOW_CHANNELS_CHANGE);
+ * ```
+ *
+ * If you aren't particularly concerned with the specifics of the audio
+ * device, and your data isn't in a specific format, the values you
+ * use here can just be reasonable defaults. SDL_mixer will convert
+ * audio data you feed it to the correct format on demand.
+ *
+ * That being said, if you have control of your audio data and you
+ * know its format ahead of time, you can save CPU time by opening
+ * the audio device in that exact format so SDL_mixer does not have to
+ * spend time converting anything behind the scenes, and can just pass
+ * the data straight through to the hardware. On some platforms,
+ * where the hardware only supports specific settings, you might have
+ * to be careful to make everything match, but your own data is often
+ * easier to control, so aim to open the device for what you need.
+ *
+ * The other reason to care about specific formats: if you plan to touch
+ * the mix buffer directly (with Mix_SetPostMix, a registered effect,
+ * or Mix_HookMusic), you might have code that expects it to be in a
+ * specific format, and you should specify that here.
+ *
+ * The audio device frequency is specified in Hz; in modern times, 48000
+ * is often a reasonable default.
+ *
+ * The audio device format is one of SDL's AUDIO_* constants. AUDIO_S16SYS
+ * (16-bit audio) is probably a safe default. More modern systems may
+ * prefer AUDIO_F32SYS (32-bit floating point audio).
+ *
+ * The audio device channels are generally 1 for mono output, or 2 for
+ * stereo, but the brave can try surround sound configs with 4 (quad),
+ * 6 (5.1), 7 (6.1) or 8 (7.1).
+ *
+ * The audio device's chunk size is the number of sample frames (one
+ * sample per frame for mono output, two samples per frame in a stereo
+ * setup, etc) that are fed to the device at once. The lower the
+ * number, the lower the latency, but you risk dropouts if it gets too
+ * low. 2048 is often a reasonable default, but your app might want to
+ * experiment with 1024 or 4096.
+ *
+ * You may only have one audio device open at a time; if you want to
+ * change a setting, you must close the device and reopen it, which is
+ * not something you can do seamlessly during playback.
+ *
+ * This function does not allow you to select a specific audio device
+ * on the system, it always chooses the best default it can on your
+ * behalf (which, in many cases, is exactly what you want anyhow).
+ * If you must choose a specific device, you can do so with
+ * Mix_OpenAudioDevice() instead.
+ *
+ * If this function reports success, you are ready to start making
+ * noise! Load some audio data and start playing!
+ *
+ * The app can use Mix_QuerySpec() to determine the final device settings.
+ *
+ * When done with an audio device, probably at the end of the program,
+ * the app should dispose of the device with Mix_CloseDevice().
+ *
+ * \param frequency the frequency to playback audio at (in Hz).
+ * \param format audio format, one of SDL's AUDIO_* values.
+ * \param channels number of channels (1 is mono, 2 is stereo, etc).
+ * \param chunksize audio buffer size in sample FRAMES (total samples divided by channel count).
+ * \returns 0 if successful, -1 on error.
  *
  * \since This function is available since SDL_mixer 2.0.0.
+ *
+ * \sa Mix_OpenAudioDevice
+ * \sa Mix_CloseDevice
  */
 extern DECLSPEC int SDLCALL Mix_OpenAudio(int frequency, Uint16 format, int channels, int chunksize);
 
+
 /**
- * Open the mixer with specific device and certain audio format
+ * Open a specific audio device for playback.
  *
- * \param frequency frequency
- * \param format audio format
- * \param channels number of channels
- * \param chunksize chunk size
- * \param device audio device (can be NULL)
+ * (A slightly simpler version of this function is available in
+ * Mix_OpenAudio(), which still might meet most applications' needs.)
+ *
+ * An audio device is what generates sound, so the app must open one to
+ * make noise.
+ *
+ * This function will check if SDL's audio system is initialized, and
+ * if not, it will initialize it by calling `SDL_Init(SDL_INIT_AUDIO)`
+ * on your behalf. You are free to (and encouraged to!) initialize it
+ * yourself before calling this function, as this gives your program
+ * more control over the process.
+ *
+ * If you aren't particularly concerned with the specifics of the audio
+ * device, and your data isn't in a specific format, the values you
+ * use here can just be reasonable defaults. SDL_mixer will convert
+ * audio data you feed it to the correct format on demand.
+ *
+ * That being said, if you have control of your audio data and you
+ * know its format ahead of time, you can save CPU time by opening
+ * the audio device in that exact format so SDL_mixer does not have to
+ * spend time converting anything behind the scenes, and can just pass
+ * the data straight through to the hardware. On some platforms,
+ * where the hardware only supports specific settings, you might have
+ * to be careful to make everything match, but your own data is often
+ * easier to control, so aim to open the device for what you need.
+ *
+ * The other reason to care about specific formats: if you plan to touch
+ * the mix buffer directly (with Mix_SetPostMix, a registered effect,
+ * or Mix_HookMusic), you might have code that expects it to be in a
+ * specific format, and you should specify that here.
+ *
+ * The audio device frequency is specified in Hz; in modern times, 48000
+ * is often a reasonable default.
+ *
+ * The audio device format is one of SDL's AUDIO_* constants. AUDIO_S16SYS
+ * (16-bit audio) is probably a safe default. More modern systems may
+ * prefer AUDIO_F32SYS (32-bit floating point audio).
+ *
+ * The audio device channels are generally 1 for mono output, or 2 for
+ * stereo, but the brave can try surround sound configs with 4 (quad),
+ * 6 (5.1), 7 (6.1) or 8 (7.1).
+ *
+ * The audio device's chunk size is the number of sample frames (one
+ * sample per frame for mono output, two samples per frame in a stereo
+ * setup, etc) that are fed to the device at once. The lower the
+ * number, the lower the latency, but you risk dropouts if it gets too
+ * low. 2048 is often a reasonable default, but your app might want to
+ * experiment with 1024 or 4096.
+ *
+ * You may only have one audio device open at a time; if you want to
+ * change a setting, you must close the device and reopen it, which is
+ * not something you can do seamlessly during playback.
+ *
+ * This function allows you to select specific audio hardware on the
+ * system with the `device` parameter. If you specify NULL, SDL_mixer
+ * will choose the best default it can on your behalf (which, in many
+ * cases, is exactly what you want anyhow). SDL_mixer does not offer
+ * a mechanism to determine device names to open, but you can use
+ * SDL_GetNumAudioDevices() to get a count of available devices and
+ * then SDL_GetAudioDeviceName() in a loop to obtain a list. If you
+ * do this, be sure to call `SDL_Init(SDL_INIT_AUDIO)` first to
+ * initialize SDL's audio system!
+ *
+ * The `allowed_changes` parameter specifies what settings are
+ * flexible. These are the `SDL_AUDIO_ALLOW_*` flags from SDL. These
+ * tell SDL_mixer that the app doesn't mind if a specific setting
+ * changes. For example, the app might need stereo data in Sint16
+ * format, but if the sample rate or chunk size changes, the app can
+ * handle that. In that case, the app would specify
+ * `SDL_AUDIO_ALLOW_FORMAT_CHANGE|SDL_AUDIO_ALLOW_SAMPLES_CHANGE`.
+ * In this case, if the system's hardware requires something other
+ * than the requested format, SDL_mixer can select what the hardware
+ * demands instead of the app. If the `SDL_AUDIO_ALLOW_` flag is
+ * not specified, SDL_mixer must convert data behind the scenes
+ * between what the app demands and what the hardware requires.
+ * If your app needs precisely what is requested, specify zero for
+ * `allowed_changes`.
+ *
+ * If changes were allowed, the app can use Mix_QuerySpec() to
+ * determine the final device settings.
+ *
+ * If this function reports success, you are ready to start making
+ * noise! Load some audio data and start playing!
+ *
+ * When done with an audio device, probably at the end of the program,
+ * the app should dispose of the device with Mix_CloseDevice().
+ *
+ * \param frequency the frequency to playback audio at (in Hz).
+ * \param format audio format, one of SDL's AUDIO_* values.
+ * \param channels number of channels (1 is mono, 2 is stereo, etc).
+ * \param chunksize audio buffer size in sample FRAMES (total samples divided by channel count).
+ * \param device the device name to open, or NULL to choose a reasonable default.
  * \param allowed_changes Allow change flags (see SDL_AUDIO_ALLOW_* flags)
- * \returns 0 if successful, -1 on error
+ * \returns 0 if successful, -1 on error.
  *
  * \since This function is available since SDL_mixer 2.0.2.
+ *
+ * \sa Mix_OpenAudio
+ * \sa Mix_CloseDevice
+ * \sa Mix_QuerySpec
  */
 extern DECLSPEC int SDLCALL Mix_OpenAudioDevice(int frequency, Uint16 format, int channels, int chunksize, const char* device, int allowed_changes);
 
 /**
+ * Find out what the actual audio device parameters are.
+ *
+ * If Mix_OpenAudioDevice() was called with `allowed_changes` set to
+ * anything but zero, or Mix_OpenAudio() was used, some audio device
+ * settings may be different from the application's request. This
+ * function will report what the device is actually running at.
+ *
+ * Note this is only important if the app intends to touch the
+ * audio buffers being sent to the hardware directly. If an app
+ * just wants to play audio files and let SDL_mixer handle the
+ * low-level details, this function can probably be ignored.
+ *
+ * If the audio device is not opened, this function will return 0.
+ *
+ * \param frequency On return, will be filled with the audio device's frequency in Hz.
+ * \param format On return, will be filled with the audio device's format.
+ * \param channels On return, will be filled with the audio device's channel count.
+ * \returns 1 if the audio device has been opened, 0 otherwise.
+ *
+ * \since This function is available since SDL_mixer 2.0.0.
+ *
+ * \sa Mix_OpenAudio
+ * \sa Mix_OpenAudioDevice
+ */
+extern DECLSPEC int SDLCALL Mix_QuerySpec(int *frequency, Uint16 *format, int *channels);
+
+/**
  * Dynamically change the number of channels managed by the mixer.
  *
- * If decreasing the number of channels, the upper channels are stopped.
+ * SDL_mixer deals with "channels," which is not the same thing as
+ * the mono/stereo channels; they might be better described as
+ * "tracks," as each one corresponds to a separate source of audio
+ * data. Three different WAV files playing at the same time would
+ * be three separate SDL_mixer channels, for example.
  *
- * \param numchans number of channels
+ * An app needs as many channels as it has audio data it wants to
+ * play simultaneously, mixing them into a single stream to send
+ * to the audio device.
+ *
+ * SDL_mixer allocates `MIX_CHANNELS` (currently 8) channels when you
+ * open an audio device, which may be more than an app needs, but
+ * if the app needs more or wants less, this function can change it.
+ *
+ * If decreasing the number of channels, any upper channels currently
+ * playing are stopped. This will deregister all effects on those
+ * channels and call any callback specified by Mix_ChannelFinished()
+ * for each removed channel.
+ *
+ * If `numchans` is less than zero, this will return the current number of
+ * channels without changing anything.
+ *
+ * \param numchans the new number of channels, or < 0 to query current channel count.
  * \returns the new number of allocated channels.
  *
  * \since This function is available since SDL_mixer 2.0.0.
@@ -237,24 +521,38 @@ extern DECLSPEC int SDLCALL Mix_OpenAudioDevice(int frequency, Uint16 format, in
 extern DECLSPEC int SDLCALL Mix_AllocateChannels(int numchans);
 
 /**
- * Find out what the actual audio device parameters are.
+ * Load a supported audio format into a chunk.
  *
- * \param frequency frequency
- * \param format audio format
- * \param channels number of channels
- * \returns 1 if the audio has been opened, 0 otherwise.
+ * SDL_mixer has two separate data structures for audio data. One it
+ * calls a "chunk," which is meant to be a file completely decoded into
+ * memory up front, and the other it calls "music" which is a file
+ * intended to be decoded on demand. Originally, simple formats like
+ * uncompressed WAV files were meant to be chunks and compressed things,
+ * like MP3s, were meant to be music, and you would stream one thing
+ * for a game's music and make repeating sound effects with the chunks.
  *
- * \since This function is available since SDL_mixer 2.0.0.
- */
-extern DECLSPEC int SDLCALL Mix_QuerySpec(int *frequency, Uint16 *format, int *channels);
-
-/**
- * Load a wave file or a music (.mod .s3m .it .xm) file
+ * In modern times, this isn't split by format anymore, and most are
+ * interchangeable, so the question is what the app thinks is worth
+ * predecoding or not. Chunks might take more memory, but once they
+ * are loaded won't need to decode again, whereas music always needs
+ * to be decoded on the fly. Also, crucially, there are as many
+ * channels for chunks as the app can allocate, but SDL_mixer only
+ * offers a single "music" channel.
  *
- * \param src RWops
- * \param freesrc can be set so that the RWops is freed after this function is
- *                called
- * \returns Mix Chunk, or NULL on error.
+ * If `freesrc` is non-zero, the RWops will be closed before returning,
+ * whether this function succeeds or not. SDL_mixer reads everything it
+ * needs from the RWops during this call in any case.
+ *
+ * As a convenience, there is a macro to read files from disk without
+ * having to deal with SDL_RWops: `Mix_LoadWAV("filename.wav")` will
+ * call this function and manage those details for you.
+ *
+ * When done with a chunk, the app should dispose of it with a call to
+ * Mix_FreeChunk().
+ *
+ * \param src an SDL_RWops that data will be read from.
+ * \param freesrc non-zero to close/free the SDL_RWops before returning, zero to leave it open.
+ * \returns a new chunk, or NULL on error.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  *
@@ -277,10 +575,29 @@ extern DECLSPEC Mix_Chunk * SDLCALL Mix_LoadWAV_RW(SDL_RWops *src, int freesrc);
 #define Mix_LoadWAV(file)   Mix_LoadWAV_RW(SDL_RWFromFile(file, "rb"), 1)
 
 /**
- * Load a music file
+ * Load a supported audio format into a music object.
  *
- * \param file file name
- * \returns Mix Music, or NULL on error.
+ * SDL_mixer has two separate data structures for audio data. One it
+ * calls a "chunk," which is meant to be a file completely decoded into
+ * memory up front, and the other it calls "music" which is a file
+ * intended to be decoded on demand. Originally, simple formats like
+ * uncompressed WAV files were meant to be chunks and compressed things,
+ * like MP3s, were meant to be music, and you would stream one thing
+ * for a game's music and make repeating sound effects with the chunks.
+ *
+ * In modern times, this isn't split by format anymore, and most are
+ * interchangeable, so the question is what the app thinks is worth
+ * predecoding or not. Chunks might take more memory, but once they
+ * are loaded won't need to decode again, whereas music always needs
+ * to be decoded on the fly. Also, crucially, there are as many
+ * channels for chunks as the app can allocate, but SDL_mixer only
+ * offers a single "music" channel.
+ *
+ * When done with this music, the app should dispose of it with a call to
+ * Mix_FreeMusic().
+ *
+ * \param file a file path from where to load music data.
+ * \returns a new music object, or NULL on error.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  *
@@ -289,12 +606,42 @@ extern DECLSPEC Mix_Chunk * SDLCALL Mix_LoadWAV_RW(SDL_RWops *src, int freesrc);
 extern DECLSPEC Mix_Music * SDLCALL Mix_LoadMUS(const char *file);
 
 /**
- * Load a music file from an SDL_RWop object
+ * Load a supported audio format into a music object.
  *
- * \param src RWops
- * \param freesrc can be set so that the RWops is freed after this function is
- *                called
- * \returns Mix Music, or NULL on error.
+ * SDL_mixer has two separate data structures for audio data. One it
+ * calls a "chunk," which is meant to be a file completely decoded into
+ * memory up front, and the other it calls "music" which is a file
+ * intended to be decoded on demand. Originally, simple formats like
+ * uncompressed WAV files were meant to be chunks and compressed things,
+ * like MP3s, were meant to be music, and you would stream one thing
+ * for a game's music and make repeating sound effects with the chunks.
+ *
+ * In modern times, this isn't split by format anymore, and most are
+ * interchangeable, so the question is what the app thinks is worth
+ * predecoding or not. Chunks might take more memory, but once they
+ * are loaded won't need to decode again, whereas music always needs
+ * to be decoded on the fly. Also, crucially, there are as many
+ * channels for chunks as the app can allocate, but SDL_mixer only
+ * offers a single "music" channel.
+ *
+ * If `freesrc` is non-zero, the RWops will be closed before returning,
+ * whether this function succeeds or not. SDL_mixer reads everything it
+ * needs from the RWops during this call in any case.
+ *
+ * As a convenience, there is a function to read files from disk without
+ * having to deal with SDL_RWops: `Mix_LoadMUS("filename.mp3")` will
+ * manage those details for you.
+ *
+ * This function attempts to guess the file format from incoming data.
+ * If the caller knows the format, or wants to force it, it should use
+ * Mix_LoadMUSType_RW() instead.
+ *
+ * When done with this music, the app should dispose of it with a call to
+ * Mix_FreeMusic().
+ *
+ * \param src an SDL_RWops that data will be read from.
+ * \param freesrc non-zero to close/free the SDL_RWops before returning, zero to leave it open.
+ * \returns a new music object, or NULL on error.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  *
@@ -303,17 +650,58 @@ extern DECLSPEC Mix_Music * SDLCALL Mix_LoadMUS(const char *file);
 extern DECLSPEC Mix_Music * SDLCALL Mix_LoadMUS_RW(SDL_RWops *src, int freesrc);
 
 /**
- * Load a music file from an SDL_RWop object assuming a specific format
+ * Load an audio format into a music object, assuming a specific format.
  *
- * \param src RWops
- * \param type music type
- * \param freesrc can be set so that the RWops is freed after this function is
- *                called
- * \returns Mix Music, or NULL on error.
+ * SDL_mixer has two separate data structures for audio data. One it
+ * calls a "chunk," which is meant to be a file completely decoded into
+ * memory up front, and the other it calls "music" which is a file
+ * intended to be decoded on demand. Originally, simple formats like
+ * uncompressed WAV files were meant to be chunks and compressed things,
+ * like MP3s, were meant to be music, and you would stream one thing
+ * for a game's music and make repeating sound effects with the chunks.
+ *
+ * In modern times, this isn't split by format anymore, and most are
+ * interchangeable, so the question is what the app thinks is worth
+ * predecoding or not. Chunks might take more memory, but once they
+ * are loaded won't need to decode again, whereas music always needs
+ * to be decoded on the fly. Also, crucially, there are as many
+ * channels for chunks as the app can allocate, but SDL_mixer only
+ * offers a single "music" channel.
+ *
+ * This function loads music data, and lets the application specify
+ * the type of music being loaded, which might be useful if SDL_mixer
+ * cannot figure it out from the data stream itself.
+ *
+ * Currently, the following types are supported:
+ *
+ * - `MUS_NONE` (SDL_mixer should guess, based on the data)
+ * - `MUS_WAV` (Microsoft WAV files)
+ * - `MUS_MOD` (Various tracker formats)
+ * - `MUS_MID` (MIDI files)
+ * - `MUS_OGG` (Ogg Vorbis files)
+ * - `MUS_MP3` (MP3 files)
+ * - `MUS_FLAC` (FLAC files)
+ * - `MUS_OPUS` (Opus files)
+ *
+ * If `freesrc` is non-zero, the RWops will be closed before returning,
+ * whether this function succeeds or not. SDL_mixer reads everything it
+ * needs from the RWops during this call in any case.
+ *
+ * As a convenience, there is a function to read files from disk without
+ * having to deal with SDL_RWops: `Mix_LoadMUS("filename.mp3")` will
+ * manage those details for you (but not let you specify the music type
+ * explicitly)..
+ *
+ * When done with this music, the app should dispose of it with a call to
+ * Mix_FreeMusic().
+ *
+ * \param src an SDL_RWops that data will be read from.
+ * \param type the type of audio data provided by `src`.
+ * \param freesrc non-zero to close/free the SDL_RWops before returning, zero to leave it open.
+ * \returns a new music object, or NULL on error.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  *
- * \sa Mix_MusicType
  * \sa Mix_FreeMusic
  */
 extern DECLSPEC Mix_Music * SDLCALL Mix_LoadMUSType_RW(SDL_RWops *src, Mix_MusicType type, int freesrc);
@@ -346,7 +734,11 @@ extern DECLSPEC Mix_Chunk * SDLCALL Mix_QuickLoad_RAW(Uint8 *mem, Uint32 len);
 /**
  * Free an audio chunk previously loaded
  *
- * \param chunk Mix Chunka
+ * SDL_mixer will stop any channels this chunk is currently playing on.
+ * This will deregister all effects on those channels and call any
+ * callback specified by Mix_ChannelFinished() for each removed channel.
+ *
+ * \param chunk Mix Chunk
  *
  * \since This function is available since SDL_mixer 2.0.0.
  *
