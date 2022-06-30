@@ -1227,30 +1227,6 @@ extern DECLSPEC int SDLCALL Mix_SetPosition(int channel, Sint16 angle, Uint8 dis
 extern DECLSPEC int SDLCALL Mix_SetDistance(int channel, Uint8 distance);
 
 
-/*
- * !!! FIXME : Haven't implemented, since the effect goes past the
- *              end of the sound buffer. Will have to think about this.
- *               --ryan.
- */
-#if 0
-/* Causes an echo effect to be mixed into a sound. (echo) is the amount
- *  of echo to mix. 0 is no echo, 255 is infinite (and probably not
- *  what you want).
- *
- * Setting (channel) to MIX_CHANNEL_POST registers this as a posteffect, and
- *  the reverbing will be done to the final mixed stream before passing it on
- *  to the audio device.
- *
- * This uses the Mix_RegisterEffect() API internally. If you specify an echo
- *  of zero, the effect is unregistered, as the data is already in that state.
- *
- * returns zero if error (no such channel or Mix_RegisterEffect() fails),
- *  nonzero if reversing effect is enabled.
- *  Error messages can be retrieved from Mix_GetError().
- */
-extern no_parse_DECLSPEC int SDLCALL Mix_SetReverb(int channel, Uint8 echo);
-#endif
-
 /**
  * Causes a channel to reverse its stereo.
  *
