@@ -704,23 +704,53 @@ extern DECLSPEC Mix_Music * SDLCALL Mix_LoadMUS_RW(SDL_RWops *src, int freesrc);
 extern DECLSPEC Mix_Music * SDLCALL Mix_LoadMUSType_RW(SDL_RWops *src, Mix_MusicType type, int freesrc);
 
 /**
- * Load a wave file of the mixer format from a memory buffer
+ * Load a WAV file from memory as quickly as possible.
  *
- * \param mem memory buffer
- * \returns Mix Chunk, or NULL on error.
+ * Unlike Mix_LoadWAV_RW, this function has several requirements, and
+ * unless you control all your audio data and know what you're doing, you
+ * should consider this function unsafe and not use it.
+ *
+ * - The provided audio data MUST be in Microsoft WAV format.
+ * - The provided audio data shouldn't use any strange WAV extensions.
+ * - The audio data MUST be in the exact same format as the audio device.
+ *   This function will not attempt to convert it, or even verify it's
+ *   in the right format.
+ * - The audio data must be valid; this function does not know the size of
+ *   the memory buffer, so if the WAV data is corrupted, it can read past
+ *   the end of the buffer, causing a crash.
+ * - The audio data must live at least as long as the returned Mix_Chunk,
+ *   because SDL_mixer will use that data directly and not make a copy of it.
+ *
+ * This function will do NO error checking! Be extremely careful here!
+ *
+ * (Seriously, use Mix_LoadWAV_RW instead.)
+ *
+ * If this function is successful, the provided memory buffer must remain
+ * available until Mix_FreeChunk() is called on the returned chunk.
+ *
+ * \param mem memory buffer containing of a WAV file.
+ * \returns a new chunk, or NULL on error.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  *
+ * \sa Mix_LoadWAV_RW
  * \sa Mix_FreeChunk
  */
 extern DECLSPEC Mix_Chunk * SDLCALL Mix_QuickLoad_WAV(Uint8 *mem);
 
 /**
- * Load raw audio data of the mixer format from a memory buffer
+ * Load a raw audio data from memory as quickly as possible.
  *
- * \param mem memory buffer
- * \param len length
- * \returns Mix Chunk, or NULL on error.
+ * The audio data MUST be in the exact same format as the audio device.
+ * This function will not attempt to convert it, or even verify it's
+ * in the right format.
+ *
+ * If this function is successful, the provided memory buffer must remain
+ * available until Mix_FreeChunk() is called on the returned chunk.
+ *
+ * \param mem memory buffer containing raw PCM data.
+ * \param len length of buffer pointed to by `mem`, in bytes.
+ * \returns a new chunk, or NULL on error.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  *
@@ -729,13 +759,16 @@ extern DECLSPEC Mix_Chunk * SDLCALL Mix_QuickLoad_WAV(Uint8 *mem);
 extern DECLSPEC Mix_Chunk * SDLCALL Mix_QuickLoad_RAW(Uint8 *mem, Uint32 len);
 
 /**
- * Free an audio chunk previously loaded
+ * Free an audio chunk.
+ *
+ * An app should call this function when it is done with a Mix_Chunk
+ * and wants to dispose of its resources.
  *
  * SDL_mixer will stop any channels this chunk is currently playing on. This
  * will deregister all effects on those channels and call any callback
  * specified by Mix_ChannelFinished() for each removed channel.
  *
- * \param chunk Mix Chunk
+ * \param chunk the chunk to free.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  *
@@ -747,9 +780,16 @@ extern DECLSPEC Mix_Chunk * SDLCALL Mix_QuickLoad_RAW(Uint8 *mem, Uint32 len);
 extern DECLSPEC void SDLCALL Mix_FreeChunk(Mix_Chunk *chunk);
 
 /**
- * Free an audio music previously loaded
+ * Free a music object.
  *
- * \param music Mix Music
+ * If this music is currently playing, it will be stopped.
+ *
+ * If this music is in the process of fading out (via Mix_FadeOutMusic()),
+ * this function will *block* until the fade completes. If you need
+ * to avoid this, be sure to call Mix_HaltMusic() before freeing
+ * the music.
+ *
+ * \param music the music object to free.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  *
@@ -760,20 +800,21 @@ extern DECLSPEC void SDLCALL Mix_FreeChunk(Mix_Chunk *chunk);
 extern DECLSPEC void SDLCALL Mix_FreeMusic(Mix_Music *music);
 
 /**
- * Get a list of chunk/music decoders that this build of SDL_mixer provides.
+ * Get a list of chunk decoders that this build of SDL_mixer provides.
  *
  * This list can change between builds AND runs of the program, if external
  * libraries that add functionality become available. You must successfully
- * call Mix_OpenAudio() before calling these functions.
+ * call Mix_OpenAudio() or Mix_OpenAudioDevice() before calling this
+ * function, as decoders are activated at device open time.
  *
  * Appearing in this list doesn't promise your specific audio file will
- * decode...but it's handy to know if you have, say, a functioning Timidity
- * install.
+ * decode...but it's handy to know if you have, say, a functioning
+ * Ogg Vorbis install.
  *
  * These return values are static, read-only data; do not modify or free it.
  * The pointers remain valid until you call Mix_CloseAudio().
  *
- * \returns number of chunk decoders
+ * \returns number of chunk decoders available.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  *
@@ -783,10 +824,19 @@ extern DECLSPEC void SDLCALL Mix_FreeMusic(Mix_Music *music);
 extern DECLSPEC int SDLCALL Mix_GetNumChunkDecoders(void);
 
 /**
- * Get chunk decoder name
+ * Get a chunk decoder's name.
  *
- * \param index index of the chunk decoder
- * \returns chunk decoder name
+ * The requested decoder's index must be between zero and
+ * Mix_GetNumChunkDecoders()-1. It's safe to call this with an
+ * invalid index; this function will return NULL in that case.
+ *
+ * This list can change between builds AND runs of the program, if external
+ * libraries that add functionality become available. You must successfully
+ * call Mix_OpenAudio() or Mix_OpenAudioDevice() before calling this
+ * function, as decoders are activated at device open time.
+ *
+ * \param index index of the chunk decoder.
+ * \returns the chunk decoder's name.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  *
@@ -795,19 +845,43 @@ extern DECLSPEC int SDLCALL Mix_GetNumChunkDecoders(void);
 extern DECLSPEC const char * SDLCALL Mix_GetChunkDecoder(int index);
 
 /**
- * Check if `name` is a chunk decoder
+ * Check if a chunk decoder is available by name.
  *
- * \param name name
- * \returns SDL_TRUE or SDL_FALSE
+ * This result can change between builds AND runs of the program, if external
+ * libraries that add functionality become available. You must successfully
+ * call Mix_OpenAudio() or Mix_OpenAudioDevice() before calling this
+ * function, as decoders are activated at device open time.
+ *
+ * Decoder names are arbitrary but also obvious, so you have to know what
+ * you're looking for ahead of time, but usually it's the file extension in
+ * capital letters (some example names are "AIFF", "VOC", "WAV").
+ *
+ * \param name the decoder name to query.
+ * \returns SDL_TRUE if a decoder by that name is available, SDL_FALSE otherwise.
  *
  * \since This function is available since SDL_mixer 2.0.2.
+ *
+ * \sa Mix_GetNumChunkDecoders
+ * \sa Mix_GetChunkDecoder
  */
 extern DECLSPEC SDL_bool SDLCALL Mix_HasChunkDecoder(const char *name);
 
 /**
- * Get the number of music decoders
+ * Get a list of music decoders that this build of SDL_mixer provides.
  *
- * \returns number of music decoders
+ * This list can change between builds AND runs of the program, if external
+ * libraries that add functionality become available. You must successfully
+ * call Mix_OpenAudio() or Mix_OpenAudioDevice() before calling this
+ * function, as decoders are activated at device open time.
+ *
+ * Appearing in this list doesn't promise your specific audio file will
+ * decode...but it's handy to know if you have, say, a functioning
+ * Ogg Vorbis install.
+ *
+ * These return values are static, read-only data; do not modify or free it.
+ * The pointers remain valid until you call Mix_CloseAudio().
+ *
+ * \returns number of chunk decoders available.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  *
@@ -817,10 +891,19 @@ extern DECLSPEC SDL_bool SDLCALL Mix_HasChunkDecoder(const char *name);
 extern DECLSPEC int SDLCALL Mix_GetNumMusicDecoders(void);
 
 /**
- * Get music decoder name
+ * Get a music decoder's name.
  *
- * \param index index of the music decoder
- * \returns music decoder name
+ * The requested decoder's index must be between zero and
+ * Mix_GetNumMusicDecoders()-1. It's safe to call this with an
+ * invalid index; this function will return NULL in that case.
+ *
+ * This list can change between builds AND runs of the program, if external
+ * libraries that add functionality become available. You must successfully
+ * call Mix_OpenAudio() or Mix_OpenAudioDevice() before calling this
+ * function, as decoders are activated at device open time.
+ *
+ * \param index index of the music decoder.
+ * \returns the music decoder's name.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  *
@@ -829,69 +912,155 @@ extern DECLSPEC int SDLCALL Mix_GetNumMusicDecoders(void);
 extern DECLSPEC const char * SDLCALL Mix_GetMusicDecoder(int index);
 
 /**
- * Check if `name` is a music decoder
+ * Check if a music decoder is available by name.
  *
- * \param name name
- * \returns SDL_TRUE or SDL_FALSE
+ * This result can change between builds AND runs of the program, if external
+ * libraries that add functionality become available. You must successfully
+ * call Mix_OpenAudio() or Mix_OpenAudioDevice() before calling this
+ * function, as decoders are activated at device open time.
  *
- * \since This function is available since SDL_mixer 2.6.0.
+ * Decoder names are arbitrary but also obvious, so you have to know what
+ * you're looking for ahead of time, but usually it's the file extension in
+ * capital letters (some example names are "MOD", "MP3", "FLAC").
+ *
+ * \param name the decoder name to query.
+ * \returns SDL_TRUE if a decoder by that name is available, SDL_FALSE otherwise.
+ *
+ * \since This function is available since SDL_mixer 2.6.0
+ *
+ * \sa Mix_GetNumMusicDecoders
+ * \sa Mix_GetMusicDecoder
  */
 extern DECLSPEC SDL_bool SDLCALL Mix_HasMusicDecoder(const char *name);
 
-/* Find out the music format of a mixer music, or the currently playing
-   music, if 'music' is NULL.
-*/
+/**
+ * Find out the format of a mixer music.
+ *
+ * If `music` is NULL, this will query the currently playing music (and
+ * return MUS_NONE if nothing is currently playing).
+ *
+ * \param music the music object to query, or NULL for the currently-playing music.
+ * \returns the Mix_MusicType for the music object.
+ *
+ * \since This function is available since SDL_mixer 2.0.0
+ */
 extern DECLSPEC Mix_MusicType SDLCALL Mix_GetMusicType(const Mix_Music *music);
 
 /**
- * Get music title from meta-tag if possible.
+ * Get the title for a music object, or its filename.
  *
- * If title tag is empty, filename will be returned
+ * This returns format-specific metadata. Not all file formats supply this!
  *
- * \param music Mix Music
- * \returns music title
+ * If `music` is NULL, this will query the currently-playing music.
+ *
+ * If music's title tag is missing or empty, the filename will be returned.
+ * If you'd rather have the actual metadata or nothing, use
+ * Mix_GetMusicTitleTag() instead.
+ *
+ * Please note that if the music was loaded from an SDL_RWops instead of a
+ * filename, the filename returned will be an empty string ("").
+ *
+ * This function never returns NULL! If no data is available, it will return an
+ * empty string ("").
+ *
+ * \param music the music object to query, or NULL for the currently-playing music.
+ * \returns the music's title if available, or the filename if not, or "".
  *
  * \since This function is available since SDL_mixer 2.6.0.
+ *
+ * \sa Mix_GetMusicTitleTag
+ * \sa Mix_GetMusicArtistTag
+ * \sa Mix_GetMusicAlbumTag
+ * \sa Mix_GetMusicCopyrightTag
  */
 extern DECLSPEC const char *SDLCALL Mix_GetMusicTitle(const Mix_Music *music);
 
 /**
- * Get music title from meta-tag if possible
+ * Get the title for a music object.
  *
- * \param music Mix Music
- * \returns music title tag
+ * This returns format-specific metadata. Not all file formats supply this!
+ *
+ * If `music` is NULL, this will query the currently-playing music.
+ *
+ * Unlike this function, Mix_GetMusicTitle() produce a string with the music's
+ * filename if a title isn't available, which might be preferable for some
+ * applications.
+ *
+ * This function never returns NULL! If no data is available, it will return an
+ * empty string ("").
+ *
+ * \param music the music object to query, or NULL for the currently-playing music.
+ * \returns the music's title if available, or "".
  *
  * \since This function is available since SDL_mixer 2.6.0.
+ *
+ * \sa Mix_GetMusicTitle
+ * \sa Mix_GetMusicArtistTag
+ * \sa Mix_GetMusicAlbumTag
+ * \sa Mix_GetMusicCopyrightTag
  */
 extern DECLSPEC const char *SDLCALL Mix_GetMusicTitleTag(const Mix_Music *music);
 
 /**
- * Get music artist from meta-tag if possible
+ * Get the artist name for a music object.
  *
- * \param music Mix Music
- * \returns music artist tag
+ * This returns format-specific metadata. Not all file formats supply this!
+ *
+ * If `music` is NULL, this will query the currently-playing music.
+ *
+ * This function never returns NULL! If no data is available, it will return an
+ * empty string ("").
+ *
+ * \param music the music object to query, or NULL for the currently-playing music.
+ * \returns the music's artist name if available, or "".
  *
  * \since This function is available since SDL_mixer 2.6.0.
+ *
+ * \sa Mix_GetMusicTitleTag
+ * \sa Mix_GetMusicAlbumTag
+ * \sa Mix_GetMusicCopyrightTag
  */
 extern DECLSPEC const char *SDLCALL Mix_GetMusicArtistTag(const Mix_Music *music);
 
 /**
- * Get music album from meta-tag if possible
+ * Get the album name for a music object.
  *
- * \param music Mix Music
- * \returns music album tag
+ * This returns format-specific metadata. Not all file formats supply this!
+ *
+ * If `music` is NULL, this will query the currently-playing music.
+ *
+ * This function never returns NULL! If no data is available, it will return an
+ * empty string ("").
+ *
+ * \param music the music object to query, or NULL for the currently-playing music.
+ * \returns the music's album name if available, or "".
  *
  * \since This function is available since SDL_mixer 2.6.0.
+ *
+ * \sa Mix_GetMusicTitleTag
+ * \sa Mix_GetMusicArtistTag
+ * \sa Mix_GetMusicCopyrightTag
  */
 extern DECLSPEC const char *SDLCALL Mix_GetMusicAlbumTag(const Mix_Music *music);
 
 /**
- * Get music copyright from meta-tag if possible
+ * Get the copyright text for a music object.
  *
- * \param music Mix Music
- * \returns music copyright tag
+ * This returns format-specific metadata. Not all file formats supply this!
+ *
+ * If `music` is NULL, this will query the currently-playing music.
+ *
+ * This function never returns NULL! If no data is available, it will return an
+ * empty string ("").
+ *
+ * \param music the music object to query, or NULL for the currently-playing music.
+ * \returns the music's copyright text if available, or "".
  *
  * \since This function is available since SDL_mixer 2.6.0.
+ *
+ * \sa Mix_GetMusicTitleTag
+ * \sa Mix_GetMusicArtistTag
+ * \sa Mix_GetMusicAlbumTag
  */
 extern DECLSPEC const char *SDLCALL Mix_GetMusicCopyrightTag(const Mix_Music *music);
 
@@ -901,61 +1070,142 @@ extern DECLSPEC const char *SDLCALL Mix_GetMusicCopyrightTag(const Mix_Music *mu
  * This can be used to provide real-time visual display of the audio stream or
  * add a custom mixer filter for the stream data.
  *
- * \param mix_func callback function
- * \param arg callback argument to be passed
+ * The callback will fire every time SDL_mixer is ready to supply more data
+ * to the audio device, after it has finished all its mixing work. This runs
+ * inside an SDL audio callback, so it's important that the callback return
+ * quickly, or there could be problems in the audio playback.
+ *
+ * The data provided to the callback is in the format that the audio device
+ * was opened in, and it represents the exact waveform SDL_mixer has mixed
+ * from all playing chunks and music for playback. You are allowed to
+ * modify the data, but it cannot be resized (so you can't add a reverb
+ * effect that goes past the end of the buffer without saving some state
+ * between runs to add it into the next callback, or resample the buffer
+ * to a smaller size to speed it up, etc).
+ *
+ * The `arg` pointer supplied here is passed to the callback as-is, for
+ * whatever the callback might want to do with it (keep track of some
+ * ongoing state, settings, etc).
+ *
+ * Passing a NULL callback disables the post-mix callback until such a time
+ * as a new one callback is set.
+ *
+ * There is only one callback available. If you need to mix multiple inputs,
+ * be prepared to handle them from a single function.
+ *
+ * \param mix_func the callback function to become the new post-mix callback.
+ * \param arg a pointer that is passed, untouched, to the callback.
  *
  * \since This function is available since SDL_mixer 2.0.0.
+ *
+ * \sa Mix_HookMusic
  */
 extern DECLSPEC void SDLCALL Mix_SetPostMix(void (SDLCALL *mix_func)(void *udata, Uint8 *stream, int len), void *arg);
 
 /**
  * Add your own music player or additional mixer function.
  *
- * If 'mix_func' is NULL, the default music player is re-enabled.
+ * This works something like Mix_SetPostMix(), but it has some crucial
+ * differences. Note that an app can use this _and_ Mix_SetPostMix() at
+ * the same time. This allows an app to replace the built-in music
+ * playback, either with it's own music decoder or with some sort of
+ * procedurally-generated audio output.
  *
- * \param mix_func mixer function callback
- * \param arg callback argument to be passed
+ * The supplied callback will fire every time SDL_mixer is preparing to
+ * supply more data to the audio device. This runs inside an SDL audio
+ * callback, so it's important that the callback return quickly, or there
+ * could be problems in the audio playback.
+ *
+ * Running this callback is the first thing SDL_mixer will do when
+ * starting to mix more audio. The buffer will contain silence upon
+ * entry, so the callback does not need to mix into existing data or
+ * initialize the buffer.
+ *
+ * Note that while a callback is set through this function, SDL_mixer
+ * will not mix any playing music; this callback is used instead. To
+ * disable this callback (and thus reenable built-in music playback)
+ * call this function with a NULL callback.
+ *
+ * The data written to by the callback is in the format that the audio
+ * device was opened in, and upon return from the callback, SDL_mixer
+ * will mix any playing chunks (but not music!) into the buffer. The
+ * callback cannot resize the buffer (so you must be prepared to provide
+ * exactly the amount of data demanded or leave it as silence).
+ *
+ * The `arg` pointer supplied here is passed to the callback as-is, for
+ * whatever the callback might want to do with it (keep track of some
+ * ongoing state, settings, etc).
+ *
+ * As there is only one music "channel" mixed, there is only one
+ * callback available. If you need to mix multiple inputs,
+ * be prepared to handle them from a single function.
+ *
+ * \param mix_func the callback function to become the new post-mix callback.
+ * \param arg a pointer that is passed, untouched, to the callback.
  *
  * \since This function is available since SDL_mixer 2.0.0.
+ *
+ * \sa Mix_SetPostMix
  */
 extern DECLSPEC void SDLCALL Mix_HookMusic(void (SDLCALL *mix_func)(void *udata, Uint8 *stream, int len), void *arg);
 
 /**
- * Add your own callback for when the music has finished playing or when it is
- * stopped from a call to Mix_HaltMusic.
+ * Set a callback that runs when a music object has stopped playing.
  *
- * \param music_finished callback function
+ * This callback will fire when the currently-playing music has completed,
+ * or when it has been explicitly stopped from a call to Mix_HaltMusic. As
+ * such, this callback might fire from an arbitrary background thread at
+ * almost any time; try to limit what you do here.
+ *
+ * It is legal to start a new music object playing in this callback (or
+ * restart the one that just stopped). If the music finished normally, this
+ * can be used to loop the music without a gap in the audio playback.
+ *
+ * Do not call SDL_LockAudio() from this callback; you will either be inside
+ * the audio callback, or SDL_mixer will explicitly lock the audio before
+ * calling your callback.
+ *
+ * A NULL pointer will disable the callback.
+ *
+ * \param music_finished the callback function to become the new notification mechanism.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC void SDLCALL Mix_HookMusicFinished(void (SDLCALL *music_finished)(void));
 
 /**
- * Get a pointer to the user data for the current music hook
+ * Get a pointer to the user data for the current music hook.
  *
- * \returns pointer to the user data
+ * This returns the `arg` pointer last passed to Mix_HookMusic(), or
+ * NULL if that function has never been called.
+ *
+ * \returns pointer to the user data previously passed to Mix_HookMusic.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC void * SDLCALL Mix_GetMusicHookData(void);
 
 /**
- * Add your own callback when a channel has finished playing.
+ * Set a callback that runs when a channel has finished playing.
  *
- * NULL to disable callback. The callback may be called from the mixer's audio
- * callback or it could be called as a result of Mix_HaltChannel(), etc. do
- * not call SDL_LockAudio() from this callback; you will either be inside the
- * audio callback, or SDL_mixer will explicitly lock the audio before calling
- * your callback.
+ * The callback may be called from the mixer's audio callback or it could be
+ * called as a result of Mix_HaltChannel(), etc.
  *
- * \param channel_finished callback function
+ * The callback has a single parameter, `channel`, which says what
+ * mixer channel has just stopped.
+ *
+ * Do not call SDL_LockAudio() from this callback; you will either be inside
+ * the audio callback, or SDL_mixer will explicitly lock the audio before
+ * calling your callback.
+ *
+ * A NULL pointer will disable the callback.
+ *
+ * \param channel_finished the callback function to become the new notification mechanism.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC void SDLCALL Mix_ChannelFinished(void (SDLCALL *channel_finished)(int channel));
 
-
-/* Special Effects API by ryan c. gordon. (icculus@icculus.org) */
 
 #define MIX_CHANNEL_POST  (-2)
 
@@ -1031,17 +1281,22 @@ typedef void (SDLCALL *Mix_EffectDone_t)(int chan, void *udata);
  * Mix_EffectDone_t function called when they are unregistered (since the main
  * output stream is never "done" in the same sense as a channel). You must
  * unregister them manually when you've had enough. Your callback will be told
- * that the channel being mixed is (MIX_CHANNEL_POST) if the processing is
+ * that the channel being mixed is `MIX_CHANNEL_POST` if the processing is
  * considered a posteffect.
  *
  * After all these effects have finished processing, the callback registered
  * through Mix_SetPostMix() runs, and then the stream goes to the audio
  * device.
  *
- * DO NOT EVER call SDL_LockAudio() from your callback function!
+ * DO NOT EVER call SDL_LockAudio() from your callback function! You are already
+ * running in the audio thread and the lock is already held!
  *
- * \param chan channel
- * \param f effect callback
+ * Note that unlike most SDL and SDL_mixer functions, this function returns
+ * zero if there's an error, not on success. We apologize for the API design
+ * inconsistency here.
+ *
+ * \param chan the channel to register an effect to, or MIX_CHANNEL_POST.
+ * \param f effect the callback to run when more of this channel is to be mixed.
  * \param d effect done callback
  * \param arg argument
  * \returns zero if error (no such channel), nonzero if added. Error messages
@@ -1053,15 +1308,22 @@ extern DECLSPEC int SDLCALL Mix_RegisterEffect(int chan, Mix_EffectFunc_t f, Mix
 
 
 /**
- * You may not need to call this explicitly, unless you need to stop an effect
+ * Explicitly unregister a special effect function.
+ *
+ * You may not need to call this at all, unless you need to stop an effect
  * from processing in the middle of a chunk's playback.
  *
- * Posteffects are never implicitly unregistered as they are for channels, but
- * they may be explicitly unregistered through this function by specifying
- * MIX_CHANNEL_POST for a channel.
+ * Posteffects are never implicitly unregistered as they are for channels
+ * (as the output stream does not have an end), but they may be explicitly
+ * unregistered through this function by specifying MIX_CHANNEL_POST for a
+ * channel.
  *
- * \param channel channel
- * \param f effect callback
+ * Note that unlike most SDL and SDL_mixer functions, this function returns
+ * zero if there's an error, not on success. We apologize for the API design
+ * inconsistency here.
+ *
+ * \param chan the channel to unregister an effect on, or MIX_CHANNEL_POST.
+ * \param f effect the callback stop calling in future mixing iterations.
  * \returns zero if error (no such channel or effect), nonzero if removed.
  *          Error messages can be retrieved from Mix_GetError().
  *
@@ -1070,8 +1332,10 @@ extern DECLSPEC int SDLCALL Mix_RegisterEffect(int chan, Mix_EffectFunc_t f, Mix
 extern DECLSPEC int SDLCALL Mix_UnregisterEffect(int channel, Mix_EffectFunc_t f);
 
 /**
- * You may not need to call this explicitly, unless you need to stop all
- * effects from processing in the middle of a chunk's playback.
+ * Explicitly unregister all special effect functions.
+ *
+ * You may not need to call this at all, unless you need to stop all effects
+ * from processing in the middle of a chunk's playback.
  *
  * Note that this will also shut off some internal effect processing, since
  * Mix_SetPanning() and others may use this API under the hood. This is called
@@ -1080,7 +1344,11 @@ extern DECLSPEC int SDLCALL Mix_UnregisterEffect(int channel, Mix_EffectFunc_t f
  * explicitly unregistered through this function by specifying
  * MIX_CHANNEL_POST for a channel.
  *
- * \param channel channel
+ * Note that unlike most SDL and SDL_mixer functions, this function returns
+ * zero if there's an error, not on success. We apologize for the API design
+ * inconsistency here.
+ *
+ * \param chan the channel to unregister all effects on, or MIX_CHANNEL_POST.
  * \returns zero if error (no such channel), nonzero if all effects removed.
  *          Error messages can be retrieved from Mix_GetError().
  *
@@ -1115,8 +1383,6 @@ extern DECLSPEC int SDLCALL Mix_UnregisterAllEffects(int channel);
  * Mix_SetPanning(channel, left, 255 - left);
  * ```
  *
- * ...which isn't so hard.
- *
  * Setting `channel` to MIX_CHANNEL_POST registers this as a posteffect, and
  * the panning will be done to the final mixed stream before passing it on to
  * the audio device.
@@ -1129,6 +1395,10 @@ extern DECLSPEC int SDLCALL Mix_UnregisterAllEffects(int channel);
  * Note that an audio device in mono mode is a no-op, but this call will
  * return successful in that case. Error messages can be retrieved from
  * Mix_GetError().
+ *
+ * Note that unlike most SDL and SDL_mixer functions, this function returns
+ * zero if there's an error, not on success. We apologize for the API design
+ * inconsistency here.
  *
  * \param channel The mixer channel to pan or MIX_CHANNEL_POST.
  * \param left Volume of stereo left channel, 0 is silence, 255 is full
@@ -1149,18 +1419,18 @@ extern DECLSPEC int SDLCALL Mix_SetPanning(int channel, Uint8 left, Uint8 right)
 /**
  * Set the position of a channel.
  *
- * (angle) is an integer from 0 to 360, that specifies the location of the
- * sound in relation to the listener. (angle) will be reduced as neccesary
+ * `angle` is an integer from 0 to 360, that specifies the location of the
+ * sound in relation to the listener. `angle` will be reduced as neccesary
  * (540 becomes 180 degrees, -100 becomes 260). Angle 0 is due north, and
  * rotates clockwise as the value increases. For efficiency, the precision of
  * this effect may be limited (angles 1 through 7 might all produce the same
- * effect, 8 through 15 are equal, etc). (distance) is an integer between 0
+ * effect, 8 through 15 are equal, etc). `distance` is an integer between 0
  * and 255 that specifies the space between the sound and the listener. The
  * larger the number, the further away the sound is. Using 255 does not
- * guarantee that the channel will be culled from the mixing process or be
+ * guarantee that the channel will be removed from the mixing process or be
  * completely silent. For efficiency, the precision of this effect may be
  * limited (distance 0 through 5 might all produce the same effect, 6 through
- * 10 are equal, etc). Setting (angle) and (distance) to 0 unregisters this
+ * 10 are equal, etc). Setting `angle` and `distance` to 0 unregisters this
  * effect, since the data would be unchanged.
  *
  * If you need more precise positional audio, consider using OpenAL for
@@ -1175,15 +1445,19 @@ extern DECLSPEC int SDLCALL Mix_SetPanning(int channel, Uint8 left, Uint8 right)
  * convert them to mono through SDL before giving them to the mixer in the
  * first place if you like.
  *
- * Setting (channel) to MIX_CHANNEL_POST registers this as a posteffect, and
+ * Setting the channel to MIX_CHANNEL_POST registers this as a posteffect, and
  * the positioning will be done to the final mixed stream before passing it on
  * to the audio device.
  *
  * This is a convenience wrapper over Mix_SetDistance() and Mix_SetPanning().
  *
- * \param channel channel
- * \param angle angle
- * \param distance distance
+ * Note that unlike most SDL and SDL_mixer functions, this function returns
+ * zero if there's an error, not on success. We apologize for the API design
+ * inconsistency here.
+ *
+ * \param channel The mixer channel to position, or MIX_CHANNEL_POST.
+ * \param angle angle, in degrees. North is 0, and goes clockwise.
+ * \param distance distance; 0 is the listener, 255 is maxiumum distance away.
  * \returns zero if error (no such channel or Mix_RegisterEffect() fails),
  *          nonzero if position effect is enabled. Error messages can be
  *          retrieved from Mix_GetError().
@@ -1196,28 +1470,32 @@ extern DECLSPEC int SDLCALL Mix_SetPosition(int channel, Sint16 angle, Uint8 dis
 /**
  * Set the "distance" of a channel.
  *
- * (distance) is an integer from 0 to 255 that specifies the location of the
+ * `distance` is an integer from 0 to 255 that specifies the location of the
  * sound in relation to the listener. Distance 0 is overlapping the listener,
- * and 255 is as far away as possible A distance of 255 does not guarantee
+ * and 255 is as far away as possible. A distance of 255 does not guarantee
  * silence; in such a case, you might want to try changing the chunk's volume,
  * or just cull the sample from the mixing process with Mix_HaltChannel(). For
  * efficiency, the precision of this effect may be limited (distances 1
  * through 7 might all produce the same effect, 8 through 15 are equal, etc).
  * (distance) is an integer between 0 and 255 that specifies the space between
  * the sound and the listener. The larger the number, the further away the
- * sound is. Setting (distance) to 0 unregisters this effect, since the data
+ * sound is. Setting the distance to 0 unregisters this effect, since the data
  * would be unchanged. If you need more precise positional audio, consider
  * using OpenAL for spatialized effects instead of SDL_mixer. This is only
  * meant to be a basic effect for simple "3D" games.
  *
- * Setting (channel) to MIX_CHANNEL_POST registers this as a posteffect, and
+ * Setting the channel to MIX_CHANNEL_POST registers this as a posteffect, and
  * the distance attenuation will be done to the final mixed stream before
  * passing it on to the audio device.
  *
  * This uses the Mix_RegisterEffect() API internally.
  *
- * \param channel channel
- * \param distance distance
+ * Note that unlike most SDL and SDL_mixer functions, this function returns
+ * zero if there's an error, not on success. We apologize for the API design
+ * inconsistency here.
+ *
+ * \param channel The mixer channel to attenuate, or MIX_CHANNEL_POST.
+ * \param distance distance; 0 is the listener, 255 is maxiumum distance away.
  * \returns zero if error (no such channel or Mix_RegisterEffect() fails),
  *          nonzero if position effect is enabled. Error messages can be
  *          retrieved from Mix_GetError().
@@ -1228,24 +1506,29 @@ extern DECLSPEC int SDLCALL Mix_SetDistance(int channel, Uint8 distance);
 
 
 /**
- * Causes a channel to reverse its stereo.
+ * Cause a channel to reverse its stereo.
  *
  * This is handy if the user has his speakers hooked up backwards, or you
- * would like to have a minor bit of psychedelia in your sound code. :)
- * Calling this function with (flip) set to non-zero reverses the chunks's
- * usual channels. If (flip) is zero, the effect is unregistered.
+ * would like to have a trippy sound effect.
+ *
+ * Calling this function with `flip` set to non-zero reverses the chunks's
+ * usual channels. If `flip` is zero, the effect is unregistered.
  *
  * This uses the Mix_RegisterEffect() API internally, and thus is probably
  * more CPU intensive than having the user just plug in his speakers
  * correctly. Mix_SetReverseStereo() returns without registering the effect
  * function if the audio device is not configured for stereo output.
  *
- * If you specify MIX_CHANNEL_POST for (channel), then this the effect is used
+ * If you specify MIX_CHANNEL_POST for `channel`, then this effect is used
  * on the final mixed stream before sending it on to the audio device (a
  * posteffect).
  *
- * \param channel channel
- * \param flip flip
+ * Note that unlike most SDL and SDL_mixer functions, this function returns
+ * zero if there's an error, not on success. We apologize for the API design
+ * inconsistency here.
+ *
+ * \param channel The mixer channel to reverse, or MIX_CHANNEL_POST.
+ * \param flip non-zero to reverse stereo, zero to disable this effect.
  * \returns zero if error (no such channel or Mix_RegisterEffect() fails),
  *          nonzero if reversing effect is enabled. Note that an audio device
  *          in mono mode is a no-op, but this call will return successful in
@@ -1255,44 +1538,82 @@ extern DECLSPEC int SDLCALL Mix_SetDistance(int channel, Uint8 distance);
  */
 extern DECLSPEC int SDLCALL Mix_SetReverseStereo(int channel, int flip);
 
-/* end of effects API. --ryan. */
+/* end of effects API. */
+
 
 
 /**
- * Reserve the first channels (0 -> n-1) for the application, i.e.
+ * Reserve the first channels for the application.
  *
- * don't allocate them dynamically to the next sample if requested with a -1
- * value below.
+ * While SDL_mixer will use up to the number of channels allocated by
+ * Mix_AllocateChannels(), this sets channels aside that will not be
+ * available when calling Mix_PlayChannel with a channel of -1 (play
+ * on the first unused channel). In this case, SDL_mixer will treat
+ * reserved channels as "used" whether anything is playing on them
+ * at the moment or not.
  *
- * \param num number of channels
+ * This is useful if you've budgeted some channels for dedicated
+ * audio and the rest are just used as they are available.
+ *
+ * Calling this function will set channels 0 to `n - 1` to be reserved.
+ * This will not change channel allocations. The number of reserved
+ * channels will be clamped to the current number allocated.
+ *
+ * By default, no channels are reserved.
+ *
+ * \param num number of channels to reserve, starting at index zero.
  * \returns the number of reserved channels.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC int SDLCALL Mix_ReserveChannels(int num);
 
+
 /* Channel grouping functions */
 
-/** Attach a tag to a channel. A tag can be assigned to several mixer
+/**
+ * Assign a tag to a channel.
+ *
+ * A tag is an arbitary number that can be assigned to several mixer
  * channels, to form groups of channels.
+ *
  * If 'tag' is -1, the tag is removed (actually -1 is the tag used to
  * represent the group of all the channels).
  *
- * \param which which
- * \param tag tag
+ * This function replaces the requested channel's current tag; you
+ * may only have one tag per channel.
  *
- * \returns true if everything was OK.
+ * You may not specify MAX_CHANNEL_POST for a channel.
+ *
+ * \param which the channel to set the tag on.
+ * \param tag an arbitrary value to assign a channel.
+ *
+ * \returns non-zero on success, zero on error (no such channel).
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC int SDLCALL Mix_GroupChannel(int which, int tag);
 
 /**
- * Assign several consecutive channels to a group
+ * Assign several consecutive channels to the same tag.
  *
- * \param from from
- * \param to to
- * \param tag tag
+ * A tag is an arbitary number that can be assigned to several mixer
+ * channels, to form groups of channels.
+ *
+ * If 'tag' is -1, the tag is removed (actually -1 is the tag used to
+ * represent the group of all the channels).
+ *
+ * This function replaces the requested channels' current tags; you
+ * may only have one tag per channel.
+ *
+ * You may not specify MAX_CHANNEL_POST for a channel.
+ *
+ * Note that this returns success and failure in the _opposite_ way
+ * from Mix_GroupChannel(). We regret the API design mistake.
+ *
+ * \param from the first channel to set the tag on.
+ * \param to the last channel to set the tag on, inclusive.
+ * \param tag an arbitrary value to assign a channel.
  * \returns 0 if successful, negative on error
  *
  * \since This function is available since SDL_mixer 2.0.0.
@@ -1300,9 +1621,19 @@ extern DECLSPEC int SDLCALL Mix_GroupChannel(int which, int tag);
 extern DECLSPEC int SDLCALL Mix_GroupChannels(int from, int to, int tag);
 
 /**
- * Finds the first available channel in a group of channels,
+ * Finds the first available channel in a group of channels.
  *
- * \param tag tag
+ * A tag is an arbitary number that can be assigned to several mixer
+ * channels, to form groups of channels.
+ *
+ * This function searches all channels with a specified tag, and
+ * returns the channel number of the first one it finds that is
+ * currently unused.
+ *
+ * If no channels with the specified tag are unused, this function
+ * returns -1.
+ *
+ * \param tag an arbitrary value, assigned to channels, to search for.
  * \returns first available channel, or -1 if none are available.
  *
  * \since This function is available since SDL_mixer 2.0.0.
@@ -1312,36 +1643,53 @@ extern DECLSPEC int SDLCALL Mix_GroupAvailable(int tag);
 /**
  * Returns the number of channels in a group.
  *
- * This is also a subtle way to get the total number of channels when 'tag' is
- * -1
+ * If tag is -1, this will return the total number of
+ * channels allocated, regardless of what their tag might be.
  *
- * \param tag tag
- * \returns the number of channels in a group.
+ * \param tag an arbitrary value, assigned to channels, to search for.
+ * \returns the number of channels assigned the specified tag.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC int SDLCALL Mix_GroupCount(int tag);
 
 /**
- * Finds the "oldest" sample playing in a group of channels
+ * Find the "oldest" sample playing in a group of channels.
  *
- * \param tag tag
+ * Specifically, this function returns the channel number that
+ * is assigned the specified tag, is currently playing, and
+ * has the lowest start time, based on the value of SDL_GetTicks()
+ * when the channel started playing.
+ *
+ * If no channel with this tag is currently playing, this function
+ * returns -1.
+ *
+ * \param tag an arbitrary value, assigned to channels, to search through.
  * \returns the "oldest" sample playing in a group of channels
  *
  * \since This function is available since SDL_mixer 2.0.0.
+ *
+ * \sa Mix_GroupNewer
  */
 extern DECLSPEC int SDLCALL Mix_GroupOldest(int tag);
 
 /**
- * Finds the "most recent" (i.e.
+ * Find the "most recent" sample playing in a group of channels.
  *
- * last) sample playing in a group of channels
+ * Specifically, this function returns the channel number that
+ * is assigned the specified tag, is currently playing, and
+ * has the highest start time, based on the value of SDL_GetTicks()
+ * when the channel started playing.
  *
- * \param tag tag
- * \returns the "most recent" (i.e. last) sample playing in a group of
- *          channels
+ * If no channel with this tag is currently playing, this function
+ * returns -1.
+ *
+ * \param tag an arbitrary value, assigned to channels, to search through.
+ * \returns the "most recent" sample playing in a group of channels
  *
  * \since This function is available since SDL_mixer 2.0.0.
+ *
+ * \sa Mix_GroupOldest
  */
 extern DECLSPEC int SDLCALL Mix_GroupNewer(int tag);
 
@@ -1376,24 +1724,54 @@ extern DECLSPEC int SDLCALL Mix_GroupNewer(int tag);
 extern DECLSPEC int SDLCALL Mix_PlayChannel(int channel, Mix_Chunk *chunk, int loops);
 
 /**
- * The same as above, but the sound is played at most 'ticks' milliseconds
+ * Play an audio chunk on a specific channel for a maximum time.
  *
- * \param channel channel
- * \param chunk chunk
- * \param loops loops
- * \param ticks ticks
- * \returns which channel was used to play the sound.
+ * If the specified channel is -1, play on the first free channel (and
+ * return -1 without playing anything new if no free channel was
+ * available).
+ *
+ * If a specific channel was requested, and there is a chunk already
+ * playing there, that chunk will be halted and the new chunk will
+ * take its place.
+ *
+ * If `loops` is greater than zero, loop the sound that many times.
+ * If `loops` is -1, loop "infinitely" (~65000 times).
+ *
+ * `ticks` specifies the maximum number of milliseconds to play this
+ * chunk before halting it. If you want the chunk to play until all
+ * data has been mixed, specify -1.
+ *
+ * Note that this function does not block for the number of ticks
+ * requested; it just schedules the chunk to play and notes the
+ * maximum for the mixer to manage later, and returns immediately.
+ *
+ * \param channel the channel on which to play the new chunk.
+ * \param chunk the new chunk to play.
+ * \param loop the number of times the chunk should loop, -1 to loop (not actually) infinitely.
+ * \param ticks the maximum number of milliseconds of this chunk to mix for playback.
+ * \returns which channel was used to play the sound, or -1 if sound could not be played.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC int SDLCALL Mix_PlayChannelTimed(int channel, Mix_Chunk *chunk, int loops, int ticks);
 
 /**
- * Play Music
+ * Play a new music object.
  *
- * \param music music
- * \param loops loops
- * \returns which channel was used to play the music.
+ * This will schedule the music object to begin mixing for playback.
+ *
+ * There is only ever one music object playing at a time; if this is
+ * called when another music object is playing, the currently-playing
+ * music is halted and the new music will replace it.
+ *
+ * Please note that if the currently-playing music is in the process of
+ * fading out (via Mix_FadeOutMusic()), this function will *block* until
+ * the fade completes. If you need to avoid this, be sure to call
+ * Mix_HaltMusic() before starting new music.
+ *
+ * \param music the new music object to schedule for mixing.
+ * \param loops the number of loops to play the music for (0 means "play once and stop").
+ * \returns zero on success, -1 on error.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
@@ -1443,6 +1821,10 @@ extern DECLSPEC int SDLCALL Mix_FadeInMusicPos(Mix_Music *music, int loops, int 
  * If `loops` is greater than zero, loop the sound that many times.
  * If `loops` is -1, loop "infinitely" (~65000 times).
  *
+ * A fading channel will change it's volume progressively, as if
+ * Mix_Volume() was called on it (which is to say: you probably shouldn't
+ * call Mix_Volume() on a fading channel).
+ *
  * Note that before SDL_mixer 2.5.3, this function was a macro
  * that called Mix_FadeInChannelTimed() with a fourth parameter ("ticks")
  * of -1. This function still does the same thing, but promotes it
@@ -1461,50 +1843,116 @@ extern DECLSPEC int SDLCALL Mix_FadeInMusicPos(Mix_Music *music, int loops, int 
 extern DECLSPEC int SDLCALL Mix_FadeInChannel(int channel, Mix_Chunk *chunk, int loops, int ms);
 
 /**
- * Fade in a channel over "ms" milliseconds at position
+ * Play an audio chunk on a specific channel, fading in the audio, for a maximum time.
  *
- * \param channel channel
- * \param chunk chunk
- * \param loops loops
- * \param ms milliseconds
- * \param ticks ticks
- * \returns 0 if successful, -1 on error
+ * This will start the new sound playing, much like Mix_PlayChannel() will,
+ * but will start the sound playing at silence and fade in to its normal
+ * volume over the specified number of milliseconds.
+ *
+ * If the specified channel is -1, play on the first free channel (and
+ * return -1 without playing anything new if no free channel was
+ * available).
+ *
+ * If a specific channel was requested, and there is a chunk already
+ * playing there, that chunk will be halted and the new chunk will
+ * take its place.
+ *
+ * If `loops` is greater than zero, loop the sound that many times.
+ * If `loops` is -1, loop "infinitely" (~65000 times).
+ *
+ * `ticks` specifies the maximum number of milliseconds to play this
+ * chunk before halting it. If you want the chunk to play until all
+ * data has been mixed, specify -1.
+ *
+ * Note that this function does not block for the number of ticks
+ * requested; it just schedules the chunk to play and notes the
+ * maximum for the mixer to manage later, and returns immediately.
+ *
+ * A fading channel will change it's volume progressively, as if
+ * Mix_Volume() was called on it (which is to say: you probably shouldn't
+ * call Mix_Volume() on a fading channel).
+ *
+ * \param channel the channel on which to play the new chunk, or -1 to find any available.
+ * \param chunk the new chunk to play.
+ * \param loop the number of times the chunk should loop, -1 to loop (not actually) infinitely.
+ * \param ms the number of milliseconds to spend fading in.
+ * \param ticks the maximum number of milliseconds of this chunk to mix for playback.
+ * \returns which channel was used to play the sound, or -1 if sound could not be played.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC int SDLCALL Mix_FadeInChannelTimed(int channel, Mix_Chunk *chunk, int loops, int ms, int ticks);
 
 /**
- * Set the volume in the range of 0-128 of a specific channel.
+ * Set the volume for a specific channel.
  *
- * If the specified channel is -1, set volume for all channels.
+ * The volume must be between 0 (silence) and MIX_MAX_VOLUME (full volume).
+ * Note that MIX_MAX_VOLUME is 128. Values greater than MIX_MAX_VOLUME are
+ * clamped to MIX_MAX_VOLUME.
  *
- * \param channel channel
- * \param volume volume
- * \returns the original volume. If the specified volume is -1, just return
- *          the current volume.
+ * Specifying a negative volume will not change the current volume; as
+ * such, this can be used to query the current volume without making changes,
+ * as this function returns the previous (in this case, still-current) value.
+ *
+ * If the specified channel is -1, this function sets the volume for all
+ * channels, and returns _the average_ of all channels' volumes prior to
+ * this call.
+ *
+ * The default volume for a channel is MIX_MAX_VOLUME (no attenuation).
+ *
+ * \param channel the channel on set/query the volume on, or -1 for all channels.
+ * \param volume the new volume, between 0 and MIX_MAX_VOLUME, or -1 to query.
+ * \returns the previous volume. If the specified volume is -1, this returns
+ *          the current volume. If `channel` is -1, this returns the average
+ *          of all channels.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC int SDLCALL Mix_Volume(int channel, int volume);
 
 /**
- * Set the volume in the range of 0-128 of a specific chunk.
+ * Set the volume for a specific chunk.
  *
- * \param chunk chunk
- * \param volume volume
- * \returns the original volume. If the specified volume is -1, just return
- *          the current volume.
+ * In addition to channels having a volume setting, individual chunks
+ * also maintain a seperate volume. Both values are considered when mixing,
+ * so both affect the final attenuation of the sound. This lets an app
+ * adjust the volume for all instances of a sound in addition to specific
+ * instances of that sound.
+ *
+ * The volume must be between 0 (silence) and MIX_MAX_VOLUME (full volume).
+ * Note that MIX_MAX_VOLUME is 128. Values greater than MIX_MAX_VOLUME are
+ * clamped to MIX_MAX_VOLUME.
+ *
+ * Specifying a negative volume will not change the current volume; as
+ * such, this can be used to query the current volume without making changes,
+ * as this function returns the previous (in this case, still-current) value.
+ *
+ * The default volume for a chunk is MIX_MAX_VOLUME (no attenuation).
+ *
+ * \param channel the channel on set/query the volume on, or -1 for all channels.
+ * \param volume the new volume, between 0 and MIX_MAX_VOLUME, or -1 to query.
+ * \returns the previous volume. If the specified volume is -1, this returns
+ *          the current volume. If `chunk` is NULL, this returns -1.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC int SDLCALL Mix_VolumeChunk(Mix_Chunk *chunk, int volume);
 
 /**
- * Set the volume in the range of 0-128 of music
+ * Set the volume for the music channel.
  *
- * \param volume volume
- * \returns the original volume. If the specified volume is -1, just return
+ * The volume must be between 0 (silence) and MIX_MAX_VOLUME (full volume).
+ * Note that MIX_MAX_VOLUME is 128. Values greater than MIX_MAX_VOLUME are
+ * clamped to MIX_MAX_VOLUME.
+ *
+ * Specifying a negative volume will not change the current volume; as
+ * such, this can be used to query the current volume without making changes,
+ * as this function returns the previous (in this case, still-current) value.
+ *
+ * The default volume for music is MIX_MAX_VOLUME (no attenuation).
+ *
+ * \param volume the new volume, between 0 and MIX_MAX_VOLUME, or -1 to query.
+ * \returns the previous volume. If the specified volume is -1, this returns
  *          the current volume.
  *
  * \since This function is available since SDL_mixer 2.0.0.
@@ -1512,9 +1960,9 @@ extern DECLSPEC int SDLCALL Mix_VolumeChunk(Mix_Chunk *chunk, int volume);
 extern DECLSPEC int SDLCALL Mix_VolumeMusic(int volume);
 
 /**
- * Get the current volume value in the range of 0-128 of a music stream
+ * Query the current volume value for a music object.
  *
- * \param music music
+ * \param music the music object to query
  * \returns volume
  *
  * \since This function is available since SDL_mixer 2.6.0.
@@ -1524,20 +1972,46 @@ extern DECLSPEC int SDLCALL Mix_GetMusicVolume(Mix_Music *music);
 /**
  * Set the master volume for all channels.
  *
- * This did not affect the member variables of channel or chunk volume. If the
- * specified volume is -1, just return the current master volume.
+ * SDL_mixer keeps a per-channel volume, a per-chunk volume, and a master
+ * volume, and considers all three when mixing audio. This function
+ * sets the master volume, which is applied to all playing channels when
+ * mixing.
  *
- * \param volume volume
- * \returns volume
+ * The volume must be between 0 (silence) and MIX_MAX_VOLUME (full volume).
+ * Note that MIX_MAX_VOLUME is 128. Values greater than MIX_MAX_VOLUME are
+ * clamped to MIX_MAX_VOLUME.
+ *
+ * Specifying a negative volume will not change the current volume; as
+ * such, this can be used to query the current volume without making changes,
+ * as this function returns the previous (in this case, still-current) value.
+ *
+ * Note that the master volume does not affect any playing music; it is only
+ * applied when mixing chunks. Use Mix_MusicVolume() for that.\
+ *
+ * \param volume the new volume, between 0 and MIX_MAX_VOLUME, or -1 to query.
+ * \returns the previous volume. If the specified volume is -1, this returns
+ *          the current volume.
  *
  * \since This function is available since SDL_mixer 2.6.0.
  */
 extern DECLSPEC int SDLCALL Mix_MasterVolume(int volume);
 
 /**
- * Halt playing of a particular channel
+ * Halt playing of a particular channel.
  *
- * \param channel channel
+ * This will stop further playback on that channel until a new chunk
+ * is started there.
+ *
+ * Specifying a channel of -1 will halt _all_ channels, except for
+ * any playing music.
+ *
+ * Any halted channels will have any currently-registered effects
+ * deregistered, and will call any callback specified by
+ * Mix_ChannelFinished() before this function returns.
+ *
+ * You may not specify MAX_CHANNEL_POST for a channel.
+ *
+ * \param channel channel to halt, or -1 to halt all channels.
  * \returns 0 on success, or -1 on error.
  *
  * \since This function is available since SDL_mixer 2.0.0.
@@ -1545,19 +2019,37 @@ extern DECLSPEC int SDLCALL Mix_MasterVolume(int volume);
 extern DECLSPEC int SDLCALL Mix_HaltChannel(int channel);
 
 /**
- * Halt playing of a particular group
+ * Halt playing of a group of channels by arbitrary tag.
  *
- * \param tag tag
- * \returns 0 on success, or -1 on error.
+ * This will stop further playback on all channels with a
+ * specific tag, until a new chunk is started there.
+ *
+ * A tag is an arbitary number that can be assigned to several mixer
+ * channels, to form groups of channels.
+ *
+ * The default tag for a channel is -1.
+ *
+ * Any halted channels will have any currently-registered effects
+ * deregistered, and will call any callback specified by
+ * Mix_ChannelFinished() before this function returns.
+ *
+ * \param tag an arbitrary value, assigned to channels, to search for.
+ * \returns zero, whether any channels were halted or not.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC int SDLCALL Mix_HaltGroup(int tag);
 
 /**
- * Halt playing of music stream
+ * Halt playing of the music stream.
  *
- * \returns 0 on success, or -1 on error.
+ * This will stop further playback of music until a new music
+ * object is started there.
+ *
+ * Any halted music will call any callback specified by
+ * Mix_HookMusicFinished() before this function returns.
+ *
+ * \returns zero, regardless of whether any music was halted.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
@@ -1566,23 +2058,50 @@ extern DECLSPEC int SDLCALL Mix_HaltMusic(void);
 /**
  * Change the expiration delay for a particular channel.
  *
- * The sample will stop playing after the 'ticks' milliseconds have elapsed,
- * or remove the expiration if 'ticks' is -1
+ * The channel will halt after the 'ticks' milliseconds have elapsed,
+ * or remove the expiration if 'ticks' is -1.
  *
- * \param channel channel
- * \param ticks ticks
- * \returns 0 on success, or -1 on error.
+ * This overrides the value passed to the fourth parameter of
+ * Mix_PlayChannelTimed().
+ *
+ * Specifying a channel of -1 will set an expiration for _all_ channels.
+ *
+ * Any halted channels will have any currently-registered effects
+ * deregistered, and will call any callback specified by
+ * Mix_ChannelFinished() once the halt occurs.
+ *
+ * Note that this function does not block for the number of ticks
+ * requested; it just schedules the chunk to expire and notes the
+ * time for the mixer to manage later, and returns immediately.
+ *
+ * \param channel the channel to change the expiration time on.
+ * \param ticks number of milliseconds from now to let channel play before halting, -1 to not halt.
+ * \returns the number of channels that changed expirations.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC int SDLCALL Mix_ExpireChannel(int channel, int ticks);
 
 /**
- * Halt a channel, fading it out progressively till it's silent The ms
- * parameter indicates the number of milliseconds the fading will take.
+ * Halt a channel after fading it out for a specified time.
  *
- * \param which which channel
- * \param ms milliseconds
+ * This will begin a channel fading from its current volume to silence
+ * over `ms` milliseconds. After that time, the channel is halted.
+ *
+ * Any halted channels will have any currently-registered effects
+ * deregistered, and will call any callback specified by
+ * Mix_ChannelFinished() once the halt occurs.
+ *
+ * A fading channel will change it's volume progressively, as if
+ * Mix_Volume() was called on it (which is to say: you probably shouldn't
+ * call Mix_Volume() on a fading channel).
+ *
+ * Note that this function does not block for the number of milliseconds
+ * requested; it just schedules the chunk to fade and notes the
+ * time for the mixer to manage later, and returns immediately.
+ *
+ * \param which the channel to fade out.
+ * \param ms number of milliseconds to fade before halting the channel.
  * \returns 0 on success, or -1 on error.
  *
  * \since This function is available since SDL_mixer 2.0.0.
@@ -1590,110 +2109,219 @@ extern DECLSPEC int SDLCALL Mix_ExpireChannel(int channel, int ticks);
 extern DECLSPEC int SDLCALL Mix_FadeOutChannel(int which, int ms);
 
 /**
- * Halt a group, fading it out progressively till it's silent The ms parameter
- * indicates the number of milliseconds the fading will take.
+ * Halt a playing group of channels by arbitrary tag, after fading them out for a specified time.
  *
- * \param tag tag
- * \param ms milliseconds
- * \returns 0 on success, or -1 on error.
+ * This will begin fading a group of channels with a specific tag
+ * from their current volumes to silence over `ms` milliseconds.
+ * After that time, those channels are halted.
+ *
+ * A tag is an arbitary number that can be assigned to several mixer
+ * channels, to form groups of channels.
+ *
+ * The default tag for a channel is -1.
+ *
+ * Any halted channels will have any currently-registered effects
+ * deregistered, and will call any callback specified by
+ * Mix_ChannelFinished() once the halt occurs.
+ *
+ * A fading channel will change it's volume progressively, as if
+ * Mix_Volume() was called on it (which is to say: you probably shouldn't
+ * call Mix_Volume() on a fading channel).
+ *
+ * Note that this function does not block for the number of milliseconds
+ * requested; it just schedules the group to fade and notes the
+ * time for the mixer to manage later, and returns immediately.
+ *
+ * \param tag an arbitrary value, assigned to channels, to search for.
+ * \param ms number of milliseconds to fade before halting the group.
+ * \returns the number of channels that were scheduled for fading.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC int SDLCALL Mix_FadeOutGroup(int tag, int ms);
 
 /**
- * Halt music stream, fading it out progressively till it's silent The ms
- * parameter indicates the number of milliseconds the fading will take.
+ * Halt the music stream after fading it out for a specified time.
  *
- * \param ms milliseconds
- * \returns 0 on success, or -1 on error.
+ * This will begin the music fading from its current volume to silence
+ * over `ms` milliseconds. After that time, the music is halted.
+ *
+ * Any halted music will call any callback specified by
+ * Mix_HookMusicFinished() once the halt occurs.
+ *
+ * Fading music will change it's volume progressively, as if
+ * Mix_VolumeMusic() was called on it (which is to say: you probably shouldn't
+ * call Mix_VolumeMusic() on a fading channel).
+ *
+ * Note that this function does not block for the number of milliseconds
+ * requested; it just schedules the music to fade and notes the
+ * time for the mixer to manage later, and returns immediately.
+ *
+ * \param which the channel to fade out.
+ * \param ms number of milliseconds to fade before halting the channel.
+ * \returns non-zero if music was scheduled to fade, zero otherwise. If no
+ *          music is currently playing, this returns zero.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC int SDLCALL Mix_FadeOutMusic(int ms);
 
 /**
- * Query the fading status of music stream
+ * Query the fading status of the music stream.
  *
- * \returns fading type
+ * This reports one of three values:
+ *
+ * - `MIX_NO_FADING`
+ * - `MIX_FADING_OUT`
+ * - `MIX_FADING_IN`
+ *
+ * If music is not currently playing, this returns `MIX_NO_FADING`.
+ *
+ * \returns the current fading status of the music stream.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC Mix_Fading SDLCALL Mix_FadingMusic(void);
 
 /**
- * Query the fading status of a channel
+ * Query the fading status of a channel.
  *
- * \param which which channel
- * \returns fading type
+ * This reports one of three values:
+ *
+ * - `MIX_NO_FADING`
+ * - `MIX_FADING_OUT`
+ * - `MIX_FADING_IN`
+ *
+ * If nothing is currently playing on the channel, or an
+ * invalid channel is specified, this returns `MIX_NO_FADING`.
+ *
+ * You may not specify MAX_CHANNEL_POST for a channel.
+ *
+ * You may not specify -1 for all channels; only individual
+ * channels may be queried.
+ *
+ * \param which the channel to query.
+ * \returns the current fading status of the channel.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC Mix_Fading SDLCALL Mix_FadingChannel(int which);
 
 /**
- * Pause a particular channel
+ * Pause a particular channel.
  *
- * \param channel channel
+ * Pausing a channel will prevent further playback of the assigned
+ * chunk but will maintain the chunk's current mixing position. When
+ * resumed, this channel will continue to mix the chunk where it
+ * left off.
+ *
+ * A paused channel can be resumed by calling Mix_Resume().
+ *
+ * A paused channel with an expiration will not expire while
+ * paused (the expiration countdown will be adjusted once
+ * resumed).
+ *
+ * It is legal to halt a paused channel. Playing a new chunk on
+ * a paused channel will replace the current chunk and unpause the
+ * channel.
+ *
+ * Specifying a channel of -1 will pause  _all_ channels. Any music
+ * is unaffected.
+ *
+ * You may not specify MAX_CHANNEL_POST for a channel.
+ *
+ * \param channel the channel to pause, or -1 to pause all channels.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC void SDLCALL Mix_Pause(int channel);
 
 /**
- * Resume a particular channel
+ * Resume a particular channel.
  *
- * \param channel channel
+ * It is legal to resume an unpaused or invalid channel; it
+ * causes no effect and reports no error.
+ *
+ * If the paused channel has an expiration, its expiration countdown
+ * resumes now, as well.
+ *
+ * Specifying a channel of -1 will resume _all_ paused channels. Any music
+ * is unaffected.
+ *
+ * \param channel the channel to resume, or -1 to resume all paused channels.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC void SDLCALL Mix_Resume(int channel);
 
 /**
- * Tell whether a particular channel is paused
+ * Query whether a particular channel is paused.
  *
- * \param channel channel
- * \return 1 if paused. 0 if not. or number of paused channel (if channel ==
- *         -1)
+ * If an invalid channel is specified, this function returns zero.
+ *
+ * \param channel the channel to query, or -1 to query all channels.
+ * \return 1 if channel paused, 0 otherwise. If `channel` is -1, returns
+ *         the number of paused channels.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC int SDLCALL Mix_Paused(int channel);
 
 /**
- * Pause the music stream
+ * Pause the music stream.
+ *
+ * Pausing the music stream will prevent further playback of the assigned
+ * music object, but will maintain the object's current mixing position. When
+ * resumed, this channel will continue to mix the music where it left off.
+ *
+ * Paused music can be resumed by calling Mix_ResumeMusic().
+ *
+ * It is legal to halt paused music. Playing a new music object
+ * when music is paused will replace the current music and unpause the
+ * music stream.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC void SDLCALL Mix_PauseMusic(void);
 
 /**
- * Resume the music stream
+ * Resume the music stream.
+ *
+ * It is legal to resume an unpaused music stream; it causes no effect
+ * and reports no error.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC void SDLCALL Mix_ResumeMusic(void);
 
 /**
- * Rewind the music stream
+ * Rewind the music stream.
+ *
+ * This causes the currently-playing music to start mixing from the
+ * beginning of the music, as if it were just started.
+ *
+ * It's a legal no-op to rewind the music stream when not playing.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC void SDLCALL Mix_RewindMusic(void);
 
 /**
- * Tell whether the music stream is paused
+ * Query whether the music stream is paused.
  *
- * \returns 1 if paused, 0 if not.
+ * \return 1 if music is paused, 0 otherwise.
  *
  * \since This function is available since SDL_mixer 2.0.0.
+ *
+ * \sa Mix_PauseMusic
+ * \sa Mix_ResumeMusic
  */
 extern DECLSPEC int SDLCALL Mix_PausedMusic(void);
 
 /**
  * Jump to a given order in mod music.
  *
- * Only for MOD music formats.
+ * This only applies to MOD music formats.
  *
  * \param order order
  * \returns 0 if successful, or -1 if failed or isn't implemented.
@@ -1703,12 +2331,14 @@ extern DECLSPEC int SDLCALL Mix_PausedMusic(void);
 extern DECLSPEC int SDLCALL Mix_ModMusicJumpToOrder(int order);
 
 /**
- * Set the current position in the music stream (in seconds).
+ * Set the current position in the music stream, in seconds.
+ *
+ * To convert from milliseconds, divide by 1000.0.
  *
  * This function is only implemented for MOD music formats (set pattern order
  * number) and for WAV, OGG, FLAC, MP3, and MODPLUG music at the moment.
  *
- * \param position position
+ * \param position the new position, in seconds (as a double).
  * \returns 0 if successful, or -1 if it failed or not implemented.
  *
  * \since This function is available since SDL_mixer 2.0.0.
@@ -1716,30 +2346,39 @@ extern DECLSPEC int SDLCALL Mix_ModMusicJumpToOrder(int order);
 extern DECLSPEC int SDLCALL Mix_SetMusicPosition(double position);
 
 /**
- * Get the time current position of music stream
+ * Get the time current position of music stream, in seconds.
  *
- * \param music music
- * \returns -1.0 if this feature is not supported for some codec
+ * To convert to milliseconds, multiply by 1000.0.
+ *
+ * \param music the music object to query.
+ * \returns -1.0 if this feature is not supported for some codec.
  *
  * \since This function is available since SDL_mixer 2.6.0.
  */
 extern DECLSPEC double SDLCALL Mix_GetMusicPosition(Mix_Music *music);
 
 /**
- * Get Music duration.
+ * Get a music object's duration, in seconds.
+ *
+ * To convert to milliseconds, multiply by 1000.0.
  *
  * If NULL is passed, returns duration of current playing music.
  *
- * \returns music duration in seconds. -1 on error
+ * \param music the music object to query.
+ * \returns music duration in seconds, or -1.0 on error.
  *
  * \since This function is available since SDL_mixer 2.6.0.
  */
 extern DECLSPEC double SDLCALL Mix_MusicDuration(Mix_Music *music);
 
 /**
- * Get the loop start time position of music stream
+ * Get the loop start time position of music stream, in seconds.
  *
- * \param music music
+ * To convert to milliseconds, multiply by 1000.0.
+ *
+ * If NULL is passed, returns duration of current playing music.
+ *
+ * \param music the music object to query.
  * \returns -1.0 if this feature is not used for this music or not supported
  *          for some codec
  *
@@ -1748,9 +2387,13 @@ extern DECLSPEC double SDLCALL Mix_MusicDuration(Mix_Music *music);
 extern DECLSPEC double SDLCALL Mix_GetMusicLoopStartTime(Mix_Music *music);
 
 /**
- * Get the loop end time position of music stream
+ * Get the loop end time position of music stream, in seconds.
  *
- * \param music music
+ * To convert to milliseconds, multiply by 1000.0.
+ *
+ * If NULL is passed, returns duration of current playing music.
+ *
+ * \param music the music object to query.
  * \returns -1.0 if this feature is not used for this music or not supported
  *          for some codec
  *
@@ -1759,9 +2402,13 @@ extern DECLSPEC double SDLCALL Mix_GetMusicLoopStartTime(Mix_Music *music);
 extern DECLSPEC double SDLCALL Mix_GetMusicLoopEndTime(Mix_Music *music);
 
 /**
- * Get the loop time length of music stream
+ * Get the loop time length of music stream, in seconds.
  *
- * \param music music
+ * To convert to milliseconds, multiply by 1000.0.
+ *
+ * If NULL is passed, returns duration of current playing music.
+ *
+ * \param music the music object to query.
  * \returns -1.0 if this feature is not used for this music or not supported
  *          for some codec
  *
@@ -1770,28 +2417,59 @@ extern DECLSPEC double SDLCALL Mix_GetMusicLoopEndTime(Mix_Music *music);
 extern DECLSPEC double SDLCALL Mix_GetMusicLoopLengthTime(Mix_Music *music);
 
 /**
- * Check the status of a specific channel.
+ * Check the playing status of a specific channel.
  *
- * If the specified channel is -1, check all channels.
+ * If the channel is currently playing, this function returns 1. Otherwise
+ * it returns 0.
+ *
+ * If the specified channel is -1, all channels are checked, and this
+ * function returns the number of channels currently playing.
+ *
+ * You may not specify MAX_CHANNEL_POST for a channel.
+ *
+ * Paused channels are treated as playing, even though they are not
+ * currently making forward progress in mixing.
  *
  * \param channel channel
- * \returns number of channel playings
+ * \returns non-zero if channel is playing, zero otherwise. If
+ *          `channel` is -1, return the total number of channel playings.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC int SDLCALL Mix_Playing(int channel);
 
 /**
- * Check the status of music stream
+ * Check the playing status of the music stream.
  *
- * \returns 1 if playing, 0 if not
+ * If music is currently playing, this function returns 1. Otherwise
+ * it returns 0.
+ *
+ * Paused music is treated as playing, even though it is not
+ * currently making forward progress in mixing.
+ *
+ * \returns non-zero if music is playing, zero otherwise.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC int SDLCALL Mix_PlayingMusic(void);
 
 /**
- * Stop music and set external music playback command
+ * Run an external command as the music stream.
+ *
+ * This halts any currently-playing music, and next time the
+ * music stream is played, SDL_mixer will spawn a process
+ * using the command line specified in `command`. This command
+ * is not subject to shell expansion, and beyond some basic
+ * splitting up of arguments, is passed to execvp() on most platforms,
+ * not system().
+ *
+ * The command is responsible for generating sound; it is NOT
+ * mixed by SDL_mixer! SDL_mixer will kill the child process
+ * if asked to halt the music, but otherwise does not have any
+ * control over what the process does.
+ *
+ * You are strongly encouraged not to use this function without
+ * an extremely good reason.
  *
  * \param command command
  * \returns 0 if successful, -1 on error
@@ -1801,60 +2479,119 @@ extern DECLSPEC int SDLCALL Mix_PlayingMusic(void);
 extern DECLSPEC int SDLCALL Mix_SetMusicCMD(const char *command);
 
 /**
- * Synchro value is set from modules while playing
+ * This function does nothing, do not use.
  *
- * Not supported by any players at this time
+ * This was probably meant to expose a feature, but no codecs
+ * support it, so it only remains for binary compatibility.
  *
- * \param value value
+ * Calling this function is a legal no-op that returns -1.
+ *
+ * \param value this parameter is ignored.
+ * \returns -1.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC int SDLCALL Mix_SetSynchroValue(int value);
 
 /**
- * Get Synchro value
+ * This function does nothing, do not use.
  *
- * Not supported by any players at this time
+ * This was probably meant to expose a feature, but no codecs
+ * support it, so it only remains for binary compatibility.
+ *
+ * Calling this function is a legal no-op that returns -1.
+ *
+ * \returns -1.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC int SDLCALL Mix_GetSynchroValue(void);
 
 /**
- * Set SoundFonts paths to use by supported MIDI backends
+ * Set SoundFonts paths to use by supported MIDI backends.
  *
- * \param paths paths
- * \returns 1 if successful, 0 on error
+ * You may specify multiple paths in a single string by
+ * separating them with semicolons; they will be searched
+ * in the order listed.
+ *
+ * This function replaces any previously-specified paths.
+ *
+ * Passing a NULL path will remove any previously-specified paths.
+ *
+ * Note that unlike most SDL and SDL_mixer functions, this function returns
+ * zero if there's an error, not on success. We apologize for the API design
+ * inconsistency here.
+ *
+ * \param paths Paths on the filesystem where SoundFonts are available, separated by semicolons.
+ * \returns 1 if successful, 0 on error (out of memory).
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC int SDLCALL Mix_SetSoundFonts(const char *paths);
 
 /**
- * Get SoundFonts paths to use by supported MIDI backends
+ * Get SoundFonts paths to use by supported MIDI backends.
  *
- * \returns sound fonts
+ * There are several factors that determine what will be reported by this
+ * function:
+ *
+ * - If the boolean _SDL hint_ `"SDL_FORCE_SOUNDFONTS"` is set, AND the
+ *   `"SDL_SOUNDFONTS"` _environment variable_ is also set, this function
+ *   will return that environment variable regardless of whether
+ *   Mix_SetSoundFounts() was ever called.
+ * - Otherwise, if Mix_SetSoundFonts() was successfully called with a
+ *   non-NULL path, this function will return the string passed to that
+ *   function.
+ * - Otherwise, if the `"SDL_SOUNDFONTS"` variable is set, this function
+ *   will return that environment variable.
+ * - Otherwise, this function will search some common locations on the
+ *   filesystem, and if it finds a SoundFont there, it will return that.
+ * - Failing everything else, this function returns NULL.
+ *
+ * This returns a pointer to internal (possibly read-only) memory, and it
+ * should not be modified or free'd by the caller.
+ *
+ * \returns semicolon-separated list of sound font paths.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC const char* SDLCALL Mix_GetSoundFonts(void);
 
 /**
- * Iterate SoundFonts paths to use by supported MIDI backends
+ * Iterate SoundFonts paths to use by supported MIDI backends.
  *
- * \param function callback
- * \returns position if successful, 0 on error
+ * This function will take the string reported by Mix_GetSoundFonts(),
+ * split it up into separate paths, as delimited by semicolons in
+ * the string, and call a callback function for each separate path.
+ *
+ * If there are no paths available, this returns 0 without calling
+ * the callback at all.
+ *
+ * If the callback returns non-zero, this function stops iterating and
+ * returns non-zero. If the callback returns 0, this function will
+ * continue iterating, calling the callback again for further paths.
+ * If the callback never returns 1, this function returns 0, so this
+ * can be used to decide if an available soundfont is acceptable for use.
+ *
+ * \param function the callback function to call once per path.
+ * \param data a pointer to pass to the callback for its own personal use.
+ * \returns non-zero if callback ever returned non-zero, 0 on error or the callback never returned non-zero.
  *
  * \since This function is available since SDL_mixer 2.0.0.
+ *
+ * \sa Mix_GetSoundFonts
  */
 extern DECLSPEC int SDLCALL Mix_EachSoundFont(int (SDLCALL *function)(const char*, void*), void *data);
 
 /**
- * Set full path of Timidity config file.
+ * Set full path of the Timidity config file.
  *
- * (e.g. /etc/timidity.cfg)
+ * For example, "/etc/timidity.cfg"
  *
- * \param path path
+ * This is obviously only useful if SDL_mixer is using Timidity internally
+ * to play MIDI files.
+ *
+ * \param path path to a Timidity config file.
  * \returns 1 if successful, 0 on error
  *
  * \since This function is available since SDL_mixer 2.6.0.
@@ -1862,32 +2599,78 @@ extern DECLSPEC int SDLCALL Mix_EachSoundFont(int (SDLCALL *function)(const char
 extern DECLSPEC int SDLCALL Mix_SetTimidityCfg(const char *path);
 
 /**
- * Get full path of Timidity config file.
+ * Get full path of a previously-specified Timidity config file.
  *
- * (e.g. /etc/timidity.cfg)
+ * For example, "/etc/timidity.cfg"
  *
- * \returns path, NULL if not set
+ * If a path has never been specified, this returns NULL.
+ *
+ * This returns a pointer to internal memory, and it
+ * should not be modified or free'd by the caller.
+ *
+ * \returns the previously-specified path, or NULL if not set.
  *
  * \since This function is available since SDL_mixer 2.6.0.
+ *
+ * \sa Mix_SetTimidityCfg
  */
 extern DECLSPEC const char* SDLCALL Mix_GetTimidityCfg(void);
 
 /**
- * Get the Mix_Chunk currently associated with a mixer channel
+ * Get the Mix_Chunk currently associated with a mixer channel.
  *
- * \param channel channel
- * \returns NULL if it's an invalid channel, or there's no chunk associated.
+ * You may not specify MAX_CHANNEL_POST or -1 for a channel.
+ *
+ * \param channel the channel to query.
+ * \returns the associated chunk, if any, or NULL if it's an invalid channel.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC Mix_Chunk * SDLCALL Mix_GetChunk(int channel);
 
 /**
- * Close the mixer, halting all playing audio
+ * Close the mixer, halting all playing audio.
+ *
+ * Any halted channels will have any currently-registered effects
+ * deregistered, and will call any callback specified by
+ * Mix_ChannelFinished() before this function returns.
+ *
+ * Any halted music will call any callback specified by
+ * Mix_HookMusicFinished() before this function returns.
+ *
+ * Do not start any new audio playing during callbacks in
+ * this function.
+ *
+ * This will close the audio device. Attempting to play new audio
+ * after this function returns will fail, until another successful
+ * call to Mix_OpenAudio() or Mix_OpenAudioDevice().
+ *
+ * Note that (unlike Mix_OpenAudio optionally calling
+ * SDL_Init(SDL_INIT_AUDIO) on the app's behalf), this will
+ * _not_ deinitialize the SDL audio subsystem in any case.
+ * At some point after calling this function and Mix_Quit(),
+ * some part of the application should be responsible for
+ * calling SDL_Quit() to deinitialize all of SDL, including
+ * its audio subsystem.
+ *
+ * This function should be the last thing you call in SDL_mixer before
+ * Mix_Quit(). However, the following notes apply if you don't follow
+ * this advice:
+ *
+ * Note that this will not free any loaded chunks or music; you
+ * should dispose of those resources separately. It is probably
+ * poor form to dispose of them _after_ this function, but it is
+ * safe to call Mix_FreeChunk() and Mix_FreeMusic() after closing
+ * the device.
+ *
+ * Note that any chunks or music you don't free may or may not
+ * work if you call Mix_OpenAudio again, as the audio device may
+ * be in a new format and the existing chunks will not be converted
+ * to match.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  *
- * \sa Mix_Init
+ * \sa Mix_Quit
  */
 extern DECLSPEC void SDLCALL Mix_CloseAudio(void);
 
