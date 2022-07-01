@@ -541,9 +541,10 @@ extern DECLSPEC int SDLCALL Mix_AllocateChannels(int numchans);
  * whether this function succeeds or not. SDL_mixer reads everything it needs
  * from the RWops during this call in any case.
  *
- * As a convenience, there is a macro to read files from disk without having
- * to deal with SDL_RWops: `Mix_LoadWAV("filename.wav")` will call this
- * function and manage those details for you.
+ * There is a separate function (macro, before SDL_mixer 2.0.53) to read
+ * files from disk without having to deal with SDL_RWops:
+ * `Mix_LoadWAV("filename.wav")` will call this function and manage those
+ * details for you.
  *
  * When done with a chunk, the app should dispose of it with a call to
  * Mix_FreeChunk().
@@ -555,23 +556,52 @@ extern DECLSPEC int SDLCALL Mix_AllocateChannels(int numchans);
  *
  * \since This function is available since SDL_mixer 2.0.0.
  *
+ * \sa Mix_LoadWAV
  * \sa Mix_FreeChunk
  */
 extern DECLSPEC Mix_Chunk * SDLCALL Mix_LoadWAV_RW(SDL_RWops *src, int freesrc);
 
-
 /**
- * Load a wave file or a music (.mod .s3m .it .xm) file
+ * Load a supported audio format into a chunk.
  *
- * \param file file name
+ * SDL_mixer has two separate data structures for audio data. One it calls a
+ * "chunk," which is meant to be a file completely decoded into memory up
+ * front, and the other it calls "music" which is a file intended to be
+ * decoded on demand. Originally, simple formats like uncompressed WAV files
+ * were meant to be chunks and compressed things, like MP3s, were meant to be
+ * music, and you would stream one thing for a game's music and make repeating
+ * sound effects with the chunks.
  *
- * \returns Mix Chunk, or NULL on error.
+ * In modern times, this isn't split by format anymore, and most are
+ * interchangeable, so the question is what the app thinks is worth
+ * predecoding or not. Chunks might take more memory, but once they are loaded
+ * won't need to decode again, whereas music always needs to be decoded on the
+ * fly. Also, crucially, there are as many channels for chunks as the app can
+ * allocate, but SDL_mixer only offers a single "music" channel.
  *
- * \since This function is available since SDL_mixer 2.0.0.
+ * If you would rather use the abstract SDL_RWops interface to load data
+ * from somewhere other than the filesystem, you can use Mix_LoadWAV_RW()
+ * instead.
  *
+ * When done with a chunk, the app should dispose of it with a call to
+ * Mix_FreeChunk().
+ *
+ * Note that before SDL_mixer 2.5.3, this function was a macro that called
+ * Mix_LoadWAV_RW(), creating a RWops and setting `freesrc` to 1. This
+ * macro has since been promoted to a proper API function. Older binaries
+ * linked against a newer SDL_mixer will still call Mix_LoadWAV_RW directly,
+ * as they are using the macro, which was available since the dawn of time.
+ *
+ * \param file the filesystem path to load data from.
+ * \returns a new chunk, or NULL on error.
+ *
+ * \since This function is available since SDL_mixer 2.5.3 (and as a macro since 2.0.0).
+ *
+ * \sa Mix_LoadWAV_RW
  * \sa Mix_FreeChunk
  */
-#define Mix_LoadWAV(file)   Mix_LoadWAV_RW(SDL_RWFromFile(file, "rb"), 1)
+extern DECLSPEC Mix_Chunk * SDLCALL Mix_LoadWAV(const char *file);
+
 
 /**
  * Load a supported audio format into a music object.

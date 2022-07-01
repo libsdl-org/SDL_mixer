@@ -846,6 +846,12 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
     return(chunk);
 }
 
+Mix_Chunk *Mix_LoadWAV(const char *file)
+{
+    return Mix_LoadWAV_RW(SDL_RWFromFile(file, "rb"), 1);
+}
+
+
 /* Load a wave file of the mixer format from a memory buffer */
 Mix_Chunk *Mix_QuickLoad_WAV(Uint8 *mem)
 {
