@@ -1347,19 +1347,33 @@ extern DECLSPEC int SDLCALL Mix_GroupNewer(int tag);
 
 /**
  * Play an audio chunk on a specific channel.
- * If the specified channel is -1, play on the first free channel.
- * If 'loops' is greater than zero, loop the sound that many times.
- * If 'loops' is -1, loop inifinitely (~65000 times).
  *
- * \param channel channel
- * \param chunk chunk
- * \param loop loop
+ * If the specified channel is -1, play on the first free channel (and
+ * return -1 without playing anything new if no free channel was
+ * available).
  *
- * \returns which channel was used to play the sound.
+ * If a specific channel was requested, and there is a chunk already
+ * playing there, that chunk will be halted and the new chunk will
+ * take its place.
  *
- * \since This function is available since SDL_mixer 2.0.0.
+ * If `loops` is greater than zero, loop the sound that many times.
+ * If `loops` is -1, loop "infinitely" (~65000 times).
+ *
+ * Note that before SDL_mixer 2.5.3, this function was a macro
+ * that called Mix_PlayChannelTimed() with a fourth parameter ("ticks")
+ * of -1. This function still does the same thing, but promotes it
+ * to a proper API function. Older binaries linked against a newer
+ * SDL_mixer will still call Mix_PlayChannelTimed directly, as they
+ * are using the macro, which was available since the dawn of time.
+ *
+ * \param channel the channel on which to play the new chunk.
+ * \param chunk the new chunk to play.
+ * \param loop the number of times the chunk should loop, -1 to loop (not actually) infinitely.
+ * \returns which channel was used to play the sound, or -1 if sound could not be played.
+ *
+ * \since This function is available since SDL_mixer 2.5.3 (and as a macro since 2.0.0).
  */
-#define Mix_PlayChannel(channel,chunk,loops) Mix_PlayChannelTimed(channel,chunk,loops,-1)
+extern DECLSPEC int SDLCALL Mix_PlayChannel(int channel, Mix_Chunk *chunk, int loops);
 
 /**
  * The same as above, but the sound is played at most 'ticks' milliseconds
@@ -1411,7 +1425,40 @@ extern DECLSPEC int SDLCALL Mix_FadeInMusic(Mix_Music *music, int loops, int ms)
  */
 extern DECLSPEC int SDLCALL Mix_FadeInMusicPos(Mix_Music *music, int loops, int ms, double position);
 
-#define Mix_FadeInChannel(channel,chunk,loops,ms) Mix_FadeInChannelTimed(channel,chunk,loops,ms,-1)
+/**
+ * Play an audio chunk on a specific channel, fading in the audio.
+ *
+ * This will start the new sound playing, much like Mix_PlayChannel() will,
+ * but will start the sound playing at silence and fade in to its normal
+ * volume over the specified number of milliseconds.
+ *
+ * If the specified channel is -1, play on the first free channel (and
+ * return -1 without playing anything new if no free channel was
+ * available).
+ *
+ * If a specific channel was requested, and there is a chunk already
+ * playing there, that chunk will be halted and the new chunk will
+ * take its place.
+ *
+ * If `loops` is greater than zero, loop the sound that many times.
+ * If `loops` is -1, loop "infinitely" (~65000 times).
+ *
+ * Note that before SDL_mixer 2.5.3, this function was a macro
+ * that called Mix_FadeInChannelTimed() with a fourth parameter ("ticks")
+ * of -1. This function still does the same thing, but promotes it
+ * to a proper API function. Older binaries linked against a newer
+ * SDL_mixer will still call Mix_FadeInChannelTimed directly, as they
+ * are using the macro, which was available since the dawn of time.
+ *
+ * \param channel the channel on which to play the new chunk, or -1 to find any available.
+ * \param chunk the new chunk to play.
+ * \param loop the number of times the chunk should loop, -1 to loop (not actually) infinitely.
+ * \param ms the number of milliseconds to spend fading in.
+ * \returns which channel was used to play the sound, or -1 if sound could not be played.
+ *
+ * \since This function is available since SDL_mixer 2.5.3 (and as a macro since 2.0.0).
+ */
+extern DECLSPEC int SDLCALL Mix_FadeInChannel(int channel, Mix_Chunk *chunk, int loops, int ms);
 
 /**
  * Fade in a channel over "ms" milliseconds at position

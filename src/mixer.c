@@ -1071,6 +1071,11 @@ int Mix_PlayChannelTimed(int which, Mix_Chunk *chunk, int loops, int ticks)
     return(which);
 }
 
+int Mix_PlayChannel(int channel, Mix_Chunk *chunk, int loops)
+{
+    return Mix_PlayChannelTimed(channel, chunk, loops, -1);
+}
+
 /* Change the expiration delay for a channel */
 int Mix_ExpireChannel(int which, int ticks)
 {
@@ -1147,6 +1152,12 @@ int Mix_FadeInChannelTimed(int which, Mix_Chunk *chunk, int loops, int ms, int t
     /* Return the channel on which the sound is being played */
     return(which);
 }
+
+int Mix_FadeInChannel(int channel, Mix_Chunk *chunk, int loops, int ms)
+{
+    return Mix_FadeInChannelTimed(channel, chunk, loops, ms, -1);
+}
+
 
 /* Set volume of a particular channel */
 int Mix_Volume(int which, int volume)
