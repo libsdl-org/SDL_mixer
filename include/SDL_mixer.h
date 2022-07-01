@@ -541,8 +541,8 @@ extern DECLSPEC int SDLCALL Mix_AllocateChannels(int numchans);
  * whether this function succeeds or not. SDL_mixer reads everything it needs
  * from the RWops during this call in any case.
  *
- * There is a separate function (macro, before SDL_mixer 2.0.53) to read
- * files from disk without having to deal with SDL_RWops:
+ * There is a separate function (macro, before SDL_mixer 2.0.53) to read files
+ * from disk without having to deal with SDL_RWops:
  * `Mix_LoadWAV("filename.wav")` will call this function and manage those
  * details for you.
  *
@@ -579,23 +579,23 @@ extern DECLSPEC Mix_Chunk * SDLCALL Mix_LoadWAV_RW(SDL_RWops *src, int freesrc);
  * fly. Also, crucially, there are as many channels for chunks as the app can
  * allocate, but SDL_mixer only offers a single "music" channel.
  *
- * If you would rather use the abstract SDL_RWops interface to load data
- * from somewhere other than the filesystem, you can use Mix_LoadWAV_RW()
- * instead.
+ * If you would rather use the abstract SDL_RWops interface to load data from
+ * somewhere other than the filesystem, you can use Mix_LoadWAV_RW() instead.
  *
  * When done with a chunk, the app should dispose of it with a call to
  * Mix_FreeChunk().
  *
  * Note that before SDL_mixer 2.6.0, this function was a macro that called
- * Mix_LoadWAV_RW(), creating a RWops and setting `freesrc` to 1. This
- * macro has since been promoted to a proper API function. Older binaries
- * linked against a newer SDL_mixer will still call Mix_LoadWAV_RW directly,
- * as they are using the macro, which was available since the dawn of time.
+ * Mix_LoadWAV_RW(), creating a RWops and setting `freesrc` to 1. This macro
+ * has since been promoted to a proper API function. Older binaries linked
+ * against a newer SDL_mixer will still call Mix_LoadWAV_RW directly, as they
+ * are using the macro, which was available since the dawn of time.
  *
  * \param file the filesystem path to load data from.
  * \returns a new chunk, or NULL on error.
  *
- * \since This function is available since SDL_mixer 2.6.0 (and as a macro since 2.0.0).
+ * \since This function is available since SDL_mixer 2.6.0 (and as a macro
+ *        since 2.0.0).
  *
  * \sa Mix_LoadWAV_RW
  * \sa Mix_FreeChunk
