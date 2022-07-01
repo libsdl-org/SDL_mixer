@@ -1457,8 +1457,13 @@ int Mix_GroupCount(int tag)
 {
     int count = 0;
     int i;
+
+    if (tag == -1) {
+        return num_channels;  /* minor optimization; no need to go through the loop. */
+    }
+
     for(i=0; i < num_channels; i ++) {
-        if (mix_channel[i].tag==tag || tag==-1)
+        if (mix_channel[i].tag == tag)
             ++ count;
     }
     return(count);
