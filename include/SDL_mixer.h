@@ -586,7 +586,7 @@ extern DECLSPEC Mix_Chunk * SDLCALL Mix_LoadWAV_RW(SDL_RWops *src, int freesrc);
  * When done with a chunk, the app should dispose of it with a call to
  * Mix_FreeChunk().
  *
- * Note that before SDL_mixer 2.5.3, this function was a macro that called
+ * Note that before SDL_mixer 2.6.0, this function was a macro that called
  * Mix_LoadWAV_RW(), creating a RWops and setting `freesrc` to 1. This
  * macro has since been promoted to a proper API function. Older binaries
  * linked against a newer SDL_mixer will still call Mix_LoadWAV_RW directly,
@@ -595,7 +595,7 @@ extern DECLSPEC Mix_Chunk * SDLCALL Mix_LoadWAV_RW(SDL_RWops *src, int freesrc);
  * \param file the filesystem path to load data from.
  * \returns a new chunk, or NULL on error.
  *
- * \since This function is available since SDL_mixer 2.5.3 (and as a macro since 2.0.0).
+ * \since This function is available since SDL_mixer 2.6.0 (and as a macro since 2.0.0).
  *
  * \sa Mix_LoadWAV_RW
  * \sa Mix_FreeChunk
@@ -1736,7 +1736,7 @@ extern DECLSPEC int SDLCALL Mix_GroupNewer(int tag);
  * If `loops` is greater than zero, loop the sound that many times. If `loops`
  * is -1, loop "infinitely" (~65000 times).
  *
- * Note that before SDL_mixer 2.5.3, this function was a macro that called
+ * Note that before SDL_mixer 2.6.0, this function was a macro that called
  * Mix_PlayChannelTimed() with a fourth parameter ("ticks") of -1. This
  * function still does the same thing, but promotes it to a proper API
  * function. Older binaries linked against a newer SDL_mixer will still call
@@ -1750,7 +1750,7 @@ extern DECLSPEC int SDLCALL Mix_GroupNewer(int tag);
  * \returns which channel was used to play the sound, or -1 if sound could not
  *          be played.
  *
- * \since This function is available since SDL_mixer 2.5.3 (and as a macro
+ * \since This function is available since SDL_mixer 2.6.0 (and as a macro
  *        since 2.0.0).
  */
 extern DECLSPEC int SDLCALL Mix_PlayChannel(int channel, Mix_Chunk *chunk, int loops);
@@ -1857,7 +1857,7 @@ extern DECLSPEC int SDLCALL Mix_FadeInMusicPos(Mix_Music *music, int loops, int 
  * was called on it (which is to say: you probably shouldn't call Mix_Volume()
  * on a fading channel).
  *
- * Note that before SDL_mixer 2.5.3, this function was a macro that called
+ * Note that before SDL_mixer 2.6.0, this function was a macro that called
  * Mix_FadeInChannelTimed() with a fourth parameter ("ticks") of -1. This
  * function still does the same thing, but promotes it to a proper API
  * function. Older binaries linked against a newer SDL_mixer will still call
@@ -1873,7 +1873,7 @@ extern DECLSPEC int SDLCALL Mix_FadeInMusicPos(Mix_Music *music, int loops, int 
  * \returns which channel was used to play the sound, or -1 if sound could not
  *          be played.
  *
- * \since This function is available since SDL_mixer 2.5.3 (and as a macro
+ * \since This function is available since SDL_mixer 2.6.0 (and as a macro
  *        since 2.0.0).
  */
 extern DECLSPEC int SDLCALL Mix_FadeInChannel(int channel, Mix_Chunk *chunk, int loops, int ms);
