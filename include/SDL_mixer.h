@@ -1813,26 +1813,64 @@ extern DECLSPEC int SDLCALL Mix_PlayChannelTimed(int channel, Mix_Chunk *chunk, 
 extern DECLSPEC int SDLCALL Mix_PlayMusic(Mix_Music *music, int loops);
 
 /**
- * Fade in music or a channel over "ms" milliseconds, same semantics as the
- * "Play" functions
+ * Play a new music object, fading in the audio.
  *
- * \param music music
- * \param loops loops
- * \param ms milliseconds
- * \returns 0 if successful, -1 on error
+ * This will start the new music playing, much like Mix_PlayMusic() will,
+ * but will start the music playing at silence and fade in to its normal
+ * volume over the specified number of milliseconds.
+ *
+ * If there is already music playing, that music will be halted and the
+ * new music object will take its place.
+ *
+ * If `loops` is greater than zero, loop the music that many times. If `loops`
+ * is -1, loop "infinitely" (~65000 times).
+ *
+ * Fading music will change it's volume progressively, as if Mix_VolumeMusic()
+ * was called on it (which is to say: you probably shouldn't call Mix_VolumeMusic()
+ * on fading music).
+ *
+ * \param music the new music object to play.
+ * \param loop the number of times the chunk should loop, -1 to loop (not
+ *             actually) infinitely.
+ * \param ms the number of milliseconds to spend fading in.
+ * \returns zero on success, -1 on error.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC int SDLCALL Mix_FadeInMusic(Mix_Music *music, int loops, int ms);
 
 /**
- * Fade in music over "ms" milliseconds at position
+ * Play a new music object, fading in the audio, from a starting position.
  *
- * \param music music
- * \param loops loops
- * \param ms milliseconds
- * \param position position
- * \returns 0 if successful, -1 on error
+ * This will start the new music playing, much like Mix_PlayMusic() will,
+ * but will start the music playing at silence and fade in to its normal
+ * volume over the specified number of milliseconds.
+ *
+ * If there is already music playing, that music will be halted and the
+ * new music object will take its place.
+ *
+ * If `loops` is greater than zero, loop the music that many times. If `loops`
+ * is -1, loop "infinitely" (~65000 times).
+ *
+ * Fading music will change it's volume progressively, as if Mix_VolumeMusic()
+ * was called on it (which is to say: you probably shouldn't call Mix_VolumeMusic()
+ * on fading music).
+ *
+ * This function allows the caller to start the music playback past the beginning
+ * of its audio data. You may specify a start position, in seconds, and the playback
+ * and fade-in will start there instead of with the first samples of the music.
+ *
+ * An app can specify a `position` of 0.0 to start at the beginning of the music
+ * (or just call Mix_FadeInMusic() instead).
+ *
+ * To convert from milliseconds, divide by 1000.0.
+ *
+ * \param music the new music object to play.
+ * \param loop the number of times the chunk should loop, -1 to loop (not
+ *             actually) infinitely.
+ * \param ms the number of milliseconds to spend fading in.
+ * \param position the start position within the music, in seconds, where playback should start.
+ * \returns zero on success, -1 on error.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
@@ -2004,8 +2042,8 @@ extern DECLSPEC int SDLCALL Mix_VolumeMusic(int volume);
 /**
  * Query the current volume value for a music object.
  *
- * \param music the music object to query
- * \returns volume
+ * \param music the music object to query.
+ * \returns the music's current volume, between 0 and MIX_MAX_VOLUME (128).
  *
  * \since This function is available since SDL_mixer 2.6.0.
  */
