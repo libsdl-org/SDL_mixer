@@ -154,11 +154,10 @@ typedef enum
  * Since this returns previously-initialized flags as well as new ones, and
  * you can call this with zero, you should not check for a zero return value
  * to determine an error condition. Instead, you should check to make sure all
- * the flags you require are set in the return value. If you have a game
- * with data in a specific format, this might be a fatal error. If you're a
- * generic media player, perhaps you are fine with only having WAV and MP3
- * support and can live without Opus playback, even if you request support for
- * everything.
+ * the flags you require are set in the return value. If you have a game with
+ * data in a specific format, this might be a fatal error. If you're a generic
+ * media player, perhaps you are fine with only having WAV and MP3 support and
+ * can live without Opus playback, even if you request support for everything.
  *
  * Unlike other SDL satellite libraries, calls to Mix_Init do not stack; a
  * single call to Mix_Quit() will deinitialize everything and does not have to
