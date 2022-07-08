@@ -45,7 +45,7 @@ extern "C" {
  * Printable format: "%d.%d.%d", MAJOR, MINOR, PATCHLEVEL
  */
 #define SDL_MIXER_MAJOR_VERSION 2
-#define SDL_MIXER_MINOR_VERSION 6
+#define SDL_MIXER_MINOR_VERSION 7
 #define SDL_MIXER_PATCHLEVEL    0
 
 /**
