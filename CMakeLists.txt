@@ -550,7 +550,7 @@ if(SDL2MIXER_MOD_MODPLUG)
             # <modplug.h> is not escaped properly for windres when using MinGW + "Unix Makefiles" ==> limit it to C sources
             target_compile_definitions(SDL2_mixer PRIVATE $<$<COMPILE_LANGUAGE:C>:MODPLUG_HEADER=<modplug.h$<ANGLE-R>>)
         endif()
-        if(SDL2MIXER_FLAC_LIBFLAC_SHARED OR NOT SDL2MIXER_BUILD_SHARED_LIBS)
+        if(SDL2MIXER_MOD_MODPLUG_SHARED OR NOT SDL2MIXER_BUILD_SHARED_LIBS)
             list(APPEND INSTALL_EXTRA_TARGETS modplug)
         endif()
         if(NOT SDL2MIXER_MOD_MODPLUG_SHARED)
