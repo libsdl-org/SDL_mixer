@@ -66,12 +66,17 @@ dnl Detect the canonical build and host environments
 dnl AC_CANONICAL_HOST
 
 dnl Check for tools
+AC_PROG_AWK
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 LT_PROG_RC
 PKG_PROG_PKG_CONFIG
+
+if [ test -z "$AWK" ]; then
+    AC_MSG_ERROR([*** awk not found, aborting])
+fi
 
 dnl Set up the compiler and linker flags
 case "$host" in
@@ -263,7 +268,7 @@ find_lib()
         host_lib_path="$ac_default_prefix/$base_libdir $ac_default_prefix/$base_bindir /usr/$base_libdir /usr/local/$base_libdir"
     fi
     for path in $env_lib_path $gcc_bin_path $gcc_lib_path $host_lib_path; do
-        lib=[`ls -- $path/$1 2>/dev/null | sed -e '/\.so\..*\./d' -e 's,.*/,,' | sort | tail -1`]
+        lib=[`ls -- $path/$1 2>/dev/null | sed 's,.*/,,' | sort -V -r | $AWK 'BEGIN{FS="."}{ print NF, $0 }' | sort -n -s | sed 's,[0-9]* ,,' | head -1`]
         if test x$lib != x; then
             echo $lib
             return
