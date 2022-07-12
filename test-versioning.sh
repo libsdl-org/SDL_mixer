@@ -149,7 +149,7 @@ ${major}.${minor}.0"
 if [ "$ref" = "$dylib_cur" ]; then
     ok "project.pbxproj DYLIB_CURRENT_VERSION is consistent"
 else
-    not_ok "project.pbxproj DYLIB_CURRENT_VERSION is inconsistent"
+    not_ok "project.pbxproj DYLIB_CURRENT_VERSION is inconsistent, expected $ref"
 fi
 
 if [ "$ref_sdl_req" = "$sdl_req" ]; then
