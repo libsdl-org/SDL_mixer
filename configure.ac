@@ -31,7 +31,10 @@ AC_SUBST(MINOR_VERSION)
 AC_SUBST(MICRO_VERSION)
 AC_SUBST(INTERFACE_AGE)
 AC_SUBST(BINARY_AGE)
-AC_SUBST(VERSION)
+# Automake defines VERSION to be the same as PACKAGE_VERSION, but we're
+# not using Automake in SDL_mixer, so we need to set up the @VERSION@
+# substitution for SDL2_mixer.pc ourselves
+AC_SUBST([VERSION], [$PACKAGE_VERSION])
 
 dnl libtool versioning
 LT_INIT([win32-dll])
