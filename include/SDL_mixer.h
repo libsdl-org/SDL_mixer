@@ -462,6 +462,15 @@ extern DECLSPEC int SDLCALL Mix_OpenAudio(int frequency, Uint16 format, int chan
 extern DECLSPEC int SDLCALL Mix_OpenAudioDevice(int frequency, Uint16 format, int channels, int chunksize, const char* device, int allowed_changes);
 
 /**
+ * Suspend or resume the whole audio output.
+ *
+ * \since This function is available since SDL_mixer 2.8.0.
+ *
+ * @param pause_on Set audio output to pause, 1 (to pause) or 0 (to resume)
+ */
+extern DECLSPEC void SDLCALL Mix_PauseAudio(int pause_on);
+
+/**
  * Find out what the actual audio device parameters are.
  *
  * If Mix_OpenAudioDevice() was called with `allowed_changes` set to anything
