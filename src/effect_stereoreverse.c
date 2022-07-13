@@ -34,7 +34,7 @@
     #include <unistd.h>
     struct timeval tv1;
     struct timeval tv2;
-    
+
     gettimeofday(&tv1, NULL);
 
         ... do your thing here ...
