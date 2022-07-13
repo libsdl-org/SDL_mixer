@@ -533,6 +533,15 @@ int Mix_OpenAudio(int frequency, Uint16 format, int nchannels, int chunksize)
                                 SDL_AUDIO_ALLOW_CHANNELS_CHANGE);
 }
 
+/* Pause or resume the audio streaming */
+void Mix_PauseAudio(int pause_on)
+{
+    SDL_PauseAudioDevice(audio_device, pause_on);
+    Mix_LockAudio();
+    pause_async_music(pause_on);
+    Mix_UnlockAudio();
+}
+
 /* Dynamically change the number of channels managed by the mixer.
    If decreasing the number of channels, the upper channels are
    stopped.

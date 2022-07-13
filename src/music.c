@@ -378,6 +378,23 @@ void SDLCALL music_mixer(void *udata, Uint8 *stream, int len)
     }
 }
 
+void pause_async_music(int pause_on)
+{
+    if (!music_active || !music_playing || !music_playing->interface) {
+        return;
+    }
+
+    if (pause_on) {
+        if (music_playing->interface->Pause) {
+            music_playing->interface->Pause(music_playing->context);
+        }
+    } else {
+        if (music_playing->interface->Resume) {
+            music_playing->interface->Resume(music_playing->context);
+        }
+    }
+}
+
 /* Load the music interface libraries for a given music type */
 SDL_bool load_music_type(Mix_MusicType type)
 {
