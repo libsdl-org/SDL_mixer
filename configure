@@ -1661,10 +1661,10 @@ Optional Features:
   --enable-music-wave     enable streaming WAVE music [default=yes]
   --enable-music-mod      enable MOD music [default=yes]
   --enable-music-mod-modplug
-                          enable MOD music via modplug [default=yes]
+                          enable MOD music via modplug [default=no]
   --enable-music-mod-modplug-shared
                           dynamically load modplug library [default=yes]
-  --enable-music-mod-xmp  enable MOD music via libxmp [default=no]
+  --enable-music-mod-xmp  enable MOD music via libxmp [default=yes]
   --enable-music-mod-xmp-lite
                           use libxmp-lite instead of libxmp [default=no]
   --enable-music-mod-xmp-shared
@@ -16939,7 +16939,7 @@ if test ${enable_music_mod_modplug+y}
 then :
   enableval=$enable_music_mod_modplug;
 else $as_nop
-  enable_music_mod_modplug=yes
+  enable_music_mod_modplug=no
 fi
 
 # Check whether --enable-music-mod-modplug-shared was given.
@@ -17160,7 +17160,7 @@ if test ${enable_music_mod_xmp+y}
 then :
   enableval=$enable_music_mod_xmp;
 else $as_nop
-  enable_music_mod_xmp=no
+  enable_music_mod_xmp=yes
 fi
 
 # Check whether --enable-music-mod-xmp-lite was given.

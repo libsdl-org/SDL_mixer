@@ -1,3 +1,7 @@
+2.8.0:
+ * Use libxmp instead of modplug as the default backend for MOD music
+   To use libmodplug instead, configure using --enable-music-mod-modplug --disable-music-mod-xmp
+
 2.6.0:
  * Added support for building with CMake
  * Added support for playing Ogg files using stb_vorbis, which is now the default Vorbis backend.

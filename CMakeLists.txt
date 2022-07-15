@@ -78,10 +78,10 @@ cmake_dependent_option(SDL2MIXER_FLAC_DRFLAC "Enable FLAC music using drflac" ON
 
 option(SDL2MIXER_MOD "Support loading MOD music" ON)
 
-cmake_dependent_option(SDL2MIXER_MOD_MODPLUG "Support loading MOD music via modplug" ON SDL2MIXER_MOD OFF)
+cmake_dependent_option(SDL2MIXER_MOD_MODPLUG "Support loading MOD music via modplug" OFF SDL2MIXER_MOD OFF)
 cmake_dependent_option(SDL2MIXER_MOD_MODPLUG_SHARED "Dynamically load modplug" "${SDL2MIXER_DEPS_SHARED}" SDL2MIXER_MOD_MODPLUG OFF)
 
-cmake_dependent_option(SDL2MIXER_MOD_XMP "Support loading MOD music via libxmp" OFF SDL2MIXER_MOD OFF)
+cmake_dependent_option(SDL2MIXER_MOD_XMP "Support loading MOD music via libxmp" ON SDL2MIXER_MOD OFF)
 cmake_dependent_option(SDL2MIXER_MOD_XMP_LITE "Use libxmp-lite instead of libxmp" OFF SDL2MIXER_MOD_XMP OFF)
 cmake_dependent_option(SDL2MIXER_MOD_XMP_SHARED "Dynamically load libxmp(-lite)" "${SDL2MIXER_DEPS_SHARED}" SDL2MIXER_MOD_XMP OFF)
 

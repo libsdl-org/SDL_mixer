@@ -26,9 +26,9 @@ SUPPORT_MP3_DRMP3 ?= true
 SUPPORT_MP3_MPG123 ?= false
 MPG123_LIBRARY_PATH := external/mpg123
 
-# Enable this if you want to support loading MOD music via modplug
-SUPPORT_MOD_MODPLUG ?= false
-MODPLUG_LIBRARY_PATH := external/libmodplug
+# Enable this if you want to support loading MOD music via XMP-lite
+SUPPORT_MOD_XMP ?= false
+XMP_LIBRARY_PATH := external/libxmp
 
 # Enable this if you want to support TiMidity
 SUPPORT_MID_TIMIDITY ?= false
@@ -52,8 +52,8 @@ ifeq ($(SUPPORT_MP3_MPG123),true)
 endif
 
 # Build the library
-ifeq ($(SUPPORT_MOD_MODPLUG),true)
-    include $(SDL_MIXER_LOCAL_PATH)/$(MODPLUG_LIBRARY_PATH)/Android.mk
+ifeq ($(SUPPORT_MOD_XMP),true)
+    include $(SDL_MIXER_LOCAL_PATH)/$(XMP_LIBRARY_PATH)/Android.mk
 endif
 
 # Build the library
@@ -122,11 +122,9 @@ ifeq ($(SUPPORT_MP3_MPG123),true)
     LOCAL_SHARED_LIBRARIES += mpg123
 endif
 
-ifeq ($(SUPPORT_MOD_MODPLUG),true)
-    LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(MODPLUG_LIBRARY_PATH)/src
-    LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(MODPLUG_LIBRARY_PATH)/src/libmodplug
-    LOCAL_CFLAGS += -DMUSIC_MOD_MODPLUG -DMODPLUG_HEADER="<modplug.h>"
-    LOCAL_STATIC_LIBRARIES += modplug
+ifeq ($(SUPPORT_MOD_XMP),true)
+    LOCAL_CFLAGS += -DMUSIC_MOD_XMP -DLIBXMP_HEADER=\"../external/libxmp/include/xmp.h\"
+    LOCAL_STATIC_LIBRARIES += xmp
 endif
 
 ifeq ($(SUPPORT_MID_TIMIDITY),true)

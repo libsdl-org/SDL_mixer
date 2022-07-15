@@ -337,8 +337,8 @@ AC_ARG_ENABLE([music-mod],
 
 SDL2MIXER_MOD_MODPLUG=0
 AC_ARG_ENABLE([music-mod-modplug],
-[AS_HELP_STRING([--enable-music-mod-modplug], [enable MOD music via modplug [default=yes]])],
-              [], [enable_music_mod_modplug=yes])
+[AS_HELP_STRING([--enable-music-mod-modplug], [enable MOD music via modplug [default=no]])],
+              [], [enable_music_mod_modplug=no])
 AC_ARG_ENABLE([music-mod-modplug-shared],
 [AS_HELP_STRING([--enable-music-mod-modplug-shared], [dynamically load modplug library [default=yes]])],
               [], [enable_music_mod_modplug_shared=yes])
@@ -389,8 +389,8 @@ fi
 SDL2MIXER_MOD_XMP=0
 SDL2MIXER_MOD_XMP_LITE=0
 AC_ARG_ENABLE([music-mod-xmp],
-[AS_HELP_STRING([--enable-music-mod-xmp], [enable MOD music via libxmp [default=no]])],
-              [], [enable_music_mod_xmp=no])
+[AS_HELP_STRING([--enable-music-mod-xmp], [enable MOD music via libxmp [default=yes]])],
+              [], [enable_music_mod_xmp=yes])
 AC_ARG_ENABLE([music-mod-xmp-lite],
 [AS_HELP_STRING([--enable-music-mod-xmp-lite], [use libxmp-lite instead of libxmp [default=no]])],
               [], [enable_music_mod_xmp_lite=no])

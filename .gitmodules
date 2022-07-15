@@ -22,11 +22,11 @@
 	path = external/tremor
 	url = https://github.com/libsdl-org/tremor.git
 	branch = v1.2.1-SDL
-[submodule "external/libmodplug"]
-	path = external/libmodplug
-	url = https://github.com/libsdl-org/libmodplug.git
-	branch = v0.8.9.0-SDL
 [submodule "external/mpg123"]
 	path = external/mpg123
 	url = https://github.com/libsdl-org/mpg123.git
 	branch = v1.29.3-SDL
+[submodule "libxmp"]
+	path = external/libxmp
+	url = https://github.com/libsdl-org/libxmp.git
+	branch = v4.5.0-SDL

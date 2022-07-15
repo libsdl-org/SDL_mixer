@@ -12,18 +12,18 @@
 		F3968EC3282039BC00661875 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EC2282039BC00661875 /* SDL2.framework */; };
 		F3968ECE28203E7300661875 /* SDL2.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EBE2820392700661875 /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968ECF28203F3100661875 /* SDL2_mixer.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3ED80D4281D9ED600C33C5B /* SDL2_mixer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F3968ED128203F5800661875 /* libmodplug.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968E9E282038D700661875 /* libmodplug.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968ED328203F5800661875 /* ogg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EBC2820390500661875 /* ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968ED428203F5800661875 /* opus.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EAA282038E000661875 /* opus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968EEF2820409F00661875 /* SDL2.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EC0282039AC00661875 /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F3968EF1282040B300661875 /* libmodplug.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968E9E282038D700661875 /* libmodplug.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968EF3282040B300661875 /* ogg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EBC2820390500661875 /* ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968EF4282040B300661875 /* opus.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EAA282038E000661875 /* opus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F3968F0F2820428F00661875 /* libmodplug.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968E9E282038D700661875 /* libmodplug.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968F112820428F00661875 /* ogg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EBC2820390500661875 /* ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968F122820428F00661875 /* opus.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EAA282038E000661875 /* opus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968F142820428F00661875 /* SDL2.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EC2282039BC00661875 /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F39CD44B281DC6C8006CF638 /* SDL2_mixer.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3ED80D4281D9ED600C33C5B /* SDL2_mixer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F3E29D1C288211B90006D108 /* xmp_lite.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3E29D1B288211A60006D108 /* xmp_lite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F3E29D1D288211CA0006D108 /* xmp_lite.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3E29D1B288211A60006D108 /* xmp_lite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F3E29D1E288211CF0006D108 /* xmp_lite.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3E29D1B288211A60006D108 /* xmp_lite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3ED80CB281D9ECB00C33C5B /* playwave.c in Sources */ = {isa = PBXBuildFile; fileRef = F3ED80CA281D9ECB00C33C5B /* playwave.c */; };
 		F3ED80CC281D9ECB00C33C5B /* playwave.c in Sources */ = {isa = PBXBuildFile; fileRef = F3ED80CA281D9ECB00C33C5B /* playwave.c */; };
 		F3ED80DB281D9F2100C33C5B /* playwave.c in Sources */ = {isa = PBXBuildFile; fileRef = F3ED80CA281D9ECB00C33C5B /* playwave.c */; };
@@ -36,13 +36,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		F3968E9D282038D700661875 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3968E99282038D700661875 /* libmodplug.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F3968D85281FBB1900661875;
-			remoteInfo = libmodplug;
-		};
 		F3968EA9282038E000661875 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F3968EA5282038E000661875 /* opus.xcodeproj */;
@@ -56,6 +49,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = F3F70EDA281F61B4005AA27D;
 			remoteInfo = ogg;
+		};
+		F3E29D1A288211A60006D108 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3E29D11288211A60006D108 /* xmp-lite.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F3968D85281FBB1900661875;
+			remoteInfo = "xmp-lite";
 		};
 		F3ED80D3281D9ED600C33C5B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -89,9 +89,9 @@
 			files = (
 				F3968F142820428F00661875 /* SDL2.framework in Copy Frameworks */,
 				F39CD44B281DC6C8006CF638 /* SDL2_mixer.framework in Copy Frameworks */,
-				F3968F0F2820428F00661875 /* libmodplug.framework in Copy Frameworks */,
 				F3968F112820428F00661875 /* ogg.framework in Copy Frameworks */,
 				F3968F122820428F00661875 /* opus.framework in Copy Frameworks */,
+				F3E29D1E288211CF0006D108 /* xmp_lite.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -104,9 +104,9 @@
 			files = (
 				F3968ECE28203E7300661875 /* SDL2.framework in Copy Frameworks */,
 				F3968ECF28203F3100661875 /* SDL2_mixer.framework in Copy Frameworks */,
-				F3968ED128203F5800661875 /* libmodplug.framework in Copy Frameworks */,
 				F3968ED328203F5800661875 /* ogg.framework in Copy Frameworks */,
 				F3968ED428203F5800661875 /* opus.framework in Copy Frameworks */,
+				F3E29D1C288211B90006D108 /* xmp_lite.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -119,9 +119,9 @@
 			files = (
 				F3968EEF2820409F00661875 /* SDL2.framework in Copy Frameworks */,
 				F3ED80FF281DA63000C33C5B /* SDL2_mixer.framework in Copy Frameworks */,
-				F3968EF1282040B300661875 /* libmodplug.framework in Copy Frameworks */,
 				F3968EF3282040B300661875 /* ogg.framework in Copy Frameworks */,
 				F3968EF4282040B300661875 /* opus.framework in Copy Frameworks */,
+				F3E29D1D288211CA0006D108 /* xmp_lite.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -129,12 +129,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		F3968E99282038D700661875 /* libmodplug.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libmodplug.xcodeproj; path = ../libmodplug/libmodplug.xcodeproj; sourceTree = "<group>"; };
 		F3968EA5282038E000661875 /* opus.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = opus.xcodeproj; path = ../opus/opus.xcodeproj; sourceTree = "<group>"; };
 		F3968EB72820390500661875 /* ogg.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ogg.xcodeproj; path = ../ogg/ogg.xcodeproj; sourceTree = "<group>"; };
 		F3968EBE2820392700661875 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../macOS/SDL2.framework; sourceTree = "<group>"; };
 		F3968EC0282039AC00661875 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../iOS/SDL2.framework; sourceTree = "<group>"; };
 		F3968EC2282039BC00661875 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../tvOS/SDL2.framework; sourceTree = "<group>"; };
+		F3E29D11288211A60006D108 /* xmp-lite.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "xmp-lite.xcodeproj"; path = "../xmp-lite/xmp-lite.xcodeproj"; sourceTree = "<group>"; };
 		F3ED80B3281D9E8900C33C5B /* playwave.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = playwave.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3ED80B9281D9E8900C33C5B /* playwave.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = playwave.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3ED80BB281D9E8900C33C5B /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
@@ -175,14 +175,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		F3968E9A282038D700661875 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				F3968E9E282038D700661875 /* libmodplug.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		F3968EA6282038E000661875 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -233,12 +225,20 @@
 			name = tvOS;
 			sourceTree = "<group>";
 		};
+		F3E29D12288211A60006D108 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F3E29D1B288211A60006D108 /* xmp_lite.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		F3ED80A6281D9E8800C33C5B = {
 			isa = PBXGroup;
 			children = (
-				F3968E99282038D700661875 /* libmodplug.xcodeproj */,
 				F3968EB72820390500661875 /* ogg.xcodeproj */,
 				F3968EA5282038E000661875 /* opus.xcodeproj */,
+				F3E29D11288211A60006D108 /* xmp-lite.xcodeproj */,
 				F3ED80CD281D9ED600C33C5B /* SDL_mixer.xcodeproj */,
 				F3ED80AB281D9E8800C33C5B /* Shared */,
 				F3ED80BA281D9E8900C33C5B /* macOS */,
@@ -372,10 +372,6 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = F3968E9A282038D700661875 /* Products */;
-					ProjectRef = F3968E99282038D700661875 /* libmodplug.xcodeproj */;
-				},
-				{
 					ProductGroup = F3968EB82820390500661875 /* Products */;
 					ProjectRef = F3968EB72820390500661875 /* ogg.xcodeproj */;
 				},
@@ -386,6 +382,10 @@
 				{
 					ProductGroup = F3ED80CE281D9ED600C33C5B /* Products */;
 					ProjectRef = F3ED80CD281D9ED600C33C5B /* SDL_mixer.xcodeproj */;
+				},
+				{
+					ProductGroup = F3E29D12288211A60006D108 /* Products */;
+					ProjectRef = F3E29D11288211A60006D108 /* xmp-lite.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -398,13 +398,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		F3968E9E282038D700661875 /* libmodplug.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = libmodplug.framework;
-			remoteRef = F3968E9D282038D700661875 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		F3968EAA282038E000661875 /* opus.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -417,6 +410,13 @@
 			fileType = wrapper.framework;
 			path = ogg.framework;
 			remoteRef = F3968EBB2820390500661875 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3E29D1B288211A60006D108 /* xmp_lite.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = xmp_lite.framework;
+			remoteRef = F3E29D1A288211A60006D108 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		F3ED80D4281D9ED600C33C5B /* SDL2_mixer.framework */ = {
