@@ -37,11 +37,11 @@ jobs:
           ${{ matrix.platform.msys-env }}-autotools
           ${{ matrix.platform.msys-env }}-cmake
           ${{ matrix.platform.msys-env }}-gcc
-          ${{ matrix.platform.msys-env }}-mpg123
           ${{ matrix.platform.msys-env }}-flac
-          ${{ matrix.platform.msys-env }}-libmodplug
           ${{ matrix.platform.msys-env }}-fluidsynth
           ${{ matrix.platform.msys-env }}-libvorbis
+          ${{ matrix.platform.msys-env }}-libxmp
+          ${{ matrix.platform.msys-env }}-mpg123
           ${{ matrix.platform.msys-env }}-opusfile
           ${{ matrix.platform.msys-env }}-ninja
           ${{ matrix.platform.msys-env }}-pkg-config
@@ -55,11 +55,11 @@ jobs:
           libtool \
           ninja \
           pkg-config \
-          mpg123 \
           flac \
-          libmodplug \
           fluidsynth \
           libvorbis \
+          libxmp \
+          mpg123 \
           opusfile \
           ${NULL+}
     - name: Setup Linux dependencies
@@ -71,12 +71,12 @@ jobs:
           automake \
           cmake \
           libsdl2-dev \
-          libmpg123-dev \
           libflac-dev \
-          libmodplug-dev \
           libfluidsynth-dev \
-          libvorbis-dev \
+          libmpg123-dev \
           libopusfile-dev \
+          libvorbis-dev \
+          libxmp-dev \
           ninja-build \
           pkg-config \
           ${NULL+}
@@ -124,10 +124,10 @@ jobs:
           -DCMAKE_BUILD_TYPE=Release \
           -DSDL2MIXER_FLAC=ON \
           -DSDL2MIXER_FLAC_LIBFLAC=ON \
-          -DSDL2MIXER_VORBIS=VORBISFILE \
-          -DSDL2MIXER_OPUS=ON \
+          -DSDL2MIXER_MOD_XMP=ON \
           -DSDL2MIXER_MP3_MPG123=ON \
-          -DSDL2MIXER_MOD_MODPLUG=ON \
+          -DSDL2MIXER_OPUS=ON \
+          -DSDL2MIXER_VORBIS=VORBISFILE \
           -DCMAKE_INSTALL_PREFIX=prefix_cmake \
           ${NULL+}
         
