@@ -14,6 +14,7 @@ Copy the SDL2_mixer.framework to /Library/Frameworks
 
 You may alternatively install it in <your home directory>/Library/Frameworks if your access privileges are not high enough. (Be aware that the Xcode templates we provide in the SDL Developer Extras package may require some adjustment for your system if you do this.)
 
+In the optional directory are additional frameworks you can install or include in your application to support more audio formats.
 
 Use in CMake projects:
 SDL2_mixer.framework can be used in CMake projects using the following pattern:
@@ -25,14 +26,3 @@ target_link_libraries(my_game PRIVATE SDL2_mixer::SDL2_mixer)
 If SDL2_mixer.framework is installed in a non-standard location,
 please refer to the following link for ways to configure CMake:
 https://cmake.org/cmake/help/latest/command/find_package.html#config-mode-search-procedure
-
-
-(Partial) History of PB/Xcode projects:
-2009-09-21 - Updated for 64-bit (Snow Leopard) Universal Binaries.
-	Switched to 10.4 minimum requirement.
-	Reebuilt Ogg Vorbis components for 64-bit Universal.
-	Ogg 1.1.4
-	Vorbis 1.2.3
-	Mac native midi had to be disabled because the code depends on legacy Quicktime and won't compile in 64-bit.
-	
-2006-01-31 - First entry in history. Updated for Universal Binaries. Static libraries of libogg and libvorbis have been brought up-to-date and built as Universal. Infrastructure has been added to support building against smpeg statically, but there may be bugs in smpeg itself (unrelated to static linking) which prevent MP3 playback.
