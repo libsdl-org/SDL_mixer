@@ -6,6 +6,9 @@
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
 
+// Include any optional config for this build
+#include? "build.xcconfig"
+
 // Uncomment these lines to enable native MIDI support on OSX
 //CONFIG_PREPROCESSOR_DEFINITIONS[sdk=mac*] = $(inherited) MUSIC_MID_NATIVE
 

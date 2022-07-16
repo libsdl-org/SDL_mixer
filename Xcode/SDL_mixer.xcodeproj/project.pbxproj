@@ -349,7 +349,7 @@
 		F3E29D032882107B0006D108 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F3E29D072882107B0006D108 /* xmp.framework */,
+				F3E29D072882107B0006D108 /* xmp_lite.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -550,10 +550,10 @@
 			remoteRef = F3968B96281F817E00661875 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3E29D072882107B0006D108 /* xmp.framework */ = {
+		F3E29D072882107B0006D108 /* xmp_lite.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = xmp.framework;
+			path = xmp_lite.framework;
 			remoteRef = F3E29D062882107B0006D108 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -609,7 +609,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "PRODUCT_NAME=SDL2_mixer\n\n# Sign framework\nif [ \"$SDL_CODESIGN_IDENTITY\" != \"\" ]; then\n    codesign --force --deep --sign \"$SDL_CODESIGN_IDENTITY\" $TARGET_BUILD_DIR/$PRODUCT_NAME.framework/Versions/A || exit $?\nfi\n\n# clean up the framework, remove headers, extra files\nmkdir -p build/dmg-tmp\ncp -a $TARGET_BUILD_DIR/$PRODUCT_NAME.framework build/dmg-tmp/\ncp pkg-support/resources/ReadMe.txt build/dmg-tmp\n\n# remove the .DS_Store files if any (we may want to provide one in the future for fancy .dmgs)\nrm -rf build/dmg-tmp/.DS_Store\n\n# create the dmg\nhdiutil create -ov -fs HFS+ -volname $PRODUCT_NAME -srcfolder build/dmg-tmp build/$PRODUCT_NAME.dmg\n\n# clean up\nrm -rf build/dmg-tmp\n";
+			shellScript = "PRODUCT_NAME=SDL2_mixer\n\n# Sign framework\nif [ \"$SDL_CODESIGN_IDENTITY\" != \"\" ]; then\n    codesign --force --deep --sign \"$SDL_CODESIGN_IDENTITY\" $TARGET_BUILD_DIR/$PRODUCT_NAME.framework/Versions/A || exit $?\nfi\n\n# clean up the framework, remove headers, extra files\nmkdir -p build/dmg-tmp\ncp -a $TARGET_BUILD_DIR/$PRODUCT_NAME.framework build/dmg-tmp/\ncp pkg-support/resources/ReadMe.txt build/dmg-tmp\nmkdir -p build/dmg-tmp/optional\ncp -a $TARGET_BUILD_DIR/xmp_lite.framework build/dmg-tmp/optional/\ncp -a $TARGET_BUILD_DIR/ogg.framework build/dmg-tmp/optional/\ncp -a $TARGET_BUILD_DIR/opus.framework build/dmg-tmp/optional/\n\n# remove the .DS_Store files if any (we may want to provide one in the future for fancy .dmgs)\nrm -rf build/dmg-tmp/.DS_Store\n\n# create the dmg\nhdiutil create -ov -fs HFS+ -volname $PRODUCT_NAME -srcfolder build/dmg-tmp build/$PRODUCT_NAME.dmg\n\n# clean up\nrm -rf build/dmg-tmp\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
