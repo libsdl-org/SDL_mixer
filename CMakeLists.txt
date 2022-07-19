@@ -528,7 +528,7 @@ if(SDL2MIXER_FLAC_LIBFLAC)
             add_dependencies(SDL2_mixer FLAC)
         endif()
     else()
-        target_link_libraries(SDL2_mixer PRIVATE FLAC)
+        target_link_libraries(SDL2_mixer PRIVATE FLAC::FLAC)
     endif()
 endif()
 
