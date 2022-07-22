@@ -837,13 +837,15 @@ if(SDL2MIXER_INSTALL)
         endif()
         # Only install a SDL2_mixer.pc file in Release mode
         install(CODE "
-            # FIXME: use file(COPY_FILE) if minimum CMake version >= 3.21
-            execute_process(COMMAND \"\${CMAKE_COMMAND}\" -E copy_if_different
-                \"${CMAKE_CURRENT_BINARY_DIR}/SDL2_mixer-$<CONFIG>.pc\"
-                \"${CMAKE_CURRENT_BINARY_DIR}/SDL2_mixer.pc\")
-            file(INSTALL DESTINATION \"\${CMAKE_INSTALL_PREFIX}/${PC_DESTDIR}\"
-                TYPE FILE
-                FILES \"${CMAKE_CURRENT_BINARY_DIR}/SDL2_mixer.pc\")" CONFIG Release COMPONENT devel)
+            if(CMAKE_INSTALL_CONFIG_NAME MATCHES \"Release\")
+                # FIXME: use file(COPY_FILE) if minimum CMake version >= 3.21
+                execute_process(COMMAND \"\${CMAKE_COMMAND}\" -E copy_if_different
+                    \"${CMAKE_CURRENT_BINARY_DIR}/SDL2_mixer-$<CONFIG>.pc\"
+                    \"${CMAKE_CURRENT_BINARY_DIR}/SDL2_mixer.pc\")
+                file(INSTALL DESTINATION \"\${CMAKE_INSTALL_PREFIX}/${PC_DESTDIR}\"
+                    TYPE FILE
+                    FILES \"${CMAKE_CURRENT_BINARY_DIR}/SDL2_mixer.pc\")
+            endif()" COMPONENT devel)
     endif()
 
     if(SDL2MIXER_BUILD_SHARED_LIBS AND (APPLE OR (UNIX AND NOT ANDROID)))
