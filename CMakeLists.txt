@@ -44,7 +44,7 @@ mark_as_advanced(SDL2MIXER_DEBUG_POSTFIX)
 # Assume MSVC projects don't have a package manager and need vendored dependencies (by default).
 # Most other platforms have some kind of package manager.
 # FIXME: consider a package manager such as conan/vcpkg instead of vendoring
-if(MSVC)
+if(ANDROID OR MSVC)
     set(vendored_default ON)
 else()
     set(vendored_default OFF)
