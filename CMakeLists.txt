@@ -25,6 +25,12 @@ project(SDL2_mixer
 
 message(STATUS "Configuring ${PROJECT_NAME} ${PROJECT_VERSION}")
 
+if(CMAKE_SOURCE_DIR STREQUAL PROJET_SOURCE_DIR)
+    set(SDL2MIXER_ROOTPROJECT ON)
+else()
+    set(SDL2MIXER_ROOTPROJECT OFF)
+endif()
+
 if(POLICY CMP0112)
     # Target file component generator expressions do not add target dependencies.
     cmake_policy(SET CMP0112 NEW)
@@ -55,11 +61,11 @@ option(BUILD_SHARED_LIBS "Build the library as a shared library" ON)
 # Save BUILD_SHARED_LIBS variable as soon as possible
 set(SDL2MIXER_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
 
-option(SDL2MIXER_INSTALL "Enable SDL2mixer install target" ON)
+option(SDL2MIXER_INSTALL "Enable SDL2mixer install target" ${SDL2MIXER_ROOTPROJECT})
 option(SDL2MIXER_DEPS_SHARED "Default value for loading dependencies dynamically" ON)
 option(SDL2MIXER_VENDORED "Use vendored third-party libraries" ${vendored_default})
 
-option(SDL2MIXER_SAMPLES "Build the SDL2_mixer sample program(s)" ON)
+option(SDL2MIXER_SAMPLES "Build the SDL2_mixer sample program(s)" ${SDL2MIXER_ROOTPROJECT})
 cmake_dependent_option(SDL2MIXER_SAMPLES_INSTALL "Install the SDL2_mixer sample program(s)" OFF "SDL2MIXER_SAMPLES;SDL2MIXER_INSTALL" OFF)
 
 if(UNIX AND NOT APPLE)
