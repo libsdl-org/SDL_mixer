@@ -950,9 +950,9 @@ $(objects)/\2.lo: \1/\2.c \$(objects)/.created\\
 PLAYMUS_DEPENDS=`echo "$PLAYMUS_DEPENDS" | sed 's,\\$,\\\\$,g'`
 
 dnl Calculate the location of the prefix, relative to the cmake folder
-eval pkg_prefix=$prefix
-eval pkg_cmakedir=$libdir/cmake/SDL2_mixer
-cmake_prefix_relpath="$(echo -n "$pkg_cmakedir" | sed -E "s#^$pkg_prefix##" | sed -E "s#[A-Za-z0-9_ .-]+#..#g")"
+pkg_cmakedir='$libdir/cmake/SDL2_mixer'
+AX_COMPUTE_RELATIVE_PATHS([pkg_cmakedir:prefix:cmake_prefix_relpath])
+AC_SUBST([cmake_prefix_relpath])
 AC_SUBST([cmake_prefix_relpath])
 
 dnl Expand the sources and objects needed to build the library
