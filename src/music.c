@@ -176,11 +176,11 @@ static Mix_MusicInterface *s_music_interfaces[] =
 #ifdef MUSIC_OPUS
     &Mix_MusicInterface_Opus,
 #endif
-#ifdef MUSIC_MP3_DRMP3
-    &Mix_MusicInterface_DRMP3,
-#endif
 #ifdef MUSIC_MP3_MPG123
     &Mix_MusicInterface_MPG123,
+#endif
+#ifdef MUSIC_MP3_DRMP3
+    &Mix_MusicInterface_DRMP3,
 #endif
 #ifdef MUSIC_MOD_XMP
     &Mix_MusicInterface_XMP,
