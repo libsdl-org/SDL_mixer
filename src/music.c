@@ -164,11 +164,11 @@ static Mix_MusicInterface *s_music_interfaces[] =
 #ifdef MUSIC_WAV
     &Mix_MusicInterface_WAV,
 #endif
-#ifdef MUSIC_FLAC_DRFLAC
-    &Mix_MusicInterface_DRFLAC,
-#endif
 #ifdef MUSIC_FLAC_LIBFLAC
     &Mix_MusicInterface_FLAC,
+#endif
+#ifdef MUSIC_FLAC_DRFLAC
+    &Mix_MusicInterface_DRFLAC,
 #endif
 #ifdef MUSIC_OGG
     &Mix_MusicInterface_OGG,
