@@ -19,7 +19,7 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#if defined(MUSIC_OGG) && defined(OGG_USE_STB)
+#ifdef MUSIC_OGG_STB
 
 /* This file supports Ogg Vorbis music streams using a modified stb_vorbis module */
 
@@ -447,7 +447,7 @@ static void OGG_Delete(void *context)
     SDL_free(music);
 }
 
-Mix_MusicInterface Mix_MusicInterface_OGG =
+Mix_MusicInterface Mix_MusicInterface_OGG_STB =
 {
     "OGG",
     MIX_MUSIC_OGG,

@@ -34,6 +34,7 @@
 #include "music_fluidsynth.h"
 #include "music_timidity.h"
 #include "music_ogg.h"
+#include "music_ogg_stb.h"
 #include "music_opus.h"
 #include "music_drmp3.h"
 #include "music_mpg123.h"
@@ -172,6 +173,9 @@ static Mix_MusicInterface *s_music_interfaces[] =
 #endif
 #ifdef MUSIC_OGG
     &Mix_MusicInterface_OGG,
+#endif
+#ifdef MUSIC_OGG_STB
+    &Mix_MusicInterface_OGG_STB,
 #endif
 #ifdef MUSIC_OPUS
     &Mix_MusicInterface_Opus,

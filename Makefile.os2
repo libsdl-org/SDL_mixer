@@ -99,15 +99,14 @@ VORBIS_LIBS=vorbisfile.lib vorbis.lib
 !endif
 !ifeq USE_OGG yes
 CFLAGS+= -DMUSIC_OGG
-!ifeq USE_STBVORBIS yes
-CFLAGS+= -DOGG_USE_STB
-!else
 !ifeq USE_TREMOR yes
 CFLAGS+= -DOGG_USE_TREMOR
 !endif
 LIBS+= $(VORBIS_LIBS)
 NEED_LIBOGG=yes
 !endif
+!ifeq USE_STBVORBIS yes
+CFLAGS+= -DMUSIC_OGG_STB
 !endif
 
 !ifeq USE_FLAC yes

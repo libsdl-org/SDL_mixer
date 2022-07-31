@@ -395,8 +395,7 @@ endif()
 
 if(SDL2MIXER_VORBIS_STB)
     message(STATUS "Enabled ogg music: using stb_vorbis")
-    target_compile_definitions(SDL2_mixer PRIVATE MUSIC_OGG)
-    target_compile_definitions(SDL2_mixer PRIVATE OGG_USE_STB)
+    target_compile_definitions(SDL2_mixer PRIVATE MUSIC_OGG_STB)
 endif()
 
 if(SDL2MIXER_VORBIS_TREMOR)

@@ -17720,7 +17720,7 @@ fi
 
 if test x$enable_music_ogg = xyes -a x$enable_music_ogg_stb = xyes; then
     have_stb_vorbis=yes
-    EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_OGG -DOGG_USE_STB"
+    EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_OGG_STB"
     SDL2MIXER_VORBIS_STB=1
 fi
 

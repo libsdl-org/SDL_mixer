@@ -101,7 +101,7 @@ ifeq ($(SUPPORT_FLAC_LIBFLAC),true)
 endif
 
 ifeq ($(SUPPORT_OGG_STB),true)
-    LOCAL_CFLAGS += -DMUSIC_OGG -DOGG_USE_STB
+    LOCAL_CFLAGS += -DMUSIC_OGG_STB
 endif
 
 ifeq ($(SUPPORT_OGG),true)
