@@ -1,3 +1,5 @@
+include(FindPackageHandleStandardArgs)
+
 find_library(libxmp_lite_LIBRARY
     NAMES xmp
 )
