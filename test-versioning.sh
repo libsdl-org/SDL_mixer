@@ -29,8 +29,8 @@ not_ok () {
 major=$(sed -Ene 's/^m4_define\(\[MAJOR_VERSION_MACRO\], \[([0-9]*)\]\)$/\1/p' configure.ac)
 minor=$(sed -Ene 's/^m4_define\(\[MINOR_VERSION_MACRO\], \[([0-9]*)\]\)$/\1/p' configure.ac)
 micro=$(sed -Ene 's/^m4_define\(\[MICRO_VERSION_MACRO\], \[([0-9]*)\]\)$/\1/p' configure.ac)
-ref_sdl_req=$(sed -ne 's/^SDL_VERSION=//p' configure.ac)
 version="${major}.${minor}.${micro}"
+ref_sdl_req=$(sed -ne 's/^SDL_VERSION=//p' configure.ac)
 
 if [ "$ref_version" = "$version" ]; then
     ok "configure.ac $version"
@@ -46,7 +46,7 @@ version="${major}.${minor}.${micro}"
 if [ "$ref_version" = "$version" ]; then
     ok "configure $version"
 else
-    not_ok "configure $version disagrees with SDL_image.h $ref_version"
+    not_ok "configure $version disagrees with SDL_mixer.h $ref_version"
 fi
 
 major=$(sed -ne 's/^set(MAJOR_VERSION \([0-9]*\))$/\1/p' CMakeLists.txt)
@@ -174,6 +174,8 @@ if [ "$ref" = "$dylib_cur" ]; then
 else
     not_ok "project.pbxproj DYLIB_CURRENT_VERSION is inconsistent, expected $ref, got $dylib_cur"
 fi
+
+sdl_req=$(sed -ne 's/\$sdl2_version = "\([0-9.]*\)"$/\1/p' .github/fetch_sdl_vc.ps1)
 
 if [ "$ref_sdl_req" = "$sdl_req" ]; then
     ok ".github/fetch_sdl_vc.ps1 $sdl_req"
