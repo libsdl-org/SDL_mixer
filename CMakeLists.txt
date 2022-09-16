@@ -121,7 +121,7 @@ if(SDL2MIXER_MIDI AND NOT (SDL2MIXER_MIDI_TIMIDITY OR SDL2MIXER_MIDI_NATIVE OR S
 endif()
 
 option(SDL2MIXER_OPUS "Enable Opus music" ON)
-cmake_dependent_option(SDL2MIXER_OPUS_SHARED "Dynamically load libopus" ON SDL2MIXER_OPUS OFF)
+cmake_dependent_option(SDL2MIXER_OPUS_SHARED "Dynamically load libopus" "${SDL2MIXER_DEPS_SHARED}" SDL2MIXER_OPUS OFF)
 
 set(sdl2mixer_vorbis_strings STB TREMOR VORBISFILE)
 set(SDL2MIXER_VORBIS "STB" CACHE STRING "Enable OGG Vorbis music")
@@ -143,8 +143,8 @@ endif()
 if(SDL2MIXER_VORBIS STREQUAL "VORBISFILE")
     set(SDL2MIXER_VORBIS_VORBISFILE ON)
 endif()
-cmake_dependent_option(SDL2MIXER_VORBIS_TREMOR_SHARED "Dynamically load tremor library" ON SDL2MIXER_VORBIS_TREMOR OFF)
-cmake_dependent_option(SDL2MIXER_VORBIS_VORBISFILE_SHARED "Dynamically load vorbisfile library" ON SDL2MIXER_VORBIS_VORBISFILE OFF)
+cmake_dependent_option(SDL2MIXER_VORBIS_TREMOR_SHARED "Dynamically load tremor library" "${SDL2MIXER_DEPS_SHARED}" SDL2MIXER_VORBIS_TREMOR OFF)
+cmake_dependent_option(SDL2MIXER_VORBIS_VORBISFILE_SHARED "Dynamically load vorbisfile library" "${SDL2MIXER_DEPS_SHARED}" SDL2MIXER_VORBIS_VORBISFILE OFF)
 
 option(SDL2MIXER_WAVE "Enable streaming WAVE music" ON)
 
