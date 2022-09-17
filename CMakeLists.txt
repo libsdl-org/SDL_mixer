@@ -820,39 +820,34 @@ if(SDL2MIXER_INSTALL)
         COMPONENT devel
     )
 
-    if(SDL2MIXER_BUILD_SHARED_LIBS)
-        # Only create a .pc file for a shared SDL2_mixer
-        set(VERSION ${FULL_VERSION})
-        set(SDL_VERSION ${SDL_REQUIRED_VERSION})
-        set(prefix "${CMAKE_INSTALL_PREFIX}")
-        set(exec_prefix "\${prefix}")
-        set(libdir "\${exec_prefix}/${CMAKE_INSTALL_LIBDIR}")
-        set(bindir "\${exec_prefix}/bin")
-        set(includedir "\${prefix}/${CMAKE_INSTALL_INCLUDEDIR}")
-        string(JOIN " " PC_REQUIRES ${PC_REQUIRES})
-        string(JOIN " " PC_LIBS ${PC_LIBS})
-        configure_file(SDL2_mixer.pc.in ${CMAKE_CURRENT_BINARY_DIR}/SDL2_mixer.pc.intermediate @ONLY)
-        file(GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/SDL2_mixer-$<CONFIG>.pc" INPUT "${CMAKE_CURRENT_BINARY_DIR}/SDL2_mixer.pc.intermediate")
+    set(VERSION ${FULL_VERSION})
+    set(SDL_VERSION ${SDL_REQUIRED_VERSION})
+    set(prefix "${CMAKE_INSTALL_PREFIX}")
+    set(exec_prefix "\${prefix}")
+    set(libdir "\${exec_prefix}/${CMAKE_INSTALL_LIBDIR}")
+    set(bindir "\${exec_prefix}/bin")
+    set(includedir "\${prefix}/${CMAKE_INSTALL_INCLUDEDIR}")
+    string(JOIN " " PC_REQUIRES ${PC_REQUIRES})
+    string(JOIN " " PC_LIBS ${PC_LIBS})
+    configure_file(SDL2_mixer.pc.in ${CMAKE_CURRENT_BINARY_DIR}/SDL2_mixer.pc.intermediate @ONLY)
+    file(GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/SDL2_mixer-$<CONFIG>.pc" INPUT "${CMAKE_CURRENT_BINARY_DIR}/SDL2_mixer.pc.intermediate")
 
-        set(PC_DESTDIR)
-        if(CMAKE_SYSTEM_NAME MATCHES FreeBSD)
-            # FreeBSD uses ${PREFIX}/libdata/pkgconfig
-            set(PC_DESTDIR "libdata/pkgconfig")
-        else()
-            set(PC_DESTDIR "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
-        endif()
-        # Only install a SDL2_mixer.pc file in Release mode
-        install(CODE "
-            if(CMAKE_INSTALL_CONFIG_NAME MATCHES \"Release\")
-                # FIXME: use file(COPY_FILE) if minimum CMake version >= 3.21
-                execute_process(COMMAND \"\${CMAKE_COMMAND}\" -E copy_if_different
-                    \"${CMAKE_CURRENT_BINARY_DIR}/SDL2_mixer-$<CONFIG>.pc\"
-                    \"${CMAKE_CURRENT_BINARY_DIR}/SDL2_mixer.pc\")
-                file(INSTALL DESTINATION \"\${CMAKE_INSTALL_PREFIX}/${PC_DESTDIR}\"
-                    TYPE FILE
-                    FILES \"${CMAKE_CURRENT_BINARY_DIR}/SDL2_mixer.pc\")
-            endif()" COMPONENT devel)
+    set(PC_DESTDIR)
+    if(CMAKE_SYSTEM_NAME MATCHES FreeBSD)
+        # FreeBSD uses ${PREFIX}/libdata/pkgconfig
+        set(PC_DESTDIR "libdata/pkgconfig")
+    else()
+        set(PC_DESTDIR "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
     endif()
+    # Always install SDL2_mixer.pc file: libraries might be different between config modes
+    install(CODE "
+        # FIXME: use file(COPY_FILE) if minimum CMake version >= 3.21
+        execute_process(COMMAND \"\${CMAKE_COMMAND}\" -E copy_if_different
+            \"${CMAKE_CURRENT_BINARY_DIR}/SDL2_mixer-$<CONFIG>.pc\"
+            \"${CMAKE_CURRENT_BINARY_DIR}/SDL2_mixer.pc\")
+        file(INSTALL DESTINATION \"\${CMAKE_INSTALL_PREFIX}/${PC_DESTDIR}\"
+            TYPE FILE
+            FILES \"${CMAKE_CURRENT_BINARY_DIR}/SDL2_mixer.pc\")" COMPONENT devel)
 
     if(SDL2MIXER_BUILD_SHARED_LIBS AND (APPLE OR (UNIX AND NOT ANDROID)))
         install(
