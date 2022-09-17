@@ -476,6 +476,7 @@ static double OPUS_LoopLength(void *music_p)
 static void OPUS_Delete(void *context)
 {
     OPUS_music *music = (OPUS_music *)context;
+    meta_tags_clear(&music->tags);
     opus.op_free(music->of);
     if (music->stream) {
         SDL_FreeAudioStream(music->stream);
