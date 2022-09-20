@@ -29,4 +29,4 @@
 [submodule "libxmp"]
 	path = external/libxmp
 	url = https://github.com/libsdl-org/libxmp.git
-	branch = pre4.5.1-SDL
+	branch = pre4.5.1-SDL-2
