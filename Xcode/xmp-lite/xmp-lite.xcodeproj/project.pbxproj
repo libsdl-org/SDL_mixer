@@ -63,8 +63,8 @@
 		F33AA3302881F70D00F836D8 /* s3m_load.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = s3m_load.c; path = ../../external/libxmp/src/loaders/s3m_load.c; sourceTree = "<group>"; };
 		F3968D85281FBB1900661875 /* xmp_lite.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = xmp_lite.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3E29CE52881FB370006D108 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README; path = ../../external/libxmp/lite/README; sourceTree = "<group>"; };
-		F3E29CE72881FB610006D108 /* format.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = format.c; path = ../../external/libxmp/lite/src/format.c; sourceTree = "<group>"; };
-		F3E29CE92881FB840006D108 /* mod_load.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mod_load.c; path = ../../external/libxmp/lite/src/loaders/mod_load.c; sourceTree = "<group>"; };
+		F3E29CE72881FB610006D108 /* format.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = format.c; path = ../../external/libxmp/src/format.c; sourceTree = "<group>"; };
+		F3E29CE92881FB840006D108 /* mod_load.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mod_load.c; path = ../../external/libxmp/src/loaders/mod_load.c; sourceTree = "<group>"; };
 		F3E29CEB2881FC900006D108 /* common.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = common.c; path = ../../external/libxmp/src/loaders/common.c; sourceTree = "<group>"; };
 		F3E29CEC2881FC900006D108 /* sample.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sample.c; path = ../../external/libxmp/src/loaders/sample.c; sourceTree = "<group>"; };
 		F3E29CED2881FC900006D108 /* itsex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = itsex.c; path = ../../external/libxmp/src/loaders/itsex.c; sourceTree = "<group>"; };
@@ -323,10 +323,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/../../external/libxmp/src\"",
-					"\"$(SRCROOT)/../../external/libxmp/src/loaders\"",
-				);
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -390,10 +386,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/../../external/libxmp/src\"",
-					"\"$(SRCROOT)/../../external/libxmp/src/loaders\"",
-				);
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				MTL_ENABLE_DEBUG_INFO = NO;
