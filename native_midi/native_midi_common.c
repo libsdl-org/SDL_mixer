@@ -349,6 +349,7 @@ bail:
 			free(mididata->track[i].data);
 	}
 
+	free(mididata->track);
 	return 0;
 }
 
