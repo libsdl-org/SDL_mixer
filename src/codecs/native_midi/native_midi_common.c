@@ -350,6 +350,7 @@ bail:
             SDL_free(mididata->track[i].data);
     }
 
+    SDL_free(mididata->track);
     return 0;
 }
 
