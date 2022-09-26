@@ -458,8 +458,8 @@ if(SDL2MIXER_VORBIS_VORBISFILE)
         set(BUILD_SHARED_LIBS ${SDL2MIXER_VORBIS_VORBISFILE_SHARED})
         sdl_check_project_in_subfolder(external/vorbis vorbisfile SDL2MIXER_VENDORED)
         add_subdirectory(external/vorbis EXCLUDE_FROM_ALL)
-        if(NOT TARGET vorbisfile::vorbisfile)
-            add_library(vorbisfile::vorbisfile ALIAS vorbisfile)
+        if(NOT TARGET Vorbis::vorbisfile)
+            add_library(Vorbis::vorbisfile ALIAS vorbisfile)
         endif()
         if(SDL2MIXER_VORBIS_VORBISFILE_SHARED OR NOT SDL2MIXER_BUILD_SHARED_LIBS)
             list(APPEND INSTALL_EXTRA_TARGETS vorbis vorbisfile)
@@ -469,25 +469,25 @@ if(SDL2MIXER_VORBIS_VORBISFILE)
         endif()
     else()
         message(STATUS "Using system vorbisfile")
-        find_package(vorbisfile REQUIRED)
+        find_package(Vorbis REQUIRED)
         if(NOT SDL2MIXER_VORBIS_VORBISFILE_SHARED)
             list(APPEND PC_REQUIRES vorbisfile)
         endif()
     endif()
     if(SDL2MIXER_VORBIS_VORBISFILE_SHARED)
         target_include_directories(SDL2_mixer PRIVATE
-            $<TARGET_PROPERTY:vorbisfile::vorbisfile,INCLUDE_DIRECTORIES>
-            $<TARGET_PROPERTY:vorbisfile::vorbisfile,INTERFACE_INCLUDE_DIRECTORIES>
-            $<TARGET_PROPERTY:vorbisfile::vorbisfile,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:Vorbis::vorbisfile,INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:Vorbis::vorbisfile,INTERFACE_INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:Vorbis::vorbisfile,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
         )
-        target_get_dynamic_library(dynamic_vorbisfile vorbisfile::vorbisfile)
+        target_get_dynamic_library(dynamic_vorbisfile Vorbis::vorbisfile)
         message(STATUS "Dynamic vorbisfile: ${dynamic_vorbisfile}")
         target_compile_definitions(SDL2_mixer PRIVATE "OGG_DYNAMIC=\"${dynamic_vorbisfile}\"")
         if(SDL2MIXER_VENDORED)
-            add_dependencies(SDL2_mixer vorbisfile::vorbisfile)
+            add_dependencies(SDL2_mixer Vorbis::vorbisfile)
         endif()
     else()
-        target_link_libraries(SDL2_mixer PRIVATE vorbisfile::vorbisfile)
+        target_link_libraries(SDL2_mixer PRIVATE Vorbis::vorbisfile)
     endif()
 endif()
 
@@ -807,7 +807,7 @@ if(SDL2MIXER_INSTALL)
                 cmake/Findmodplug.cmake
                 cmake/Findopusfile.cmake
                 cmake/FindMPG123.cmake
-                cmake/Findvorbisfile.cmake
+                cmake/FindVorbis.cmake
                 cmake/Findtremor.cmake
             DESTINATION "${PKG_PREFIX}"
             COMPONENT devel
