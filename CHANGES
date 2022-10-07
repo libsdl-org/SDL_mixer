@@ -1,5 +1,7 @@
 1.2.13:
-- Mix_LoadWAV_RW: Fixed an incompatibility with sdl12-compat.
+- Mix_LoadWAV_RW, Mix_FreeChunk: Fixed a free() function / C library
+  incompatibility with SDL side, fixing crashes against sdl12-compat
+  in particular.
 - MP3: Added playback support using libmpg123 and removed deprecated
   smpeg support.
 - MP3, mad decoder: skip tags, which otherwise would lead to crashes
