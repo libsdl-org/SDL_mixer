@@ -560,6 +560,7 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
 	SDL_AudioSpec wavespec, *loaded;
 	SDL_AudioCVT wavecvt;
 	int samplesize;
+	int wavfree;		/* to decide how to free chunk->abuf. */
 
 	/* rcg06012001 Make sure src is valid */
 	if ( ! src ) {
@@ -591,9 +592,11 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
 	/* Seek backwards for compatibility with older loaders */
 	SDL_RWseek(src, -(int)sizeof(Uint32), RW_SEEK_CUR);
 
+	wavfree = 0;
 	switch (magic) {
 		case WAVE:
 		case RIFF:
+			wavfree = 1;
 			loaded = SDL_LoadWAV_RW(src, freesrc, &wavespec,
 					(Uint8 **)&chunk->abuf, &chunk->alen);
 			break;
@@ -643,7 +646,8 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
 		if ( SDL_BuildAudioCVT(&wavecvt,
 				wavespec.format, wavespec.channels, wavespec.freq,
 				mixer.format, mixer.channels, mixer.freq) < 0 ) {
-			SDL_free(chunk->abuf);
+			if (!wavfree)SDL_free(chunk->abuf);
+			else	SDL_FreeWAV(chunk->abuf);
 			SDL_free(chunk);
 			return(NULL);
 		}
@@ -652,12 +656,14 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
 		wavecvt.buf = (Uint8 *)SDL_calloc(1, wavecvt.len*wavecvt.len_mult);
 		if ( wavecvt.buf == NULL ) {
 			SDL_SetError("Out of memory");
-			SDL_free(chunk->abuf);
+			if (!wavfree) SDL_free(chunk->abuf);
+			else	SDL_FreeWAV(chunk->abuf);
 			SDL_free(chunk);
 			return(NULL);
 		}
 		memcpy(wavecvt.buf, chunk->abuf, wavecvt.len);
-		SDL_free(chunk->abuf);
+		if (!wavfree) SDL_free(chunk->abuf);
+		else	SDL_FreeWAV(chunk->abuf);
 
 		/* Run the audio converter */
 		if ( SDL_ConvertAudio(&wavecvt) < 0 ) {
@@ -668,9 +674,10 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
 
 		chunk->abuf = wavecvt.buf;
 		chunk->alen = wavecvt.len_cvt;
+		wavfree = 0;
 	}
 
-	chunk->allocated = 1;
+	chunk->allocated = (wavfree == 0) ? 1 : 2; /* see Mix_FreeChunk() */
 	chunk->volume = MIX_MAX_VOLUME;
 
 	return(chunk);
@@ -757,8 +764,13 @@ void Mix_FreeChunk(Mix_Chunk *chunk)
 		}
 		SDL_UnlockAudio();
 		/* Actually free the chunk */
-		if ( chunk->allocated ) {
+		switch ( chunk->allocated ) {
+		case 1:
 			SDL_free(chunk->abuf);
+			break;
+		case 2:
+			SDL_FreeWAV(chunk->abuf);
+			break;
 		}
 		SDL_free(chunk);
 	}
