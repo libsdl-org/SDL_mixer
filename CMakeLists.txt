@@ -28,6 +28,11 @@ else()
     set(SDL2MIXER_ROOTPROJECT OFF)
 endif()
 
+set(SDL2MIXER_SAMPLES_DEFAULT ${SDL2MIXER_ROOTPROJECT})
+if(ANDROID)
+    set(SDL2MIXER_SAMPLES_DEFAULT OFF)
+endif()
+
 if(POLICY CMP0112)
     # Target file component generator expressions do not add target dependencies.
     cmake_policy(SET CMP0112 NEW)
@@ -62,7 +67,7 @@ option(SDL2MIXER_INSTALL "Enable SDL2mixer install target" ${SDL2MIXER_ROOTPROJE
 option(SDL2MIXER_DEPS_SHARED "Default value for loading dependencies dynamically" ON)
 option(SDL2MIXER_VENDORED "Use vendored third-party libraries" ${vendored_default})
 
-option(SDL2MIXER_SAMPLES "Build the SDL2_mixer sample program(s)" ${SDL2MIXER_ROOTPROJECT})
+option(SDL2MIXER_SAMPLES "Build the SDL2_mixer sample program(s)" ${SDL2MIXER_SAMPLES_DEFAULT})
 cmake_dependent_option(SDL2MIXER_SAMPLES_INSTALL "Install the SDL2_mixer sample program(s)" OFF "SDL2MIXER_SAMPLES;SDL2MIXER_INSTALL" OFF)
 
 if(UNIX AND NOT APPLE)
