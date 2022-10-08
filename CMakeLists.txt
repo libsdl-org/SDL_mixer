@@ -341,6 +341,7 @@ if(SDL2MIXER_OPUS)
         add_subdirectory(external/opus EXCLUDE_FROM_ALL)
 
         set(OP_DISABLE_DOCS TRUE CACHE BOOL "Disable opusfile documentation")
+        set(OP_DISABLE_EXAMPLES TRUE CACHE BOOL "Disable opusfile examples")
         set(OP_DISABLE_HTTP TRUE CACHE BOOL "Disable opusfile HTTP SUPPORT")
         message(STATUS "Using vendored opusfile")
         set(BUILD_SHARED_LIBS ${SDL2MIXER_OPUS_SHARED})
