@@ -952,10 +952,10 @@ MidiEvent *read_midi_file(SDL_RWops *mrw, int32 *count, int32 *sp)
   GM_System_On=GS_System_On=XG_System_On=0;
   /* vol_table = def_vol_table; */
   XG_System_reverb_type=XG_System_chorus_type=XG_System_variation_type=0;
-  memset(&drumvolume,-1,sizeof(drumvolume));
-  memset(&drumchorusdepth,-1,sizeof(drumchorusdepth));
-  memset(&drumreverberation,-1,sizeof(drumreverberation));
-  memset(&drumpanpot,NO_PANNING,sizeof(drumpanpot));
+  memset(drumvolume,-1,sizeof(drumvolume));
+  memset(drumchorusdepth,-1,sizeof(drumchorusdepth));
+  memset(drumreverberation,-1,sizeof(drumreverberation));
+  memset(drumpanpot,NO_PANNING,sizeof(drumpanpot));
 
   for (i=0; i<MAXCHAN; i++)
      {
