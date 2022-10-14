@@ -99,6 +99,9 @@ static int XMP_Load(void)
         FUNCTION_LOADER(xmp_free_context, void(*)(xmp_context))
 #if defined(XMP_DYNAMIC)
         libxmp.xmp_load_module_from_callbacks = (int (*)(xmp_context,void*,struct xmp_callbacks)) SDL_LoadFunction(libxmp.handle, "xmp_load_module_from_callbacks");
+        if (libxmp.xmp_load_module_from_callbacks == NULL) {
+            SDL_ClearError();   /* xmp_load_module_from_callbacks is optional. */
+        }
 #elif (XMP_VERCODE >= 0x040500)
         libxmp.xmp_load_module_from_callbacks = xmp_load_module_from_callbacks;
 #else
