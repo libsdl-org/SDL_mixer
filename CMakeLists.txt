@@ -777,13 +777,14 @@ if(SDL2MIXER_INSTALL)
 
     ##### export files #####
     if(WIN32 AND NOT MINGW)
-        set(PKG_PREFIX "cmake")
+        set(SDLMIXER_INSTALL_CMAKEDIR_DEFAULT "cmake")
     else()
-        set(PKG_PREFIX "${CMAKE_INSTALL_LIBDIR}/cmake/SDL2_mixer")
+        set(SDLMIXER_INSTALL_CMAKEDIR_DEFAULT "${CMAKE_INSTALL_LIBDIR}/cmake/SDL2_mixer")
     endif()
+    set(SDLMIXER_INSTALL_CMAKEDIR "${SDLMIXER_INSTALL_CMAKEDIR_DEFAULT}" CACHE STRING "Location where to install SDL2_mixerConfig.cmake")
 
     configure_package_config_file(SDL2_mixerConfig.cmake.in SDL2_mixerConfig.cmake
-        INSTALL_DESTINATION "${PKG_PREFIX}"
+        INSTALL_DESTINATION "${SDLMIXER_INSTALL_CMAKEDIR}"
     )
     write_basic_package_version_file("${PROJECT_BINARY_DIR}/SDL2_mixerConfigVersion.cmake"
         VERSION ${FULL_VERSION}
@@ -793,7 +794,7 @@ if(SDL2MIXER_INSTALL)
         FILES
             "${CMAKE_CURRENT_BINARY_DIR}/SDL2_mixerConfig.cmake"
             "${CMAKE_CURRENT_BINARY_DIR}/SDL2_mixerConfigVersion.cmake"
-        DESTINATION "${PKG_PREFIX}"
+        DESTINATION "${SDLMIXER_INSTALL_CMAKEDIR}"
         COMPONENT devel
     )
     if(NOT SDL2MIXER_BUILD_SHARED_LIBS)
@@ -808,14 +809,14 @@ if(SDL2MIXER_INSTALL)
                 cmake/FindMPG123.cmake
                 cmake/FindVorbis.cmake
                 cmake/Findtremor.cmake
-            DESTINATION "${PKG_PREFIX}"
+            DESTINATION "${SDLMIXER_INSTALL_CMAKEDIR}"
             COMPONENT devel
         )
     endif()
     install(EXPORT SDL2MixerTargets
         FILE SDL2_mixer-${sdl2_mixer_install_name_infix}-targets.cmake
         NAMESPACE SDL2_mixer::
-        DESTINATION "${PKG_PREFIX}"
+        DESTINATION "${SDLMIXER_INSTALL_CMAKEDIR}"
         COMPONENT devel
     )
 
