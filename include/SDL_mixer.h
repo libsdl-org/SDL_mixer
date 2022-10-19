@@ -121,10 +121,10 @@ typedef enum
  * This function loads dynamic libraries that SDL_mixer needs, and prepares
  * them for use.
  *
- * Note that, unlike other SDL libraries, this call is optional! If you load
- * a music file, SDL_mixer will handle initialization on the fly. This
- * function will let you know, up front, whether a specific format will be
- * available for use.
+ * Note that, unlike other SDL libraries, this call is optional! If you load a
+ * music file, SDL_mixer will handle initialization on the fly. This function
+ * will let you know, up front, whether a specific format will be available
+ * for use.
  *
  * Flags should be one or more flags from MIX_InitFlags OR'd together. It
  * returns the flags successfully initialized, or 0 on failure.
