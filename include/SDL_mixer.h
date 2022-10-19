@@ -2187,7 +2187,7 @@ extern DECLSPEC int SDLCALL Mix_ExpireChannel(int channel, int ticks);
  *
  * \param which the channel to fade out.
  * \param ms number of milliseconds to fade before halting the channel.
- * \returns 0 on success, or -1 on error.
+ * \returns the number of channels scheduled to fade.
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
