@@ -101,52 +101,43 @@ static int read_config_file(const char *name, int rcf_count)
     {
       while (*endp == ' ' || *endp == '\t' || *endp == '\240')
         endp++;
+
       if (*endp == '\0' || *endp == '#')
         break;
-      if (*endp == '"' || *endp == '\'') /* quoted string */
-      {
-        char *terminator;
-        if ((terminator = SDL_strchr(endp + 1, *endp)) != NULL) /* terminated */
-        {
-          if (terminator[1] == ' ' || terminator[1] == '\t' || terminator[1] == '\240' || terminator[1] == '\0')
-          {
-            char *extraQuote;
-            if ((extraQuote = SDL_strchr(endp + 1, *endp == '"' ? '\'' : '"')) != NULL && extraQuote < terminator)
-            {
+
+      if (*endp == '"' || *endp == '\'') { /* quoted string */
+        char *terminator = SDL_strchr(endp + 1, *endp);
+        if (terminator != NULL) { /* terminated */
+          if (terminator[1] == ' ' || terminator[1] == '\t' || terminator[1] == '\240' || terminator[1] == '\0') {
+            char *extraQuote = SDL_strchr(endp + 1, *endp == '"' ? '\'' : '"');
+            if (extraQuote != NULL && extraQuote < terminator) {
                 SNDDBG(("%s: line %d: Quote characters are not allowed inside a quoted string", name, line));
                 goto fail;
             }
-
             w[++words] = endp + 1;
             endp = terminator + 1;
             *terminator = '\0';
           }
-          else /* no space after quoted string */
-          {
+          else { /* no space after quoted string */
             SNDDBG(("%s: line %d: There must be at least one whitespace between string terminator (%c) and the next parameter", name, line, *endp));
             goto fail;
           }
         }
-        else /* not terminated */
-        {
+        else { /* not terminated */
           SNDDBG(("%s: line %d: The quoted string is not terminated", name, line));
           goto fail;
         }
       }
-      else /* not quoted string */
-      {
+      else { /* not quoted string */
         w[++words] = endp;
-        while (!(*endp == ' ' || *endp == '\t' || *endp == '\240' || *endp == '\0'))
-        {
-          if (*endp == '"' || *endp == '\'') /* no space before quoted string */
-          {
+        while (!(*endp == ' ' || *endp == '\t' || *endp == '\240' || *endp == '\0')) {
+          if (*endp == '"' || *endp == '\'') { /* no space before quoted string */
               SNDDBG(("%s: line %d: There must be at least one whitespace between previous parameter and a beginning of the quoted string (%c)", name, line, *endp));
               goto fail;
           }
           endp++;
         }
-        if (*endp != '\0') /* unless at the end-of-string (i.e. EOF) */
-        {
+        if (*endp != '\0') { /* unless at the end-of-string (i.e. EOF) */
           *endp = '\0';    /* terminate the token */
           endp++;
         }
