@@ -281,10 +281,7 @@ find_lib()
 
 dnl Check for SDL
 SDL_VERSION=2.0.9
-AM_PATH_SDL2($SDL_VERSION,
-            :,
-            AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])
-)
+PKG_CHECK_MODULES([SDL], [sdl2 >= $SDL_VERSION],, AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!]))
 EXTRA_CFLAGS="$EXTRA_CFLAGS $SDL_CFLAGS"
 
 dnl For use in static assertions
