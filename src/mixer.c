@@ -758,6 +758,7 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
     SDL_AudioCVT wavecvt;
     int samplesize;
     int wavfree;        /* to decide how to free chunk->abuf. */
+    Uint8 *resized_buf;
 
     /* rcg06012001 Make sure src is valid */
     if (!src) {
@@ -860,7 +861,12 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
             return(NULL);
         }
 
-        chunk->abuf = SDL_realloc(wavecvt.buf, wavecvt.len_cvt);
+        resized_buf = SDL_realloc(wavecvt.buf, wavecvt.len_cvt);
+        if (resized_buf == NULL) {
+            chunk->abuf = wavecvt.buf;
+        } else {
+            chunk->abuf = resized_buf;
+        }
         chunk->alen = wavecvt.len_cvt;
         wavfree = 0;
     }
