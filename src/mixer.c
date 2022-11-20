@@ -860,7 +860,7 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
             return(NULL);
         }
 
-        chunk->abuf = wavecvt.buf;
+        chunk->abuf = SDL_realloc(wavecvt.buf, wavecvt.len_cvt);
         chunk->alen = wavecvt.len_cvt;
         wavfree = 0;
     }
