@@ -884,7 +884,7 @@ if(SDL2MIXER_SAMPLES)
 
         if(SDL2MIXER_SAMPLES_INSTALL)
             install(TARGETS ${prog}
-                RUNTIME DESTINATION "{CMAKE_INSTALL_BINDIR}"
+                RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
             )
         endif()
     endforeach()
