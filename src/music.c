@@ -34,6 +34,7 @@
 #include "music_fluidsynth.h"
 #include "music_timidity.h"
 #include "music_ogg.h"
+#include "music_ogg_stb.h"
 #include "music_opus.h"
 #include "music_drmp3.h"
 #include "music_mpg123.h"
@@ -164,23 +165,26 @@ static Mix_MusicInterface *s_music_interfaces[] =
 #ifdef MUSIC_WAV
     &Mix_MusicInterface_WAV,
 #endif
-#ifdef MUSIC_FLAC_DRFLAC
-    &Mix_MusicInterface_DRFLAC,
-#endif
 #ifdef MUSIC_FLAC_LIBFLAC
     &Mix_MusicInterface_FLAC,
+#endif
+#ifdef MUSIC_FLAC_DRFLAC
+    &Mix_MusicInterface_DRFLAC,
 #endif
 #ifdef MUSIC_OGG
     &Mix_MusicInterface_OGG,
 #endif
+#ifdef MUSIC_OGG_STB
+    &Mix_MusicInterface_OGG_STB,
+#endif
 #ifdef MUSIC_OPUS
     &Mix_MusicInterface_Opus,
 #endif
-#ifdef MUSIC_MP3_DRMP3
-    &Mix_MusicInterface_DRMP3,
-#endif
 #ifdef MUSIC_MP3_MPG123
     &Mix_MusicInterface_MPG123,
+#endif
+#ifdef MUSIC_MP3_DRMP3
+    &Mix_MusicInterface_DRMP3,
 #endif
 #ifdef MUSIC_MOD_XMP
     &Mix_MusicInterface_XMP,

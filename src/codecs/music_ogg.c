@@ -19,7 +19,7 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#if defined(MUSIC_OGG) && !defined(OGG_USE_STB)
+#ifdef MUSIC_OGG
 
 /* This file supports Ogg Vorbis music streams */
 

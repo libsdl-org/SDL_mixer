@@ -198,7 +198,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>..\include;..\src;..\src\codecs;..\src\codecs\timidity;..\external\ogg\include;..\external\vorbis\include;..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>DLL_EXPORT;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MP3_DRMP3;MUSIC_OGG;OGG_USE_STB;MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DLL_EXPORT;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MP3_DRMP3;MUSIC_OGG_STB;MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -211,7 +211,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>..\include;..\src;..\src\codecs;..\src\codecs\timidity;..\external\ogg\include;..\external\vorbis\include;..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>DLL_EXPORT;NDEBUG;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MP3_DRMP3;MUSIC_OGG;OGG_USE_STB;MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DLL_EXPORT;NDEBUG;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MP3_DRMP3;MUSIC_OGG_STB;MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -224,7 +224,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>..\include;..\src;..\src\codecs;..\src\codecs\timidity;..\external\ogg\include;..\external\vorbis\include;..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>DLL_EXPORT;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MP3_DRMP3;MUSIC_OGG;OGG_USE_STB;MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DLL_EXPORT;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MP3_DRMP3;MUSIC_OGG_STB;MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -237,7 +237,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>..\include;..\src;..\src\codecs;..\src\codecs\timidity;..\external\ogg\include;..\external\vorbis\include;..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>DLL_EXPORT;NDEBUG;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MP3_DRMP3;MUSIC_OGG;OGG_USE_STB;MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DLL_EXPORT;NDEBUG;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MP3_DRMP3;MUSIC_OGG_STB;MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -250,7 +250,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>..\include;..\src;..\src\codecs;..\src\codecs\timidity;..\external\ogg\include;..\external\vorbis\include;..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>DLL_EXPORT;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MP3_DRMP3;MUSIC_OGG;OGG_USE_STB;MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DLL_EXPORT;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MP3_DRMP3;MUSIC_OGG_STB;MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -263,7 +263,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
       <AdditionalIncludeDirectories>..\include;..\src;..\src\codecs;..\src\codecs\timidity;..\external\ogg\include;..\external\vorbis\include;..\..\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>DLL_EXPORT;NDEBUG;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MP3_DRMP3;MUSIC_OGG;OGG_USE_STB;MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DLL_EXPORT;NDEBUG;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MP3_DRMP3;MUSIC_OGG_STB;MUSIC_MID_TIMIDITY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

@@ -109,7 +109,7 @@
       <AdditionalOptions>/D OGG_DYNAMIC=\"libvorbisfile-3.dll\" %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\include;..\src;..\src\codecs;..\src\codecs\timidity;..\src\codecs\native_midi;external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>DLL_EXPORT;_DEBUG;WIN32;_WINDOWS;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MOD_XMP;XMP_DYNAMIC="libxmp-lite.dll";MUSIC_MP3_DRMP3;MUSIC_OGG;OGG_USE_STB;MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DLL_EXPORT;_DEBUG;WIN32;_WINDOWS;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MOD_XMP;XMP_DYNAMIC="libxmp-lite.dll";MUSIC_MP3_DRMP3;MUSIC_OGG_STB;MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
@@ -139,7 +139,7 @@
       <AdditionalOptions>/D OGG_DYNAMIC=\"libvorbisfile-3.dll\" %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\include;..\src;..\src\codecs;..\src\codecs\timidity;..\src\codecs\native_midi;external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>DLL_EXPORT;_DEBUG;WIN32;_WINDOWS;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MOD_XMP;XMP_DYNAMIC="libxmp-lite.dll";MUSIC_MP3_DRMP3;MUSIC_OGG;OGG_USE_STB;MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DLL_EXPORT;_DEBUG;WIN32;_WINDOWS;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MOD_XMP;XMP_DYNAMIC="libxmp-lite.dll";MUSIC_MP3_DRMP3;MUSIC_OGG_STB;MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
@@ -168,7 +168,7 @@
     <ClCompile>
       <AdditionalOptions>/D OGG_DYNAMIC=\"libvorbisfile-3.dll\" %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>..\include;..\src;..\src\codecs;..\src\codecs\timidity;..\src\codecs\native_midi;external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>DLL_EXPORT;NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MOD_XMP;XMP_DYNAMIC="libxmp-lite.dll";MUSIC_MP3_DRMP3;MUSIC_OGG;OGG_USE_STB;MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DLL_EXPORT;NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MOD_XMP;XMP_DYNAMIC="libxmp-lite.dll";MUSIC_MP3_DRMP3;MUSIC_OGG_STB;MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
@@ -195,7 +195,7 @@
     <ClCompile>
       <AdditionalOptions>/D OGG_DYNAMIC=\"libvorbisfile-3.dll\" %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>..\include;..\src;..\src\codecs;..\src\codecs\timidity;..\src\codecs\native_midi;external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>DLL_EXPORT;NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MOD_XMP;XMP_DYNAMIC="libxmp-lite.dll";MUSIC_MP3_DRMP3;MUSIC_OGG;OGG_USE_STB;MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DLL_EXPORT;NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MOD_XMP;XMP_DYNAMIC="libxmp-lite.dll";MUSIC_MP3_DRMP3;MUSIC_OGG_STB;MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
