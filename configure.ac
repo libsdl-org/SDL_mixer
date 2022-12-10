@@ -905,6 +905,70 @@ if test x$enable_music_opus = xyes; then
     fi
 fi
 
+SDL2MIXER_WAVPACK=0
+AC_ARG_ENABLE([music-wavpack],
+[AS_HELP_STRING([--enable-music-wavpack], [enable WavPack music [default=yes]])],
+              [], [enable_music_wavpack=yes])
+AC_ARG_ENABLE([music-wavpack-shared],
+[AS_HELP_STRING([--enable-music-wavpack-shared], [dynamically load WavPack library [default=yes]])],
+              [], [enable_music_wavpack_shared=yes])
+if test x$enable_music_wavpack = xyes; then
+    LIBS_SAVED="$LIBS"
+    PKG_CHECK_MODULES([WAVPACK], [wavpack >= 4.0], [dnl
+            have_wavpack_hdr=yes
+            have_wavpack_lib=yes
+            have_wavpack_pc=yes
+        ], [dnl
+            AC_CHECK_HEADER([wavpack.h], [have_wavpack_hdr=yes;have_wavpack_hdr2=yes])
+            AC_CHECK_HEADER([wavpack/wavpack.h], [have_wavpack_hdr=yes])
+            AC_CHECK_LIB([wavpack], [WavpackOpenFileInputEx], [have_wavpack_lib=yes;WAVPACK_LIBS="-lwavpack"], [], [-lm])
+        ])
+    if test x$have_wavpack_pc = xyes; then
+        CFLAGS_SAVED="$CFLAGS"
+        CFLAGS="$CFLAGS $WAVPACK_CFLAGS"
+        AC_CHECK_HEADER([wavpack.h], [have_wavpack_hdr2=yes])
+        CFLAGS="$CFLAGS_SAVED"
+    fi
+    LIBS="$LIBS_SAVED"
+
+    if test x$have_wavpack_hdr = xyes -a x$have_wavpack_lib = xyes; then
+        have_wavpack=yes
+        case "$host" in
+            *-*-darwin*)
+                wavpack_lib=[`find_lib libwavpack.dylib`]
+                ;;
+            *-*-cygwin* | *-*-mingw*)
+                wavpack_lib=[`find_lib "libwavpack*.dll"`]
+                ;;
+            *)
+                wavpack_lib=[`find_lib "libwavpack[0-9]*.so.*"`]
+                if test x$wavpack_lib = x; then
+                    wavpack_lib=[`find_lib "libwavpack.so.*"`]
+                fi
+                ;;
+        esac
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_WAVPACK $WAVPACK_CFLAGS"
+        if test x$have_wavpack_hdr2 = xyes; then
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DHAVE_WAVPACK_H"
+        fi
+        if test x$enable_music_wavpack_shared = xyes && test x$wavpack_lib != x; then
+            echo "-- dynamic wavpack -> $wavpack_lib"
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DWAVPACK_DYNAMIC=\\\"$wavpack_lib\\\""
+        else
+            MIXER_LIBS="$MIXER_LIBS $WAVPACK_LIBS"
+            if test x$have_wavpack_pc = xyes; then
+                PC_REQUIRES="$PC_REQUIRES wavpack"
+            else
+                PC_LIBS="$PC_LIBS $WAVPACK_LIBS"
+            fi
+        fi
+        SDL2MIXER_WAVPACK=1
+    else
+        AC_MSG_WARN([*** Unable to find WavPack library (http://www.wavpack.com)])
+        AC_MSG_WARN([WavPack support disabled])
+    fi
+fi
+
 dnl check for LD --no-undefined option
 CheckNoUndef
 
@@ -993,6 +1057,7 @@ AC_SUBST(SDL2MIXER_VORBIS_STB)
 AC_SUBST(SDL2MIXER_VORBIS_TREMOR)
 AC_SUBST(SDL2MIXER_VORBIS_VORBISFILE)
 AC_SUBST(SDL2MIXER_WAVE)
+AC_SUBST(SDL2MIXER_WAVPACK)
 
 AC_CONFIG_FILES([
 Makefile

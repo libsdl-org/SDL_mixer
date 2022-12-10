@@ -102,7 +102,6 @@ void Menu(void)
 }
 
 #ifdef HAVE_SIGNAL_H
-
 void IntHandler(int sig)
 {
     switch (sig) {
@@ -111,7 +110,6 @@ void IntHandler(int sig)
             break;
     }
 }
-
 #endif
 
 int main(int argc, char *argv[])
@@ -257,6 +255,9 @@ int main(int argc, char *argv[])
             break;
         case MUS_OPUS:
             typ = "OPUS";
+            break;
+        case MUS_WAVPACK:
+            typ = "WavPack";
             break;
         case MUS_NONE:
         default:

@@ -185,6 +185,9 @@ static int get_loaded_mix_init_flags(void)
             case MUS_FLAC:
                 loaded_init_flags |= MIX_INIT_FLAC;
                 break;
+            case MUS_WAVPACK:
+                loaded_init_flags |= MIX_INIT_WAVPACK;
+                break;
             case MUS_MOD:
                 loaded_init_flags |= MIX_INIT_MOD;
                 break;
@@ -220,6 +223,14 @@ int Mix_Init(int flags)
             result |= MIX_INIT_FLAC;
         } else {
             Mix_SetError("FLAC support not available");
+        }
+    }
+    if (flags & MIX_INIT_WAVPACK) {
+        if (load_music_type(MUS_WAVPACK)) {
+            open_music_type(MUS_WAVPACK);
+            result |= MIX_INIT_WAVPACK;
+        } else {
+            Mix_SetError("WavPack support not available");
         }
     }
     if (flags & MIX_INIT_MOD) {

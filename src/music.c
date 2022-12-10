@@ -39,6 +39,7 @@
 #include "music_mpg123.h"
 #include "music_drflac.h"
 #include "music_flac.h"
+#include "music_wavpack.h"
 #include "native_midi/native_midi.h"
 
 #include "utils.h"
@@ -169,6 +170,9 @@ static Mix_MusicInterface *s_music_interfaces[] =
 #endif
 #ifdef MUSIC_FLAC_LIBFLAC
     &Mix_MusicInterface_FLAC,
+#endif
+#ifdef MUSIC_WAVPACK
+    &Mix_MusicInterface_WAVPACK,
 #endif
 #ifdef MUSIC_OGG
     &Mix_MusicInterface_OGG,
@@ -493,6 +497,10 @@ SDL_bool open_music_type(Mix_MusicType type)
         add_music_decoder("FLAC");
         add_chunk_decoder("FLAC");
     }
+    if (has_music(MUS_WAVPACK)) {
+        add_music_decoder("WAVPACK");
+        add_chunk_decoder("WAVPACK");
+    }
 
     return (opened > 0) ? SDL_TRUE : SDL_FALSE;
 }
@@ -569,6 +577,11 @@ Mix_MusicType detect_music_type(SDL_RWops *src)
         return MUS_FLAC;
     }
 
+    /* WavPack files have the magic four bytes "wvpk" */
+    if (SDL_memcmp(magic, "wvpk", 4) == 0) {
+        return MUS_WAVPACK;
+    }
+
     /* MIDI files have the magic four bytes "MThd" */
     if (SDL_memcmp(magic, "MThd", 4) == 0) {
         return MUS_MID;
@@ -643,6 +656,8 @@ Mix_Music *Mix_LoadMUS(const char *file)
             type = MUS_OPUS;
         } else if (SDL_strcasecmp(ext, "FLAC") == 0) {
             type = MUS_FLAC;
+        } else if (SDL_strcasecmp(ext, "WV") == 0) {
+            type = MUS_WAVPACK;
         } else  if (SDL_strcasecmp(ext, "MPG") == 0 ||
                      SDL_strcasecmp(ext, "MPEG") == 0 ||
                      SDL_strcasecmp(ext, "MP3") == 0 ||

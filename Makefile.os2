@@ -35,6 +35,8 @@ USE_OPUS=yes
 USE_MPG123=yes
 # mp3 music support (using dr_mp3)
 USE_DRMP3=no
+# wavpack music support
+USE_WAVPACK=yes
 # midi music support (using timidity)
 USE_TIMIDITY=yes
 # midi music support (using fluidsynth)
@@ -53,8 +55,8 @@ SRCS = utils.c effect_position.c effects_internal.c effect_stereoreverse.c mixer
 # codec sources:
 SRCS+= load_aiff.c load_voc.c music_wav.c &
        music_ogg.c music_ogg_stb.c music_opus.c &
-       music_flac.c music_drflac.c mp3utils.c &
-       music_mpg123.c music_drmp3.c &
+       music_flac.c music_drflac.c music_wavpack.c &
+       mp3utils.c music_mpg123.c music_drmp3.c &
        music_xmp.c music_modplug.c &
        music_fluidsynth.c music_timidity.c
 # timidity sources:
@@ -116,6 +118,11 @@ LIBS+= FLAC.lib
 !endif
 !ifeq USE_DRFLAC yes
 CFLAGS+= -DMUSIC_FLAC_DRFLAC
+!endif
+
+!ifeq USE_WAVPACK yes
+CFLAGS+= -DMUSIC_WAVPACK
+LIBS+= wavpack.lib
 !endif
 
 !ifeq USE_OPUS yes

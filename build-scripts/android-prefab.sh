@@ -81,6 +81,7 @@ build_cmake_projects() {
                 -DSDL2MIXER_MIDI_TIMIDITY=ON \
                 -DSDL2MIXER_OPUS=ON \
                 -DSDL2MIXER_VORBIS=STB \
+                -DSDL2MIXER_WAVPACK=ON \
                 -DCMAKE_TOOLCHAIN_FILE="$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake" \
                 -DSDL${sdlmixer_major}_DIR="${sdl_build_root}/build_${android_abi}/prefix/lib/cmake/SDL${sdlmixer_major}" \
                 -DANDROID_PLATFORM=${ANDROID_PLATFORM} \
@@ -335,6 +336,9 @@ cp "${sdlmixer_root}/external/opusfile/COPYING" "${aar_metainfdir_path}/LICENSE.
 
 create_shared_module external_libxmp libxmp ""
 tail -n15 "${sdlmixer_root}/external/libxmp/README" >"${aar_metainfdir_path}/LICENSE.libxmp.txt"
+
+create_shared_module external_libwavpack libwavpack ""
+tail -n15 "${sdlmixer_root}/external/wavpack/COPYING" >"${aar_metainfdir_path}/LICENSE.wavpack.txt"
 
 pushd "${aar_root}"
     aar_filename="SDL${sdlmixer_major}_mixer-${sdlmixer_version}.aar"

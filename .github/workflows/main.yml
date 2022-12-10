@@ -43,6 +43,7 @@ jobs:
           ${{ matrix.platform.msys-env }}-libxmp
           ${{ matrix.platform.msys-env }}-mpg123
           ${{ matrix.platform.msys-env }}-opusfile
+          ${{ matrix.platform.msys-env }}-wavpack
           ${{ matrix.platform.msys-env }}-ninja
           ${{ matrix.platform.msys-env }}-pkg-config
     - name: Setup Macos dependencies
@@ -61,6 +62,7 @@ jobs:
           libxmp \
           mpg123 \
           opusfile \
+          wavpack \
           ${NULL+}
     - name: Setup Linux dependencies
       if: runner.os == 'Linux'
@@ -77,6 +79,7 @@ jobs:
           libopusfile-dev \
           libvorbis-dev \
           libxmp-dev \
+          libwavpack-dev \
           ninja-build \
           pkg-config \
           ${NULL+}

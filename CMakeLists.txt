@@ -153,6 +153,9 @@ cmake_dependent_option(SDL2MIXER_VORBIS_VORBISFILE_SHARED "Dynamically load vorb
 
 option(SDL2MIXER_WAVE "Enable streaming WAVE music" ON)
 
+option(SDL2MIXER_WAVPACK "Enable WavPack music" ON)
+cmake_dependent_option(SDL2MIXER_WAVPACK_SHARED "Dynamically load WavPack library" "${SDL2MIXER_DEPS_SHARED}" SDL2MIXER_WAVPACK OFF)
+
 if(SDL2MIXER_VORBIS_TREMOR OR SDL2MIXER_VORBIS_VORBISFILE OR SDL2MIXER_FLAC_LIBFLAC OR SDL2MIXER_OPUS)
     set(SDL2MIXER_OGG TRUE)
     set(SDL2MIXER_OGG_install FALSE)
@@ -199,6 +202,7 @@ add_library(SDL2_mixer
     src/codecs/music_opus.c
     src/codecs/music_timidity.c
     src/codecs/music_wav.c
+    src/codecs/music_wavpack.c
     src/codecs/music_xmp.c
     src/effect_position.c
     src/effect_stereoreverse.c
@@ -751,6 +755,48 @@ if(SDL2MIXER_WAVE)
     target_compile_definitions(SDL2_mixer PRIVATE MUSIC_WAV)
 endif()
 
+if(SDL2MIXER_WAVPACK)
+    target_compile_definitions(SDL2_mixer PRIVATE MUSIC_WAVPACK)
+    if(SDL2MIXER_VENDORED)
+        message(STATUS "Using vendored WevPack")
+        sdl_check_project_in_subfolder(external/wavpack WavPack SDL2MIXER_VENDORED)
+        set(WAVPACK_BUILD_PROGRAMS FALSE CACHE BOOL "Don't build WavPack programs")
+        set(WAVPACK_BUILD_COOLEDIT_PLUGIN OFF CACHE BOOL "Don't build WavPack CoolEdit plugin")
+        set(WAVPACK_BUILD_WINAMP_PLUGIN OFF CACHE BOOL "Don't build WavPack WinAMP plugin")
+        set(WAVPACK_BUILD_DOCS OFF CACHE BOOL "Don't build WavPack documentation")
+        set(BUILD_SHARED_LIBS "${SDL2MIXER_WAVPACK_SHARED}")
+        add_subdirectory(external/wavpack EXCLUDE_FROM_ALL)
+        if(SDL2MIXER_WAVPACK_SHARED OR NOT SDL2MIXER_BUILD_SHARED_LIBS)
+            list(APPEND INSTALL_EXTRA_TARGETS wavpack)
+        endif()
+        if(NOT SDL2MIXER_WAVPACK_SHARED)
+            list(APPEND PC_LIBS -l$<TARGET_FILE_BASE_NAME:WavPack::WavPack>)
+        endif()
+        target_compile_definitions(SDL2_mixer PRIVATE HAVE_WAVPACK_H)
+    else()
+        message(STATUS "Using system WavPack")
+        find_package(wavpack REQUIRED)
+        if(NOT SDL2MIXER_WAVPACK_SHARED)
+            list(APPEND PC_REQUIRES wavpack)
+        endif()
+    endif()
+    if(SDL2MIXER_WAVPACK_SHARED)
+        target_include_directories(SDL2_mixer PRIVATE
+            $<TARGET_PROPERTY:WavPack::WavPack,INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:WavPack::WavPack,INTERFACE_INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:WavPack::WavPack,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
+        )
+        target_get_dynamic_library(dynamic_wavpack WavPack::WavPack)
+        message(STATUS "Dynamic WavPack: ${dynamic_wavpack}")
+        target_compile_definitions(SDL2_mixer PRIVATE "WAVPACK_DYNAMIC=\"${dynamic_wavpack}\"")
+        if(SDL2MIXER_VENDORED)
+            add_dependencies(SDL2_mixer WavPack::WavPack)
+        endif()
+    else()
+        target_link_libraries(SDL2_mixer PRIVATE WavPack::WavPack)
+    endif()
+endif()
+
 if(SDL2MIXER_INSTALL)
     install(
         TARGETS SDL2_mixer
@@ -809,6 +855,7 @@ if(SDL2MIXER_INSTALL)
                 cmake/FindMPG123.cmake
                 cmake/FindVorbis.cmake
                 cmake/Findtremor.cmake
+                cmake/Findwavpack.cmake
             DESTINATION "${SDLMIXER_INSTALL_CMAKEDIR}"
             COMPONENT devel
         )
