@@ -83,7 +83,7 @@ if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/SDL2_mixer-static-targets.cmake")
         find_dependency(tremor)
     endif()
 
-    if(SDL2MIXER_VORBIS_VORBISFILE AND NOT SDL2MIXER_VENDORED AND NOT TARGET vorbisfile::vorbisfile)
+    if(SDL2MIXER_VORBIS_VORBISFILE AND NOT SDL2MIXER_VENDORED AND NOT TARGET Vorbis::vorbisfile)
         find_dependency(Vorbis)
     endif()
 
