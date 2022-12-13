@@ -194,7 +194,7 @@ typedef struct {
     void *decimation_cnxt;
 
     SDL_AudioStream *stream;
-    int32_t *buffer;
+    void *buffer;
     int32_t frames;
 
     Mix_MusicMetaTags tags;
@@ -397,7 +397,19 @@ static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, int
             (Sint64)music->numsamples, music->samplerate, music->bps, music->channels, music->mode, !(music->mode & MODE_LOSSLESS), music->numsamples/(double)music->samplerate);
     #endif
 
-    format = (music->mode & MODE_FLOAT) ? AUDIO_F32SYS : AUDIO_S32SYS;
+    /* library returns the samples in 8, 16, 24, or 32 bit depth,
+     * but always in an int32_t[] buffer, in host-endian format. */
+    switch (music->bps) {
+    case 8:
+        format = AUDIO_S8;
+        break;
+    case 16:
+        format = AUDIO_S16SYS;
+        break;
+    default:
+        format = (music->mode & MODE_FLOAT) ? AUDIO_F32SYS : AUDIO_S32SYS;
+        break;
+    }
     music->stream = SDL_NewAudioStream(format, (Uint8)music->channels, (int)music->samplerate / music->decimation,
                                        music_spec.format, music_spec.channels, music_spec.freq);
     if (!music->stream) {
@@ -406,7 +418,7 @@ static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, int
     }
 
     music->frames = music_spec.samples;
-    music->buffer = (int32_t *)SDL_malloc(music->frames * music->channels * sizeof(int32_t) * music->decimation);
+    music->buffer = SDL_malloc(music->frames * music->channels * sizeof(int32_t) * music->decimation);
     if (!music->buffer) {
         SDL_OutOfMemory();
         WAVPACK_Delete(music);
@@ -502,15 +514,32 @@ static int WAVPACK_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     }
 
     if (amount) {
+        int32_t *src = (int32_t *)music->buffer;
+        int c = 0;
         amount *= music->channels;
-        if (music->bps < 32) {
-            const int shift = 32 - music->bps;
-            int c = 0;
+        switch (music->bps) {
+        case 8: {
+            Sint8 *dst = (Sint8 *)music->buffer;
             for (; c < amount; ++c) {
-                music->buffer[c] <<= shift;
+                *dst++ = *src++;
+            } }
+            break;
+        case 16: {
+            Sint16 *dst = (Sint16 *)music->buffer;
+            for (; c < amount; ++c) {
+                *dst++ = *src++;
+            } }
+            amount *= sizeof(Sint16);
+            break;
+        case 24:
+            for (; c < amount; ++c) {
+                src[c] <<= 8;
             }
+            /* FALLTHRU */
+        default:
+            amount *= sizeof(Sint32);
+            break;
         }
-        amount *= sizeof(int32_t);
         if (SDL_AudioStreamPut(music->stream, music->buffer, amount) < 0) {
             return -1;
         }
