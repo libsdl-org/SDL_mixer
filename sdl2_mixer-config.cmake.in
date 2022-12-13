@@ -64,6 +64,8 @@ endif()
 
 set(SDL2MIXER_WAVE                  @SDL2MIXER_WAVE@)
 
+set(SDL2MIXER_WAVPACK               @SDL2MIXER_WAVPACK@)
+
 set(SDL2MIXER_SDL2_REQUIRED_VERSION @SDL_VERSION@)
 
 get_filename_component(prefix "${CMAKE_CURRENT_LIST_DIR}/@cmake_prefix_relpath@" ABSOLUTE)
