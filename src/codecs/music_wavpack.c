@@ -45,6 +45,11 @@
 #define WAVPACK4_OR_OLDER
 #endif
 
+static void *decimation_init (int num_channels, int ratio);
+static int decimation_run (void *context, int32_t *samples, int num_samples);
+static void decimation_reset (void *context);
+static void *decimation_destroy (void *context);
+
 #ifdef WAVPACK4_OR_OLDER
 typedef struct {
     int32_t (*read_bytes)(void *id, void *data, int32_t bcount);
@@ -185,7 +190,8 @@ typedef struct {
     WavpackContext *ctx;
     int64_t numsamples;
     uint32_t samplerate;
-    int bps, channels, mode;
+    int bps, channels, mode, decimation;
+    void *decimation_cnxt;
 
     SDL_AudioStream *stream;
     int32_t *buffer;
@@ -349,8 +355,8 @@ static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, int
     music->volume = MIX_MAX_VOLUME;
 
     music->ctx = (wvpk.WavpackOpenFileInputEx64 != NULL) ?
-                  wvpk.WavpackOpenFileInputEx64(&sdl_reader64, src1, src2, err, OPEN_WVC|OPEN_NORMALIZE|OPEN_TAGS, 0) :
-                  wvpk.WavpackOpenFileInputEx(&sdl_reader32, src1, src2, err, OPEN_WVC|OPEN_NORMALIZE|OPEN_TAGS, 0);
+                  wvpk.WavpackOpenFileInputEx64(&sdl_reader64, src1, src2, err, OPEN_NORMALIZE|OPEN_TAGS|OPEN_DSD_AS_PCM, 0) :
+                  wvpk.WavpackOpenFileInputEx(&sdl_reader32, src1, src2, err, OPEN_NORMALIZE|OPEN_TAGS, 0);
     if (!music->ctx) {
         Mix_SetError("%s", err);
         SDL_free(music);
@@ -367,9 +373,23 @@ static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, int
     music->bps = wvpk.WavpackGetBytesPerSample(music->ctx) << 3;
     music->channels = wvpk.WavpackGetNumChannels(music->ctx);
     music->mode = wvpk.WavpackGetMode(music->ctx);
+    music->decimation = 1;
 
     if (freesrc2) {
        *freesrc2 = 0; /* WAVPACK_Delete() will free it. */
+    }
+
+    /* for very high sample rates (including DSD, which will normally be 352,800 Hz)
+     * decimate 4x here before sending on */
+    if (music->samplerate >= 256000) {
+        music->decimation = 4;
+        music->decimation_cnxt = decimation_init (music->channels, music->decimation);
+
+        if (!music->decimation_cnxt) {
+            SDL_OutOfMemory();
+            WAVPACK_Delete(music);
+            return NULL;
+        }
     }
 
     #if WAVPACK_DBG
@@ -378,7 +398,7 @@ static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, int
     #endif
 
     format = (music->mode & MODE_FLOAT) ? AUDIO_F32SYS : AUDIO_S32SYS;
-    music->stream = SDL_NewAudioStream(format, (Uint8)music->channels, (int)music->samplerate,
+    music->stream = SDL_NewAudioStream(format, (Uint8)music->channels, (int)music->samplerate / music->decimation,
                                        music_spec.format, music_spec.channels, music_spec.freq);
     if (!music->stream) {
         WAVPACK_Delete(music);
@@ -386,7 +406,7 @@ static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, int
     }
 
     music->frames = music_spec.samples;
-    music->buffer = (int32_t *)SDL_malloc(music->frames * music->channels * sizeof(int32_t));
+    music->buffer = (int32_t *)SDL_malloc(music->frames * music->channels * sizeof(int32_t) * music->decimation);
     if (!music->buffer) {
         SDL_OutOfMemory();
         WAVPACK_Delete(music);
@@ -475,7 +495,12 @@ static int WAVPACK_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         return 0;
     }
 
-    amount = (int) wvpk.WavpackUnpackSamples(music->ctx, music->buffer, music->frames);
+    amount = (int) wvpk.WavpackUnpackSamples(music->ctx, music->buffer, music->frames * music->decimation);
+
+    if (amount && music->decimation_cnxt) {
+        amount = decimation_run (music->decimation_cnxt, music->buffer, amount);
+    }
+
     if (amount) {
         amount *= music->channels;
         if (music->bps < 32) {
@@ -522,6 +547,9 @@ static int WAVPACK_Seek(void *context, double time)
     if (!success) {
         return Mix_SetError("%s", wvpk.WavpackGetErrorMessage(music->ctx));
     }
+    if (music->decimation_cnxt) {
+        decimation_reset (music->decimation_cnxt);
+    }
     return 0;
 }
 
@@ -547,6 +575,9 @@ static void WAVPACK_Delete(void *context)
     WAVPACK_music *music = (WAVPACK_music *)context;
     meta_tags_clear(&music->tags);
     wvpk.WavpackCloseFile(music->ctx);
+    if (music->decimation_cnxt) {
+        decimation_destroy (music->decimation_cnxt);
+    }
     if (music->stream) {
         SDL_FreeAudioStream(music->stream);
     }
@@ -560,6 +591,113 @@ static void WAVPACK_Delete(void *context)
         SDL_RWclose(music->src1);
     }
     SDL_free(music);
+}
+
+/* Decimation code for playing DSD (which comes from the library already decimated 8x) */
+
+/* sinc low-pass filter, cutoff = fs/12, 80 terms */
+
+static const int32_t filter[] = {
+    50, 464, 968, 711, -1203, -5028, -9818, -13376,
+    -12870, -6021, 7526, 25238, 41688, 49778, 43050, 18447,
+    -21428, -67553, -105876, -120890, -100640, -41752, 47201, 145510,
+    224022, 252377, 208224, 86014, -97312, -301919, -470919, -541796,
+    -461126, -199113, 239795, 813326, 1446343, 2043793, 2509064, 2763659,
+    2763659, 2509064, 2043793, 1446343, 813326, 239795, -199113, -461126,
+    -541796, -470919, -301919, -97312, 86014, 208224, 252377, 224022,
+    145510, 47201, -41752, -100640, -120890, -105876, -67553, -21428,
+    18447, 43050, 49778, 41688, 25238, 7526, -6021, -12870,
+    -13376, -9818, -5028, -1203, 711, 968, 464, 50
+};
+
+#define NUM_TERMS ((int)(sizeof(filter) / sizeof(filter[0])))
+
+typedef struct chan_state {
+    int delay[NUM_TERMS], index, num_channels, ratio;
+} ChanState;
+
+static void *decimation_init (int num_channels, int ratio)
+{
+    ChanState *sp = (ChanState *)SDL_calloc(num_channels, sizeof(ChanState));
+    int i;
+
+    if (sp) {
+        for (i = 0; i < num_channels; ++i) {
+            sp[i].num_channels = num_channels;
+            sp[i].index = NUM_TERMS - ratio;
+            sp[i].ratio = ratio;
+        }
+    }
+
+    return sp;
+}
+
+static int decimation_run (void *context, int32_t *samples, int num_samples)
+{
+    int32_t *in_samples = samples, *out_samples = samples;
+    ChanState *sp = (ChanState *) context;
+    int num_channels, ratio, chan;
+
+    if (!sp) {
+        return 0;
+    }
+
+    num_channels = sp->num_channels;
+    ratio = sp->ratio;
+    chan = 0;
+
+    while (num_samples) {
+        sp = ((ChanState *) context) + chan;
+
+        sp->delay[sp->index++] = *in_samples++;
+
+        if (sp->index == NUM_TERMS) {
+            int64_t sum = 0;
+            int i;
+
+            for (i = 0; i < NUM_TERMS; ++i) {
+                sum += (int64_t) filter[i] * sp->delay[i];
+            }
+
+            *out_samples++ = (int32_t)(sum >> 24);
+            SDL_memmove(sp->delay, sp->delay + ratio, sizeof(sp->delay[0]) * (NUM_TERMS - ratio));
+            sp->index = NUM_TERMS - ratio;
+        }
+
+        if (++chan == num_channels) {
+            num_samples--;
+            chan = 0;
+        }
+    }
+
+    return (int)(out_samples - samples) / num_channels;
+}
+
+static void decimation_reset (void *context)
+{
+    ChanState *sp = (ChanState *) context;
+    int num_channels, ratio, i;
+
+    if (sp) {
+        num_channels = sp->num_channels;
+        ratio = sp->ratio;
+
+        SDL_memset(sp, 0, sizeof(ChanState) * num_channels);
+
+        for (i = 0; i < num_channels; ++i) {
+            sp[i].num_channels = num_channels;
+            sp[i].index = NUM_TERMS - ratio;
+            sp[i].ratio = ratio;
+        }
+    }
+}
+
+static void *decimation_destroy (void *context)
+{
+    if (context) {
+        SDL_free (context);
+    }
+    return NULL;
 }
 
 Mix_MusicInterface Mix_MusicInterface_WAVPACK =
