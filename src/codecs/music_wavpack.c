@@ -401,7 +401,7 @@ static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, int
      * but always in an int32_t[] buffer, in host-endian format. */
     switch (music->bps) {
     case 8:
-        format = AUDIO_S8;
+        format = AUDIO_U8;
         break;
     case 16:
         format = AUDIO_S16SYS;
@@ -519,9 +519,9 @@ static int WAVPACK_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         amount *= music->channels;
         switch (music->bps) {
         case 8: {
-            Sint8 *dst = (Sint8 *)music->buffer;
+            Uint8 *dst = (Uint8 *)music->buffer;
             for (; c < amount; ++c) {
-                *dst++ = *src++;
+                *dst++ = 0x80 ^ (Uint8)*src++;
             } }
             break;
         case 16: {
