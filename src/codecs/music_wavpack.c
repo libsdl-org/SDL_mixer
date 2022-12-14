@@ -45,10 +45,9 @@
 #define WAVPACK4_OR_OLDER
 #endif
 
-static void *decimation_init (int num_channels, int ratio);
-static int decimation_run (void *context, int32_t *samples, int num_samples);
-static void decimation_reset (void *context);
-static void *decimation_destroy (void *context);
+static void *decimation_init(int num_channels, int ratio);
+static int decimation_run(void *context, int32_t *samples, int num_samples);
+static void decimation_reset(void *context);
 
 #ifdef WAVPACK4_OR_OLDER
 typedef struct {
@@ -191,7 +190,7 @@ typedef struct {
     int64_t numsamples;
     uint32_t samplerate;
     int bps, channels, mode, decimation;
-    void *decimation_cnxt;
+    void *decimation_ctx;
 
     SDL_AudioStream *stream;
     void *buffer;
@@ -383,9 +382,8 @@ static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, int
      * decimate 4x here before sending on */
     if (music->samplerate >= 256000) {
         music->decimation = 4;
-        music->decimation_cnxt = decimation_init (music->channels, music->decimation);
-
-        if (!music->decimation_cnxt) {
+        music->decimation_ctx = decimation_init(music->channels, music->decimation);
+        if (!music->decimation_ctx) {
             SDL_OutOfMemory();
             WAVPACK_Delete(music);
             return NULL;
@@ -397,8 +395,8 @@ static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, int
             (Sint64)music->numsamples, music->samplerate, music->bps, music->channels, music->mode, !(music->mode & MODE_LOSSLESS), music->numsamples/(double)music->samplerate);
     #endif
 
-    /* library returns the samples in 8, 16, 24, or 32 bit depth,
-     * but always in an int32_t[] buffer, in host-endian format. */
+    /* library returns the samples in 8, 16, 24, or 32 bit depth, but
+     * always in an int32_t[] buffer, in signed host-endian format. */
     switch (music->bps) {
     case 8:
         format = AUDIO_U8;
@@ -509,8 +507,8 @@ static int WAVPACK_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 
     amount = (int) wvpk.WavpackUnpackSamples(music->ctx, music->buffer, music->frames * music->decimation);
 
-    if (amount && music->decimation_cnxt) {
-        amount = decimation_run (music->decimation_cnxt, music->buffer, amount);
+    if (amount && music->decimation_ctx) {
+        amount = decimation_run(music->decimation_ctx, music->buffer, amount);
     }
 
     if (amount) {
@@ -576,8 +574,8 @@ static int WAVPACK_Seek(void *context, double time)
     if (!success) {
         return Mix_SetError("%s", wvpk.WavpackGetErrorMessage(music->ctx));
     }
-    if (music->decimation_cnxt) {
-        decimation_reset (music->decimation_cnxt);
+    if (music->decimation_ctx) {
+        decimation_reset(music->decimation_ctx);
     }
     return 0;
 }
@@ -604,15 +602,11 @@ static void WAVPACK_Delete(void *context)
     WAVPACK_music *music = (WAVPACK_music *)context;
     meta_tags_clear(&music->tags);
     wvpk.WavpackCloseFile(music->ctx);
-    if (music->decimation_cnxt) {
-        decimation_destroy (music->decimation_cnxt);
-    }
     if (music->stream) {
         SDL_FreeAudioStream(music->stream);
     }
-    if (music->buffer) {
-        SDL_free(music->buffer);
-    }
+    SDL_free(music->buffer);
+    SDL_free(music->decimation_ctx);
     if (music->src2) {
         SDL_RWclose(music->src2);
     }
@@ -623,35 +617,32 @@ static void WAVPACK_Delete(void *context)
 }
 
 /* Decimation code for playing DSD (which comes from the library already decimated 8x) */
-
 /* sinc low-pass filter, cutoff = fs/12, 80 terms */
-
 static const int32_t filter[] = {
-    50, 464, 968, 711, -1203, -5028, -9818, -13376,
-    -12870, -6021, 7526, 25238, 41688, 49778, 43050, 18447,
-    -21428, -67553, -105876, -120890, -100640, -41752, 47201, 145510,
-    224022, 252377, 208224, 86014, -97312, -301919, -470919, -541796,
-    -461126, -199113, 239795, 813326, 1446343, 2043793, 2509064, 2763659,
-    2763659, 2509064, 2043793, 1446343, 813326, 239795, -199113, -461126,
-    -541796, -470919, -301919, -97312, 86014, 208224, 252377, 224022,
-    145510, 47201, -41752, -100640, -120890, -105876, -67553, -21428,
-    18447, 43050, 49778, 41688, 25238, 7526, -6021, -12870,
-    -13376, -9818, -5028, -1203, 711, 968, 464, 50
+         50,     464,     968,     711,   -1203,   -5028,   -9818,  -13376,
+     -12870,   -6021,    7526,   25238,   41688,   49778,   43050,   18447,
+     -21428,  -67553, -105876, -120890, -100640,  -41752,   47201,  145510,
+     224022,  252377,  208224,   86014,  -97312, -301919, -470919, -541796,
+    -461126, -199113,  239795,  813326, 1446343, 2043793, 2509064, 2763659,
+    2763659, 2509064, 2043793, 1446343,  813326,  239795, -199113, -461126,
+    -541796, -470919, -301919,  -97312,   86014,  208224,  252377,  224022,
+     145510,   47201,  -41752, -100640, -120890, -105876,  -67553,  -21428,
+      18447,   43050,   49778,   41688,   25238,    7526,   -6021,  -12870,
+     -13376,   -9818,   -5028,   -1203,     711,     968,     464,      50
 };
-
-#define NUM_TERMS ((int)(sizeof(filter) / sizeof(filter[0])))
+#define NUM_TERMS (int)SDL_arraysize(filter)
 
 typedef struct chan_state {
     int delay[NUM_TERMS], index, num_channels, ratio;
 } ChanState;
 
-static void *decimation_init (int num_channels, int ratio)
+static void *decimation_init(int num_channels, int ratio)
 {
     ChanState *sp = (ChanState *)SDL_calloc(num_channels, sizeof(ChanState));
-    int i;
 
     if (sp) {
-        for (i = 0; i < num_channels; ++i) {
+        int i = 0;
+        for (; i < num_channels; ++i) {
             sp[i].num_channels = num_channels;
             sp[i].index = NUM_TERMS - ratio;
             sp[i].ratio = ratio;
@@ -661,33 +652,26 @@ static void *decimation_init (int num_channels, int ratio)
     return sp;
 }
 
-static int decimation_run (void *context, int32_t *samples, int num_samples)
+static int decimation_run(void *context, int32_t *samples, int num_samples)
 {
-    int32_t *in_samples = samples, *out_samples = samples;
-    ChanState *sp = (ChanState *) context;
-    int num_channels, ratio, chan;
-
-    if (!sp) {
-        return 0;
-    }
-
-    num_channels = sp->num_channels;
-    ratio = sp->ratio;
-    chan = 0;
+    int32_t *in_samples = samples;
+    int32_t *out_samples = samples;
+    ChanState *sp = (ChanState *)context;
+    const int num_channels = sp->num_channels;
+    const int ratio = sp->ratio;
+    int chan = 0;
 
     while (num_samples) {
-        sp = ((ChanState *) context) + chan;
+        sp = (ChanState *)context + chan;
 
         sp->delay[sp->index++] = *in_samples++;
 
         if (sp->index == NUM_TERMS) {
             int64_t sum = 0;
-            int i;
-
-            for (i = 0; i < NUM_TERMS; ++i) {
-                sum += (int64_t) filter[i] * sp->delay[i];
+            int i = 0;
+            for (; i < NUM_TERMS; ++i) {
+                sum += (int64_t)filter[i] * sp->delay[i];
             }
-
             *out_samples++ = (int32_t)(sum >> 24);
             SDL_memmove(sp->delay, sp->delay + ratio, sizeof(sp->delay[0]) * (NUM_TERMS - ratio));
             sp->index = NUM_TERMS - ratio;
@@ -702,31 +686,19 @@ static int decimation_run (void *context, int32_t *samples, int num_samples)
     return (int)(out_samples - samples) / num_channels;
 }
 
-static void decimation_reset (void *context)
+static void decimation_reset(void *context)
 {
-    ChanState *sp = (ChanState *) context;
-    int num_channels, ratio, i;
+    ChanState *sp = (ChanState *)context;
+    const int num_channels = sp->num_channels;
+    const int ratio = sp->ratio;
+    int i = 0;
 
-    if (sp) {
-        num_channels = sp->num_channels;
-        ratio = sp->ratio;
-
-        SDL_memset(sp, 0, sizeof(ChanState) * num_channels);
-
-        for (i = 0; i < num_channels; ++i) {
-            sp[i].num_channels = num_channels;
-            sp[i].index = NUM_TERMS - ratio;
-            sp[i].ratio = ratio;
-        }
+    SDL_memset(sp, 0, sizeof(ChanState) * num_channels);
+    for (; i < num_channels; ++i) {
+        sp[i].num_channels = num_channels;
+        sp[i].index = NUM_TERMS - ratio;
+        sp[i].ratio = ratio;
     }
-}
-
-static void *decimation_destroy (void *context)
-{
-    if (context) {
-        SDL_free (context);
-    }
-    return NULL;
 }
 
 Mix_MusicInterface Mix_MusicInterface_WAVPACK =
