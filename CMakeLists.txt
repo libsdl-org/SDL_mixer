@@ -369,8 +369,8 @@ if(SDL2MIXER_OPUS)
         )
         target_include_directories(SDL2_mixer PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 
-        if(NOT TARGET opusfile::opusfile)
-            add_library(opusfile::opusfile ALIAS opusfile)
+        if(NOT TARGET OpusFile::opusfile)
+            add_library(OpusFile::opusfile ALIAS opusfile)
         endif()
         if(SDL2MIXER_OPUS_SHARED OR NOT SDL2MIXER_BUILD_SHARED_LIBS)
             list(APPEND INSTALL_EXTRA_TARGETS opus opusfile)
@@ -380,25 +380,25 @@ if(SDL2MIXER_OPUS)
         endif()
     else()
         message(STATUS "Using system opusfile")
-        find_package(opusfile REQUIRED)
+        find_package(OpusFile REQUIRED)
         if(NOT SDL2MIXER_OPUS_SHARED)
             list(APPEND PC_REQUIRES opusfile)
         endif()
     endif()
     if(SDL2MIXER_OPUS_SHARED)
         target_include_directories(SDL2_mixer PRIVATE
-            $<TARGET_PROPERTY:opusfile::opusfile,INCLUDE_DIRECTORIES>
-            $<TARGET_PROPERTY:opusfile::opusfile,INTERFACE_INCLUDE_DIRECTORIES>
-            $<TARGET_PROPERTY:opusfile::opusfile,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:OpusFile::opusfile,INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:OpusFile::opusfile,INTERFACE_INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:OpusFile::opusfile,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
         )
-        target_get_dynamic_library(dynamic_opusfile opusfile::opusfile)
+        target_get_dynamic_library(dynamic_opusfile OpusFile::opusfile)
         message(STATUS "Dynamic opus (opusfile): ${dynamic_opusfile}")
         target_compile_definitions(SDL2_mixer PRIVATE "OPUS_DYNAMIC=\"${dynamic_opusfile}\"")
         if(SDL2MIXER_VENDORED)
-            add_dependencies(SDL2_mixer opusfile::opusfile)
+            add_dependencies(SDL2_mixer OpusFile::opusfile)
         endif()
     else()
-        target_link_libraries(SDL2_mixer PRIVATE opusfile::opusfile)
+        target_link_libraries(SDL2_mixer PRIVATE OpusFile::opusfile)
     endif()
 endif()
 
@@ -851,7 +851,7 @@ if(SDL2MIXER_INSTALL)
                 cmake/Findlibxmp.cmake
                 cmake/Findlibxmp-lite.cmake
                 cmake/Findmodplug.cmake
-                cmake/Findopusfile.cmake
+                cmake/FindOpusFile.cmake
                 cmake/FindMPG123.cmake
                 cmake/FindVorbis.cmake
                 cmake/Findtremor.cmake
