@@ -491,8 +491,8 @@ static SDL_bool parse_id3v2(Mix_MusicMetaTags *out_tags, struct mp3file_t *src)
     }
 
     if (tag_extended_len) {
-        total_length += tag_extended_len + 4;
-        MP3_RWseek(src, tag_extended_len + 4, RW_SEEK_CUR); /* Skip extended header and it's size value */
+        tag_len -= tag_extended_len; /* Subtract the size of extended header */
+        MP3_RWseek(src, tag_extended_len, RW_SEEK_CUR); /* Skip extended header and it's size value */
     }
 
     total_length += tag_len;
