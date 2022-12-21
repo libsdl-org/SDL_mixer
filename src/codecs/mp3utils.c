@@ -398,7 +398,7 @@ static size_t id3v22_parse_frame(Mix_MusicMetaTags *out_tags, struct mp3file_t *
     if (size < ID3v2_BUFFER_SIZE) {
         read_size = MP3_RWread(src, buffer, 1, size);
         if (read_size < size) {
-            SDL_Log("id3v22_parse_frame (2): Buffer size that left is too small (%u < %u)", (unsigned int)read_size, size);
+            SDL_Log("id3v22_parse_frame (2): Buffer size that left is too small (%u < %u)", (unsigned int)read_size, (unsigned int)size);
             MP3_RWseek(src, frame_begin, RW_SEEK_SET);
             return 0; /* Can't read frame data, possibly, a file size was reached */
         }
@@ -452,7 +452,7 @@ static size_t id3v2x_parse_frame(Mix_MusicMetaTags *out_tags, struct mp3file_t *
     if (size < ID3v2_BUFFER_SIZE) {
         read_size = MP3_RWread(src, buffer, 1, size);
         if (read_size < size) {
-            SDL_Log("id3v2x_parse_frame (2): Buffer size that left is too small (%u < %u)", (unsigned int)read_size, size);
+            SDL_Log("id3v2x_parse_frame (2): Buffer size that left is too small (%u < %u)", (unsigned int)read_size, (unsigned int)size);
             MP3_RWseek(src, frame_begin, RW_SEEK_SET);
             return 0; /* Can't read frame data, possibly, a file size was reached */
         }
