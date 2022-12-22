@@ -571,6 +571,52 @@ if test x$enable_music_midi_timidity != xyes -a \
     AC_MSG_WARN([MIDI support disabled])
 fi
 
+AC_ARG_ENABLE([music-gme],
+[AS_HELP_STRING([--enable-music-gme], [enable Game Music Emu support [default=no]])],
+              [], [enable_music_gme=no])
+AC_ARG_ENABLE([music-gme-shared],
+[AS_HELP_STRING([--enable-music-gme-shared], [dynamically load libgme library [default=yes]])],
+              [], [enable_music_gme_shared=yes])
+if test x$enable_music_gme = xyes; then
+    PKG_CHECK_MODULES([GME], [libgme], [dnl
+            have_gme_hdr=yes
+            have_gme_lib=yes
+            have_gme_pc=yes
+        ], [dnl
+            AC_CHECK_HEADER([gme/gme.h], [have_gme_hdr=yes])
+            AC_CHECK_LIB([gme], [gme_open_data], [have_gme_lib=yes;GME_LIBS="-lgme"])
+        ])
+    if test x$have_gme_hdr = xyes -a x$have_gme_lib = xyes; then
+        have_gme=yes
+        case "$host" in
+            *-*-darwin*)
+                gme_lib=[`find_lib libgme.dylib`]
+                ;;
+            *-*-cygwin* | *-*-mingw*)
+                gme_lib=[`find_lib "libgme*.dll"`]
+                ;;
+            *)
+                gme_lib=[`find_lib "libgme.so.*"`]
+                ;;
+        esac
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_GME $GME_CFLAGS"
+        if test x$enable_music_gme_shared = xyes && test x$gme_lib != x; then
+            echo "-- dynamic libgme -> $gme_lib"
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DGME_DYNAMIC=\\\"$gme_lib\\\""
+        else
+            EXTRA_LDFLAGS="$EXTRA_LDFLAGS $GME_LIBS"
+            if test x$have_gme_pc = xyes; then
+                PC_REQUIRES="$PC_REQUIRES libgme"
+            else
+                PC_LIBS="$PC_LIBS $GME_LIBS"
+            fi
+        fi
+    else
+        AC_MSG_WARN([*** Unable to find GME library (https://bitbucket.org/mpyne/game-music-emu)])
+        AC_MSG_WARN([Game Music Emu support disabled.])
+    fi
+fi
+
 AC_ARG_ENABLE([music-ogg],
 [AS_HELP_STRING([--enable-music-ogg], [enable Ogg Vorbis music [default=yes]])],
               [], [enable_music_ogg=yes])

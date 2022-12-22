@@ -41,6 +41,7 @@ typedef enum
     MIX_MUSIC_OPUS,
     MIX_MUSIC_LIBXMP,
     MIX_MUSIC_WAVPACK,
+    MIX_MUSIC_GME,
     MIX_MUSIC_LAST
 } Mix_MusicAPI;
 
@@ -133,6 +134,12 @@ typedef struct
     /* Get a meta-tag string if available */
     const char* (*GetMetaTag)(void *music, Mix_MusicMetaTag tag_type);
 
+    /* Get number of tracks. Returns -1 if not applicable */
+    int (*GetNumTracks)(void *music);
+
+    /* Start a specific track */
+    int (*StartTrack)(void *music, int track);
+
     /* Pause playing music */
     void (*Pause)(void *music);
 
@@ -150,7 +157,6 @@ typedef struct
 
     /* Unload the library */
     void (*Unload)(void);
-
 } Mix_MusicInterface;
 
 

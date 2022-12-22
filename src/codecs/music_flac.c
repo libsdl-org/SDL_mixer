@@ -748,7 +748,9 @@ Mix_MusicInterface Mix_MusicInterface_FLAC =
     FLAC_LoopStart,
     FLAC_LoopEnd,
     FLAC_LoopLength,
-    FLAC_GetMetaTag,/* GetMetaTag */
+    FLAC_GetMetaTag,
+    NULL,   /* GetNumTracks */
+    NULL,   /* StartTrack */
     NULL,   /* Pause */
     NULL,   /* Resume */
     FLAC_Stop,   /* Stop */

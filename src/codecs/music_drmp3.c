@@ -282,6 +282,8 @@ Mix_MusicInterface Mix_MusicInterface_DRMP3 =
     NULL,   /* LoopEnd */
     NULL,   /* LoopLength */
     DRMP3_GetMetaTag,
+    NULL,   /* GetNumTracks */
+    NULL,   /* StartTrack */
     NULL,   /* Pause */
     NULL,   /* Resume */
     DRMP3_Stop,
