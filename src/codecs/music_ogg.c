@@ -543,6 +543,8 @@ Mix_MusicInterface Mix_MusicInterface_OGG =
     OGG_LoopEnd,
     OGG_LoopLength,
     OGG_GetMetaTag,   /* GetMetaTag */
+    NULL,   /* GetNumTracks */
+    NULL,   /* StartTrack */
     NULL,   /* Pause */
     NULL,   /* Resume */
     OGG_Stop,

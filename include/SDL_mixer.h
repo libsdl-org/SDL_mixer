@@ -262,7 +262,8 @@ typedef enum {
     MUS_FLAC,
     MUS_MODPLUG_UNUSED,
     MUS_OPUS,
-    MUS_WAVPACK
+    MUS_WAVPACK,
+    MUS_GME
 } Mix_MusicType;
 
 /**
@@ -2424,6 +2425,10 @@ extern DECLSPEC int SDLCALL Mix_PausedMusic(void);
  * \since This function is available since SDL_mixer 2.6.0.
  */
 extern DECLSPEC int SDLCALL Mix_ModMusicJumpToOrder(int order);
+
+/* Tracks */
+extern DECLSPEC int SDLCALL Mix_StartTrack(Mix_Music *music, int track);
+extern DECLSPEC int SDLCALL Mix_GetNumTracks(Mix_Music *music);
 
 /**
  * Set the current position in the music stream, in seconds.

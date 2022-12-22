@@ -515,6 +515,8 @@ Mix_MusicInterface Mix_MusicInterface_Opus =
     OPUS_LoopEnd,
     OPUS_LoopLength,
     OPUS_GetMetaTag,
+    NULL,   /* GetNumTracks */
+    NULL,   /* StartTrack */
     NULL,   /* Pause */
     NULL,   /* Resume */
     OPUS_Stop,

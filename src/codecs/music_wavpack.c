@@ -726,6 +726,8 @@ Mix_MusicInterface Mix_MusicInterface_WAVPACK =
     NULL, /* LoopEnd */
     NULL, /* LoopLength */
     WAVPACK_GetMetaTag,
+    NULL,   /* GetNumTracks */
+    NULL,   /* StartTrack */
     NULL,   /* Pause */
     NULL,   /* Resume */
     WAVPACK_Stop,

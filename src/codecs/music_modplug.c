@@ -366,6 +366,8 @@ Mix_MusicInterface Mix_MusicInterface_MODPLUG =
     NULL,   /* LoopEnd */
     NULL,   /* LoopLength */
     MODPLUG_GetMetaTag,
+    NULL,   /* GetNumTracks */
+    NULL,   /* StartTrack */
     NULL,   /* Pause */
     NULL,   /* Resume */
     MODPLUG_Stop,

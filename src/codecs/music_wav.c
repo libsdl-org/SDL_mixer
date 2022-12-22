@@ -931,8 +931,7 @@ static SDL_bool LoadWAVMusic(WAV_Music *wave)
         if (chunk_length == 0)
             break;
 
-        switch (chunk_type)
-        {
+        switch (chunk_type) {
         case FMT:
             found_FMT = SDL_TRUE;
             if (!ParseFMT(wave, chunk_length))
@@ -1135,7 +1134,6 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
         return SDL_FALSE;
     }
 
-
     wave->samplesize = channels * (samplesize / 8);
     wave->stop = wave->start + channels * numsamples * (samplesize / 8);
 
@@ -1254,6 +1252,8 @@ Mix_MusicInterface Mix_MusicInterface_WAV =
     NULL,   /* LoopEnd */
     NULL,   /* LoopLength */
     WAV_GetMetaTag,   /* GetMetaTag */
+    NULL,   /* GetNumTracks */
+    NULL,   /* StartTrack */
     NULL,   /* Pause */
     NULL,   /* Resume */
     WAV_Stop, /* Stop */

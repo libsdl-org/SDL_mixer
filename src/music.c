@@ -40,6 +40,7 @@
 #include "music_drflac.h"
 #include "music_flac.h"
 #include "music_wavpack.h"
+#include "music_gme.h"
 #include "native_midi/native_midi.h"
 
 #include "utils.h"
@@ -200,6 +201,9 @@ static Mix_MusicInterface *s_music_interfaces[] =
 #endif
 #ifdef MUSIC_MID_NATIVE
     &Mix_MusicInterface_NATIVEMIDI,
+#endif
+#ifdef MUSIC_GME
+    &Mix_MusicInterface_GME,
 #endif
 };
 
@@ -593,6 +597,32 @@ Mix_MusicType detect_music_type(SDL_RWops *src)
         return MUS_MP3;
     }
 
+    /* GME Specific files */
+    if (SDL_memcmp(magic, "ZXAY", 4) == 0)
+        return MUS_GME;
+    if (SDL_memcmp(magic, "GBS\x01", 4) == 0)
+        return MUS_GME;
+    if (SDL_memcmp(magic, "GYMX", 4) == 0)
+        return MUS_GME;
+    if (SDL_memcmp(magic, "HESM", 4) == 0)
+        return MUS_GME;
+    if (SDL_memcmp(magic, "KSCC", 4) == 0)
+        return MUS_GME;
+    if (SDL_memcmp(magic, "KSSX", 4) == 0)
+        return MUS_GME;
+    if (SDL_memcmp(magic, "NESM", 4) == 0)
+        return MUS_GME;
+    if (SDL_memcmp(magic, "NSFE", 4) == 0)
+        return MUS_GME;
+    if (SDL_memcmp(magic, "SAP\x0D", 4) == 0)
+        return MUS_GME;
+    if (SDL_memcmp(magic, "SNES", 4) == 0)
+        return MUS_GME;
+    if (SDL_memcmp(magic, "Vgm ", 4) == 0)
+        return MUS_GME;
+    if (SDL_memcmp(magic, "\x1f\x8b", 2) == 0)
+        return MUS_GME;
+
     /* Assume MOD format.
      *
      * Apparently there is no way to check if the file is really a MOD,
@@ -686,6 +716,12 @@ Mix_Music *Mix_LoadMUS(const char *file)
                     SDL_strcasecmp(ext, "WOW") == 0 ||
                     SDL_strcasecmp(ext, "XM") == 0) {
             type = MUS_MOD;
+        } else if (SDL_strcasecmp(ext, "GBS") == 0 ||
+                    SDL_strcasecmp(ext, "M3U") == 0 ||
+                    SDL_strcasecmp(ext, "NSF") == 0 ||
+                    SDL_strcasecmp(ext, "SPC") == 0 ||
+                    SDL_strcasecmp(ext, "VGM") == 0) {
+            type = MUS_GME;
         }
     }
     return Mix_LoadMUSType_RW(src, type, SDL_TRUE);
@@ -1289,6 +1325,38 @@ void Mix_RewindMusic(void)
 int Mix_PausedMusic(void)
 {
     return (music_active == SDL_FALSE);
+}
+
+int Mix_StartTrack(Mix_Music *music, int track)
+{
+    int result;
+
+    Mix_LockAudio();
+    if (music && music->interface->StartTrack) {
+        if (music->interface->Pause) {
+            music->interface->Pause(music->context);
+        }
+        result = music->interface->StartTrack(music->context, track);
+    } else {
+        result = Mix_SetError("That operation is not supported");
+    }
+    Mix_UnlockAudio();
+
+    return result;
+}
+
+int Mix_GetNumTracks(Mix_Music *music)
+{
+    int result;
+
+    Mix_LockAudio();
+    if (music && music->interface->GetNumTracks) {
+        result = music->interface->GetNumTracks(music->context);
+    } else {
+        result = Mix_SetError("That operation is not supported");
+    }
+    Mix_UnlockAudio();
+    return result;
 }
 
 /* Check the status of the music */

@@ -284,6 +284,8 @@ Mix_MusicInterface Mix_MusicInterface_TIMIDITY =
     NULL,   /* LoopEnd */
     NULL,   /* LoopLength */
     NULL,   /* GetMetaTag */
+    NULL,   /* GetNumTracks */
+    NULL,   /* StartTrack */
     NULL,   /* Pause */
     NULL,   /* Resume */
     TIMIDITY_Stop,
