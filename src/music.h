@@ -157,6 +157,12 @@ typedef struct
 
     /* Unload the library */
     void (*Unload)(void);
+
+    /* Seek to a play position (in beats) */
+    int (*SeekBeat)(void *music, int beats);
+
+    /* Tell current beat */
+    int (*TellBeat)(void *music);
 } Mix_MusicInterface;
 
 
