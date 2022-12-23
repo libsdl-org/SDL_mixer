@@ -84,6 +84,9 @@ cmake_dependent_option(SDL2MIXER_FLAC_LIBFLAC_SHARED "Dynamically load LIBFLAC" 
 
 cmake_dependent_option(SDL2MIXER_FLAC_DRFLAC "Enable FLAC music using drflac" ON SDL2MIXER_FLAC OFF)
 
+option(SDL2MIXER_GME "Support loading GME music via game-music-emu" OFF)
+option(SDL2MIXER_GME_SHARED "Dynamically load libgme" "${SDL2MIXER_DEPS_SHARED}")
+
 option(SDL2MIXER_MOD "Support loading MOD music" ON)
 
 cmake_dependent_option(SDL2MIXER_MOD_MODPLUG "Support loading MOD music via modplug" OFF SDL2MIXER_MOD OFF)
@@ -194,6 +197,7 @@ add_library(SDL2_mixer
     src/codecs/music_drmp3.c
     src/codecs/music_flac.c
     src/codecs/music_fluidsynth.c
+    src/codecs/music_gme.c
     src/codecs/music_modplug.c
     src/codecs/music_mpg123.c
     src/codecs/music_nativemidi.c
@@ -555,6 +559,35 @@ if(SDL2MIXER_FLAC_DRFLAC)
     target_compile_definitions(SDL2_mixer PRIVATE MUSIC_FLAC_DRFLAC)
 endif()
 
+if(SDL2MIXER_GME)
+    target_compile_definitions(SDL2_mixer PRIVATE MUSIC_GME)
+    if(SDL2MIXER_VENDORED)
+        message(STATUS "Using vendored libgme")
+        message(FATAL_ERROR "libgme is not vendored.")
+    else()
+        message(STATUS "Using system libgme")
+        find_package(gme REQUIRED)
+        if(NOT SDL2MIXER_GME_SHARED)
+            list(APPEND PC_REQUIRES libgme)
+        endif()
+    endif()
+    if(SDL2MIXER_GME_SHARED)
+        target_include_directories(SDL2_mixer PRIVATE
+            $<TARGET_PROPERTY:gme::gme,INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:gme::gme,INTERFACE_INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:gme::gme,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
+        )
+        target_get_dynamic_library(dynamic_gme gme::gme)
+        message(STATUS "Dynamic libgme: ${dynamic_gme}")
+        target_compile_definitions(SDL2_mixer PRIVATE "GME_DYNAMIC=\"${dynamic_gme}\"")
+        if(SDL2MIXER_VENDORED)
+            add_dependencies(SDL2_mixer gme::gme)
+        endif()
+    else()
+        target_link_libraries(SDL2_mixer PRIVATE gme::gme)
+    endif()
+endif()
+
 if(SDL2MIXER_MOD_MODPLUG)
     target_compile_definitions(SDL2_mixer PRIVATE MUSIC_MOD_MODPLUG)
     if(SDL2MIXER_VENDORED)
@@ -848,13 +881,14 @@ if(SDL2MIXER_INSTALL)
             FILES
                 cmake/FindFLAC.cmake
                 cmake/FindFluidSynth.cmake
+                cmake/Findgme.cmake
                 cmake/Findlibxmp.cmake
                 cmake/Findlibxmp-lite.cmake
                 cmake/Findmodplug.cmake
-                cmake/FindOpusFile.cmake
                 cmake/FindMPG123.cmake
-                cmake/FindVorbis.cmake
+                cmake/FindOpusFile.cmake
                 cmake/Findtremor.cmake
+                cmake/FindVorbis.cmake
                 cmake/Findwavpack.cmake
             DESTINATION "${SDLMIXER_INSTALL_CMAKEDIR}"
             COMPONENT devel

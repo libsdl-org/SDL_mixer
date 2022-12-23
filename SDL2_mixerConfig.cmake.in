@@ -15,6 +15,8 @@ set(SDL2MIXER_CMD                   @SDL2MIXER_CMD@)
 set(SDL2MIXER_FLAC_LIBFLAC          @SDL2MIXER_FLAC_LIBFLAC@)
 set(SDL2MIXER_FLAC_DRFLAC           @SDL2MIXER_FLAC_DRFLAC@)
 
+set(SDL2MIXER_GME                   @SDL2MIXER_GME@)
+
 set(SDL2MIXER_MOD                   @SDL2MIXER_MOD@)
 set(SDL2MIXER_MOD_MODPLUG           @SDL2MIXER_MOD_MODPLUG@)
 set(SDL2MIXER_MOD_XMP               @SDL2MIXER_MOD_XMP@)
@@ -57,6 +59,10 @@ if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/SDL2_mixer-static-targets.cmake")
 
     if(SDL2MIXER_FLAC_LIBFLAC AND NOT SDL2MIXER_VENDORED AND NOT TARGET FLAC::FLAC)
         find_dependency(FLAC)
+    endif()
+
+    if(SDL2MIXER_GME AND NOT SDL2MIXER_VENDORED AND NOT TARGET gme::gme)
+        find_dependency(gme)
     endif()
 
     if(SDL2MIXER_MOD_MODPLUG AND NOT SDL2MIXER_VENDORED AND NOT TARGET modplug::modplug)

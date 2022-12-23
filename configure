@@ -814,6 +814,7 @@ SDL2MIXER_MP3_DRMP3
 SDL2MIXER_MOD_XMP_LITE
 SDL2MIXER_MOD_XMP
 SDL2MIXER_MOD_MODPLUG
+SDL2MIXER_GME
 SDL2MIXER_FLAC_LIBFLAC
 SDL2MIXER_FLAC_DRFLAC
 SDL2MIXER_CMD
@@ -17852,6 +17853,7 @@ if test x$enable_music_midi_timidity != xyes -a \
 printf "%s\n" "$as_me: WARNING: MIDI support disabled" >&2;}
 fi
 
+SDL2MIXER_GME=0
 # Check whether --enable-music-gme was given.
 if test ${enable_music_gme+y}
 then :
@@ -18060,6 +18062,7 @@ fi
                 PC_LIBS="$PC_LIBS $GME_LIBS"
             fi
         fi
+        SDL2MIXER_GME=1
     else
         { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: *** Unable to find GME library (https://bitbucket.org/mpyne/game-music-emu)" >&5
 printf "%s\n" "$as_me: WARNING: *** Unable to find GME library (https://bitbucket.org/mpyne/game-music-emu)" >&2;}

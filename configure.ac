@@ -571,6 +571,7 @@ if test x$enable_music_midi_timidity != xyes -a \
     AC_MSG_WARN([MIDI support disabled])
 fi
 
+SDL2MIXER_GME=0
 AC_ARG_ENABLE([music-gme],
 [AS_HELP_STRING([--enable-music-gme], [enable Game Music Emu support [default=no]])],
               [], [enable_music_gme=no])
@@ -611,6 +612,7 @@ if test x$enable_music_gme = xyes; then
                 PC_LIBS="$PC_LIBS $GME_LIBS"
             fi
         fi
+        SDL2MIXER_GME=1
     else
         AC_MSG_WARN([*** Unable to find GME library (https://bitbucket.org/mpyne/game-music-emu)])
         AC_MSG_WARN([Game Music Emu support disabled.])
@@ -1090,6 +1092,7 @@ AC_SUBST(PC_LIBS)
 AC_SUBST(SDL2MIXER_CMD)
 AC_SUBST(SDL2MIXER_FLAC_DRFLAC)
 AC_SUBST(SDL2MIXER_FLAC_LIBFLAC)
+AC_SUBST(SDL2MIXER_GME)
 AC_SUBST(SDL2MIXER_MOD_MODPLUG)
 AC_SUBST(SDL2MIXER_MOD_XMP)
 AC_SUBST(SDL2MIXER_MOD_XMP_LITE)
