@@ -329,7 +329,7 @@ static void *WAVPACK_CreateFromFile(const char *file)
     music = WAVPACK_CreateFromRW_internal(src1, src2, 1, &freesrc2);
     if (!music) {
         SDL_RWclose(src1);
-        if (freesrc2) {
+        if (freesrc2 && src2) {
             SDL_RWclose(src2);
         }
     }
