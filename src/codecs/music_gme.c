@@ -93,6 +93,9 @@ static int GME_Load(void)
         FUNCTION_LOADER(gme_delete, void (*)(Music_Emu*))
 #if defined(GME_DYNAMIC)
         gme.gme_set_autoload_playback_limit = (void (*)(Music_Emu*,int)) SDL_LoadFunction(gme.handle, "gme_set_autoload_playback_limit");
+        if (!gme.gme_set_autoload_playback_limit) {
+            SDL_ClearError();   /* gme_set_autoload_playback_limit is optional. */
+        }
 #elif (GME_VERSION >= 0x000603)
         gme.gme_set_autoload_playback_limit = gme_set_autoload_playback_limit;
 #else
@@ -142,7 +145,7 @@ static void GME_Delete(void *context);
 static void GME_SetVolume(void *music_p, int volume)
 {
     GME_Music *music = (GME_Music*)music_p;
-    double v = SDL_floor(((double)(volume) * music->gain) + 0.5);
+    double v = SDL_floor(((double)volume * music->gain) + 0.5);
     music->volume = (int)v;
 }
 
@@ -377,10 +380,8 @@ static double GME_Duration(void *music_p)
     GME_Music *music = (GME_Music*)music_p;
     if (music->has_track_length) {
         return (double)(music->track_length) / 1000.0;
-    } else {
-
-        return -1.0;
     }
+    return -1.0;
 }
 
 static int GME_GetNumTracks(void *music_p)
