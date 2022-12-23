@@ -844,6 +844,8 @@ TREMOR_LIBS
 TREMOR_CFLAGS
 VORBIS_LIBS
 VORBIS_CFLAGS
+GME_LIBS
+GME_CFLAGS
 FLUIDSYNTH_LIBS
 FLUIDSYNTH_CFLAGS
 XMP_LIBS
@@ -981,6 +983,8 @@ with_timidity_cfg
 enable_music_midi_native
 enable_music_midi_fluidsynth
 enable_music_midi_fluidsynth_shared
+enable_music_gme
+enable_music_gme_shared
 enable_music_ogg
 enable_music_ogg_stb
 enable_music_ogg_vorbis
@@ -1023,6 +1027,8 @@ XMP_CFLAGS
 XMP_LIBS
 FLUIDSYNTH_CFLAGS
 FLUIDSYNTH_LIBS
+GME_CFLAGS
+GME_LIBS
 VORBIS_CFLAGS
 VORBIS_LIBS
 TREMOR_CFLAGS
@@ -1686,6 +1692,9 @@ Optional Features:
                           enable FluidSynth MIDI output [default=yes]
   --enable-music-midi-fluidsynth-shared
                           dynamically load FluidSynth library [default=yes]
+  --enable-music-gme      enable Game Music Emu support [default=no]
+  --enable-music-gme-shared
+                          dynamically load libgme library [default=yes]
   --enable-music-ogg      enable Ogg Vorbis music [default=yes]
   --enable-music-ogg-stb  enable OGG Vorbis music via stb_vorbis [default=yes]
   --enable-music-ogg-vorbis
@@ -1756,6 +1765,8 @@ Some influential environment variables:
               C compiler flags for FLUIDSYNTH, overriding pkg-config
   FLUIDSYNTH_LIBS
               linker flags for FLUIDSYNTH, overriding pkg-config
+  GME_CFLAGS  C compiler flags for GME, overriding pkg-config
+  GME_LIBS    linker flags for GME, overriding pkg-config
   VORBIS_CFLAGS
               C compiler flags for VORBIS, overriding pkg-config
   VORBIS_LIBS linker flags for VORBIS, overriding pkg-config
@@ -4950,13 +4961,13 @@ then :
 else $as_nop
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:4953: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:4964: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4956: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:4967: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4959: output\"" >&5)
+  (eval echo "\"\$as_me:4970: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -6215,7 +6226,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 6218 "configure"' > conftest.$ac_ext
+  echo '#line 6229 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -7888,11 +7899,11 @@ else $as_nop
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7891: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7902: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7895: \$? = $ac_status" >&5
+   echo "$as_me:7906: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8238,11 +8249,11 @@ else $as_nop
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8241: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8252: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:8245: \$? = $ac_status" >&5
+   echo "$as_me:8256: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8345,11 +8356,11 @@ else $as_nop
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8348: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8359: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8352: \$? = $ac_status" >&5
+   echo "$as_me:8363: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -8401,11 +8412,11 @@ else $as_nop
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8404: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8415: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8408: \$? = $ac_status" >&5
+   echo "$as_me:8419: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -10844,7 +10855,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10847 "configure"
+#line 10858 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -10941,7 +10952,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10944 "configure"
+#line 10955 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -14640,11 +14651,11 @@ else $as_nop
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14643: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14654: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:14647: \$? = $ac_status" >&5
+   echo "$as_me:14658: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -14741,11 +14752,11 @@ else $as_nop
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14744: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14755: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:14748: \$? = $ac_status" >&5
+   echo "$as_me:14759: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -14794,11 +14805,11 @@ else $as_nop
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14797: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14808: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:14801: \$? = $ac_status" >&5
+   echo "$as_me:14812: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -17839,6 +17850,222 @@ if test x$enable_music_midi_timidity != xyes -a \
         x$have_fluidsynth != xyes; then
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: MIDI support disabled" >&5
 printf "%s\n" "$as_me: WARNING: MIDI support disabled" >&2;}
+fi
+
+# Check whether --enable-music-gme was given.
+if test ${enable_music_gme+y}
+then :
+  enableval=$enable_music_gme;
+else $as_nop
+  enable_music_gme=no
+fi
+
+# Check whether --enable-music-gme-shared was given.
+if test ${enable_music_gme_shared+y}
+then :
+  enableval=$enable_music_gme_shared;
+else $as_nop
+  enable_music_gme_shared=yes
+fi
+
+if test x$enable_music_gme = xyes; then
+
+pkg_failed=no
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for libgme" >&5
+printf %s "checking for libgme... " >&6; }
+
+if test -n "$GME_CFLAGS"; then
+    pkg_cv_GME_CFLAGS="$GME_CFLAGS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { printf "%s\n" "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libgme\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "libgme") 2>&5
+  ac_status=$?
+  printf "%s\n" "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_GME_CFLAGS=`$PKG_CONFIG --cflags "libgme" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+if test -n "$GME_LIBS"; then
+    pkg_cv_GME_LIBS="$GME_LIBS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { printf "%s\n" "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libgme\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "libgme") 2>&5
+  ac_status=$?
+  printf "%s\n" "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_GME_LIBS=`$PKG_CONFIG --libs "libgme" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+
+
+
+if test $pkg_failed = yes; then
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+
+if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
+        _pkg_short_errors_supported=yes
+else
+        _pkg_short_errors_supported=no
+fi
+        if test $_pkg_short_errors_supported = yes; then
+	        GME_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "libgme" 2>&1`
+        else
+	        GME_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "libgme" 2>&1`
+        fi
+	# Put the nasty error message in config.log where it belongs
+	echo "$GME_PKG_ERRORS" >&5
+
+	            ac_fn_c_check_header_compile "$LINENO" "gme/gme.h" "ac_cv_header_gme_gme_h" "$ac_includes_default"
+if test "x$ac_cv_header_gme_gme_h" = xyes
+then :
+  have_gme_hdr=yes
+fi
+
+            { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for gme_open_data in -lgme" >&5
+printf %s "checking for gme_open_data in -lgme... " >&6; }
+if test ${ac_cv_lib_gme_gme_open_data+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lgme  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+char gme_open_data ();
+int
+main (void)
+{
+return gme_open_data ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"
+then :
+  ac_cv_lib_gme_gme_open_data=yes
+else $as_nop
+  ac_cv_lib_gme_gme_open_data=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_gme_gme_open_data" >&5
+printf "%s\n" "$ac_cv_lib_gme_gme_open_data" >&6; }
+if test "x$ac_cv_lib_gme_gme_open_data" = xyes
+then :
+  have_gme_lib=yes;GME_LIBS="-lgme"
+fi
+
+
+elif test $pkg_failed = untried; then
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+	            ac_fn_c_check_header_compile "$LINENO" "gme/gme.h" "ac_cv_header_gme_gme_h" "$ac_includes_default"
+if test "x$ac_cv_header_gme_gme_h" = xyes
+then :
+  have_gme_hdr=yes
+fi
+
+            { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for gme_open_data in -lgme" >&5
+printf %s "checking for gme_open_data in -lgme... " >&6; }
+if test ${ac_cv_lib_gme_gme_open_data+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lgme  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+char gme_open_data ();
+int
+main (void)
+{
+return gme_open_data ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"
+then :
+  ac_cv_lib_gme_gme_open_data=yes
+else $as_nop
+  ac_cv_lib_gme_gme_open_data=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_gme_gme_open_data" >&5
+printf "%s\n" "$ac_cv_lib_gme_gme_open_data" >&6; }
+if test "x$ac_cv_lib_gme_gme_open_data" = xyes
+then :
+  have_gme_lib=yes;GME_LIBS="-lgme"
+fi
+
+
+else
+	GME_CFLAGS=$pkg_cv_GME_CFLAGS
+	GME_LIBS=$pkg_cv_GME_LIBS
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+	            have_gme_hdr=yes
+            have_gme_lib=yes
+            have_gme_pc=yes
+
+fi
+    if test x$have_gme_hdr = xyes -a x$have_gme_lib = xyes; then
+        have_gme=yes
+        case "$host" in
+            *-*-darwin*)
+                gme_lib=`find_lib libgme.dylib`
+                ;;
+            *-*-cygwin* | *-*-mingw*)
+                gme_lib=`find_lib "libgme*.dll"`
+                ;;
+            *)
+                gme_lib=`find_lib "libgme.so.*"`
+                ;;
+        esac
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_GME $GME_CFLAGS"
+        if test x$enable_music_gme_shared = xyes && test x$gme_lib != x; then
+            echo "-- dynamic libgme -> $gme_lib"
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DGME_DYNAMIC=\\\"$gme_lib\\\""
+        else
+            EXTRA_LDFLAGS="$EXTRA_LDFLAGS $GME_LIBS"
+            if test x$have_gme_pc = xyes; then
+                PC_REQUIRES="$PC_REQUIRES libgme"
+            else
+                PC_LIBS="$PC_LIBS $GME_LIBS"
+            fi
+        fi
+    else
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: *** Unable to find GME library (https://bitbucket.org/mpyne/game-music-emu)" >&5
+printf "%s\n" "$as_me: WARNING: *** Unable to find GME library (https://bitbucket.org/mpyne/game-music-emu)" >&2;}
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Game Music Emu support disabled." >&5
+printf "%s\n" "$as_me: WARNING: Game Music Emu support disabled." >&2;}
+    fi
 fi
 
 # Check whether --enable-music-ogg was given.
