@@ -243,6 +243,7 @@ static int sdl_setpos_abs32(void *id, uint32_t pos)
 
 static int sdl_pushback_byte(void *id, int c)
 {
+    (void)c;
     /* libwavpack calls ungetc(), but doesn't really modify buffer. */
     return (SDL_RWseek((SDL_RWops*)id, -1, RW_SEEK_CUR) < 0)? -1 : 0;
 }
