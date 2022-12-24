@@ -45,6 +45,8 @@ USE_FLUIDSYNTH=no
 USE_XMP=yes
 # tracker music support (using libmodplug)
 USE_MODPLUG=no
+# game-music-emu support (using libgme)
+USE_GME=no
 
 LIBFILE = $(LIBNAME).lib
 DLLFILE = $(LIBNAME).dll
@@ -57,7 +59,7 @@ SRCS+= load_aiff.c load_voc.c music_wav.c &
        music_ogg.c music_ogg_stb.c music_opus.c &
        music_flac.c music_drflac.c music_wavpack.c &
        mp3utils.c music_mpg123.c music_drmp3.c &
-       music_xmp.c music_modplug.c &
+       music_xmp.c music_modplug.c music_gme.c &
        music_fluidsynth.c music_timidity.c
 # timidity sources:
 TIMISRCS = common.c instrum.c mix.c output.c playmidi.c readmidi.c resample.c tables.c timidity.c
@@ -146,6 +148,11 @@ LIBS+= libxmp.lib
 !ifeq USE_MODPLUG yes
 CFLAGS+= -DMUSIC_MOD_MODPLUG
 LIBS+= modplug.lib
+!endif
+
+!ifeq USE_GME yes
+CFLAGS+= -DMUSIC_GME
+LIBS+= gme.lib
 !endif
 
 !ifeq NEED_LIBOGG yes
