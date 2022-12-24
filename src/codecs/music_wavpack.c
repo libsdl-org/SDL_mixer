@@ -45,10 +45,6 @@
 #define WAVPACK4_OR_OLDER
 #endif
 
-static void *decimation_init(int num_channels, int ratio);
-static int decimation_run(void *context, int32_t *samples, int num_samples);
-static void decimation_reset(void *context);
-
 #ifdef WAVPACK4_OR_OLDER
 typedef struct {
     int32_t (*read_bytes)(void *id, void *data, int32_t bcount);
@@ -291,6 +287,10 @@ static int WAVPACK_Seek(void *context, double time);
 static void WAVPACK_Delete(void *context);
 static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, int freesrc, int *freesrc2);
 
+static void *decimation_init(int num_channels, int ratio);
+static int decimation_run(void *context, int32_t *samples, int num_samples);
+static void decimation_reset(void *context);
+
 static void *WAVPACK_CreateFromRW(SDL_RWops *src, int freesrc)
 {
     return WAVPACK_CreateFromRW_internal(src, NULL, freesrc, NULL);
@@ -461,14 +461,12 @@ static const char* WAVPACK_GetMetaTag(void *context, Mix_MusicMetaTag tag_type)
     return meta_tags_get(&music->tags, tag_type);
 }
 
-/* Set the volume for a WavPack stream */
 static void WAVPACK_SetVolume(void *context, int volume)
 {
     WAVPACK_music *music = (WAVPACK_music *)context;
     music->volume = volume;
 }
 
-/* Get the volume for a WavPack stream */
 static int WAVPACK_GetVolume(void *context)
 {
     WAVPACK_music *music = (WAVPACK_music *)context;
@@ -618,8 +616,10 @@ static void WAVPACK_Delete(void *context)
 }
 
 /* Decimation code for playing DSD (which comes from the library already decimated 8x) */
+/* Code provided by David Bryant. */
 /* sinc low-pass filter, cutoff = fs/12, 80 terms */
-static const int32_t filter[] = {
+#define NUM_TERMS 80
+static const int32_t filter[NUM_TERMS] = {
          50,     464,     968,     711,   -1203,   -5028,   -9818,  -13376,
      -12870,   -6021,    7526,   25238,   41688,   49778,   43050,   18447,
      -21428,  -67553, -105876, -120890, -100640,  -41752,   47201,  145510,
@@ -631,10 +631,10 @@ static const int32_t filter[] = {
       18447,   43050,   49778,   41688,   25238,    7526,   -6021,  -12870,
      -13376,   -9818,   -5028,   -1203,     711,     968,     464,      50
 };
-#define NUM_TERMS (int)SDL_arraysize(filter)
 
 typedef struct chan_state {
-    int delay[NUM_TERMS], index, num_channels, ratio;
+    int32_t delay[NUM_TERMS];
+    int index, num_channels, ratio;
 } ChanState;
 
 static void *decimation_init(int num_channels, int ratio)
@@ -653,11 +653,12 @@ static void *decimation_init(int num_channels, int ratio)
     return sp;
 }
 
+/** FIXME: This isn't particularly easy on the CPU ! **/
 static int decimation_run(void *context, int32_t *samples, int num_samples)
 {
+    ChanState *sp = (ChanState *)context;
     int32_t *in_samples = samples;
     int32_t *out_samples = samples;
-    ChanState *sp = (ChanState *)context;
     const int num_channels = sp->num_channels;
     const int ratio = sp->ratio;
     int chan = 0;
