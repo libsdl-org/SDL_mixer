@@ -502,6 +502,7 @@ static MidiEvent *groom_list(MidiSong *song, Sint32 divisions,Sint32 *eventsp,
 	  /* Add the event to the list */
 	  *lp=meep->event;
 	  lp->time=st;
+	  lp->beat = meep->event.time / divisions;
 	  lp++;
 	  our_event_count++;
 	}
@@ -510,6 +511,7 @@ static MidiEvent *groom_list(MidiSong *song, Sint32 divisions,Sint32 *eventsp,
     }
   /* Add an End-of-Track event */
   lp->time=st;
+  lp->beat=UINT8_MAX;
   lp->type=ME_EOT;
   our_event_count++;
   free_midi_list(song);

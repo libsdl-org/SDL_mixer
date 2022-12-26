@@ -2472,6 +2472,29 @@ extern DECLSPEC double SDLCALL Mix_GetMusicPosition(Mix_Music *music);
 extern DECLSPEC double SDLCALL Mix_MusicDuration(Mix_Music *music);
 
 /**
+ * Set the current position in the music stream, in beats.
+ *
+ * This function is only implemented for MIDI via Timidity at the moment.
+ *
+ * \param beat the new position, in beats (as a int).
+ * \returns 0 if successful, or -1 if it failed or not implemented.
+ *
+ * \since This function is available since SDL_mixer 2.7.0.
+ */
+extern DECLSPEC int SDLCALL Mix_SetMusicBeat(int beat);
+
+/**
+ * Get the current position in the music stream, in beats.
+ *
+ * This function is only implemented for MIDI via Timidity at the moment.
+ *
+ * \returns current beat position if successful, or -1 if it failed or not implemented.
+ *
+ * \since This function is available since SDL_mixer 2.7.0.
+ */
+extern DECLSPEC int SDLCALL Mix_GetMusicBeat();
+
+/**
  * Get the loop start time position of music stream, in seconds.
  *
  * To convert to milliseconds, multiply by 1000.0.

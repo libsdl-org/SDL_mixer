@@ -225,10 +225,23 @@ static int TIMIDITY_Seek(void *context, double position)
     return 0;
 }
 
+static int TIMIDITY_SeekBeat(void *context, int index)
+{
+    TIMIDITY_Music *music = (TIMIDITY_Music *)context;
+    Timidity_SeekBeat(music->song, (Uint32)index);
+    return 0;
+}
+
 static double TIMIDITY_Tell(void *context)
 {
     TIMIDITY_Music *music = (TIMIDITY_Music *)context;
     return Timidity_GetSongTime(music->song) / 1000.0;
+}
+
+static int TIMIDITY_TellBeat(void *context)
+{
+    TIMIDITY_Music *music = (TIMIDITY_Music *)context;
+    return Timidity_GetSongBeat(music->song);
 }
 
 static double TIMIDITY_Duration(void *context)
@@ -291,7 +304,9 @@ Mix_MusicInterface Mix_MusicInterface_TIMIDITY =
     TIMIDITY_Stop,
     TIMIDITY_Delete,
     TIMIDITY_Close,
-    NULL    /* Unload */
+    NULL,   /* Unload */
+    TIMIDITY_SeekBeat,
+    TIMIDITY_TellBeat
 };
 
 #endif /* MUSIC_MID_TIMIDITY */

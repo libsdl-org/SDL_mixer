@@ -98,6 +98,7 @@ typedef struct {
 typedef struct {
     Sint32 time;
     Uint8 channel, type, a, b;
+    Uint32 beat;
 } MidiEvent;
 
 typedef struct _MidiEventList {
@@ -154,7 +155,9 @@ extern int Timidity_PlaySome(MidiSong *song, void *stream, Sint32 len);
 extern MidiSong *Timidity_LoadSong(SDL_RWops *rw, SDL_AudioSpec *audio);
 extern void Timidity_Start(MidiSong *song);
 extern void Timidity_Seek(MidiSong *song, Uint32 ms);
+extern void Timidity_SeekBeat(MidiSong *song, Uint32 beat);
 extern Uint32 Timidity_GetSongLength(MidiSong *song); /* returns millseconds */
+extern Uint32 Timidity_GetSongBeat(MidiSong *song); /* returns current beat (aka quarter note) */
 extern Uint32 Timidity_GetSongTime(MidiSong *song);   /* returns millseconds */
 extern void Timidity_Stop(MidiSong *song);
 extern int Timidity_IsActive(MidiSong *song);

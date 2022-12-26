@@ -1032,6 +1032,52 @@ int Mix_SetMusicPosition(double position)
     return(retval);
 }
 
+int Mix_SetMusicBeat(int beat)
+{
+    int retval;
+
+    Mix_LockAudio();
+    if (music_playing) {
+        if (music_playing->interface->SeekBeat) {
+            retval = music_playing->interface->SeekBeat(music_playing->context, beat);
+        } else {
+            retval = -1;
+        }
+        if (retval < 0) {
+            Mix_SetError("Seek beat not implemented for music type");
+        }
+    } else {
+        Mix_SetError("Music isn't playing");
+        retval = -1;
+    }
+    Mix_UnlockAudio();
+
+    return(retval);
+}
+
+int Mix_GetMusicBeat()
+{
+    int retval;
+
+    Mix_LockAudio();
+    if (music_playing) {
+        if (music_playing->interface->TellBeat) {
+            retval = music_playing->interface->TellBeat(music_playing->context);
+        } else {
+            retval = -1;
+        }
+        if (retval < 0) {
+            Mix_SetError("Get beat not implemented for music type");
+        }
+    } else {
+        Mix_SetError("Music isn't playing");
+        retval = -1;
+    }
+    Mix_UnlockAudio();
+
+    return(retval);
+}
+
 /* Set the playing music position */
 static double music_internal_position_get(Mix_Music *music)
 {

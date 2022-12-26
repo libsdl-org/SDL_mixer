@@ -560,6 +560,75 @@ static void seek_forward(MidiSong *song, Sint32 until_time)
   song->current_sample=until_time;
 }
 
+static void seek_forward_beat(MidiSong *song, Uint32 beat)
+{
+  reset_voices(song);
+  while (song->current_event->beat < beat)
+    {
+      switch(song->current_event->type)
+	{
+	  /* All notes stay off. Just handle the parameter changes. */
+
+	case ME_PITCH_SENS:
+	  song->channel[song->current_event->channel].pitchsens =
+	    song->current_event->a;
+	  song->channel[song->current_event->channel].pitchfactor = 0;
+	  break;
+
+	case ME_PITCHWHEEL:
+	  song->channel[song->current_event->channel].pitchbend =
+	    song->current_event->a + song->current_event->b * 128;
+	  song->channel[song->current_event->channel].pitchfactor = 0;
+	  break;
+
+	case ME_MAINVOLUME:
+	  song->channel[song->current_event->channel].volume =
+	    song->current_event->a;
+	  break;
+
+	case ME_PAN:
+	  song->channel[song->current_event->channel].panning =
+	    song->current_event->a;
+	  break;
+
+	case ME_EXPRESSION:
+	  song->channel[song->current_event->channel].expression =
+	    song->current_event->a;
+	  break;
+
+	case ME_PROGRAM:
+	  if (ISDRUMCHANNEL(song, song->current_event->channel))
+	    /* Change drum set */
+	    song->channel[song->current_event->channel].bank =
+	      song->current_event->a;
+	  else
+	    song->channel[song->current_event->channel].program =
+	      song->current_event->a;
+	  break;
+
+	case ME_SUSTAIN:
+	  song->channel[song->current_event->channel].sustain =
+	    song->current_event->a;
+	  break;
+
+	case ME_RESET_CONTROLLERS:
+	  reset_controllers(song, song->current_event->channel);
+	  break;
+
+	case ME_TONE_BANK:
+	  song->channel[song->current_event->channel].bank =
+	    song->current_event->a;
+	  break;
+
+	case ME_EOT:
+	  song->current_sample = song->current_event->time;
+	  return;
+	}
+      song->current_event++;
+    }
+  song->current_sample=song->current_event->time;
+}
+
 static void skip_to(MidiSong *song, Sint32 until_time)
 {
   if (song->current_sample > until_time)
@@ -645,6 +714,17 @@ void Timidity_Seek(MidiSong *song, Uint32 ms)
   skip_to(song, (ms * (song->rate / 100)) / 10);
 }
 
+void Timidity_SeekBeat(MidiSong *song, Uint32 beat)
+{
+  reset_midi(song);
+  song->buffered_count = 0;
+  song->buffer_pointer = song->common_buffer;
+  song->current_event = song->events;
+
+  if (beat)
+    seek_forward_beat(song, beat);
+}
+
 Uint32 Timidity_GetSongLength(MidiSong *song)
 {
   MidiEvent *last_event = &song->events[song->groomed_event_count - 1];
@@ -659,6 +739,11 @@ Uint32 Timidity_GetSongTime(MidiSong *song)
   Uint32 retvalue = (song->current_sample / song->rate) * 1000;
   retvalue       += (song->current_sample % song->rate) * 1000 / song->rate;
   return retvalue;
+}
+
+Uint32 Timidity_GetSongBeat(MidiSong *song)
+{
+  return song->current_event->beat;
 }
 
 int Timidity_PlaySome(MidiSong *song, void *stream, Sint32 len)

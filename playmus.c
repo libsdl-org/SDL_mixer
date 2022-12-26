@@ -119,9 +119,11 @@ int main(int argc, char *argv[])
     int audio_channels;
     int audio_buffers;
     int audio_volume = MIX_MAX_VOLUME;
+    int beat = 0;
     int looping = 0;
     int interactive = 0;
     int rwops = 0;
+    int supports_beats;
     int i;
     const char *typ;
     const char *tag_title = NULL;
@@ -161,6 +163,10 @@ int main(int argc, char *argv[])
         } else
         if (strcmp(argv[i], "-l") == 0) {
             looping = -1;
+        } else
+        if (strcmp(argv[i], "-n") == 0 && argv[i+1]) {
+            ++i;
+            beat = atoi(argv[i]);
         } else
         if (strcmp(argv[i], "-i") == 0) {
             interactive = 1;
@@ -295,14 +301,22 @@ int main(int argc, char *argv[])
         if (loop_start > 0.0 && loop_end > 0.0 && loop_length > 0.0) {
             SDL_Log("Loop points: start %g s, end %g s, length %g s\n", loop_start, loop_end, loop_length);
         }
-        Mix_FadeInMusic(music,looping,2000);
+        Mix_PlayMusic(music, looping);
+
+        supports_beats = Mix_GetMusicBeat(music) != -1;
+        if (supports_beats)
+            Mix_SetMusicBeat(beat);
+
         while (!next_track && (Mix_PlayingMusic() || Mix_PausedMusic())) {
             if(interactive)
                 Menu();
             else {
                 current_position = Mix_GetMusicPosition(music);
                 if (current_position >= 0.0) {
-                    printf("Position: %g seconds             \r", current_position);
+                    if (supports_beats)
+                        printf("Position: %0.2f seconds      Beat: %d\r", current_position, Mix_GetMusicBeat(music));
+                    else
+                        printf("Position: %0.2f seconds             \r", current_position);
                     fflush(stdout);
                 }
                 SDL_Delay(100);
