@@ -344,7 +344,7 @@ typedef struct _Mix_Music Mix_Music;
  * The app can use Mix_QuerySpec() to determine the final device settings.
  *
  * When done with an audio device, probably at the end of the program, the app
- * should dispose of the device with Mix_CloseDevice().
+ * should dispose of the device with Mix_CloseAudio().
  *
  * \param frequency the frequency to playback audio at (in Hz).
  * \param format audio format, one of SDL's AUDIO_* values.
@@ -356,7 +356,7 @@ typedef struct _Mix_Music Mix_Music;
  * \since This function is available since SDL_mixer 2.0.0.
  *
  * \sa Mix_OpenAudioDevice
- * \sa Mix_CloseDevice
+ * \sa Mix_CloseAudio
  */
 extern DECLSPEC int SDLCALL Mix_OpenAudio(int frequency, Uint16 format, int channels, int chunksize);
 
