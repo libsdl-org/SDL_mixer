@@ -80,7 +80,7 @@ if [ test -z "$AWK" ]; then
 fi
 
 AC_CHECK_PROGS([SORT], [gsort sort], [false])
-AS_IF([! "$SORT" -V </dev/null >/dev/null], [AC_MSG_ERROR([GNU sort(1) is required])])
+AS_IF([! "$SORT" -V </dev/null >/dev/null], [AC_MSG_WARN([sort(1) that supports the -V option is required to find dynamic libraries])])
 
 dnl Set up the compiler and linker flags
 case "$host" in
