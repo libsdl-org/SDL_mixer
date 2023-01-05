@@ -25,8 +25,8 @@
 
 /* This file supports WavPack music streams */
 
-#include "SDL_loadso.h"
-#include "SDL_log.h"
+#include <SDL3/SDL_loadso.h>
+#include <SDL3/SDL_log.h>
 
 #include "music_wavpack.h"
 
@@ -198,7 +198,11 @@ typedef struct {
 
 static int32_t sdl_read_bytes(void *id, void *data, int32_t bcount)
 {
-    return (int32_t)SDL_RWread((SDL_RWops*)id, data, 1, bcount);
+    Sint64 amount = SDL_RWread((SDL_RWops*)id, data, bcount);
+    if (amount <= 0) {
+        return 0;
+    }
+    return (int32_t)amount;
 }
 
 static uint32_t sdl_get_pos32(void *id)
@@ -214,9 +218,9 @@ static int64_t sdl_get_pos64(void *id)
 static int sdl_setpos_rel64(void *id, int64_t delta, int mode)
 {
     switch (mode) { /* just in case SDL_RW doesn't match stdio.. */
-    case SEEK_SET: mode = RW_SEEK_SET; break;
-    case SEEK_CUR: mode = RW_SEEK_CUR; break;
-    case SEEK_END: mode = RW_SEEK_END; break;
+    case SEEK_SET: mode = SDL_RW_SEEK_SET; break;
+    case SEEK_CUR: mode = SDL_RW_SEEK_CUR; break;
+    case SEEK_END: mode = SDL_RW_SEEK_END; break;
     default: return -1;
     }
     return (SDL_RWseek((SDL_RWops*)id, delta, mode) < 0)? -1 : 0;
@@ -229,19 +233,19 @@ static int sdl_setpos_rel32(void *id, int32_t delta, int mode)
 
 static int sdl_setpos_abs64(void *id, int64_t pos)
 {
-    return (SDL_RWseek((SDL_RWops*)id, pos, RW_SEEK_SET) < 0)? -1 : 0;
+    return (SDL_RWseek((SDL_RWops*)id, pos, SDL_RW_SEEK_SET) < 0)? -1 : 0;
 }
 
 static int sdl_setpos_abs32(void *id, uint32_t pos)
 {
-    return (SDL_RWseek((SDL_RWops*)id, pos, RW_SEEK_SET) < 0)? -1 : 0;
+    return (SDL_RWseek((SDL_RWops*)id, pos, SDL_RW_SEEK_SET) < 0)? -1 : 0;
 }
 
 static int sdl_pushback_byte(void *id, int c)
 {
     (void)c;
     /* libwavpack calls ungetc(), but doesn't really modify buffer. */
-    return (SDL_RWseek((SDL_RWops*)id, -1, RW_SEEK_CUR) < 0)? -1 : 0;
+    return (SDL_RWseek((SDL_RWops*)id, -1, SDL_RW_SEEK_CUR) < 0)? -1 : 0;
 }
 
 static uint32_t sdl_get_length32(void *id)
@@ -256,7 +260,7 @@ static int64_t sdl_get_length64(void *id)
 
 static int sdl_can_seek(void *id)
 {
-    return (SDL_RWseek((SDL_RWops*)id, 0, RW_SEEK_CUR) < 0)? 0 : 1;
+    return (SDL_RWseek((SDL_RWops*)id, 0, SDL_RW_SEEK_CUR) < 0)? 0 : 1;
 }
 
 static WavpackStreamReader sdl_reader32 = {
@@ -409,7 +413,7 @@ static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, int
         format = (music->mode & MODE_FLOAT) ? AUDIO_F32SYS : AUDIO_S32SYS;
         break;
     }
-    music->stream = SDL_NewAudioStream(format, (Uint8)music->channels, (int)music->samplerate / music->decimation,
+    music->stream = SDL_CreateAudioStream(format, (Uint8)music->channels, (int)music->samplerate / music->decimation,
                                        music_spec.format, music_spec.channels, music_spec.freq);
     if (!music->stream) {
         WAVPACK_Delete(music);
@@ -484,7 +488,7 @@ static int WAVPACK_Play(void *context, int play_count)
 static void WAVPACK_Stop(void *context)
 {
     WAVPACK_music *music = (WAVPACK_music *)context;
-    SDL_AudioStreamClear(music->stream);
+    SDL_ClearAudioStream(music->stream);
 }
 
 /* Play some of a stream previously started with WAVPACK_play() */
@@ -493,7 +497,7 @@ static int WAVPACK_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     WAVPACK_music *music = (WAVPACK_music *)context;
     int amount;
 
-    amount = SDL_AudioStreamGet(music->stream, data, bytes);
+    amount = SDL_GetAudioStreamData(music->stream, data, bytes);
     if (amount != 0) {
         return amount;
     }
@@ -537,13 +541,13 @@ static int WAVPACK_GetSome(void *context, void *data, int bytes, SDL_bool *done)
             amount *= sizeof(Sint32);
             break;
         }
-        if (SDL_AudioStreamPut(music->stream, music->buffer, amount) < 0) {
+        if (SDL_PutAudioStreamData(music->stream, music->buffer, amount) < 0) {
             return -1;
         }
     } else {
         if (music->play_count == 1) {
             music->play_count = 0;
-            SDL_AudioStreamFlush(music->stream);
+            SDL_FlushAudioStream(music->stream);
         } else {
             int play_count = -1;
             if (music->play_count > 0) {
@@ -602,7 +606,7 @@ static void WAVPACK_Delete(void *context)
     meta_tags_clear(&music->tags);
     wvpk.WavpackCloseFile(music->ctx);
     if (music->stream) {
-        SDL_FreeAudioStream(music->stream);
+        SDL_DestroyAudioStream(music->stream);
     }
     SDL_free(music->buffer);
     SDL_free(music->decimation_ctx);

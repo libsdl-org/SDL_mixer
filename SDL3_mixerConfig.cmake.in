@@ -1,0 +1,111 @@
+# sdl3_mixer cmake project-config input for CMakeLists.txt script
+
+include(FeatureSummary)
+set_package_properties(SDL3_mixer PROPERTIES
+    URL "https://www.libsdl.org/projects/SDL_mixer/"
+    DESCRIPTION "SDL_mixer is a sample multi-channel audio mixer library"
+)
+
+set(SDL3_mixer_FOUND                ON)
+
+set(SDL3MIXER_VENDORED              @SDL3MIXER_VENDORED@)
+
+set(SDL3MIXER_CMD                   @SDL3MIXER_CMD@)
+
+set(SDL3MIXER_FLAC_LIBFLAC          @SDL3MIXER_FLAC_LIBFLAC@)
+set(SDL3MIXER_FLAC_DRFLAC           @SDL3MIXER_FLAC_DRFLAC@)
+
+set(SDL3MIXER_MOD                   @SDL3MIXER_MOD@)
+set(SDL3MIXER_MOD_MODPLUG           @SDL3MIXER_MOD_MODPLUG@)
+set(SDL3MIXER_MOD_XMP               @SDL3MIXER_MOD_XMP@)
+set(SDL3MIXER_MOD_XMP_LITE          @SDL3MIXER_MOD_XMP_LITE@)
+
+set(SDL3MIXER_MP3                   @SDL3MIXER_MP3@)
+set(SDL3MIXER_MP3_DRMP3             @SDL3MIXER_MP3_DRMP3@)
+set(SDL3MIXER_MP3_MPG123            @SDL3MIXER_MP3_MPG123@)
+
+set(SDL3MIXER_MIDI                  @SDL3MIXER_MIDI@)
+set(SDL3MIXER_MIDI_FLUIDSYNTH       @SDL3MIXER_MIDI_FLUIDSYNTH@)
+set(SDL3MIXER_MIDI_NATIVE           @SDL3MIXER_MIDI_NATIVE@)
+set(SDL3MIXER_MIDI_TIMIDITY         @SDL3MIXER_MIDI_TIMIDITY@)
+
+set(SDL3MIXER_OPUS                  @SDL3MIXER_OPUS@)
+
+set(SDL3MIXER_VORBIS                @SDL3MIXER_VORBIS@)
+set(SDL3MIXER_VORBIS_STB            @SDL3MIXER_VORBIS_STB@)
+set(SDL3MIXER_VORBIS_TREMOR         @SDL3MIXER_VORBIS_TREMOR@)
+set(SDL3MIXER_VORBIS_VORBISFILE     @SDL3MIXER_VORBIS_VORBISFILE@)
+
+set(SDL3MIXER_WAVE                  @SDL3MIXER_WAVE@)
+
+set(SDL3MIXER_WAVPACK               @SDL3MIXER_WAVPACK@)
+
+set(SDL3MIXER_SDL3_REQUIRED_VERSION @SDL_REQUIRED_VERSION@)
+
+if(NOT SDL3MIXER_VENDORED)
+    set(_sdl_cmake_module_path "${CMAKE_MODULE_PATH}")
+    list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
+endif()
+
+if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/SDL3_mixer-shared-targets.cmake")
+    include("${CMAKE_CURRENT_LIST_DIR}/SDL3_mixer-shared-targets.cmake")
+endif()
+
+if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/SDL3_mixer-static-targets.cmake")
+
+    include(CMakeFindDependencyMacro)
+
+    if(SDL3MIXER_FLAC_LIBFLAC AND NOT SDL3MIXER_VENDORED AND NOT TARGET FLAC::FLAC)
+        find_dependency(FLAC)
+    endif()
+
+    if(SDL3MIXER_MOD_MODPLUG AND NOT SDL3MIXER_VENDORED AND NOT TARGET modplug::modplug)
+        find_dependency(modplug)
+    endif()
+
+    if(SDL3MIXER_MOD_XMP AND NOT SDL3MIXER_VENDORED AND NOT TARGET libxmp::libxmp)
+        find_dependency(libxmp)
+    endif()
+
+    if(SDL3MIXER_MOD_XMP_LITE AND NOT SDL3MIXER_VENDORED AND NOT TARGET libxmp-lite::libxmp-lite)
+        find_dependency(libxmp-lite)
+    endif()
+
+    if(SDL3MIXER_MP3_MPG123 AND NOT SDL3MIXER_VENDORED AND NOT TARGET MPG123::mpg123)
+        find_dependency(MPG123)
+    endif()
+
+    if(SDL3MIXER_MIDI_FLUIDSYNTH AND NOT SDL3MIXER_VENDORED AND NOT TARGET FluidSynth::FluidSynth)
+        find_dependency(FluidSynth)
+    endif()
+
+    if(SDL3MIXER_VORBIS_TREMOR AND NOT SDL3MIXER_VENDORED AND NOT TARGET tremor::tremor)
+        find_dependency(tremor)
+    endif()
+
+    if(SDL3MIXER_VORBIS_VORBISFILE AND NOT SDL3MIXER_VENDORED AND NOT TARGET Vorbis::vorbisfile)
+        find_dependency(Vorbis)
+    endif()
+
+    if(SDL3MIXER_OPUS AND NOT SDL3MIXER_VENDORED AND NOT TARGET opusfile::opusfile)
+        find_dependency(OpusFile)
+    endif()
+
+    if(SDL3MIXER_WAVPACK AND NOT SDL3MIXER_VENDORED AND NOT TARGET WavPack::WavPack)
+        find_dependency(wavpack)
+    endif()
+
+    if((NOT SDL3MIXER_VENDORED AND SDL3MIXER_MOD_MODPLUG) OR (HAIKU AND SDL3MIXER_MIDI_NATIVE))
+        include(CheckLanguage)
+        check_language(CXX)
+        if(NOT CMAKE_CXX_COMPILER)
+            message(WARNING "CXX language not enabled. Linking to SDL3_mixer::SDL3_mixer-static might fail.")
+        endif()
+    endif()
+    include("${CMAKE_CURRENT_LIST_DIR}/SDL3_mixer-static-targets.cmake")
+endif()
+
+if(NOT SDL3MIXER_VENDORED)
+    set(CMAKE_MODULE_PATH "${_sdl_cmake_module_path}")
+    unset(_sdl_cmake_module_path)
+endif()

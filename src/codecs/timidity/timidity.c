@@ -6,7 +6,7 @@
     it under the terms of the Perl Artistic License, available in COPYING.
 */
 
-#include "SDL.h"
+#include <SDL3/SDL.h>
 #include "../../utils.h" /* for SDL_strtokr() */
 
 #include "timidity.h"
@@ -38,7 +38,7 @@ static char *RWgets(SDL_RWops *rw, char *s, int size)
 
     for (; num_read < size; ++p)
     {
-	if (SDL_RWread(rw, p, 1, 1) != 1)
+	if (SDL_RWread(rw, p, 1) != 1)
 	    break;
 
 	num_read++;

@@ -23,7 +23,7 @@
 
 /* This file supports Ogg Vorbis music streams */
 
-#include "SDL_loadso.h"
+#include <SDL3/SDL_loadso.h>
 
 #include "music_ogg.h"
 #include "utils.h"
@@ -166,7 +166,11 @@ static int set_ov_error(const char *function, int error)
 
 static size_t sdl_read_func(void *ptr, size_t size, size_t nmemb, void *datasource)
 {
-    return SDL_RWread((SDL_RWops*)datasource, ptr, size, nmemb);
+    Sint64 amount = SDL_RWread((SDL_RWops*)datasource, ptr, size * nmemb);
+    if (amount <= 0) {
+        return 0;
+    }
+    return (size_t)(amount / size);
 }
 
 static int sdl_seek_func(void *datasource, ogg_int64_t offset, int whence)
@@ -203,11 +207,11 @@ static int OGG_UpdateSection(OGG_music *music)
     }
 
     if (music->stream) {
-        SDL_FreeAudioStream(music->stream);
+        SDL_DestroyAudioStream(music->stream);
         music->stream = NULL;
     }
 
-    music->stream = SDL_NewAudioStream(AUDIO_S16SYS, (Uint8)vi->channels, (int)vi->rate,
+    music->stream = SDL_CreateAudioStream(AUDIO_S16SYS, (Uint8)vi->channels, (int)vi->rate,
                                        music_spec.format, music_spec.channels, music_spec.freq);
     if (!music->stream) {
         return -1;
@@ -351,7 +355,7 @@ static int OGG_Play(void *context, int play_count)
 static void OGG_Stop(void *context)
 {
     OGG_music *music = (OGG_music *)context;
-    SDL_AudioStreamClear(music->stream);
+    SDL_ClearAudioStream(music->stream);
 }
 
 /* Play some of a stream previously started with OGG_play() */
@@ -363,7 +367,7 @@ static int OGG_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     int section;
     ogg_int64_t pcmPos;
 
-    filled = SDL_AudioStreamGet(music->stream, data, bytes);
+    filled = SDL_GetAudioStreamData(music->stream, data, bytes);
     if (filled != 0) {
         return filled;
     }
@@ -410,13 +414,13 @@ static int OGG_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     }
 
     if (amount > 0) {
-        if (SDL_AudioStreamPut(music->stream, music->buffer, amount) < 0) {
+        if (SDL_PutAudioStreamData(music->stream, music->buffer, amount) < 0) {
             return -1;
         }
     } else if (!looped) {
         if (music->play_count == 1) {
             music->play_count = 0;
-            SDL_AudioStreamFlush(music->stream);
+            SDL_FlushAudioStream(music->stream);
         } else {
             int play_count = -1;
             if (music->play_count > 0) {
@@ -507,7 +511,7 @@ static void OGG_Delete(void *context)
     meta_tags_clear(&music->tags);
     vorbis.ov_clear(&music->vf);
     if (music->stream) {
-        SDL_FreeAudioStream(music->stream);
+        SDL_DestroyAudioStream(music->stream);
     }
     if (music->buffer) {
         SDL_free(music->buffer);

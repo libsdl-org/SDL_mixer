@@ -26,7 +26,7 @@
 
 /* ------ These are used internally only. Don't touch. ------ */
 
-#include "SDL_mixer.h"
+#include <SDL3/SDL_mixer.h>
 
 #define MIX_INTERNAL_EFFECT__
 #include "effects_internal.h"

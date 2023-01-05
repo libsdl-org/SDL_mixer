@@ -3,7 +3,7 @@
 */
 
 /* Include the SDL main definition header */
-#include "SDL_main.h"
+#include <SDL3/SDL_main.h>
 
 #ifndef SDL_MAIN_HANDLED
 #ifdef main

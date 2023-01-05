@@ -24,8 +24,8 @@
 
 /* misc helper routines */
 
-#include "SDL_stdinc.h"
-#include "SDL_version.h"
+#include <SDL3/SDL_stdinc.h>
+#include <SDL3/SDL_version.h>
 
 #if SDL_VERSION_ATLEAST(2,0,12)
 #define HAVE_SDL_STRTOKR

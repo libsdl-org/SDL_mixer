@@ -112,7 +112,7 @@ void *TIMIDITY_CreateFromRW(SDL_RWops *src, int freesrc)
     }
 
     if (need_stream) {
-        music->stream = SDL_NewAudioStream(spec.format, spec.channels, spec.freq,
+        music->stream = SDL_CreateAudioStream(spec.format, spec.channels, spec.freq,
                                            music_spec.format, music_spec.channels, music_spec.freq);
         if (!music->stream) {
             TIMIDITY_Delete(music);
@@ -167,7 +167,7 @@ static int TIMIDITY_GetSome(void *context, void *data, int bytes, SDL_bool *done
     int filled, amount, expected;
 
     if (music->stream) {
-        filled = SDL_AudioStreamGet(music->stream, data, bytes);
+        filled = SDL_GetAudioStreamData(music->stream, data, bytes);
         if (filled != 0) {
             return filled;
         }
@@ -182,7 +182,7 @@ static int TIMIDITY_GetSome(void *context, void *data, int bytes, SDL_bool *done
     if (music->stream) {
         expected = music->buffer_size;
         amount = Timidity_PlaySome(music->song, music->buffer, music->buffer_size);
-        if (SDL_AudioStreamPut(music->stream, music->buffer, amount) < 0) {
+        if (SDL_PutAudioStreamData(music->stream, music->buffer, amount) < 0) {
             return -1;
         }
     } else {
@@ -245,7 +245,7 @@ static void TIMIDITY_Delete(void *context)
         Timidity_FreeSong(music->song);
     }
     if (music->stream) {
-        SDL_FreeAudioStream(music->stream);
+        SDL_DestroyAudioStream(music->stream);
     }
     if (music->buffer) {
         SDL_free(music->buffer);

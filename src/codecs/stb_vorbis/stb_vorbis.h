@@ -1385,7 +1385,7 @@ static uint8 get8(vorb *z)
 {
    #ifdef STB_VORBIS_SDL
    uint8 c;
-   if (SDL_RWread(z->rwops, &c, 1, 1) != 1) { z->eof = TRUE; return 0; }
+   if (SDL_RWread(z->rwops, &c, 1) != 1) { z->eof = TRUE; return 0; }
    return c;
 
    #else
@@ -1417,7 +1417,7 @@ static uint32 get32(vorb *f)
 static int getn(vorb *z, uint8 *data, int n)
 {
    #ifdef STB_VORBIS_SDL
-   if (SDL_RWread(z->rwops, data, n, 1) == 1) return 1;
+   if (SDL_RWread(z->rwops, data, n) == n) return 1;
    z->eof = 1;
    return 0;
 
@@ -1443,7 +1443,7 @@ static int getn(vorb *z, uint8 *data, int n)
 static void skip(vorb *z, int n)
 {
    #ifdef STB_VORBIS_SDL
-   SDL_RWseek(z->rwops, n, RW_SEEK_CUR);
+   SDL_RWseek(z->rwops, n, SDL_RW_SEEK_CUR);
 
    #else
    if (USE_MEMORY(z)) {
@@ -1475,10 +1475,10 @@ static int set_file_offset(stb_vorbis *f, unsigned int loc)
    } else {
       loc += f->rwops_start;
    }
-   if (SDL_RWseek(f->rwops, loc, RW_SEEK_SET) != -1)
+   if (SDL_RWseek(f->rwops, loc, SDL_RW_SEEK_SET) != -1)
       return 1;
    f->eof = 1;
-   SDL_RWseek(f->rwops, f->rwops_start, RW_SEEK_END);
+   SDL_RWseek(f->rwops, f->rwops_start, SDL_RW_SEEK_END);
    return 0;
 
    #else

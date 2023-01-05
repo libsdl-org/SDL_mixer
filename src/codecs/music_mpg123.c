@@ -23,8 +23,8 @@
 
 #ifdef MUSIC_MP3_MPG123
 
-#include "SDL_loadso.h"
-#include "SDL_assert.h"
+#include <SDL3/SDL_loadso.h>
+#include <SDL3/SDL_assert.h>
 
 #include "music_mpg123.h"
 #include "mp3utils.h"
@@ -317,7 +317,7 @@ static void *MPG123_CreateFromRW(SDL_RWops *src, int freesrc)
     SDL_assert(format != -1);
     music->sample_rate = rate;
 
-    music->stream = SDL_NewAudioStream((SDL_AudioFormat)format, (Uint8)channels, (int)rate,
+    music->stream = SDL_CreateAudioStream((SDL_AudioFormat)format, (Uint8)channels, (int)rate,
                                        music_spec.format, music_spec.channels, music_spec.freq);
     if (!music->stream) {
         MPG123_Delete(music);
@@ -352,7 +352,7 @@ static int MPG123_Play(void *context, int play_count)
 static void MPG123_Stop(void *context)
 {
     MPG123_Music *music = (MPG123_Music *)context;
-    SDL_AudioStreamClear(music->stream);
+    SDL_ClearAudioStream(music->stream);
 }
 
 /* read some mp3 stream data and convert it for output */
@@ -365,7 +365,7 @@ static int MPG123_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     int channels, encoding, format;
 
     if (music->stream) {
-        filled = SDL_AudioStreamGet(music->stream, data, bytes);
+        filled = SDL_GetAudioStreamData(music->stream, data, bytes);
         if (filled != 0) {
             return filled;
         }
@@ -380,7 +380,7 @@ static int MPG123_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     result = mpg123.mpg123_read(music->handle, music->buffer, music->buffer_size, &amount);
     switch (result) {
     case MPG123_OK:
-        if (SDL_AudioStreamPut(music->stream, music->buffer, (int)amount) < 0) {
+        if (SDL_PutAudioStreamData(music->stream, music->buffer, (int)amount) < 0) {
             return -1;
         }
         break;
@@ -400,10 +400,10 @@ static int MPG123_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         SDL_assert(format != -1);
 
         if (music->stream) {
-            SDL_FreeAudioStream(music->stream);
+            SDL_DestroyAudioStream(music->stream);
         }
 
-        music->stream = SDL_NewAudioStream((SDL_AudioFormat)format, (Uint8)channels, (int)rate,
+        music->stream = SDL_CreateAudioStream((SDL_AudioFormat)format, (Uint8)channels, (int)rate,
                                            music_spec.format, music_spec.channels, music_spec.freq);
         if (!music->stream) {
             return -1;
@@ -413,14 +413,14 @@ static int MPG123_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 
     case MPG123_DONE:
         if (amount > 0) {
-            if (SDL_AudioStreamPut(music->stream, music->buffer, (int)amount) < 0) {
+            if (SDL_PutAudioStreamData(music->stream, music->buffer, (int)amount) < 0) {
                 return -1;
             }
             break;
         }
         if (music->play_count == 1) {
             music->play_count = 0;
-            SDL_AudioStreamFlush(music->stream);
+            SDL_FlushAudioStream(music->stream);
         } else {
             int play_count = -1;
             if (music->play_count > 0) {
@@ -493,7 +493,7 @@ static void MPG123_Delete(void *context)
         mpg123.mpg123_delete(music->handle);
     }
     if (music->stream) {
-        SDL_FreeAudioStream(music->stream);
+        SDL_DestroyAudioStream(music->stream);
     }
     if (music->buffer) {
         SDL_free(music->buffer);

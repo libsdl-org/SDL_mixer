@@ -19,20 +19,20 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#include "SDL_config.h"
+#include <SDL3/SDL_platform.h>
 
-#if __MACOSX__
+#if __MACOS__
 
 /* Mac OS X 10.6+, using Core MIDI. */
 
-#include "SDL_stdinc.h"
+#include <SDL3/SDL_stdinc.h>
 
 #include <AudioUnit/AudioUnit.h>
 #include <AudioToolbox/AudioToolbox.h>
 #include <AvailabilityMacros.h>
 
-#include "SDL_endian.h"
-#include "SDL_mixer.h"
+#include <SDL3/SDL_endian.h>
+#include <SDL3/SDL_mixer.h>
 #include "../../mixer.h"
 #include "native_midi.h"
 
@@ -203,19 +203,19 @@ NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *src, int freesrc)
     Sint64 len = 0;
     CFDataRef data = NULL;
 
-    if (SDL_RWseek(src, 0, RW_SEEK_END) < 0)
+    if (SDL_RWseek(src, 0, SDL_RW_SEEK_END) < 0)
         goto fail;
     len = SDL_RWtell(src);
     if (len < 0)
         goto fail;
-    if (SDL_RWseek(src, 0, RW_SEEK_SET) < 0)
+    if (SDL_RWseek(src, 0, SDL_RW_SEEK_SET) < 0)
         goto fail;
 
     buf = SDL_malloc(len);
     if (buf == NULL)
         goto fail;
 
-    if (SDL_RWread(src, buf, len, 1) != 1)
+    if (SDL_RWread(src, buf, len) != len)
         goto fail;
 
     retval = SDL_malloc(sizeof(NativeMidiSong));

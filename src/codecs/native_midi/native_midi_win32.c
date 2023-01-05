@@ -18,7 +18,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include <SDL3/SDL_platform.h>
 
 /* everything below is currently one very big bad hack ;) Proff */
 

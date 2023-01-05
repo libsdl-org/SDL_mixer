@@ -67,7 +67,7 @@ LOCAL_PATH := $(SDL_MIXER_LOCAL_PATH)
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := SDL2_mixer
+LOCAL_MODULE := SDL3_mixer
 
 LOCAL_C_INCLUDES :=                                     \
     $(LOCAL_PATH)/include                               \
@@ -84,7 +84,7 @@ LOCAL_SRC_FILES :=                                      \
 LOCAL_CFLAGS :=
 LOCAL_LDLIBS :=
 LOCAL_STATIC_LIBRARIES :=
-LOCAL_SHARED_LIBRARIES := SDL2
+LOCAL_SHARED_LIBRARIES := SDL3
 
 ifeq ($(SUPPORT_WAV),true)
     LOCAL_CFLAGS += -DMUSIC_WAV
@@ -139,13 +139,13 @@ include $(BUILD_SHARED_LIBRARY)
 
 ###########################
 #
-# SDL2_mixer static library
+# SDL3_mixer static library
 #
 ###########################
 
-LOCAL_MODULE := SDL2_mixer_static
+LOCAL_MODULE := SDL3_mixer_static
 
-LOCAL_MODULE_FILENAME := libSDL2_mixer
+LOCAL_MODULE_FILENAME := libSDL3_mixer
 
 LOCAL_LDLIBS :=
 LOCAL_EXPORT_LDLIBS :=

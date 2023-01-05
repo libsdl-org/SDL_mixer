@@ -23,7 +23,7 @@
 
 /* This file supports Ogg Opus music streams */
 
-#include "SDL_loadso.h"
+#include <SDL3/SDL_loadso.h>
 
 #include "music_opus.h"
 #include "utils.h"
@@ -146,7 +146,11 @@ static int set_op_error(const char *function, int error)
 
 static int sdl_read_func(void *datasource, unsigned char *ptr, int size)
 {
-    return (int)SDL_RWread((SDL_RWops*)datasource, ptr, 1, (size_t)size);
+    Sint64 amount = SDL_RWread((SDL_RWops*)datasource, ptr, size);
+    if (amount <= 0) {
+        return 0;
+    }
+    return (int)amount;
 }
 
 static int sdl_seek_func(void *datasource, opus_int64 offset, int whence)
@@ -183,11 +187,11 @@ static int OPUS_UpdateSection(OPUS_music *music)
     }
 
     if (music->stream) {
-        SDL_FreeAudioStream(music->stream);
+        SDL_DestroyAudioStream(music->stream);
         music->stream = NULL;
     }
 
-    music->stream = SDL_NewAudioStream(AUDIO_S16SYS, (Uint8)op_info->channel_count, 48000,
+    music->stream = SDL_CreateAudioStream(AUDIO_S16SYS, (Uint8)op_info->channel_count, 48000,
                                        music_spec.format, music_spec.channels, music_spec.freq);
     if (!music->stream) {
         return -1;
@@ -339,7 +343,7 @@ static int OPUS_Play(void *context, int play_count)
 static void OPUS_Stop(void *context)
 {
     OPUS_music *music = (OPUS_music *)context;
-    SDL_AudioStreamClear(music->stream);
+    SDL_ClearAudioStream(music->stream);
 }
 
 /* Play some of a stream previously started with OPUS_Play() */
@@ -351,7 +355,7 @@ static int OPUS_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     SDL_bool looped = SDL_FALSE;
     ogg_int64_t pcmPos;
 
-    filled = SDL_AudioStreamGet(music->stream, data, bytes);
+    filled = SDL_GetAudioStreamData(music->stream, data, bytes);
     if (filled != 0) {
         return filled;
     }
@@ -395,13 +399,13 @@ static int OPUS_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 
     if (samples > 0) {
         filled = samples * music->op_info->channel_count * 2;
-        if (SDL_AudioStreamPut(music->stream, music->buffer, filled) < 0) {
+        if (SDL_PutAudioStreamData(music->stream, music->buffer, filled) < 0) {
             return -1;
         }
     } else if (!looped) {
         if (music->play_count == 1) {
             music->play_count = 0;
-            SDL_AudioStreamFlush(music->stream);
+            SDL_FlushAudioStream(music->stream);
         } else {
             int play_count = -1;
             if (music->play_count > 0) {
@@ -479,7 +483,7 @@ static void OPUS_Delete(void *context)
     meta_tags_clear(&music->tags);
     opus.op_free(music->of);
     if (music->stream) {
-        SDL_FreeAudioStream(music->stream);
+        SDL_DestroyAudioStream(music->stream);
     }
     if (music->buffer) {
         SDL_free(music->buffer);

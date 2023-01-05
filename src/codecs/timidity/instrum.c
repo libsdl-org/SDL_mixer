@@ -12,7 +12,7 @@
 
 */
 
-#include "SDL.h"
+#include <SDL3/SDL.h>
 
 #include "timidity.h"
 #include "options.h"
@@ -183,7 +183,7 @@ static void load_instrument(MidiSong *song, const char *name,
   /* Read some headers and do cursory sanity checks. There are loads
      of magic offsets. This could be rewritten... */
 
-  if ((239 != SDL_RWread(rw, tmp, 1, 239)) ||
+  if ((239 != SDL_RWread(rw, tmp, 239)) ||
       (SDL_memcmp(tmp, "GF1PATCH110\0ID#000002", 22) &&
        SDL_memcmp(tmp, "GF1PATCH100\0ID#000002", 22))) /* don't know what the
 						      differences are */
@@ -221,18 +221,18 @@ static void load_instrument(MidiSong *song, const char *name,
       Uint8 tmpchar;
 
 #define READ_CHAR(thing)					\
-  if (1 != SDL_RWread(rw, &tmpchar, 1, 1))  goto badread;	\
+  if (1 != SDL_RWread(rw, &tmpchar, 1))  goto badread;	\
   thing = tmpchar;
 #define READ_SHORT(thing)					\
-  if (1 != SDL_RWread(rw, &tmpshort, 2, 1)) goto badread;	\
+  if (2 != SDL_RWread(rw, &tmpshort, 2)) goto badread;	\
   thing = SDL_SwapLE16(tmpshort);
 #define READ_LONG(thing)					\
-  if (1 != SDL_RWread(rw, &tmplong, 4, 1))  goto badread;	\
+  if (4 != SDL_RWread(rw, &tmplong, 4))  goto badread;	\
   thing = (Sint32)SDL_SwapLE32((Uint32)tmplong);
 
-      SDL_RWseek(rw, 7, RW_SEEK_CUR); /* Skip the wave name */
+      SDL_RWseek(rw, 7, SDL_RW_SEEK_CUR); /* Skip the wave name */
 
-      if (1 != SDL_RWread(rw, &fractions, 1, 1))
+      if (1 != SDL_RWread(rw, &fractions, 1))
 	goto badread;
 
       sp=&(ip->sample[i]);
@@ -244,7 +244,7 @@ static void load_instrument(MidiSong *song, const char *name,
       READ_LONG(sp->low_freq);
       READ_LONG(sp->high_freq);
       READ_LONG(sp->root_freq);
-      SDL_RWseek(rw, 2, RW_SEEK_CUR); /* Why have a "root frequency" and then
+      SDL_RWseek(rw, 2, SDL_RW_SEEK_CUR); /* Why have a "root frequency" and then
 				    * "tuning"?? */
 
       READ_CHAR(tmp[0]);
@@ -255,7 +255,7 @@ static void load_instrument(MidiSong *song, const char *name,
 	sp->panning=(Uint8)(panning & 0x7F);
 
       /* envelope, tremolo, and vibrato */
-      if (18 != SDL_RWread(rw, tmp, 1, 18))
+      if (18 != SDL_RWread(rw, tmp, 18))
 	goto badread;
 
       if (!tmp[13] || !tmp[14])
@@ -293,7 +293,7 @@ static void load_instrument(MidiSong *song, const char *name,
 
       READ_CHAR(sp->modes);
 
-      SDL_RWseek(rw, 40, RW_SEEK_CUR); /* skip the useless scale frequency, scale
+      SDL_RWseek(rw, 40, SDL_RW_SEEK_CUR); /* skip the useless scale frequency, scale
 				  factor (what's it mean?), and reserved
 				  space */
 
@@ -367,7 +367,7 @@ static void load_instrument(MidiSong *song, const char *name,
       sp->data = (sample_t *) SDL_malloc(sp->data_length+4);
       if (!sp->data) goto nomem;
 
-      if (1 != SDL_RWread(rw, sp->data, sp->data_length, 1))
+      if (sp->data_length != SDL_RWread(rw, sp->data, sp->data_length))
 	goto badread;
 
       if (!(sp->modes & MODES_16BIT)) /* convert to 16-bit data */

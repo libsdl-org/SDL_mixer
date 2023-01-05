@@ -19,9 +19,9 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#include "SDL.h"
+#include <SDL3/SDL.h>
 
-#include "SDL_mixer.h"
+#include <SDL3/SDL_mixer.h>
 #include "mixer.h"
 #include "music.h"
 #include "load_aiff.h"
@@ -667,7 +667,7 @@ static SDL_AudioSpec *Mix_LoadMusic_RW(SDL_RWops *src, int freesrc, SDL_AudioSpe
         }
 
         /* Reset the stream for the next decoder */
-        SDL_RWseek(src, start, RW_SEEK_SET);
+        SDL_RWseek(src, start, SDL_RW_SEEK_SET);
     }
 
     if (!music) {
@@ -796,7 +796,7 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
     }
 
     /* Find out what kind of audio file this is */
-    if (SDL_RWread(src, magic, 1, 4) != 4) {
+    if (SDL_RWread(src, magic, 4) != 4) {
         SDL_free(chunk);
         if (freesrc) {
             SDL_RWclose(src);
@@ -805,7 +805,7 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
         return NULL;
     }
     /* Seek backwards for compatibility with older loaders */
-    SDL_RWseek(src, -4, RW_SEEK_CUR);
+    SDL_RWseek(src, -4, SDL_RW_SEEK_CUR);
 
     if (SDL_memcmp(magic, "WAVE", 4) == 0 || SDL_memcmp(magic, "RIFF", 4) == 0) {
         loaded = SDL_LoadWAV_RW(src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);

@@ -24,8 +24,8 @@
 
 #ifdef MUSIC_FLAC_LIBFLAC
 
-#include "SDL_loadso.h"
-#include "SDL_assert.h"
+#include <SDL3/SDL_loadso.h>
+#include <SDL3/SDL_assert.h>
 
 #include "music_flac.h"
 #include "utils.h"
@@ -171,11 +171,11 @@ static FLAC__StreamDecoderReadStatus flac_read_music_cb(
 
     /* make sure there is something to be reading */
     if (*bytes > 0) {
-        *bytes = SDL_RWread (data->src, buffer, sizeof (FLAC__byte), *bytes);
-
-        if (*bytes == 0) { /* error or no data was read (EOF) */
+        Sint64 amount = SDL_RWread (data->src, buffer, *bytes);
+        if (amount <= 0) { /* error or no data was read (EOF) */
             return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
         } else { /* data was read, continue */
+            *bytes = (size_t)amount;
             return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
         }
     } else {
@@ -192,7 +192,7 @@ static FLAC__StreamDecoderSeekStatus flac_seek_music_cb(
 
     (void)decoder;
 
-    if (SDL_RWseek(data->src, (Sint64)absolute_byte_offset, RW_SEEK_SET) < 0) {
+    if (SDL_RWseek(data->src, (Sint64)absolute_byte_offset, SDL_RW_SEEK_SET) < 0) {
         return FLAC__STREAM_DECODER_SEEK_STATUS_ERROR;
     } else {
         return FLAC__STREAM_DECODER_SEEK_STATUS_OK;
@@ -226,11 +226,11 @@ static FLAC__StreamDecoderLengthStatus flac_length_music_cb(
     FLAC_Music *data = (FLAC_Music*)client_data;
 
     Sint64 pos = SDL_RWtell(data->src);
-    Sint64 length = SDL_RWseek(data->src, 0, RW_SEEK_END);
+    Sint64 length = SDL_RWseek(data->src, 0, SDL_RW_SEEK_END);
 
     (void)decoder;
 
-    if (SDL_RWseek(data->src, pos, RW_SEEK_SET) != pos || length < 0) {
+    if (SDL_RWseek(data->src, pos, SDL_RW_SEEK_SET) != pos || length < 0) {
         /* there was an error attempting to return the stream to the original
          * position, or the length was invalid. */
         return FLAC__STREAM_DECODER_LENGTH_STATUS_ERROR;
@@ -247,7 +247,7 @@ static FLAC__bool flac_eof_music_cb(
     FLAC_Music *data = (FLAC_Music*)client_data;
 
     Sint64 pos = SDL_RWtell(data->src);
-    Sint64 end = SDL_RWseek(data->src, 0, RW_SEEK_END);
+    Sint64 end = SDL_RWseek(data->src, 0, SDL_RW_SEEK_END);
 
     (void)decoder;
 
@@ -257,7 +257,7 @@ static FLAC__bool flac_eof_music_cb(
         return true;
     } else {
         /* not EOF, return to the original position */
-        SDL_RWseek(data->src, pos, RW_SEEK_SET);
+        SDL_RWseek(data->src, pos, SDL_RW_SEEK_SET);
         return false;
     }
 }
@@ -351,7 +351,7 @@ static FLAC__StreamDecoderWriteStatus flac_write_music_cb(
         music->loop_flag = SDL_TRUE;
     }
 
-    SDL_AudioStreamPut(music->stream, data, amount);
+    SDL_PutAudioStreamData(music->stream, data, amount);
     SDL_stack_free(data);
 
     return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
@@ -388,7 +388,7 @@ static void flac_metadata_music_cb(
 
         /* We check for NULL stream later when we get data */
         SDL_assert(!music->stream);
-        music->stream = SDL_NewAudioStream(AUDIO_S16SYS, (Uint8)channels, (int)music->sample_rate,
+        music->stream = SDL_CreateAudioStream(AUDIO_S16SYS, (Uint8)channels, (int)music->sample_rate,
                                           music_spec.format, music_spec.channels, music_spec.freq);
     } else if (metadata->type == FLAC__METADATA_TYPE_VORBIS_COMMENT) {
         FLAC__uint32 i;
@@ -578,7 +578,7 @@ static int FLAC_Play(void *context, int play_count)
 static void FLAC_Stop(void *context)
 {
     FLAC_Music *music = (FLAC_Music *)context;
-    SDL_AudioStreamClear(music->stream);
+    SDL_ClearAudioStream(music->stream);
 }
 
 /* Read some FLAC stream data and convert it for output */
@@ -587,7 +587,7 @@ static int FLAC_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     FLAC_Music *music = (FLAC_Music *)context;
     int filled;
 
-    filled = SDL_AudioStreamGet(music->stream, data, bytes);
+    filled = SDL_GetAudioStreamData(music->stream, data, bytes);
     if (filled != 0) {
         return filled;
     }
@@ -623,7 +623,7 @@ static int FLAC_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     if (flac.FLAC__stream_decoder_get_state(music->flac_decoder) == FLAC__STREAM_DECODER_END_OF_STREAM) {
         if (music->play_count == 1) {
             music->play_count = 0;
-            SDL_AudioStreamFlush(music->stream);
+            SDL_FlushAudioStream(music->stream);
         } else {
             int play_count = -1;
             if (music->play_count > 0) {
@@ -650,7 +650,7 @@ static int FLAC_Seek(void *context, double position)
     FLAC_Music *music = (FLAC_Music *)context;
     FLAC__uint64 seek_sample = (FLAC__uint64) (music->sample_rate * position);
 
-    SDL_AudioStreamClear(music->stream);
+    SDL_ClearAudioStream(music->stream);
 
     music->pcm_pos = (FLAC__int64) seek_sample;
     if (!flac.FLAC__stream_decoder_seek_absolute(music->flac_decoder, seek_sample)) {
@@ -715,7 +715,7 @@ static void FLAC_Delete(void *context)
             flac.FLAC__stream_decoder_delete(music->flac_decoder);
         }
         if (music->stream) {
-            SDL_FreeAudioStream(music->stream);
+            SDL_DestroyAudioStream(music->stream);
         }
         if (music->freesrc) {
             SDL_RWclose(music->src);

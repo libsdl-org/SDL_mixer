@@ -24,8 +24,8 @@
 
 #ifdef MUSIC_MID_FLUIDSYNTH
 
-#include "SDL_loadso.h"
-#include "SDL_rwops.h"
+#include <SDL3/SDL_loadso.h>
+#include <SDL3/SDL_rwops.h>
 
 #include "music_fluidsynth.h"
 
@@ -234,7 +234,7 @@ static FLUIDSYNTH_Music *FLUIDSYNTH_LoadMusic(void *data)
         goto fail;
     }
 
-    if (!(music->stream = SDL_NewAudioStream(src_format, channels, (int) samplerate,
+    if (!(music->stream = SDL_CreateAudioStream(src_format, channels, (int) samplerate,
                           music_spec.format, music_spec.channels, music_spec.freq))) {
         goto fail;
     }
@@ -291,7 +291,7 @@ static int FLUIDSYNTH_GetSome(void *context, void *data, int bytes, SDL_bool *do
 
     (void)done;
 
-    filled = SDL_AudioStreamGet(music->stream, data, bytes);
+    filled = SDL_GetAudioStreamData(music->stream, data, bytes);
     if (filled != 0) {
         return filled;
     }
@@ -300,7 +300,7 @@ static int FLUIDSYNTH_GetSome(void *context, void *data, int bytes, SDL_bool *do
         Mix_SetError("Error generating FluidSynth audio");
         return -1;
     }
-    if (SDL_AudioStreamPut(music->stream, music->buffer, music->buffer_size) < 0) {
+    if (SDL_PutAudioStreamData(music->stream, music->buffer, music->buffer_size) < 0) {
         return -1;
     }
     return 0;
@@ -330,7 +330,7 @@ static void FLUIDSYNTH_Delete(void *context)
         fluidsynth.delete_fluid_settings(music->settings);
     }
     if (music->stream) {
-        SDL_FreeAudioStream(music->stream);
+        SDL_DestroyAudioStream(music->stream);
     }
     if (music->buffer) {
         SDL_free(music->buffer);

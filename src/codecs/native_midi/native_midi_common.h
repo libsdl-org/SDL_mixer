@@ -22,7 +22,7 @@
 #ifndef _NATIVE_MIDI_COMMON_H_
 #define _NATIVE_MIDI_COMMON_H_
 
-#include "SDL.h"
+#include <SDL3/SDL.h>
 
 /* Midi Status Bytes */
 #define MIDI_STATUS_NOTE_OFF    0x8

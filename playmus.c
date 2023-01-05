@@ -22,8 +22,6 @@
 /* Quiet windows compiler warnings */
 #define _CRT_SECURE_NO_WARNINGS
 
-#include "SDL_stdinc.h"
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -32,8 +30,9 @@
 #include <unistd.h>
 #endif
 
-#include "SDL.h"
-#include "SDL_mixer.h"
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
+#include <SDL3/SDL_mixer.h>
 
 #ifdef HAVE_SIGNAL_H
 #include <signal.h>

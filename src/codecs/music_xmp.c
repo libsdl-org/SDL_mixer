@@ -21,7 +21,7 @@
 
 #ifdef MUSIC_MOD_XMP
 
-#include "SDL_loadso.h"
+#include <SDL3/SDL_loadso.h>
 
 #include "music_xmp.h"
 
@@ -177,7 +177,11 @@ static void libxmp_set_error(int e)
 }
 
 static unsigned long xmp_fread(void *dst, unsigned long len, unsigned long nmemb, void *src) {
-    return (unsigned long)SDL_RWread((SDL_RWops*)src, dst, len, nmemb);
+    Sint64 amount = SDL_RWread((SDL_RWops*)src, dst, len * nmemb);
+    if (amount <= 0) {
+        return 0;
+    }
+    return (unsigned long)(amount / len);
 }
 static int xmp_fseek(void *src, long offset, int whence) {
     return (SDL_RWseek((SDL_RWops*)src, offset, whence) < 0)? -1 : 0;
@@ -239,7 +243,7 @@ void *XMP_CreateFromRW(SDL_RWops *src, int freesrc)
     }
 
     music->volume = MIX_MAX_VOLUME;
-    music->stream = SDL_NewAudioStream(AUDIO_S16SYS, 2, music_spec.freq,
+    music->stream = SDL_CreateAudioStream(AUDIO_S16SYS, 2, music_spec.freq,
                                        music_spec.format, music_spec.channels, music_spec.freq);
     if (!music->stream) {
         goto e3;
@@ -292,7 +296,7 @@ static int XMP_Play(void *context, int play_count)
 static void XMP_Stop(void *context)
 {
     XMP_Music *music = (XMP_Music *)context;
-    SDL_AudioStreamClear(music->stream);
+    SDL_ClearAudioStream(music->stream);
 }
 
 /* Play some of a stream previously started with xmp_play() */
@@ -301,7 +305,7 @@ static int XMP_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     XMP_Music *music = (XMP_Music *)context;
     int filled, amount, ret;
 
-    filled = SDL_AudioStreamGet(music->stream, data, bytes);
+    filled = SDL_GetAudioStreamData(music->stream, data, bytes);
     if (filled != 0) {
         return filled;
     }
@@ -320,7 +324,7 @@ static int XMP_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     amount = music->buffer_size;
 
     if (ret == 0) {
-        if (SDL_AudioStreamPut(music->stream, music->buffer, amount) < 0) {
+        if (SDL_PutAudioStreamData(music->stream, music->buffer, amount) < 0) {
             return -1;
         }
     } else {
@@ -329,7 +333,7 @@ static int XMP_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         }
         if (music->play_count == 1) {
             music->play_count = 0;
-            SDL_AudioStreamFlush(music->stream);
+            SDL_FlushAudioStream(music->stream);
         } else {
             int play_count = -1;
             if (music->play_count > 0) {
@@ -396,7 +400,7 @@ static void XMP_Delete(void *context)
         libxmp.xmp_free_context(music->ctx);
     }
     if (music->stream) {
-        SDL_FreeAudioStream(music->stream);
+        SDL_DestroyAudioStream(music->stream);
     }
     if (music->buffer) {
         SDL_free(music->buffer);

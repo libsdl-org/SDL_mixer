@@ -18,11 +18,11 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_hints.h"
-#include "SDL_log.h"
-#include "SDL_timer.h"
+#include <SDL3/SDL_hints.h>
+#include <SDL3/SDL_log.h>
+#include <SDL3/SDL_timer.h>
 
-#include "SDL_mixer.h"
+#include <SDL3/SDL_mixer.h>
 #include "mixer.h"
 #include "music.h"
 
@@ -552,11 +552,11 @@ Mix_MusicType detect_music_type(SDL_RWops *src)
 {
     Uint8 magic[12];
 
-    if (SDL_RWread(src, magic, 1, 12) != 12) {
+    if (SDL_RWread(src, magic, 12) != 12) {
         Mix_SetError("Couldn't read first 12 bytes of audio data");
         return MUS_NONE;
     }
-    SDL_RWseek(src, -12, RW_SEEK_CUR);
+    SDL_RWseek(src, -12, SDL_RW_SEEK_CUR);
 
     /* WAVE files have the magic four bytes "RIFF"
        AIFF files have the magic 12 bytes "FORM" XXXX "AIFF" */
@@ -567,9 +567,9 @@ Mix_MusicType detect_music_type(SDL_RWops *src)
 
     /* Ogg Vorbis files have the magic four bytes "OggS" */
     if (SDL_memcmp(magic, "OggS", 4) == 0) {
-        SDL_RWseek(src, 28, RW_SEEK_CUR);
-        SDL_RWread(src, magic, 1, 8);
-        SDL_RWseek(src,-36, RW_SEEK_CUR);
+        SDL_RWseek(src, 28, SDL_RW_SEEK_CUR);
+        SDL_RWread(src, magic, 8);
+        SDL_RWseek(src,-36, SDL_RW_SEEK_CUR);
         if (SDL_memcmp(magic, "OpusHead", 8) == 0) {
             return MUS_OPUS;
         }
@@ -784,7 +784,7 @@ Mix_Music *Mix_LoadMUSType_RW(SDL_RWops *src, Mix_MusicType type, int freesrc)
             }
 
             /* Reset the stream for the next decoder */
-            SDL_RWseek(src, start, RW_SEEK_SET);
+            SDL_RWseek(src, start, SDL_RW_SEEK_SET);
         }
     }
 
@@ -794,7 +794,7 @@ Mix_Music *Mix_LoadMUSType_RW(SDL_RWops *src, Mix_MusicType type, int freesrc)
     if (freesrc) {
         SDL_RWclose(src);
     } else {
-        SDL_RWseek(src, start, RW_SEEK_SET);
+        SDL_RWseek(src, start, SDL_RW_SEEK_SET);
     }
     return NULL;
 }

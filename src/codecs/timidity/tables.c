@@ -6,7 +6,7 @@
     it under the terms of the Perl Artistic License, available in COPYING.
 */
 
-#include "SDL.h"
+#include <SDL3/SDL.h>
 
 #include "common.h"
 #include "tables.h"

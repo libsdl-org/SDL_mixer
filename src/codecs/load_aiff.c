@@ -28,8 +28,8 @@
   in december 2002.
 */
 
-#include "SDL_endian.h"
-#include "SDL_mixer.h"
+#include <SDL3/SDL_endian.h>
+#include <SDL3/SDL_mixer.h>
 #include "load_aiff.h"
 
 /*********************************************/
@@ -142,7 +142,11 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
                 channels    = SDL_ReadBE16(src);
                 numsamples  = SDL_ReadBE32(src);
                 samplesize  = SDL_ReadBE16(src);
-                SDL_RWread(src, sane_freq, sizeof(sane_freq), 1);
+                if (SDL_RWread(src, sane_freq, sizeof(sane_freq)) != sizeof(sane_freq)) {
+                    Mix_SetError("Bad AIFF sample frequency");
+                    was_error = 1;
+                    goto done;
+                }
                 frequency   = SANE_to_Uint32(sane_freq);
                 if (frequency == 0) {
                     Mix_SetError("Bad AIFF sample frequency");
@@ -175,7 +179,7 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
             next_chunk++;
     } while ((((AIFFmagic == AIFF) && (!found_SSND || !found_COMM))
           || ((AIFFmagic == _8SVX) && (!found_VHDR || !found_BODY)))
-          && SDL_RWseek(src, next_chunk, RW_SEEK_SET) != 1);
+          && SDL_RWseek(src, next_chunk, SDL_RW_SEEK_SET) != 1);
 
     if ((AIFFmagic == AIFF) && !found_SSND) {
         Mix_SetError("Bad AIFF (no SSND chunk)");
@@ -225,8 +229,8 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
         Mix_OutOfMemory();
         return(NULL);
     }
-    SDL_RWseek(src, start, RW_SEEK_SET);
-    if (SDL_RWread(src, *audio_buf, *audio_len, 1) != 1) {
+    SDL_RWseek(src, start, SDL_RW_SEEK_SET);
+    if (SDL_RWread(src, *audio_buf, *audio_len) != *audio_len) {
         Mix_SetError("Unable to read audio data");
         return(NULL);
     }

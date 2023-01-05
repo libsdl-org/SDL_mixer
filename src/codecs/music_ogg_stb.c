@@ -25,7 +25,7 @@
 
 #include "music_ogg.h"
 #include "utils.h"
-#include "SDL_assert.h"
+#include <SDL3/SDL_assert.h>
 
 #define STB_VORBIS_SDL 1 /* for SDL_mixer-specific stuff. */
 #define STB_VORBIS_NO_STDIO 1
@@ -137,11 +137,11 @@ static int OGG_UpdateSection(OGG_music *music)
     }
 
     if (music->stream) {
-        SDL_FreeAudioStream(music->stream);
+        SDL_DestroyAudioStream(music->stream);
         music->stream = NULL;
     }
 
-    music->stream = SDL_NewAudioStream(AUDIO_F32SYS, (Uint8)vi.channels, (int)vi.sample_rate,
+    music->stream = SDL_CreateAudioStream(AUDIO_F32SYS, (Uint8)vi.channels, (int)vi.sample_rate,
                                        music_spec.format, music_spec.channels, music_spec.freq);
     if (!music->stream) {
         return -1;
@@ -293,7 +293,7 @@ static int OGG_Play(void *context, int play_count)
 static void OGG_Stop(void *context)
 {
     OGG_music *music = (OGG_music *)context;
-    SDL_AudioStreamClear(music->stream);
+    SDL_ClearAudioStream(music->stream);
 }
 
 /* Play some of a stream previously started with OGG_play() */
@@ -305,7 +305,7 @@ static int OGG_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     int section;
     Sint64 pcmPos;
 
-    filled = SDL_AudioStreamGet(music->stream, data, bytes);
+    filled = SDL_GetAudioStreamData(music->stream, data, bytes);
     if (filled != 0) {
         return filled;
     }
@@ -349,13 +349,13 @@ static int OGG_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     }
 
     if (amount > 0) {
-        if (SDL_AudioStreamPut(music->stream, music->buffer, amount) < 0) {
+        if (SDL_PutAudioStreamData(music->stream, music->buffer, amount) < 0) {
             return -1;
         }
     } else if (!looped) {
         if (music->play_count == 1) {
             music->play_count = 0;
-            SDL_AudioStreamFlush(music->stream);
+            SDL_FlushAudioStream(music->stream);
         } else {
             int play_count = -1;
             if (music->play_count > 0) {
@@ -436,7 +436,7 @@ static void OGG_Delete(void *context)
     meta_tags_clear(&music->tags);
     stb_vorbis_close(music->vf);
     if (music->stream) {
-        SDL_FreeAudioStream(music->stream);
+        SDL_DestroyAudioStream(music->stream);
     }
     if (music->buffer) {
         SDL_free(music->buffer);

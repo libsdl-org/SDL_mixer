@@ -8,7 +8,7 @@
     playmidi.c -- random stuff in need of rearrangement
 */
 
-#include "SDL.h"
+#include <SDL3/SDL.h>
 
 #include "timidity.h"
 #include "options.h"

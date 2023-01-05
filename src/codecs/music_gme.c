@@ -21,7 +21,7 @@
 
 #ifdef MUSIC_GME
 
-#include "SDL_loadso.h"
+#include <SDL3/SDL_loadso.h>
 
 #include "music_gme.h"
 
@@ -222,7 +222,7 @@ static void *GME_CreateFromRW(struct SDL_RWops *src, int freesrc)
     music->tempo = 1.0;
     music->gain = 1.0;
 
-    music->stream = SDL_NewAudioStream(AUDIO_S16SYS, 2, music_spec.freq,
+    music->stream = SDL_CreateAudioStream(AUDIO_S16SYS, 2, music_spec.freq,
                                        music_spec.format, music_spec.channels, music_spec.freq);
     if (!music->stream) {
         GME_Delete(music);
@@ -237,7 +237,7 @@ static void *GME_CreateFromRW(struct SDL_RWops *src, int freesrc)
         return NULL;
     }
 
-    SDL_RWseek(src, 0, RW_SEEK_SET);
+    SDL_RWseek(src, 0, SDL_RW_SEEK_SET);
     mem = SDL_LoadFile_RW(src, &size, SDL_FALSE);
     if (mem) {
         err = gme.gme_open_data(mem, size, &music->game_emu, music_spec.freq);
@@ -285,7 +285,7 @@ static int GME_Play(void *music_p, int play_count)
     GME_Music *music = (GME_Music*)music_p;
     int fade_start;
     if (music) {
-        SDL_AudioStreamClear(music->stream);
+        SDL_ClearAudioStream(music->stream);
         music->play_count = play_count;
         fade_start = play_count > 0 ? music->intro_length + (music->loop_length * play_count) : -1;
 #if GME_VERSION >= 0x000700
@@ -304,7 +304,7 @@ static int GME_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     int filled;
     const char *err = NULL;
 
-    filled = SDL_AudioStreamGet(music->stream, data, bytes);
+    filled = SDL_GetAudioStreamData(music->stream, data, bytes);
     if (filled != 0) {
         return filled;
     }
@@ -321,7 +321,7 @@ static int GME_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         return 0;
     }
 
-    if (SDL_AudioStreamPut(music->stream, music->buffer, music->buffer_size) < 0) {
+    if (SDL_PutAudioStreamData(music->stream, music->buffer, music->buffer_size) < 0) {
         return -1;
     }
     return 0;
@@ -345,7 +345,7 @@ static void GME_Delete(void *context)
             music->game_emu = NULL;
         }
         if (music->stream) {
-            SDL_FreeAudioStream(music->stream);
+            SDL_DestroyAudioStream(music->stream);
         }
         if (music->buffer) {
             SDL_free(music->buffer);

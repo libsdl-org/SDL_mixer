@@ -21,7 +21,7 @@
 
 #ifdef MUSIC_MOD_MODPLUG
 
-#include "SDL_loadso.h"
+#include <SDL3/SDL_loadso.h>
 
 #include "music_modplug.h"
 
@@ -175,7 +175,7 @@ void *MODPLUG_CreateFromRW(SDL_RWops *src, int freesrc)
 
     music->volume = MIX_MAX_VOLUME;
 
-    music->stream = SDL_NewAudioStream((settings.mBits == 8) ? AUDIO_U8 : AUDIO_S16SYS, (Uint8)settings.mChannels, settings.mFrequency,
+    music->stream = SDL_CreateAudioStream((settings.mBits == 8) ? AUDIO_U8 : AUDIO_S16SYS, (Uint8)settings.mChannels, settings.mFrequency,
                                        music_spec.format, music_spec.channels, music_spec.freq);
     if (!music->stream) {
         MODPLUG_Delete(music);
@@ -238,7 +238,7 @@ static int MODPLUG_Play(void *context, int play_count)
 static void MODPLUG_Stop(void *context)
 {
     MODPLUG_Music *music = (MODPLUG_Music *)context;
-    SDL_AudioStreamClear(music->stream);
+    SDL_ClearAudioStream(music->stream);
 }
 
 /* Play some of a stream previously started with modplug_play() */
@@ -247,7 +247,7 @@ static int MODPLUG_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     MODPLUG_Music *music = (MODPLUG_Music *)context;
     int filled, amount;
 
-    filled = SDL_AudioStreamGet(music->stream, data, bytes);
+    filled = SDL_GetAudioStreamData(music->stream, data, bytes);
     if (filled != 0) {
         return filled;
     }
@@ -260,13 +260,13 @@ static int MODPLUG_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 
     amount = modplug.ModPlug_Read(music->file, music->buffer, music->buffer_size);
     if (amount > 0) {
-        if (SDL_AudioStreamPut(music->stream, music->buffer, amount) < 0) {
+        if (SDL_PutAudioStreamData(music->stream, music->buffer, amount) < 0) {
             return -1;
         }
     } else {
         if (music->play_count == 1) {
             music->play_count = 0;
-            SDL_AudioStreamFlush(music->stream);
+            SDL_FlushAudioStream(music->stream);
         } else {
             int play_count = -1;
             if (music->play_count > 0) {
@@ -333,7 +333,7 @@ static void MODPLUG_Delete(void *context)
         modplug.ModPlug_Unload(music->file);
     }
     if (music->stream) {
-        SDL_FreeAudioStream(music->stream);
+        SDL_DestroyAudioStream(music->stream);
     }
     if (music->buffer) {
         SDL_free(music->buffer);

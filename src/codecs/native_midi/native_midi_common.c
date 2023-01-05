@@ -22,7 +22,7 @@
 
 #include "native_midi_common.h"
 
-#include "SDL_mixer.h"
+#include <SDL3/SDL_mixer.h>
 
 /* The constant 'MThd' */
 #define MIDI_MAGIC	0x4d546864
@@ -278,11 +278,11 @@ static MIDIEvent *MIDItoStream(MIDIFile *mididata)
 static int ReadMIDIFile(MIDIFile *mididata, SDL_RWops *src)
 {
     int i = 0;
-    Uint32  ID;
-    Uint32  size;
-    Uint16  format;
-    Uint16  tracks;
-    Uint16  division;
+    Uint32  ID = 0;
+    Uint32  size = 0;
+    Uint16  format = 0;
+    Uint16  tracks = 0;
+    Uint16  division = 0;
 
     if (!mididata)
         return 0;
@@ -290,27 +290,37 @@ static int ReadMIDIFile(MIDIFile *mididata, SDL_RWops *src)
         return 0;
 
     /* Make sure this is really a MIDI file */
-    SDL_RWread(src, &ID, 1, 4);
+    if (SDL_RWread(src, &ID, 4) != 4) {
+        return 0;
+    }
     if (BE_LONG(ID) == RIFF_MAGIC) {
-        SDL_RWseek(src, 16, RW_SEEK_CUR);
-        SDL_RWread(src, &ID, 1, 4);
+        SDL_RWseek(src, 16, SDL_RW_SEEK_CUR);
+        if (SDL_RWread(src, &ID, 4) != 4) {
+            return 0;
+        }
     }
     if (BE_LONG(ID) != MIDI_MAGIC)
         return 0;
 
     /* Header size must be 6 */
-    SDL_RWread(src, &size, 1, 4);
+    if (SDL_RWread(src, &size, 4) != 4) {
+        return 0;
+    }
     size = BE_LONG(size);
     if (size != 6)
         return 0;
 
     /* We only support format 0 and 1, but not 2 */
-    SDL_RWread(src, &format, 1, 2);
+    if (SDL_RWread(src, &format, 2) != 2) {
+        return 0;
+    }
     format = BE_SHORT(format);
     if (format != 0 && format != 1)
         return 0;
 
-    SDL_RWread(src, &tracks, 1, 2);
+    if (SDL_RWread(src, &tracks, 2) != 2) {
+        return 0;
+    }
     tracks = BE_SHORT(tracks);
     mididata->nTracks = tracks;
 
@@ -323,14 +333,20 @@ static int ReadMIDIFile(MIDIFile *mididata, SDL_RWops *src)
     }
 
     /* Retrieve the PPQN value, needed for playback */
-    SDL_RWread(src, &division, 1, 2);
+    if (SDL_RWread(src, &division, 2) != 2) {
+        goto bail;
+    }
     mididata->division = BE_SHORT(division);
 
 
     for (i=0; i<tracks; i++)
     {
-        SDL_RWread(src, &ID, 1, 4);  /* We might want to verify this is MTrk... */
-        SDL_RWread(src, &size, 1, 4);
+        if (SDL_RWread(src, &ID, 4) != 4) {  /* We might want to verify this is MTrk... */
+            goto bail;
+        }
+        if (SDL_RWread(src, &size, 4) != 4) {
+            goto bail;
+        }
         size = BE_LONG(size);
         mididata->track[i].len = size;
         mididata->track[i].data = SDL_malloc(size);
@@ -339,7 +355,9 @@ static int ReadMIDIFile(MIDIFile *mididata, SDL_RWops *src)
             Mix_OutOfMemory();
             goto bail;
         }
-        SDL_RWread(src, mididata->track[i].data, 1, size);
+        if (SDL_RWread(src, mididata->track[i].data, size) != size) {
+            goto bail;
+        }
     }
     return 1;
 

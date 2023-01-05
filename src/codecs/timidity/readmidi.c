@@ -6,7 +6,7 @@
     it under the terms of the Perl Artistic License, available in COPYING.
 */
 
-#include "SDL.h"
+#include <SDL3/SDL.h>
 
 #include "options.h"
 #include "timidity.h"
@@ -37,7 +37,7 @@ static Sint32 getvl(SDL_RWops *rw)
   Uint8 c;
   for (;;)
     {
-      if (!SDL_RWread(rw, &c, 1, 1)) return l;
+      if (SDL_RWread(rw, &c, 1) != 0) return l;
       l += (c & 0x7f);
       if (!(c & 0x80)) return l;
       l<<=7;
@@ -55,10 +55,10 @@ static int dumpstring(SDL_RWops *rw, Sint32 len, Uint8 type)
   signed char *s = SDL_malloc(len+1);
   if (!s)
     {
-      SDL_RWseek(rw, len, RW_SEEK_CUR);/* should I ? */
+      SDL_RWseek(rw, len, SDL_RW_SEEK_CUR);/* should I ? */
       return -1;
     }
-  if (len != (Sint32) SDL_RWread(rw, s, 1, len))
+  if (len != (Sint32) SDL_RWread(rw, s, len))
     {
       SDL_free(s);
       return -1;
@@ -95,14 +95,14 @@ static MidiEventList *read_midi_event(MidiSong *song)
 {
   static Uint8 laststatus, lastchan;
   static Uint8 nrpn=0, rpn_msb[16], rpn_lsb[16]; /* one per channel */
-  Uint8 me, type, a,b,c;
+  Uint8 me, type, a = 0, b = 0, c = 0;
   Sint32 len;
   MidiEventList *newlist;
 
   for (;;)
     {
       song->at += getvl(song->rw);
-      if (SDL_RWread(song->rw, &me, 1, 1) != 1)
+      if (SDL_RWread(song->rw, &me, 1) != 1)
 	{
 	  SNDDBG(("read_midi_event: SDL_RWread() failure\n"));
 	  return NULL;
@@ -111,18 +111,18 @@ static MidiEventList *read_midi_event(MidiSong *song)
       if(me==0xF0 || me == 0xF7) /* SysEx event */
 	{
 	  len=getvl(song->rw);
-	  SDL_RWseek(song->rw, len, RW_SEEK_CUR);
+	  SDL_RWseek(song->rw, len, SDL_RW_SEEK_CUR);
 	}
       else if(me==0xFF) /* Meta event */
 	{
-	  SDL_RWread(song->rw, &type, 1, 1);
+	  SDL_RWread(song->rw, &type, 1);
 	  len=getvl(song->rw);
 	  if (type>0 && type<16)
 	    {
 	      #if (defined DEBUG_CHATTER)
 	      dumpstring(song->rw, len, type);
 	      #else
-	      SDL_RWseek(song->rw, len, RW_SEEK_CUR);
+	      SDL_RWseek(song->rw, len, SDL_RW_SEEK_CUR);
 	      #endif
 	    }
 	  else
@@ -132,14 +132,14 @@ static MidiEventList *read_midi_event(MidiSong *song)
 		return MAGIC_EOT;
 
 	      case 0x51: /* Tempo */
-		SDL_RWread(song->rw, &a, 1, 1);
-		SDL_RWread(song->rw, &b, 1, 1);
-		SDL_RWread(song->rw, &c, 1, 1);
+		SDL_RWread(song->rw, &a, 1);
+		SDL_RWread(song->rw, &b, 1);
+		SDL_RWread(song->rw, &c, 1);
 		MIDIEVENT(song->at, ME_TEMPO, c, a, b);
 
 	      default:
 		SNDDBG(("(Meta event type 0x%02x, length %d)\n", type, len));
-		SDL_RWseek(song->rw, len, RW_SEEK_CUR);
+		SDL_RWseek(song->rw, len, SDL_RW_SEEK_CUR);
 		break;
 	      }
 	}
@@ -150,28 +150,28 @@ static MidiEventList *read_midi_event(MidiSong *song)
 	    {
 	      lastchan=a & 0x0F;
 	      laststatus=(a>>4) & 0x07;
-	      SDL_RWread(song->rw, &a, 1, 1);
+	      SDL_RWread(song->rw, &a, 1);
 	      a &= 0x7F;
 	    }
 	  switch(laststatus)
 	    {
 	    case 0: /* Note off */
-	      SDL_RWread(song->rw, &b, 1, 1);
+	      SDL_RWread(song->rw, &b, 1);
 	      b &= 0x7F;
 	      MIDIEVENT(song->at, ME_NOTEOFF, lastchan, a,b);
 
 	    case 1: /* Note on */
-	      SDL_RWread(song->rw, &b, 1, 1);
+	      SDL_RWread(song->rw, &b, 1);
 	      b &= 0x7F;
 	      MIDIEVENT(song->at, ME_NOTEON, lastchan, a,b);
 
 	    case 2: /* Key Pressure */
-	      SDL_RWread(song->rw, &b, 1, 1);
+	      SDL_RWread(song->rw, &b, 1);
 	      b &= 0x7F;
 	      MIDIEVENT(song->at, ME_KEYPRESSURE, lastchan, a, b);
 
 	    case 3: /* Control change */
-	      SDL_RWread(song->rw, &b, 1, 1);
+	      SDL_RWread(song->rw, &b, 1);
 	      b &= 0x7F;
 	      {
 		int control=255;
@@ -251,7 +251,7 @@ static MidiEventList *read_midi_event(MidiSong *song)
 	      break;
 
 	    case 6: /* Pitch wheel */
-	      SDL_RWread(song->rw, &b, 1, 1);
+	      SDL_RWread(song->rw, &b, 1);
 	      b &= 0x7F;
 	      MIDIEVENT(song->at, ME_PITCHWHEEL, lastchan, a, b);
 
@@ -290,7 +290,7 @@ static int read_track(MidiSong *song, int append)
     song->at=0;
 
   /* Check the formalities */
-  if (SDL_RWread(song->rw, tmp, 1, 4) != 4 || SDL_RWread(song->rw, &len, 4, 1) != 1)
+  if (SDL_RWread(song->rw, tmp, 4) != 4 || SDL_RWread(song->rw, &len, 4) != 4)
     {
       SNDDBG(("Can't read track header.\n"));
       return -1;
@@ -314,7 +314,7 @@ static int read_track(MidiSong *song, int append)
 	 * track data, skip any junk at the end.  */
 	  pos = SDL_RWtell(song->rw);
 	  if (pos < next_pos)
-	    SDL_RWseek(song->rw, next_pos - pos, RW_SEEK_CUR);
+	    SDL_RWseek(song->rw, next_pos - pos, SDL_RW_SEEK_CUR);
 	  return 0;
 	}
 
@@ -522,7 +522,7 @@ static MidiEvent *groom_list(MidiSong *song, Sint32 divisions,Sint32 *eventsp,
 MidiEvent *read_midi_file(MidiSong *song, Sint32 *count, Sint32 *sp)
 {
   Sint32 len, divisions;
-  Sint16 format, tracks, divisions_tmp;
+  Sint16 format = 0, tracks = 0, divisions_tmp = 0;
   int i;
   char tmp[4];
 
@@ -530,17 +530,17 @@ MidiEvent *read_midi_file(MidiSong *song, Sint32 *count, Sint32 *sp)
   song->at=0;
   song->evlist = NULL;
 
-  if (SDL_RWread(song->rw, tmp, 1, 4) != 4 || SDL_RWread(song->rw, &len, 4, 1) != 1)
+  if (SDL_RWread(song->rw, tmp, 4) != 4 || SDL_RWread(song->rw, &len, 4) != 4)
     {
       SNDDBG(("Not a MIDI file!\n"));
       return NULL;
     }
   if (SDL_memcmp(tmp, "RIFF", 4) == 0) { /* RMID ?? */
-    if (SDL_RWread(song->rw, tmp, 1, 4) != 4 || SDL_memcmp(tmp, "RMID", 4) != 0 ||
-	SDL_RWread(song->rw, tmp, 1, 4) != 4 || SDL_memcmp(tmp, "data", 4) != 0 ||
-	SDL_RWread(song->rw, tmp, 1, 4) != 4 ||
+    if (SDL_RWread(song->rw, tmp, 4) != 4 || SDL_memcmp(tmp, "RMID", 4) != 0 ||
+	SDL_RWread(song->rw, tmp, 4) != 4 || SDL_memcmp(tmp, "data", 4) != 0 ||
+	SDL_RWread(song->rw, tmp, 4) != 4 ||
 	/* SMF must begin from here onwards: */
-	SDL_RWread(song->rw, tmp, 1, 4) != 4 || SDL_RWread(song->rw, &len, 4, 1) != 1)
+	SDL_RWread(song->rw, tmp, 4) != 4 || SDL_RWread(song->rw, &len, 4) != 4)
       {
 	SNDDBG(("Not an RMID file!\n"));
 	return NULL;
@@ -554,9 +554,9 @@ MidiEvent *read_midi_file(MidiSong *song, Sint32 *count, Sint32 *sp)
     }
 
   format=tracks=divisions_tmp = -1;
-  SDL_RWread(song->rw, &format, 2, 1);
-  SDL_RWread(song->rw, &tracks, 2, 1);
-  SDL_RWread(song->rw, &divisions_tmp, 2, 1);
+  SDL_RWread(song->rw, &format, 2);
+  SDL_RWread(song->rw, &tracks, 2);
+  SDL_RWread(song->rw, &divisions_tmp, 2);
   format=SDL_SwapBE16(format);
   tracks=SDL_SwapBE16(tracks);
   divisions_tmp=SDL_SwapBE16(divisions_tmp);
@@ -572,7 +572,7 @@ MidiEvent *read_midi_file(MidiSong *song, Sint32 *count, Sint32 *sp)
   if (len > 6)
     {
       SNDDBG(("MIDI file header size %u bytes", len));
-      SDL_RWseek(song->rw, len-6, RW_SEEK_CUR); /* skip the excess */
+      SDL_RWseek(song->rw, len-6, SDL_RW_SEEK_CUR); /* skip the excess */
     }
   if (format<0 || format >2)
     {
