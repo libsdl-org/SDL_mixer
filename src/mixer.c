@@ -768,7 +768,6 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
     SDL_AudioSpec wavespec, *loaded;
     SDL_AudioCVT wavecvt;
     int samplesize;
-    int wavfree;        /* to decide how to free chunk->abuf. */
     Uint8 *resized_buf;
 
     /* rcg06012001 Make sure src is valid */
@@ -808,9 +807,7 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
     /* Seek backwards for compatibility with older loaders */
     SDL_RWseek(src, -4, RW_SEEK_CUR);
 
-    wavfree = 0;
     if (SDL_memcmp(magic, "WAVE", 4) == 0 || SDL_memcmp(magic, "RIFF", 4) == 0) {
-        wavfree = 1;
         loaded = SDL_LoadWAV_RW(src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
     } else if (SDL_memcmp(magic, "FORM", 4) == 0) {
         loaded = Mix_LoadAIFF_RW(src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
@@ -837,33 +834,21 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
         if (SDL_BuildAudioCVT(&wavecvt,
                 wavespec.format, wavespec.channels, wavespec.freq,
                 mixer.format, mixer.channels, mixer.freq) < 0) {
-            if (wavfree) {
-                SDL_FreeWAV(chunk->abuf);
-            } else {
-                SDL_free(chunk->abuf);
-            }
+            SDL_free(chunk->abuf);
             SDL_free(chunk);
             return(NULL);
         }
         samplesize = ((wavespec.format & 0xFF)/8)*wavespec.channels;
-        wavecvt.len = chunk->alen & ~(samplesize - 1);
+        wavecvt.len = chunk->alen & ~(samplesize-1);
         wavecvt.buf = (Uint8 *)SDL_calloc(1, wavecvt.len*wavecvt.len_mult);
         if (wavecvt.buf == NULL) {
             Mix_OutOfMemory();
-            if (wavfree) {
-                SDL_FreeWAV(chunk->abuf);
-            } else {
-                SDL_free(chunk->abuf);
-            }
+            SDL_free(chunk->abuf);
             SDL_free(chunk);
             return(NULL);
         }
         SDL_memcpy(wavecvt.buf, chunk->abuf, wavecvt.len);
-        if (wavfree) {
-            SDL_FreeWAV(chunk->abuf);
-        } else {
-            SDL_free(chunk->abuf);
-        }
+        SDL_free(chunk->abuf);
 
         /* Run the audio converter */
         if (SDL_ConvertAudio(&wavecvt) < 0) {
@@ -879,10 +864,9 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
             chunk->abuf = resized_buf;
         }
         chunk->alen = wavecvt.len_cvt;
-        wavfree = 0;
     }
 
-    chunk->allocated = (wavfree == 0) ? 1 : 2; /* see Mix_FreeChunk() */
+    chunk->allocated = 1;
     chunk->volume = MIX_MAX_VOLUME;
 
     return(chunk);
@@ -988,13 +972,8 @@ void Mix_FreeChunk(Mix_Chunk *chunk)
         }
         Mix_UnlockAudio();
         /* Actually free the chunk */
-        switch (chunk->allocated) {
-        case 1:
+        if (chunk->allocated) {
             SDL_free(chunk->abuf);
-            break;
-        case 2:
-            SDL_FreeWAV(chunk->abuf);
-            break;
         }
         SDL_free(chunk);
     }
