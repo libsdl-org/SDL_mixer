@@ -19,6 +19,8 @@ set(SDL2MIXER_CMD                   FALSE)
 set(SDL2MIXER_FLAC_LIBFLAC          FALSE)
 set(SDL2MIXER_FLAC_DRFLAC           TRUE)
 
+set(SDL2MIXER_GME                   FALSE)
+
 set(SDL2MIXER_MOD                   FALSE)
 set(SDL2MIXER_MOD_MODPLUG           FALSE)
 set(SDL2MIXER_MOD_XMP               FALSE)
