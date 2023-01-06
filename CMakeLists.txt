@@ -77,6 +77,9 @@ cmake_dependent_option(SDL3MIXER_FLAC_LIBFLAC_SHARED "Dynamically load LIBFLAC" 
 
 cmake_dependent_option(SDL3MIXER_FLAC_DRFLAC "Enable FLAC music using drflac" ON SDL3MIXER_FLAC OFF)
 
+option(SDL3MIXER_GME "Support loading GME music via game-music-emu" OFF)
+option(SDL3MIXER_GME_SHARED "Dynamically load libgme" "${SDL3MIXER_DEPS_SHARED}")
+
 option(SDL3MIXER_MOD "Support loading MOD music" ON)
 
 cmake_dependent_option(SDL3MIXER_MOD_MODPLUG "Support loading MOD music via modplug" OFF SDL3MIXER_MOD OFF)
@@ -206,6 +209,7 @@ add_library(SDL3_mixer
     src/codecs/music_drmp3.c
     src/codecs/music_flac.c
     src/codecs/music_fluidsynth.c
+    src/codecs/music_gme.c
     src/codecs/music_modplug.c
     src/codecs/music_mpg123.c
     src/codecs/music_nativemidi.c
@@ -406,7 +410,7 @@ endif()
 if(SDL3MIXER_VORBIS_TREMOR)
     target_compile_definitions(SDL3_mixer PRIVATE MUSIC_OGG OGG_USE_TREMOR)
     if(SDL3MIXER_VENDORED)
-        # vendored libogg alread handled
+        # vendored libogg already handled
         if(NOT TARGET ogg)
             message(FATAL_ERROR "ogg target not present")
         endif()
@@ -457,7 +461,7 @@ endif()
 if(SDL3MIXER_VORBIS_VORBISFILE)
     target_compile_definitions(SDL3_mixer PRIVATE MUSIC_OGG)
     if(SDL3MIXER_VENDORED)
-        # vendored libogg alread handled
+        # vendored libogg already handled
         if(NOT TARGET ogg)
             message(FATAL_ERROR "ogg target not present")
         endif()
@@ -501,7 +505,7 @@ endif()
 if(SDL3MIXER_FLAC_LIBFLAC)
     target_compile_definitions(SDL3_mixer PRIVATE MUSIC_FLAC_LIBFLAC)
     if(SDL3MIXER_VENDORED)
-        # vendored libogg alread handled
+        # vendored libogg already handled
         if(NOT TARGET ogg)
             message(FATAL_ERROR "ogg target not present")
         endif()
@@ -548,6 +552,47 @@ endif()
 
 if(SDL3MIXER_FLAC_DRFLAC)
     target_compile_definitions(SDL3_mixer PRIVATE MUSIC_FLAC_DRFLAC)
+endif()
+
+if(SDL3MIXER_GME)
+    target_compile_definitions(SDL3_mixer PRIVATE MUSIC_GME)
+    if(SDL3MIXER_VENDORED)
+        set(BUILD_SHARED_LIBS "${SDL3MIXER_GME_SHARED}")
+        set(ENABLE_UBSAN OFF CACHE BOOL "UB sanitizer")
+        set(BUILD_FRAMEWORK OFF CACHE BOOL "macos framework")
+        set(GME_ZLIB OFF CACHE BOOL "GME supports compressed formats")
+        message(STATUS "Using vendored libgme")
+        sdl_check_project_in_subfolder(external/libgme libgme SDL3MIXER_VENDORED)
+        add_subdirectory(external/libgme EXCLUDE_FROM_ALL)
+        add_library(gme::gme ALIAS gme)
+        if(SDL3MIXER_GME_SHARED)
+            list(APPEND INSTALL_EXTRA_TARGETS gme)
+        endif()
+        if(NOT SDL3MIXER_GME_SHARED)
+            list(APPEND PC_LIBS -l$<TARGET_FILE_BASE_NAME:gme>)
+        endif()
+    else()
+        message(STATUS "Using system libgme")
+        find_package(gme REQUIRED)
+        if(NOT SDL3MIXER_GME_SHARED)
+            list(APPEND PC_REQUIRES libgme)
+        endif()
+    endif()
+    if(SDL3MIXER_GME_SHARED)
+        target_include_directories(SDL3_mixer PRIVATE
+            $<TARGET_PROPERTY:gme::gme,INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:gme::gme,INTERFACE_INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:gme::gme,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
+        )
+        target_get_dynamic_library(dynamic_gme gme::gme)
+        message(STATUS "Dynamic libgme: ${dynamic_gme}")
+        target_compile_definitions(SDL3_mixer PRIVATE "GME_DYNAMIC=\"${dynamic_gme}\"")
+        if(SDL3MIXER_VENDORED)
+            add_dependencies(SDL3_mixer gme::gme)
+        endif()
+    else()
+        target_link_libraries(SDL3_mixer PRIVATE gme::gme)
+    endif()
 endif()
 
 if(SDL3MIXER_MOD_MODPLUG)
@@ -845,6 +890,7 @@ if(SDL3MIXER_INSTALL)
             "${CMAKE_CURRENT_BINARY_DIR}/SDL3_mixerConfigVersion.cmake"
             cmake/FindFLAC.cmake
             cmake/FindFluidSynth.cmake
+            cmake/Findgme.cmake
             cmake/Findlibxmp.cmake
             cmake/Findlibxmp-lite.cmake
             cmake/Findmodplug.cmake
