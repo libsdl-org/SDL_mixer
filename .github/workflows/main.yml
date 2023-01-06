@@ -119,7 +119,7 @@ jobs:
 
     - name: Setup (CMake)
       if: ${{ matrix.platform.cmake && !matrix.platform.msystem && !matrix.platform.msvc }}
-      uses: jwlawson/actions-setup-cmake@v1.12
+      uses: jwlawson/actions-setup-cmake@v1.13.1
       with:
         cmake-version: '3.16'
     - name: Configure (CMake)
