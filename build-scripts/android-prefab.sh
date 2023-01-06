@@ -42,9 +42,9 @@ android_api=19
 android_ndk=21
 android_stl="c++_shared"
 
-sdlmixer_major=$(sed -ne 's/^#define SDL_MIXER_MAJOR_VERSION  *//p' "${sdlmixer_root}/include/SDL_mixer.h")
-sdlmixer_minor=$(sed -ne 's/^#define SDL_MIXER_MINOR_VERSION  *//p' "${sdlmixer_root}/include/SDL_mixer.h")
-sdlmixer_patch=$(sed -ne 's/^#define SDL_MIXER_PATCHLEVEL  *//p' "${sdlmixer_root}/include/SDL_mixer.h")
+sdlmixer_major=$(sed -ne 's/^#define SDL_MIXER_MAJOR_VERSION  *//p' "${sdlmixer_root}/include/SDL3/SDL_mixer.h")
+sdlmixer_minor=$(sed -ne 's/^#define SDL_MIXER_MINOR_VERSION  *//p' "${sdlmixer_root}/include/SDL3/SDL_mixer.h")
+sdlmixer_patch=$(sed -ne 's/^#define SDL_MIXER_PATCHLEVEL  *//p' "${sdlmixer_root}/include/SDL3/SDL_mixer.h")
 sdlmixer_version="${sdlmixer_major}.${sdlmixer_minor}.${sdlmixer_patch}"
 echo "Building Android prefab package for SDL_mixer version $sdlmixer_version"
 
@@ -67,21 +67,21 @@ build_cmake_projects() {
         for build_shared_libs in ON OFF; do
             echo "Configuring CMake project for $android_abi (shared=${build_shared_libs})"
             cmake -S "${sdlmixer_root}" -B "${build_root}/build_${android_abi}/shared_${build_shared_libs}" \
-                -DSDL2MIXER_DEPS_SHARED=ON \
-                -DSDL2MIXER_VENDORED=ON \
-                -DSDL2MIXER_FLAC=ON \
+                -DSDL3MIXER_DEPS_SHARED=ON \
+                -DSDL3MIXER_VENDORED=ON \
+                -DSDL3MIXER_FLAC=ON \
                 -DWITH_ASM=OFF \
-                -DSDL2MIXER_FLAC_LIBFLAC=ON \
-                -DSDL2MIXER_MOD=ON \
-                -DSDL2MIXER_MOD_MODPLUG=OFF \
-                -DSDL2MIXER_MOD_XMP=ON \
-                -DSDL2MIXER_MP3=ON \
-                -DSDL2MIXER_MP3_MPG123=ON \
-                -DSDL2MIXER_MIDI=ON \
-                -DSDL2MIXER_MIDI_TIMIDITY=ON \
-                -DSDL2MIXER_OPUS=ON \
-                -DSDL2MIXER_VORBIS=STB \
-                -DSDL2MIXER_WAVPACK=ON \
+                -DSDL3MIXER_FLAC_LIBFLAC=ON \
+                -DSDL3MIXER_MOD=ON \
+                -DSDL3MIXER_MOD_MODPLUG=OFF \
+                -DSDL3MIXER_MOD_XMP=ON \
+                -DSDL3MIXER_MP3=ON \
+                -DSDL3MIXER_MP3_MPG123=ON \
+                -DSDL3MIXER_MIDI=ON \
+                -DSDL3MIXER_MIDI_TIMIDITY=ON \
+                -DSDL3MIXER_OPUS=ON \
+                -DSDL3MIXER_VORBIS=STB \
+                -DSDL3MIXER_WAVPACK=ON \
                 -DCMAKE_TOOLCHAIN_FILE="$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake" \
                 -DSDL${sdlmixer_major}_DIR="${sdl_build_root}/build_${android_abi}/prefix/lib/cmake/SDL${sdlmixer_major}" \
                 -DANDROID_PLATFORM=${ANDROID_PLATFORM} \
@@ -212,8 +212,8 @@ create_shared_sdl_mixer_module() {
   "library_name": "libSDL${sdlmixer_major}_mixer"
 }
 EOF
-        mkdir -p "${sdl_moduleworkdir}/include"
-        cp -r "${abi_build_prefix}/include/SDL${sdlmixer_major}/"* "${sdl_moduleworkdir}/include/"
+        mkdir -p "${sdl_moduleworkdir}/include/SDL${sdlmixer_major}"
+        cp -r "${abi_build_prefix}/include/SDL${sdlmixer_major}/"* "${sdl_moduleworkdir}/include/SDL${sdlmixer_major}"
 
         abi_sdllibdir="${sdl_moduleworkdir}/libs/android.${android_abi}"
         mkdir -p "${abi_sdllibdir}"
@@ -244,8 +244,8 @@ create_static_sdl_mixer_module() {
   "library_name": "libSDL${sdlmixer_major}_mixer"
 }
 EOF
-        mkdir -p "${sdl_moduleworkdir}/include"
-        cp -r "${abi_build_prefix}/include/SDL${sdlmixer_major}/"* "${sdl_moduleworkdir}/include"
+        mkdir -p "${sdl_moduleworkdir}/include/SDL${sdlmixer_major}"
+        cp -r "${abi_build_prefix}/include/SDL${sdlmixer_major}/"* "${sdl_moduleworkdir}/include/SDL${sdlmixer_major}"
 
         abi_sdllibdir="${sdl_moduleworkdir}/libs/android.${android_abi}"
         mkdir -p "${abi_sdllibdir}"
