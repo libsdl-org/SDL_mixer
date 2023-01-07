@@ -15,15 +15,15 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { name: Windows (MSVC+CMake),         os: windows-2019, shell: sh,   cmake: '-DSDL2MIXER_VENDORED=ON -GNinja', msvc: 1, shared: 1, static: 0 }
+        - { name: Windows (MSVC+CMake),         os: windows-2019, shell: sh,   cmake: '-DSDL3MIXER_VENDORED=ON -GNinja', msvc: 1, shared: 1, static: 0 }
         - { name: Windows (mingw32+autotools),  os: windows-latest, shell: 'msys2 {0}', msystem: mingw32, msys-env: mingw-w64-i686, shared: 1, static: 1 }
         - { name: Windows (mingw64+CMake),      os: windows-latest, shell: 'msys2 {0}', msystem: mingw64, msys-env: mingw-w64-x86_64, shared: 1, static: 0,
-            cmake: '-DSDL2MIXER_VENDORED=OFF -G "Ninja Multi-Config"' }
+            cmake: '-DSDL3MIXER_VENDORED=OFF -G "Ninja Multi-Config"' }
         - { name: Linux (autotools),            os: ubuntu-20.04,   shell: sh, shared: 1, static: 1}
-        - { name: Linux (CMake),                os: ubuntu-20.04,   shell: sh, cmake: '-DSDL2MIXER_VENDORED=ON -GNinja', shared: 1, static: 0 }
-        - { name: 'Linux (CMake, static)',      os: ubuntu-20.04,   shell: sh, cmake: '-DSDL2MIXER_VENDORED=ON -DBUILD_SHARED_LIBS=OFF -GNinja', shared: 0, static: 1 }
+        - { name: Linux (CMake),                os: ubuntu-20.04,   shell: sh, cmake: '-DSDL3MIXER_VENDORED=ON -GNinja', shared: 1, static: 0 }
+        - { name: 'Linux (CMake, static)',      os: ubuntu-20.04,   shell: sh, cmake: '-DSDL3MIXER_VENDORED=ON -DBUILD_SHARED_LIBS=OFF -GNinja', shared: 0, static: 1 }
         - { name: Macos (autotools),            os: macos-latest,   shell: sh, shared: 1, static: 1 }
-        - { name: Macos (CMake),                os: macos-latest,   shell: sh, cmake: '-DSDL2MIXER_VENDORED=ON -GNinja', shared: 1, static: 0 }
+        - { name: Macos (CMake),                os: macos-latest,   shell: sh, cmake: '-DSDL3MIXER_VENDORED=ON -GNinja', shared: 1, static: 0 }
 
 
     steps:
@@ -33,12 +33,13 @@ jobs:
       with:
         msystem: ${{ matrix.platform.msystem }}
         install: >-
-          ${{ matrix.platform.msys-env }}-SDL2
+          ${{ matrix.platform.msys-env }}-SDL3
           ${{ matrix.platform.msys-env }}-autotools
           ${{ matrix.platform.msys-env }}-cmake
           ${{ matrix.platform.msys-env }}-gcc
           ${{ matrix.platform.msys-env }}-flac
           ${{ matrix.platform.msys-env }}-fluidsynth
+          ${{ matrix.platform.msys-env }}-libgme
           ${{ matrix.platform.msys-env }}-libvorbis
           ${{ matrix.platform.msys-env }}-libxmp
           ${{ matrix.platform.msys-env }}-mpg123
@@ -50,7 +51,7 @@ jobs:
       if: runner.os == 'macOS'
       run: |
         brew install \
-          sdl2 \
+          sdl3 \
           autoconf \
           automake \
           libtool \
@@ -58,6 +59,7 @@ jobs:
           pkg-config \
           flac \
           fluidsynth \
+          game-music-emu \
           libvorbis \
           libxmp \
           mpg123 \
@@ -72,9 +74,10 @@ jobs:
           autoconf \
           automake \
           cmake \
-          libsdl2-dev \
+          libsdl3-dev \
           libflac-dev \
           libfluidsynth-dev \
+          libgme-dev \
           libmpg123-dev \
           libopusfile-dev \
           libvorbis-dev \
@@ -93,7 +96,7 @@ jobs:
       run: |
         echo "::group::Downloading SDL"
         .github/fetch_sdl_vc.ps1
-        echo "SDL2_DIR=$Env:GITHUB_WORKSPACE/SDL2-devel-VC" >> $Env:GITHUB_ENV
+        echo "SDL3_DIR=$Env:GITHUB_WORKSPACE/SDL3-devel-VC" >> $Env:GITHUB_ENV
         echo "::endgroup::"
         echo "::group::Downloading yasm"
         .github/fetch_yasm.ps1
@@ -116,7 +119,7 @@ jobs:
 
     - name: Setup (CMake)
       if: ${{ matrix.platform.cmake && !matrix.platform.msystem && !matrix.platform.msvc }}
-      uses: jwlawson/actions-setup-cmake@v1.12
+      uses: jwlawson/actions-setup-cmake@v1.13.1
       with:
         cmake-version: '3.16'
     - name: Configure (CMake)
@@ -125,15 +128,17 @@ jobs:
         set -- \
           -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
           -DCMAKE_BUILD_TYPE=Release \
-          -DSDL2MIXER_FLAC=ON \
-          -DSDL2MIXER_FLAC_LIBFLAC=ON \
-          -DSDL2MIXER_MOD_XMP=ON \
-          -DSDL2MIXER_MP3_MPG123=ON \
-          -DSDL2MIXER_OPUS=ON \
-          -DSDL2MIXER_VORBIS=VORBISFILE \
+          -DSDL3MIXER_FLAC=ON \
+          -DSDL3MIXER_FLAC_LIBFLAC=ON \
+          -DSDL3MIXER_GME=ON \
+          -DSDL3MIXER_MOD_XMP=ON \
+          -DSDL3MIXER_MP3_MPG133=ON \
+          -DSDL3MIXER_OPUS=ON \
+          -DSDL3MIXER_VORBIS=VORBISFILE \
+          -DSDL3MIXER_WERROR=ON \
           -DCMAKE_INSTALL_PREFIX=prefix_cmake \
           ${NULL+}
-        
+
         cmake -B build \
           "$@" \
           ${{ matrix.platform.cmake }}
@@ -147,7 +152,7 @@ jobs:
         set -eu
         rm -fr prefix_cmake
         cmake --install build/ --config Release
-        echo "SDL2_mixer_DIR=$(pwd)/prefix_cmake" >> $GITHUB_ENV
+        echo "SDL3_mixer_DIR=$(pwd)/prefix_cmake" >> $GITHUB_ENV
         ( cd prefix_cmake; find . ) | LC_ALL=C sort -u
 
     - name: Configure (Autotools)
@@ -173,14 +178,14 @@ jobs:
         parallel="$(getconf _NPROCESSORS_ONLN)"
         rm -rf prefix_autotools
         make -j"${parallel}" -C build-autotools install V=1
-        echo "SDL2_mixer_DIR=$(pwd)/prefix_autotools" >> $GITHUB_ENV
+        echo "SDL3_mixer_DIR=$(pwd)/prefix_autotools" >> $GITHUB_ENV
         ( cd prefix_autotools; find ) | LC_ALL=C sort -u
 
     - name: Verify CMake configuration files
       run: |
         cmake -S cmake/test -B cmake_config_build \
           -DCMAKE_BUILD_TYPE=Release \
-          -DCMAKE_PREFIX_PATH="${{ env.SDL2_mixer_DIR }};${{ env.SDL2_DIR }}" \
+          -DCMAKE_PREFIX_PATH="${{ env.SDL3_mixer_DIR }};${{ env.SDL3_DIR }}" \
           -DTEST_SHARED=${{ matrix.platform.shared }} \
           -DTEST_STATIC=${{ matrix.platform.static }}
         cmake --build cmake_config_build --verbose --config Release

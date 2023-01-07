@@ -28,6 +28,5 @@ if(libxmp_lite_FOUND)
             INTERFACE_LINK_LIBRARIES "${libxmp_lite_LINK_LIBRARIES}"
             INTERFACE_LINK_FLAGS "${libxmp_lite_LINK_FLAGS}"
         )
-        endif()
     endif()
 endif()

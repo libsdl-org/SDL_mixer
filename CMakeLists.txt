@@ -8,17 +8,17 @@ set(MINOR_VERSION 0)
 set(MICRO_VERSION 0)
 set(SDL_REQUIRED_VERSION 3.0.0)
 
-include(PrivateSdlFunctions)
-sdl_calculate_derived_version_variables()
-
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
     message(FATAL_ERROR "Prevented in-tree built. Please create a build directory outside of the SDL_mixer source code and call cmake from there")
 endif()
 
 project(SDL3_mixer
     LANGUAGES C
-    VERSION "${FULL_VERSION}"
+    VERSION "${MAJOR_VERSION}.${MINOR_VERSION}.${MICRO_VERSION}"
 )
+
+include(PrivateSdlFunctions)
+sdl_calculate_derived_version_variables(${MAJOR_VERSION} ${MINOR_VERSION} ${MICRO_VERSION})
 
 message(STATUS "Configuring ${PROJECT_NAME} ${PROJECT_VERSION}")
 
@@ -38,11 +38,6 @@ if(POLICY CMP0112)
     cmake_policy(SET CMP0112 NEW)
 endif()
 
-# Set defaults preventing destination file conflicts
-set(SDL3MIXER_DEBUG_POSTFIX "d"
-    CACHE STRING "Name suffix for debug builds")
-mark_as_advanced(SDL3MIXER_DEBUG_POSTFIX)
-
 # Assume MSVC projects don't have a package manager and need vendored dependencies (by default).
 # Most other platforms have some kind of package manager.
 # FIXME: consider a package manager such as conan/vcpkg instead of vendoring
@@ -60,12 +55,10 @@ include(GNUInstallDirs)
 option(CMAKE_POSITION_INDEPENDENT_CODE "Build static libraries with -fPIC" ON)
 option(BUILD_SHARED_LIBS "Build the library as a shared library" ON)
 
-# Save BUILD_SHARED_LIBS variable as soon as possible
-set(SDL3MIXER_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
-
 option(SDL3MIXER_INSTALL "Enable SDL3mixer install target" ${SDL3MIXER_ROOTPROJECT})
 option(SDL3MIXER_DEPS_SHARED "Default value for loading dependencies dynamically" ON)
 option(SDL3MIXER_VENDORED "Use vendored third-party libraries" ${vendored_default})
+option(SDL3MIXER_WERROR "Treat warnings as errors" OFF)
 
 option(SDL3MIXER_SAMPLES "Build the SDL3_mixer sample program(s)" ${SDL3MIXER_SAMPLES_DEFAULT})
 cmake_dependent_option(SDL3MIXER_SAMPLES_INSTALL "Install the SDL3_mixer sample program(s)" OFF "SDL3MIXER_SAMPLES;SDL3MIXER_INSTALL" OFF)
@@ -83,6 +76,9 @@ cmake_dependent_option(SDL3MIXER_FLAC_LIBFLAC "Enable FLAC music using libFLAC" 
 cmake_dependent_option(SDL3MIXER_FLAC_LIBFLAC_SHARED "Dynamically load LIBFLAC" "${SDL3MIXER_DEPS_SHARED}" SDL3MIXER_FLAC_LIBFLAC OFF)
 
 cmake_dependent_option(SDL3MIXER_FLAC_DRFLAC "Enable FLAC music using drflac" ON SDL3MIXER_FLAC OFF)
+
+option(SDL3MIXER_GME "Support loading GME music via game-music-emu" OFF)
+option(SDL3MIXER_GME_SHARED "Dynamically load libgme" "${SDL3MIXER_DEPS_SHARED}")
 
 option(SDL3MIXER_MOD "Support loading MOD music" ON)
 
@@ -172,6 +168,9 @@ else()
     set(SDL3MIXER_OGG FALSE)
 endif()
 
+# Save BUILD_SHARED_LIBS variable
+set(SDL3MIXER_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
+
 if(SDL3MIXER_BUILD_SHARED_LIBS)
     set(sdl3_mixer_export_name SDL3_mixer)
     set(sdl3_mixer_install_name_infix shared)
@@ -182,7 +181,23 @@ else()
     set(sdl3_target_name SDL3::SDL3-static)
 endif()
 
-sdl_find_sdl3(${sdl3_target_name} ${SDL_REQUIRED_VERSION})
+if(NOT TARGET ${sdl3_target_name})
+    find_package(SDL3 ${SDL_REQUIRED_VERSION} REQUIRED)
+endif()
+
+add_library(sdl3mixer_build_options INTERFACE)
+if(MSVC)
+    target_compile_options(sdl3mixer_build_options INTERFACE /W2)
+else()
+    target_compile_options(sdl3mixer_build_options INTERFACE -Wall -Wextra)
+endif()
+if(SDL3MIXER_WERROR)
+    if(MSVC)
+        target_compile_options(sdl3mixer_build_options INTERFACE /WX)
+    else()
+        target_compile_options(sdl3mixer_build_options INTERFACE -Werror)
+    endif()
+endif()
 
 set(BUILD_SHARED_LIBS ${SDL3MIXER_BUILD_SHARED_LIBS})
 add_library(SDL3_mixer
@@ -194,6 +209,7 @@ add_library(SDL3_mixer
     src/codecs/music_drmp3.c
     src/codecs/music_flac.c
     src/codecs/music_fluidsynth.c
+    src/codecs/music_gme.c
     src/codecs/music_modplug.c
     src/codecs/music_mpg123.c
     src/codecs/music_nativemidi.c
@@ -229,6 +245,7 @@ target_compile_definitions(SDL3_mixer PRIVATE
     SDL_BUILD_MICRO_VERSION=${MICRO_VERSION}
 )
 target_link_libraries(SDL3_mixer PRIVATE $<BUILD_INTERFACE:${sdl3_target_name}>)
+target_link_libraries(SDL3_mixer PRIVATE $<BUILD_INTERFACE:sdl3mixer_build_options>)
 if(WIN32 AND BUILD_SHARED_LIBS)
     target_sources(SDL3_mixer PRIVATE
         version.rc
@@ -240,56 +257,36 @@ set_target_properties(SDL3_mixer PROPERTIES
     C_VISIBILITY_PRESET "hidden"
 )
 if(NOT ANDROID)
-    set_target_properties(SDL3_mixer PROPERTIES
-        DEBUG_POSTFIX "${SDL3MIXER_DEBUG_POSTFIX}"
-    )
     if(APPLE)
         # the SOVERSION property corresponds to the compatibility version and VERSION corresponds to the current version
         # https://cmake.org/cmake/help/latest/prop_tgt/SOVERSION.html#mach-o-versions
         set_target_properties(SDL3_mixer PROPERTIES
-            SOVERSION "${DYLIB_COMPATIBILITY_VERSION}"
+            SOVERSION "${DYLIB_COMPAT_VERSION}"
             VERSION "${DYLIB_CURRENT_VERSION}"
         )
     else()
         set_target_properties(SDL3_mixer PROPERTIES
-            SOVERSION "${LT_MAJOR}"
-            VERSION "${LT_VERSION}"
+            SOVERSION "${SO_VERSION_MAJOR}"
+            VERSION "${SO_VERSION}"
         )
     endif()
 endif()
-if(SDL3MIXER_BUILD_SHARED_LIBS AND (APPLE OR (UNIX AND NOT ANDROID)))
-    add_custom_command(TARGET SDL3_mixer POST_BUILD
-        COMMAND "${CMAKE_COMMAND}" -E create_symlink "$<TARGET_SONAME_FILE_NAME:SDL3_mixer>" "libSDL3_mixer$<$<CONFIG:Debug>:${SDL3MIXER_DEBUG_POSTFIX}>$<TARGET_FILE_SUFFIX:SDL3_mixer>"
-        # BYPRODUCTS "libSDL3_mixer$<$<CONFIG:Debug>:${SDL3MIXER_DEBUG_POSTFIX}>$<TARGET_FILE_SUFFIX:SDL3_mixer>" # Needs CMake 3.20
-        WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
-    )
-endif()
 if(SDL3MIXER_BUILD_SHARED_LIBS)
-    if(WIN32 OR OS2)
+    if(WIN32)
         set_target_properties(SDL3_mixer PROPERTIES
             PREFIX ""
         )
     endif()
-    if(OS2)
-        # OS/2 doesn't support a DLL name longer than 8 characters.
-        set_target_properties(SDL3_mixer PROPERTIES
-            OUTPUT_NAME "SDL3mix"
-        )
-    elseif(UNIX AND NOT ANDROID)
-        set_target_properties(SDL3_mixer PROPERTIES
-            OUTPUT_NAME "SDL3_mixer-${LT_RELEASE}"
-        )
-    endif()
 else()
-    if(MSVC OR (WATCOM AND (WIN32 OR OS2)))
+    if(MSVC)
         set_target_properties(SDL3_mixer PROPERTIES
             OUTPUT_NAME "SDL3_mixer-static"
         )
     endif()
 endif()
 
+# Use `Compatible Interface Properties` to ensure a shared SDL3_mixer is linked to a shared SDL3 library
 if(SDL3MIXER_BUILD_SHARED_LIBS)
-    # Use `Compatible Interface Properties` to ensure a shared SDL3_mixer is linked to a shared SDL3 library
     set_property(TARGET SDL3_mixer PROPERTY INTERFACE_SDL3_SHARED ${SDL3MIXER_BUILD_SHARED_LIBS})
     set_property(TARGET SDL3_mixer APPEND PROPERTY COMPATIBLE_INTERFACE_BOOL SDL3_SHARED)
 endif()
@@ -343,7 +340,7 @@ endif()
 if(SDL3MIXER_OPUS)
     target_compile_definitions(SDL3_mixer PRIVATE MUSIC_OPUS)
     if(SDL3MIXER_VENDORED)
-        # vendored libogg alread handled
+        # vendored libogg already handled
         if(NOT TARGET ogg)
             message(FATAL_ERROR "ogg target not present")
         endif()
@@ -413,7 +410,7 @@ endif()
 if(SDL3MIXER_VORBIS_TREMOR)
     target_compile_definitions(SDL3_mixer PRIVATE MUSIC_OGG OGG_USE_TREMOR)
     if(SDL3MIXER_VENDORED)
-        # vendored libogg alread handled
+        # vendored libogg already handled
         if(NOT TARGET ogg)
             message(FATAL_ERROR "ogg target not present")
         endif()
@@ -464,7 +461,7 @@ endif()
 if(SDL3MIXER_VORBIS_VORBISFILE)
     target_compile_definitions(SDL3_mixer PRIVATE MUSIC_OGG)
     if(SDL3MIXER_VENDORED)
-        # vendored libogg alread handled
+        # vendored libogg already handled
         if(NOT TARGET ogg)
             message(FATAL_ERROR "ogg target not present")
         endif()
@@ -508,7 +505,7 @@ endif()
 if(SDL3MIXER_FLAC_LIBFLAC)
     target_compile_definitions(SDL3_mixer PRIVATE MUSIC_FLAC_LIBFLAC)
     if(SDL3MIXER_VENDORED)
-        # vendored libogg alread handled
+        # vendored libogg already handled
         if(NOT TARGET ogg)
             message(FATAL_ERROR "ogg target not present")
         endif()
@@ -555,6 +552,47 @@ endif()
 
 if(SDL3MIXER_FLAC_DRFLAC)
     target_compile_definitions(SDL3_mixer PRIVATE MUSIC_FLAC_DRFLAC)
+endif()
+
+if(SDL3MIXER_GME)
+    target_compile_definitions(SDL3_mixer PRIVATE MUSIC_GME)
+    if(SDL3MIXER_VENDORED)
+        set(BUILD_SHARED_LIBS "${SDL3MIXER_GME_SHARED}")
+        set(ENABLE_UBSAN OFF CACHE BOOL "UB sanitizer")
+        set(BUILD_FRAMEWORK OFF CACHE BOOL "macos framework")
+        set(GME_ZLIB OFF CACHE BOOL "GME supports compressed formats")
+        message(STATUS "Using vendored libgme")
+        sdl_check_project_in_subfolder(external/libgme libgme SDL3MIXER_VENDORED)
+        add_subdirectory(external/libgme EXCLUDE_FROM_ALL)
+        add_library(gme::gme ALIAS gme)
+        if(SDL3MIXER_GME_SHARED)
+            list(APPEND INSTALL_EXTRA_TARGETS gme)
+        endif()
+        if(NOT SDL3MIXER_GME_SHARED)
+            list(APPEND PC_LIBS -l$<TARGET_FILE_BASE_NAME:gme>)
+        endif()
+    else()
+        message(STATUS "Using system libgme")
+        find_package(gme REQUIRED)
+        if(NOT SDL3MIXER_GME_SHARED)
+            list(APPEND PC_REQUIRES libgme)
+        endif()
+    endif()
+    if(SDL3MIXER_GME_SHARED)
+        target_include_directories(SDL3_mixer PRIVATE
+            $<TARGET_PROPERTY:gme::gme,INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:gme::gme,INTERFACE_INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:gme::gme,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
+        )
+        target_get_dynamic_library(dynamic_gme gme::gme)
+        message(STATUS "Dynamic libgme: ${dynamic_gme}")
+        target_compile_definitions(SDL3_mixer PRIVATE "GME_DYNAMIC=\"${dynamic_gme}\"")
+        if(SDL3MIXER_VENDORED)
+            add_dependencies(SDL3_mixer gme::gme)
+        endif()
+    else()
+        target_link_libraries(SDL3_mixer PRIVATE gme::gme)
+    endif()
 endif()
 
 if(SDL3MIXER_MOD_MODPLUG)
@@ -799,6 +837,9 @@ if(SDL3MIXER_WAVPACK)
     endif()
 endif()
 
+# Restore BUILD_SHARED_LIBS
+set(BUILD_SHARED_LIBS ${SDL3MIXER_BUILD_SHARED_LIBS})
+
 if(SDL3MIXER_INSTALL)
     install(
         TARGETS SDL3_mixer
@@ -806,7 +847,6 @@ if(SDL3MIXER_INSTALL)
         ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT devel
         LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT library
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}" COMPONENT library
-        PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/SDL3" COMPONENT devel
     )
     install(FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/include/SDL3/SDL_mixer.h"
@@ -823,89 +863,65 @@ if(SDL3MIXER_INSTALL)
         )
     endif()
 
-    ##### export files #####
     if(WIN32 AND NOT MINGW)
-        set(SDLMIXER_INSTALL_CMAKEDIR_DEFAULT "cmake")
+        set(SDL3MIXER_INSTALL_CMAKEDIR_ROOT_DEFAULT "cmake")
     else()
-        set(SDLMIXER_INSTALL_CMAKEDIR_DEFAULT "${CMAKE_INSTALL_LIBDIR}/cmake/SDL3_mixer")
+        set(SDL3MIXER_INSTALL_CMAKEDIR_ROOT_DEFAULT "${CMAKE_INSTALL_LIBDIR}/cmake")
     endif()
-    set(SDLMIXER_INSTALL_CMAKEDIR "${SDLMIXER_INSTALL_CMAKEDIR_DEFAULT}" CACHE STRING "Location where to install SDL3_mixerConfig.cmake")
+    set(SDL3MIXER_INSTALL_CMAKEDIR_ROOT "${SDL3MIXER_INSTALL_CMAKEDIR_ROOT_DEFAULT}" CACHE STRING "Root folder where to install SDL3Config.cmake related files (SDL3 subfolder for MSVC projects)")
 
-    configure_package_config_file(SDL3_mixerConfig.cmake.in SDL3_mixerConfig.cmake
-        INSTALL_DESTINATION "${SDLMIXER_INSTALL_CMAKEDIR}"
+    if(WIN32 AND NOT MINGW)
+        set(SDL3MIXER_INSTALL_CMAKEDIR "${SDL3MIXER_INSTALL_CMAKEDIR_ROOT}")
+        set(LICENSES_PREFIX "licenses/SDL3_mixer")
+    else()
+        set(SDL3MIXER_INSTALL_CMAKEDIR "${SDL3MIXER_INSTALL_CMAKEDIR_ROOT}/SDL3_mixer")
+        set(LICENSES_PREFIX "${CMAKE_INSTALL_DATAROOTDIR}/licenses/SDL3_mixer")
+    endif()
+
+    configure_package_config_file(cmake/SDL3_mixerConfig.cmake.in SDL3_mixerConfig.cmake
+        INSTALL_DESTINATION "${SDL3MIXER_INSTALL_CMAKEDIR}"
     )
     write_basic_package_version_file("${PROJECT_BINARY_DIR}/SDL3_mixerConfigVersion.cmake"
-        VERSION ${FULL_VERSION}
         COMPATIBILITY AnyNewerVersion
     )
     install(
         FILES
             "${CMAKE_CURRENT_BINARY_DIR}/SDL3_mixerConfig.cmake"
             "${CMAKE_CURRENT_BINARY_DIR}/SDL3_mixerConfigVersion.cmake"
-        DESTINATION "${SDLMIXER_INSTALL_CMAKEDIR}"
+            cmake/FindFLAC.cmake
+            cmake/FindFluidSynth.cmake
+            cmake/Findgme.cmake
+            cmake/Findlibxmp.cmake
+            cmake/Findlibxmp-lite.cmake
+            cmake/Findmodplug.cmake
+            cmake/FindOpusFile.cmake
+            cmake/FindMPG123.cmake
+            cmake/FindVorbis.cmake
+            cmake/Findtremor.cmake
+            cmake/Findwavpack.cmake
+        DESTINATION "${SDL3MIXER_INSTALL_CMAKEDIR}"
         COMPONENT devel
     )
-    if(NOT SDL3MIXER_BUILD_SHARED_LIBS)
-        install(
-            FILES
-                cmake/FindFLAC.cmake
-                cmake/FindFluidSynth.cmake
-                cmake/Findlibxmp.cmake
-                cmake/Findlibxmp-lite.cmake
-                cmake/Findmodplug.cmake
-                cmake/FindOpusFile.cmake
-                cmake/FindMPG123.cmake
-                cmake/FindVorbis.cmake
-                cmake/Findtremor.cmake
-                cmake/Findwavpack.cmake
-            DESTINATION "${SDLMIXER_INSTALL_CMAKEDIR}"
-            COMPONENT devel
-        )
-    endif()
     install(EXPORT SDL3MixerTargets
         FILE SDL3_mixer-${sdl3_mixer_install_name_infix}-targets.cmake
         NAMESPACE SDL3_mixer::
-        DESTINATION "${SDLMIXER_INSTALL_CMAKEDIR}"
+        DESTINATION "${SDL3MIXER_INSTALL_CMAKEDIR}"
         COMPONENT devel
     )
 
-    set(VERSION ${FULL_VERSION})
-    set(SDL_VERSION ${SDL_REQUIRED_VERSION})
-    set(prefix "${CMAKE_INSTALL_PREFIX}")
-    set(exec_prefix "\${prefix}")
-    set(libdir "\${exec_prefix}/${CMAKE_INSTALL_LIBDIR}")
-    set(bindir "\${exec_prefix}/bin")
-    set(includedir "\${prefix}/${CMAKE_INSTALL_INCLUDEDIR}")
     string(JOIN " " PC_REQUIRES ${PC_REQUIRES})
     string(JOIN " " PC_LIBS ${PC_LIBS})
-    configure_file(SDL3_mixer.pc.in ${CMAKE_CURRENT_BINARY_DIR}/SDL3_mixer.pc.intermediate @ONLY)
-    file(GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/SDL3_mixer-$<CONFIG>.pc" INPUT "${CMAKE_CURRENT_BINARY_DIR}/SDL3_mixer.pc.intermediate")
+    configure_file(cmake/sdl3-mixer.pc.in sdl3-mixer.pc @ONLY)
 
-    set(PC_DESTDIR)
     if(CMAKE_SYSTEM_NAME MATCHES FreeBSD)
         # FreeBSD uses ${PREFIX}/libdata/pkgconfig
         set(PC_DESTDIR "libdata/pkgconfig")
     else()
         set(PC_DESTDIR "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
     endif()
-    # Always install SDL3_mixer.pc file: libraries might be different between config modes
-    install(CODE "
-        # FIXME: use file(COPY_FILE) if minimum CMake version >= 3.21
-        execute_process(COMMAND \"\${CMAKE_COMMAND}\" -E copy_if_different
-            \"${CMAKE_CURRENT_BINARY_DIR}/SDL3_mixer-$<CONFIG>.pc\"
-            \"${CMAKE_CURRENT_BINARY_DIR}/SDL3_mixer.pc\")
-        file(INSTALL DESTINATION \"\${CMAKE_INSTALL_PREFIX}/${PC_DESTDIR}\"
-            TYPE FILE
-            FILES \"${CMAKE_CURRENT_BINARY_DIR}/SDL3_mixer.pc\")" COMPONENT devel)
-
-    if(SDL3MIXER_BUILD_SHARED_LIBS AND (APPLE OR (UNIX AND NOT ANDROID)))
-        install(
-            FILES
-                "${PROJECT_BINARY_DIR}/libSDL3_mixer$<$<CONFIG:Debug>:${SDL3MIXER_DEBUG_POSTFIX}>$<TARGET_FILE_SUFFIX:SDL3_mixer>"
-            DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-            COMPONENT devel
-        )
-    endif()
+    # Always install sdl3-mixer.pc file: libraries might be different between config modes
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/sdl3-mixer.pc"
+        DESTINATION "${PC_DESTDIR}" COMPONENT devel)
 
     install(FILES "LICENSE.txt"
         DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/licenses/${PROJECT_NAME}"
@@ -918,11 +934,6 @@ if(SDL3MIXER_SAMPLES)
     add_executable(playwave playwave.c)
 
     foreach(prog playmus playwave)
-        # FIXME: mingw should be handled by SDL3::SDL3(-static) target
-        if(MINGW)
-            target_link_libraries(${prog} PRIVATE mingw32)
-            target_link_options(${prog} PRIVATE -mwindows)
-        endif()
         target_link_libraries(${prog} PRIVATE SDL3_mixer::${sdl3_mixer_export_name})
         target_link_libraries(${prog} PRIVATE ${sdl3_target_name})
 
@@ -932,14 +943,4 @@ if(SDL3MIXER_SAMPLES)
             )
         endif()
     endforeach()
-endif()
-
-add_library(SDL3::mixer INTERFACE IMPORTED GLOBAL)
-set_target_properties(SDL3::mixer PROPERTIES
-    INTERFACE_LINK_LIBRARIES "SDL3_mixer"
-)
-if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.17")
-    set_target_properties(SDL3::mixer PROPERTIES
-        DEPRECATION "Use SDL3_mixer::SDL3_mixer or SDL3_mixer::SDL3_mixer-static instead"
-    )
 endif()
