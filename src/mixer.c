@@ -532,7 +532,7 @@ int Mix_OpenAudioDevice(int frequency, Uint16 format, int nchannels, int chunksi
     open_music(&mixer);
 
     audio_opened = 1;
-    SDL_PauseAudioDevice(audio_device, 0);
+    SDL_PlayAudioDevice(audio_device);
     return(0);
 }
 
@@ -547,7 +547,11 @@ int Mix_OpenAudio(int frequency, Uint16 format, int nchannels, int chunksize)
 /* Pause or resume the audio streaming */
 void Mix_PauseAudio(int pause_on)
 {
-    SDL_PauseAudioDevice(audio_device, pause_on);
+    if (pause_on) {
+        SDL_PauseAudioDevice(audio_device);
+    } else {
+        SDL_PlayAudioDevice(audio_device);
+    }
     Mix_LockAudio();
     pause_async_music(pause_on);
     Mix_UnlockAudio();
