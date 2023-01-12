@@ -7,15 +7,15 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		F3B38D49296F8DDD005DA6D3 /* xcFramework */ = {
+		F3B38D49296F8DDD005DA6D3 /* opus.xcframework */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = F3B38D4D296F8DDD005DA6D3 /* Build configuration list for PBXAggregateTarget "xcFramework" */;
+			buildConfigurationList = F3B38D4D296F8DDD005DA6D3 /* Build configuration list for PBXAggregateTarget "opus.xcframework" */;
 			buildPhases = (
 				F3B38D4E296F8DF9005DA6D3 /* ShellScript */,
 			);
 			dependencies = (
 			);
-			name = xcFramework;
+			name = opus.xcframework;
 			productName = xcFramework;
 		};
 /* End PBXAggregateTarget section */
@@ -712,7 +712,7 @@
 			projectRoot = "";
 			targets = (
 				F3968A20281F704800661875 /* opus */,
-				F3B38D49296F8DDD005DA6D3 /* xcFramework */,
+				F3B38D49296F8DDD005DA6D3 /* opus.xcframework */,
 			);
 		};
 /* End PBXProject section */
@@ -742,6 +742,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		F3B38D4E296F8DF9005DA6D3 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -1149,7 +1150,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F3B38D4D296F8DDD005DA6D3 /* Build configuration list for PBXAggregateTarget "xcFramework" */ = {
+		F3B38D4D296F8DDD005DA6D3 /* Build configuration list for PBXAggregateTarget "opus.xcframework" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F3B38D4A296F8DDD005DA6D3 /* Debug */,

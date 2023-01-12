@@ -7,15 +7,15 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		F3B38D4F296F8E1F005DA6D3 /* xcFramework */ = {
+		F3B38D4F296F8E1F005DA6D3 /* xmp-lite.xcframework */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = F3B38D52296F8E1F005DA6D3 /* Build configuration list for PBXAggregateTarget "xcFramework" */;
+			buildConfigurationList = F3B38D52296F8E1F005DA6D3 /* Build configuration list for PBXAggregateTarget "xmp-lite.xcframework" */;
 			buildPhases = (
 				F3B38D53296F8E3B005DA6D3 /* ShellScript */,
 			);
 			dependencies = (
 			);
-			name = xcFramework;
+			name = "xmp-lite.xcframework";
 			productName = xcFramework;
 		};
 /* End PBXAggregateTarget section */
@@ -235,7 +235,7 @@
 			projectRoot = "";
 			targets = (
 				F3968D84281FBB1900661875 /* xmp-lite */,
-				F3B38D4F296F8E1F005DA6D3 /* xcFramework */,
+				F3B38D4F296F8E1F005DA6D3 /* xmp-lite.xcframework */,
 			);
 		};
 /* End PBXProject section */
@@ -254,6 +254,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		F3B38D53296F8E3B005DA6D3 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -525,7 +526,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F3B38D52296F8E1F005DA6D3 /* Build configuration list for PBXAggregateTarget "xcFramework" */ = {
+		F3B38D52296F8E1F005DA6D3 /* Build configuration list for PBXAggregateTarget "xmp-lite.xcframework" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F3B38D50296F8E1F005DA6D3 /* Debug */,

@@ -7,15 +7,15 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		F3B38D7B296F9312005DA6D3 /* xcFramework */ = {
+		F3B38D7B296F9312005DA6D3 /* FLAC.xcframework */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = F3B38D7E296F9312005DA6D3 /* Build configuration list for PBXAggregateTarget "xcFramework" */;
+			buildConfigurationList = F3B38D7E296F9312005DA6D3 /* Build configuration list for PBXAggregateTarget "FLAC.xcframework" */;
 			buildPhases = (
 				F3B38D7F296F931D005DA6D3 /* ShellScript */,
 			);
 			dependencies = (
 			);
-			name = xcFramework;
+			name = FLAC.xcframework;
 			productName = xcFramework;
 		};
 /* End PBXAggregateTarget section */
@@ -262,7 +262,7 @@
 			projectRoot = "";
 			targets = (
 				F3F70E66281F442C005AA27D /* FLAC */,
-				F3B38D7B296F9312005DA6D3 /* xcFramework */,
+				F3B38D7B296F9312005DA6D3 /* FLAC.xcframework */,
 			);
 		};
 /* End PBXProject section */
@@ -282,6 +282,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		F3B38D7F296F931D005DA6D3 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -539,7 +540,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		F3B38D7E296F9312005DA6D3 /* Build configuration list for PBXAggregateTarget "xcFramework" */ = {
+		F3B38D7E296F9312005DA6D3 /* Build configuration list for PBXAggregateTarget "FLAC.xcframework" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F3B38D7C296F9312005DA6D3 /* Debug */,

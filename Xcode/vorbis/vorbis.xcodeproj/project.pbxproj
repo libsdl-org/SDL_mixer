@@ -7,15 +7,15 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		F3B38DA3296F9856005DA6D3 /* xcFramework */ = {
+		F3B38DA3296F9856005DA6D3 /* vorbis.xcframework */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = F3B38DA8296F9856005DA6D3 /* Build configuration list for PBXAggregateTarget "xcFramework" */;
+			buildConfigurationList = F3B38DA8296F9856005DA6D3 /* Build configuration list for PBXAggregateTarget "vorbis.xcframework" */;
 			buildPhases = (
 				F3B38DA9296F985C005DA6D3 /* ShellScript */,
 			);
 			dependencies = (
 			);
-			name = xcFramework;
+			name = vorbis.xcframework;
 			productName = xcFramework;
 		};
 /* End PBXAggregateTarget section */
@@ -256,7 +256,7 @@
 			projectRoot = "";
 			targets = (
 				F3F70EFE281F637A005AA27D /* vorbis */,
-				F3B38DA3296F9856005DA6D3 /* xcFramework */,
+				F3B38DA3296F9856005DA6D3 /* vorbis.xcframework */,
 			);
 		};
 /* End PBXProject section */
@@ -285,6 +285,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		F3B38DA9296F985C005DA6D3 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -537,7 +538,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		F3B38DA8296F9856005DA6D3 /* Build configuration list for PBXAggregateTarget "xcFramework" */ = {
+		F3B38DA8296F9856005DA6D3 /* Build configuration list for PBXAggregateTarget "vorbis.xcframework" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F3B38DA4296F9856005DA6D3 /* Debug */,

@@ -7,15 +7,15 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		F3B38D8F296F9773005DA6D3 /* xcFramework */ = {
+		F3B38D8F296F9773005DA6D3 /* ogg.xcframework */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = F3B38D92296F9773005DA6D3 /* Build configuration list for PBXAggregateTarget "xcFramework" */;
+			buildConfigurationList = F3B38D92296F9773005DA6D3 /* Build configuration list for PBXAggregateTarget "ogg.xcframework" */;
 			buildPhases = (
 				F3B38D93296F9779005DA6D3 /* ShellScript */,
 			);
 			dependencies = (
 			);
-			name = xcFramework;
+			name = ogg.xcframework;
 			productName = xcFramework;
 		};
 /* End PBXAggregateTarget section */
@@ -159,7 +159,7 @@
 			projectRoot = "";
 			targets = (
 				F3F70ED9281F61B4005AA27D /* ogg */,
-				F3B38D8F296F9773005DA6D3 /* xcFramework */,
+				F3B38D8F296F9773005DA6D3 /* ogg.xcframework */,
 			);
 		};
 /* End PBXProject section */
@@ -179,6 +179,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		F3B38D93296F9779005DA6D3 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -399,7 +400,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		F3B38D92296F9773005DA6D3 /* Build configuration list for PBXAggregateTarget "xcFramework" */ = {
+		F3B38D92296F9773005DA6D3 /* Build configuration list for PBXAggregateTarget "ogg.xcframework" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F3B38D90296F9773005DA6D3 /* Debug */,
