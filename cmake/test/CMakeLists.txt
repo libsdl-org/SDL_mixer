@@ -17,28 +17,14 @@ option(TEST_STATIC "Test linking to static SDL3_mixer libary" ON)
 add_feature_info("TEST_STATIC" TEST_STATIC "Test linking with static library")
 
 if(TEST_SHARED)
-    # FIXME: in the distant future, must become REQUIRED
-    find_package(SDL3 CONFIG COMPONENTS SDL3)
-    # FIXME: and the following should be removed
-    if(NOT TARGET SDL3::SDL3)
-        list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/..")
-        include(PrivateSdlFunctions)
-        sdl_find_sdl2(SDL3::SDL3 2.0)
-    endif()
+    find_package(SDL3 REQUIRED CONFIG COMPONENTS SDL3)
     find_package(SDL3_mixer REQUIRED CONFIG)
     add_executable(main_shared main.c)
     target_link_libraries(main_shared PRIVATE SDL3::SDL3 SDL3_mixer::SDL3_mixer)
 endif()
 
 if(TEST_STATIC)
-    # FIXME: in the distant future, must become REQUIRED
-    find_package(SDL3 CONFIG COMPONENTS SDL3-static)
-    # FIXME: and the following should be removed
-    if(NOT TARGET SDL3::SDL3-static)
-        list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/..")
-        include(PrivateSdlFunctions)
-        sdl_find_sdl2(SDL3::SDL3-static 2.0)
-    endif()
+    find_package(SDL3 REQUIRED CONFIG COMPONENTS SDL3-static)
     # some static vendored libraries use c++ (enable CXX after `find_package` might show a warning)
     enable_language(CXX)
     find_package(SDL3_mixer REQUIRED CONFIG)
