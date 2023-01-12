@@ -407,7 +407,7 @@ static int fetch_float64le(void *context, int length)
 }
 
 /*
-    G711 decode tables taken from SDL2 (src/audio/SDL_wave.c)
+    G711 decode tables taken from SDL (src/audio/SDL_wave.c)
 */
 #ifdef SDL_WAVE_LAW_LUT
 static const Sint16 alaw_lut[256] = {

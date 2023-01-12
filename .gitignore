@@ -21,7 +21,5 @@ Release
 .DS_Store
 xcuserdata
 *.xcworkspace
-SDL2_mixer.pc
-SDL2_mixer.spec
 .vs
 .vscode

@@ -5,45 +5,45 @@ project(sdl_test LANGUAGES C)
 
 cmake_policy(SET CMP0074 NEW)
 
-# Override CMAKE_FIND_ROOT_PATH_MODE to allow search for SDL2_mixer outside of sysroot
+# Override CMAKE_FIND_ROOT_PATH_MODE to allow search for SDL3_mixer outside of sysroot
 set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE NEVER)
 
 include(FeatureSummary)
 
-option(TEST_SHARED "Test linking to shared SDL2_mixer library" ON)
+option(TEST_SHARED "Test linking to shared SDL3_mixer library" ON)
 add_feature_info("TEST_SHARED" TEST_SHARED "Test linking with shared library")
 
-option(TEST_STATIC "Test linking to static SDL2_mixer libary" ON)
+option(TEST_STATIC "Test linking to static SDL3_mixer libary" ON)
 add_feature_info("TEST_STATIC" TEST_STATIC "Test linking with static library")
 
 if(TEST_SHARED)
     # FIXME: in the distant future, must become REQUIRED
-    find_package(SDL2 CONFIG COMPONENTS SDL2)
+    find_package(SDL3 CONFIG COMPONENTS SDL3)
     # FIXME: and the following should be removed
-    if(NOT TARGET SDL2::SDL2)
+    if(NOT TARGET SDL3::SDL3)
         list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/..")
         include(PrivateSdlFunctions)
-        sdl_find_sdl2(SDL2::SDL2 2.0)
+        sdl_find_sdl2(SDL3::SDL3 2.0)
     endif()
-    find_package(SDL2_mixer REQUIRED CONFIG)
+    find_package(SDL3_mixer REQUIRED CONFIG)
     add_executable(main_shared main.c)
-    target_link_libraries(main_shared PRIVATE SDL2::SDL2 SDL2_mixer::SDL2_mixer)
+    target_link_libraries(main_shared PRIVATE SDL3::SDL3 SDL3_mixer::SDL3_mixer)
 endif()
 
 if(TEST_STATIC)
     # FIXME: in the distant future, must become REQUIRED
-    find_package(SDL2 CONFIG COMPONENTS SDL2-static)
+    find_package(SDL3 CONFIG COMPONENTS SDL3-static)
     # FIXME: and the following should be removed
-    if(NOT TARGET SDL2::SDL2-static)
+    if(NOT TARGET SDL3::SDL3-static)
         list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/..")
         include(PrivateSdlFunctions)
-        sdl_find_sdl2(SDL2::SDL2-static 2.0)
+        sdl_find_sdl2(SDL3::SDL3-static 2.0)
     endif()
     # some static vendored libraries use c++ (enable CXX after `find_package` might show a warning)
     enable_language(CXX)
-    find_package(SDL2_mixer REQUIRED CONFIG)
+    find_package(SDL3_mixer REQUIRED CONFIG)
     add_executable(main_static main.c)
-    target_link_libraries(main_static PRIVATE SDL2::SDL2-static SDL2_mixer::SDL2_mixer-static)
+    target_link_libraries(main_static PRIVATE SDL3::SDL3-static SDL3_mixer::SDL3_mixer-static)
 endif()
 
 feature_summary(WHAT ALL)

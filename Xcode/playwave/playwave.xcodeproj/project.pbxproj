@@ -7,32 +7,30 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F3968EBF2820392700661875 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EBE2820392700661875 /* SDL2.framework */; };
-		F3968EC1282039AC00661875 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EC0282039AC00661875 /* SDL2.framework */; };
-		F3968EC3282039BC00661875 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EC2282039BC00661875 /* SDL2.framework */; };
-		F3968ECE28203E7300661875 /* SDL2.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EBE2820392700661875 /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F3968ECF28203F3100661875 /* SDL2_mixer.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3ED80D4281D9ED600C33C5B /* SDL2_mixer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F3016F4E296F9A8A00C730E5 /* SDL3.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3016F4D296F9A8A00C730E5 /* SDL3.xcframework */; };
+		F3016F4F296F9A8A00C730E5 /* SDL3.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3016F4D296F9A8A00C730E5 /* SDL3.xcframework */; };
+		F3016F50296F9A8A00C730E5 /* SDL3.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3016F4D296F9A8A00C730E5 /* SDL3.xcframework */; };
+		F3016F62296F9ADF00C730E5 /* SDL3.xcframework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3016F4D296F9A8A00C730E5 /* SDL3.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F3016F63296F9AEB00C730E5 /* SDL3.xcframework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3016F4D296F9A8A00C730E5 /* SDL3.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F3016F64296F9AF800C730E5 /* SDL3.xcframework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3016F4D296F9A8A00C730E5 /* SDL3.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F3968ECF28203F3100661875 /* SDL3_mixer.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3ED80D4281D9ED600C33C5B /* SDL3_mixer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968ED328203F5800661875 /* ogg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EBC2820390500661875 /* ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968ED428203F5800661875 /* opus.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EAA282038E000661875 /* opus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F3968EEF2820409F00661875 /* SDL2.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EC0282039AC00661875 /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968EF3282040B300661875 /* ogg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EBC2820390500661875 /* ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968EF4282040B300661875 /* opus.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EAA282038E000661875 /* opus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968F112820428F00661875 /* ogg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EBC2820390500661875 /* ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968F122820428F00661875 /* opus.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EAA282038E000661875 /* opus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F3968F142820428F00661875 /* SDL2.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EC2282039BC00661875 /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F39CD44B281DC6C8006CF638 /* SDL2_mixer.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3ED80D4281D9ED600C33C5B /* SDL2_mixer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F39CD44B281DC6C8006CF638 /* SDL3_mixer.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3ED80D4281D9ED600C33C5B /* SDL3_mixer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3E29D1C288211B90006D108 /* xmp_lite.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3E29D1B288211A60006D108 /* xmp_lite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3E29D1D288211CA0006D108 /* xmp_lite.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3E29D1B288211A60006D108 /* xmp_lite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3E29D1E288211CF0006D108 /* xmp_lite.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3E29D1B288211A60006D108 /* xmp_lite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3ED80CB281D9ECB00C33C5B /* playwave.c in Sources */ = {isa = PBXBuildFile; fileRef = F3ED80CA281D9ECB00C33C5B /* playwave.c */; };
 		F3ED80CC281D9ECB00C33C5B /* playwave.c in Sources */ = {isa = PBXBuildFile; fileRef = F3ED80CA281D9ECB00C33C5B /* playwave.c */; };
 		F3ED80DB281D9F2100C33C5B /* playwave.c in Sources */ = {isa = PBXBuildFile; fileRef = F3ED80CA281D9ECB00C33C5B /* playwave.c */; };
-		F3ED80E3281DA16500C33C5B /* SDL2_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3ED80D4281D9ED600C33C5B /* SDL2_mixer.framework */; };
-		F3ED80F3281DA3BD00C33C5B /* SDL_uikit_main.c in Sources */ = {isa = PBXBuildFile; fileRef = F3ED80EF281DA3BD00C33C5B /* SDL_uikit_main.c */; };
-		F3ED80F4281DA3BD00C33C5B /* SDL_uikit_main.c in Sources */ = {isa = PBXBuildFile; fileRef = F3ED80EF281DA3BD00C33C5B /* SDL_uikit_main.c */; };
-		F3ED80F5281DA3F600C33C5B /* SDL2_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3ED80D4281D9ED600C33C5B /* SDL2_mixer.framework */; };
-		F3ED80FF281DA63000C33C5B /* SDL2_mixer.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3ED80D4281D9ED600C33C5B /* SDL2_mixer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F3ED8113281DC13D00C33C5B /* SDL2_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3ED80D4281D9ED600C33C5B /* SDL2_mixer.framework */; };
+		F3ED80E3281DA16500C33C5B /* SDL3_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3ED80D4281D9ED600C33C5B /* SDL3_mixer.framework */; };
+		F3ED80F5281DA3F600C33C5B /* SDL3_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3ED80D4281D9ED600C33C5B /* SDL3_mixer.framework */; };
+		F3ED80FF281DA63000C33C5B /* SDL3_mixer.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3ED80D4281D9ED600C33C5B /* SDL3_mixer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F3ED8113281DC13D00C33C5B /* SDL3_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3ED80D4281D9ED600C33C5B /* SDL3_mixer.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,8 +85,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				F3968F142820428F00661875 /* SDL2.framework in Copy Frameworks */,
-				F39CD44B281DC6C8006CF638 /* SDL2_mixer.framework in Copy Frameworks */,
+				F3016F64296F9AF800C730E5 /* SDL3.xcframework in Copy Frameworks */,
+				F39CD44B281DC6C8006CF638 /* SDL3_mixer.framework in Copy Frameworks */,
 				F3968F112820428F00661875 /* ogg.framework in Copy Frameworks */,
 				F3968F122820428F00661875 /* opus.framework in Copy Frameworks */,
 				F3E29D1E288211CF0006D108 /* xmp_lite.framework in Copy Frameworks */,
@@ -102,8 +100,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				F3968ECE28203E7300661875 /* SDL2.framework in Copy Frameworks */,
-				F3968ECF28203F3100661875 /* SDL2_mixer.framework in Copy Frameworks */,
+				F3016F63296F9AEB00C730E5 /* SDL3.xcframework in Copy Frameworks */,
+				F3968ECF28203F3100661875 /* SDL3_mixer.framework in Copy Frameworks */,
 				F3968ED328203F5800661875 /* ogg.framework in Copy Frameworks */,
 				F3968ED428203F5800661875 /* opus.framework in Copy Frameworks */,
 				F3E29D1C288211B90006D108 /* xmp_lite.framework in Copy Frameworks */,
@@ -117,8 +115,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				F3968EEF2820409F00661875 /* SDL2.framework in Copy Frameworks */,
-				F3ED80FF281DA63000C33C5B /* SDL2_mixer.framework in Copy Frameworks */,
+				F3016F62296F9ADF00C730E5 /* SDL3.xcframework in Copy Frameworks */,
+				F3ED80FF281DA63000C33C5B /* SDL3_mixer.framework in Copy Frameworks */,
 				F3968EF3282040B300661875 /* ogg.framework in Copy Frameworks */,
 				F3968EF4282040B300661875 /* opus.framework in Copy Frameworks */,
 				F3E29D1D288211CA0006D108 /* xmp_lite.framework in Copy Frameworks */,
@@ -129,11 +127,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F3016F4D296F9A8A00C730E5 /* SDL3.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SDL3.xcframework; path = ../SDL/SDL3.xcframework; sourceTree = "<group>"; };
 		F3968EA5282038E000661875 /* opus.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = opus.xcodeproj; path = ../opus/opus.xcodeproj; sourceTree = "<group>"; };
 		F3968EB72820390500661875 /* ogg.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ogg.xcodeproj; path = ../ogg/ogg.xcodeproj; sourceTree = "<group>"; };
-		F3968EBE2820392700661875 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../macOS/SDL2.framework; sourceTree = "<group>"; };
-		F3968EC0282039AC00661875 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../iOS/SDL2.framework; sourceTree = "<group>"; };
-		F3968EC2282039BC00661875 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../tvOS/SDL2.framework; sourceTree = "<group>"; };
+		F3968EBE2820392700661875 /* SDL3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL3.framework; path = ../macOS/SDL3.framework; sourceTree = "<group>"; };
+		F3968EC0282039AC00661875 /* SDL3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL3.framework; path = ../iOS/SDL3.framework; sourceTree = "<group>"; };
+		F3968EC2282039BC00661875 /* SDL3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL3.framework; path = ../tvOS/SDL3.framework; sourceTree = "<group>"; };
 		F3E29D11288211A60006D108 /* xmp-lite.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "xmp-lite.xcodeproj"; path = "../xmp-lite/xmp-lite.xcodeproj"; sourceTree = "<group>"; };
 		F3ED80B3281D9E8900C33C5B /* playwave.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = playwave.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3ED80B9281D9E8900C33C5B /* playwave.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = playwave.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -141,7 +140,6 @@
 		F3ED80CA281D9ECB00C33C5B /* playwave.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = playwave.c; path = ../../playwave.c; sourceTree = SOURCE_ROOT; };
 		F3ED80CD281D9ED600C33C5B /* SDL_mixer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SDL_mixer.xcodeproj; path = ../SDL_mixer.xcodeproj; sourceTree = "<group>"; };
 		F3ED80E1281D9F2100C33C5B /* playwave.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = playwave.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		F3ED80EF281DA3BD00C33C5B /* SDL_uikit_main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SDL_uikit_main.c; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,8 +147,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F3968EC1282039AC00661875 /* SDL2.framework in Frameworks */,
-				F3ED80F5281DA3F600C33C5B /* SDL2_mixer.framework in Frameworks */,
+				F3016F4E296F9A8A00C730E5 /* SDL3.xcframework in Frameworks */,
+				F3ED80F5281DA3F600C33C5B /* SDL3_mixer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -158,8 +156,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F3968EBF2820392700661875 /* SDL2.framework in Frameworks */,
-				F3ED80E3281DA16500C33C5B /* SDL2_mixer.framework in Frameworks */,
+				F3016F4F296F9A8A00C730E5 /* SDL3.xcframework in Frameworks */,
+				F3ED80E3281DA16500C33C5B /* SDL3_mixer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -167,8 +165,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F3968EC3282039BC00661875 /* SDL2.framework in Frameworks */,
-				F3ED8113281DC13D00C33C5B /* SDL2_mixer.framework in Frameworks */,
+				F3016F50296F9A8A00C730E5 /* SDL3.xcframework in Frameworks */,
+				F3ED8113281DC13D00C33C5B /* SDL3_mixer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -204,7 +202,7 @@
 		F3968EC728203DD200661875 /* macOS */ = {
 			isa = PBXGroup;
 			children = (
-				F3968EBE2820392700661875 /* SDL2.framework */,
+				F3968EBE2820392700661875 /* SDL3.framework */,
 			);
 			name = macOS;
 			sourceTree = "<group>";
@@ -212,7 +210,7 @@
 		F3968EC828203DDA00661875 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
-				F3968EC0282039AC00661875 /* SDL2.framework */,
+				F3968EC0282039AC00661875 /* SDL3.framework */,
 			);
 			name = iOS;
 			sourceTree = "<group>";
@@ -220,7 +218,7 @@
 		F3968EC928203DDE00661875 /* tvOS */ = {
 			isa = PBXGroup;
 			children = (
-				F3968EC2282039BC00661875 /* SDL2.framework */,
+				F3968EC2282039BC00661875 /* SDL3.framework */,
 			);
 			name = tvOS;
 			sourceTree = "<group>";
@@ -239,6 +237,7 @@
 				F3968EB72820390500661875 /* ogg.xcodeproj */,
 				F3968EA5282038E000661875 /* opus.xcodeproj */,
 				F3E29D11288211A60006D108 /* xmp-lite.xcodeproj */,
+				F3016F4D296F9A8A00C730E5 /* SDL3.xcframework */,
 				F3ED80CD281D9ED600C33C5B /* SDL_mixer.xcodeproj */,
 				F3ED80AB281D9E8800C33C5B /* Shared */,
 				F3ED80BA281D9E8900C33C5B /* macOS */,
@@ -251,7 +250,6 @@
 			isa = PBXGroup;
 			children = (
 				F3ED80CA281D9ECB00C33C5B /* playwave.c */,
-				F3ED80EF281DA3BD00C33C5B /* SDL_uikit_main.c */,
 			);
 			name = Shared;
 			sourceTree = SOURCE_ROOT;
@@ -277,8 +275,8 @@
 		F3ED80CE281D9ED600C33C5B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F3ED80D4281D9ED600C33C5B /* SDL2_mixer.framework */,
-				F3ED80D6281D9ED600C33C5B /* libSDL2_mixer.a */,
+				F3ED80D4281D9ED600C33C5B /* SDL3_mixer.framework */,
+				F3ED80D6281D9ED600C33C5B /* libSDL3_mixer.a */,
 				F3ED80D8281D9ED600C33C5B /* Create DMG */,
 			);
 			name = Products;
@@ -419,17 +417,17 @@
 			remoteRef = F3E29D1A288211A60006D108 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3ED80D4281D9ED600C33C5B /* SDL2_mixer.framework */ = {
+		F3ED80D4281D9ED600C33C5B /* SDL3_mixer.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = SDL2_mixer.framework;
+			path = SDL3_mixer.framework;
 			remoteRef = F3ED80D3281D9ED600C33C5B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3ED80D6281D9ED600C33C5B /* libSDL2_mixer.a */ = {
+		F3ED80D6281D9ED600C33C5B /* libSDL3_mixer.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libSDL2_mixer.a;
+			path = libSDL3_mixer.a;
 			remoteRef = F3ED80D5281D9ED600C33C5B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -472,7 +470,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3ED80CB281D9ECB00C33C5B /* playwave.c in Sources */,
-				F3ED80F3281DA3BD00C33C5B /* SDL_uikit_main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -489,7 +486,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3ED80DB281D9F2100C33C5B /* playwave.c in Sources */,
-				F3ED80F4281DA3BD00C33C5B /* SDL_uikit_main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -511,7 +507,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../../include\"",
-					"\"$(SRCROOT)/../$(PLATFORM)/SDL2.framework/Headers\"",
+					"\"$(SRCROOT)/../$(PLATFORM)/SDL3.framework/Headers\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
@@ -532,7 +528,7 @@
 				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../$(PLATFORM)\"";
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../../include\"",
-					"\"$(SRCROOT)/../$(PLATFORM)/SDL2.framework/Headers\"",
+					"\"$(SRCROOT)/../$(PLATFORM)/SDL3.framework/Headers\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;

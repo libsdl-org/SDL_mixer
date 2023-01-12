@@ -19,6 +19,6 @@ LOCAL_SRC_FILES += \
     tables.c \
     timidity.c
 
-LOCAL_SHARED_LIBRARIES := SDL2
+LOCAL_SHARED_LIBRARIES := SDL3
 
 include $(BUILD_STATIC_LIBRARY)
