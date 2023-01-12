@@ -498,24 +498,16 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../$(PLATFORM)\"";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/../../include\"",
-					"\"$(SRCROOT)/../$(PLATFORM)/SDL3.framework/Headers\"",
-				);
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../../include\"";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
-				PLATFORM = "";
-				"PLATFORM[sdk=appletvos*]" = tvOS;
-				"PLATFORM[sdk=iphoneos*]" = iOS;
-				"PLATFORM[sdk=macosx*]" = macOS;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 			};
 			name = Debug;
@@ -525,17 +517,9 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../$(PLATFORM)\"";
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/../../include\"",
-					"\"$(SRCROOT)/../$(PLATFORM)/SDL3.framework/Headers\"",
-				);
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../../include\"";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				PLATFORM = "";
-				"PLATFORM[sdk=appletvos*]" = tvOS;
-				"PLATFORM[sdk=iphoneos*]" = iOS;
-				"PLATFORM[sdk=macosx*]" = macOS;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 			};
 			name = Release;
