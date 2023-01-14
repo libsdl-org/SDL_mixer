@@ -15,15 +15,12 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { name: Windows (MSVC+CMake),         os: windows-2019, shell: sh,   cmake: '-DSDL3MIXER_VENDORED=ON -GNinja', msvc: 1, shared: 1, static: 0 }
-        - { name: Windows (mingw32+autotools),  os: windows-latest, shell: 'msys2 {0}', msystem: mingw32, msys-env: mingw-w64-i686, shared: 1, static: 1 }
-        - { name: Windows (mingw64+CMake),      os: windows-latest, shell: 'msys2 {0}', msystem: mingw64, msys-env: mingw-w64-x86_64, shared: 1, static: 0,
+        - { name: Windows (MSVC),       os: windows-2019, shell: sh,   cmake: '-DSDL3MIXER_VENDORED=ON -GNinja', msvc: 1, shared: 1, static: 0 }
+        - { name: Windows (mingw64),    os: windows-latest, shell: 'msys2 {0}', msystem: mingw64, msys-env: mingw-w64-x86_64, shared: 1, static: 0,
             cmake: '-DSDL3MIXER_VENDORED=OFF -G "Ninja Multi-Config"' }
-        - { name: Linux (autotools),            os: ubuntu-20.04,   shell: sh, shared: 1, static: 1}
-        - { name: Linux (CMake),                os: ubuntu-20.04,   shell: sh, cmake: '-DSDL3MIXER_VENDORED=ON -GNinja', shared: 1, static: 0 }
-        - { name: 'Linux (CMake, static)',      os: ubuntu-20.04,   shell: sh, cmake: '-DSDL3MIXER_VENDORED=ON -DBUILD_SHARED_LIBS=OFF -GNinja', shared: 0, static: 1 }
-        - { name: Macos (autotools),            os: macos-latest,   shell: sh, shared: 1, static: 1 }
-        - { name: Macos (CMake),                os: macos-latest,   shell: sh, cmake: '-DSDL3MIXER_VENDORED=ON -GNinja', shared: 1, static: 0 }
+        - { name: Linux,                os: ubuntu-20.04,   shell: sh, cmake: '-DSDL3MIXER_VENDORED=ON -GNinja', shared: 1, static: 0 }
+        - { name: 'Linux (static)',     os: ubuntu-20.04,   shell: sh, cmake: '-DSDL3MIXER_VENDORED=ON -DBUILD_SHARED_LIBS=OFF -GNinja', shared: 0, static: 1 }
+        - { name: Macos,                os: macos-latest,   shell: sh, cmake: '-DSDL3MIXER_VENDORED=ON -GNinja', shared: 1, static: 0 }
 
 
     steps:
@@ -34,7 +31,6 @@ jobs:
         msystem: ${{ matrix.platform.msystem }}
         install: >-
           ${{ matrix.platform.msys-env }}-SDL3
-          ${{ matrix.platform.msys-env }}-autotools
           ${{ matrix.platform.msys-env }}-cmake
           ${{ matrix.platform.msys-env }}-gcc
           ${{ matrix.platform.msys-env }}-flac
@@ -52,8 +48,6 @@ jobs:
       run: |
         brew install \
           sdl3 \
-          autoconf \
-          automake \
           libtool \
           ninja \
           pkg-config \
@@ -71,8 +65,6 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get -y install \
-          autoconf \
-          automake \
           cmake \
           libsdl3-dev \
           libflac-dev \
@@ -113,17 +105,16 @@ jobs:
         arch: x64
 
     - name: Check that versioning is consistent
-      # We only need to run this once: arbitrarily use the Linux/CMake build
-      if: "runner.os == 'Linux' && matrix.platform.cmake"
+      # We only need to run this once: arbitrarily use the Linux build
+      if: "runner.os == 'Linux'"
       run: ./test-versioning.sh
 
     - name: Setup (CMake)
-      if: ${{ matrix.platform.cmake && !matrix.platform.msystem && !matrix.platform.msvc }}
+      if: ${{ !matrix.platform.msystem && !matrix.platform.msvc }}
       uses: jwlawson/actions-setup-cmake@v1.13.1
       with:
         cmake-version: '3.16'
     - name: Configure (CMake)
-      if: "matrix.platform.cmake"
       run: |
         set -- \
           -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
@@ -143,43 +134,15 @@ jobs:
           "$@" \
           ${{ matrix.platform.cmake }}
     - name: Build (CMake)
-      if: "matrix.platform.cmake"
       run: |
         cmake --build build/ --config Release --parallel --verbose
     - name: Install (CMake)
-      if: "matrix.platform.cmake"
       run: |
         set -eu
         rm -fr prefix_cmake
         cmake --install build/ --config Release
         echo "SDL3_mixer_DIR=$(pwd)/prefix_cmake" >> $GITHUB_ENV
         ( cd prefix_cmake; find . ) | LC_ALL=C sort -u
-
-    - name: Configure (Autotools)
-      if: "! matrix.platform.cmake"
-      run: |
-        set -eu
-        rm -fr build-autotools
-        mkdir build-autotools
-        ./autogen.sh
-        set -- -prefix=$(pwd)/prefix_autotools
-        ( cd build-autotools && ../configure "$@" )
-    - name: Build (Autotools)
-      if: "! matrix.platform.cmake"
-      run: |
-        set -eu
-        parallel="$(getconf _NPROCESSORS_ONLN)"
-        make -j"${parallel}" -C build-autotools V=1
-    - name: Install (Autotools)
-      if: "! matrix.platform.cmake"
-      run: |
-        set -eu
-        curdir="$(pwd)"
-        parallel="$(getconf _NPROCESSORS_ONLN)"
-        rm -rf prefix_autotools
-        make -j"${parallel}" -C build-autotools install V=1
-        echo "SDL3_mixer_DIR=$(pwd)/prefix_autotools" >> $GITHUB_ENV
-        ( cd prefix_autotools; find ) | LC_ALL=C sort -u
 
     - name: Verify CMake configuration files
       run: |
