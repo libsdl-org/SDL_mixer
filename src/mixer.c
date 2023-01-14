@@ -278,7 +278,7 @@ int Mix_Init(int flags)
     return result;
 }
 
-void Mix_Quit()
+void Mix_Quit(void)
 {
     unload_music();
 }
@@ -770,9 +770,6 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
     Uint8 magic[4];
     Mix_Chunk *chunk;
     SDL_AudioSpec wavespec, *loaded;
-    SDL_AudioCVT wavecvt;
-    int samplesize;
-    Uint8 *resized_buf;
 
     /* rcg06012001 Make sure src is valid */
     if (!src) {
@@ -831,49 +828,73 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
     PrintFormat("-- Wave file", &wavespec);
 #endif
 
+    chunk->allocated = 1;
+    chunk->volume = MIX_MAX_VOLUME;
+
     /* Build the audio converter and create conversion buffers */
     if (wavespec.format != mixer.format ||
          wavespec.channels != mixer.channels ||
          wavespec.freq != mixer.freq) {
-        if (SDL_BuildAudioCVT(&wavecvt,
-                wavespec.format, wavespec.channels, wavespec.freq,
-                mixer.format, mixer.channels, mixer.freq) < 0) {
-            SDL_free(chunk->abuf);
-            SDL_free(chunk);
-            return(NULL);
+        SDL_AudioStream *stream;
+        int src_samplesize, dst_samplesize;
+        Uint8 *dst_buf = NULL;
+        int src_len, dst_len, real_dst_len;
+
+        src_samplesize = (SDL_AUDIO_BITSIZE(wavespec.format) / 8) * wavespec.channels;
+        dst_samplesize = (SDL_AUDIO_BITSIZE(mixer.format) / 8) * mixer.channels;
+
+        stream = SDL_CreateAudioStream(wavespec.format, wavespec.channels, wavespec.freq,
+                                       mixer.format, mixer.channels, mixer.freq);
+        if (stream == NULL) {
+            goto failure;
         }
-        samplesize = ((wavespec.format & 0xFF)/8)*wavespec.channels;
-        wavecvt.len = chunk->alen & ~(samplesize-1);
-        wavecvt.buf = (Uint8 *)SDL_calloc(1, wavecvt.len*wavecvt.len_mult);
-        if (wavecvt.buf == NULL) {
+
+        src_len = chunk->alen & ~(src_samplesize - 1);
+        dst_len = dst_samplesize * (src_len / src_samplesize);
+        if (wavespec.freq < mixer.freq) {
+            const double mult = ((double)mixer.freq) / ((double)wavespec.freq);
+            dst_len *= (int) SDL_ceil(mult);
+        }
+
+        dst_len = dst_len & ~(dst_samplesize - 1);
+        dst_buf = (Uint8 *)SDL_calloc(1, dst_len);
+        if (dst_buf == NULL) {
             Mix_OutOfMemory();
-            SDL_free(chunk->abuf);
-            SDL_free(chunk);
-            return(NULL);
+            goto failure;
         }
-        SDL_memcpy(wavecvt.buf, chunk->abuf, wavecvt.len);
-        SDL_free(chunk->abuf);
 
         /* Run the audio converter */
-        if (SDL_ConvertAudio(&wavecvt) < 0) {
-            SDL_free(wavecvt.buf);
-            SDL_free(chunk);
-            return(NULL);
+        if (SDL_PutAudioStreamData(stream, chunk->abuf, src_len) < 0 ||
+            SDL_FlushAudioStream(stream) < 0) {
+            goto failure;
         }
 
-        resized_buf = SDL_realloc(wavecvt.buf, wavecvt.len_cvt);
-        if (resized_buf == NULL) {
-            chunk->abuf = wavecvt.buf;
-        } else {
-            chunk->abuf = resized_buf;
+        real_dst_len = SDL_GetAudioStreamData(stream, dst_buf, dst_len);
+        if (real_dst_len < 0) {
+            goto failure;
         }
-        chunk->alen = wavecvt.len_cvt;
+
+        SDL_DestroyAudioStream(stream);
+        SDL_free(chunk->abuf);
+
+        {
+            Uint8 *resized_buf = SDL_realloc(dst_buf, real_dst_len);
+            if (resized_buf) {
+                dst_buf = resized_buf;
+            }
+        }
+        chunk->abuf = dst_buf;
+        chunk->alen = real_dst_len;
+        return chunk;
+
+failure:
+        SDL_free(chunk->abuf);
+        SDL_free(chunk);
+        SDL_free(dst_buf);
+        return NULL;
     }
 
-    chunk->allocated = 1;
-    chunk->volume = MIX_MAX_VOLUME;
-
-    return(chunk);
+    return chunk;
 }
 
 Mix_Chunk *Mix_LoadWAV(const char *file)
