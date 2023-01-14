@@ -695,8 +695,8 @@ if(SDL3MIXER_MP3_MPG123)
         set(BUILD_PROGRAMS OFF CACHE BOOL "Build programs")
         set(BUILD_SHARED_LIBS "${SDL3MIXER_MP3_MPG123_SHARED}")
         add_subdirectory(external/mpg123/ports/cmake EXCLUDE_FROM_ALL)
-        if(NOT TARGET MPG123::mpg123)
-            add_library(MPG123::mpg123 ALIAS libmpg123)
+        if(NOT TARGET MPG123::libmpg123)
+            add_library(MPG123::libmpg123 ALIAS libmpg123)
         endif()
         if(SDL3MIXER_MP3_MPG123_SHARED OR NOT SDL3MIXER_BUILD_SHARED_LIBS)
             list(APPEND INSTALL_EXTRA_TARGETS libmpg123)
@@ -706,25 +706,25 @@ if(SDL3MIXER_MP3_MPG123)
         endif()
     else()
         message(STATUS "Using system mpg123")
-        find_package(MPG123 REQUIRED)
+        find_package(mpg123 REQUIRED)
         if(NOT SDL3MIXER_MP3_MPG123_SHARED)
             list(APPEND PC_REQUIRES libmpg123)
         endif()
     endif()
     if(SDL3MIXER_MP3_MPG123_SHARED)
         target_include_directories(SDL3_mixer PRIVATE
-            $<TARGET_PROPERTY:MPG123::mpg123,INCLUDE_DIRECTORIES>
-            $<TARGET_PROPERTY:MPG123::mpg123,INTERFACE_INCLUDE_DIRECTORIES>
-            $<TARGET_PROPERTY:MPG123::mpg123,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:MPG123::libmpg123,INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:MPG123::libmpg123,INTERFACE_INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:MPG123::libmpg123,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
         )
-        target_get_dynamic_library(dynamic_mpg123 MPG123::mpg123)
+        target_get_dynamic_library(dynamic_mpg123 MPG123::libmpg123)
         message(STATUS "Dynamic mpg123}: ${dynamic_mpg123}")
         target_compile_definitions(SDL3_mixer PRIVATE "MPG123_DYNAMIC=\"${dynamic_mpg123}\"")
         if(SDL3MIXER_VENDORED)
-            add_dependencies(SDL3_mixer MPG123::mpg123)
+            add_dependencies(SDL3_mixer MPG123::libmpg123)
         endif()
     else()
-        target_link_libraries(SDL3_mixer PRIVATE MPG123::mpg123)
+        target_link_libraries(SDL3_mixer PRIVATE MPG123::libmpg123)
     endif()
 endif()
 
@@ -868,7 +868,7 @@ if(SDL3MIXER_INSTALL)
     else()
         set(SDL3MIXER_INSTALL_CMAKEDIR_ROOT_DEFAULT "${CMAKE_INSTALL_LIBDIR}/cmake")
     endif()
-    set(SDL3MIXER_INSTALL_CMAKEDIR_ROOT "${SDL3MIXER_INSTALL_CMAKEDIR_ROOT_DEFAULT}" CACHE STRING "Root folder where to install SDL3Config.cmake related files (SDL3 subfolder for MSVC projects)")
+    set(SDL3MIXER_INSTALL_CMAKEDIR_ROOT "${SDL3MIXER_INSTALL_CMAKEDIR_ROOT_DEFAULT}" CACHE STRING "Root folder where to install SDL3Config.cmake related files (SDL3 subfolder for non-MSVC projects)")
 
     if(WIN32 AND NOT MINGW)
         set(SDL3MIXER_INSTALL_CMAKEDIR "${SDL3MIXER_INSTALL_CMAKEDIR_ROOT}")
@@ -895,7 +895,7 @@ if(SDL3MIXER_INSTALL)
             cmake/Findlibxmp-lite.cmake
             cmake/Findmodplug.cmake
             cmake/FindOpusFile.cmake
-            cmake/FindMPG123.cmake
+            cmake/Findmpg123.cmake
             cmake/FindVorbis.cmake
             cmake/Findtremor.cmake
             cmake/Findwavpack.cmake
