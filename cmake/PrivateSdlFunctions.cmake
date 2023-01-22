@@ -60,7 +60,7 @@ macro(sdl_find_sdl2 TARGET VERSION)
     # or for those installations where no target is generated.
     if (NOT TARGET ${TARGET})
         message(STATUS "Using private SDL2 find module")
-        find_package(PrivateSDL2 ${VERSION} REQUIRED)
+        find_package(PrivateSDL2 ${VERSION} REQUIRED MODULE)
         add_library(${TARGET} INTERFACE IMPORTED)
         set_target_properties(${TARGET} PROPERTIES
             INTERFACE_LINK_LIBRARIES "PrivateSDL2::PrivateSDL2"
