@@ -52,6 +52,7 @@ else()
     set(vendored_default OFF)
 endif()
 
+include(CheckIncludeFile)
 include(CheckSymbolExists)
 include(CMakeDependentOption)
 include(CMakePackageConfigHelpers)
@@ -958,6 +959,9 @@ if(SDL2MIXER_INSTALL)
 endif()
 
 if(SDL2MIXER_SAMPLES)
+    check_include_file("signal.h" HAVE_SIGNAL_H)
+    check_symbol_exists("setbuf" "stdio.h" HAVE_SETBUF)
+
     add_executable(playmus playmus.c)
     add_executable(playwave playwave.c)
 
@@ -974,6 +978,12 @@ if(SDL2MIXER_SAMPLES)
             target_link_libraries(${prog} PRIVATE SDL2::SDL2main)
         endif()
         target_link_libraries(${prog} PRIVATE ${sdl2_target_name})
+        if(HAVE_SIGNAL_H)
+            target_compile_definitions(${prog} PRIVATE HAVE_SIGNAL_H)
+        endif()
+        if(HAVE_SETBUF)
+            target_compile_definitions(${prog} PRIVATE HAVE_SETBUF)
+        endif()
 
         if(SDL2MIXER_SAMPLES_INSTALL)
             install(TARGETS ${prog}
