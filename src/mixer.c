@@ -833,65 +833,22 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
 
     /* Build the audio converter and create conversion buffers */
     if (wavespec.format != mixer.format ||
-         wavespec.channels != mixer.channels ||
-         wavespec.freq != mixer.freq) {
-        SDL_AudioStream *stream;
-        int src_samplesize, dst_samplesize;
-        Uint8 *dst_buf = NULL;
-        int src_len, dst_len, real_dst_len;
+        wavespec.channels != mixer.channels ||
+        wavespec.freq != mixer.freq) {
 
-        src_samplesize = (SDL_AUDIO_BITSIZE(wavespec.format) / 8) * wavespec.channels;
-        dst_samplesize = (SDL_AUDIO_BITSIZE(mixer.format) / 8) * mixer.channels;
+        Uint8 *dst_data = NULL;
+        int dst_len = 0;
 
-        stream = SDL_CreateAudioStream(wavespec.format, wavespec.channels, wavespec.freq,
-                                       mixer.format, mixer.channels, mixer.freq);
-        if (stream == NULL) {
-            goto failure;
+        if (SDL_ConvertAudioSamples(wavespec.format, wavespec.channels, wavespec.freq, chunk->alen, chunk->abuf,
+                                    mixer.format, mixer.channels, mixer.freq, &dst_len, &dst_data) < 0) {
+            SDL_free(chunk->abuf);
+            SDL_free(chunk);
+            return NULL;
         }
 
-        src_len = chunk->alen & ~(src_samplesize - 1);
-        dst_len = dst_samplesize * (src_len / src_samplesize);
-        if (wavespec.freq < mixer.freq) {
-            const double mult = ((double)mixer.freq) / ((double)wavespec.freq);
-            dst_len *= (int) SDL_ceil(mult);
-        }
-
-        dst_len = dst_len & ~(dst_samplesize - 1);
-        dst_buf = (Uint8 *)SDL_calloc(1, dst_len);
-        if (dst_buf == NULL) {
-            Mix_OutOfMemory();
-            goto failure;
-        }
-
-        /* Run the audio converter */
-        if (SDL_PutAudioStreamData(stream, chunk->abuf, src_len) < 0 ||
-            SDL_FlushAudioStream(stream) < 0) {
-            goto failure;
-        }
-
-        real_dst_len = SDL_GetAudioStreamData(stream, dst_buf, dst_len);
-        if (real_dst_len < 0) {
-            goto failure;
-        }
-
-        SDL_DestroyAudioStream(stream);
         SDL_free(chunk->abuf);
-
-        {
-            Uint8 *resized_buf = SDL_realloc(dst_buf, real_dst_len);
-            if (resized_buf) {
-                dst_buf = resized_buf;
-            }
-        }
-        chunk->abuf = dst_buf;
-        chunk->alen = real_dst_len;
-        return chunk;
-
-failure:
-        SDL_free(chunk->abuf);
-        SDL_free(chunk);
-        SDL_free(dst_buf);
-        return NULL;
+        chunk->abuf = dst_data;
+        chunk->alen = dst_len;
     }
 
     return chunk;
