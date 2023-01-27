@@ -37,6 +37,8 @@ USE_MPG123=yes
 USE_DRMP3=no
 # wavpack music support
 USE_WAVPACK=yes
+# wavpack DSD music support
+USE_WAVPACK_DSD= no
 # midi music support (using timidity)
 USE_TIMIDITY=yes
 # midi music support (using fluidsynth)
@@ -124,6 +126,9 @@ CFLAGS+= -DMUSIC_FLAC_DRFLAC
 
 !ifeq USE_WAVPACK yes
 CFLAGS+= -DMUSIC_WAVPACK
+!ifeq USE_WAVPACK_DSD yes
+CFLAGS+= -DMUSIC_WAVPACK_DSD
+!endif
 LIBS+= wavpack.lib
 !endif
 
