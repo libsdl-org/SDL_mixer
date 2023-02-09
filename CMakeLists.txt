@@ -52,6 +52,12 @@ else()
     set(vendored_default OFF)
 endif()
 
+set(sdl2mixer_install_enableable ON)
+if ((TARGET SDL2 OR TARGET SDL2-static) AND SDL2_DISABLE_INSTALL)
+    # Cannot install SDL2_mixer when SDL2 is built in same built, and is not installed.
+    set(sdl2mixer_install_enableable OFF)
+endif()
+
 include(CheckIncludeFile)
 include(CheckSymbolExists)
 include(CMakeDependentOption)
@@ -64,7 +70,7 @@ option(BUILD_SHARED_LIBS "Build the library as a shared library" ON)
 # Save BUILD_SHARED_LIBS variable as soon as possible
 set(SDL2MIXER_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
 
-option(SDL2MIXER_INSTALL "Enable SDL2mixer install target" ${SDL2MIXER_ROOTPROJECT})
+cmake_dependent_option(SDL2MIXER_INSTALL "Enable SDL2mixer install target" ${SDL2MIXER_ROOTPROJECT} "${sdl2mixer_install_enableable}" OFF)
 option(SDL2MIXER_DEPS_SHARED "Default value for loading dependencies dynamically" ON)
 option(SDL2MIXER_VENDORED "Use vendored third-party libraries" ${vendored_default})
 
