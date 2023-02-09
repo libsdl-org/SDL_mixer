@@ -960,9 +960,9 @@ Mix_Chunk *Mix_QuickLoad_RAW(Uint8 *mem, Uint32 len)
 static void  Mix_HaltChannel_locked(int which)
 {
     if (Mix_Playing(which)) {
-        _Mix_channel_done_playing(which);
         mix_channel[which].playing = 0;
         mix_channel[which].looping = 0;
+        _Mix_channel_done_playing(which);
     }
     mix_channel[which].expire = 0;
     if (mix_channel[which].fading != MIX_NO_FADING) /* Restore volume */
