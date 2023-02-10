@@ -839,8 +839,8 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
         Uint8 *dst_data = NULL;
         int dst_len = 0;
 
-        if (SDL_ConvertAudioSamples(wavespec.format, wavespec.channels, wavespec.freq, chunk->alen, chunk->abuf,
-                                    mixer.format, mixer.channels, mixer.freq, &dst_len, &dst_data) < 0) {
+        if (SDL_ConvertAudioSamples(wavespec.format, wavespec.channels, wavespec.freq, chunk->abuf, chunk->alen,
+                                    mixer.format, mixer.channels, mixer.freq, &dst_data, &dst_len) < 0) {
             SDL_free(chunk->abuf);
             SDL_free(chunk);
             return NULL;
