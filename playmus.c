@@ -43,7 +43,7 @@ static int audio_open = 0;
 static Mix_Music *music = NULL;
 static int next_track = 0;
 
-void CleanUp(int exitcode)
+static void CleanUp(int exitcode)
 {
     if(Mix_PlayingMusic()) {
         Mix_FadeOutMusic(1500);
@@ -61,13 +61,13 @@ void CleanUp(int exitcode)
     exit(exitcode);
 }
 
-void Usage(char *argv0)
+static void Usage(char *argv0)
 {
     SDL_Log("Usage: %s [-i] [-l] [-8] [-f32] [-r rate] [-c channels] [-b buffers] [-v N] [-rwops] <musicfile>\n", argv0);
 }
 
 /*#define SEEK_TEST */
-void Menu(void)
+static void Menu(void)
 {
     char buf[10];
 
@@ -101,7 +101,7 @@ void Menu(void)
 }
 
 #ifdef HAVE_SIGNAL_H
-void IntHandler(int sig)
+static void IntHandler(int sig)
 {
     switch (sig) {
             case SIGINT:
