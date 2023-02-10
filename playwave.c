@@ -82,7 +82,7 @@ static void output_test_warnings(void)
 
 
 static int audio_open = 0;
-static Mix_Chunk *wave = NULL;
+static Mix_Chunk *g_wave = NULL;
 
 /* rcg06042009 Report available decoders. */
 #if (defined TEST_MIX_DECODERS)
@@ -137,7 +137,7 @@ static void SDLCALL channel_complete_callback (int chan)
     Mix_Chunk *done_chunk = Mix_GetChunk(chan);
     SDL_Log("We were just alerted that Mixer channel #%d is done.\n", chan);
     SDL_Log("Channel's chunk pointer is (%p).\n", (void*)done_chunk);
-    SDL_Log(" Which %s correct.\n", (wave == done_chunk) ? "is" : "is NOT");
+    SDL_Log(" Which %s correct.\n", (g_wave == done_chunk) ? "is" : "is NOT");
     channel_is_done = 1;
 }
 #endif
@@ -273,9 +273,9 @@ static void do_position_update(void)
 
 static void CleanUp(int exitcode)
 {
-    if (wave) {
-        Mix_FreeChunk(wave);
-        wave = NULL;
+    if (g_wave) {
+        Mix_FreeChunk(g_wave);
+        g_wave = NULL;
     }
     if (audio_open) {
         Mix_CloseAudio();
@@ -453,15 +453,15 @@ int main(int argc, char *argv[])
 #endif
 
     /* Load the requested wave file */
-    wave = Mix_LoadWAV(argv[i]);
-    if (wave == NULL) {
+    g_wave = Mix_LoadWAV(argv[i]);
+    if (g_wave == NULL) {
         SDL_Log("Couldn't load %s: %s\n",
                         argv[i], SDL_GetError());
         CleanUp(2);
     }
 
     if (reverse_sample) {
-        flip_sample(wave);
+        flip_sample(g_wave);
     }
 
 #ifdef TEST_MIX_CHANNELFINISHED  /* rcg06072001 */
@@ -476,7 +476,7 @@ int main(int argc, char *argv[])
     }
 
     /* Play and then exit */
-    Mix_PlayChannel(0, wave, loops);
+    Mix_PlayChannel(0, g_wave, loops);
 
     while (still_playing()) {
 
