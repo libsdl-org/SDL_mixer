@@ -19,7 +19,7 @@ find_package_handle_standard_args(libxmp-lite
     REQUIRED_VARS libxmp_lite_LIBRARY libxmp_lite_INCLUDE_PATH
 )
 
-if(libxmp_lite_FOUND)
+if(libxmp-lite_FOUND)
     if(NOT TARGET libxmp-lite::libxmp-lite)
         add_library(libxmp-lite::libxmp-lite UNKNOWN IMPORTED)
         set_target_properties(libxmp-lite::libxmp-lite PROPERTIES
