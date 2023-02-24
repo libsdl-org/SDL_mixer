@@ -1,7 +1,7 @@
 projectfullname = SDL_mixer
 projectshortname = SDL_mixer
-incsubdir = include
-wikisubdir = SDL_mixer
+incsubdir = include/SDL3
+wikisubdir = SDL3_mixer
 apiprefixregex = (Mix_|MIX_)
 mainincludefname = SDL_mixer.h
 versionfname = include/SDL_mixer.h
