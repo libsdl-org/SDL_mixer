@@ -77,6 +77,9 @@ else()
 endif()
 option(SDL3MIXER_CMD "Support an external music player" ${sdl3mixer_cmd_default})
 
+option(SDL3MIXER_SNDFILE "Support loading sounds via libsndfile" OFF)
+option(SDL3MIXER_SNDFILE_SHARED "Dynamically load libsndfile" "${SDL3MIXER_DEPS_SHARED}")
+
 option(SDL3MIXER_FLAC "Enable FLAC music" ON)
 
 cmake_dependent_option(SDL3MIXER_FLAC_LIBFLAC "Enable FLAC music using libFLAC" ON SDL3MIXER_FLAC OFF)
@@ -210,6 +213,7 @@ set(BUILD_SHARED_LIBS ${SDL3MIXER_BUILD_SHARED_LIBS})
 add_library(SDL3_mixer
     src/codecs/load_aiff.c
     src/codecs/load_voc.c
+    src/codecs/load_sndfile.c
     src/codecs/mp3utils.c
     src/codecs/music_cmd.c
     src/codecs/music_drflac.c
@@ -326,6 +330,35 @@ if(SDL3MIXER_CMD)
     endif()
     if(NOT fork_found)
         message(FATAL_ERROR "Neither fork() nor vfork() or available on this platform. Reconfigure with -DSDL3MIXER_CMD=OFF.")
+    endif()
+endif()
+
+if(SDL3MIXER_SNDFILE)
+    target_compile_definitions(SDL3_mixer PRIVATE LOAD_SNDFILE)
+    if(SDL3MIXER_VENDORED)
+        message(STATUS "Using vendored libsndfile")
+        message(FATAL_ERROR "libsndfile is not vendored.")
+    else()
+        message(STATUS "Using system libsndfile")
+        find_package(SndFile REQUIRED)
+        if(NOT SDL3MIXER_SNDFILE_SHARED)
+            list(APPEND PC_REQUIRES sndfile)
+        endif()
+    endif()
+    if(SDL3MIXER_SNDFILE_SHARED)
+        target_include_directories(SDL3_mixer PRIVATE
+            $<TARGET_PROPERTY:SndFile::sndfile,INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:SndFile::sndfile,INTERFACE_INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:SndFile::sndfile,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
+        )
+        target_get_dynamic_library(dynamic_sndfile SndFile::sndfile)
+        message(STATUS "Dynamic libsndfile: ${dynamic_sndfile}")
+        target_compile_definitions(SDL3_mixer PRIVATE "SNDFILE_DYNAMIC=\"${dynamic_sndfile}\"")
+        if(SDL3MIXER_VENDORED)
+            add_dependencies(SDL3_mixer SndFile::sndfile)
+        endif()
+    else()
+        target_link_libraries(SDL3_mixer PRIVATE SndFile::sndfile)
     endif()
 endif()
 
@@ -906,6 +939,7 @@ if(SDL3MIXER_INSTALL)
             cmake/FindVorbis.cmake
             cmake/Findtremor.cmake
             cmake/Findwavpack.cmake
+            cmake/FindSndFile.cmake
         DESTINATION "${SDL3MIXER_INSTALL_CMAKEDIR}"
         COMPONENT devel
     )
