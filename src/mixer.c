@@ -26,6 +26,7 @@
 #include "music.h"
 #include "load_aiff.h"
 #include "load_voc.h"
+#include "load_sndfile.h"
 
 #define MIX_INTERNAL_EFFECT__
 #include "effects_internal.h"
@@ -808,14 +809,19 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
     /* Seek backwards for compatibility with older loaders */
     SDL_RWseek(src, -4, SDL_RW_SEEK_CUR);
 
-    if (SDL_memcmp(magic, "WAVE", 4) == 0 || SDL_memcmp(magic, "RIFF", 4) == 0) {
-        loaded = SDL_LoadWAV_RW(src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
-    } else if (SDL_memcmp(magic, "FORM", 4) == 0) {
-        loaded = Mix_LoadAIFF_RW(src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
-    } else if (SDL_memcmp(magic, "Crea", 4) == 0) {
-        loaded = Mix_LoadVOC_RW(src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
-    } else {
-        loaded = Mix_LoadMusic_RW(src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
+    /* First try loading via libsndfile */
+    loaded = Mix_LoadSndFile_RW(src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
+
+    if (!loaded)  {
+        if (SDL_memcmp(magic, "WAVE", 4) == 0 || SDL_memcmp(magic, "RIFF", 4) == 0) {
+            loaded = SDL_LoadWAV_RW(src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
+        } else if (SDL_memcmp(magic, "FORM", 4) == 0) {
+            loaded = Mix_LoadAIFF_RW(src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
+        } else if (SDL_memcmp(magic, "Crea", 4) == 0) {
+            loaded = Mix_LoadVOC_RW(src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
+        } else {
+            loaded = Mix_LoadMusic_RW(src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
+        }
     }
     if (!loaded) {
         /* The individual loaders have closed src if needed */

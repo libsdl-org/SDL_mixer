@@ -12,6 +12,8 @@ set(SDL3MIXER_VENDORED              @SDL3MIXER_VENDORED@)
 
 set(SDL3MIXER_CMD                   @SDL3MIXER_CMD@)
 
+set(SDL3MIXER_SNDFILE               @SDL3MIXER_SNDFILE@)
+
 set(SDL3MIXER_FLAC_LIBFLAC          @SDL3MIXER_FLAC_LIBFLAC@)
 set(SDL3MIXER_FLAC_DRFLAC           @SDL3MIXER_FLAC_DRFLAC@)
 
@@ -56,6 +58,10 @@ endif()
 if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/SDL3_mixer-static-targets.cmake")
 
     include(CMakeFindDependencyMacro)
+
+    if(SDL3MIXER_SNDFILE AND NOT SDL3MIXER_VENDORED AND NOT TARGET SndFile::sndfile)
+        find_dependency(SndFile)
+    endif()
 
     if(SDL3MIXER_FLAC_LIBFLAC AND NOT SDL3MIXER_VENDORED AND NOT TARGET FLAC::FLAC)
         find_dependency(FLAC)
