@@ -40,15 +40,14 @@ static int (*SF_sf_close) (SNDFILE *sndfile);
 static sf_count_t (*SF_sf_readf_short) (SNDFILE *sndfile, short *ptr, sf_count_t frames);
 static const char* (*SF_sf_strerror) (SNDFILE *sndfile);
 
+static int SNDFILE_loaded;
+static void *SNDFILE_lib;
+
 static int SNDFILE_init (void)
 {
-    static int SNDFILE_loaded;
-
     if (SNDFILE_loaded == 0)
     {
 #ifdef SNDFILE_DYNAMIC
-        static void *SNDFILE_lib;
-
         SNDFILE_lib = SDL_LoadObject(SNDFILE_DYNAMIC);
         if (SNDFILE_lib == NULL) {
             return -1;
@@ -78,6 +77,21 @@ static int SNDFILE_init (void)
     }
 
     return 0;
+}
+
+void SNDFILE_uninit (void)
+{
+    if (SNDFILE_lib != NULL) {
+        SDL_UnloadObject(SNDFILE_lib);
+        SNDFILE_lib = NULL;
+
+        SF_sf_open_virtual = NULL;
+        SF_sf_close = NULL;
+        SF_sf_readf_short = NULL;
+        SF_sf_strerror = NULL;
+
+        SNDFILE_loaded = 0;
+    }
 }
 
 static sf_count_t sfvio_size(void *user_data)
@@ -135,8 +149,10 @@ SDL_AudioSpec *Mix_LoadSndFile_RW (SDL_RWops *src, int freesrc,
     *audio_len = 0;
     SDL_memset(spec, 0, sizeof(*spec));
 
-    if (SNDFILE_init() != 0) {
-        goto done;
+    if (SNDFILE_loaded == 0) {
+        if (SNDFILE_init() != 0) {
+            goto done;
+        }
     }
 
     SDL_memset(&sfinfo, 0, sizeof(sfinfo));
@@ -203,6 +219,11 @@ SDL_AudioSpec *Mix_LoadSndFile_RW (SDL_RWops *src, int freesrc,
         SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
 {
     return NULL;
+}
+
+void SNDFILE_uninit (void)
+{
+    // no-op
 }
 
 #endif
