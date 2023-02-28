@@ -282,6 +282,7 @@ int Mix_Init(int flags)
 void Mix_Quit(void)
 {
     unload_music();
+    SNDFILE_uninit();
 }
 
 static int _Mix_remove_all_effects(int channel, effect_info **e);

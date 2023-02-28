@@ -34,6 +34,8 @@
 SDL_AudioSpec *Mix_LoadSndFile_RW (SDL_RWops *src, int freesrc,
         SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len);
 
+void SNDFILE_uninit (void);
+
 #endif
 
 /* vi: set ts=4 sw=4 expandtab: */
