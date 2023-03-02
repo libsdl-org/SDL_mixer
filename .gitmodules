@@ -29,7 +29,7 @@
 [submodule "libxmp"]
 	path = external/libxmp
 	url = https://github.com/libsdl-org/libxmp.git
-	branch = pre4.5.1-SDL-2
+	branch = pre4.5.1-SDL-3
 [submodule "external/wavpack"]
 	path = external/wavpack
 	url = https://github.com/libsdl-org/wavpack.git
