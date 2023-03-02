@@ -57,7 +57,7 @@
 char *music_cmd = NULL;
 static SDL_bool music_active = SDL_TRUE;
 static int music_volume = MIX_MAX_VOLUME;
-static Mix_Music * volatile music_playing = NULL;
+static Mix_Music *music_playing = NULL;
 SDL_AudioSpec music_spec;
 
 struct _Mix_Music {
