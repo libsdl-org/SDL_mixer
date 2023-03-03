@@ -35,6 +35,7 @@
 #else
 #include <mpg123.h>
 #endif
+
 #ifdef _MSC_VER
 typedef ptrdiff_t MIX_SSIZE_T;
 #else
@@ -158,7 +159,6 @@ static int mpg123_format_to_sdl(int fmt)
         case MPG123_ENC_SIGNED_8:       return AUDIO_S8;
         case MPG123_ENC_UNSIGNED_8:     return AUDIO_U8;
         case MPG123_ENC_SIGNED_16:      return AUDIO_S16SYS;
-        case MPG123_ENC_UNSIGNED_16:    return AUDIO_U16SYS;
         case MPG123_ENC_SIGNED_32:      return AUDIO_S32SYS;
         case MPG123_ENC_FLOAT_32:       return AUDIO_F32SYS;
         default:                        return -1;
@@ -172,7 +172,6 @@ static const char *mpg123_format_str(int fmt)
     switch (fmt) {
 #define f(x) case x: return #x;
         f(MPG123_ENC_UNSIGNED_8)
-        f(MPG123_ENC_UNSIGNED_16)
         f(MPG123_ENC_SIGNED_8)
         f(MPG123_ENC_SIGNED_16)
         f(MPG123_ENC_SIGNED_32)
@@ -288,7 +287,6 @@ static void *MPG123_CreateFromRW(SDL_RWops *src, int freesrc)
         const int formats = (MPG123_ENC_SIGNED_8 |
                              MPG123_ENC_UNSIGNED_8 |
                              MPG123_ENC_SIGNED_16 |
-                             MPG123_ENC_UNSIGNED_16 |
                              MPG123_ENC_SIGNED_32 |
                              MPG123_ENC_FLOAT_32);
 
