@@ -57,19 +57,6 @@ void timi_s32tos16(void *dp, Sint32 *lp, Sint32 c)
     }
 }
 
-void timi_s32tou16(void *dp, Sint32 *lp, Sint32 c)
-{
-  Uint16 *sp=(Uint16 *)(dp);
-  Sint32 l;
-  while (c--)
-    {
-      l=(*lp++)>>(32-16-GUARD_BITS);
-      if (l > 32767) l=32767;
-      else if (l<-32768) l=-32768;
-      *sp++ = 0x8000 ^ (Uint16)(l);
-    }
-}
-
 void timi_s32tos16x(void *dp, Sint32 *lp, Sint32 c)
 {
   Sint16 *sp=(Sint16 *)(dp);
@@ -80,19 +67,6 @@ void timi_s32tos16x(void *dp, Sint32 *lp, Sint32 c)
       if (l > 32767) l=32767;
       else if (l<-32768) l=-32768;
       *sp++ = SDL_Swap16((Sint16)(l));
-    }
-}
-
-void timi_s32tou16x(void *dp, Sint32 *lp, Sint32 c)
-{
-  Uint16 *sp=(Uint16 *)(dp);
-  Sint32 l;
-  while (c--)
-    {
-      l=(*lp++)>>(32-16-GUARD_BITS);
-      if (l > 32767) l=32767;
-      else if (l<-32768) l=-32768;
-      *sp++ = SDL_Swap16(0x8000 ^ (Uint16)(l));
     }
 }
 

@@ -27,11 +27,9 @@ extern void timi_s32tou8(void *dp, Sint32 *lp, Sint32 c);
 
 /* 16-bit */
 extern void timi_s32tos16(void *dp, Sint32 *lp, Sint32 c);
-extern void timi_s32tou16(void *dp, Sint32 *lp, Sint32 c);
 
 /* byte-exchanged 16-bit */
 extern void timi_s32tos16x(void *dp, Sint32 *lp, Sint32 c);
-extern void timi_s32tou16x(void *dp, Sint32 *lp, Sint32 c);
 
 /* 32-bit */
 extern void timi_s32tof32(void *dp, Sint32 *lp, Sint32 c);
@@ -42,15 +40,11 @@ extern void timi_s32tos32x(void *dp, Sint32 *lp, Sint32 c);
 
 /* little-endian and big-endian specific */
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
-#define timi_s32tou16l timi_s32tou16
-#define timi_s32tou16b timi_s32tou16x
 #define timi_s32tos16l timi_s32tos16
 #define timi_s32tos16b timi_s32tos16x
 #define timi_s32tos32l timi_s32tos32
 #define timi_s32tos32b timi_s32tos32x
 #else
-#define timi_s32tou16l timi_s32tou16x
-#define timi_s32tou16b timi_s32tou16
 #define timi_s32tos16l timi_s32tos16x
 #define timi_s32tos16b timi_s32tos16
 #define timi_s32tos32l timi_s32tos32x

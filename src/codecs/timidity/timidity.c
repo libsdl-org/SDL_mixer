@@ -564,12 +564,6 @@ static void do_song_load(SDL_RWops *rw, SDL_AudioSpec *audio, MidiSong **out)
   case AUDIO_S16MSB:
     song->write = timi_s32tos16b;
     break;
-  case AUDIO_U16LSB:
-    song->write = timi_s32tou16l;
-    break;
-  case AUDIO_U16MSB:
-    song->write = timi_s32tou16b;
-    break;
   case AUDIO_S32LSB:
     song->write = timi_s32tos32l;
     break;
