@@ -45,8 +45,7 @@ static void *SNDFILE_lib;
 
 static int SNDFILE_init (void)
 {
-    if (SNDFILE_loaded == 0)
-    {
+    if (SNDFILE_loaded == 0) {
 #ifdef SNDFILE_DYNAMIC
         SNDFILE_lib = SDL_LoadObject(SNDFILE_DYNAMIC);
         if (SNDFILE_lib == NULL) {
@@ -97,28 +96,24 @@ void SNDFILE_uninit (void)
 static sf_count_t sfvio_size(void *user_data)
 {
     SDL_RWops *RWops = user_data;
-
     return SDL_RWsize(RWops);
 }
 
 static sf_count_t sfvio_seek(sf_count_t offset, int whence, void *user_data)
 {
     SDL_RWops *RWops = user_data;
-
     return SDL_RWseek(RWops, offset, whence);
 }
 
 static sf_count_t sfvio_read(void *ptr, sf_count_t count, void *user_data)
 {
     SDL_RWops *RWops = user_data;
-
     return SDL_RWread(RWops, ptr, count);
 }
 
 static sf_count_t sfvio_tell(void *user_data)
 {
     SDL_RWops *RWops = user_data;
-
     return SDL_RWtell(RWops);
 }
 
@@ -127,8 +122,7 @@ SDL_AudioSpec *Mix_LoadSndFile_RW (SDL_RWops *src, int freesrc,
 {
     SNDFILE *sndfile = NULL;
     SF_INFO sfinfo;
-    SF_VIRTUAL_IO sfvio =
-    {
+    SF_VIRTUAL_IO sfvio = {
         sfvio_size,
         sfvio_seek,
         sfvio_read,
@@ -218,12 +212,17 @@ done:
 SDL_AudioSpec *Mix_LoadSndFile_RW (SDL_RWops *src, int freesrc,
         SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
 {
+    (void) src;
+    (void) freesrc;
+    (void) spec;
+    (void) audio_buf;
+    (void) audio_len;
     return NULL;
 }
 
 void SNDFILE_uninit (void)
 {
-    // no-op
+    /* no-op */
 }
 
 #endif
