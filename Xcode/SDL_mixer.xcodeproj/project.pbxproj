@@ -118,6 +118,18 @@
 		F3D87C09281DFABD005DA540 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87C08281DFABD005DA540 /* AudioToolbox.framework */; };
 		F3D87C0B281DFAD4005DA540 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87C0A281DFAD4005DA540 /* AudioUnit.framework */; platformFilters = (macos, ); };
 		F3D87C0D281DFADB005DA540 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87C0C281DFADB005DA540 /* CoreServices.framework */; };
+		F3F8794E29B30FDA0007FDA1 /* music_wavpack.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8794529B30FDA0007FDA1 /* music_wavpack.c */; };
+		F3F8794F29B30FDA0007FDA1 /* music_wavpack.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8794529B30FDA0007FDA1 /* music_wavpack.c */; };
+		F3F8795029B30FDA0007FDA1 /* load_sndfile.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8794929B30FDA0007FDA1 /* load_sndfile.c */; };
+		F3F8795129B30FDA0007FDA1 /* load_sndfile.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8794929B30FDA0007FDA1 /* load_sndfile.c */; };
+		F3F8795229B30FDA0007FDA1 /* music_gme.h in Headers */ = {isa = PBXBuildFile; fileRef = F3F8794A29B30FDA0007FDA1 /* music_gme.h */; };
+		F3F8795329B30FDA0007FDA1 /* music_gme.h in Headers */ = {isa = PBXBuildFile; fileRef = F3F8794A29B30FDA0007FDA1 /* music_gme.h */; };
+		F3F8795429B30FDA0007FDA1 /* music_wavpack.h in Headers */ = {isa = PBXBuildFile; fileRef = F3F8794B29B30FDA0007FDA1 /* music_wavpack.h */; };
+		F3F8795529B30FDA0007FDA1 /* music_wavpack.h in Headers */ = {isa = PBXBuildFile; fileRef = F3F8794B29B30FDA0007FDA1 /* music_wavpack.h */; };
+		F3F8795629B30FDA0007FDA1 /* music_gme.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8794C29B30FDA0007FDA1 /* music_gme.c */; };
+		F3F8795729B30FDA0007FDA1 /* music_gme.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8794C29B30FDA0007FDA1 /* music_gme.c */; };
+		F3F8795829B30FDA0007FDA1 /* load_sndfile.h in Headers */ = {isa = PBXBuildFile; fileRef = F3F8794D29B30FDA0007FDA1 /* load_sndfile.h */; };
+		F3F8795929B30FDA0007FDA1 /* load_sndfile.h in Headers */ = {isa = PBXBuildFile; fileRef = F3F8794D29B30FDA0007FDA1 /* load_sndfile.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -232,6 +244,12 @@
 		F3D87C0C281DFADB005DA540 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		F3D87C0E281DFB02005DA540 /* SDL3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL3.framework; path = macOS/SDL3.framework; sourceTree = "<group>"; };
 		F3E29D022882107B0006D108 /* xmp-lite.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "xmp-lite.xcodeproj"; path = "xmp-lite/xmp-lite.xcodeproj"; sourceTree = "<group>"; };
+		F3F8794529B30FDA0007FDA1 /* music_wavpack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_wavpack.c; sourceTree = "<group>"; };
+		F3F8794929B30FDA0007FDA1 /* load_sndfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = load_sndfile.c; sourceTree = "<group>"; };
+		F3F8794A29B30FDA0007FDA1 /* music_gme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_gme.h; sourceTree = "<group>"; };
+		F3F8794B29B30FDA0007FDA1 /* music_wavpack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_wavpack.h; sourceTree = "<group>"; };
+		F3F8794C29B30FDA0007FDA1 /* music_gme.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_gme.c; sourceTree = "<group>"; };
+		F3F8794D29B30FDA0007FDA1 /* load_sndfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = load_sndfile.h; sourceTree = "<group>"; };
 		F51BFB0101F724BE01D3D55B /* native_midi.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = native_midi.h; sourceTree = "<group>"; };
 		F59C710300D5CB5801000001 /* ReadMe.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = ReadMe.txt; sourceTree = "<group>"; };
 		F59C710400D5CB5801000001 /* Welcome.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Welcome.txt; sourceTree = "<group>"; };
@@ -321,6 +339,8 @@
 			children = (
 				AAE405BE1F9607BF00EDAF53 /* load_aiff.c */,
 				AAE405D21F9607C100EDAF53 /* load_aiff.h */,
+				F3F8794929B30FDA0007FDA1 /* load_sndfile.c */,
+				F3F8794D29B30FDA0007FDA1 /* load_sndfile.h */,
 				AAE405CC1F9607C000EDAF53 /* load_voc.c */,
 				AAE405C31F9607C000EDAF53 /* load_voc.h */,
 				639197EF239FE66700F1D8F8 /* mp3utils.c */,
@@ -335,6 +355,8 @@
 				AAE405C71F9607C000EDAF53 /* music_flac.h */,
 				AAE405C61F9607C000EDAF53 /* music_fluidsynth.c */,
 				AAE405BF1F9607BF00EDAF53 /* music_fluidsynth.h */,
+				F3F8794C29B30FDA0007FDA1 /* music_gme.c */,
+				F3F8794A29B30FDA0007FDA1 /* music_gme.h */,
 				AAE405C41F9607C000EDAF53 /* music_modplug.c */,
 				AAE405C51F9607C000EDAF53 /* music_modplug.h */,
 				AAE405DF1F9607C300EDAF53 /* music_mpg123.c */,
@@ -350,6 +372,8 @@
 				AAE405D61F9607C100EDAF53 /* music_timidity.h */,
 				AAE405C91F9607C000EDAF53 /* music_wav.c */,
 				AAE405C81F9607C000EDAF53 /* music_wav.h */,
+				F3F8794529B30FDA0007FDA1 /* music_wavpack.c */,
+				F3F8794B29B30FDA0007FDA1 /* music_wavpack.h */,
 				F30240622881DF95002F32D6 /* music_xmp.c */,
 				F302405F2881DF94002F32D6 /* music_xmp.h */,
 			);
@@ -456,13 +480,16 @@
 				F37A8D4A2838A23400C38E95 /* music_drflac.h in Headers */,
 				F30240632881DF95002F32D6 /* music_xmp.h in Headers */,
 				AAE405E41F9607C300EDAF53 /* mixer.h in Headers */,
+				F3F8795829B30FDA0007FDA1 /* load_sndfile.h in Headers */,
 				AAE405FF1F9607C300EDAF53 /* music_cmd.h in Headers */,
+				F3F8795229B30FDA0007FDA1 /* music_gme.h in Headers */,
 				AAE405EB1F9607C300EDAF53 /* music_flac.h in Headers */,
 				AAE406051F9607C300EDAF53 /* effects_internal.h in Headers */,
 				AAE405FA1F9607C300EDAF53 /* music_timidity.h in Headers */,
 				AAE405F71F9607C300EDAF53 /* music_mpg123.h in Headers */,
 				AAE405E61F9607C300EDAF53 /* music.h in Headers */,
 				F382335F2731963800F7F527 /* native_midi.h in Headers */,
+				F3F8795429B30FDA0007FDA1 /* music_wavpack.h in Headers */,
 				BE1FA8CD07AF96B2004B6283 /* SDL_mixer.h in Headers */,
 				AAE405F51F9607C300EDAF53 /* music_ogg.h in Headers */,
 				630FBD8520D5211F009867AB /* music_opus.h in Headers */,
@@ -476,6 +503,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3823346273195F300F7F527 /* music_flac.h in Headers */,
+				F3F8795529B30FDA0007FDA1 /* music_wavpack.h in Headers */,
 				F382333E273195DF00F7F527 /* mixer.h in Headers */,
 				F382335A2731962600F7F527 /* load_aiff.h in Headers */,
 				F3823348273195F800F7F527 /* music_fluidsynth.h in Headers */,
@@ -490,11 +518,13 @@
 				F38233542731961800F7F527 /* music_ogg.h in Headers */,
 				F382335C2731962B00F7F527 /* load_voc.h in Headers */,
 				F382335D2731962D00F7F527 /* music_opus.h in Headers */,
+				F3F8795929B30FDA0007FDA1 /* load_sndfile.h in Headers */,
 				F3823342273195E900F7F527 /* mp3utils.h in Headers */,
 				F38233602731963800F7F527 /* native_midi.h in Headers */,
 				F38233502731960F00F7F527 /* music_mpg123.h in Headers */,
 				F3823344273195EE00F7F527 /* music_cmd.h in Headers */,
 				F37A8D2E2838924900C38E95 /* music_drmp3.h in Headers */,
+				F3F8795329B30FDA0007FDA1 /* music_gme.h in Headers */,
 				F38233582731962100F7F527 /* music_wav.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -705,12 +735,15 @@
 				AAE405F81F9607C300EDAF53 /* music_flac.c in Sources */,
 				AAE405F21F9607C300EDAF53 /* effects_internal.c in Sources */,
 				AAE406021F9607C300EDAF53 /* music_cmd.c in Sources */,
+				F3F8795029B30FDA0007FDA1 /* load_sndfile.c in Sources */,
 				AAE405FB1F9607C300EDAF53 /* music_timidity.c in Sources */,
 				F37A8DB52838AD1300C38E95 /* music_ogg_stb.c in Sources */,
 				F37A8D502838A23400C38E95 /* music_drflac.c in Sources */,
 				AAE405F11F9607C300EDAF53 /* music.c in Sources */,
 				AAE405F91F9607C300EDAF53 /* music_nativemidi.c in Sources */,
+				F3F8794E29B30FDA0007FDA1 /* music_wavpack.c in Sources */,
 				AAE406031F9607C300EDAF53 /* music_mpg123.c in Sources */,
+				F3F8795629B30FDA0007FDA1 /* music_gme.c in Sources */,
 				AAE406041F9607C300EDAF53 /* effect_stereoreverse.c in Sources */,
 				AAE405ED1F9607C300EDAF53 /* music_wav.c in Sources */,
 				F30240652881DF95002F32D6 /* music_xmp.c in Sources */,
@@ -736,12 +769,15 @@
 				F382335B2731962900F7F527 /* load_voc.c in Sources */,
 				F382334D2731960400F7F527 /* music_modplug.c in Sources */,
 				F382333F273195E100F7F527 /* music.c in Sources */,
+				F3F8795129B30FDA0007FDA1 /* load_sndfile.c in Sources */,
 				F37A8DB62838AD1300C38E95 /* music_ogg_stb.c in Sources */,
 				F37A8D512838A23400C38E95 /* music_drflac.c in Sources */,
 				F3823341273195E600F7F527 /* mp3utils.c in Sources */,
 				F3823343273195EB00F7F527 /* music_cmd.c in Sources */,
 				F382335E2731963000F7F527 /* music_opus.c in Sources */,
+				F3F8794F29B30FDA0007FDA1 /* music_wavpack.c in Sources */,
 				F382333D273195DC00F7F527 /* mixer.c in Sources */,
+				F3F8795729B30FDA0007FDA1 /* music_gme.c in Sources */,
 				F3823347273195F500F7F527 /* music_fluidsynth.c in Sources */,
 				F38233592731962400F7F527 /* load_aiff.c in Sources */,
 				F30240662881DF95002F32D6 /* music_xmp.c in Sources */,

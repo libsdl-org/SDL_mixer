@@ -75,18 +75,18 @@ typedef struct _Mix_effectinfo
 static struct _Mix_Channel {
     Mix_Chunk *chunk;
     int playing;
-    int paused;
+    Uint64 paused;
     Uint8 *samples;
     int volume;
     int looping;
     int tag;
-    Uint32 expire;
-    Uint32 start_time;
+    Uint64 expire;
+    Uint64 start_time;
     Mix_Fading fading;
     int fade_volume;
     int fade_volume_reset;
-    Uint32 fade_length;
-    Uint32 ticks_fade;
+    Uint64 fade_length;
+    Uint64 ticks_fade;
     effect_info *effects;
 } *mix_channel = NULL;
 
@@ -340,7 +340,7 @@ mix_channels(void *udata, Uint8 *stream, int len)
 {
     Uint8 *mix_input;
     int i, mixable, master_vol;
-    Uint32 sdl_ticks;
+    Uint64 sdl_ticks;
 
     (void)udata;
 
@@ -364,7 +364,7 @@ mix_channels(void *udata, Uint8 *stream, int len)
                 mix_channel[i].expire = 0;
                 _Mix_channel_done_playing(i);
             } else if (mix_channel[i].fading != MIX_NO_FADING) {
-                Uint32 ticks = sdl_ticks - mix_channel[i].ticks_fade;
+                Uint64 ticks = sdl_ticks - mix_channel[i].ticks_fade;
                 if (ticks >= mix_channel[i].fade_length) {
                     Mix_Volume(i, mix_channel[i].fade_volume_reset); /* Restore the volume */
                     if (mix_channel[i].fading == MIX_FADING_OUT) {
@@ -376,10 +376,11 @@ mix_channels(void *udata, Uint8 *stream, int len)
                     mix_channel[i].fading = MIX_NO_FADING;
                 } else {
                     if (mix_channel[i].fading == MIX_FADING_OUT) {
-                        Mix_Volume(i, (mix_channel[i].fade_volume * (mix_channel[i].fade_length-ticks))
-                                   / mix_channel[i].fade_length);
+                        int volume = (int)((mix_channel[i].fade_volume * (mix_channel[i].fade_length - ticks)) / mix_channel[i].fade_length);
+                        Mix_Volume(i, volume);
                     } else {
-                        Mix_Volume(i, (mix_channel[i].fade_volume * ticks) / mix_channel[i].fade_length);
+                        int volume = (int)((mix_channel[i].fade_volume * ticks) / mix_channel[i].fade_length);
+                        Mix_Volume(i, volume);
                     }
                 }
             }
@@ -1075,7 +1076,7 @@ int Mix_PlayChannelTimed(int which, Mix_Chunk *chunk, int loops, int ticks)
 
         /* Queue up the audio data for this channel */
         if (which >= 0 && which < num_channels) {
-            Uint32 sdl_ticks = SDL_GetTicks();
+            Uint64 sdl_ticks = SDL_GetTicks();
             mix_channel[which].samples = chunk->abuf;
             mix_channel[which].playing = (int)chunk->alen;
             mix_channel[which].looping = loops;
@@ -1083,7 +1084,7 @@ int Mix_PlayChannelTimed(int which, Mix_Chunk *chunk, int loops, int ticks)
             mix_channel[which].paused = 0;
             mix_channel[which].fading = MIX_NO_FADING;
             mix_channel[which].start_time = sdl_ticks;
-            mix_channel[which].expire = (ticks > 0) ? (sdl_ticks + (Uint32)ticks) : 0;
+            mix_channel[which].expire = (ticks > 0) ? (sdl_ticks + ticks) : 0;
         }
     }
     Mix_UnlockAudio();
@@ -1151,7 +1152,7 @@ int Mix_FadeInChannelTimed(int which, Mix_Chunk *chunk, int loops, int ms, int t
 
         /* Queue up the audio data for this channel */
         if (which >= 0 && which < num_channels) {
-            Uint32 sdl_ticks = SDL_GetTicks();
+            Uint64 sdl_ticks = SDL_GetTicks();
             mix_channel[which].samples = chunk->abuf;
             mix_channel[which].playing = (int)chunk->alen;
             mix_channel[which].looping = loops;
@@ -1163,9 +1164,9 @@ int Mix_FadeInChannelTimed(int which, Mix_Chunk *chunk, int loops, int ms, int t
             mix_channel[which].fading = MIX_FADING_IN;
             mix_channel[which].fade_volume = mix_channel[which].volume;
             mix_channel[which].volume = 0;
-            mix_channel[which].fade_length = (Uint32)ms;
+            mix_channel[which].fade_length = (Uint64)ms;
             mix_channel[which].start_time = mix_channel[which].ticks_fade = sdl_ticks;
-            mix_channel[which].expire = (ticks > 0) ? (sdl_ticks+(Uint32)ticks) : 0;
+            mix_channel[which].expire = (ticks > 0) ? (sdl_ticks + ticks) : 0;
         }
     }
     Mix_UnlockAudio();
@@ -1269,7 +1270,7 @@ int Mix_FadeOutChannel(int which, int ms)
                 (mix_channel[which].volume > 0) &&
                 (mix_channel[which].fading != MIX_FADING_OUT)) {
                 mix_channel[which].fade_volume = mix_channel[which].volume;
-                mix_channel[which].fade_length = (Uint32)ms;
+                mix_channel[which].fade_length = (Uint64)ms;
                 mix_channel[which].ticks_fade = SDL_GetTicks();
 
                 /* only change fade_volume_reset if we're not fading. */
@@ -1380,7 +1381,7 @@ void Mix_CloseAudio(void)
 /* Pause a particular channel (or all) */
 void Mix_Pause(int which)
 {
-    Uint32 sdl_ticks = SDL_GetTicks();
+    Uint64 sdl_ticks = SDL_GetTicks();
     if (which == -1) {
         int i;
 
@@ -1399,7 +1400,7 @@ void Mix_Pause(int which)
 /* Resume a paused channel */
 void Mix_Resume(int which)
 {
-    Uint32 sdl_ticks = SDL_GetTicks();
+    Uint64 sdl_ticks = SDL_GetTicks();
 
     Mix_LockAudio();
     if (which == -1) {
@@ -1494,7 +1495,7 @@ int Mix_GroupCount(int tag)
 int Mix_GroupOldest(int tag)
 {
     int chan = -1;
-    Uint32 mintime = SDL_GetTicks();
+    Uint64 mintime = SDL_GetTicks();
     int i;
     for(i=0; i < num_channels; i ++) {
         if ((mix_channel[i].tag==tag || tag==-1) && Mix_Playing(i)
@@ -1510,7 +1511,7 @@ int Mix_GroupOldest(int tag)
 int Mix_GroupNewer(int tag)
 {
     int chan = -1;
-    Uint32 maxtime = 0;
+    Uint64 maxtime = 0;
     int i;
     for(i=0; i < num_channels; i ++) {
         if ((mix_channel[i].tag==tag || tag==-1) && Mix_Playing(i)
