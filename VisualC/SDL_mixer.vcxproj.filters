@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="..\include\SDL_mixer.h">
@@ -19,6 +19,9 @@
     <ClInclude Include="..\src\codecs\load_aiff.h">
       <Filter>Sources</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\codecs\load_sndfile.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\codecs\load_voc.h">
       <Filter>Sources</Filter>
     </ClInclude>
@@ -28,10 +31,19 @@
     <ClInclude Include="..\src\codecs\music_cmd.h">
       <Filter>Sources</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\codecs\music_drflac.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\music_drmp3.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\codecs\music_flac.h">
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="..\src\codecs\music_fluidsynth.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\music_gme.h">
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="..\src\codecs\music_modplug.h">
@@ -55,10 +67,7 @@
     <ClInclude Include="..\src\codecs\music_wav.h">
       <Filter>Sources</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\codecs\music_drflac.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\codecs\music_drmp3.h">
+    <ClInclude Include="..\src\codecs\music_wavpack.h">
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="..\src\codecs\music_xmp.h">
@@ -158,6 +167,9 @@
     <ClCompile Include="..\src\codecs\load_aiff.c">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\codecs\load_sndfile.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\codecs\load_voc.c">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -167,10 +179,19 @@
     <ClCompile Include="..\src\codecs\music_cmd.c">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\codecs\music_drflac.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\music_drmp3.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\codecs\music_flac.c">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\src\codecs\music_fluidsynth.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\music_gme.c">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\src\codecs\music_modplug.c">
@@ -185,6 +206,9 @@
     <ClCompile Include="..\src\codecs\music_ogg.c">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\codecs\music_ogg_stb.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\codecs\music_opus.c">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -194,13 +218,7 @@
     <ClCompile Include="..\src\codecs\music_wav.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\codecs\music_drflac.c">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\codecs\music_drmp3.c">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\codecs\music_ogg_stb.c">
+    <ClCompile Include="..\src\codecs\music_wavpack.c">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\src\codecs\music_xmp.c">

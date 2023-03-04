@@ -351,7 +351,7 @@ static Uint32 voc_read(SDL_RWops *src, vs_t *v, Uint8 *buf, SDL_AudioSpec *spec)
         if (done <= 0)
             return 0;
 
-        v->rest -= done;
+        v->rest = (Uint32)(v->rest - done);
         if (v->size == ST_SIZE_WORD)
         {
             #if (SDL_BYTEORDER == SDL_BIG_ENDIAN)

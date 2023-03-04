@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -216,6 +216,7 @@
     <ClInclude Include="..\src\music.h" />
     <ClInclude Include="..\src\utils.h" />
     <ClInclude Include="..\src\codecs\load_aiff.h" />
+    <ClInclude Include="..\src\codecs\load_sndfile.h" />
     <ClInclude Include="..\src\codecs\load_voc.h" />
     <ClInclude Include="..\src\codecs\mp3utils.h" />
     <ClInclude Include="..\src\codecs\music_cmd.h" />
@@ -223,6 +224,7 @@
     <ClInclude Include="..\src\codecs\music_drmp3.h" />
     <ClInclude Include="..\src\codecs\music_flac.h" />
     <ClInclude Include="..\src\codecs\music_fluidsynth.h" />
+    <ClInclude Include="..\src\codecs\music_gme.h" />
     <ClInclude Include="..\src\codecs\music_modplug.h" />
     <ClInclude Include="..\src\codecs\music_mpg123.h" />
     <ClInclude Include="..\src\codecs\music_nativemidi.h" />
@@ -230,6 +232,7 @@
     <ClInclude Include="..\src\codecs\music_opus.h" />
     <ClInclude Include="..\src\codecs\music_timidity.h" />
     <ClInclude Include="..\src\codecs\music_wav.h" />
+    <ClInclude Include="..\src\codecs\music_wavpack.h" />
     <ClInclude Include="..\src\codecs\music_xmp.h" />
   </ItemGroup>
   <ItemGroup>
@@ -404,6 +407,7 @@
     <ClCompile Include="..\src\music.c" />
     <ClCompile Include="..\src\utils.c" />
     <ClCompile Include="..\src\codecs\load_aiff.c" />
+    <ClCompile Include="..\src\codecs\load_sndfile.c" />
     <ClCompile Include="..\src\codecs\load_voc.c" />
     <ClCompile Include="..\src\codecs\mp3utils.c" />
     <ClCompile Include="..\src\codecs\music_cmd.c" />
@@ -411,6 +415,7 @@
     <ClCompile Include="..\src\codecs\music_drmp3.c" />
     <ClCompile Include="..\src\codecs\music_flac.c" />
     <ClCompile Include="..\src\codecs\music_fluidsynth.c" />
+    <ClCompile Include="..\src\codecs\music_gme.c" />
     <ClCompile Include="..\src\codecs\music_modplug.c" />
     <ClCompile Include="..\src\codecs\music_mpg123.c" />
     <ClCompile Include="..\src\codecs\music_nativemidi.c" />
@@ -419,6 +424,7 @@
     <ClCompile Include="..\src\codecs\music_opus.c" />
     <ClCompile Include="..\src\codecs\music_timidity.c" />
     <ClCompile Include="..\src\codecs\music_wav.c" />
+    <ClCompile Include="..\src\codecs\music_wavpack.c" />
     <ClCompile Include="..\src\codecs\music_xmp.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
