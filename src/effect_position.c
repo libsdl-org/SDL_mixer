@@ -53,23 +53,23 @@
 
 typedef struct _Eff_positionargs
 {
-    volatile float left_f;
-    volatile float right_f;
-    volatile Uint8 left_u8;
-    volatile Uint8 right_u8;
-    volatile float left_rear_f;
-    volatile float right_rear_f;
-    volatile float center_f;
-    volatile float lfe_f;
-    volatile Uint8 left_rear_u8;
-    volatile Uint8 right_rear_u8;
-    volatile Uint8 center_u8;
-    volatile Uint8 lfe_u8;
-    volatile float distance_f;
-    volatile Uint8 distance_u8;
-    volatile Sint16 room_angle;
-    volatile int in_use;
-    volatile int channels;
+    float left_f;
+    float right_f;
+    Uint8 left_u8;
+    Uint8 right_u8;
+    float left_rear_f;
+    float right_rear_f;
+    float center_f;
+    float lfe_f;
+    Uint8 left_rear_u8;
+    Uint8 right_rear_u8;
+    Uint8 center_u8;
+    Uint8 lfe_u8;
+    float distance_f;
+    Uint8 distance_u8;
+    Sint16 room_angle;
+    int in_use;
+    int channels;
 } position_args;
 
 static position_args **pos_args_array = NULL;
@@ -156,7 +156,7 @@ static void SDLCALL _Eff_position_u8(int chan, void *stream, int len, void *udat
 
 static void SDLCALL _Eff_position_u8_c4(int chan, void *stream, int len, void *udata)
 {
-    volatile position_args *args = (volatile position_args *) udata;
+    position_args *args = (position_args *) udata;
     Uint8 *ptr = (Uint8 *) stream;
     int i;
 
@@ -245,7 +245,7 @@ static void SDLCALL _Eff_position_u8_c4(int chan, void *stream, int len, void *u
 
 static void SDLCALL _Eff_position_u8_c6(int chan, void *stream, int len, void *udata)
 {
-    volatile position_args *args = (volatile position_args *) udata;
+    position_args *args = (position_args *) udata;
     Uint8 *ptr = (Uint8 *) stream;
     int i;
 
@@ -374,7 +374,7 @@ static void SDLCALL _Eff_position_u8_c6(int chan, void *stream, int len, void *u
  */
 static void SDLCALL _Eff_position_table_u8(int chan, void *stream, int len, void *udata)
 {
-    volatile position_args *args = (volatile position_args *) udata;
+    position_args *args = (position_args *) udata;
     Uint8 *ptr = (Uint8 *) stream;
     Uint32 *p;
     int i;
@@ -463,7 +463,7 @@ static void SDLCALL _Eff_position_s8(int chan, void *stream, int len, void *udat
 }
 static void SDLCALL _Eff_position_s8_c4(int chan, void *stream, int len, void *udata)
 {
-    volatile position_args *args = (volatile position_args *) udata;
+    position_args *args = (position_args *) udata;
     Sint8 *ptr = (Sint8 *) stream;
     int i;
 
@@ -512,7 +512,7 @@ static void SDLCALL _Eff_position_s8_c4(int chan, void *stream, int len, void *u
 
 static void SDLCALL _Eff_position_s8_c6(int chan, void *stream, int len, void *udata)
 {
-    volatile position_args *args = (volatile position_args *) udata;
+    position_args *args = (position_args *) udata;
     Sint8 *ptr = (Sint8 *) stream;
     int i;
 
@@ -580,7 +580,7 @@ static void SDLCALL _Eff_position_s8_c6(int chan, void *stream, int len, void *u
  */
 static void SDLCALL _Eff_position_table_s8(int chan, void *stream, int len, void *udata)
 {
-    volatile position_args *args = (volatile position_args *) udata;
+    position_args *args = (position_args *) udata;
     Sint8 *ptr = (Sint8 *) stream;
     Uint32 *p;
     int i;
@@ -664,7 +664,7 @@ static void SDLCALL _Eff_position_s16lsb(int chan, void *stream, int len, void *
 static void SDLCALL _Eff_position_s16lsb_c4(int chan, void *stream, int len, void *udata)
 {
     /* 16 signed bits (lsb) * 4 channels. */
-    volatile position_args *args = (volatile position_args *) udata;
+    position_args *args = (position_args *) udata;
     Sint16 *ptr = (Sint16 *) stream;
     int i;
 
@@ -711,7 +711,7 @@ static void SDLCALL _Eff_position_s16lsb_c4(int chan, void *stream, int len, voi
 static void SDLCALL _Eff_position_s16lsb_c6(int chan, void *stream, int len, void *udata)
 {
     /* 16 signed bits (lsb) * 6 channels. */
-    volatile position_args *args = (volatile position_args *) udata;
+    position_args *args = (position_args *) udata;
     Sint16 *ptr = (Sint16 *) stream;
     int i;
 
@@ -791,7 +791,7 @@ static void SDLCALL _Eff_position_s16msb(int chan, void *stream, int len, void *
 static void SDLCALL _Eff_position_s16msb_c4(int chan, void *stream, int len, void *udata)
 {
     /* 16 signed bits (lsb) * 4 channels. */
-    volatile position_args *args = (volatile position_args *) udata;
+    position_args *args = (position_args *) udata;
     Sint16 *ptr = (Sint16 *) stream;
     int i;
 
@@ -838,7 +838,7 @@ static void SDLCALL _Eff_position_s16msb_c4(int chan, void *stream, int len, voi
 static void SDLCALL _Eff_position_s16msb_c6(int chan, void *stream, int len, void *udata)
 {
     /* 16 signed bits (lsb) * 6 channels. */
-    volatile position_args *args = (volatile position_args *) udata;
+    position_args *args = (position_args *) udata;
     Sint16 *ptr = (Sint16 *) stream;
     int i;
 
@@ -933,7 +933,7 @@ static void SDLCALL _Eff_position_s32lsb(int chan, void *stream, int len, void *
 static void SDLCALL _Eff_position_s32lsb_c4(int chan, void *stream, int len, void *udata)
 {
     /* 32 signed bits (lsb) * 4 channels. */
-    volatile position_args *args = (volatile position_args *) udata;
+    position_args *args = (position_args *) udata;
     Sint32 *ptr = (Sint32 *) stream;
     int i;
 
@@ -980,7 +980,7 @@ static void SDLCALL _Eff_position_s32lsb_c4(int chan, void *stream, int len, voi
 static void SDLCALL _Eff_position_s32lsb_c6(int chan, void *stream, int len, void *udata)
 {
     /* 32 signed bits (lsb) * 6 channels. */
-    volatile position_args *args = (volatile position_args *) udata;
+    position_args *args = (position_args *) udata;
     Sint32 *ptr = (Sint32 *) stream;
     int i;
 
@@ -1060,7 +1060,7 @@ static void SDLCALL _Eff_position_s32msb(int chan, void *stream, int len, void *
 static void SDLCALL _Eff_position_s32msb_c4(int chan, void *stream, int len, void *udata)
 {
     /* 32 signed bits (lsb) * 4 channels. */
-    volatile position_args *args = (volatile position_args *) udata;
+    position_args *args = (position_args *) udata;
     Sint32 *ptr = (Sint32 *) stream;
     int i;
 
@@ -1107,7 +1107,7 @@ static void SDLCALL _Eff_position_s32msb_c4(int chan, void *stream, int len, voi
 static void SDLCALL _Eff_position_s32msb_c6(int chan, void *stream, int len, void *udata)
 {
     /* 32 signed bits (lsb) * 6 channels. */
-    volatile position_args *args = (volatile position_args *) udata;
+    position_args *args = (position_args *) udata;
     Sint32 *ptr = (Sint32 *) stream;
     int i;
 
@@ -1186,7 +1186,7 @@ static void SDLCALL _Eff_position_f32sys(int chan, void *stream, int len, void *
 static void SDLCALL _Eff_position_f32sys_c4(int chan, void *stream, int len, void *udata)
 {
     /* float * 4 channels. */
-    volatile position_args *args = (volatile position_args *) udata;
+    position_args *args = (position_args *) udata;
     float *ptr = (float *) stream;
     int i;
 
@@ -1229,7 +1229,7 @@ static void SDLCALL _Eff_position_f32sys_c4(int chan, void *stream, int len, voi
 static void SDLCALL _Eff_position_f32sys_c6(int chan, void *stream, int len, void *udata)
 {
     /* float * 6 channels. */
-    volatile position_args *args = (volatile position_args *) udata;
+    position_args *args = (position_args *) udata;
     float *ptr = (float *) stream;
     int i;
 
