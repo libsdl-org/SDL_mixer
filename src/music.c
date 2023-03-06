@@ -93,7 +93,7 @@ void meta_tags_init(Mix_MusicMetaTags *tags)
 
 void meta_tags_clear(Mix_MusicMetaTags *tags)
 {
-    size_t i;
+    int i;
 
     for (i = 0; i < MIX_META_LAST; i++) {
         if (tags->tags[i]) {
@@ -205,11 +205,12 @@ static Mix_MusicInterface *s_music_interfaces[] =
 #ifdef MUSIC_GME
     &Mix_MusicInterface_GME,
 #endif
+    NULL
 };
 
 int get_num_music_interfaces(void)
 {
-    return SDL_arraysize(s_music_interfaces);
+    return SDL_arraysize(s_music_interfaces) - 1;
 }
 
 Mix_MusicInterface *get_music_interface(int index)
@@ -406,9 +407,9 @@ void pause_async_music(int pause_on)
 /* Load the music interface libraries for a given music type */
 SDL_bool load_music_type(Mix_MusicType type)
 {
-    size_t i;
+    int i;
     int loaded = 0;
-    for (i = 0; i < SDL_arraysize(s_music_interfaces); ++i) {
+    for (i = 0; i < get_num_music_interfaces(); ++i) {
         Mix_MusicInterface *interface = s_music_interfaces[i];
         if (interface->type != type) {
             continue;
@@ -436,7 +437,7 @@ SDL_bool load_music_type(Mix_MusicType type)
 /* Open the music interfaces for a given music type */
 SDL_bool open_music_type(Mix_MusicType type)
 {
-    size_t i;
+    int i;
     int opened = 0;
     SDL_bool use_native_midi = SDL_FALSE;
 
@@ -451,7 +452,7 @@ SDL_bool open_music_type(Mix_MusicType type)
     }
 #endif
 
-    for (i = 0; i < SDL_arraysize(s_music_interfaces); ++i) {
+    for (i = 0; i < get_num_music_interfaces(); ++i) {
         Mix_MusicInterface *interface = s_music_interfaces[i];
         if (!interface->loaded) {
             continue;
@@ -535,8 +536,8 @@ void open_music(const SDL_AudioSpec *spec)
 /* Return SDL_TRUE if the music type is available */
 SDL_bool has_music(Mix_MusicType type)
 {
-    size_t i;
-    for (i = 0; i < SDL_arraysize(s_music_interfaces); ++i) {
+    int i;
+    for (i = 0; i < get_num_music_interfaces(); ++i) {
         Mix_MusicInterface *interface = s_music_interfaces[i];
         if (interface->type != type) {
             continue;
@@ -634,13 +635,13 @@ Mix_MusicType detect_music_type(SDL_RWops *src)
 /* Load a music file */
 Mix_Music *Mix_LoadMUS(const char *file)
 {
-    size_t i;
+    int i;
     void *context;
     char *ext;
     Mix_MusicType type;
     SDL_RWops *src;
 
-    for (i = 0; i < SDL_arraysize(s_music_interfaces); ++i) {
+    for (i = 0; i < get_num_music_interfaces(); ++i) {
         Mix_MusicInterface *interface = s_music_interfaces[i];
         if (!interface->opened || !interface->CreateFromFile) {
             continue;
@@ -734,7 +735,7 @@ Mix_Music *Mix_LoadMUS_RW(SDL_RWops *src, int freesrc)
 
 Mix_Music *Mix_LoadMUSType_RW(SDL_RWops *src, Mix_MusicType type, int freesrc)
 {
-    size_t i;
+    int i;
     void *context;
     Sint64 start;
 
@@ -759,7 +760,7 @@ Mix_Music *Mix_LoadMUSType_RW(SDL_RWops *src, Mix_MusicType type, int freesrc)
     Mix_ClearError();
 
     if (load_music_type(type) && open_music_type(type)) {
-        for (i = 0; i < SDL_arraysize(s_music_interfaces); ++i) {
+        for (i = 0; i < get_num_music_interfaces(); ++i) {
             Mix_MusicInterface *interface = s_music_interfaces[i];
             if (!interface->opened || type != interface->type || !interface->CreateFromRW) {
                 continue;
@@ -1418,11 +1419,11 @@ int Mix_GetSynchroValue(void)
 /* Uninitialize the music interfaces */
 void close_music(void)
 {
-    size_t i;
+    int i;
 
     Mix_HaltMusic();
 
-    for (i = 0; i < SDL_arraysize(s_music_interfaces); ++i) {
+    for (i = 0; i < get_num_music_interfaces(); ++i) {
         Mix_MusicInterface *interface = s_music_interfaces[i];
         if (!interface || !interface->opened) {
             continue;
@@ -1452,8 +1453,8 @@ void close_music(void)
 /* Unload the music interface libraries */
 void unload_music(void)
 {
-    size_t i;
-    for (i = 0; i < SDL_arraysize(s_music_interfaces); ++i) {
+    int i;
+    for (i = 0; i < get_num_music_interfaces(); ++i) {
         Mix_MusicInterface *interface = s_music_interfaces[i];
         if (!interface || !interface->loaded) {
             continue;
