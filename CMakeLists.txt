@@ -38,6 +38,13 @@ if(POLICY CMP0112)
     cmake_policy(SET CMP0112 NEW)
 endif()
 
+if(POLICY CMP0099)
+    # Make `INTERFACE_LINK_DIRECTORIES` a transitive usage requirement.
+    # This is needed for static dependencies which have transitive dependencies
+    # outside of compiler default search paths.
+    cmake_policy(SET CMP0099 NEW)
+endif()
+
 # Assume MSVC projects don't have a package manager and need vendored dependencies (by default).
 # Most other platforms have some kind of package manager.
 # FIXME: consider a package manager such as conan/vcpkg instead of vendoring
@@ -58,6 +65,8 @@ include(CheckSymbolExists)
 include(CMakeDependentOption)
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
+
+include(PkgConfigHelper)
 
 option(CMAKE_POSITION_INDEPENDENT_CODE "Build static libraries with -fPIC" ON)
 option(BUILD_SHARED_LIBS "Build the library as a shared library" ON)
