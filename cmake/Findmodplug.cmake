@@ -12,7 +12,7 @@ set(modplug_COMPILE_OPTIONS "" CACHE STRING "Extra compile options of modplug")
 
 set(modplug_LINK_LIBRARIES "" CACHE STRING "Extra link libraries of modplug")
 
-set(modplug_LINK_FLAGS "" CACHE STRING "Extra link flags of modplug")
+set(modplug_LINK_OPTIONS "" CACHE STRING "Extra link flags of modplug")
 
 find_package_handle_standard_args(modplug
     REQUIRED_VARS modplug_LIBRARY modplug_INCLUDE_PATH
@@ -27,7 +27,7 @@ if (modplug_FOUND)
             INTERFACE_INCLUDE_DIRECTORIES "${modplug_INCLUDE_PATH}"
             INTERFACE_COMPILE_OPTIONS "${modplug_COMPILE_OPTIONS}"
             INTERFACE_LINK_LIBRARIES "${modplug_LINK_LIBRARIES}"
-            INTERFACE_LINK_FLAGS "${modplug_LINK_FLAGS}"
+            INTERFACE_LINK_OPTIONS "${modplug_LINK_OPTIONS}"
         )
     endif()
 endif()

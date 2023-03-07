@@ -13,7 +13,7 @@ set(libxmp_lite_COMPILE_OPTIONS "" CACHE STRING "Extra compile options of libxmp
 
 set(libxmp_lite_LINK_LIBRARIES "" CACHE STRING "Extra link libraries of libxmp_lite")
 
-set(libxmp_lite_LINK_FLAGS "" CACHE STRING "Extra link flags of libxmp_lite")
+set(libxmp_lite_LINK_OPTIONS "" CACHE STRING "Extra link flags of libxmp_lite")
 
 find_package_handle_standard_args(libxmp-lite
     REQUIRED_VARS libxmp_lite_LIBRARY libxmp_lite_INCLUDE_PATH
@@ -27,7 +27,7 @@ if(libxmp-lite_FOUND)
             INTERFACE_INCLUDE_DIRECTORIES "${libxmp_lite_INCLUDE_PATH}"
             INTERFACE_COMPILE_OPTIONS "${libxmp_lite_COMPILE_OPTIONS}"
             INTERFACE_LINK_LIBRARIES "${libxmp_lite_LINK_LIBRARIES}"
-            INTERFACE_LINK_FLAGS "${libxmp_lite_LINK_FLAGS}"
+            INTERFACE_LINK_OPTIONS "${libxmp_lite_LINK_OPTIONS}"
         )
     endif()
 endif()

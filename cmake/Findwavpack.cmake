@@ -17,7 +17,7 @@ set(wavpack_COMPILE_OPTIONS "" CACHE STRING "Extra compile options of wavpack")
 
 set(wavpack_LINK_LIBRARIES "" CACHE STRING "Extra link libraries of wavpack")
 
-set(wavpack_LINK_FLAGS "" CACHE STRING "Extra link flags of wavpack")
+set(wavpack_LINK_OPTIONS "" CACHE STRING "Extra link flags of wavpack")
 
 find_package_handle_standard_args(wavpack
     REQUIRED_VARS wavpack_LIBRARY wavpack_INCLUDE_PATH
@@ -31,7 +31,7 @@ if (wavpack_FOUND)
             INTERFACE_INCLUDE_DIRECTORIES "${wavpack_INCLUDE_PATH}"
             INTERFACE_COMPILE_OPTIONS "${wavpack_COMPILE_OPTIONS}"
             INTERFACE_LINK_LIBRARIES "${wavpack_LINK_LIBRARIES}"
-            INTERFACE_LINK_FLAGS "${wavpack_LINK_FLAGS}"
+            INTERFACE_LINK_OPTIONS "${wavpack_LINK_OPTIONS}"
         )
     endif()
 endif()
