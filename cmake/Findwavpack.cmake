@@ -1,7 +1,7 @@
 include(FindPackageHandleStandardArgs)
 
 if(WIN32)
-    set(wavpack_find_names wavpack wavpackdll)
+    set(wavpack_find_names wavpack libwavpack wavpackdll)
 else()
     set(wavpack_find_names wavpack)
 endif()

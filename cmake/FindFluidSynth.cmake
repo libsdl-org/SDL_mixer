@@ -4,7 +4,7 @@ find_package(PkgConfig QUIET)
 pkg_check_modules(PC_FLUIDSYNTH QUIET fluidsynth)
 
 find_library(FluidSynth_LIBRARY
-    NAMES fluidsynth
+    NAMES fluidsynth libfluidsynth
     HINTS ${PC_FLUIDSYNTH_LIBDIR}
 )
 

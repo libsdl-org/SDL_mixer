@@ -4,7 +4,7 @@ find_package(PkgConfig QUIET)
 pkg_check_modules(PC_XMPLITE QUIET libxmp-lite)
 
 find_library(libxmp_lite_LIBRARY
-    NAMES xmp-lite
+    NAMES xmp-lite libxmp-lite
     HINTS ${PC_XMPLITE_LIBDIR}
 )
 
