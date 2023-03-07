@@ -19,9 +19,9 @@ find_package_handle_standard_args(FluidSynth
 )
 
 if(FluidSynth_FOUND)
-    if(NOT TARGET FluidSynth::FluidSynth)
-        add_library(FluidSynth::FluidSynth UNKNOWN IMPORTED)
-        set_target_properties(FluidSynth::FluidSynth PROPERTIES
+    if(NOT TARGET FluidSynth::libfluidsynth)
+        add_library(FluidSynth::libfluidsynth UNKNOWN IMPORTED)
+        set_target_properties(FluidSynth::libfluidsynth PROPERTIES
             IMPORTED_LOCATION "${FluidSynth_LIBRARY}"
             INTERFACE_INCLUDE_DIRECTORIES "${FluidSynth_INCLUDE_PATH}"
             INTERFACE_COMPILE_OPTIONS "${FluidSynth_COMPILE_OPTIONS}"
