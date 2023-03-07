@@ -786,18 +786,18 @@ if(SDL3MIXER_MIDI_FLUIDSYNTH)
     endif()
     if(SDL3MIXER_MIDI_FLUIDSYNTH_SHARED)
         target_include_directories(SDL3_mixer PRIVATE
-            $<TARGET_PROPERTY:FluidSynth::FluidSynth,INCLUDE_DIRECTORIES>
-            $<TARGET_PROPERTY:FluidSynth::FluidSynth,INTERFACE_INCLUDE_DIRECTORIES>
-            $<TARGET_PROPERTY:FluidSynth::FluidSynth,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:FluidSynth::libfluidsynth,INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:FluidSynth::libfluidsynth,INTERFACE_INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:FluidSynth::libfluidsynth,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
         )
-        target_get_dynamic_library(dynamic_fluidsynth FluidSynth::FluidSynth)
+        target_get_dynamic_library(dynamic_fluidsynth FluidSynth::libfluidsynth)
         message(STATUS "Dynamic fluidsynth: ${dynamic_fluidsynth}")
         target_compile_definitions(SDL3_mixer PRIVATE "FLUIDSYNTH_DYNAMIC=\"${dynamic_fluidsynth}\"")
         if(SDL3MIXER_VENDORED)
-            add_dependencies(SDL3_mixer FluidSynth::FluidSynth)
+            add_dependencies(SDL3_mixer FluidSynth::libfluidsynth)
         endif()
     else()
-        target_link_libraries(SDL3_mixer PRIVATE FluidSynth::FluidSynth)
+        target_link_libraries(SDL3_mixer PRIVATE FluidSynth::libfluidsynth)
     endif()
 endif()
 
