@@ -8,7 +8,7 @@ set(Vorbis_vorbisfile_COMPILE_OPTIONS "" CACHE STRING "Extra compile options of 
 
 set(Vorbis_vorbisfile_LINK_LIBRARIES "" CACHE STRING "Extra link libraries of vorbisfile")
 
-set(Vorbis_vorbisfile_LINK_FLAGS "" CACHE STRING "Extra link flags of vorbisfile")
+set(Vorbis_vorbisfile_LINK_OPTIONS "" CACHE STRING "Extra link flags of vorbisfile")
 
 find_path(Vorbis_vorbisfile_INCLUDE_PATH
     NAMES vorbis/vorbisfile.h
@@ -26,7 +26,7 @@ if (Vorbis_FOUND)
             INTERFACE_INCLUDE_DIRECTORIES "${Vorbis_vorbisfile_INCLUDE_PATH}"
             INTERFACE_COMPILE_OPTIONS "${Vorbis_vorbisfile_COMPILE_OPTIONS}"
             INTERFACE_LINK_LIBRARIES "${Vorbis_vorbisfile_LINK_LIBRARIES}"
-            INTERFACE_LINK_FLAGS "${Vorbis_vorbisfile_LINK_FLAGS}"
+            INTERFACE_LINK_OPTIONS "${Vorbis_vorbisfile_LINK_OPTIONS}"
         )
     endif()
 endif()

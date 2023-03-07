@@ -8,7 +8,7 @@ set(gme_COMPILE_OPTIONS "" CACHE STRING "Extra compile options of gme")
 
 set(gme_LINK_LIBRARIES "" CACHE STRING "Extra link libraries of gme")
 
-set(gme_LINK_FLAGS "" CACHE STRING "Extra link flags of gme")
+set(gme_LINK_OPTIONS "" CACHE STRING "Extra link flags of gme")
 
 find_path(gme_INCLUDE_PATH
     NAMES gme/gme.h
@@ -30,7 +30,7 @@ if(gme_FOUND)
             INTERFACE_INCLUDE_DIRECTORIES "${gme_dirs}"
             INTERFACE_COMPILE_OPTIONS "${gme_COMPILE_OPTIONS}"
             INTERFACE_LINK_LIBRARIES "${gme_LINK_LIBRARIES}"
-            INTERFACE_LINK_FLAGS "${gme_LINK_FLAGS}"
+            INTERFACE_LINK_OPTIONS "${gme_LINK_OPTIONS}"
         )
     endif()
 endif()

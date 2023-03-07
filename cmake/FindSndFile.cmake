@@ -12,7 +12,7 @@ set(SndFile_COMPILE_OPTIONS "" CACHE STRING "Extra compile options of libsndfile
 
 set(SndFile_LINK_LIBRARIES "" CACHE STRING "Extra link libraries of libsndfile")
 
-set(SndFile_LINK_FLAGS "" CACHE STRING "Extra link flags of libsndfile")
+set(SndFile_LINK_OPTIONS "" CACHE STRING "Extra link flags of libsndfile")
 
 find_package_handle_standard_args(SndFile
     REQUIRED_VARS SndFile_LIBRARY SndFile_INCLUDE_PATH
@@ -26,7 +26,7 @@ if(SndFile_FOUND)
             INTERFACE_INCLUDE_DIRECTORIES "${SndFile_INCLUDE_PATH}"
             INTERFACE_COMPILE_OPTIONS "${SndFile_COMPILE_OPTIONS}"
             INTERFACE_LINK_LIBRARIES "${SndFile_LINK_LIBRARIES}"
-            INTERFACE_LINK_FLAGS "${SndFile_LINK_FLAGS}"
+            INTERFACE_LINK_OPTIONS "${SndFile_LINK_OPTIONS}"
         )
     endif()
 endif()

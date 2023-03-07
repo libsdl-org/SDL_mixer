@@ -12,7 +12,7 @@ set(FluidSynth_COMPILE_OPTIONS "" CACHE STRING "Extra compile options of FluidSy
 
 set(FluidSynth_LINK_LIBRARIES "" CACHE STRING "Extra link libraries of FluidSynth")
 
-set(FluidSynth_LINK_FLAGS "" CACHE STRING "Extra link flags of FluidSynth")
+set(FluidSynth_LINK_OPTIONS "" CACHE STRING "Extra link flags of FluidSynth")
 
 find_package_handle_standard_args(FluidSynth
     REQUIRED_VARS FluidSynth_LIBRARY FluidSynth_INCLUDE_PATH
@@ -26,7 +26,7 @@ if(FluidSynth_FOUND)
             INTERFACE_INCLUDE_DIRECTORIES "${FluidSynth_INCLUDE_PATH}"
             INTERFACE_COMPILE_OPTIONS "${FluidSynth_COMPILE_OPTIONS}"
             INTERFACE_LINK_LIBRARIES "${FluidSynth_LINK_LIBRARIES}"
-            INTERFACE_LINK_FLAGS "${FluidSynth_LINK_FLAGS}"
+            INTERFACE_LINK_OPTIONS "${FluidSynth_LINK_OPTIONS}"
         )
     endif()
 endif()
