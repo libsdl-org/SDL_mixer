@@ -1,5 +1,7 @@
 # sdl3_mixer cmake project-config input for CMakeLists.txt script
 
+@PACKAGE_INIT@
+
 include(FeatureSummary)
 set_package_properties(SDL3_mixer PROPERTIES
     URL "https://www.libsdl.org/projects/SDL_mixer/"
@@ -117,3 +119,5 @@ if(NOT SDL3MIXER_VENDORED)
     set(CMAKE_MODULE_PATH "${_sdl_cmake_module_path}")
     unset(_sdl_cmake_module_path)
 endif()
+
+check_required_components(SDL3_mixer)
