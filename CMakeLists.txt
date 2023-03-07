@@ -928,6 +928,7 @@ if(SDL3MIXER_INSTALL)
         FILES
             "${CMAKE_CURRENT_BINARY_DIR}/SDL3_mixerConfig.cmake"
             "${CMAKE_CURRENT_BINARY_DIR}/SDL3_mixerConfigVersion.cmake"
+            "${CMAKE_CURRENT_LIST_DIR}/cmake/PkgConfigHelper.cmake"
             cmake/FindFLAC.cmake
             cmake/FindFluidSynth.cmake
             cmake/Findgme.cmake
