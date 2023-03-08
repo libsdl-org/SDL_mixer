@@ -60,6 +60,10 @@ if ((TARGET SDL3 OR TARGET SDL3-static) AND SDL3_DISABLE_INSTALL)
     set(sdl3mixer_install_enableable OFF)
 endif()
 
+if(NOT DEFINED CMAKE_FIND_PACKAGE_PREFER_CONFIG)
+    set(CMAKE_FIND_PACKAGE_PREFER_CONFIG ON)
+endif()
+
 include(CheckIncludeFile)
 include(CheckSymbolExists)
 include(CMakeDependentOption)
