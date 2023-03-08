@@ -47,16 +47,11 @@ endif()
 
 # Assume MSVC projects don't have a package manager and need vendored dependencies (by default).
 # Most other platforms have some kind of package manager.
-if(ANDROID OR MSVC AND NOT VCPKG_TOOLCHAIN AND NOT CONAN_CMD)
+# FIXME: consider a package manager such as conan/vcpkg instead of vendoring
+if(ANDROID OR MSVC)
     set(vendored_default ON)
 else()
     set(vendored_default OFF)
-endif()
-
-# Both vcpkg and conan provide the upstream CMake config for the
-# dependencies, so prioritise them over the Find modules
-if(VCPKG_TOOLCHAIN OR CONAN_CMD)
-    set(CMAKE_FIND_PACKAGE_PREFER_CONFIG ON)
 endif()
 
 set(sdl3mixer_install_enableable ON)
