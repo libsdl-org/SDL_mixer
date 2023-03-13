@@ -111,7 +111,7 @@ static void *music_data = NULL;
 static const char **chunk_decoders = NULL;
 static int num_decoders = 0;
 
-static SDL_atomic_t master_volume = { MIX_MAX_VOLUME };
+static SDL_AtomicInt master_volume = { MIX_MAX_VOLUME };
 
 int Mix_GetNumChunkDecoders(void)
 {
