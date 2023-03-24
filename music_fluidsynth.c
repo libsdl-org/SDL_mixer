@@ -207,8 +207,8 @@ int fluidsynth_active(FluidSynthMidiSong *song)
 
 void fluidsynth_setvolume(FluidSynthMidiSong *song, int volume)
 {
-	/* FluidSynth's default is 0.2. Make 1.2 the maximum. */
-	fluidsynth.fluid_synth_set_gain(song->synth, (float) (volume * 1.2 / MIX_MAX_VOLUME));
+	/* FluidSynth's default gain is 0.2. Make 1.0 the maximum gain value to avoid sound overload. */
+	fluidsynth.fluid_synth_set_gain(song->synth, volume * 1.0f / MIX_MAX_VOLUME);
 }
 
 static void fluid_get_samples(FluidSynthMidiSong *song)
