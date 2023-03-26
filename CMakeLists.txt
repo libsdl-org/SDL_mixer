@@ -303,6 +303,10 @@ if(SDL3MIXER_BUILD_SHARED_LIBS)
 endif()
 
 if(SDL3MIXER_BUILD_SHARED_LIBS)
+    sdl_target_link_options_no_undefined(SDL3_mixer)
+endif()
+
+if(SDL3MIXER_BUILD_SHARED_LIBS)
     # Make sure static library dependencies are built with -fPIC when building a shared SDL3_mixer
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
