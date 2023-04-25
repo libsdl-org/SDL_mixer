@@ -13,7 +13,7 @@
 [submodule "external/opus"]
 	path = external/opus
 	url = https://github.com/libsdl-org/opus.git
-	branch = v1.3.1-SDL
+	branch = v1.4-SDL
 [submodule "external/opusfile"]
 	path = external/opusfile
 	url = https://github.com/libsdl-org/opusfile.git
