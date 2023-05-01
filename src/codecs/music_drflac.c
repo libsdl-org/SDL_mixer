@@ -281,7 +281,7 @@ static int DRFLAC_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     if (amount > 0) {
         if (music->loop && (music->play_count != 1) &&
             ((Sint64)music->dec->currentPCMFrame >= music->loop_end)) {
-            amount -= (music->dec->currentPCMFrame - music->loop_end) * sizeof(drflac_int16) * music->channels;
+            amount -= (music->dec->currentPCMFrame - music->loop_end);
             music->loop_flag = SDL_TRUE;
         }
         if (SDL_AudioStreamPut(music->stream, music->buffer, (int)amount * sizeof(drflac_int16) * music->channels) < 0) {
