@@ -314,9 +314,9 @@ typedef struct _Mix_Music Mix_Music;
  * The audio device frequency is specified in Hz; in modern times, 48000 is
  * often a reasonable default.
  *
- * The audio device format is one of SDL's SDL_AUDIO_* constants. SDL_AUDIO_S16SYS
- * (16-bit audio) is probably a safe default. More modern systems may prefer
- * SDL_AUDIO_F32SYS (32-bit floating point audio).
+ * The audio device format is one of SDL's SDL_AUDIO_* constants.
+ * SDL_AUDIO_S16SYS (16-bit audio) is probably a safe default. More modern
+ * systems may prefer SDL_AUDIO_F32SYS (32-bit floating point audio).
  *
  * The audio device channels are generally 1 for mono output, or 2 for stereo,
  * but the brave can try surround sound configs with 4 (quad), 6 (5.1), 7
@@ -397,9 +397,9 @@ extern DECLSPEC int SDLCALL Mix_OpenAudio(int frequency, Uint16 format, int chan
  * The audio device frequency is specified in Hz; in modern times, 48000 is
  * often a reasonable default.
  *
- * The audio device format is one of SDL's SDL_AUDIO_* constants. SDL_AUDIO_S16SYS
- * (16-bit audio) is probably a safe default. More modern systems may prefer
- * SDL_AUDIO_F32SYS (32-bit floating point audio).
+ * The audio device format is one of SDL's SDL_AUDIO_* constants.
+ * SDL_AUDIO_S16SYS (16-bit audio) is probably a safe default. More modern
+ * systems may prefer SDL_AUDIO_F32SYS (32-bit floating point audio).
  *
  * The audio device channels are generally 1 for mono output, or 2 for stereo,
  * but the brave can try surround sound configs with 4 (quad), 6 (5.1), 7
