@@ -41,7 +41,7 @@ struct _NativeMidiSong {
   Uint16 ppqn;
   int Size;
   int NewPos;
-  SDL_mutex *mutex;
+  SDL_Mutex *mutex;
 };
 
 static UINT MidiDevice=MIDI_MAPPER;

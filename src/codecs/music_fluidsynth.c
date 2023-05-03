@@ -175,7 +175,7 @@ static FLUIDSYNTH_Music *FLUIDSYNTH_LoadMusic(void *data)
     FLUIDSYNTH_Music *music;
     double samplerate; /* as set by the lib. */
     const Uint8 channels = 2;
-    int src_format = AUDIO_S16SYS;
+    int src_format = SDL_AUDIO_S16SYS;
     void *rw_mem;
     size_t rw_size;
     int ret;
@@ -189,7 +189,7 @@ static FLUIDSYNTH_Music *FLUIDSYNTH_LoadMusic(void *data)
     music->buffer_size = music_spec.samples * sizeof(Sint16) * channels;
     music->synth_write = fluidsynth.fluid_synth_write_s16;
     if (music_spec.format & 0x0020) { /* 32 bit. */
-        src_format = AUDIO_F32SYS;
+        src_format = SDL_AUDIO_F32SYS;
         music->buffer_size <<= 1;
         music->synth_write = fluidsynth.fluid_synth_write_float;
     }

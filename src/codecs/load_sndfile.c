@@ -186,7 +186,7 @@ SDL_AudioSpec *Mix_LoadSndFile_RW (SDL_RWops *src, int freesrc,
 
     spec->channels = sfinfo.channels;
     spec->freq = sfinfo.samplerate;
-    spec->format = AUDIO_S16;
+    spec->format = SDL_AUDIO_S16;
 
     *audio_buf = (Uint8 *)buf;
     *audio_len = len;

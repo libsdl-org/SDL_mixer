@@ -221,9 +221,9 @@ extern DECLSPEC void SDLCALL Mix_Quit(void);
 /* Good default values for a PC soundcard */
 #define MIX_DEFAULT_FREQUENCY   44100
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
-#define MIX_DEFAULT_FORMAT  AUDIO_S16LSB
+#define MIX_DEFAULT_FORMAT  SDL_AUDIO_S16LSB
 #else
-#define MIX_DEFAULT_FORMAT  AUDIO_S16MSB
+#define MIX_DEFAULT_FORMAT  SDL_AUDIO_S16MSB
 #endif
 #define MIX_DEFAULT_CHANNELS    2
 #define MIX_MAX_VOLUME          SDL_MIX_MAXVOLUME /* Volume of a chunk */
@@ -314,9 +314,9 @@ typedef struct _Mix_Music Mix_Music;
  * The audio device frequency is specified in Hz; in modern times, 48000 is
  * often a reasonable default.
  *
- * The audio device format is one of SDL's AUDIO_* constants. AUDIO_S16SYS
+ * The audio device format is one of SDL's SDL_AUDIO_* constants. SDL_AUDIO_S16SYS
  * (16-bit audio) is probably a safe default. More modern systems may prefer
- * AUDIO_F32SYS (32-bit floating point audio).
+ * SDL_AUDIO_F32SYS (32-bit floating point audio).
  *
  * The audio device channels are generally 1 for mono output, or 2 for stereo,
  * but the brave can try surround sound configs with 4 (quad), 6 (5.1), 7
@@ -347,7 +347,7 @@ typedef struct _Mix_Music Mix_Music;
  * should dispose of the device with Mix_CloseAudio().
  *
  * \param frequency the frequency to playback audio at (in Hz).
- * \param format audio format, one of SDL's AUDIO_* values.
+ * \param format audio format, one of SDL's SDL_AUDIO_* values.
  * \param channels number of channels (1 is mono, 2 is stereo, etc).
  * \param chunksize audio buffer size in sample FRAMES (total samples divided
  *                  by channel count).
@@ -397,9 +397,9 @@ extern DECLSPEC int SDLCALL Mix_OpenAudio(int frequency, Uint16 format, int chan
  * The audio device frequency is specified in Hz; in modern times, 48000 is
  * often a reasonable default.
  *
- * The audio device format is one of SDL's AUDIO_* constants. AUDIO_S16SYS
+ * The audio device format is one of SDL's SDL_AUDIO_* constants. SDL_AUDIO_S16SYS
  * (16-bit audio) is probably a safe default. More modern systems may prefer
- * AUDIO_F32SYS (32-bit floating point audio).
+ * SDL_AUDIO_F32SYS (32-bit floating point audio).
  *
  * The audio device channels are generally 1 for mono output, or 2 for stereo,
  * but the brave can try surround sound configs with 4 (quad), 6 (5.1), 7
@@ -448,7 +448,7 @@ extern DECLSPEC int SDLCALL Mix_OpenAudio(int frequency, Uint16 format, int chan
  * should dispose of the device with Mix_CloseDevice().
  *
  * \param frequency the frequency to playback audio at (in Hz).
- * \param format audio format, one of SDL's AUDIO_* values.
+ * \param format audio format, one of SDL's SDL_AUDIO_* values.
  * \param channels number of channels (1 is mono, 2 is stereo, etc).
  * \param chunksize audio buffer size in sample FRAMES (total samples divided
  *                  by channel count).

@@ -730,15 +730,15 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
     switch (bits) {
         case 8:
             switch(wave->encoding) {
-            case PCM_CODE:  spec->format = AUDIO_U8; break;
-            case ALAW_CODE: spec->format = AUDIO_S16; break;
-            case uLAW_CODE: spec->format = AUDIO_S16; break;
+            case PCM_CODE:  spec->format = SDL_AUDIO_U8; break;
+            case ALAW_CODE: spec->format = SDL_AUDIO_S16; break;
+            case uLAW_CODE: spec->format = SDL_AUDIO_S16; break;
             default: goto unknown_bits;
             }
             break;
         case 16:
             switch(wave->encoding) {
-            case PCM_CODE: spec->format = AUDIO_S16; break;
+            case PCM_CODE: spec->format = SDL_AUDIO_S16; break;
             default: goto unknown_bits;
             }
             break;
@@ -746,15 +746,15 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
             switch(wave->encoding) {
             case PCM_CODE:
                 wave->decode = fetch_pcm24le;
-                spec->format = AUDIO_S32;
+                spec->format = SDL_AUDIO_S32;
                 break;
             default: goto unknown_bits;
             }
             break;
         case 32:
             switch(wave->encoding) {
-            case PCM_CODE:   spec->format = AUDIO_S32; break;
-            case FLOAT_CODE: spec->format = AUDIO_F32; break;
+            case PCM_CODE:   spec->format = SDL_AUDIO_S32; break;
+            case FLOAT_CODE: spec->format = SDL_AUDIO_F32; break;
             default: goto unknown_bits;
             }
             break;
@@ -762,7 +762,7 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
             switch(wave->encoding) {
             case FLOAT_CODE:
                 wave->decode = fetch_float64le;
-                spec->format = AUDIO_F32;
+                spec->format = SDL_AUDIO_F32;
                 break;
             default: goto unknown_bits;
             }
@@ -1176,17 +1176,17 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
     switch (samplesize) {
     case 8:
         if (!is_AIFC)
-            spec->format = AUDIO_S8;
+            spec->format = SDL_AUDIO_S8;
         else switch (compressionType) {
-        case raw_: spec->format = AUDIO_U8; break;
-        case sowt: spec->format = AUDIO_S8; break;
+        case raw_: spec->format = SDL_AUDIO_U8; break;
+        case sowt: spec->format = SDL_AUDIO_S8; break;
         case ulaw:
-            spec->format = AUDIO_S16LSB;
+            spec->format = SDL_AUDIO_S16LSB;
             wave->encoding = uLAW_CODE;
             wave->decode = fetch_ulaw;
             break;
         case alaw:
-            spec->format = AUDIO_S16LSB;
+            spec->format = SDL_AUDIO_S16LSB;
             wave->encoding = ALAW_CODE;
             wave->decode = fetch_alaw;
             break;
@@ -1195,17 +1195,17 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
         break;
     case 16:
         if (!is_AIFC)
-            spec->format = AUDIO_S16MSB;
+            spec->format = SDL_AUDIO_S16MSB;
         else switch (compressionType) {
-        case sowt: spec->format = AUDIO_S16LSB; break;
-        case NONE: spec->format = AUDIO_S16MSB; break;
+        case sowt: spec->format = SDL_AUDIO_S16LSB; break;
+        case NONE: spec->format = SDL_AUDIO_S16MSB; break;
         case ULAW:
-            spec->format = AUDIO_S16LSB;
+            spec->format = SDL_AUDIO_S16LSB;
             wave->encoding = uLAW_CODE;
             wave->decode = fetch_ulaw;
             break;
         case ALAW:
-            spec->format = AUDIO_S16LSB;
+            spec->format = SDL_AUDIO_S16LSB;
             wave->encoding = ALAW_CODE;
             wave->decode = fetch_alaw;
             break;
@@ -1216,21 +1216,21 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
         wave->encoding = PCM_CODE;
         wave->decode = fetch_pcm24be;
         if (!is_AIFC)
-            spec->format = AUDIO_S32MSB;
+            spec->format = SDL_AUDIO_S32MSB;
         else switch (compressionType) {
-        case sowt: spec->format = AUDIO_S32LSB; break;
-        case NONE: spec->format = AUDIO_S32MSB; break;
+        case sowt: spec->format = SDL_AUDIO_S32LSB; break;
+        case NONE: spec->format = SDL_AUDIO_S32MSB; break;
         default: goto unsupported_format;
         }
         break;
     case 32:
         if (!is_AIFC)
-            spec->format = AUDIO_S32MSB;
+            spec->format = SDL_AUDIO_S32MSB;
         else switch (compressionType) {
-        case sowt: spec->format = AUDIO_S32LSB; break;
-        case NONE: spec->format = AUDIO_S32MSB; break;
+        case sowt: spec->format = SDL_AUDIO_S32LSB; break;
+        case NONE: spec->format = SDL_AUDIO_S32MSB; break;
         case fl32:
-        case FL32: spec->format = AUDIO_F32MSB; break;
+        case FL32: spec->format = SDL_AUDIO_F32MSB; break;
         default: goto unsupported_format;
         }
         break;
@@ -1238,10 +1238,10 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
         wave->encoding = FLOAT_CODE;
         wave->decode = fetch_float64be;
         if (!is_AIFC)
-            spec->format = AUDIO_F32;
+            spec->format = SDL_AUDIO_F32;
         else switch (compressionType) {
         case fl64:
-            spec->format = AUDIO_F32;
+            spec->format = SDL_AUDIO_F32;
             break;
         default: goto unsupported_format;
         }

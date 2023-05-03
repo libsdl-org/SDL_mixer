@@ -395,10 +395,10 @@ int main(int argc, char *argv[])
             loops = -1;
         } else
         if (strcmp(argv[i], "-8") == 0) {
-            audio_format = AUDIO_U8;
+            audio_format = SDL_AUDIO_U8;
         } else
         if (strcmp(argv[i], "-f32") == 0) {
-            audio_format = AUDIO_F32;
+            audio_format = SDL_AUDIO_F32;
         } else
         if (strcmp(argv[i], "-f") == 0) { /* rcg06122001 flip stereo */
             reverse_stereo = 1;

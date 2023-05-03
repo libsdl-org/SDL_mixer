@@ -407,7 +407,7 @@ SDL_AudioSpec *Mix_LoadVOC_RW (SDL_RWops *src, int freesrc,
         goto done;
     }
 
-    spec->format = ((v.size == ST_SIZE_WORD) ? AUDIO_S16 : AUDIO_U8);
+    spec->format = ((v.size == ST_SIZE_WORD) ? SDL_AUDIO_S16 : SDL_AUDIO_U8);
     if (spec->channels == 0)
         spec->channels = v.channels;
 
