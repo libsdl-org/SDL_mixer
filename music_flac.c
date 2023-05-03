@@ -160,17 +160,6 @@ static FLAC__StreamDecoderWriteStatus flac_write_music_cb(
 	FLAC_music *data = (FLAC_music *)client_data;
 	size_t i;
 
-	if (data->flac_data.total_samples == 0) {
-		SDL_SetError ("Given FLAC file does not specify its sample count.");
-		return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
-	}
-
-	if (data->flac_data.channels != 2 ||
-		data->flac_data.bits_per_sample != 16) {
-		SDL_SetError("Current FLAC support is only for 16 bit Stereo files.");
-		return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
-	}
-
 	for (i = 0; i < frame->header.blocksize; i++) {
 		FLAC__int16 i16;
 		FLAC__uint16 ui16;
@@ -346,7 +335,14 @@ FLAC_music *FLAC_new_RW(SDL_RWops *rw, int freerw)
 
 				if (flac.FLAC__stream_decoder_process_until_end_of_metadata
 										(music->flac_decoder)) {
-					was_error = 0;
+					if (music->flac_data.total_samples == 0) {
+						SDL_SetError ("Given FLAC file does not specify its sample count.");
+					} else if (music->flac_data.channels != 2 ||
+						music->flac_data.bits_per_sample != 16) {
+						SDL_SetError("Current FLAC support is only for 16 bit Stereo files.");
+					} else {
+						was_error = 0;
+					}
 				} else {
 					SDL_SetError("FLAC__stream_decoder_process_until_end_of_metadata() failed");
 				}
@@ -400,6 +396,7 @@ int FLAC_playing(FLAC_music *music)
 static void FLAC_getsome(FLAC_music *music)
 {
 	SDL_AudioCVT *cvt;
+	FLAC__StreamDecoderState state;
 
 	/* GET AUDIO WAVE DATA */
 	// set the max number of characters to read
@@ -447,8 +444,13 @@ static void FLAC_getsome(FLAC_music *music)
 				music->flac_data.max_to_read = 0;
 			}
 
-			if (flac.FLAC__stream_decoder_get_state (music->flac_decoder)
-									== FLAC__STREAM_DECODER_END_OF_STREAM) {
+			state = flac.FLAC__stream_decoder_get_state (music->flac_decoder);
+			if (state == FLAC__STREAM_DECODER_END_OF_STREAM ||
+				state == FLAC__STREAM_DECODER_OGG_ERROR ||
+				state == FLAC__STREAM_DECODER_SEEK_ERROR ||
+				state == FLAC__STREAM_DECODER_ABORTED ||
+				state == FLAC__STREAM_DECODER_MEMORY_ALLOCATION_ERROR ||
+				state == FLAC__STREAM_DECODER_UNINITIALIZED) {
 				music->flac_data.max_to_read = 0;
 			}
 		}
