@@ -552,25 +552,25 @@ static void do_song_load(SDL_RWops *rw, SDL_AudioSpec *audio, MidiSong **out)
       goto fail;
   }
   switch (audio->format) {
-  case AUDIO_S8:
+  case SDL_AUDIO_S8 :
     song->write = timi_s32tos8;
     break;
-  case AUDIO_U8:
+  case SDL_AUDIO_U8 :
     song->write = timi_s32tou8;
     break;
-  case AUDIO_S16LSB:
+  case SDL_AUDIO_S16LSB :
     song->write = timi_s32tos16l;
     break;
-  case AUDIO_S16MSB:
+  case SDL_AUDIO_S16MSB :
     song->write = timi_s32tos16b;
     break;
-  case AUDIO_S32LSB:
+  case SDL_AUDIO_S32LSB :
     song->write = timi_s32tos32l;
     break;
-  case AUDIO_S32MSB:
+  case SDL_AUDIO_S32MSB :
     song->write = timi_s32tos32b;
     break;
-  case AUDIO_F32SYS:
+  case SDL_AUDIO_F32SYS :
     song->write = timi_s32tof32;
     break;
   default:

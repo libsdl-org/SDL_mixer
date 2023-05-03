@@ -210,10 +210,10 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
     spec->freq = frequency;
     switch (samplesize) {
         case 8:
-            spec->format = AUDIO_S8;
+            spec->format = SDL_AUDIO_S8;
             break;
         case 16:
-            spec->format = AUDIO_S16MSB;
+            spec->format = SDL_AUDIO_S16MSB;
             break;
         default:
             Mix_SetError("Unsupported AIFF samplesize");

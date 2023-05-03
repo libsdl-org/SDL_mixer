@@ -184,12 +184,12 @@ static void *DRFLAC_CreateFromRW(SDL_RWops *src, int freesrc)
     }
 
     /* We should have channels and sample rate set up here */
-    music->stream = SDL_CreateAudioStream(AUDIO_S16SYS,
-                                       (Uint8)music->channels,
-                                       music->sample_rate,
-                                       music_spec.format,
-                                       music_spec.channels,
-                                       music_spec.freq);
+    music->stream = SDL_CreateAudioStream(SDL_AUDIO_S16SYS,
+                                          (Uint8)music->channels,
+                                          music->sample_rate,
+                                          music_spec.format,
+                                          music_spec.channels,
+                                          music_spec.freq);
     if (!music->stream) {
         SDL_OutOfMemory();
         drflac_close(music->dec);

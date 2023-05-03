@@ -1340,7 +1340,7 @@ static Mix_EffectFunc_t get_position_effect_func(Uint16 format, int channels)
     Mix_EffectFunc_t f = NULL;
 
     switch (format) {
-        case AUDIO_U8:
+        case SDL_AUDIO_U8 :
             switch (channels) {
             case 1:
             case 2:
@@ -1359,7 +1359,7 @@ static Mix_EffectFunc_t get_position_effect_func(Uint16 format, int channels)
             }
             break;
 
-        case AUDIO_S8:
+        case SDL_AUDIO_S8 :
             switch (channels) {
             case 1:
             case 2:
@@ -1378,7 +1378,7 @@ static Mix_EffectFunc_t get_position_effect_func(Uint16 format, int channels)
             }
             break;
 
-        case AUDIO_S16LSB:
+        case SDL_AUDIO_S16LSB :
             switch (channels) {
             case 1:
             case 2:
@@ -1396,7 +1396,7 @@ static Mix_EffectFunc_t get_position_effect_func(Uint16 format, int channels)
             }
             break;
 
-        case AUDIO_S16MSB:
+        case SDL_AUDIO_S16MSB :
             switch (channels) {
             case 1:
             case 2:
@@ -1414,7 +1414,7 @@ static Mix_EffectFunc_t get_position_effect_func(Uint16 format, int channels)
             }
             break;
 
-        case AUDIO_S32MSB:
+        case SDL_AUDIO_S32MSB :
             switch (channels) {
             case 1:
             case 2:
@@ -1432,7 +1432,7 @@ static Mix_EffectFunc_t get_position_effect_func(Uint16 format, int channels)
             }
             break;
 
-        case AUDIO_S32LSB:
+        case SDL_AUDIO_S32LSB :
             switch (channels) {
             case 1:
             case 2:
@@ -1450,7 +1450,7 @@ static Mix_EffectFunc_t get_position_effect_func(Uint16 format, int channels)
             }
             break;
 
-        case AUDIO_F32SYS:
+        case SDL_AUDIO_F32SYS :
             switch (channels) {
             case 1:
             case 2:

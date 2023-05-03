@@ -175,8 +175,12 @@ void *MODPLUG_CreateFromRW(SDL_RWops *src, int freesrc)
 
     music->volume = MIX_MAX_VOLUME;
 
-    music->stream = SDL_CreateAudioStream((settings.mBits == 8) ? AUDIO_U8 : AUDIO_S16SYS, (Uint8)settings.mChannels, settings.mFrequency,
-                                       music_spec.format, music_spec.channels, music_spec.freq);
+    music->stream = SDL_CreateAudioStream((settings.mBits == 8) ? SDL_AUDIO_U8 : SDL_AUDIO_S16SYS,
+                                          (Uint8)settings.mChannels,
+                                          settings.mFrequency,
+                                          music_spec.format,
+                                          music_spec.channels,
+                                          music_spec.freq);
     if (!music->stream) {
         MODPLUG_Delete(music);
         return NULL;

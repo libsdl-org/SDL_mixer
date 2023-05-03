@@ -111,12 +111,12 @@ static void *DRMP3_CreateFromRW(SDL_RWops *src, int freesrc)
     }
 
     music->channels = music->dec.channels;
-    music->stream = SDL_CreateAudioStream(AUDIO_S16SYS,
-                                       (Uint8)music->channels,
-                                       (int)music->dec.sampleRate,
-                                       music_spec.format,
-                                       music_spec.channels,
-                                       music_spec.freq);
+    music->stream = SDL_CreateAudioStream(SDL_AUDIO_S16SYS,
+                                          (Uint8)music->channels,
+                                          (int)music->dec.sampleRate,
+                                          music_spec.format,
+                                          music_spec.channels,
+                                          music_spec.freq);
     if (!music->stream) {
         SDL_OutOfMemory();
         drmp3_uninit(&music->dec);

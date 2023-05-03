@@ -156,11 +156,11 @@ static void MPG123_Delete(void *context);
 static int mpg123_format_to_sdl(int fmt)
 {
     switch (fmt) {
-        case MPG123_ENC_SIGNED_8:       return AUDIO_S8;
-        case MPG123_ENC_UNSIGNED_8:     return AUDIO_U8;
-        case MPG123_ENC_SIGNED_16:      return AUDIO_S16SYS;
-        case MPG123_ENC_SIGNED_32:      return AUDIO_S32SYS;
-        case MPG123_ENC_FLOAT_32:       return AUDIO_F32SYS;
+        case MPG123_ENC_SIGNED_8:       return SDL_AUDIO_S8;
+        case MPG123_ENC_UNSIGNED_8:     return SDL_AUDIO_U8;
+        case MPG123_ENC_SIGNED_16:      return SDL_AUDIO_S16SYS;
+        case MPG123_ENC_SIGNED_32:      return SDL_AUDIO_S32SYS;
+        case MPG123_ENC_FLOAT_32:       return SDL_AUDIO_F32SYS;
         default:                        return -1;
     }
 }
