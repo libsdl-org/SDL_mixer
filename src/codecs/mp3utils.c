@@ -163,7 +163,7 @@ static char *parse_id3v1_ansi_string(const Uint8 *buffer, size_t src_len)
 #endif /* ENABLE_ID3V2_TAG */
 
 #ifdef ENABLE_ALL_MP3_TAGS
-static void id3v1_set_tag(Mix_MusicMetaTags *out_tags, Mix_MusicMetaTag tag, const Uint8 *buffer, size_t len)
+static void id3v1_set_tag(MIX_MusicMetaTags *out_tags, MIX_MusicMetaTag tag, const Uint8 *buffer, size_t len)
 {
     char *src_buf = parse_id3v1_ansi_string(buffer, len);
     if (src_buf) {
@@ -173,7 +173,7 @@ static void id3v1_set_tag(Mix_MusicMetaTags *out_tags, Mix_MusicMetaTag tag, con
 }
 
 /* Parse content of ID3v1 tag */
-static void parse_id3v1(Mix_MusicMetaTags *out_tags, const Uint8 *buffer)
+static void parse_id3v1(MIX_MusicMetaTags *out_tags, const Uint8 *buffer)
 {
     id3v1_set_tag(out_tags, MIX_META_TITLE,     buffer + ID3v1_FIELD_TITLE,     ID3v1_SIZE_OF_FIELD);
     id3v1_set_tag(out_tags, MIX_META_ARTIST,    buffer + ID3v1_FIELD_ARTIST,    ID3v1_SIZE_OF_FIELD);
@@ -328,7 +328,7 @@ static char *id3v2_decode_string(const Uint8 *string, size_t size)
 }
 
 /* Write a tag string into internal meta-tags storage */
-static void write_id3v2_string(Mix_MusicMetaTags *out_tags, Mix_MusicMetaTag tag, const Uint8 *string, size_t size)
+static void write_id3v2_string(MIX_MusicMetaTags *out_tags, MIX_MusicMetaTag tag, const Uint8 *string, size_t size)
 {
     char *str_buffer = id3v2_decode_string(string, size);
 
@@ -340,7 +340,7 @@ static void write_id3v2_string(Mix_MusicMetaTags *out_tags, Mix_MusicMetaTag tag
 }
 
 /* Identify a meta-key and decode the string (Note: input buffer should have at least 4 characters!) */
-static void handle_id3v2_string(Mix_MusicMetaTags *out_tags, const char *key, const Uint8 *string, size_t size)
+static void handle_id3v2_string(MIX_MusicMetaTags *out_tags, const char *key, const Uint8 *string, size_t size)
 {
     if (SDL_memcmp(key, "TIT2", 4) == 0) {
         write_id3v2_string(out_tags, MIX_META_TITLE, string, size);
@@ -360,7 +360,7 @@ static void handle_id3v2_string(Mix_MusicMetaTags *out_tags, const char *key, co
 }
 
 /* Identify a meta-key and decode the string (Note: input buffer should have at least 4 characters!) */
-static void handle_id3v2x2_string(Mix_MusicMetaTags *out_tags, const char *key, const Uint8 *string, size_t size)
+static void handle_id3v2x2_string(MIX_MusicMetaTags *out_tags, const char *key, const Uint8 *string, size_t size)
 {
     if (SDL_memcmp(key, "TT2", 3) == 0) {
         write_id3v2_string(out_tags, MIX_META_TITLE, string, size);
@@ -374,7 +374,7 @@ static void handle_id3v2x2_string(Mix_MusicMetaTags *out_tags, const char *key, 
 }
 
 /* Parse a frame in ID3v2.2 format */
-static size_t id3v22_parse_frame(Mix_MusicMetaTags *out_tags, struct mp3file_t *src, Uint8 *buffer)
+static size_t id3v22_parse_frame(MIX_MusicMetaTags *out_tags, struct mp3file_t *src, Uint8 *buffer)
 {
     size_t size;
     char key[4];
@@ -427,7 +427,7 @@ static size_t id3v22_parse_frame(Mix_MusicMetaTags *out_tags, struct mp3file_t *
 }
 
 /* Parse a frame in ID3v2.3 and ID3v2.4 formats */
-static size_t id3v2x_parse_frame(Mix_MusicMetaTags *out_tags, struct mp3file_t *src, Uint8 *buffer, Uint8 version)
+static size_t id3v2x_parse_frame(MIX_MusicMetaTags *out_tags, struct mp3file_t *src, Uint8 *buffer, Uint8 version)
 {
     Uint32 size;
     char key[4];
@@ -488,7 +488,7 @@ static size_t id3v2x_parse_frame(Mix_MusicMetaTags *out_tags, struct mp3file_t *
 
 
 /* Parse content of ID3v2 */
-static SDL_bool parse_id3v2(Mix_MusicMetaTags *out_tags, struct mp3file_t *src)
+static SDL_bool parse_id3v2(MIX_MusicMetaTags *out_tags, struct mp3file_t *src)
 {
     Uint8 version_major, flags;
     long total_length, tag_len, tag_extended_len = 0;
@@ -623,7 +623,7 @@ static char *ape_find_value(char *key)
     return key + 1;
 }
 
-static Uint32 ape_handle_tag(Mix_MusicMetaTags *out_tags, Uint8 *data, size_t valsize)
+static Uint32 ape_handle_tag(MIX_MusicMetaTags *out_tags, Uint8 *data, size_t valsize)
 {
     /* http://wiki.hydrogenaud.io/index.php?title=APE_Tag_Item
      * Tag entry has unclear size because of no size value for a key field
@@ -667,7 +667,7 @@ static Uint32 ape_handle_tag(Mix_MusicMetaTags *out_tags, Uint8 *data, size_t va
 }
 
 /* Parse content of APE tag  */
-static SDL_bool parse_ape(Mix_MusicMetaTags *out_tags, struct mp3file_t *src, Sint64 ape_head_pos, Uint32 version)
+static SDL_bool parse_ape(MIX_MusicMetaTags *out_tags, struct mp3file_t *src, Sint64 ape_head_pos, Uint32 version)
 {
     Uint8 buffer[APE_BUFFER_SIZE + 1];
     Uint32 v, i, tag_size, tag_items_count, tag_item_size;
@@ -935,7 +935,7 @@ static long get_musicmatch_len(struct mp3file_t *m)
 #define TAG_INVALID    -1
 #define TAG_NOT_FOUND   0
 
-static int probe_id3v1(Mix_MusicMetaTags *out_tags, struct mp3file_t *fil, Uint8 *buf, SDL_bool tag_handled, int atend)
+static int probe_id3v1(MIX_MusicMetaTags *out_tags, struct mp3file_t *fil, Uint8 *buf, SDL_bool tag_handled, int atend)
 {
     if (fil->length >= ID3v1_TAG_SIZE) {
         MP3_RWseek(fil, -ID3v1_TAG_SIZE, SDL_RW_SEEK_END);
@@ -961,7 +961,7 @@ static int probe_id3v1(Mix_MusicMetaTags *out_tags, struct mp3file_t *fil, Uint8
     return TAG_NOT_FOUND;
 }
 
-static int probe_mmtag(Mix_MusicMetaTags *out_tags, struct mp3file_t *fil, Uint8 *buf)
+static int probe_mmtag(MIX_MusicMetaTags *out_tags, struct mp3file_t *fil, Uint8 *buf)
 {
     long len;
     (void)out_tags; /* TODO: Implement reading tag contents. */
@@ -980,7 +980,7 @@ static int probe_mmtag(Mix_MusicMetaTags *out_tags, struct mp3file_t *fil, Uint8
     return TAG_NOT_FOUND;
 }
 
-static int probe_apetag(Mix_MusicMetaTags *out_tags, struct mp3file_t *fil, Uint8 *buf, SDL_bool tag_handled)
+static int probe_apetag(MIX_MusicMetaTags *out_tags, struct mp3file_t *fil, Uint8 *buf, SDL_bool tag_handled)
 {
     Sint64 ape_tag_pos;
     size_t readsize;
@@ -1064,7 +1064,7 @@ static int probe_lyrics3(struct mp3file_t *fil, Uint8 *buf)
     return TAG_NOT_FOUND;
 }
 
-int mp3_read_tags(Mix_MusicMetaTags *out_tags, struct mp3file_t *fil, SDL_bool keep_id3v2)
+int mp3_read_tags(MIX_MusicMetaTags *out_tags, struct mp3file_t *fil, SDL_bool keep_id3v2)
 {
     Uint8 buf[TAGS_INPUT_BUFFER_SIZE];
     long len; size_t readsize;
@@ -1148,7 +1148,7 @@ int mp3_read_tags(Mix_MusicMetaTags *out_tags, struct mp3file_t *fil, SDL_bool k
 #endif /* ENABLE_ALL_MP3_TAGS */
 
 #ifdef ENABLE_ID3V2_TAG
-int read_id3v2_from_mem(Mix_MusicMetaTags *out_tags, Uint8 *data, size_t length)
+int read_id3v2_from_mem(MIX_MusicMetaTags *out_tags, Uint8 *data, size_t length)
 {
     SDL_RWops *src = SDL_RWFromConstMem(data, (int)length);
     SDL_bool is_valid;

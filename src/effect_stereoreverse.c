@@ -101,13 +101,13 @@ static void SDLCALL _Eff_reversestereo8(int chan, void *stream, int len, void *u
     }
 }
 
-int Mix_SetReverseStereo(int channel, int flip)
+int MIX_SetReverseStereo(int channel, int flip)
 {
-    Mix_EffectFunc_t f = NULL;
+    MIX_EffectFunc_t f = NULL;
     int channels;
     Uint16 format;
 
-    Mix_QuerySpec(NULL, &format, &channels);
+    MIX_QuerySpec(NULL, &format, &channels);
 
     if (channels == 2) {
         int bits = (format & 0xFF);
@@ -122,14 +122,14 @@ int Mix_SetReverseStereo(int channel, int flip)
             f = _Eff_reversestereo32;
             break;
         default:
-            Mix_SetError("Unsupported audio format");
+            MIX_SetError("Unsupported audio format");
             return(0);
         }
-        if (!flip) return Mix_UnregisterEffect(channel, f);
-        return(Mix_RegisterEffect(channel, f, NULL, NULL));
+        if (!flip) return MIX_UnregisterEffect(channel, f);
+        return(MIX_RegisterEffect(channel, f, NULL, NULL));
     }
 
-    Mix_SetError("Trying to reverse stereo on a non-stereo stream");
+    MIX_SetError("Trying to reverse stereo on a non-stereo stream");
     return(0);
 }
 

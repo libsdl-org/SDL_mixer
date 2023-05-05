@@ -185,7 +185,7 @@ SetSequenceSoundFont(MusicSequence sequence)
     if (err != noErr)
         return;
 
-    Mix_EachSoundFont(macosx_load_soundfont, &ctx);
+    MIX_EachSoundFont(macosx_load_soundfont, &ctx);
     if (ctx.default_url)
         CFRelease(ctx.default_url);
     return;

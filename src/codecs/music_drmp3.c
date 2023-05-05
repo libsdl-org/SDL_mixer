@@ -57,7 +57,7 @@ typedef struct {
     int buffer_size;
     int channels;
 
-    Mix_MusicMetaTags tags;
+    MIX_MusicMetaTags tags;
 } DRMP3_Music;
 
 
@@ -98,7 +98,7 @@ static void *DRMP3_CreateFromRW(SDL_RWops *src, int freesrc)
     meta_tags_init(&music->tags);
     if (mp3_read_tags(&music->tags, &music->file, SDL_FALSE) < 0) {
         SDL_free(music);
-        Mix_SetError("music_drmp3: corrupt mp3 file (bad tags).");
+        MIX_SetError("music_drmp3: corrupt mp3 file (bad tags).");
         return NULL;
     }
 
@@ -106,7 +106,7 @@ static void *DRMP3_CreateFromRW(SDL_RWops *src, int freesrc)
 
     if (!drmp3_init(&music->dec, DRMP3_ReadCB, DRMP3_SeekCB, music, NULL)) {
         SDL_free(music);
-        Mix_SetError("music_drmp3: corrupt mp3 file (bad stream).");
+        MIX_SetError("music_drmp3: corrupt mp3 file (bad stream).");
         return NULL;
     }
 
@@ -232,7 +232,7 @@ static double DRMP3_Duration(void *context)
     return (double)samples / music->dec.sampleRate;
 }
 
-static const char* DRMP3_GetMetaTag(void *context, Mix_MusicMetaTag tag_type)
+static const char* DRMP3_GetMetaTag(void *context, MIX_MusicMetaTag tag_type)
 {
     DRMP3_Music *music = (DRMP3_Music *)context;
     return meta_tags_get(&music->tags, tag_type);
@@ -257,7 +257,7 @@ static void DRMP3_Delete(void *context)
     SDL_free(music);
 }
 
-Mix_MusicInterface Mix_MusicInterface_DRMP3 =
+MIX_MusicInterface MIX_MusicInterface_DRMP3 =
 {
     "DRMP3",
     MIX_MUSIC_DRMP3,

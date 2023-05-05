@@ -23,6 +23,6 @@
 
 #include "music.h"
 
-extern Mix_MusicInterface Mix_MusicInterface_OGG;
+extern MIX_MusicInterface MIX_MusicInterface_OGG;
 
 /* vi: set ts=4 sw=4 expandtab: */

@@ -61,7 +61,7 @@ static gme_loader gme;
 #else
 #define FUNCTION_LOADER(FUNC, SIG) \
     gme.FUNC = FUNC; \
-    if (gme.FUNC == NULL) { Mix_SetError("Missing GME.framework"); return -1; }
+    if (gme.FUNC == NULL) { MIX_SetError("Missing GME.framework"); return -1; }
 #endif
 
 static int GME_Load(void)
@@ -136,7 +136,7 @@ typedef struct
     SDL_AudioStream *stream;
     void *buffer;
     size_t buffer_size;
-    Mix_MusicMetaTags tags;
+    MIX_MusicMetaTags tags;
 } GME_Music;
 
 static void GME_Delete(void *context);
@@ -165,7 +165,7 @@ static int initialize_from_track_info(GME_Music *music, int track)
 
     err = gme.gme_track_info(music->game_emu, &musInfo, track);
     if (err != 0) {
-        Mix_SetError("GME: %s", err);
+        MIX_SetError("GME: %s", err);
         return -1;
     }
 
@@ -213,7 +213,7 @@ static void *GME_CreateFromRW(struct SDL_RWops *src, int freesrc)
     const char *err;
 
     if (src == NULL) {
-        Mix_SetError("GME: Empty source given");
+        MIX_SetError("GME: Empty source given");
         return NULL;
     }
 
@@ -247,7 +247,7 @@ static void *GME_CreateFromRW(struct SDL_RWops *src, int freesrc)
         SDL_free(mem);
         if (err != 0) {
             GME_Delete(music);
-            Mix_SetError("GME: %s", err);
+            MIX_SetError("GME: %s", err);
             return NULL;
         }
     } else {
@@ -264,7 +264,7 @@ static void *GME_CreateFromRW(struct SDL_RWops *src, int freesrc)
     err = gme.gme_start_track(music->game_emu, 0);
     if (err != 0) {
         GME_Delete(music);
-        Mix_SetError("GME: %s", err);
+        MIX_SetError("GME: %s", err);
         return NULL;
     }
 
@@ -320,7 +320,7 @@ static int GME_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 
     err = gme.gme_play(music->game_emu, (music->buffer_size / 2), (short*)music->buffer);
     if (err != NULL) {
-        Mix_SetError("GME: %s", err);
+        MIX_SetError("GME: %s", err);
         return 0;
     }
 
@@ -358,7 +358,7 @@ static void GME_Delete(void *context)
 }
 
 // TODO: this should accept a track number, not assume the current track!
-static const char* GME_GetMetaTag(void *context, Mix_MusicMetaTag tag_type)
+static const char* GME_GetMetaTag(void *context, MIX_MusicMetaTag tag_type)
 {
     GME_Music *music = (GME_Music *)context;
     return meta_tags_get(&music->tags, tag_type);
@@ -404,7 +404,7 @@ static int GME_StartTrack(void *music_p, int track)
 
     err = gme.gme_start_track(music->game_emu, track);
     if (err != 0) {
-        Mix_SetError("GME: %s", err);
+        MIX_SetError("GME: %s", err);
         return -1;
     }
 
@@ -418,7 +418,7 @@ static int GME_StartTrack(void *music_p, int track)
 }
 
 
-Mix_MusicInterface Mix_MusicInterface_GME =
+MIX_MusicInterface MIX_MusicInterface_GME =
 {
     "GME",
     MIX_MUSIC_GME,

@@ -64,7 +64,7 @@ typedef struct {
     Sint64 loop_start;
     Sint64 loop_end;
     Sint64 loop_len;
-    Mix_MusicMetaTags tags;
+    MIX_MusicMetaTags tags;
 } DRFLAC_Music;
 
 
@@ -115,17 +115,17 @@ static void DRFLAC_MetaCB(void *context, drflac_metadata *metadata)
 
                 /* Want to match LOOP-START, LOOP_START, etc. Remove - or _ from
                  * string if it is present at position 4. */
-                if (_Mix_IsLoopTag(argument) && ((argument[4] == '_') || (argument[4] == '-'))) {
+                if (_MIX_IsLoopTag(argument) && ((argument[4] == '_') || (argument[4] == '-'))) {
                     SDL_memmove(argument + 4, argument + 5, SDL_strlen(argument) - 4);
                 }
 
                 if (SDL_strcasecmp(argument, "LOOPSTART") == 0)
-                    music->loop_start = _Mix_ParseTime(value, music->sample_rate);
+                    music->loop_start = _MIX_ParseTime(value, music->sample_rate);
                 else if (SDL_strcasecmp(argument, "LOOPLENGTH") == 0) {
                     music->loop_len = SDL_strtoll(value, NULL, 10);
                     is_loop_length = SDL_TRUE;
                 } else if (SDL_strcasecmp(argument, "LOOPEND") == 0) {
-                    music->loop_end = _Mix_ParseTime(value, music->sample_rate);
+                    music->loop_end = _MIX_ParseTime(value, music->sample_rate);
                     is_loop_length = SDL_FALSE;
                 } else if (SDL_strcasecmp(argument, "TITLE") == 0) {
                     meta_tags_set(&music->tags, MIX_META_TITLE, value);
@@ -179,7 +179,7 @@ static void *DRFLAC_CreateFromRW(SDL_RWops *src, int freesrc)
     music->dec = drflac_open_with_metadata(DRFLAC_ReadCB, DRFLAC_SeekCB, DRFLAC_MetaCB, music, NULL);
     if (!music->dec) {
         SDL_free(music);
-        Mix_SetError("music_drflac: corrupt flac file (bad stream).");
+        MIX_SetError("music_drflac: corrupt flac file (bad stream).");
         return NULL;
     }
 
@@ -359,7 +359,7 @@ static double DRFLAC_LoopLength(void *context)
     return -1.0;
 }
 
-static const char* DRFLAC_GetMetaTag(void *context, Mix_MusicMetaTag tag_type)
+static const char* DRFLAC_GetMetaTag(void *context, MIX_MusicMetaTag tag_type)
 {
     DRFLAC_Music *music = (DRFLAC_Music *)context;
     return meta_tags_get(&music->tags, tag_type);
@@ -384,7 +384,7 @@ static void DRFLAC_Delete(void *context)
     SDL_free(music);
 }
 
-Mix_MusicInterface Mix_MusicInterface_DRFLAC =
+MIX_MusicInterface MIX_MusicInterface_DRFLAC =
 {
     "DRFLAC",
     MIX_MUSIC_DRFLAC,

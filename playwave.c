@@ -82,7 +82,7 @@ static void output_test_warnings(void)
 
 
 static int audio_open = 0;
-static Mix_Chunk *g_wave = NULL;
+static MIX_Chunk *g_wave = NULL;
 
 /* rcg06042009 Report available decoders. */
 #if (defined TEST_MIX_DECODERS)
@@ -91,14 +91,14 @@ static void report_decoders(void)
     int i, total;
 
     SDL_Log("Supported decoders...\n");
-    total = Mix_GetNumChunkDecoders();
+    total = MIX_GetNumChunkDecoders();
     for (i = 0; i < total; i++) {
-        SDL_Log(" - chunk decoder: %s\n", Mix_GetChunkDecoder(i));
+        SDL_Log(" - chunk decoder: %s\n", MIX_GetChunkDecoder(i));
     }
 
-    total = Mix_GetNumMusicDecoders();
+    total = MIX_GetNumMusicDecoders();
     for (i = 0; i < total; i++) {
-        SDL_Log(" - music decoder: %s\n", Mix_GetMusicDecoder(i));
+        SDL_Log(" - music decoder: %s\n", MIX_GetMusicDecoder(i));
     }
 }
 #endif
@@ -124,7 +124,7 @@ static void test_versions(void)
     output_versions("SDL", &compiled, &linked);
 
     SDL_MIXER_VERSION(&compiled);
-    SDL_memcpy(&linked, Mix_Linked_Version(), sizeof(SDL_version));
+    SDL_memcpy(&linked, MIX_Linked_Version(), sizeof(SDL_version));
     output_versions("SDL_mixer", &compiled, &linked);
 }
 #endif
@@ -134,7 +134,7 @@ static void test_versions(void)
 static int channel_is_done = 0;
 static void SDLCALL channel_complete_callback (int chan)
 {
-    Mix_Chunk *done_chunk = Mix_GetChunk(chan);
+    MIX_Chunk *done_chunk = MIX_GetChunk(chan);
     SDL_Log("We were just alerted that Mixer channel #%d is done.\n", chan);
     SDL_Log("Channel's chunk pointer is (%p).\n", (void*)done_chunk);
     SDL_Log(" Which %s correct.\n", (g_wave == done_chunk) ? "is" : "is NOT");
@@ -149,7 +149,7 @@ static int still_playing(void)
 #ifdef TEST_MIX_CHANNELFINISHED
     return(!channel_is_done);
 #else
-    return(Mix_Playing(0));
+    return(MIX_Playing(0));
 #endif
 }
 
@@ -165,11 +165,11 @@ static void do_panning_update(void)
     static Uint32 next_panning_update = 0;
 
     if ((panningok) && (SDL_GetTicks() >= next_panning_update)) {
-        panningok = Mix_SetPanning(0, leftvol, rightvol);
+        panningok = MIX_SetPanning(0, leftvol, rightvol);
         if (!panningok) {
-            SDL_Log("Mix_SetPanning(0, %d, %d) failed!\n",
+            SDL_Log("MIX_SetPanning(0, %d, %d) failed!\n",
                     (int) leftvol, (int) rightvol);
-            SDL_Log("Reason: [%s].\n", Mix_GetError());
+            SDL_Log("Reason: [%s].\n", MIX_GetError());
         }
 
         if ((leftvol == 255) || (leftvol == 0)) {
@@ -203,10 +203,10 @@ static void do_distance_update(void)
     static Uint32 next_distance_update = 0;
 
     if ((distanceok) && (SDL_GetTicks() >= next_distance_update)) {
-        distanceok = Mix_SetDistance(0, distance);
+        distanceok = MIX_SetDistance(0, distance);
         if (!distanceok) {
-            SDL_Log("Mix_SetDistance(0, %d) failed!\n", (int) distance);
-            SDL_Log("Reason: [%s].\n", Mix_GetError());
+            SDL_Log("MIX_SetDistance(0, %d) failed!\n", (int) distance);
+            SDL_Log("Reason: [%s].\n", MIX_GetError());
         }
 
         if (distance == 0) {
@@ -236,11 +236,11 @@ static void do_position_update(void)
     static Uint32 next_position_update = 0;
 
     if ((positionok) && (SDL_GetTicks() >= next_position_update)) {
-        positionok = Mix_SetPosition(0, angle, (Uint8)distance);
+        positionok = MIX_SetPosition(0, angle, (Uint8)distance);
         if (!positionok) {
-            SDL_Log("Mix_SetPosition(0, %d, %d) failed!\n",
+            SDL_Log("MIX_SetPosition(0, %d, %d) failed!\n",
                     (int) angle, (int) distance);
-            SDL_Log("Reason: [%s].\n", Mix_GetError());
+            SDL_Log("Reason: [%s].\n", MIX_GetError());
         }
 
         if (angle == 0) {
@@ -274,11 +274,11 @@ static void do_position_update(void)
 static void CleanUp(int exitcode)
 {
     if (g_wave) {
-        Mix_FreeChunk(g_wave);
+        MIX_FreeChunk(g_wave);
         g_wave = NULL;
     }
     if (audio_open) {
-        Mix_CloseAudio();
+        MIX_CloseAudio();
         audio_open = 0;
     }
     SDL_Quit();
@@ -305,14 +305,14 @@ static void Usage(char *argv0)
  *  permanent; here, you've got a reversed sample, and that's that until
  *  you either reverse it again, or reload it.
  */
-static void flip_sample(Mix_Chunk *wave)
+static void flip_sample(MIX_Chunk *wave)
 {
     Uint16 format;
     int channels, i, incr;
     Uint8 *start = wave->abuf;
     Uint8 *end = wave->abuf + wave->alen;
 
-    Mix_QuerySpec(NULL, &format, &channels);
+    MIX_QuerySpec(NULL, &format, &channels);
     incr = (format & 0xFF) * channels;
 
     end -= incr;
@@ -426,11 +426,11 @@ int main(int argc, char *argv[])
 #endif
 
     /* Open the audio device */
-    if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, 4096) < 0) {
+    if (MIX_OpenAudio(audio_rate, audio_format, audio_channels, 4096) < 0) {
         SDL_Log("Couldn't open audio: %s\n", SDL_GetError());
         CleanUp(2);
     } else {
-        Mix_QuerySpec(&audio_rate, &audio_format, &audio_channels);
+        MIX_QuerySpec(&audio_rate, &audio_format, &audio_channels);
         SDL_Log("Opened audio at %d Hz %d bit%s %s", audio_rate,
             (audio_format&0xFF),
             (SDL_AUDIO_ISFLOAT(audio_format) ? " (float)" : ""),
@@ -453,7 +453,7 @@ int main(int argc, char *argv[])
 #endif
 
     /* Load the requested wave file */
-    g_wave = Mix_LoadWAV(argv[i]);
+    g_wave = MIX_LoadWAV(argv[i]);
     if (g_wave == NULL) {
         SDL_Log("Couldn't load %s: %s\n",
                         argv[i], SDL_GetError());
@@ -465,18 +465,18 @@ int main(int argc, char *argv[])
     }
 
 #ifdef TEST_MIX_CHANNELFINISHED  /* rcg06072001 */
-    Mix_ChannelFinished(channel_complete_callback);
+    MIX_ChannelFinished(channel_complete_callback);
 #endif
 
-    if ((!Mix_SetReverseStereo(MIX_CHANNEL_POST, reverse_stereo)) &&
+    if ((!MIX_SetReverseStereo(MIX_CHANNEL_POST, reverse_stereo)) &&
          (reverse_stereo))
     {
         SDL_Log("Failed to set up reverse stereo effect!\n");
-        SDL_Log("Reason: [%s].\n", Mix_GetError());
+        SDL_Log("Reason: [%s].\n", MIX_GetError());
     }
 
     /* Play and then exit */
-    Mix_PlayChannel(0, g_wave, loops);
+    MIX_PlayChannel(0, g_wave, loops);
 
     while (still_playing()) {
 

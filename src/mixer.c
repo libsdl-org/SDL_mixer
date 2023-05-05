@@ -64,16 +64,16 @@ static int audio_opened = 0;
 static SDL_AudioSpec mixer;
 static SDL_AudioDeviceID audio_device;
 
-typedef struct _Mix_effectinfo
+typedef struct _MIX_effectinfo
 {
-    Mix_EffectFunc_t callback;
-    Mix_EffectDone_t done_callback;
+    MIX_EffectFunc_t callback;
+    MIX_EffectDone_t done_callback;
     void *udata;
-    struct _Mix_effectinfo *next;
+    struct _MIX_effectinfo *next;
 } effect_info;
 
-static struct _Mix_Channel {
-    Mix_Chunk *chunk;
+static struct _MIX_Channel {
+    MIX_Chunk *chunk;
     int playing;
     Uint64 paused;
     Uint8 *samples;
@@ -82,7 +82,7 @@ static struct _Mix_Channel {
     int tag;
     Uint64 expire;
     Uint64 start_time;
-    Mix_Fading fading;
+    MIX_Fading fading;
     int fade_volume;
     int fade_volume_reset;
     Uint64 fade_length;
@@ -113,12 +113,12 @@ static int num_decoders = 0;
 
 static SDL_AtomicInt master_volume = { MIX_MAX_VOLUME };
 
-int Mix_GetNumChunkDecoders(void)
+int MIX_GetNumChunkDecoders(void)
 {
     return(num_decoders);
 }
 
-const char *Mix_GetChunkDecoder(int index)
+const char *MIX_GetChunkDecoder(int index)
 {
     if ((index < 0) || (index >= num_decoders)) {
         return NULL;
@@ -126,7 +126,7 @@ const char *Mix_GetChunkDecoder(int index)
     return(chunk_decoders[index]);
 }
 
-SDL_bool Mix_HasChunkDecoder(const char *name)
+SDL_bool MIX_HasChunkDecoder(const char *name)
 {
     int index;
     for (index = 0; index < num_decoders; ++index) {
@@ -158,7 +158,7 @@ void add_chunk_decoder(const char *decoder)
 }
 
 /* rcg06192001 get linked library's version. */
-const SDL_version *Mix_Linked_Version(void)
+const SDL_version *MIX_Linked_Version(void)
 {
     static SDL_version linked_version;
     SDL_MIXER_VERSION(&linked_version);
@@ -168,9 +168,9 @@ const SDL_version *Mix_Linked_Version(void)
 /*
  * Returns a bitmap of already loaded modules (MIX_INIT_* flags).
  *
- * Note that functions other than Mix_Init() may cause a module to get loaded
+ * Note that functions other than MIX_Init() may cause a module to get loaded
  * (hence the looping over the interfaces instead of maintaining a set of flags
- * just in Mix_Init() and Mix_Quit()).
+ * just in MIX_Init() and MIX_Quit()).
  */
 static int get_loaded_mix_init_flags(void)
 {
@@ -178,7 +178,7 @@ static int get_loaded_mix_init_flags(void)
     int loaded_init_flags = 0;
 
     for (i = 0; i < get_num_music_interfaces(); ++i) {
-        Mix_MusicInterface *interface;
+        MIX_MusicInterface *interface;
 
         interface = get_music_interface(i);
         if (interface->loaded) {
@@ -213,7 +213,7 @@ static int get_loaded_mix_init_flags(void)
     return loaded_init_flags;
 }
 
-int Mix_Init(int flags)
+int MIX_Init(int flags)
 {
     int result = 0;
     int already_loaded = get_loaded_mix_init_flags();
@@ -223,7 +223,7 @@ int Mix_Init(int flags)
             open_music_type(MUS_FLAC);
             result |= MIX_INIT_FLAC;
         } else {
-            Mix_SetError("FLAC support not available");
+            MIX_SetError("FLAC support not available");
         }
     }
     if (flags & MIX_INIT_WAVPACK) {
@@ -231,7 +231,7 @@ int Mix_Init(int flags)
             open_music_type(MUS_WAVPACK);
             result |= MIX_INIT_WAVPACK;
         } else {
-            Mix_SetError("WavPack support not available");
+            MIX_SetError("WavPack support not available");
         }
     }
     if (flags & MIX_INIT_MOD) {
@@ -239,7 +239,7 @@ int Mix_Init(int flags)
             open_music_type(MUS_MOD);
             result |= MIX_INIT_MOD;
         } else {
-            Mix_SetError("MOD support not available");
+            MIX_SetError("MOD support not available");
         }
     }
     if (flags & MIX_INIT_MP3) {
@@ -247,7 +247,7 @@ int Mix_Init(int flags)
             open_music_type(MUS_MP3);
             result |= MIX_INIT_MP3;
         } else {
-            Mix_SetError("MP3 support not available");
+            MIX_SetError("MP3 support not available");
         }
     }
     if (flags & MIX_INIT_OGG) {
@@ -255,7 +255,7 @@ int Mix_Init(int flags)
             open_music_type(MUS_OGG);
             result |= MIX_INIT_OGG;
         } else {
-            Mix_SetError("OGG support not available");
+            MIX_SetError("OGG support not available");
         }
     }
     if (flags & MIX_INIT_OPUS) {
@@ -263,7 +263,7 @@ int Mix_Init(int flags)
             open_music_type(MUS_OPUS);
             result |= MIX_INIT_OPUS;
         } else {
-            Mix_SetError("OPUS support not available");
+            MIX_SetError("OPUS support not available");
         }
     }
     if (flags & MIX_INIT_MID) {
@@ -271,7 +271,7 @@ int Mix_Init(int flags)
             open_music_type(MUS_MID);
             result |= MIX_INIT_MID;
         } else {
-            Mix_SetError("MIDI support not available");
+            MIX_SetError("MIDI support not available");
         }
     }
     result |= already_loaded;
@@ -279,20 +279,20 @@ int Mix_Init(int flags)
     return result;
 }
 
-void Mix_Quit(void)
+void MIX_Quit(void)
 {
     unload_music();
     SNDFILE_uninit();
 }
 
-static int _Mix_remove_all_effects(int channel, effect_info **e);
+static int _MIX_remove_all_effects(int channel, effect_info **e);
 
 /*
  * rcg06122001 Cleanup effect callbacks.
- *  MAKE SURE Mix_LockAudio() is called before this (or you're in the
+ *  MAKE SURE MIX_LockAudio() is called before this (or you're in the
  *   audio callback).
  */
-static void _Mix_channel_done_playing(int channel)
+static void _MIX_channel_done_playing(int channel)
 {
     if (channel_done_callback) {
         channel_done_callback(channel);
@@ -302,11 +302,11 @@ static void _Mix_channel_done_playing(int channel)
      * Call internal function directly, to avoid locking audio from
      *   inside audio callback.
      */
-    _Mix_remove_all_effects(channel, &mix_channel[channel].effects);
+    _MIX_remove_all_effects(channel, &mix_channel[channel].effects);
 }
 
 
-static void *Mix_DoEffects(int chan, void *snd, int len)
+static void *MIX_DoEffects(int chan, void *snd, int len)
 {
     int posteffect = (chan == MIX_CHANNEL_POST);
     effect_info *e = ((posteffect) ? posteffects : mix_channel[chan].effects);
@@ -362,25 +362,25 @@ mix_channels(void *udata, Uint8 *stream, int len)
                 mix_channel[i].looping = 0;
                 mix_channel[i].fading = MIX_NO_FADING;
                 mix_channel[i].expire = 0;
-                _Mix_channel_done_playing(i);
+                _MIX_channel_done_playing(i);
             } else if (mix_channel[i].fading != MIX_NO_FADING) {
                 Uint64 ticks = sdl_ticks - mix_channel[i].ticks_fade;
                 if (ticks >= mix_channel[i].fade_length) {
-                    Mix_Volume(i, mix_channel[i].fade_volume_reset); /* Restore the volume */
+                    MIX_Volume(i, mix_channel[i].fade_volume_reset); /* Restore the volume */
                     if (mix_channel[i].fading == MIX_FADING_OUT) {
                         mix_channel[i].playing = 0;
                         mix_channel[i].looping = 0;
                         mix_channel[i].expire = 0;
-                        _Mix_channel_done_playing(i);
+                        _MIX_channel_done_playing(i);
                     }
                     mix_channel[i].fading = MIX_NO_FADING;
                 } else {
                     if (mix_channel[i].fading == MIX_FADING_OUT) {
                         int volume = (int)((mix_channel[i].fade_volume * (mix_channel[i].fade_length - ticks)) / mix_channel[i].fade_length);
-                        Mix_Volume(i, volume);
+                        MIX_Volume(i, volume);
                     } else {
                         int volume = (int)((mix_channel[i].fade_volume * ticks) / mix_channel[i].fade_length);
-                        Mix_Volume(i, volume);
+                        MIX_Volume(i, volume);
                     }
                 }
             }
@@ -395,7 +395,7 @@ mix_channels(void *udata, Uint8 *stream, int len)
                         mixable = remaining;
                     }
 
-                    mix_input = Mix_DoEffects(i, mix_channel[i].samples, mixable);
+                    mix_input = MIX_DoEffects(i, mix_channel[i].samples, mixable);
                     SDL_MixAudioFormat(stream+index, mix_input, mixer.format, mixable, volume);
                     if (mix_input != mix_channel[i].samples)
                         SDL_free(mix_input);
@@ -406,7 +406,7 @@ mix_channels(void *udata, Uint8 *stream, int len)
 
                     /* rcg06072001 Alert app if channel is done playing. */
                     if (!mix_channel[i].playing && !mix_channel[i].looping) {
-                        _Mix_channel_done_playing(i);
+                        _MIX_channel_done_playing(i);
 
                         /* Update the volume after the application callback */
                         volume = (master_vol * (mix_channel[i].volume * mix_channel[i].chunk->volume)) / (MIX_MAX_VOLUME * MIX_MAX_VOLUME);
@@ -422,7 +422,7 @@ mix_channels(void *udata, Uint8 *stream, int len)
                         remaining = alen;
                     }
 
-                    mix_input = Mix_DoEffects(i, mix_channel[i].chunk->abuf, remaining);
+                    mix_input = MIX_DoEffects(i, mix_channel[i].chunk->abuf, remaining);
                     SDL_MixAudioFormat(stream+index, mix_input, mixer.format, remaining, volume);
                     if (mix_input != mix_channel[i].chunk->abuf)
                         SDL_free(mix_input);
@@ -446,7 +446,7 @@ mix_channels(void *udata, Uint8 *stream, int len)
     }
 
     /* rcg06122001 run posteffects... */
-    Mix_DoEffects(MIX_CHANNEL_POST, stream, len);
+    MIX_DoEffects(MIX_CHANNEL_POST, stream, len);
 
     if (mix_postmix) {
         mix_postmix(mix_postmix_data, stream, len);
@@ -464,7 +464,7 @@ static void PrintFormat(char *title, SDL_AudioSpec *fmt)
 #endif
 
 /* Open the mixer with a certain desired audio format */
-int Mix_OpenAudioDevice(int frequency, Uint16 format, int nchannels, int chunksize,
+int MIX_OpenAudioDevice(int frequency, Uint16 format, int nchannels, int chunksize,
                         const char* device, int allowed_changes)
 {
     int i;
@@ -486,7 +486,7 @@ int Mix_OpenAudioDevice(int frequency, Uint16 format, int nchannels, int chunksi
             return(0);
         }
         while (audio_opened) {
-            Mix_CloseAudio();
+            MIX_CloseAudio();
         }
     }
 
@@ -507,7 +507,7 @@ int Mix_OpenAudioDevice(int frequency, Uint16 format, int nchannels, int chunksi
 #endif
 
     num_channels = MIX_CHANNELS;
-    mix_channel = (struct _Mix_Channel *) SDL_malloc(num_channels * sizeof(struct _Mix_Channel));
+    mix_channel = (struct _MIX_Channel *) SDL_malloc(num_channels * sizeof(struct _MIX_Channel));
 
     /* Clear out the audio channels */
     for (i=0; i<num_channels; ++i) {
@@ -523,9 +523,9 @@ int Mix_OpenAudioDevice(int frequency, Uint16 format, int nchannels, int chunksi
         mix_channel[i].effects = NULL;
         mix_channel[i].paused = 0;
     }
-    Mix_VolumeMusic(SDL_MIX_MAXVOLUME);
+    MIX_VolumeMusic(SDL_MIX_MAXVOLUME);
 
-    _Mix_InitEffects();
+    _MIX_InitEffects();
 
     add_chunk_decoder("WAVE");
     add_chunk_decoder("AIFF");
@@ -540,31 +540,31 @@ int Mix_OpenAudioDevice(int frequency, Uint16 format, int nchannels, int chunksi
 }
 
 /* Open the mixer with a certain desired audio format */
-int Mix_OpenAudio(int frequency, Uint16 format, int nchannels, int chunksize)
+int MIX_OpenAudio(int frequency, Uint16 format, int nchannels, int chunksize)
 {
-    return Mix_OpenAudioDevice(frequency, format, nchannels, chunksize, NULL,
+    return MIX_OpenAudioDevice(frequency, format, nchannels, chunksize, NULL,
                                 SDL_AUDIO_ALLOW_FREQUENCY_CHANGE |
                                 SDL_AUDIO_ALLOW_CHANNELS_CHANGE);
 }
 
 /* Pause or resume the audio streaming */
-void Mix_PauseAudio(int pause_on)
+void MIX_PauseAudio(int pause_on)
 {
     if (pause_on) {
         SDL_PauseAudioDevice(audio_device);
     } else {
         SDL_PlayAudioDevice(audio_device);
     }
-    Mix_LockAudio();
+    MIX_LockAudio();
     pause_async_music(pause_on);
-    Mix_UnlockAudio();
+    MIX_UnlockAudio();
 }
 
 /* Dynamically change the number of channels managed by the mixer.
    If decreasing the number of channels, the upper channels are
    stopped.
  */
-int Mix_AllocateChannels(int numchans)
+int MIX_AllocateChannels(int numchans)
 {
     if (numchans<0 || numchans==num_channels)
         return(num_channels);
@@ -573,12 +573,12 @@ int Mix_AllocateChannels(int numchans)
         /* Stop the affected channels */
         int i;
         for(i=numchans; i < num_channels; i++) {
-            Mix_UnregisterAllEffects(i);
-            Mix_HaltChannel(i);
+            MIX_UnregisterAllEffects(i);
+            MIX_HaltChannel(i);
         }
     }
-    Mix_LockAudio();
-    mix_channel = (struct _Mix_Channel *) SDL_realloc(mix_channel, numchans * sizeof(struct _Mix_Channel));
+    MIX_LockAudio();
+    mix_channel = (struct _MIX_Channel *) SDL_realloc(mix_channel, numchans * sizeof(struct _MIX_Channel));
     if (numchans > num_channels) {
         /* Initialize the new channels */
         int i;
@@ -597,12 +597,12 @@ int Mix_AllocateChannels(int numchans)
         }
     }
     num_channels = numchans;
-    Mix_UnlockAudio();
+    MIX_UnlockAudio();
     return(num_channels);
 }
 
 /* Return the actual mixer parameters */
-int Mix_QuerySpec(int *frequency, Uint16 *format, int *channels)
+int MIX_QuerySpec(int *frequency, Uint16 *format, int *channels)
 {
     if (audio_opened) {
         if (frequency) {
@@ -625,11 +625,11 @@ typedef struct _MusicFragment
     struct _MusicFragment *next;
 } MusicFragment;
 
-static SDL_AudioSpec *Mix_LoadMusic_RW(SDL_RWops *src, int freesrc, SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
+static SDL_AudioSpec *MIX_LoadMusic_RW(SDL_RWops *src, int freesrc, SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
 {
     int i;
-    Mix_MusicType music_type;
-    Mix_MusicInterface *interface = NULL;
+    MIX_MusicType music_type;
+    MIX_MusicInterface *interface = NULL;
     void *music = NULL;
     Sint64 start;
     SDL_bool playing;
@@ -681,11 +681,11 @@ static SDL_AudioSpec *Mix_LoadMusic_RW(SDL_RWops *src, int freesrc, SDL_AudioSpe
         if (freesrc) {
             SDL_RWclose(src);
         }
-        Mix_SetError("Unrecognized audio format");
+        MIX_SetError("Unrecognized audio format");
         return NULL;
     }
 
-    Mix_LockAudio();
+    MIX_LockAudio();
 
     if (interface->Play) {
         interface->Play(music, 1);
@@ -734,7 +734,7 @@ static SDL_AudioSpec *Mix_LoadMusic_RW(SDL_RWops *src, int freesrc, SDL_AudioSpe
         interface->Delete(music);
     }
 
-    Mix_UnlockAudio();
+    MIX_UnlockAudio();
 
     if (count > 0) {
         *audio_len = (count - 1) * fragment_size + last->size;
@@ -746,11 +746,11 @@ static SDL_AudioSpec *Mix_LoadMusic_RW(SDL_RWops *src, int freesrc, SDL_AudioSpe
                 dst += fragment->size;
             }
         } else {
-            Mix_OutOfMemory();
+            MIX_OutOfMemory();
             spec = NULL;
         }
     } else {
-        Mix_SetError("No audio data");
+        MIX_SetError("No audio data");
         spec = NULL;
     }
 
@@ -768,21 +768,21 @@ static SDL_AudioSpec *Mix_LoadMusic_RW(SDL_RWops *src, int freesrc, SDL_AudioSpe
 }
 
 /* Load a wave file */
-Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
+MIX_Chunk *MIX_LoadWAV_RW(SDL_RWops *src, int freesrc)
 {
     Uint8 magic[4];
-    Mix_Chunk *chunk;
+    MIX_Chunk *chunk;
     SDL_AudioSpec wavespec, *loaded;
 
     /* rcg06012001 Make sure src is valid */
     if (!src) {
-        Mix_SetError("Mix_LoadWAV_RW with NULL src");
+        MIX_SetError("MIX_LoadWAV_RW with NULL src");
         return(NULL);
     }
 
     /* Make sure audio has been opened */
     if (!audio_opened) {
-        Mix_SetError("Audio device hasn't been opened");
+        MIX_SetError("Audio device hasn't been opened");
         if (freesrc) {
             SDL_RWclose(src);
         }
@@ -790,9 +790,9 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
     }
 
     /* Allocate the chunk memory */
-    chunk = (Mix_Chunk *)SDL_malloc(sizeof(Mix_Chunk));
+    chunk = (MIX_Chunk *)SDL_malloc(sizeof(MIX_Chunk));
     if (chunk == NULL) {
-        Mix_OutOfMemory();
+        MIX_OutOfMemory();
         if (freesrc) {
             SDL_RWclose(src);
         }
@@ -805,24 +805,24 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
         if (freesrc) {
             SDL_RWclose(src);
         }
-        Mix_SetError("Couldn't read first 4 bytes of audio data");
+        MIX_SetError("Couldn't read first 4 bytes of audio data");
         return NULL;
     }
     /* Seek backwards for compatibility with older loaders */
     SDL_RWseek(src, -4, SDL_RW_SEEK_CUR);
 
     /* First try loading via libsndfile */
-    loaded = Mix_LoadSndFile_RW(src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
+    loaded = MIX_LoadSndFile_RW(src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
 
     if (!loaded)  {
         if (SDL_memcmp(magic, "WAVE", 4) == 0 || SDL_memcmp(magic, "RIFF", 4) == 0) {
             loaded = SDL_LoadWAV_RW(src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
         } else if (SDL_memcmp(magic, "FORM", 4) == 0) {
-            loaded = Mix_LoadAIFF_RW(src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
+            loaded = MIX_LoadAIFF_RW(src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
         } else if (SDL_memcmp(magic, "Crea", 4) == 0) {
-            loaded = Mix_LoadVOC_RW(src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
+            loaded = MIX_LoadVOC_RW(src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
         } else {
-            loaded = Mix_LoadMusic_RW(src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
+            loaded = MIX_LoadMusic_RW(src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
         }
     }
     if (!loaded) {
@@ -862,28 +862,28 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
     return chunk;
 }
 
-Mix_Chunk *Mix_LoadWAV(const char *file)
+MIX_Chunk *MIX_LoadWAV(const char *file)
 {
-    return Mix_LoadWAV_RW(SDL_RWFromFile(file, "rb"), 1);
+    return MIX_LoadWAV_RW(SDL_RWFromFile(file, "rb"), 1);
 }
 
 
 /* Load a wave file of the mixer format from a memory buffer */
-Mix_Chunk *Mix_QuickLoad_WAV(Uint8 *mem)
+MIX_Chunk *MIX_QuickLoad_WAV(Uint8 *mem)
 {
-    Mix_Chunk *chunk;
+    MIX_Chunk *chunk;
     Uint8 magic[4];
 
     /* Make sure audio has been opened */
     if (! audio_opened) {
-        Mix_SetError("Audio device hasn't been opened");
+        MIX_SetError("Audio device hasn't been opened");
         return(NULL);
     }
 
     /* Allocate the chunk memory */
-    chunk = (Mix_Chunk *)SDL_calloc(1,sizeof(Mix_Chunk));
+    chunk = (MIX_Chunk *)SDL_calloc(1,sizeof(MIX_Chunk));
     if (chunk == NULL) {
-        Mix_OutOfMemory();
+        MIX_OutOfMemory();
         return(NULL);
     }
 
@@ -904,20 +904,20 @@ Mix_Chunk *Mix_QuickLoad_WAV(Uint8 *mem)
 }
 
 /* Load raw audio data of the mixer format from a memory buffer */
-Mix_Chunk *Mix_QuickLoad_RAW(Uint8 *mem, Uint32 len)
+MIX_Chunk *MIX_QuickLoad_RAW(Uint8 *mem, Uint32 len)
 {
-    Mix_Chunk *chunk;
+    MIX_Chunk *chunk;
 
     /* Make sure audio has been opened */
     if (! audio_opened) {
-        Mix_SetError("Audio device hasn't been opened");
+        MIX_SetError("Audio device hasn't been opened");
         return(NULL);
     }
 
     /* Allocate the chunk memory */
-    chunk = (Mix_Chunk *)SDL_malloc(sizeof(Mix_Chunk));
+    chunk = (MIX_Chunk *)SDL_malloc(sizeof(MIX_Chunk));
     if (chunk == NULL) {
-        Mix_OutOfMemory();
+        MIX_OutOfMemory();
         return(NULL);
     }
 
@@ -930,13 +930,13 @@ Mix_Chunk *Mix_QuickLoad_RAW(Uint8 *mem, Uint32 len)
     return(chunk);
 }
 
-/* MAKE SURE you hold the audio lock (Mix_LockAudio()) before calling this! */
-static void  Mix_HaltChannel_locked(int which)
+/* MAKE SURE you hold the audio lock (MIX_LockAudio()) before calling this! */
+static void  MIX_HaltChannel_locked(int which)
 {
-    if (Mix_Playing(which)) {
+    if (MIX_Playing(which)) {
         mix_channel[which].playing = 0;
         mix_channel[which].looping = 0;
-        _Mix_channel_done_playing(which);
+        _MIX_channel_done_playing(which);
     }
     mix_channel[which].expire = 0;
     if (mix_channel[which].fading != MIX_NO_FADING) /* Restore volume */
@@ -945,22 +945,22 @@ static void  Mix_HaltChannel_locked(int which)
 }
 
 /* Free an audio chunk previously loaded */
-void Mix_FreeChunk(Mix_Chunk *chunk)
+void MIX_FreeChunk(MIX_Chunk *chunk)
 {
     int i;
 
     /* Caution -- if the chunk is playing, the mixer will crash */
     if (chunk) {
         /* Guarantee that this chunk isn't playing */
-        Mix_LockAudio();
+        MIX_LockAudio();
         if (mix_channel) {
             for (i=0; i<num_channels; ++i) {
                 if (chunk == mix_channel[i].chunk) {
-                    Mix_HaltChannel_locked(i);
+                    MIX_HaltChannel_locked(i);
                 }
             }
         }
-        Mix_UnlockAudio();
+        MIX_UnlockAudio();
         /* Actually free the chunk */
         if (chunk->allocated) {
             SDL_free(chunk->abuf);
@@ -973,22 +973,22 @@ void Mix_FreeChunk(Mix_Chunk *chunk)
    This can be used to provide real-time visual display of the audio stream
    or add a custom mixer filter for the stream data.
 */
-void Mix_SetPostMix(void (SDLCALL *mix_func)
+void MIX_SetPostMix(void (SDLCALL *mix_func)
                     (void *udata, Uint8 *stream, int len), void *arg)
 {
-    Mix_LockAudio();
+    MIX_LockAudio();
     mix_postmix_data = arg;
     mix_postmix = mix_func;
-    Mix_UnlockAudio();
+    MIX_UnlockAudio();
 }
 
 /* Add your own music player or mixer function.
    If 'mix_func' is NULL, the default music player is re-enabled.
  */
-void Mix_HookMusic(void (SDLCALL *mix_func)(void *udata, Uint8 *stream, int len),
+void MIX_HookMusic(void (SDLCALL *mix_func)(void *udata, Uint8 *stream, int len),
                                                                 void *arg)
 {
-    Mix_LockAudio();
+    MIX_LockAudio();
     if (mix_func != NULL) {
         music_data = arg;
         mix_music = mix_func;
@@ -996,19 +996,19 @@ void Mix_HookMusic(void (SDLCALL *mix_func)(void *udata, Uint8 *stream, int len)
         music_data = NULL;
         mix_music = music_mixer;
     }
-    Mix_UnlockAudio();
+    MIX_UnlockAudio();
 }
 
-void *Mix_GetMusicHookData(void)
+void *MIX_GetMusicHookData(void)
 {
     return(music_data);
 }
 
-void Mix_ChannelFinished(void (SDLCALL *channel_finished)(int channel))
+void MIX_ChannelFinished(void (SDLCALL *channel_finished)(int channel))
 {
-    Mix_LockAudio();
+    MIX_LockAudio();
     channel_done_callback = channel_finished;
-    Mix_UnlockAudio();
+    MIX_UnlockAudio();
 }
 
 
@@ -1016,7 +1016,7 @@ void Mix_ChannelFinished(void (SDLCALL *channel_finished)(int channel))
    them dynamically to the next sample if requested with a -1 value below.
    Returns the number of reserved channels.
  */
-int Mix_ReserveChannels(int num)
+int MIX_ReserveChannels(int num)
 {
     if (num > num_channels)
         num = num_channels;
@@ -1024,7 +1024,7 @@ int Mix_ReserveChannels(int num)
     return num;
 }
 
-static int checkchunkintegral(Mix_Chunk *chunk)
+static int checkchunkintegral(MIX_Chunk *chunk)
 {
     int frame_width = 1;
 
@@ -1040,38 +1040,38 @@ static int checkchunkintegral(Mix_Chunk *chunk)
    if there is no limit.
    Returns which channel was used to play the sound.
 */
-int Mix_PlayChannelTimed(int which, Mix_Chunk *chunk, int loops, int ticks)
+int MIX_PlayChannelTimed(int which, MIX_Chunk *chunk, int loops, int ticks)
 {
     int i;
 
     /* Don't play null pointers :-) */
     if (chunk == NULL) {
-        Mix_SetError("Tried to play a NULL chunk");
+        MIX_SetError("Tried to play a NULL chunk");
         return(-1);
     }
     if (!checkchunkintegral(chunk)) {
-        Mix_SetError("Tried to play a chunk with a bad frame");
+        MIX_SetError("Tried to play a chunk with a bad frame");
         return(-1);
     }
 
     /* Lock the mixer while modifying the playing channels */
-    Mix_LockAudio();
+    MIX_LockAudio();
     {
         /* If which is -1, play on the first free channel */
         if (which == -1) {
             for (i=reserved_channels; i<num_channels; ++i) {
-                if (!Mix_Playing(i))
+                if (!MIX_Playing(i))
                     break;
             }
             if (i == num_channels) {
-                Mix_SetError("No free channels available");
+                MIX_SetError("No free channels available");
                 which = -1;
             } else {
                 which = i;
             }
         } else {
-            if (Mix_Playing(which))
-                _Mix_channel_done_playing(which);
+            if (MIX_Playing(which))
+                _MIX_channel_done_playing(which);
         }
 
         /* Queue up the audio data for this channel */
@@ -1087,38 +1087,38 @@ int Mix_PlayChannelTimed(int which, Mix_Chunk *chunk, int loops, int ticks)
             mix_channel[which].expire = (ticks > 0) ? (sdl_ticks + ticks) : 0;
         }
     }
-    Mix_UnlockAudio();
+    MIX_UnlockAudio();
 
     /* Return the channel on which the sound is being played */
     return(which);
 }
 
-int Mix_PlayChannel(int channel, Mix_Chunk *chunk, int loops)
+int MIX_PlayChannel(int channel, MIX_Chunk *chunk, int loops)
 {
-    return Mix_PlayChannelTimed(channel, chunk, loops, -1);
+    return MIX_PlayChannelTimed(channel, chunk, loops, -1);
 }
 
 /* Change the expiration delay for a channel */
-int Mix_ExpireChannel(int which, int ticks)
+int MIX_ExpireChannel(int which, int ticks)
 {
     int status = 0;
 
     if (which == -1) {
         int i;
         for (i=0; i < num_channels; ++ i) {
-            status += Mix_ExpireChannel(i, ticks);
+            status += MIX_ExpireChannel(i, ticks);
         }
     } else if (which < num_channels) {
-        Mix_LockAudio();
+        MIX_LockAudio();
         mix_channel[which].expire = (ticks>0) ? (SDL_GetTicks() + (Uint32)ticks) : 0;
-        Mix_UnlockAudio();
+        MIX_UnlockAudio();
         ++ status;
     }
     return(status);
 }
 
 /* Fade in a sound on a channel, over ms milliseconds */
-int Mix_FadeInChannelTimed(int which, Mix_Chunk *chunk, int loops, int ms, int ticks)
+int MIX_FadeInChannelTimed(int which, MIX_Chunk *chunk, int loops, int ms, int ticks)
 {
     int i;
 
@@ -1127,17 +1127,17 @@ int Mix_FadeInChannelTimed(int which, Mix_Chunk *chunk, int loops, int ms, int t
         return(-1);
     }
     if (!checkchunkintegral(chunk)) {
-        Mix_SetError("Tried to play a chunk with a bad frame");
+        MIX_SetError("Tried to play a chunk with a bad frame");
         return(-1);
     }
 
     /* Lock the mixer while modifying the playing channels */
-    Mix_LockAudio();
+    MIX_LockAudio();
     {
         /* If which is -1, play on the first free channel */
         if (which == -1) {
             for (i=reserved_channels; i<num_channels; ++i) {
-                if (!Mix_Playing(i))
+                if (!MIX_Playing(i))
                     break;
             }
             if (i == num_channels) {
@@ -1146,8 +1146,8 @@ int Mix_FadeInChannelTimed(int which, Mix_Chunk *chunk, int loops, int ms, int t
                 which = i;
             }
         } else {
-            if (Mix_Playing(which))
-                _Mix_channel_done_playing(which);
+            if (MIX_Playing(which))
+                _MIX_channel_done_playing(which);
         }
 
         /* Queue up the audio data for this channel */
@@ -1169,27 +1169,27 @@ int Mix_FadeInChannelTimed(int which, Mix_Chunk *chunk, int loops, int ms, int t
             mix_channel[which].expire = (ticks > 0) ? (sdl_ticks + ticks) : 0;
         }
     }
-    Mix_UnlockAudio();
+    MIX_UnlockAudio();
 
     /* Return the channel on which the sound is being played */
     return(which);
 }
 
-int Mix_FadeInChannel(int channel, Mix_Chunk *chunk, int loops, int ms)
+int MIX_FadeInChannel(int channel, MIX_Chunk *chunk, int loops, int ms)
 {
-    return Mix_FadeInChannelTimed(channel, chunk, loops, ms, -1);
+    return MIX_FadeInChannelTimed(channel, chunk, loops, ms, -1);
 }
 
 
 /* Set volume of a particular channel */
-int Mix_Volume(int which, int volume)
+int MIX_Volume(int which, int volume)
 {
     int i;
     int prev_volume = 0;
 
     if (which == -1) {
         for (i=0; i<num_channels; ++i) {
-            prev_volume += Mix_Volume(i, volume);
+            prev_volume += MIX_Volume(i, volume);
         }
         prev_volume /= num_channels;
     } else if (which < num_channels) {
@@ -1204,7 +1204,7 @@ int Mix_Volume(int which, int volume)
     return(prev_volume);
 }
 /* Set volume of a particular chunk */
-int Mix_VolumeChunk(Mix_Chunk *chunk, int volume)
+int MIX_VolumeChunk(MIX_Chunk *chunk, int volume)
 {
     int prev_volume;
 
@@ -1222,37 +1222,37 @@ int Mix_VolumeChunk(Mix_Chunk *chunk, int volume)
 }
 
 /* Halt playing of a particular channel */
-int Mix_HaltChannel(int which)
+int MIX_HaltChannel(int which)
 {
     int i;
 
-    Mix_LockAudio();
+    MIX_LockAudio();
     if (which == -1) {
         for (i=0; i<num_channels; ++i) {
-            Mix_HaltChannel_locked(i);
+            MIX_HaltChannel_locked(i);
         }
     } else if (which < num_channels) {
-        Mix_HaltChannel_locked(which);
+        MIX_HaltChannel_locked(which);
     }
-    Mix_UnlockAudio();
+    MIX_UnlockAudio();
     return(0);
 }
 
 /* Halt playing of a particular group of channels */
-int Mix_HaltGroup(int tag)
+int MIX_HaltGroup(int tag)
 {
     int i;
 
     for (i=0; i<num_channels; ++i) {
         if (mix_channel[i].tag == tag) {
-            Mix_HaltChannel(i);
+            MIX_HaltChannel(i);
         }
     }
     return(0);
 }
 
 /* Fade out a channel and then stop it automatically */
-int Mix_FadeOutChannel(int which, int ms)
+int MIX_FadeOutChannel(int which, int ms)
 {
     int status;
 
@@ -1262,11 +1262,11 @@ int Mix_FadeOutChannel(int which, int ms)
             int i;
 
             for (i=0; i<num_channels; ++i) {
-                status += Mix_FadeOutChannel(i, ms);
+                status += MIX_FadeOutChannel(i, ms);
             }
         } else if (which < num_channels) {
-            Mix_LockAudio();
-            if (Mix_Playing(which) &&
+            MIX_LockAudio();
+            if (MIX_Playing(which) &&
                 (mix_channel[which].volume > 0) &&
                 (mix_channel[which].fading != MIX_FADING_OUT)) {
                 mix_channel[which].fade_volume = mix_channel[which].volume;
@@ -1282,26 +1282,26 @@ int Mix_FadeOutChannel(int which, int ms)
 
                 ++status;
             }
-            Mix_UnlockAudio();
+            MIX_UnlockAudio();
         }
     }
     return(status);
 }
 
 /* Halt playing of a particular group of channels */
-int Mix_FadeOutGroup(int tag, int ms)
+int MIX_FadeOutGroup(int tag, int ms)
 {
     int i;
     int status = 0;
     for (i=0; i<num_channels; ++i) {
         if (mix_channel[i].tag == tag) {
-            status += Mix_FadeOutChannel(i,ms);
+            status += MIX_FadeOutChannel(i,ms);
         }
     }
     return(status);
 }
 
-Mix_Fading Mix_FadingChannel(int which)
+MIX_Fading MIX_FadingChannel(int which)
 {
     if (which < 0 || which >= num_channels) {
         return MIX_NO_FADING;
@@ -1312,7 +1312,7 @@ Mix_Fading Mix_FadingChannel(int which)
 /* Check the status of a specific channel.
    If the specified mix_channel is -1, check all mix channels.
 */
-int Mix_Playing(int which)
+int MIX_Playing(int which)
 {
     int status;
 
@@ -1338,9 +1338,9 @@ int Mix_Playing(int which)
 }
 
 /* rcg06072001 Get the chunk associated with a channel. */
-Mix_Chunk *Mix_GetChunk(int channel)
+MIX_Chunk *MIX_GetChunk(int channel)
 {
-    Mix_Chunk *retval = NULL;
+    MIX_Chunk *retval = NULL;
 
     if ((channel >= 0) && (channel < num_channels)) {
         retval = mix_channel[channel].chunk;
@@ -1350,20 +1350,20 @@ Mix_Chunk *Mix_GetChunk(int channel)
 }
 
 /* Close the mixer, halting all playing audio */
-void Mix_CloseAudio(void)
+void MIX_CloseAudio(void)
 {
     int i;
 
     if (audio_opened) {
         if (audio_opened == 1) {
             for (i = 0; i < num_channels; i++) {
-                Mix_UnregisterAllEffects(i);
+                MIX_UnregisterAllEffects(i);
             }
-            Mix_UnregisterAllEffects(MIX_CHANNEL_POST);
+            MIX_UnregisterAllEffects(MIX_CHANNEL_POST);
             close_music();
-            Mix_SetMusicCMD(NULL);
-            Mix_HaltChannel(-1);
-            _Mix_DeinitEffects();
+            MIX_SetMusicCMD(NULL);
+            MIX_HaltChannel(-1);
+            _MIX_DeinitEffects();
             SDL_CloseAudioDevice(audio_device);
             audio_device = 0;
             SDL_free(mix_channel);
@@ -1379,103 +1379,103 @@ void Mix_CloseAudio(void)
 }
 
 /* Pause a particular channel (or all) */
-void Mix_Pause(int which)
+void MIX_Pause(int which)
 {
     Uint64 sdl_ticks = SDL_GetTicks();
     if (which == -1) {
         int i;
 
         for (i=0; i<num_channels; ++i) {
-            if (Mix_Playing(i)) {
+            if (MIX_Playing(i)) {
                 mix_channel[i].paused = sdl_ticks;
             }
         }
     } else if (which < num_channels) {
-        if (Mix_Playing(which)) {
+        if (MIX_Playing(which)) {
             mix_channel[which].paused = sdl_ticks;
         }
     }
 }
 
 /* Resume a paused channel */
-void Mix_Resume(int which)
+void MIX_Resume(int which)
 {
     Uint64 sdl_ticks = SDL_GetTicks();
 
-    Mix_LockAudio();
+    MIX_LockAudio();
     if (which == -1) {
         int i;
 
         for (i=0; i<num_channels; ++i) {
-            if (Mix_Playing(i)) {
+            if (MIX_Playing(i)) {
                 if (mix_channel[i].expire > 0)
                     mix_channel[i].expire += sdl_ticks - mix_channel[i].paused;
                 mix_channel[i].paused = 0;
             }
         }
     } else if (which < num_channels) {
-        if (Mix_Playing(which)) {
+        if (MIX_Playing(which)) {
             if (mix_channel[which].expire > 0)
                 mix_channel[which].expire += sdl_ticks - mix_channel[which].paused;
             mix_channel[which].paused = 0;
         }
     }
-    Mix_UnlockAudio();
+    MIX_UnlockAudio();
 }
 
-int Mix_Paused(int which)
+int MIX_Paused(int which)
 {
     if (which < 0) {
         int status = 0;
         int i;
         for(i=0; i < num_channels; ++i) {
-            if (Mix_Playing(i) && mix_channel[i].paused) {
+            if (MIX_Playing(i) && mix_channel[i].paused) {
                 ++ status;
             }
         }
         return(status);
     } else if (which < num_channels) {
-        return(Mix_Playing(which) && mix_channel[which].paused != 0);
+        return(MIX_Playing(which) && mix_channel[which].paused != 0);
     } else {
         return(0);
     }
 }
 
 /* Change the group of a channel */
-int Mix_GroupChannel(int which, int tag)
+int MIX_GroupChannel(int which, int tag)
 {
     if (which < 0 || which > num_channels)
         return(0);
 
-    Mix_LockAudio();
+    MIX_LockAudio();
     mix_channel[which].tag = tag;
-    Mix_UnlockAudio();
+    MIX_UnlockAudio();
     return(1);
 }
 
 /* Assign several consecutive channels to a group */
-int Mix_GroupChannels(int from, int to, int tag)
+int MIX_GroupChannels(int from, int to, int tag)
 {
     int status = 0;
     for(; from <= to; ++ from) {
-        status += Mix_GroupChannel(from, tag);
+        status += MIX_GroupChannel(from, tag);
     }
     return(status);
 }
 
 /* Finds the first available channel in a group of channels */
-int Mix_GroupAvailable(int tag)
+int MIX_GroupAvailable(int tag)
 {
     int i;
     for(i=0; i < num_channels; i ++) {
         if (((tag == -1) || (tag == mix_channel[i].tag)) &&
-                            (!Mix_Playing(i)))
+                            (!MIX_Playing(i)))
             return i;
     }
     return(-1);
 }
 
-int Mix_GroupCount(int tag)
+int MIX_GroupCount(int tag)
 {
     int count = 0;
     int i;
@@ -1492,13 +1492,13 @@ int Mix_GroupCount(int tag)
 }
 
 /* Finds the "oldest" sample playing in a group of channels */
-int Mix_GroupOldest(int tag)
+int MIX_GroupOldest(int tag)
 {
     int chan = -1;
     Uint64 mintime = SDL_GetTicks();
     int i;
     for(i=0; i < num_channels; i ++) {
-        if ((mix_channel[i].tag==tag || tag==-1) && Mix_Playing(i)
+        if ((mix_channel[i].tag==tag || tag==-1) && MIX_Playing(i)
              && mix_channel[i].start_time <= mintime) {
             mintime = mix_channel[i].start_time;
             chan = i;
@@ -1508,13 +1508,13 @@ int Mix_GroupOldest(int tag)
 }
 
 /* Finds the "most recent" (i.e. last) sample playing in a group of channels */
-int Mix_GroupNewer(int tag)
+int MIX_GroupNewer(int tag)
 {
     int chan = -1;
     Uint64 maxtime = 0;
     int i;
     for(i=0; i < num_channels; i ++) {
-        if ((mix_channel[i].tag==tag || tag==-1) && Mix_Playing(i)
+        if ((mix_channel[i].tag==tag || tag==-1) && MIX_Playing(i)
              && mix_channel[i].start_time >= maxtime) {
             maxtime = mix_channel[i].start_time;
             chan = i;
@@ -1528,28 +1528,28 @@ int Mix_GroupNewer(int tag)
 /*
  * rcg06122001 The special effects exportable API.
  *  Please see effect_*.c for internally-implemented effects, such
- *  as Mix_SetPanning().
+ *  as MIX_SetPanning().
  */
 
-/* MAKE SURE you hold the audio lock (Mix_LockAudio()) before calling this! */
-static int _Mix_register_effect(effect_info **e, Mix_EffectFunc_t f,
-                Mix_EffectDone_t d, void *arg)
+/* MAKE SURE you hold the audio lock (MIX_LockAudio()) before calling this! */
+static int _MIX_register_effect(effect_info **e, MIX_EffectFunc_t f,
+                MIX_EffectDone_t d, void *arg)
 {
     effect_info *new_e;
 
     if (!e) {
-        Mix_SetError("Internal error");
+        MIX_SetError("Internal error");
         return(0);
     }
 
     if (f == NULL) {
-        Mix_SetError("NULL effect callback");
+        MIX_SetError("NULL effect callback");
         return(0);
     }
 
     new_e = SDL_malloc(sizeof (effect_info));
     if (new_e == NULL) {
-        Mix_OutOfMemory();
+        MIX_OutOfMemory();
         return(0);
     }
 
@@ -1576,15 +1576,15 @@ static int _Mix_register_effect(effect_info **e, Mix_EffectFunc_t f,
 }
 
 
-/* MAKE SURE you hold the audio lock (Mix_LockAudio()) before calling this! */
-static int _Mix_remove_effect(int channel, effect_info **e, Mix_EffectFunc_t f)
+/* MAKE SURE you hold the audio lock (MIX_LockAudio()) before calling this! */
+static int _MIX_remove_effect(int channel, effect_info **e, MIX_EffectFunc_t f)
 {
     effect_info *cur;
     effect_info *prev = NULL;
     effect_info *next = NULL;
 
     if (!e) {
-        Mix_SetError("Internal error");
+        MIX_SetError("Internal error");
         return(0);
     }
 
@@ -1606,19 +1606,19 @@ static int _Mix_remove_effect(int channel, effect_info **e, Mix_EffectFunc_t f)
         prev = cur;
     }
 
-    Mix_SetError("No such effect registered");
+    MIX_SetError("No such effect registered");
     return(0);
 }
 
 
-/* MAKE SURE you hold the audio lock (Mix_LockAudio()) before calling this! */
-static int _Mix_remove_all_effects(int channel, effect_info **e)
+/* MAKE SURE you hold the audio lock (MIX_LockAudio()) before calling this! */
+static int _MIX_remove_all_effects(int channel, effect_info **e)
 {
     effect_info *cur;
     effect_info *next;
 
     if (!e) {
-        Mix_SetError("Internal error");
+        MIX_SetError("Internal error");
         return(0);
     }
 
@@ -1635,9 +1635,9 @@ static int _Mix_remove_all_effects(int channel, effect_info **e)
 }
 
 
-/* MAKE SURE you hold the audio lock (Mix_LockAudio()) before calling this! */
-int _Mix_RegisterEffect_locked(int channel, Mix_EffectFunc_t f,
-            Mix_EffectDone_t d, void *arg)
+/* MAKE SURE you hold the audio lock (MIX_LockAudio()) before calling this! */
+int _MIX_RegisterEffect_locked(int channel, MIX_EffectFunc_t f,
+            MIX_EffectDone_t d, void *arg)
 {
     effect_info **e = NULL;
 
@@ -1645,28 +1645,28 @@ int _Mix_RegisterEffect_locked(int channel, Mix_EffectFunc_t f,
         e = &posteffects;
     } else {
         if ((channel < 0) || (channel >= num_channels)) {
-            Mix_SetError("Invalid channel number");
+            MIX_SetError("Invalid channel number");
             return(0);
         }
         e = &mix_channel[channel].effects;
     }
 
-    return _Mix_register_effect(e, f, d, arg);
+    return _MIX_register_effect(e, f, d, arg);
 }
 
-int Mix_RegisterEffect(int channel, Mix_EffectFunc_t f,
-            Mix_EffectDone_t d, void *arg)
+int MIX_RegisterEffect(int channel, MIX_EffectFunc_t f,
+            MIX_EffectDone_t d, void *arg)
 {
     int retval;
-    Mix_LockAudio();
-    retval = _Mix_RegisterEffect_locked(channel, f, d, arg);
-    Mix_UnlockAudio();
+    MIX_LockAudio();
+    retval = _MIX_RegisterEffect_locked(channel, f, d, arg);
+    MIX_UnlockAudio();
     return retval;
 }
 
 
-/* MAKE SURE you hold the audio lock (Mix_LockAudio()) before calling this! */
-int _Mix_UnregisterEffect_locked(int channel, Mix_EffectFunc_t f)
+/* MAKE SURE you hold the audio lock (MIX_LockAudio()) before calling this! */
+int _MIX_UnregisterEffect_locked(int channel, MIX_EffectFunc_t f)
 {
     effect_info **e = NULL;
 
@@ -1674,26 +1674,26 @@ int _Mix_UnregisterEffect_locked(int channel, Mix_EffectFunc_t f)
         e = &posteffects;
     } else {
         if ((channel < 0) || (channel >= num_channels)) {
-            Mix_SetError("Invalid channel number");
+            MIX_SetError("Invalid channel number");
             return(0);
         }
         e = &mix_channel[channel].effects;
     }
 
-    return _Mix_remove_effect(channel, e, f);
+    return _MIX_remove_effect(channel, e, f);
 }
 
-int Mix_UnregisterEffect(int channel, Mix_EffectFunc_t f)
+int MIX_UnregisterEffect(int channel, MIX_EffectFunc_t f)
 {
     int retval;
-    Mix_LockAudio();
-    retval = _Mix_UnregisterEffect_locked(channel, f);
-    Mix_UnlockAudio();
+    MIX_LockAudio();
+    retval = _MIX_UnregisterEffect_locked(channel, f);
+    MIX_UnlockAudio();
     return(retval);
 }
 
-/* MAKE SURE you hold the audio lock (Mix_LockAudio()) before calling this! */
-int _Mix_UnregisterAllEffects_locked(int channel)
+/* MAKE SURE you hold the audio lock (MIX_LockAudio()) before calling this! */
+int _MIX_UnregisterAllEffects_locked(int channel)
 {
     effect_info **e = NULL;
 
@@ -1701,35 +1701,35 @@ int _Mix_UnregisterAllEffects_locked(int channel)
         e = &posteffects;
     } else {
         if ((channel < 0) || (channel >= num_channels)) {
-            Mix_SetError("Invalid channel number");
+            MIX_SetError("Invalid channel number");
             return(0);
         }
         e = &mix_channel[channel].effects;
     }
 
-    return _Mix_remove_all_effects(channel, e);
+    return _MIX_remove_all_effects(channel, e);
 }
 
-int Mix_UnregisterAllEffects(int channel)
+int MIX_UnregisterAllEffects(int channel)
 {
     int retval;
-    Mix_LockAudio();
-    retval = _Mix_UnregisterAllEffects_locked(channel);
-    Mix_UnlockAudio();
+    MIX_LockAudio();
+    retval = _MIX_UnregisterAllEffects_locked(channel);
+    MIX_UnlockAudio();
     return(retval);
 }
 
-void Mix_LockAudio(void)
+void MIX_LockAudio(void)
 {
     SDL_LockAudioDevice(audio_device);
 }
 
-void Mix_UnlockAudio(void)
+void MIX_UnlockAudio(void)
 {
     SDL_UnlockAudioDevice(audio_device);
 }
 
-int Mix_MasterVolume(int volume)
+int MIX_MasterVolume(int volume)
 {
     int prev_volume = SDL_AtomicGet(&master_volume);
     if (volume < 0) {

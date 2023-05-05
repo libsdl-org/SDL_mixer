@@ -21,6 +21,6 @@
 
 #include "music.h"
 
-extern Mix_MusicInterface Mix_MusicInterface_FLAC;
+extern MIX_MusicInterface MIX_MusicInterface_FLAC;
 
 /* vi: set ts=4 sw=4 expandtab: */

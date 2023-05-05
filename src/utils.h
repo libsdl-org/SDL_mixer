@@ -36,9 +36,9 @@ extern char *SDL_strtokr(char *s1, const char *s2, char **saveptr);
 
 /* Parse time string of the form HH:MM:SS.mmm and return equivalent sample
  * position */
-extern Sint64 _Mix_ParseTime(char *time, long samplerate_hz);
+extern Sint64 _MIX_ParseTime(char *time, long samplerate_hz);
 
-extern SDL_bool _Mix_IsLoopTag(const char *tag);
+extern SDL_bool _MIX_IsLoopTag(const char *tag);
 
 #endif /* UTILS_H_ */
 

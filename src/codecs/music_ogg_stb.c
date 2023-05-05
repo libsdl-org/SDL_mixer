@@ -83,12 +83,12 @@ typedef struct {
     Sint64 loop_end;
     Sint64 loop_len;
     Sint64 full_length;
-    Mix_MusicMetaTags tags;
+    MIX_MusicMetaTags tags;
 } OGG_music;
 
 static int set_ov_error(const char *function, int error)
 {
-#define HANDLE_ERROR_CASE(X) case X: Mix_SetError("%s: %s", function, #X); break;
+#define HANDLE_ERROR_CASE(X) case X: MIX_SetError("%s: %s", function, #X); break;
     switch (error) {
     HANDLE_ERROR_CASE(VORBIS_need_more_data)
     HANDLE_ERROR_CASE(VORBIS_invalid_api_mixing)
@@ -111,7 +111,7 @@ static int set_ov_error(const char *function, int error)
     HANDLE_ERROR_CASE(VORBIS_seek_failed)
     HANDLE_ERROR_CASE(VORBIS_ogg_skeleton_not_supported)
     default:
-        Mix_SetError("%s: unknown error %d\n", function, error);
+        MIX_SetError("%s: unknown error %d\n", function, error);
         break;
     }
     return -1;
@@ -196,7 +196,7 @@ static void *OGG_CreateFromRW(SDL_RWops *src, int freesrc)
 
     music->vi = stb_vorbis_get_info(music->vf);
     if ((int)music->vi.sample_rate <= 0) {
-        Mix_SetError("Invalid sample rate value");
+        MIX_SetError("Invalid sample rate value");
         OGG_Delete(music);
         return NULL;
     }
@@ -216,17 +216,17 @@ static void *OGG_CreateFromRW(SDL_RWops *src, int freesrc)
 
             /* Want to match LOOP-START, LOOP_START, etc. Remove - or _ from
              * string if it is present at position 4. */
-            if (_Mix_IsLoopTag(argument) && ((argument[4] == '_') || (argument[4] == '-'))) {
+            if (_MIX_IsLoopTag(argument) && ((argument[4] == '_') || (argument[4] == '-'))) {
                 SDL_memmove(argument + 4, argument + 5, SDL_strlen(argument) - 4);
             }
 
             if (SDL_strcasecmp(argument, "LOOPSTART") == 0)
-                music->loop_start = _Mix_ParseTime(value, rate);
+                music->loop_start = _MIX_ParseTime(value, rate);
             else if (SDL_strcasecmp(argument, "LOOPLENGTH") == 0) {
                 music->loop_len = SDL_strtoll(value, NULL, 10);
                 is_loop_length = SDL_TRUE;
             } else if (SDL_strcasecmp(argument, "LOOPEND") == 0) {
-                music->loop_end = _Mix_ParseTime(value, rate);
+                music->loop_end = _MIX_ParseTime(value, rate);
                 is_loop_length = SDL_FALSE;
             } else if (SDL_strcasecmp(argument, "TITLE") == 0) {
                 meta_tags_set(&music->tags, MIX_META_TITLE, value);
@@ -266,7 +266,7 @@ static void *OGG_CreateFromRW(SDL_RWops *src, int freesrc)
     return music;
 }
 
-static const char* OGG_GetMetaTag(void *context, Mix_MusicMetaTag tag_type)
+static const char* OGG_GetMetaTag(void *context, MIX_MusicMetaTag tag_type)
 {
     OGG_music *music = (OGG_music *)context;
     return meta_tags_get(&music->tags, tag_type);
@@ -451,7 +451,7 @@ static void OGG_Delete(void *context)
     SDL_free(music);
 }
 
-Mix_MusicInterface Mix_MusicInterface_OGG =
+MIX_MusicInterface MIX_MusicInterface_OGG =
 {
     "OGG",
     MIX_MUSIC_OGG,

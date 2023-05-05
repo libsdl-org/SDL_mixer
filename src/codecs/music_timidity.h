@@ -23,6 +23,6 @@
 
 #include "music.h"
 
-extern Mix_MusicInterface Mix_MusicInterface_TIMIDITY;
+extern MIX_MusicInterface MIX_MusicInterface_TIMIDITY;
 
 /* vi: set ts=4 sw=4 expandtab: */

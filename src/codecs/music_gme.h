@@ -23,4 +23,4 @@
 
 #include "music.h"
 
-extern Mix_MusicInterface Mix_MusicInterface_GME;
+extern MIX_MusicInterface MIX_MusicInterface_GME;

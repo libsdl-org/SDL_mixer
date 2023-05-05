@@ -23,6 +23,6 @@
 
 #include "music.h"
 
-extern Mix_MusicInterface Mix_MusicInterface_NATIVEMIDI;
+extern MIX_MusicInterface MIX_MusicInterface_NATIVEMIDI;
 
 /* vi: set ts=4 sw=4 expandtab: */

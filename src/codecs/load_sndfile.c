@@ -19,7 +19,7 @@
   3. This notice may not be removed or altered from any source distribution.
 
   This is the source needed to decode a file in any format supported by
-  libsndfile. The only externally-callable function is Mix_LoadSndFile_RW(),
+  libsndfile. The only externally-callable function is MIX_LoadSndFile_RW(),
   which is meant to act as identically to SDL_LoadWAV_RW() as possible.
 
   This file by Fabian Greffrath (fabian@greffrath.com).
@@ -117,7 +117,7 @@ static sf_count_t sfvio_tell(void *user_data)
     return SDL_RWtell(RWops);
 }
 
-SDL_AudioSpec *Mix_LoadSndFile_RW (SDL_RWops *src, int freesrc,
+SDL_AudioSpec *MIX_LoadSndFile_RW (SDL_RWops *src, int freesrc,
         SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
 {
     SNDFILE *sndfile = NULL;
@@ -154,17 +154,17 @@ SDL_AudioSpec *Mix_LoadSndFile_RW (SDL_RWops *src, int freesrc,
     sndfile = SF_sf_open_virtual(&sfvio, SFM_READ, &sfinfo, src);
 
     if (sndfile == NULL) {
-        Mix_SetError("sf_open_virtual: %s", SF_sf_strerror(sndfile));
+        MIX_SetError("sf_open_virtual: %s", SF_sf_strerror(sndfile));
         goto done;
     }
 
     if (sfinfo.frames <= 0) {
-        Mix_SetError("Invalid number of frames: %ld", (long)sfinfo.frames);
+        MIX_SetError("Invalid number of frames: %ld", (long)sfinfo.frames);
         goto done;
     }
 
     if (sfinfo.channels <= 0) {
-        Mix_SetError("Invalid number of channels: %d", sfinfo.channels);
+        MIX_SetError("Invalid number of channels: %d", sfinfo.channels);
         goto done;
     }
 
@@ -172,13 +172,13 @@ SDL_AudioSpec *Mix_LoadSndFile_RW (SDL_RWops *src, int freesrc,
     buf = SDL_malloc(len);
 
     if (buf == NULL) {
-        Mix_OutOfMemory();
+        MIX_OutOfMemory();
         goto done;
     }
 
     if (SF_sf_readf_short(sndfile, buf, sfinfo.frames) < sfinfo.frames) {
         SDL_free(buf);
-        Mix_SetError("sf_readf_short: %s", SF_sf_strerror(sndfile));
+        MIX_SetError("sf_readf_short: %s", SF_sf_strerror(sndfile));
         goto done;
     }
 
@@ -209,7 +209,7 @@ done:
 
 #else
 
-SDL_AudioSpec *Mix_LoadSndFile_RW (SDL_RWops *src, int freesrc,
+SDL_AudioSpec *MIX_LoadSndFile_RW (SDL_RWops *src, int freesrc,
         SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
 {
     (void) src;

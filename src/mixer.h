@@ -22,8 +22,8 @@
 #define MIXER_H_
 
 /* Locking wrapper functions */
-extern void Mix_LockAudio(void);
-extern void Mix_UnlockAudio(void);
+extern void MIX_LockAudio(void);
+extern void MIX_UnlockAudio(void);
 
 extern void add_chunk_decoder(const char *decoder);
 

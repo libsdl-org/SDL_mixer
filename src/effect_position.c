@@ -369,7 +369,7 @@ static void SDLCALL _Eff_position_u8_c6(int chan, void *stream, int len, void *u
  *  no loss in quality. It does, however, require 64k of memory for the
  *  lookup table. Also, this will only update position information once per
  *  call; the non-table version always checks the arguments for each sample,
- *  in case the user has called Mix_SetPanning() or whatnot again while this
+ *  in case the user has called MIX_SetPanning() or whatnot again while this
  *  callback is running.
  */
 static void SDLCALL _Eff_position_table_u8(int chan, void *stream, int len, void *udata)
@@ -575,7 +575,7 @@ static void SDLCALL _Eff_position_s8_c6(int chan, void *stream, int len, void *u
  *  no loss in quality. It does, however, require 64k of memory for the
  *  lookup table. Also, this will only update position information once per
  *  call; the non-table version always checks the arguments for each sample,
- *  in case the user has called Mix_SetPanning() or whatnot again while this
+ *  in case the user has called MIX_SetPanning() or whatnot again while this
  *  callback is running.
  */
 static void SDLCALL _Eff_position_table_s8(int chan, void *stream, int len, void *udata)
@@ -1289,7 +1289,7 @@ static void init_position_args(position_args *args)
     args->left_f  = args->right_f  = args->distance_f  = 1.0f;
     args->left_rear_u8 = args->right_rear_u8 = args->center_u8 = args->lfe_u8 = 255;
     args->left_rear_f = args->right_rear_f = args->center_f = args->lfe_f = 1.0f;
-    Mix_QuerySpec(NULL, NULL, (int *) &args->channels);
+    MIX_QuerySpec(NULL, NULL, (int *) &args->channels);
 }
 
 static position_args *get_position_arg(int channel)
@@ -1301,7 +1301,7 @@ static position_args *get_position_arg(int channel)
         if (pos_args_global == NULL) {
             pos_args_global = SDL_malloc(sizeof (position_args));
             if (pos_args_global == NULL) {
-                Mix_OutOfMemory();
+                MIX_OutOfMemory();
                 return(NULL);
             }
             init_position_args(pos_args_global);
@@ -1313,7 +1313,7 @@ static position_args *get_position_arg(int channel)
     if (channel >= position_channels) {
         rc = SDL_realloc(pos_args_array, (size_t)(channel + 1) * sizeof(position_args *));
         if (rc == NULL) {
-            Mix_OutOfMemory();
+            MIX_OutOfMemory();
             return(NULL);
         }
         pos_args_array = (position_args **) rc;
@@ -1326,7 +1326,7 @@ static position_args *get_position_arg(int channel)
     if (pos_args_array[channel] == NULL) {
         pos_args_array[channel] = (position_args *)SDL_malloc(sizeof(position_args));
         if (pos_args_array[channel] == NULL) {
-            Mix_OutOfMemory();
+            MIX_OutOfMemory();
             return(NULL);
         }
         init_position_args(pos_args_array[channel]);
@@ -1335,9 +1335,9 @@ static position_args *get_position_arg(int channel)
     return(pos_args_array[channel]);
 }
 
-static Mix_EffectFunc_t get_position_effect_func(Uint16 format, int channels)
+static MIX_EffectFunc_t get_position_effect_func(Uint16 format, int channels)
 {
-    Mix_EffectFunc_t f = NULL;
+    MIX_EffectFunc_t f = NULL;
 
     switch (format) {
         case SDL_AUDIO_U8 :
@@ -1354,7 +1354,7 @@ static Mix_EffectFunc_t get_position_effect_func(Uint16 format, int channels)
                 f = _Eff_position_u8_c6;
                 break;
             default:
-                Mix_SetError("Unsupported audio channels");
+                MIX_SetError("Unsupported audio channels");
                 break;
             }
             break;
@@ -1373,7 +1373,7 @@ static Mix_EffectFunc_t get_position_effect_func(Uint16 format, int channels)
                 f = _Eff_position_s8_c6;
                 break;
             default:
-                Mix_SetError("Unsupported audio channels");
+                MIX_SetError("Unsupported audio channels");
                 break;
             }
             break;
@@ -1391,7 +1391,7 @@ static Mix_EffectFunc_t get_position_effect_func(Uint16 format, int channels)
                 f = _Eff_position_s16lsb_c6;
                 break;
             default:
-                Mix_SetError("Unsupported audio channels");
+                MIX_SetError("Unsupported audio channels");
                 break;
             }
             break;
@@ -1409,7 +1409,7 @@ static Mix_EffectFunc_t get_position_effect_func(Uint16 format, int channels)
                 f = _Eff_position_s16msb_c6;
                 break;
             default:
-                Mix_SetError("Unsupported audio channels");
+                MIX_SetError("Unsupported audio channels");
                 break;
             }
             break;
@@ -1427,7 +1427,7 @@ static Mix_EffectFunc_t get_position_effect_func(Uint16 format, int channels)
                 f = _Eff_position_s32msb_c6;
                 break;
             default:
-                Mix_SetError("Unsupported audio channels");
+                MIX_SetError("Unsupported audio channels");
                 break;
             }
             break;
@@ -1445,7 +1445,7 @@ static Mix_EffectFunc_t get_position_effect_func(Uint16 format, int channels)
                 f = _Eff_position_s32lsb_c6;
                 break;
             default:
-                Mix_SetError("Unsupported audio channels");
+                MIX_SetError("Unsupported audio channels");
                 break;
             }
             break;
@@ -1463,13 +1463,13 @@ static Mix_EffectFunc_t get_position_effect_func(Uint16 format, int channels)
                 f = _Eff_position_f32sys_c6;
                 break;
             default:
-                Mix_SetError("Unsupported audio channels");
+                MIX_SetError("Unsupported audio channels");
                 break;
             }
             break;
 
         default:
-            Mix_SetError("Unsupported audio format");
+            MIX_SetError("Unsupported audio format");
             break;
     }
 
@@ -1483,7 +1483,7 @@ static void set_amplitudes(int channels, int angle, int room_angle)
     int left = 255, right = 255;
     int left_rear = 255, right_rear = 255, center = 255;
 
-    /* our only caller Mix_SetPosition() already makes angle between 0 and 359. */
+    /* our only caller MIX_SetPosition() already makes angle between 0 and 359. */
 
     if (channels == 2)
     {
@@ -1612,17 +1612,17 @@ static void set_amplitudes(int channels, int angle, int room_angle)
     speaker_amplitude[5] = 255;
 }
 
-int Mix_SetPosition(int channel, Sint16 angle, Uint8 distance);
+int MIX_SetPosition(int channel, Sint16 angle, Uint8 distance);
 
-int Mix_SetPanning(int channel, Uint8 left, Uint8 right)
+int MIX_SetPanning(int channel, Uint8 left, Uint8 right)
 {
-    Mix_EffectFunc_t f = NULL;
+    MIX_EffectFunc_t f = NULL;
     int channels;
     Uint16 format;
     position_args *args = NULL;
     int retval = 1;
 
-    Mix_QuerySpec(NULL, &format, &channels);
+    MIX_QuerySpec(NULL, &format, &channels);
 
     if (channels != 2 && channels != 4 && channels != 6)    /* it's a no-op; we call that successful. */
         return(1);
@@ -1637,28 +1637,28 @@ int Mix_SetPanning(int channel, Uint8 left, Uint8 right)
             angle = -angle;
             angle = angle * 90 / 128; /* Make it larger for more effect? */
         }
-        return Mix_SetPosition(channel, angle, 0);
+        return MIX_SetPosition(channel, angle, 0);
     }
 
     f = get_position_effect_func(format, channels);
     if (f == NULL)
         return(0);
 
-    Mix_LockAudio();
+    MIX_LockAudio();
     args = get_position_arg(channel);
     if (!args) {
-        Mix_UnlockAudio();
+        MIX_UnlockAudio();
         return(0);
     }
 
         /* it's a no-op; unregister the effect, if it's registered. */
     if ((args->distance_u8 == 255) && (left == 255) && (right == 255)) {
         if (args->in_use) {
-            retval = _Mix_UnregisterEffect_locked(channel, f);
-            Mix_UnlockAudio();
+            retval = _MIX_UnregisterEffect_locked(channel, f);
+            MIX_UnlockAudio();
             return(retval);
         } else {
-            Mix_UnlockAudio();
+            MIX_UnlockAudio();
             return(1);
         }
     }
@@ -1671,31 +1671,31 @@ int Mix_SetPanning(int channel, Uint8 left, Uint8 right)
 
     if (!args->in_use) {
         args->in_use = 1;
-        retval=_Mix_RegisterEffect_locked(channel, f, _Eff_PositionDone, (void*)args);
+        retval=_MIX_RegisterEffect_locked(channel, f, _Eff_PositionDone, (void*)args);
     }
 
-    Mix_UnlockAudio();
+    MIX_UnlockAudio();
     return(retval);
 }
 
 
-int Mix_SetDistance(int channel, Uint8 distance)
+int MIX_SetDistance(int channel, Uint8 distance)
 {
-    Mix_EffectFunc_t f = NULL;
+    MIX_EffectFunc_t f = NULL;
     Uint16 format;
     position_args *args = NULL;
     int channels;
     int retval = 1;
 
-    Mix_QuerySpec(NULL, &format, &channels);
+    MIX_QuerySpec(NULL, &format, &channels);
     f = get_position_effect_func(format, channels);
     if (f == NULL)
         return(0);
 
-    Mix_LockAudio();
+    MIX_LockAudio();
     args = get_position_arg(channel);
     if (!args) {
-        Mix_UnlockAudio();
+        MIX_UnlockAudio();
         return(0);
     }
 
@@ -1704,11 +1704,11 @@ int Mix_SetDistance(int channel, Uint8 distance)
     /* it's a no-op; unregister the effect, if it's registered. */
     if ((distance == 255) && (args->left_u8 == 255) && (args->right_u8 == 255)) {
         if (args->in_use) {
-            retval = _Mix_UnregisterEffect_locked(channel, f);
-            Mix_UnlockAudio();
+            retval = _MIX_UnregisterEffect_locked(channel, f);
+            MIX_UnlockAudio();
             return(retval);
         } else {
-            Mix_UnlockAudio();
+            MIX_UnlockAudio();
             return(1);
         }
     }
@@ -1717,24 +1717,24 @@ int Mix_SetDistance(int channel, Uint8 distance)
     args->distance_f = ((float) distance) / 255.0f;
     if (!args->in_use) {
         args->in_use = 1;
-        retval = _Mix_RegisterEffect_locked(channel, f, _Eff_PositionDone, (void *) args);
+        retval = _MIX_RegisterEffect_locked(channel, f, _Eff_PositionDone, (void *) args);
     }
 
-    Mix_UnlockAudio();
+    MIX_UnlockAudio();
     return(retval);
 }
 
 
-int Mix_SetPosition(int channel, Sint16 angle, Uint8 distance)
+int MIX_SetPosition(int channel, Sint16 angle, Uint8 distance)
 {
-    Mix_EffectFunc_t f = NULL;
+    MIX_EffectFunc_t f = NULL;
     Uint16 format;
     int channels;
     position_args *args = NULL;
     Sint16 room_angle = 0;
     int retval = 1;
 
-    Mix_QuerySpec(NULL, &format, &channels);
+    MIX_QuerySpec(NULL, &format, &channels);
     f = get_position_effect_func(format, channels);
     if (f == NULL)
         return(0);
@@ -1743,21 +1743,21 @@ int Mix_SetPosition(int channel, Sint16 angle, Uint8 distance)
     angle %= 360;
     if (angle < 0) angle += 360;
 
-    Mix_LockAudio();
+    MIX_LockAudio();
     args = get_position_arg(channel);
     if (!args) {
-        Mix_UnlockAudio();
+        MIX_UnlockAudio();
         return(0);
     }
 
     /* it's a no-op; unregister the effect, if it's registered. */
     if ((!distance) && (!angle)) {
         if (args->in_use) {
-            retval = _Mix_UnregisterEffect_locked(channel, f);
-            Mix_UnlockAudio();
+            retval = _MIX_UnregisterEffect_locked(channel, f);
+            MIX_UnlockAudio();
             return(retval);
         } else {
-            Mix_UnlockAudio();
+            MIX_UnlockAudio();
             return(1);
         }
     }
@@ -1776,7 +1776,7 @@ int Mix_SetPosition(int channel, Sint16 angle, Uint8 distance)
         else room_angle = 0;
     }
 
-    distance = 255 - distance;  /* flip it to scale Mix_SetDistance() uses. */
+    distance = 255 - distance;  /* flip it to scale MIX_SetDistance() uses. */
 
     set_amplitudes(channels, angle, room_angle);
 
@@ -1797,10 +1797,10 @@ int Mix_SetPosition(int channel, Sint16 angle, Uint8 distance)
     args->room_angle = room_angle;
     if (!args->in_use) {
         args->in_use = 1;
-        retval = _Mix_RegisterEffect_locked(channel, f, _Eff_PositionDone, (void *) args);
+        retval = _MIX_RegisterEffect_locked(channel, f, _Eff_PositionDone, (void *) args);
     }
 
-    Mix_UnlockAudio();
+    MIX_UnlockAudio();
     return(retval);
 }
 

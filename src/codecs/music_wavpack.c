@@ -94,7 +94,7 @@ static wavpack_loader wvpk;
 #else
 #define FUNCTION_LOADER(FUNC, SIG) \
     wvpk.FUNC = FUNC; \
-    if (wvpk.FUNC == NULL) { Mix_SetError("Missing WavPack.framework"); return -1; }
+    if (wvpk.FUNC == NULL) { MIX_SetError("Missing WavPack.framework"); return -1; }
 #endif
 
 static int WAVPACK_Load(void)
@@ -192,7 +192,7 @@ typedef struct {
     void *buffer;
     int32_t frames;
 
-    Mix_MusicMetaTags tags;
+    MIX_MusicMetaTags tags;
 } WAVPACK_music;
 
 
@@ -310,7 +310,7 @@ static void *WAVPACK_CreateFromFile(const char *file)
 
     src1 = SDL_RWFromFile(file, "rb");
     if (!src1) {
-        Mix_SetError("Couldn't open '%s'", file);
+        MIX_SetError("Couldn't open '%s'", file);
         return NULL;
     }
 
@@ -362,7 +362,7 @@ static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, int
                   wvpk.WavpackOpenFileInputEx64(&sdl_reader64, src1, src2, err, OPEN_NORMALIZE|OPEN_TAGS|OPEN_DSD_AS_PCM, 0) :
                   wvpk.WavpackOpenFileInputEx(&sdl_reader32, src1, src2, err, OPEN_NORMALIZE|OPEN_TAGS, 0);
     if (!music->ctx) {
-        Mix_SetError("%s", err);
+        MIX_SetError("%s", err);
         SDL_free(music);
         if (src2) {
             SDL_RWclose(src2);
@@ -459,7 +459,7 @@ static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, int
     return music;
 }
 
-static const char* WAVPACK_GetMetaTag(void *context, Mix_MusicMetaTag tag_type)
+static const char* WAVPACK_GetMetaTag(void *context, MIX_MusicMetaTag tag_type)
 {
     WAVPACK_music *music = (WAVPACK_music *)context;
     return meta_tags_get(&music->tags, tag_type);
@@ -575,7 +575,7 @@ static int WAVPACK_Seek(void *context, double time)
                    wvpk.WavpackSeekSample64(music->ctx, sample) :
                    wvpk.WavpackSeekSample(music->ctx, sample);
     if (!success) {
-        return Mix_SetError("%s", wvpk.WavpackGetErrorMessage(music->ctx));
+        return MIX_SetError("%s", wvpk.WavpackGetErrorMessage(music->ctx));
     }
     if (music->decimation_ctx) {
         decimation_reset(music->decimation_ctx);
@@ -707,7 +707,7 @@ static void decimation_reset(void *context)
     }
 }
 
-Mix_MusicInterface Mix_MusicInterface_WAVPACK =
+MIX_MusicInterface MIX_MusicInterface_WAVPACK =
 {
     "WAVPACK",
     MIX_MUSIC_WAVPACK,

@@ -32,15 +32,15 @@
 #include "effects_internal.h"
 
 /* Should we favor speed over memory usage and/or quality of output? */
-int _Mix_effects_max_speed = 0;
+int _MIX_effects_max_speed = 0;
 
 
-void _Mix_InitEffects(void)
+void _MIX_InitEffects(void)
 {
-    _Mix_effects_max_speed = (SDL_getenv(MIX_EFFECTSMAXSPEED) != NULL);
+    _MIX_effects_max_speed = (SDL_getenv(MIX_EFFECTSMAXSPEED) != NULL);
 }
 
-void _Mix_DeinitEffects(void)
+void _MIX_DeinitEffects(void)
 {
     _Eff_PositionDeinit();
 }
@@ -62,7 +62,7 @@ void *_Eff_build_volume_table_u8(void)
     int sample;
     Uint8 *rc;
 
-    if (!_Mix_effects_max_speed) {
+    if (!_MIX_effects_max_speed) {
         return(NULL);
     }
 

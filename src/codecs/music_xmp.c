@@ -73,7 +73,7 @@ static xmp_loader libxmp;
 #else
 #define FUNCTION_LOADER(FUNC, SIG) \
     libxmp.FUNC = FUNC; \
-    if (libxmp.FUNC == NULL) { Mix_SetError("Missing xmp_lite.framework"); return -1; }
+    if (libxmp.FUNC == NULL) { MIX_SetError("Missing xmp_lite.framework"); return -1; }
 #endif
 
 static int XMP_Load(void)
@@ -137,7 +137,7 @@ typedef struct
     SDL_AudioStream *stream;
     void *buffer;
     int buffer_size;
-    Mix_MusicMetaTags tags;
+    MIX_MusicMetaTags tags;
 } XMP_Music;
 
 
@@ -173,7 +173,7 @@ static void libxmp_set_error(int e)
         msg = "Unknown error";
         break;
     }
-    Mix_SetError("XMP: %s", msg);
+    MIX_SetError("XMP: %s", msg);
 }
 
 static unsigned long xmp_fread(void *dst, unsigned long len, unsigned long nmemb, void *src) {
@@ -385,7 +385,7 @@ static double XMP_Duration(void *context)
     return music->fi.total_time / 1000.0;
 }
 
-static const char* XMP_GetMetaTag(void *context, Mix_MusicMetaTag tag_type)
+static const char* XMP_GetMetaTag(void *context, MIX_MusicMetaTag tag_type)
 {
     XMP_Music *music = (XMP_Music *)context;
     return meta_tags_get(&music->tags, tag_type);
@@ -411,7 +411,7 @@ static void XMP_Delete(void *context)
     SDL_free(music);
 }
 
-Mix_MusicInterface Mix_MusicInterface_XMP =
+MIX_MusicInterface MIX_MusicInterface_XMP =
 {
     "XMP",
     MIX_MUSIC_LIBXMP,

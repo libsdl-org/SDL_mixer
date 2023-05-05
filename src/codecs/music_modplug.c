@@ -59,7 +59,7 @@ static ModPlug_Settings settings;
 #else
 #define FUNCTION_LOADER(FUNC, SIG) \
     modplug.FUNC = FUNC; \
-    if (modplug.FUNC == NULL) { Mix_SetError("Missing libmodplug.framework"); return -1; }
+    if (modplug.FUNC == NULL) { MIX_SetError("Missing libmodplug.framework"); return -1; }
 #endif
 
 static int MODPLUG_Load(void)
@@ -119,7 +119,7 @@ typedef struct
     SDL_AudioStream *stream;
     void *buffer;
     int buffer_size;
-    Mix_MusicMetaTags tags;
+    MIX_MusicMetaTags tags;
 } MODPLUG_Music;
 
 
@@ -197,7 +197,7 @@ void *MODPLUG_CreateFromRW(SDL_RWops *src, int freesrc)
     if (buffer) {
         music->file = modplug.ModPlug_Load(buffer, (int)size);
         if (!music->file) {
-            Mix_SetError("ModPlug_Load failed");
+            MIX_SetError("ModPlug_Load failed");
         }
         SDL_free(buffer);
     }
@@ -322,7 +322,7 @@ static double MODPLUG_Duration(void *context)
     return modplug.ModPlug_GetLength(music->file) / 1000.0;
 }
 
-static const char* MODPLUG_GetMetaTag(void *context, Mix_MusicMetaTag tag_type)
+static const char* MODPLUG_GetMetaTag(void *context, MIX_MusicMetaTag tag_type)
 {
     MODPLUG_Music *music = (MODPLUG_Music *)context;
     return meta_tags_get(&music->tags, tag_type);
@@ -345,7 +345,7 @@ static void MODPLUG_Delete(void *context)
     SDL_free(music);
 }
 
-Mix_MusicInterface Mix_MusicInterface_MODPLUG =
+MIX_MusicInterface MIX_MusicInterface_MODPLUG =
 {
     "MODPLUG",
     MIX_MUSIC_MODPLUG,

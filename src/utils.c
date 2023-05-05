@@ -95,7 +95,7 @@ char *SDL_strtokr(char *s1, const char *s2, char **ptr)
 #endif /* HAVE_SDL_STRTOKR */
 
 /* Is given tag a loop tag? */
-SDL_bool _Mix_IsLoopTag(const char *tag)
+SDL_bool _MIX_IsLoopTag(const char *tag)
 {
     char buf[5];
     SDL_strlcpy(buf, tag, 5);
@@ -104,7 +104,7 @@ SDL_bool _Mix_IsLoopTag(const char *tag)
 
 /* Parse time string of the form HH:MM:SS.mmm and return equivalent sample
  * position */
-Sint64 _Mix_ParseTime(char *time, long samplerate_hz)
+Sint64 _MIX_ParseTime(char *time, long samplerate_hz)
 {
     char *num_start, *p;
     Sint64 result;

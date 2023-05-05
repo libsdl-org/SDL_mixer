@@ -43,7 +43,7 @@ typedef enum
     MIX_MUSIC_WAVPACK,
     MIX_MUSIC_GME,
     MIX_MUSIC_LAST
-} Mix_MusicAPI;
+} MIX_MusicAPI;
 
 
 /* Supported meta-tags */
@@ -55,20 +55,20 @@ typedef enum
     MIX_META_ALBUM,
     MIX_META_COPYRIGHT,
     MIX_META_LAST
-} Mix_MusicMetaTag;
+} MIX_MusicMetaTag;
 
 
 /* MIXER-X: Meta-tags utility structure */
 
 typedef struct {
     char *tags[4];
-} Mix_MusicMetaTags;
+} MIX_MusicMetaTags;
 
 
-extern void meta_tags_init(Mix_MusicMetaTags *tags);
-extern void meta_tags_clear(Mix_MusicMetaTags *tags);
-extern void meta_tags_set(Mix_MusicMetaTags *tags, Mix_MusicMetaTag type, const char *value);
-extern const char* meta_tags_get(Mix_MusicMetaTags *tags, Mix_MusicMetaTag type);
+extern void meta_tags_init(MIX_MusicMetaTags *tags);
+extern void meta_tags_clear(MIX_MusicMetaTags *tags);
+extern void meta_tags_set(MIX_MusicMetaTags *tags, MIX_MusicMetaTag type, const char *value);
+extern const char* meta_tags_get(MIX_MusicMetaTags *tags, MIX_MusicMetaTag type);
 
 
 /* Music API implementation */
@@ -76,8 +76,8 @@ extern const char* meta_tags_get(Mix_MusicMetaTags *tags, Mix_MusicMetaTag type)
 typedef struct
 {
     const char *tag;
-    Mix_MusicAPI api;
-    Mix_MusicType type;
+    MIX_MusicAPI api;
+    MIX_MusicType type;
     SDL_bool loaded;
     SDL_bool opened;
 
@@ -132,7 +132,7 @@ typedef struct
     double (*LoopLength)(void *music);
 
     /* Get a meta-tag string if available */
-    const char* (*GetMetaTag)(void *music, Mix_MusicMetaTag tag_type);
+    const char* (*GetMetaTag)(void *music, MIX_MusicMetaTag tag_type);
 
     /* Get number of tracks. Returns -1 if not applicable */
     int (*GetNumTracks)(void *music);
@@ -157,15 +157,15 @@ typedef struct
 
     /* Unload the library */
     void (*Unload)(void);
-} Mix_MusicInterface;
+} MIX_MusicInterface;
 
 
 extern int get_num_music_interfaces(void);
-extern Mix_MusicInterface *get_music_interface(int index);
-extern Mix_MusicType detect_music_type(SDL_RWops *src);
-extern SDL_bool load_music_type(Mix_MusicType type);
-extern SDL_bool open_music_type(Mix_MusicType type);
-extern SDL_bool has_music(Mix_MusicType type);
+extern MIX_MusicInterface *get_music_interface(int index);
+extern MIX_MusicType detect_music_type(SDL_RWops *src);
+extern SDL_bool load_music_type(MIX_MusicType type);
+extern SDL_bool open_music_type(MIX_MusicType type);
+extern SDL_bool has_music(MIX_MusicType type);
 extern void open_music(const SDL_AudioSpec *spec);
 extern int music_pcm_getaudio(void *context, void *data, int bytes, int volume,
                               int (*GetSome)(void *context, void *data, int bytes, SDL_bool *done));

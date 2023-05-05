@@ -40,21 +40,21 @@
 
 
 static int audio_open = 0;
-static Mix_Music *music = NULL;
+static MIX_Music *music = NULL;
 static int next_track = 0;
 
 static void CleanUp(int exitcode)
 {
-    if(Mix_PlayingMusic()) {
-        Mix_FadeOutMusic(1500);
+    if(MIX_PlayingMusic()) {
+        MIX_FadeOutMusic(1500);
         SDL_Delay(1500);
     }
     if (music) {
-        Mix_FreeMusic(music);
+        MIX_FreeMusic(music);
         music = NULL;
     }
     if (audio_open) {
-        Mix_CloseAudio();
+        MIX_CloseAudio();
         audio_open = 0;
     }
     SDL_Quit();
@@ -76,28 +76,28 @@ static void Menu(void)
     if (scanf("%s",buf) == 1) {
         switch(buf[0]){
 #if defined(SEEK_TEST)
-        case '0': Mix_SetMusicPosition(0); break;
-        case '1': Mix_SetMusicPosition(10);break;
-        case '2': Mix_SetMusicPosition(20);break;
-        case '3': Mix_SetMusicPosition(30);break;
-        case '4': Mix_SetMusicPosition(40);break;
+        case '0': MIX_SetMusicPosition(0); break;
+        case '1': MIX_SetMusicPosition(10);break;
+        case '2': MIX_SetMusicPosition(20);break;
+        case '3': MIX_SetMusicPosition(30);break;
+        case '4': MIX_SetMusicPosition(40);break;
 #endif /* SEEK_TEST */
         case 'p': case 'P':
-            Mix_PauseMusic();
+            MIX_PauseMusic();
             break;
         case 'r': case 'R':
-            Mix_ResumeMusic();
+            MIX_ResumeMusic();
             break;
         case 'h': case 'H':
-            Mix_HaltMusic();
+            MIX_HaltMusic();
             break;
         case 'v': case 'V':
-            Mix_VolumeMusic(atoi(buf+1));
+            MIX_VolumeMusic(atoi(buf+1));
             break;
         }
     }
-    printf("Music playing: %s Paused: %s\n", Mix_PlayingMusic() ? "yes" : "no",
-           Mix_PausedMusic() ? "yes" : "no");
+    printf("Music playing: %s Paused: %s\n", MIX_PlayingMusic() ? "yes" : "no",
+           MIX_PausedMusic() ? "yes" : "no");
 }
 
 #ifdef HAVE_SIGNAL_H
@@ -194,11 +194,11 @@ int main(int argc, char *argv[])
 #endif
 
     /* Open the audio device */
-    if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) < 0) {
+    if (MIX_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) < 0) {
         SDL_Log("Couldn't open audio: %s\n", SDL_GetError());
         return(2);
     } else {
-        Mix_QuerySpec(&audio_rate, &audio_format, &audio_channels);
+        MIX_QuerySpec(&audio_rate, &audio_format, &audio_channels);
         SDL_Log("Opened audio at %d Hz %d bit%s %s %d bytes audio buffer\n", audio_rate,
             (audio_format&0xFF),
             (SDL_AUDIO_ISFLOAT(audio_format) ? " (float)" : ""),
@@ -208,19 +208,19 @@ int main(int argc, char *argv[])
     audio_open = 1;
 
     /* Set the music volume */
-    Mix_VolumeMusic(audio_volume);
+    MIX_VolumeMusic(audio_volume);
 
     /* Set the external music player, if any */
-    Mix_SetMusicCMD(SDL_getenv("MUSIC_CMD"));
+    MIX_SetMusicCMD(SDL_getenv("MUSIC_CMD"));
 
     while (argv[i]) {
         next_track = 0;
 
         /* Load the requested music file */
         if (rwops) {
-            music = Mix_LoadMUS_RW(SDL_RWFromFile(argv[i], "rb"), SDL_TRUE);
+            music = MIX_LoadMUS_RW(SDL_RWFromFile(argv[i], "rb"), SDL_TRUE);
         } else {
-            music = Mix_LoadMUS(argv[i]);
+            music = MIX_LoadMUS(argv[i]);
         }
         if (music == NULL) {
             SDL_Log("Couldn't load %s: %s\n",
@@ -228,7 +228,7 @@ int main(int argc, char *argv[])
             CleanUp(2);
         }
 
-        switch (Mix_GetMusicType(music)) {
+        switch (MIX_GetMusicType(music)) {
         case MUS_CMD:
             typ = "CMD";
             break;
@@ -265,41 +265,41 @@ int main(int argc, char *argv[])
         }
         SDL_Log("Detected music type: %s", typ);
 
-        tag_title = Mix_GetMusicTitleTag(music);
+        tag_title = MIX_GetMusicTitleTag(music);
         if (tag_title && SDL_strlen(tag_title) > 0) {
             SDL_Log("Title: %s", tag_title);
         }
 
-        tag_artist = Mix_GetMusicArtistTag(music);
+        tag_artist = MIX_GetMusicArtistTag(music);
         if (tag_artist && SDL_strlen(tag_artist) > 0) {
             SDL_Log("Artist: %s", tag_artist);
         }
 
-        tag_album = Mix_GetMusicAlbumTag(music);
+        tag_album = MIX_GetMusicAlbumTag(music);
         if (tag_album && SDL_strlen(tag_album) > 0) {
             SDL_Log("Album: %s", tag_album);
         }
 
-        tag_copyright = Mix_GetMusicCopyrightTag(music);
+        tag_copyright = MIX_GetMusicCopyrightTag(music);
         if (tag_copyright && SDL_strlen(tag_copyright) > 0) {
             SDL_Log("Copyright: %s", tag_copyright);
         }
 
-        loop_start = Mix_GetMusicLoopStartTime(music);
-        loop_end = Mix_GetMusicLoopEndTime(music);
-        loop_length = Mix_GetMusicLoopLengthTime(music);
+        loop_start = MIX_GetMusicLoopStartTime(music);
+        loop_end = MIX_GetMusicLoopEndTime(music);
+        loop_length = MIX_GetMusicLoopLengthTime(music);
 
         /* Play and then exit */
-        SDL_Log("Playing %s, duration %f\n", argv[i], Mix_MusicDuration(music));
+        SDL_Log("Playing %s, duration %f\n", argv[i], MIX_MusicDuration(music));
         if (loop_start > 0.0 && loop_end > 0.0 && loop_length > 0.0) {
             SDL_Log("Loop points: start %g s, end %g s, length %g s\n", loop_start, loop_end, loop_length);
         }
-        Mix_FadeInMusic(music,looping,2000);
-        while (!next_track && (Mix_PlayingMusic() || Mix_PausedMusic())) {
+        MIX_FadeInMusic(music,looping,2000);
+        while (!next_track && (MIX_PlayingMusic() || MIX_PausedMusic())) {
             if(interactive)
                 Menu();
             else {
-                current_position = Mix_GetMusicPosition(music);
+                current_position = MIX_GetMusicPosition(music);
                 if (current_position >= 0.0) {
                     printf("Position: %g seconds             \r", current_position);
                     fflush(stdout);
@@ -307,7 +307,7 @@ int main(int argc, char *argv[])
                 SDL_Delay(100);
             }
         }
-        Mix_FreeMusic(music);
+        MIX_FreeMusic(music);
         music = NULL;
 
         /* If the user presses Ctrl-C more than once, exit. */

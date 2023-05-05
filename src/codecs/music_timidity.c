@@ -63,7 +63,7 @@ static int TIMIDITY_Open(const SDL_AudioSpec *spec)
     (void) spec;
 
     cfg = SDL_getenv("TIMIDITY_CFG");
-    if(!cfg) cfg = Mix_GetTimidityCfg();
+    if(!cfg) cfg = MIX_GetTimidityCfg();
     if (cfg) {
         return Timidity_Init(cfg); /* env or user override: no other tries */
     }
@@ -259,7 +259,7 @@ static void TIMIDITY_Stop(void *context)
     Timidity_Stop(music->song);
 }
 
-Mix_MusicInterface Mix_MusicInterface_TIMIDITY =
+MIX_MusicInterface MIX_MusicInterface_TIMIDITY =
 {
     "TIMIDITY",
     MIX_MUSIC_TIMIDITY,

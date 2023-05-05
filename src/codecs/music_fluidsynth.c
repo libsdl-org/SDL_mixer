@@ -148,7 +148,7 @@ static int SDLCALL fluidsynth_check_soundfont(const char *path, void *data)
         SDL_RWclose(rw);
         return 1;
     } else {
-        Mix_SetError("Failed to access the SoundFont %s", path);
+        MIX_SetError("Failed to access the SoundFont %s", path);
         return 0;
     }
 }
@@ -163,7 +163,7 @@ static int SDLCALL fluidsynth_load_soundfont(const char *path, void *data)
 static int FLUIDSYNTH_Open(const SDL_AudioSpec *spec)
 {
     (void)spec;
-    if (!Mix_EachSoundFont(fluidsynth_check_soundfont, NULL)) {
+    if (!MIX_EachSoundFont(fluidsynth_check_soundfont, NULL)) {
         return -1;
     }
     return 0;
@@ -200,7 +200,7 @@ static FLUIDSYNTH_Music *FLUIDSYNTH_LoadMusic(void *data)
     }
 
     if (!(music->settings = fluidsynth.new_fluid_settings())) {
-        Mix_SetError("Failed to create FluidSynth settings");
+        MIX_SetError("Failed to create FluidSynth settings");
         goto fail;
     }
 
@@ -208,16 +208,16 @@ static FLUIDSYNTH_Music *FLUIDSYNTH_LoadMusic(void *data)
     fluidsynth.fluid_settings_getnum(music->settings, "synth.sample-rate", &samplerate);
 
     if (!(music->synth = fluidsynth.new_fluid_synth(music->settings))) {
-        Mix_SetError("Failed to create FluidSynth synthesizer");
+        MIX_SetError("Failed to create FluidSynth synthesizer");
         goto fail;
     }
 
-    if (!Mix_EachSoundFont(fluidsynth_load_soundfont, music->synth)) {
+    if (!MIX_EachSoundFont(fluidsynth_load_soundfont, music->synth)) {
         goto fail;
     }
 
     if (!(music->player = fluidsynth.new_fluid_player(music->synth))) {
-        Mix_SetError("Failed to create FluidSynth player");
+        MIX_SetError("Failed to create FluidSynth player");
         goto fail;
     }
 
@@ -230,7 +230,7 @@ static FLUIDSYNTH_Music *FLUIDSYNTH_LoadMusic(void *data)
     ret = fluidsynth.fluid_player_add_mem(music->player, rw_mem, rw_size);
     SDL_free(rw_mem);
     if (ret != FLUID_OK) {
-        Mix_SetError("FluidSynth failed to load in-memory song");
+        MIX_SetError("FluidSynth failed to load in-memory song");
         goto fail;
     }
 
@@ -297,7 +297,7 @@ static int FLUIDSYNTH_GetSome(void *context, void *data, int bytes, SDL_bool *do
     }
 
     if (music->synth_write(music->synth, music_spec.samples, music->buffer, 0, 2, music->buffer, 1, 2) != FLUID_OK) {
-        Mix_SetError("Error generating FluidSynth audio");
+        MIX_SetError("Error generating FluidSynth audio");
         return -1;
     }
     if (SDL_PutAudioStreamData(music->stream, music->buffer, music->buffer_size) < 0) {
@@ -338,7 +338,7 @@ static void FLUIDSYNTH_Delete(void *context)
     SDL_free(music);
 }
 
-Mix_MusicInterface Mix_MusicInterface_FLUIDSYNTH =
+MIX_MusicInterface MIX_MusicInterface_FLUIDSYNTH =
 {
     "FLUIDSYNTH",
     MIX_MUSIC_FLUIDSYNTH,

@@ -19,7 +19,7 @@
   3. This notice may not be removed or altered from any source distribution.
 
   This is the source needed to decode a file in any format supported by
-  libsndfile. The only externally-callable function is Mix_LoadSndFile_RW(),
+  libsndfile. The only externally-callable function is MIX_LoadSndFile_RW(),
   which is meant to act as identically to SDL_LoadWAV_RW() as possible.
 
   This file by Fabian Greffrath (fabian@greffrath.com).
@@ -30,8 +30,8 @@
 
 #include <SDL3/SDL_mixer.h>
 
-/* Don't call this directly; use Mix_LoadWAV_RW() for now. */
-SDL_AudioSpec *Mix_LoadSndFile_RW (SDL_RWops *src, int freesrc,
+/* Don't call this directly; use MIX_LoadWAV_RW() for now. */
+SDL_AudioSpec *MIX_LoadSndFile_RW (SDL_RWops *src, int freesrc,
         SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len);
 
 void SNDFILE_uninit (void);

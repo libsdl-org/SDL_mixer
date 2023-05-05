@@ -58,14 +58,14 @@ static void *MusicCMD_CreateFromFile(const char *file)
     MusicCMD *music;
 
     if (!music_cmd) {
-        Mix_SetError("You must call Mix_SetMusicCMD() first");
+        MIX_SetError("You must call MIX_SetMusicCMD() first");
         return NULL;
     }
 
     /* Allocate and fill the music structure */
     music = (MusicCMD *)SDL_calloc(1, sizeof *music);
     if (music == NULL) {
-        Mix_OutOfMemory();
+        MIX_OutOfMemory();
         return NULL;
     }
     music->file = SDL_strdup(file);
@@ -168,7 +168,7 @@ static int MusicCMD_Play(void *context, int play_count)
     switch(music->pid) {
     /* Failed fork() system call */
     case -1:
-        Mix_SetError("fork() failed");
+        MIX_SetError("fork() failed");
         return -1;
 
     /* Child process - executes here */
@@ -268,7 +268,7 @@ void MusicCMD_Delete(void *context)
     SDL_free(music);
 }
 
-Mix_MusicInterface Mix_MusicInterface_CMD =
+MIX_MusicInterface MIX_MusicInterface_CMD =
 {
     "CMD",
     MIX_MUSIC_CMD,

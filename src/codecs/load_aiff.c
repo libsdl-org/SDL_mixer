@@ -20,7 +20,7 @@
 
   This is the source needed to decode an AIFF file into a waveform.
   It's pretty straightforward once you get going. The only
-  externally-callable function is Mix_LoadAIFF_RW(), which is meant to
+  externally-callable function is MIX_LoadAIFF_RW(), which is meant to
   act as identically to SDL_LoadWAV_RW() as possible.
 
   This file by Torbjörn Andersson (torbjorn.andersson@eurotime.se)
@@ -62,7 +62,7 @@ static Uint32 SANE_to_Uint32 (Uint8 *sanebuf)
 
 /* This function is based on SDL_LoadWAV_RW(). */
 
-SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
+SDL_AudioSpec *MIX_LoadAIFF_RW (SDL_RWops *src, int freesrc,
     SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
 {
     int was_error;
@@ -108,7 +108,7 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
         AIFFmagic    = SDL_ReadLE32(src);
     }
     if ((FORMchunk != FORM) || ((AIFFmagic != AIFF) && (AIFFmagic != _8SVX))) {
-        Mix_SetError("Unrecognized file type (not AIFF nor 8SVX)");
+        MIX_SetError("Unrecognized file type (not AIFF nor 8SVX)");
         was_error = 1;
         goto done;
     }
@@ -143,13 +143,13 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
                 numsamples  = SDL_ReadBE32(src);
                 samplesize  = SDL_ReadBE16(src);
                 if (SDL_RWread(src, sane_freq, sizeof(sane_freq)) != sizeof(sane_freq)) {
-                    Mix_SetError("Bad AIFF sample frequency");
+                    MIX_SetError("Bad AIFF sample frequency");
                     was_error = 1;
                     goto done;
                 }
                 frequency   = SANE_to_Uint32(sane_freq);
                 if (frequency == 0) {
-                    Mix_SetError("Bad AIFF sample frequency");
+                    MIX_SetError("Bad AIFF sample frequency");
                     was_error = 1;
                     goto done;
                 }
@@ -182,25 +182,25 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
           && SDL_RWseek(src, next_chunk, SDL_RW_SEEK_SET) != 1);
 
     if ((AIFFmagic == AIFF) && !found_SSND) {
-        Mix_SetError("Bad AIFF (no SSND chunk)");
+        MIX_SetError("Bad AIFF (no SSND chunk)");
         was_error = 1;
         goto done;
     }
 
     if ((AIFFmagic == AIFF) && !found_COMM) {
-        Mix_SetError("Bad AIFF (no COMM chunk)");
+        MIX_SetError("Bad AIFF (no COMM chunk)");
         was_error = 1;
         goto done;
     }
 
     if ((AIFFmagic == _8SVX) && !found_VHDR) {
-        Mix_SetError("Bad 8SVX (no VHDR chunk)");
+        MIX_SetError("Bad 8SVX (no VHDR chunk)");
         was_error = 1;
         goto done;
     }
 
     if ((AIFFmagic == _8SVX) && !found_BODY) {
-        Mix_SetError("Bad 8SVX (no BODY chunk)");
+        MIX_SetError("Bad 8SVX (no BODY chunk)");
         was_error = 1;
         goto done;
     }
@@ -216,7 +216,7 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
             spec->format = SDL_AUDIO_S16MSB;
             break;
         default:
-            Mix_SetError("Unsupported AIFF samplesize");
+            MIX_SetError("Unsupported AIFF samplesize");
             was_error = 1;
             goto done;
     }
@@ -226,12 +226,12 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
     *audio_len = channels * numsamples * (samplesize / 8);
     *audio_buf = (Uint8 *)SDL_malloc(*audio_len);
     if (*audio_buf == NULL) {
-        Mix_OutOfMemory();
+        MIX_OutOfMemory();
         return(NULL);
     }
     SDL_RWseek(src, start, SDL_RW_SEEK_SET);
     if (SDL_RWread(src, *audio_buf, *audio_len) != *audio_len) {
-        Mix_SetError("Unable to read audio data");
+        MIX_SetError("Unable to read audio data");
         return(NULL);
     }
 

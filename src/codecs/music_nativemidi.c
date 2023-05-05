@@ -31,7 +31,7 @@ static void *NATIVEMIDI_CreateFromRW(SDL_RWops *src, int freesrc)
 {
     NativeMidiSong *music = native_midi_loadsong_RW(src, freesrc);
     if (!music) {
-        Mix_SetError("%s", native_midi_error());
+        MIX_SetError("%s", native_midi_error());
     }
     return music;
 }
@@ -83,7 +83,7 @@ static void NATIVEMIDI_Delete(void *context)
     native_midi_freesong(music);
 }
 
-Mix_MusicInterface Mix_MusicInterface_NATIVEMIDI =
+MIX_MusicInterface MIX_MusicInterface_NATIVEMIDI =
 {
     "NATIVEMIDI",
     MIX_MUSIC_NATIVEMIDI,
