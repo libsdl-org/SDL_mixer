@@ -287,11 +287,10 @@ static int FLUIDSYNTH_Play(void *context, int play_count)
     return 0;
 }
 
-static int FLUIDSYNTH_Resume(void *context)
+static void FLUIDSYNTH_Resume(void *context)
 {
-    FLUIDSYNTH_Music *music = (FLUIDSYNTH_Music*)context;
+    FLUIDSYNTH_Music *music = (FLUIDSYNTH_Music *)context;
     fluidsynth.fluid_player_play(music->player);
-    return 0;
 }
 
 static SDL_bool FLUIDSYNTH_IsPlaying(void *context)
@@ -366,20 +365,20 @@ static void FLUIDSYNTH_Delete(void *context)
 #if (FLUIDSYNTH_VERSION_MAJOR >= 2)
 static int FLUIDSYNTH_Seek(void *context, double position)
 {
-    FLUIDSYNTH_Music *music = (FLUIDSYNTH_Music*)context;
+    FLUIDSYNTH_Music *music = (FLUIDSYNTH_Music *)context;
     fluidsynth.fluid_player_seek(music->player, (int)(position * 1000));
     return 0;
 }
 
 static double FLUIDSYNTH_Tell(void *context)
 {
-    FLUIDSYNTH_Music *music = (FLUIDSYNTH_Music*)context;
+    FLUIDSYNTH_Music *music = (FLUIDSYNTH_Music *)context;
     return fluidsynth.fluid_player_get_current_tick(music->player) / 1000.0;
 }
 
 static double FLUIDSYNTH_Duration(void* context)
 {
-    FLUIDSYNTH_Music *music = (FLUIDSYNTH_Music*)context;
+    FLUIDSYNTH_Music *music = (FLUIDSYNTH_Music *)context;
     return fluidsynth.fluid_player_get_total_ticks(music->player) / 1000.0;
 }
 #endif
