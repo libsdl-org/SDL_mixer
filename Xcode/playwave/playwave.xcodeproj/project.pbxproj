@@ -513,8 +513,8 @@
 					"\"$(SRCROOT)/../../include\"",
 					"\"$(SRCROOT)/../$(PLATFORM)/SDL2.framework/Headers\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				ONLY_ACTIVE_ARCH = YES;
 				PLATFORM = "";
 				"PLATFORM[sdk=appletvos*]" = tvOS;
@@ -534,8 +534,8 @@
 					"\"$(SRCROOT)/../../include\"",
 					"\"$(SRCROOT)/../$(PLATFORM)/SDL2.framework/Headers\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PLATFORM = "";
 				"PLATFORM[sdk=appletvos*]" = tvOS;
 				"PLATFORM[sdk=iphoneos*]" = iOS;
