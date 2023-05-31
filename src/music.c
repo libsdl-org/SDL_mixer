@@ -44,10 +44,7 @@
 #include "native_midi/native_midi.h"
 
 #include "utils.h"
-#if defined(MUSIC_FLAC_DRFLAC) || defined(MUSIC_FLAC_LIBFLAC)
-#define ID3_EXTRA_FORMAT_CHECKS
 #include "mp3utils.h"
-#endif
 
 /* Check to make sure we are building with a new enough SDL */
 #if SDL_COMPILEDVERSION < SDL_VERSIONNUM(2, 0, 7)
@@ -553,21 +550,93 @@ SDL_bool has_music(Mix_MusicType type)
     return SDL_FALSE;
 }
 
+static int detect_mp3(Uint8 *magic, SDL_RWops *src, Sint64 start, Sint64 offset)
+{
+    const Uint32 null = 0;
+    Uint8 mp3_magic[4];
+    Sint64 end_file_pos = 0;
+    const int max_search = 10240;
+
+    SDL_memcpy(mp3_magic, magic, 4);
+
+    /* Attempt to quickly detect MP3 file if possible */
+    /* see: https://bugzilla.libsdl.org/show_bug.cgi?id=5322 */
+    if ((magic[0] == 0xFF) && (magic[1] & 0xE6) == 0xE2) {
+        SDL_RWseek(src, start, SDL_RW_SEEK_SET);
+        return 1;
+    }
+
+    /* If no success, try the deep scan of first 10 kilobytes of the file
+     * to detect the first valid MP3 frame */
+
+    SDL_RWseek(src, 0, SDL_RW_SEEK_END);
+    end_file_pos = SDL_RWtell(src);
+    SDL_RWseek(src, start + offset, SDL_RW_SEEK_SET);
+
+    /* If first 4 bytes are not zero */
+    if (SDL_memcmp(mp3_magic, &null, 4) != 0) {
+        goto readHeader;
+    }
+
+digMoreBytes:
+    /* Find the nearest 0xFF byte */
+    while ((SDL_RWread(src, mp3_magic, 1) == 1) &&
+           (mp3_magic[0] != 0xFF) &&
+           (SDL_RWtell(src) < (start + offset + max_search)) &&
+           (SDL_RWtell(src) < (end_file_pos - 1)) )
+    {}
+
+    /* Can't read last 3 bytes of the frame header */
+    if (SDL_RWread(src, mp3_magic + 1, 3) != 3) {
+        SDL_RWseek(src, start, SDL_RW_SEEK_SET);
+        return 0;
+    }
+
+    /* Go back to 3 bytes */
+    SDL_RWseek(src, -3, SDL_RW_SEEK_CUR);
+
+    /* Got the end of search zone, however, found nothing */
+    if (SDL_RWtell(src) >= (start + offset + max_search)) {
+        SDL_RWseek(src, start, SDL_RW_SEEK_SET);
+        return 0;
+    }
+
+    /* Got the end of file, however, found nothing */
+    if (SDL_RWtell(src) >= (end_file_pos - 1)) {
+        SDL_RWseek(src, start, SDL_RW_SEEK_SET);
+        return 0;
+    }
+
+readHeader:
+    if (
+        ((mp3_magic[0] & 0xff) != 0xff) || ((mp3_magic[1] & 0xf0) != 0xf0) || /*  No sync bits */
+        ((mp3_magic[1] & 0xe6) != 0xe2) ||
+        ((mp3_magic[2] & 0xf0) == 0x00) || /*  Bitrate is 0 */
+        ((mp3_magic[2] & 0xf0) == 0xf0) || /*  Bitrate is 15 */
+        ((mp3_magic[2] & 0x0c) == 0x0c) || /*  Frequency is 3 */
+        ((mp3_magic[1] & 0x06) == 0x00)    /*  Layer is 4 */
+    ) {
+        /* printf("WRONG BITS\n"); */
+        goto digMoreBytes;
+    }
+
+    SDL_RWseek(src, start, SDL_RW_SEEK_SET);
+    return 1;
+}
+
 Mix_MusicType detect_music_type(SDL_RWops *src)
 {
     Uint8 magic[12];
     Sint64 start = SDL_RWtell(src);
-#ifdef ID3_EXTRA_FORMAT_CHECKS
     Uint8 submagic[4];
     long id3len = 0;
     size_t readlen = 0;
-#endif
 
     if (SDL_RWread(src, magic, 12) != 12) {
         Mix_SetError("Couldn't read first 12 bytes of audio data");
         return MUS_NONE;
     }
-    SDL_RWseek(src, start, RW_SEEK_SET);
+    SDL_RWseek(src, start, SDL_RW_SEEK_SET);
 
     /* WAVE files have the magic four bytes "RIFF"
        AIFF files have the magic 12 bytes "FORM" XXXX "AIFF" */
@@ -607,24 +676,25 @@ Mix_MusicType detect_music_type(SDL_RWops *src)
         return MUS_MID;
     }
 
-    if (SDL_memcmp(magic, "ID3", 3) == 0 ||
-    /* see: https://bugzilla.libsdl.org/show_bug.cgi?id=5322 */
-        (magic[0] == 0xFF && (magic[1] & 0xE6) == 0xE2)) {
 #ifdef ID3_EXTRA_FORMAT_CHECKS
+    if (SDL_memcmp(magic, "ID3", 3) == 0) {
         id3len = get_id3v2_length(src);
 
         /* Check if there is something not an MP3, however, also has ID3 tag */
         if (id3len > 0) {
-            SDL_RWseek(src, id3len, RW_SEEK_CUR);
-            readlen = SDL_RWread(src, submagic, 1, 4);
-            SDL_RWseek(src, start, RW_SEEK_SET);
+            SDL_RWseek(src, id3len, SDL_RW_SEEK_CUR);
+            readlen = SDL_RWread(src, submagic, 4);
+            SDL_RWseek(src, start, SDL_RW_SEEK_SET);
 
             if (readlen == 4) {
                 if (SDL_memcmp(submagic, "fLaC", 4) == 0)
                     return MUS_FLAC;
             }
         }
-#endif
+    }
+
+    /* Detect MP3 format by frame header [needs scanning of bigger part of the file] */
+    if (detect_mp3(submagic, src, start, id3len)) {
         return MUS_MP3;
     }
 
