@@ -1181,19 +1181,19 @@ long get_id3v2_length(SDL_RWops *src)
     Sint64 start;
 
     if(!src) {
-        return -1;
+        return 0;
     }
 
     start = SDL_RWtell(src);
-    readsize = SDL_RWread(src, buf, 1, TAGS_INPUT_BUFFER_SIZE);
-    SDL_RWseek(src, start, RW_SEEK_SET);
+    readsize = SDL_RWread(src, buf, TAGS_INPUT_BUFFER_SIZE);
+    SDL_RWseek(src, start, SDL_RW_SEEK_SET);
 
     if (!readsize) {
-        return -1;
+        return 0;
     }
 
     if (!is_id3v2(buf, readsize)) {
-        return -1;
+        return 0;
     }
 
     return get_id3v2_len(buf, (long)readsize);
