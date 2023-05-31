@@ -44,6 +44,10 @@
 #include "native_midi/native_midi.h"
 
 #include "utils.h"
+#if defined(MUSIC_FLAC_DRFLAC) || defined(MUSIC_FLAC_LIBFLAC)
+#define ID3_EXTRA_FORMAT_CHECKS
+#include "mp3utils.h"
+#endif
 
 /* Check to make sure we are building with a new enough SDL */
 #if SDL_COMPILEDVERSION < SDL_VERSIONNUM(2, 0, 7)
@@ -551,12 +555,18 @@ SDL_bool has_music(Mix_MusicType type)
 Mix_MusicType detect_music_type(SDL_RWops *src)
 {
     Uint8 magic[12];
+    Sint64 start = SDL_RWtell(src);
+#ifdef ID3_EXTRA_FORMAT_CHECKS
+    Uint8 submagic[4];
+    long id3len = 0;
+    size_t readlen = 0;
+#endif
 
     if (SDL_RWread(src, magic, 1, 12) != 12) {
         Mix_SetError("Couldn't read first 12 bytes of audio data");
         return MUS_NONE;
     }
-    SDL_RWseek(src, -12, RW_SEEK_CUR);
+    SDL_RWseek(src, start, RW_SEEK_SET);
 
     /* WAVE files have the magic four bytes "RIFF"
        AIFF files have the magic 12 bytes "FORM" XXXX "AIFF" */
@@ -594,6 +604,21 @@ Mix_MusicType detect_music_type(SDL_RWops *src)
     if (SDL_memcmp(magic, "ID3", 3) == 0 ||
     /* see: https://bugzilla.libsdl.org/show_bug.cgi?id=5322 */
         (magic[0] == 0xFF && (magic[1] & 0xE6) == 0xE2)) {
+#ifdef ID3_EXTRA_FORMAT_CHECKS
+        id3len = get_id3v2_length(src);
+
+        /* Check if there is something not an MP3, however, also has ID3 tag */
+        if (id3len > 0) {
+            SDL_RWseek(src, id3len, RW_SEEK_CUR);
+            readlen = SDL_RWread(src, submagic, 1, 4);
+            SDL_RWseek(src, start, RW_SEEK_SET);
+
+            if (readlen == 4) {
+                if (SDL_memcmp(submagic, "fLaC", 4) == 0)
+                    return MUS_FLAC;
+            }
+        }
+#endif
         return MUS_MP3;
     }
 
