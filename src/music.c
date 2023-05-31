@@ -591,6 +591,11 @@ Mix_MusicType detect_music_type(SDL_RWops *src)
         return MUS_MID;
     }
 
+    /* RIFF MIDI files have the magic four bytes "RIFF" and then "RMID" */
+    if ((SDL_memcmp(magic, "RIFF", 4) == 0) && (SDL_memcmp(magic + 8, "RMID", 4) == 0)) {
+        return MUS_MID;
+    }
+
     if (SDL_memcmp(magic, "ID3", 3) == 0 ||
     /* see: https://bugzilla.libsdl.org/show_bug.cgi?id=5322 */
         (magic[0] == 0xFF && (magic[1] & 0xE6) == 0xE2)) {
