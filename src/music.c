@@ -676,28 +676,6 @@ Mix_MusicType detect_music_type(SDL_RWops *src)
         return MUS_MID;
     }
 
-#ifdef ID3_EXTRA_FORMAT_CHECKS
-    if (SDL_memcmp(magic, "ID3", 3) == 0) {
-        id3len = get_id3v2_length(src);
-
-        /* Check if there is something not an MP3, however, also has ID3 tag */
-        if (id3len > 0) {
-            SDL_RWseek(src, id3len, SDL_RW_SEEK_CUR);
-            readlen = SDL_RWread(src, submagic, 4);
-            SDL_RWseek(src, start, SDL_RW_SEEK_SET);
-
-            if (readlen == 4) {
-                if (SDL_memcmp(submagic, "fLaC", 4) == 0)
-                    return MUS_FLAC;
-            }
-        }
-    }
-
-    /* Detect MP3 format by frame header [needs scanning of bigger part of the file] */
-    if (detect_mp3(submagic, src, start, id3len)) {
-        return MUS_MP3;
-    }
-
     /* GME Specific files */
     if (SDL_memcmp(magic, "ZXAY", 4) == 0)
         return MUS_GME;
@@ -723,6 +701,27 @@ Mix_MusicType detect_music_type(SDL_RWops *src)
         return MUS_GME;
     if (SDL_memcmp(magic, "\x1f\x8b", 2) == 0)
         return MUS_GME;
+
+    if (SDL_memcmp(magic, "ID3", 3) == 0) {
+        id3len = get_id3v2_length(src);
+
+        /* Check if there is something not an MP3, however, also has ID3 tag */
+        if (id3len > 0) {
+            SDL_RWseek(src, id3len, SDL_RW_SEEK_CUR);
+            readlen = SDL_RWread(src, submagic, 4);
+            SDL_RWseek(src, start, SDL_RW_SEEK_SET);
+
+            if (readlen == 4) {
+                if (SDL_memcmp(submagic, "fLaC", 4) == 0)
+                    return MUS_FLAC;
+            }
+        }
+    }
+
+    /* Detect MP3 format by frame header [needs scanning of bigger part of the file] */
+    if (detect_mp3(submagic, src, start, id3len)) {
+        return MUS_MP3;
+    }
 
     /* Assume MOD format.
      *
