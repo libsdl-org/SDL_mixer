@@ -83,6 +83,7 @@ LOCAL_SRC_FILES :=                                      \
 
 LOCAL_CFLAGS :=
 LOCAL_LDLIBS :=
+LOCAL_LDFLAGS := -Wl,--no-undefined -Wl,--version-script=$(LOCAL_PATH)/SDL_mixer.sym
 LOCAL_STATIC_LIBRARIES :=
 LOCAL_SHARED_LIBRARIES := SDL3
 
