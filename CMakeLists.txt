@@ -323,6 +323,8 @@ if(SDL3MIXER_BUILD_SHARED_LIBS)
     sdl_target_link_options_no_undefined(${sdl3_mixer_target_name})
 endif()
 
+sdl_target_link_option_version_file(${sdl3_mixer_target_name} "${CMAKE_CURRENT_SOURCE_DIR}/SDL_mixer.sym")
+
 if(SDL3MIXER_BUILD_SHARED_LIBS)
     # Make sure static library dependencies are built with -fPIC when building a shared SDL3_mixer
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
