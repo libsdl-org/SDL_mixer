@@ -208,20 +208,6 @@ if(NOT TARGET ${sdl3_target_name})
     find_package(SDL3 ${SDL_REQUIRED_VERSION} REQUIRED)
 endif()
 
-add_library(sdl3mixer_build_options INTERFACE)
-if(MSVC)
-    target_compile_options(sdl3mixer_build_options INTERFACE /W2)
-else()
-    target_compile_options(sdl3mixer_build_options INTERFACE -Wall -Wextra)
-endif()
-if(SDL3MIXER_WERROR)
-    if(MSVC)
-        target_compile_options(sdl3mixer_build_options INTERFACE /WX)
-    else()
-        target_compile_options(sdl3mixer_build_options INTERFACE -Werror)
-    endif()
-endif()
-
 set(BUILD_SHARED_LIBS ${SDL3MIXER_BUILD_SHARED_LIBS})
 add_library(${sdl3_mixer_target_name}
     src/codecs/load_aiff.c
@@ -272,7 +258,7 @@ target_compile_definitions(${sdl3_mixer_target_name} PRIVATE
     SDL_BUILD_MICRO_VERSION=${MICRO_VERSION}
 )
 target_link_libraries(${sdl3_mixer_target_name} PRIVATE $<BUILD_INTERFACE:${sdl3_target_name}>)
-target_link_libraries(${sdl3_mixer_target_name} PRIVATE $<BUILD_INTERFACE:sdl3mixer_build_options>)
+sdl_add_warning_options(${sdl3_mixer_target_name} WARNING_AS_ERROR ${SDL3MIXER_WERROR})
 if(WIN32 AND BUILD_SHARED_LIBS)
     target_sources(${sdl3_mixer_target_name} PRIVATE
         version.rc
@@ -1009,6 +995,7 @@ if(SDL3MIXER_SAMPLES)
     add_executable(playwave playwave.c)
 
     foreach(prog playmus playwave)
+        sdl_add_warning_options(${prog} WARNING_AS_ERROR ${SDL3MIXER_WERROR})
         target_link_libraries(${prog} PRIVATE SDL3_mixer::${sdl3_mixer_target_name})
         target_link_libraries(${prog} PRIVATE ${sdl3_target_name})
         if(HAVE_SIGNAL_H)
