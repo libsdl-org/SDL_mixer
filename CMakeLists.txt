@@ -43,6 +43,13 @@ set(SDL2MIXER_DEBUG_POSTFIX "d"
     CACHE STRING "Name suffix for debug builds")
 mark_as_advanced(SDL2MIXER_DEBUG_POSTFIX)
 
+if(POLICY CMP0099)
+    # Make `INTERFACE_LINK_DIRECTORIES` a transitive usage requirement.
+    # This is needed for static dependencies which have transitive dependencies
+    # outside of compiler default search paths.
+    cmake_policy(SET CMP0099 NEW)
+endif()
+
 # Assume MSVC projects don't have a package manager and need vendored dependencies (by default).
 # Most other platforms have some kind of package manager.
 # FIXME: consider a package manager such as conan/vcpkg instead of vendoring
@@ -58,11 +65,17 @@ if ((TARGET SDL2 OR TARGET SDL2-static) AND SDL2_DISABLE_INSTALL)
     set(sdl2mixer_install_enableable OFF)
 endif()
 
+if(NOT DEFINED CMAKE_FIND_PACKAGE_PREFER_CONFIG)
+    set(CMAKE_FIND_PACKAGE_PREFER_CONFIG ON)
+endif()
+
 include(CheckIncludeFile)
 include(CheckSymbolExists)
 include(CMakeDependentOption)
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
+
+include(PkgConfigHelper)
 
 option(CMAKE_POSITION_INDEPENDENT_CODE "Build static libraries with -fPIC" ON)
 option(BUILD_SHARED_LIBS "Build the library as a shared library" ON)
@@ -758,18 +771,18 @@ if(SDL2MIXER_MIDI_FLUIDSYNTH)
     endif()
     if(SDL2MIXER_MIDI_FLUIDSYNTH_SHARED)
         target_include_directories(SDL2_mixer PRIVATE
-            $<TARGET_PROPERTY:FluidSynth::FluidSynth,INCLUDE_DIRECTORIES>
-            $<TARGET_PROPERTY:FluidSynth::FluidSynth,INTERFACE_INCLUDE_DIRECTORIES>
-            $<TARGET_PROPERTY:FluidSynth::FluidSynth,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:FluidSynth::libfluidsynth,INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:FluidSynth::libfluidsynth,INTERFACE_INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:FluidSynth::libfluidsynth,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
         )
-        target_get_dynamic_library(dynamic_fluidsynth FluidSynth::FluidSynth)
+        target_get_dynamic_library(dynamic_fluidsynth FluidSynth::libfluidsynth)
         message(STATUS "Dynamic fluidsynth: ${dynamic_fluidsynth}")
         target_compile_definitions(SDL2_mixer PRIVATE "FLUIDSYNTH_DYNAMIC=\"${dynamic_fluidsynth}\"")
         if(SDL2MIXER_VENDORED)
-            add_dependencies(SDL2_mixer FluidSynth::FluidSynth)
+            add_dependencies(SDL2_mixer FluidSynth::libfluidsynth)
         endif()
     else()
-        target_link_libraries(SDL2_mixer PRIVATE FluidSynth::FluidSynth)
+        target_link_libraries(SDL2_mixer PRIVATE FluidSynth::libfluidsynth)
     endif()
 endif()
 
@@ -902,6 +915,7 @@ if(SDL2MIXER_INSTALL)
     if(NOT SDL2MIXER_BUILD_SHARED_LIBS)
         install(
             FILES
+                cmake/PkgConfigHelper.cmake
                 cmake/FindFLAC.cmake
                 cmake/FindFluidSynth.cmake
                 cmake/Findgme.cmake
