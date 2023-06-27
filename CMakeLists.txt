@@ -76,6 +76,7 @@ option(CMAKE_POSITION_INDEPENDENT_CODE "Build static libraries with -fPIC" ON)
 option(BUILD_SHARED_LIBS "Build the library as a shared library" ON)
 
 cmake_dependent_option(SDL3MIXER_INSTALL "Enable SDL3mixer install target" ${SDL3MIXER_ROOTPROJECT} "${sdl3mixer_install_enableable}" OFF)
+cmake_dependent_option(SDL3MIXER_INSTALL_MAN "Install man pages for SDL3_mixer" ${SDL3MIXER_ROOTPROJECT} "SDL3MIXER_INSTALL" OFF)
 option(SDL3MIXER_DEPS_SHARED "Default value for loading dependencies dynamically" ON)
 option(SDL3MIXER_VENDORED "Use vendored third-party libraries" ${vendored_default})
 option(SDL3MIXER_WERROR "Treat warnings as errors" OFF)
@@ -986,6 +987,12 @@ if(SDL3MIXER_INSTALL)
         DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/licenses/${PROJECT_NAME}"
         COMPONENT library
     )
+
+    if(SDL3MIXER_INSTALL_MAN AND COMMAND SDL_generate_manpages)
+        SDL_generate_manpages(
+            SYMBOL "Mix_Init"
+        )
+    endif()
 endif()
 
 if(SDL3MIXER_SAMPLES)
