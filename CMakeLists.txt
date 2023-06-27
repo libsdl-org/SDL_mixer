@@ -18,6 +18,7 @@ project(SDL3_mixer
 )
 
 include(PrivateSdlFunctions)
+include(sdlmanpages)
 sdl_calculate_derived_version_variables(${MAJOR_VERSION} ${MINOR_VERSION} ${MICRO_VERSION})
 
 message(STATUS "Configuring ${PROJECT_NAME} ${PROJECT_VERSION}")
@@ -988,9 +989,10 @@ if(SDL3MIXER_INSTALL)
         COMPONENT library
     )
 
-    if(SDL3MIXER_INSTALL_MAN AND COMMAND SDL_generate_manpages)
+    if(SDL3MIXER_INSTALL_MAN)
         SDL_generate_manpages(
             SYMBOL "Mix_Init"
+            WIKIHEADERS_PL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/build-scripts/wikiheaders.pl"
         )
     endif()
 endif()
