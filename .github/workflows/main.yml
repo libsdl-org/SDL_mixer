@@ -24,13 +24,16 @@ jobs:
 
 
     steps:
+    - uses: ilammy/msvc-dev-cmd@v1
+      if: ${{ matrix.platform.msvc }}
+      with:
+        arch: x64
     - name: Set up MSYS2
       if: matrix.platform.shell == 'msys2 {0}'
       uses: msys2/setup-msys2@v2
       with:
         msystem: ${{ matrix.platform.msystem }}
         install: >-
-          ${{ matrix.platform.msys-env }}-SDL3
           ${{ matrix.platform.msys-env }}-cmake
           ${{ matrix.platform.msys-env }}-gcc
           ${{ matrix.platform.msys-env }}-flac
@@ -43,11 +46,23 @@ jobs:
           ${{ matrix.platform.msys-env }}-wavpack
           ${{ matrix.platform.msys-env }}-ninja
           ${{ matrix.platform.msys-env }}-pkg-config
+    - name: Setup Ninja
+      if: ${{ !contains(matrix.platform.shell, 'msys2') }}
+      uses: ashutoshvarma/setup-ninja@master
+      with:
+        version: 1.11.1
+    - name: Set up SDL
+      id: sdl
+      uses: libsdl-org/setup-sdl@main
+      with:
+        cmake-generator: Ninja
+        version: 3-head
+        sdl-test: true
+        shell: ${{ matrix.platform.shell }}
     - name: Setup Macos dependencies
       if: runner.os == 'macOS'
       run: |
         brew install \
-          sdl3 \
           libtool \
           ninja \
           pkg-config \
@@ -66,7 +81,6 @@ jobs:
         sudo apt-get update
         sudo apt-get -y install \
           cmake \
-          libsdl3-dev \
           libflac-dev \
           libfluidsynth-dev \
           libgme-dev \
@@ -82,28 +96,6 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Setup MSVC dependencies
-      if: "matrix.platform.msvc"
-      shell: pwsh
-      run: |
-        echo "::group::Downloading SDL"
-        .github/fetch_sdl_vc.ps1
-        echo "SDL3_DIR=$Env:GITHUB_WORKSPACE/SDL3-devel-VC" >> $Env:GITHUB_ENV
-        echo "::endgroup::"
-        echo "::group::Downloading yasm"
-        .github/fetch_yasm.ps1
-        echo "${{ github.workspace }}" >> $Env:GITHUB_PATH
-        echo "::endgroup::"
-    - name: Setup Ninja for MSVC
-      if: "matrix.platform.msvc"
-      uses: ashutoshvarma/setup-ninja@master
-      with:
-        version: 1.10.2
-    - uses: ilammy/msvc-dev-cmd@v1
-      if: "matrix.platform.msvc"
-      with:
-        arch: x64
-
     - name: Check that versioning is consistent
       # We only need to run this once: arbitrarily use the Linux build
       if: "runner.os == 'Linux'"
@@ -111,7 +103,7 @@ jobs:
 
     - name: Setup (CMake)
       if: ${{ !matrix.platform.msystem && !matrix.platform.msvc }}
-      uses: jwlawson/actions-setup-cmake@v1.13.1
+      uses: jwlawson/actions-setup-cmake@v1.14
       with:
         cmake-version: '3.16'
     - name: Configure (CMake)
@@ -141,14 +133,13 @@ jobs:
         set -eu
         rm -fr prefix_cmake
         cmake --install build/ --config Release
-        echo "SDL3_mixer_DIR=$(pwd)/prefix_cmake" >> $GITHUB_ENV
+        echo "SDL3_mixer_ROOT=$(pwd)/prefix_cmake" >> $GITHUB_ENV
         ( cd prefix_cmake; find . ) | LC_ALL=C sort -u
 
     - name: Verify CMake configuration files
       run: |
         cmake -S cmake/test -B cmake_config_build \
           -DCMAKE_BUILD_TYPE=Release \
-          -DCMAKE_PREFIX_PATH="${{ env.SDL3_mixer_DIR }};${{ env.SDL3_DIR }}" \
           -DTEST_SHARED=${{ matrix.platform.shared }} \
           -DTEST_STATIC=${{ matrix.platform.static }}
         cmake --build cmake_config_build --verbose --config Release
