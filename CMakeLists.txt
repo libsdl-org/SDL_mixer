@@ -56,7 +56,7 @@ else()
 endif()
 
 set(sdl3mixer_install_enableable ON)
-if ((TARGET SDL3 OR TARGET SDL3-static) AND SDL3_DISABLE_INSTALL)
+if((TARGET SDL3-shared OR TARGET SDL3-static) AND SDL_DISABLE_INSTALL)
     # Cannot install SDL3_mixer when SDL3 is built in same built, and is not installed.
     set(sdl3mixer_install_enableable OFF)
 endif()
@@ -196,16 +196,20 @@ endif()
 # Save BUILD_SHARED_LIBS variable
 set(SDL3MIXER_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
 
+set(sdl_required_components Headers)
+
 if(SDL3MIXER_BUILD_SHARED_LIBS)
     set(sdl3_mixer_target_name SDL3_mixer-shared)
     set(sdl3_target_name SDL3::SDL3-shared)
+
+    list(APPEND sdl_required_components SDL3-shared)
 else()
     set(sdl3_mixer_target_name SDL3_mixer-static)
-    set(sdl3_target_name SDL3::SDL3-static)
+    set(sdl3_target_name SDL3::SDL3)
 endif()
 
-if(NOT TARGET ${sdl3_target_name})
-    find_package(SDL3 ${SDL_REQUIRED_VERSION} REQUIRED)
+if(NOT TARGET SDL3::Headers OR NOT TARGET ${sdl3_target_name})
+    find_package(SDL3 ${SDL_REQUIRED_VERSION} REQUIRED COMPONENTS ${sdl_required_components})
 endif()
 
 set(BUILD_SHARED_LIBS ${SDL3MIXER_BUILD_SHARED_LIBS})
@@ -257,7 +261,10 @@ target_compile_definitions(${sdl3_mixer_target_name} PRIVATE
     SDL_BUILD_MINOR_VERSION=${MINOR_VERSION}
     SDL_BUILD_MICRO_VERSION=${MICRO_VERSION}
 )
-target_link_libraries(${sdl3_mixer_target_name} PRIVATE $<BUILD_INTERFACE:${sdl3_target_name}>)
+target_link_libraries(${sdl3_mixer_target_name} PUBLIC SDL3::Headers)
+if(SDL3MIXER_BUILD_SHARED_LIBS)
+    target_link_libraries(${sdl3_mixer_target_name} PRIVATE SDL3::SDL3-shared)
+endif()
 sdl_add_warning_options(${sdl3_mixer_target_name} WARNING_AS_ERROR ${SDL3MIXER_WERROR})
 if(WIN32 AND BUILD_SHARED_LIBS)
     target_sources(${sdl3_mixer_target_name} PRIVATE
@@ -265,10 +272,10 @@ if(WIN32 AND BUILD_SHARED_LIBS)
     )
 endif()
 set_target_properties(${sdl3_mixer_target_name} PROPERTIES
+    OUTPUT_NAME "SDL3_mixer"
     DEFINE_SYMBOL DLL_EXPORT
     EXPORT_NAME ${sdl3_mixer_target_name}
     C_VISIBILITY_PRESET "hidden"
-    OUTPUT_NAME "SDL3_mixer"
 )
 if(NOT ANDROID)
     if(APPLE)
