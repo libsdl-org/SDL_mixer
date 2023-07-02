@@ -85,7 +85,7 @@ static int ParseCommandLine(char *cmdline, char **argv)
     argc = 0;
     for (bufp = cmdline; *bufp;) {
         /* Skip leading whitespace */
-        while (isspace(*bufp)) {
+        while (SDL_isspace(*bufp)) {
             ++bufp;
         }
         /* Skip over argument */
@@ -109,7 +109,7 @@ static int ParseCommandLine(char *cmdline, char **argv)
                 ++argc;
             }
             /* Skip over word */
-            while (*bufp && ! isspace(*bufp)) {
+            while (*bufp && ! SDL_isspace(*bufp)) {
                 ++bufp;
             }
         }

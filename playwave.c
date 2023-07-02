@@ -380,30 +380,30 @@ int main(int argc, char *argv[])
 
     /* Check command line usage */
     for (i=1; argv[i] && (*argv[i] == '-'); ++i) {
-        if ((strcmp(argv[i], "-r") == 0) && argv[i+1]) {
+        if ((SDL_strcmp(argv[i], "-r") == 0) && argv[i+1]) {
             ++i;
-            audio_rate = atoi(argv[i]);
+            audio_rate = SDL_atoi(argv[i]);
         } else
-        if (strcmp(argv[i], "-m") == 0) {
+        if (SDL_strcmp(argv[i], "-m") == 0) {
             audio_channels = 1;
         } else
-        if ((strcmp(argv[i], "-c") == 0) && argv[i+1]) {
+        if ((SDL_strcmp(argv[i], "-c") == 0) && argv[i+1]) {
             ++i;
-            audio_channels = atoi(argv[i]);
+            audio_channels = SDL_atoi(argv[i]);
         } else
-        if (strcmp(argv[i], "-l") == 0) {
+        if (SDL_strcmp(argv[i], "-l") == 0) {
             loops = -1;
         } else
-        if (strcmp(argv[i], "-8") == 0) {
+        if (SDL_strcmp(argv[i], "-8") == 0) {
             audio_format = SDL_AUDIO_U8;
         } else
-        if (strcmp(argv[i], "-f32") == 0) {
+        if (SDL_strcmp(argv[i], "-f32") == 0) {
             audio_format = SDL_AUDIO_F32;
         } else
-        if (strcmp(argv[i], "-f") == 0) { /* rcg06122001 flip stereo */
+        if (SDL_strcmp(argv[i], "-f") == 0) { /* rcg06122001 flip stereo */
             reverse_stereo = 1;
         } else
-        if (strcmp(argv[i], "-F") == 0) { /* rcg06172001 flip sample */
+        if (SDL_strcmp(argv[i], "-F") == 0) { /* rcg06172001 flip sample */
             reverse_sample = 1;
         } else {
             Usage(argv[0]);
