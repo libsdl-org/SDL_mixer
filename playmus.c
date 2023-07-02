@@ -92,7 +92,7 @@ static void Menu(void)
             Mix_HaltMusic();
             break;
         case 'v': case 'V':
-            Mix_VolumeMusic(atoi(buf+1));
+            Mix_VolumeMusic(SDL_atoi(buf+1));
             break;
         }
     }
@@ -139,38 +139,38 @@ int main(int argc, char *argv[])
 
     /* Check command line usage */
     for (i=1; argv[i] && (*argv[i] == '-'); ++i) {
-        if ((strcmp(argv[i], "-r") == 0) && argv[i+1]) {
+        if ((SDL_strcmp(argv[i], "-r") == 0) && argv[i+1]) {
             ++i;
-            audio_rate = atoi(argv[i]);
+            audio_rate = SDL_atoi(argv[i]);
         } else
-        if (strcmp(argv[i], "-m") == 0) {
+        if (SDL_strcmp(argv[i], "-m") == 0) {
             audio_channels = 1;
         } else
-        if ((strcmp(argv[i], "-c") == 0) && argv[i+1]) {
+        if ((SDL_strcmp(argv[i], "-c") == 0) && argv[i+1]) {
             ++i;
-            audio_channels = atoi(argv[i]);
+            audio_channels = SDL_atoi(argv[i]);
         } else
-        if ((strcmp(argv[i], "-b") == 0) && argv[i+1]) {
+        if ((SDL_strcmp(argv[i], "-b") == 0) && argv[i+1]) {
             ++i;
-            audio_buffers = atoi(argv[i]);
+            audio_buffers = SDL_atoi(argv[i]);
         } else
-        if ((strcmp(argv[i], "-v") == 0) && argv[i+1]) {
+        if ((SDL_strcmp(argv[i], "-v") == 0) && argv[i+1]) {
             ++i;
-            audio_volume = atoi(argv[i]);
+            audio_volume = SDL_atoi(argv[i]);
         } else
-        if (strcmp(argv[i], "-l") == 0) {
+        if (SDL_strcmp(argv[i], "-l") == 0) {
             looping = -1;
         } else
-        if (strcmp(argv[i], "-i") == 0) {
+        if (SDL_strcmp(argv[i], "-i") == 0) {
             interactive = 1;
         } else
-        if (strcmp(argv[i], "-8") == 0) {
+        if (SDL_strcmp(argv[i], "-8") == 0) {
             audio_format = SDL_AUDIO_U8;
         } else
-        if (strcmp(argv[i], "-f32") == 0) {
+        if (SDL_strcmp(argv[i], "-f32") == 0) {
             audio_format = SDL_AUDIO_F32;
         } else
-        if (strcmp(argv[i], "-rwops") == 0) {
+        if (SDL_strcmp(argv[i], "-rwops") == 0) {
             rwops = 1;
         } else {
             Usage(argv[0]);
