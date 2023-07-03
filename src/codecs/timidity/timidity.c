@@ -7,7 +7,6 @@
 */
 
 #include <SDL3/SDL.h>
-#include "../../utils.h" /* for SDL_strtokr() */
 
 #include "timidity.h"
 
