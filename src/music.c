@@ -1565,8 +1565,8 @@ int Mix_EachSoundFont(int (SDLCALL *function)(const char*, void*), void *data)
 #else
 #define PATHSEP ":;"
 #endif
-    for (path = SDL_strtokr(paths, PATHSEP, &context); path;
-         path = SDL_strtokr(NULL,  PATHSEP, &context)) {
+    for (path = SDL_strtok_r(paths, PATHSEP, &context); path;
+         path = SDL_strtok_r(NULL,  PATHSEP, &context)) {
         if (!function(path, data)) {
             continue;
         }

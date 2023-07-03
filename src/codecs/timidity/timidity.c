@@ -84,13 +84,13 @@ static int read_config_file(const char *name, int rcf_count)
   {
     line++;
     words=0;
-    w[0]=SDL_strtokr(tmp, " \t\240", &endp);
+    w[0]=SDL_strtok_r(tmp, " \t\240", &endp);
     if (!w[0]) continue;
 
         /* Originally the TiMidity++ extensions were prefixed like this */
     if (SDL_strcmp(w[0], "#extension") == 0)
     {
-        w[0]=SDL_strtokr(0, " \t\240", &endp);
+        w[0]=SDL_strtok_r(0, " \t\240", &endp);
         if (!w[0]) continue;
     }
 
