@@ -4,6 +4,9 @@
 
 root = true
 
+[README.txt]
+end_of_line = crlf
+
 [*.{c,cc,cg,cpp,gradle,h,java,m,metal,pl,py,S,sh,txt}]
 indent_size = 4
 indent_style = space
