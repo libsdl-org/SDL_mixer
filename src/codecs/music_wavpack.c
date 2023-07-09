@@ -289,7 +289,7 @@ static WavpackStreamReader64 sdl_reader64 = {
 
 static int WAVPACK_Seek(void *context, double time);
 static void WAVPACK_Delete(void *context);
-static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, SDL_bool freesrc, int *freesrc2);
+static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, SDL_bool freesrc, SDL_bool *freesrc2);
 
 static void *decimation_init(int num_channels, int ratio);
 static int decimation_run(void *context, int32_t *samples, int num_samples);
@@ -304,7 +304,7 @@ static void *WAVPACK_CreateFromFile(const char *file)
 {
     SDL_RWops *src1, *src2;
     WAVPACK_music *music;
-    SDL_bool freesrc2 = 1;
+    SDL_bool freesrc2 = SDL_TRUE;
     size_t len;
     char *file2;
 
@@ -330,7 +330,7 @@ static void *WAVPACK_CreateFromFile(const char *file)
         SDL_stack_free(file2);
     }
 
-    music = WAVPACK_CreateFromRW_internal(src1, src2, 1, &freesrc2);
+    music = WAVPACK_CreateFromRW_internal(src1, src2, SDL_TRUE, &freesrc2);
     if (!music) {
         SDL_RWclose(src1);
         if (freesrc2 && src2) {
@@ -341,7 +341,7 @@ static void *WAVPACK_CreateFromFile(const char *file)
 }
 
 /* Load a WavPack stream from an SDL_RWops object */
-static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, SDL_bool freesrc, int *freesrc2)
+static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, SDL_bool freesrc, SDL_bool *freesrc2)
 {
     WAVPACK_music *music;
     SDL_AudioFormat format;
@@ -380,7 +380,7 @@ static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, SDL
     music->decimation = 1;
 
     if (freesrc2) {
-       *freesrc2 = 0; /* WAVPACK_Delete() will free it. */
+       *freesrc2 = SDL_FALSE; /* WAVPACK_Delete() will free it */
     }
 
     /* for very high sample rates (including DSD, which will normally be 352,800 Hz)
