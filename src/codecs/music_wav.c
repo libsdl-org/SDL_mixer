@@ -547,7 +547,7 @@ static int MS_ADPCM_Init(ADPCM_DecoderState *state, const Uint8 *chunk_data, Uin
          *   z = Number of samples per channel in block header
          *   wSamplesPerBlock = x / y + z
          */
-        samplesperblock = (Uint32)blockdatasamples + 2;
+        samplesperblock = (Uint16)(blockdatasamples + 2);
     }
 
     /* nBlockAlign can be in conflict with wSamplesPerBlock. For example, if
@@ -778,7 +778,7 @@ static int IMA_ADPCM_Init(ADPCM_DecoderState *state, const Uint8 *chunk_data, Ui
          *   z = Number of samples per channel in header
          *   wSamplesPerBlock = x / y + z
          */
-        samplesperblock = (Uint32)blockdatasamples + 1;
+        samplesperblock = (Uint16)(blockdatasamples + 1);
     }
 
     /* nBlockAlign can be in conflict with wSamplesPerBlock. For example, if
