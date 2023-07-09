@@ -144,7 +144,7 @@ typedef struct {
     unsigned channels;
     unsigned bits_per_sample;
     SDL_RWops *src;
-    int freesrc;
+    SDL_bool freesrc;
     SDL_AudioStream *stream;
     int loop;
     FLAC__int64 pcm_pos;
@@ -481,7 +481,7 @@ static void flac_error_music_cb(
 }
 
 /* Load an FLAC stream from an SDL_RWops object */
-static void *FLAC_CreateFromRW(SDL_RWops *src, int freesrc)
+static void *FLAC_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
 {
     FLAC_Music *music;
     int init_stage = 0;

@@ -51,7 +51,7 @@ typedef struct {
     struct mp3file_t file;
     drflac *dec;
     int play_count;
-    int freesrc;
+    SDL_bool freesrc;
     int volume;
     int status;
     int sample_rate;
@@ -158,7 +158,7 @@ static void DRFLAC_MetaCB(void *context, drflac_metadata *metadata)
 
 static int DRFLAC_Seek(void *context, double position);
 
-static void *DRFLAC_CreateFromRW(SDL_RWops *src, int freesrc)
+static void *DRFLAC_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
 {
     DRFLAC_Music *music;
 

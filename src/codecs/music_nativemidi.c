@@ -27,7 +27,7 @@
 #include "native_midi/native_midi.h"
 
 
-static void *NATIVEMIDI_CreateFromRW(SDL_RWops *src, int freesrc)
+static void *NATIVEMIDI_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
 {
     NativeMidiSong *music = native_midi_loadsong_RW(src, freesrc);
     if (!music) {

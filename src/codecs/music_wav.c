@@ -78,7 +78,7 @@ typedef struct {
 
 typedef struct {
     SDL_RWops *src;
-    int freesrc;
+    SDL_bool freesrc;
     SDL_AudioSpec spec;
     int volume;
     int play_count;
@@ -221,7 +221,7 @@ static void WAV_Delete(void *context);
 static int fetch_pcm(void *context, int length);
 
 /* Load a WAV stream from the given RWops object */
-static void *WAV_CreateFromRW(SDL_RWops *src, int freesrc)
+static void *WAV_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
 {
     WAV_Music *music;
     Uint32 magic;

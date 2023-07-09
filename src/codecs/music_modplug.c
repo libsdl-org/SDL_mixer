@@ -161,7 +161,7 @@ static int MODPLUG_Open(const SDL_AudioSpec *spec)
 }
 
 /* Load a modplug stream from an SDL_RWops object */
-void *MODPLUG_CreateFromRW(SDL_RWops *src, int freesrc)
+void *MODPLUG_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
 {
     MODPLUG_Music *music;
     void *buffer;

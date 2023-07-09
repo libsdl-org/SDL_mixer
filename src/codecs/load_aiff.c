@@ -62,10 +62,10 @@ static Uint32 SANE_to_Uint32 (Uint8 *sanebuf)
 
 /* This function is based on SDL_LoadWAV_RW(). */
 
-SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
+SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, SDL_bool freesrc,
     SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
 {
-    int was_error;
+    SDL_bool was_error = SDL_TRUE;
     int found_SSND;
     int found_COMM;
     int found_VHDR;
@@ -91,10 +91,24 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
     Uint8 sane_freq[10];
     Uint32 frequency = 0;
 
-    /* Make sure we are passed a valid data source */
-    was_error = 0;
-    if (src == NULL) {
-        was_error = 1;
+    /* Sanity checks */
+    if (audio_buf) {
+        *audio_buf = NULL;
+    }
+    if (!src) {
+        SDL_InvalidParamError("src");
+        goto done;
+    }
+    if (!spec) {
+        SDL_InvalidParamError("spec");
+        goto done;
+    }
+    if (!audio_buf) {
+        SDL_InvalidParamError("audio_buf");
+        goto done;
+    }
+    if (!audio_len) {
+        SDL_InvalidParamError("audio_len");
         goto done;
     }
 
@@ -109,7 +123,6 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
     }
     if ((FORMchunk != FORM) || ((AIFFmagic != AIFF) && (AIFFmagic != _8SVX))) {
         Mix_SetError("Unrecognized file type (not AIFF nor 8SVX)");
-        was_error = 1;
         goto done;
     }
 
@@ -144,13 +157,11 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
                 samplesize  = SDL_ReadBE16(src);
                 if (SDL_RWread(src, sane_freq, sizeof(sane_freq)) != sizeof(sane_freq)) {
                     Mix_SetError("Bad AIFF sample frequency");
-                    was_error = 1;
                     goto done;
                 }
                 frequency   = SANE_to_Uint32(sane_freq);
                 if (frequency == 0) {
                     Mix_SetError("Bad AIFF sample frequency");
-                    was_error = 1;
                     goto done;
                 }
                 break;
@@ -183,30 +194,26 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
 
     if ((AIFFmagic == AIFF) && !found_SSND) {
         Mix_SetError("Bad AIFF (no SSND chunk)");
-        was_error = 1;
         goto done;
     }
 
     if ((AIFFmagic == AIFF) && !found_COMM) {
         Mix_SetError("Bad AIFF (no COMM chunk)");
-        was_error = 1;
         goto done;
     }
 
     if ((AIFFmagic == _8SVX) && !found_VHDR) {
         Mix_SetError("Bad 8SVX (no VHDR chunk)");
-        was_error = 1;
         goto done;
     }
 
     if ((AIFFmagic == _8SVX) && !found_BODY) {
         Mix_SetError("Bad 8SVX (no BODY chunk)");
-        was_error = 1;
         goto done;
     }
 
     /* Decode the audio data format */
-    SDL_memset(spec, 0, sizeof(*spec));
+    SDL_zerop(spec);
     spec->freq = frequency;
     switch (samplesize) {
         case 8:
@@ -217,7 +224,6 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
             break;
         default:
             Mix_SetError("Unsupported AIFF samplesize");
-            was_error = 1;
             goto done;
     }
     spec->channels = (Uint8) channels;
@@ -227,25 +233,34 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
     *audio_buf = (Uint8 *)SDL_malloc(*audio_len);
     if (*audio_buf == NULL) {
         Mix_OutOfMemory();
-        return(NULL);
+        goto done;
     }
     SDL_RWseek(src, start, SDL_RW_SEEK_SET);
     if (SDL_RWread(src, *audio_buf, *audio_len) != *audio_len) {
         Mix_SetError("Unable to read audio data");
-        return(NULL);
+        goto done;
     }
 
     /* Don't return a buffer that isn't a multiple of samplesize */
     *audio_len &= ~((samplesize / 8) - 1);
+
+    was_error = SDL_FALSE;
 
 done:
     if (freesrc && src) {
         SDL_RWclose(src);
     }
     if (was_error) {
+        if (audio_buf && *audio_buf) {
+            SDL_free(*audio_buf);
+            *audio_buf = NULL;
+        }
+        if (audio_len) {
+            *audio_len = 0;
+        }
         spec = NULL;
     }
-    return(spec);
+    return spec;
 }
 
 /* vi: set ts=4 sw=4 expandtab: */

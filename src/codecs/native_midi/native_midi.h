@@ -27,7 +27,7 @@
 typedef struct _NativeMidiSong NativeMidiSong;
 
 int native_midi_detect(void);
-NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *src, int freesrc);
+NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *src, SDL_bool freesrc);
 void native_midi_freesong(NativeMidiSong *song);
 void native_midi_start(NativeMidiSong *song, int loops);
 void native_midi_pause(void);

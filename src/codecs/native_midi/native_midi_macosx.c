@@ -196,7 +196,7 @@ int native_midi_detect(void)
     return 1;  /* always available. */
 }
 
-NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *src, int freesrc)
+NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *src, SDL_bool freesrc)
 {
     NativeMidiSong *retval = NULL;
     void *buf = NULL;

@@ -100,7 +100,7 @@ static void OPUS_Unload(void)
 
 typedef struct {
     SDL_RWops *src;
-    int freesrc;
+    SDL_bool freesrc;
     int play_count;
     int volume;
     OggOpusFile *of;
@@ -210,7 +210,7 @@ static int OPUS_UpdateSection(OPUS_music *music)
 }
 
 /* Load an Opus stream from an SDL_RWops object */
-static void *OPUS_CreateFromRW(SDL_RWops *src, int freesrc)
+static void *OPUS_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
 {
     OPUS_music *music;
     OpusFileCallbacks callbacks;

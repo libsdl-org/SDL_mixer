@@ -245,7 +245,7 @@ fail:
     return NULL;
 }
 
-static void *FLUIDSYNTH_CreateFromRW(SDL_RWops *src, int freesrc)
+static void *FLUIDSYNTH_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
 {
     FLUIDSYNTH_Music *music;
 

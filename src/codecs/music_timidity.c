@@ -86,7 +86,7 @@ static void TIMIDITY_Close(void)
     Timidity_Exit();
 }
 
-void *TIMIDITY_CreateFromRW(SDL_RWops *src, int freesrc)
+void *TIMIDITY_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
 {
     TIMIDITY_Music *music;
     SDL_AudioSpec spec;

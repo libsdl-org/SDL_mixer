@@ -178,7 +178,7 @@ static void WAVPACK_Unload(void)
 typedef struct {
     SDL_RWops *src1; /* wavpack file    */
     SDL_RWops *src2; /* correction file */
-    int freesrc;
+    SDL_bool freesrc;
     int play_count;
     int volume;
 
@@ -289,13 +289,13 @@ static WavpackStreamReader64 sdl_reader64 = {
 
 static int WAVPACK_Seek(void *context, double time);
 static void WAVPACK_Delete(void *context);
-static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, int freesrc, int *freesrc2);
+static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, SDL_bool freesrc, int *freesrc2);
 
 static void *decimation_init(int num_channels, int ratio);
 static int decimation_run(void *context, int32_t *samples, int num_samples);
 static void decimation_reset(void *context);
 
-static void *WAVPACK_CreateFromRW(SDL_RWops *src, int freesrc)
+static void *WAVPACK_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
 {
     return WAVPACK_CreateFromRW_internal(src, NULL, freesrc, NULL);
 }
@@ -304,7 +304,7 @@ static void *WAVPACK_CreateFromFile(const char *file)
 {
     SDL_RWops *src1, *src2;
     WAVPACK_music *music;
-    int freesrc2 = 1;
+    SDL_bool freesrc2 = 1;
     size_t len;
     char *file2;
 
@@ -341,7 +341,7 @@ static void *WAVPACK_CreateFromFile(const char *file)
 }
 
 /* Load a WavPack stream from an SDL_RWops object */
-static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, int freesrc, int *freesrc2)
+static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, SDL_bool freesrc, int *freesrc2)
 {
     WAVPACK_music *music;
     SDL_AudioFormat format;

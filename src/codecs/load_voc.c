@@ -371,28 +371,43 @@ static Uint32 voc_read(SDL_RWops *src, vs_t *v, Uint8 *buf, SDL_AudioSpec *spec)
 
 
 /* don't call this directly; use Mix_LoadWAV_RW() for now. */
-SDL_AudioSpec *Mix_LoadVOC_RW (SDL_RWops *src, int freesrc,
+SDL_AudioSpec *Mix_LoadVOC_RW (SDL_RWops *src, SDL_bool freesrc,
         SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
 {
+    SDL_bool was_error = SDL_TRUE;
     vs_t v;
-    int was_error = 1;
     int samplesize;
     Uint8 *fillptr;
     void *ptr;
 
-    if ((!src) || (!audio_buf) || (!audio_len))   /* sanity checks. */
+    /* Sanity checks */
+    if (audio_buf) {
+        *audio_buf = NULL;
+    }
+    if (!src) {
+        SDL_InvalidParamError("src");
         goto done;
+    }
+    if (!spec) {
+        SDL_InvalidParamError("spec");
+        goto done;
+    }
+    if (!audio_buf) {
+        SDL_InvalidParamError("audio_buf");
+        goto done;
+    }
+    if (!audio_len) {
+        SDL_InvalidParamError("audio_len");
+        goto done;
+    }
 
     if (!voc_check_header(src))
         goto done;
 
-    SDL_memset(&v, 0, sizeof(vs_t));
+    SDL_zero(v);
     v.rate = VOC_BAD_RATE;
     v.rest = 0;
     v.has_extended = 0;
-    *audio_buf = NULL;
-    *audio_len = 0;
-    SDL_memset(spec, '\0', sizeof(SDL_AudioSpec));
 
     if (!voc_get_block(src, &v, spec))
         goto done;
@@ -407,6 +422,7 @@ SDL_AudioSpec *Mix_LoadVOC_RW (SDL_RWops *src, int freesrc,
         goto done;
     }
 
+    SDL_zerop(spec);
     spec->format = ((v.size == ST_SIZE_WORD) ? SDL_AUDIO_S16 : SDL_AUDIO_U8);
     if (spec->channels == 0)
         spec->channels = v.channels;
@@ -427,9 +443,6 @@ SDL_AudioSpec *Mix_LoadVOC_RW (SDL_RWops *src, int freesrc,
         ptr = SDL_realloc(*audio_buf, *audio_len);
         if (ptr == NULL)
         {
-            SDL_free(*audio_buf);
-            *audio_buf = NULL;
-            *audio_len = 0;
             goto done;
         }
 
@@ -439,22 +452,28 @@ SDL_AudioSpec *Mix_LoadVOC_RW (SDL_RWops *src, int freesrc,
 
     spec->samples = (Uint16)(*audio_len / v.size);
 
-    was_error = 0;  /* success, baby! */
-
     /* Don't return a buffer that isn't a multiple of samplesize */
     samplesize = ((spec->format & 0xFF)/8)*spec->channels;
     *audio_len &= (Uint32) ~(samplesize-1);
+
+    was_error = SDL_FALSE;
 
 done:
     if (freesrc && src) {
         SDL_RWclose(src);
     }
-
     if (was_error) {
+        if (audio_buf && *audio_buf) {
+            SDL_free(*audio_buf);
+            *audio_buf = NULL;
+        }
+        if (audio_len) {
+            *audio_len = 0;
+        }
         spec = NULL;
     }
+    return spec;
 
-    return(spec);
 } /* Mix_LoadVOC_RW */
 
 /* end of load_voc.c ... */

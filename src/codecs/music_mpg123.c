@@ -136,7 +136,7 @@ typedef struct
 {
     struct mp3file_t mp3file;
     int play_count;
-    int freesrc;
+    SDL_bool freesrc;
     int volume;
 
     mpg123_handle* handle;
@@ -222,7 +222,7 @@ static int MPG123_Open(const SDL_AudioSpec *spec)
     return 0;
 }
 
-static void *MPG123_CreateFromRW(SDL_RWops *src, int freesrc)
+static void *MPG123_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
 {
     MPG123_Music *music;
     int result, format, channels, encoding;

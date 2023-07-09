@@ -117,9 +117,10 @@ static sf_count_t sfvio_tell(void *user_data)
     return SDL_RWtell(RWops);
 }
 
-SDL_AudioSpec *Mix_LoadSndFile_RW (SDL_RWops *src, int freesrc,
+SDL_AudioSpec *Mix_LoadSndFile_RW (SDL_RWops *src, SDL_bool freesrc,
         SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
 {
+    SDL_bool was_error = SDL_TRUE;
     SNDFILE *sndfile = NULL;
     SF_INFO sfinfo;
     SF_VIRTUAL_IO sfvio = {
@@ -132,16 +133,26 @@ SDL_AudioSpec *Mix_LoadSndFile_RW (SDL_RWops *src, int freesrc,
     Uint32 len;
     short *buf = NULL;
 
-    int was_error = 1;
-
-    if (src == NULL || spec == NULL ||
-        audio_buf == NULL || audio_len == NULL) {
+    /* Sanity checks */
+    if (audio_buf) {
+        *audio_buf = NULL;
+    }
+    if (!src) {
+        SDL_InvalidParamError("src");
         goto done;
     }
-
-    *audio_buf = NULL;
-    *audio_len = 0;
-    SDL_memset(spec, 0, sizeof(*spec));
+    if (!spec) {
+        SDL_InvalidParamError("spec");
+        goto done;
+    }
+    if (!audio_buf) {
+        SDL_InvalidParamError("audio_buf");
+        goto done;
+    }
+    if (!audio_len) {
+        SDL_InvalidParamError("audio_len");
+        goto done;
+    }
 
     if (SNDFILE_loaded == 0) {
         if (SNDFILE_init() != 0) {
@@ -182,8 +193,7 @@ SDL_AudioSpec *Mix_LoadSndFile_RW (SDL_RWops *src, int freesrc,
         goto done;
     }
 
-    was_error = 0;
-
+    SDL_zerop(spec);
     spec->channels = sfinfo.channels;
     spec->freq = sfinfo.samplerate;
     spec->format = SDL_AUDIO_S16;
@@ -191,25 +201,31 @@ SDL_AudioSpec *Mix_LoadSndFile_RW (SDL_RWops *src, int freesrc,
     *audio_buf = (Uint8 *)buf;
     *audio_len = len;
 
-    if (freesrc && src) {
-        SDL_RWclose(src);
-    }
+    was_error = SDL_FALSE;
 
 done:
     if (sndfile) {
         SF_sf_close(sndfile);
     }
-
+    if (freesrc && src) {
+        SDL_RWclose(src);
+    }
     if (was_error) {
+        if (audio_buf && *audio_buf) {
+            SDL_free(*audio_buf);
+            *audio_buf = NULL;
+        }
+        if (audio_len) {
+            *audio_len = 0;
+        }
         spec = NULL;
     }
-
     return spec;
 }
 
 #else
 
-SDL_AudioSpec *Mix_LoadSndFile_RW (SDL_RWops *src, int freesrc,
+SDL_AudioSpec *Mix_LoadSndFile_RW (SDL_RWops *src, SDL_bool freesrc,
         SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
 {
     (void) src;

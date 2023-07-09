@@ -122,7 +122,7 @@ static void OGG_Unload(void)
 
 typedef struct {
     SDL_RWops *src;
-    int freesrc;
+    SDL_bool freesrc;
     int play_count;
     int volume;
     OggVorbis_File vf;
@@ -229,7 +229,7 @@ static int OGG_UpdateSection(OGG_music *music)
 }
 
 /* Load an OGG stream from an SDL_RWops object */
-static void *OGG_CreateFromRW(SDL_RWops *src, int freesrc)
+static void *OGG_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
 {
     OGG_music *music;
     ov_callbacks callbacks;

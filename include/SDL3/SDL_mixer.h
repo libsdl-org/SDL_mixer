@@ -553,7 +553,7 @@ extern DECLSPEC int SDLCALL Mix_AllocateChannels(int numchans);
  * fly. Also, crucially, there are as many channels for chunks as the app can
  * allocate, but SDL_mixer only offers a single "music" channel.
  *
- * If `freesrc` is non-zero, the RWops will be closed before returning,
+ * If `freesrc` is SDL_TRUE, the RWops will be closed before returning,
  * whether this function succeeds or not. SDL_mixer reads everything it needs
  * from the RWops during this call in any case.
  *
@@ -566,7 +566,7 @@ extern DECLSPEC int SDLCALL Mix_AllocateChannels(int numchans);
  * Mix_FreeChunk().
  *
  * \param src an SDL_RWops that data will be read from.
- * \param freesrc non-zero to close/free the SDL_RWops before returning, zero
+ * \param freesrc SDL_TRUE to close/free the SDL_RWops before returning, SDL_FALSE
  *                to leave it open.
  * \returns a new chunk, or NULL on error.
  *
@@ -576,7 +576,7 @@ extern DECLSPEC int SDLCALL Mix_AllocateChannels(int numchans);
  * \sa Mix_LoadWAV
  * \sa Mix_FreeChunk
  */
-extern DECLSPEC Mix_Chunk * SDLCALL Mix_LoadWAV_RW(SDL_RWops *src, int freesrc);
+extern DECLSPEC Mix_Chunk * SDLCALL Mix_LoadWAV_RW(SDL_RWops *src, SDL_bool freesrc);
 
 /**
  * Load a supported audio format into a chunk.
@@ -603,7 +603,7 @@ extern DECLSPEC Mix_Chunk * SDLCALL Mix_LoadWAV_RW(SDL_RWops *src, int freesrc);
  * Mix_FreeChunk().
  *
  * Note that before SDL_mixer 2.6.0, this function was a macro that called
- * Mix_LoadWAV_RW(), creating a RWops and setting `freesrc` to 1. This macro
+ * Mix_LoadWAV_RW(), creating a RWops and setting `freesrc` to SDL_TRUE. This macro
  * has since been promoted to a proper API function. Older binaries linked
  * against a newer SDL_mixer will still call Mix_LoadWAV_RW directly, as they
  * are using the macro, which was available since the dawn of time.
@@ -668,7 +668,7 @@ extern DECLSPEC Mix_Music * SDLCALL Mix_LoadMUS(const char *file);
  * fly. Also, crucially, there are as many channels for chunks as the app can
  * allocate, but SDL_mixer only offers a single "music" channel.
  *
- * If `freesrc` is non-zero, the RWops will be closed before returning,
+ * If `freesrc` is SDL_TRUE, the RWops will be closed before returning,
  * whether this function succeeds or not. SDL_mixer reads everything it needs
  * from the RWops during this call in any case.
  *
@@ -684,7 +684,7 @@ extern DECLSPEC Mix_Music * SDLCALL Mix_LoadMUS(const char *file);
  * Mix_FreeMusic().
  *
  * \param src an SDL_RWops that data will be read from.
- * \param freesrc non-zero to close/free the SDL_RWops before returning, zero
+ * \param freesrc SDL_TRUE to close/free the SDL_RWops before returning, SDL_FALSE
  *                to leave it open.
  * \returns a new music object, or NULL on error.
  *
@@ -692,7 +692,7 @@ extern DECLSPEC Mix_Music * SDLCALL Mix_LoadMUS(const char *file);
  *
  * \sa Mix_FreeMusic
  */
-extern DECLSPEC Mix_Music * SDLCALL Mix_LoadMUS_RW(SDL_RWops *src, int freesrc);
+extern DECLSPEC Mix_Music * SDLCALL Mix_LoadMUS_RW(SDL_RWops *src, SDL_bool freesrc);
 
 /**
  * Load an audio format into a music object, assuming a specific format.
@@ -728,7 +728,7 @@ extern DECLSPEC Mix_Music * SDLCALL Mix_LoadMUS_RW(SDL_RWops *src, int freesrc);
  * - `MUS_OPUS` (Opus files)
  * - `MUS_WAVPACK` (WavPack files)
  *
- * If `freesrc` is non-zero, the RWops will be closed before returning,
+ * If `freesrc` is SDL_TRUE, the RWops will be closed before returning,
  * whether this function succeeds or not. SDL_mixer reads everything it needs
  * from the RWops during this call in any case.
  *
@@ -741,7 +741,7 @@ extern DECLSPEC Mix_Music * SDLCALL Mix_LoadMUS_RW(SDL_RWops *src, int freesrc);
  *
  * \param src an SDL_RWops that data will be read from.
  * \param type the type of audio data provided by `src`.
- * \param freesrc non-zero to close/free the SDL_RWops before returning, zero
+ * \param freesrc SDL_TRUE to close/free the SDL_RWops before returning, SDL_FALSE
  *                to leave it open.
  * \returns a new music object, or NULL on error.
  *
@@ -749,7 +749,7 @@ extern DECLSPEC Mix_Music * SDLCALL Mix_LoadMUS_RW(SDL_RWops *src, int freesrc);
  *
  * \sa Mix_FreeMusic
  */
-extern DECLSPEC Mix_Music * SDLCALL Mix_LoadMUSType_RW(SDL_RWops *src, Mix_MusicType type, int freesrc);
+extern DECLSPEC Mix_Music * SDLCALL Mix_LoadMUSType_RW(SDL_RWops *src, Mix_MusicType type, SDL_bool freesrc);
 
 /**
  * Load a WAV file from memory as quickly as possible.

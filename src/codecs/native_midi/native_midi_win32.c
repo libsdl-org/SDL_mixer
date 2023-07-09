@@ -213,7 +213,7 @@ int native_midi_detect(void)
   return 1;
 }
 
-NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *src, int freesrc)
+NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *src, SDL_bool freesrc)
 {
     NativeMidiSong *newsong;
     MIDIEvent       *evntlist = NULL;

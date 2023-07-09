@@ -733,12 +733,12 @@ Mix_Music *Mix_LoadMUS(const char *file)
     return Mix_LoadMUSType_RW(src, type, SDL_TRUE);
 }
 
-Mix_Music *Mix_LoadMUS_RW(SDL_RWops *src, int freesrc)
+Mix_Music *Mix_LoadMUS_RW(SDL_RWops *src, SDL_bool freesrc)
 {
     return Mix_LoadMUSType_RW(src, MUS_NONE, freesrc);
 }
 
-Mix_Music *Mix_LoadMUSType_RW(SDL_RWops *src, Mix_MusicType type, int freesrc)
+Mix_Music *Mix_LoadMUSType_RW(SDL_RWops *src, Mix_MusicType type, SDL_bool freesrc)
 {
     int i;
     void *context;

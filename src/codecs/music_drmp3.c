@@ -49,7 +49,7 @@ typedef struct {
     struct mp3file_t file;
     drmp3 dec;
     int play_count;
-    int freesrc;
+    SDL_bool freesrc;
     int volume;
     int status;
     SDL_AudioStream *stream;
@@ -79,7 +79,7 @@ static drmp3_bool32 DRMP3_SeekCB(void *context, int offset, drmp3_seek_origin or
 
 static int DRMP3_Seek(void *context, double position);
 
-static void *DRMP3_CreateFromRW(SDL_RWops *src, int freesrc)
+static void *DRMP3_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
 {
     DRMP3_Music *music;
 

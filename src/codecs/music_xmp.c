@@ -191,7 +191,7 @@ static long xmp_ftell(void *src) {
 }
 
 /* Load a libxmp stream from an SDL_RWops object */
-void *XMP_CreateFromRW(SDL_RWops *src, int freesrc)
+void *XMP_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
 {
     XMP_Music *music;
     struct xmp_callbacks file_callbacks = {

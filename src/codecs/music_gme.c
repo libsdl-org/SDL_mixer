@@ -125,7 +125,7 @@ typedef struct
 {
     int play_count;
     Music_Emu* game_emu;
-    int freesrc;
+    SDL_bool freesrc;
     SDL_bool has_track_length;
     int track_length;
     int intro_length;
@@ -205,7 +205,7 @@ static int initialize_from_track_info(GME_Music *music, int track)
     return 0;
 }
 
-static void *GME_CreateFromRW(struct SDL_RWops *src, int freesrc)
+static void *GME_CreateFromRW(struct SDL_RWops *src, SDL_bool freesrc)
 {
     void *mem = 0;
     size_t size;

@@ -219,7 +219,7 @@ void native_midi_setvolume(int volume)
   synth.SetVolume(volume / 128.0);
 }
 
-NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *src, int freesrc)
+NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *src, SDL_bool freesrc)
 {
   NativeMidiSong *song = new NativeMidiSong;
   song->store = new MidiEventsStore;
