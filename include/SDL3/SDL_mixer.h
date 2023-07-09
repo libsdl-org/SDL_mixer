@@ -566,8 +566,8 @@ extern DECLSPEC int SDLCALL Mix_AllocateChannels(int numchans);
  * Mix_FreeChunk().
  *
  * \param src an SDL_RWops that data will be read from.
- * \param freesrc SDL_TRUE to close/free the SDL_RWops before returning, SDL_FALSE
- *                to leave it open.
+ * \param freesrc SDL_TRUE to close/free the SDL_RWops before returning,
+ *                SDL_FALSE to leave it open.
  * \returns a new chunk, or NULL on error.
  *
  * \since This function is available since SDL_mixer 2.6.0 (and as a macro
@@ -603,10 +603,10 @@ extern DECLSPEC Mix_Chunk * SDLCALL Mix_LoadWAV_RW(SDL_RWops *src, SDL_bool free
  * Mix_FreeChunk().
  *
  * Note that before SDL_mixer 2.6.0, this function was a macro that called
- * Mix_LoadWAV_RW(), creating a RWops and setting `freesrc` to SDL_TRUE. This macro
- * has since been promoted to a proper API function. Older binaries linked
- * against a newer SDL_mixer will still call Mix_LoadWAV_RW directly, as they
- * are using the macro, which was available since the dawn of time.
+ * Mix_LoadWAV_RW(), creating a RWops and setting `freesrc` to SDL_TRUE. This
+ * macro has since been promoted to a proper API function. Older binaries
+ * linked against a newer SDL_mixer will still call Mix_LoadWAV_RW directly,
+ * as they are using the macro, which was available since the dawn of time.
  *
  * \param file the filesystem path to load data from.
  * \returns a new chunk, or NULL on error.
@@ -684,8 +684,8 @@ extern DECLSPEC Mix_Music * SDLCALL Mix_LoadMUS(const char *file);
  * Mix_FreeMusic().
  *
  * \param src an SDL_RWops that data will be read from.
- * \param freesrc SDL_TRUE to close/free the SDL_RWops before returning, SDL_FALSE
- *                to leave it open.
+ * \param freesrc SDL_TRUE to close/free the SDL_RWops before returning,
+ *                SDL_FALSE to leave it open.
  * \returns a new music object, or NULL on error.
  *
  * \since This function is available since SDL_mixer 2.0.0.
@@ -741,8 +741,8 @@ extern DECLSPEC Mix_Music * SDLCALL Mix_LoadMUS_RW(SDL_RWops *src, SDL_bool free
  *
  * \param src an SDL_RWops that data will be read from.
  * \param type the type of audio data provided by `src`.
- * \param freesrc SDL_TRUE to close/free the SDL_RWops before returning, SDL_FALSE
- *                to leave it open.
+ * \param freesrc SDL_TRUE to close/free the SDL_RWops before returning,
+ *                SDL_FALSE to leave it open.
  * \returns a new music object, or NULL on error.
  *
  * \since This function is available since SDL_mixer 2.0.0.
