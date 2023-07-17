@@ -1630,8 +1630,8 @@ extern DECLSPEC int SDLCALL Mix_ReserveChannels(int num);
 /**
  * Assign a tag to a channel.
  *
- * A tag is an arbitrary number that can be assigned to several mixer channels,
- * to form groups of channels.
+ * A tag is an arbitrary number that can be assigned to several mixer
+ * channels, to form groups of channels.
  *
  * If 'tag' is -1, the tag is removed (actually -1 is the tag used to
  * represent the group of all the channels).
@@ -1652,8 +1652,8 @@ extern DECLSPEC int SDLCALL Mix_GroupChannel(int which, int tag);
 /**
  * Assign several consecutive channels to the same tag.
  *
- * A tag is an arbitrary number that can be assigned to several mixer channels,
- * to form groups of channels.
+ * A tag is an arbitrary number that can be assigned to several mixer
+ * channels, to form groups of channels.
  *
  * If 'tag' is -1, the tag is removed (actually -1 is the tag used to
  * represent the group of all the channels).
@@ -1678,8 +1678,8 @@ extern DECLSPEC int SDLCALL Mix_GroupChannels(int from, int to, int tag);
 /**
  * Finds the first available channel in a group of channels.
  *
- * A tag is an arbitrary number that can be assigned to several mixer channels,
- * to form groups of channels.
+ * A tag is an arbitrary number that can be assigned to several mixer
+ * channels, to form groups of channels.
  *
  * This function searches all channels with a specified tag, and returns the
  * channel number of the first one it finds that is currently unused.
@@ -2122,8 +2122,8 @@ extern DECLSPEC int SDLCALL Mix_HaltChannel(int channel);
  * This will stop further playback on all channels with a specific tag, until
  * a new chunk is started there.
  *
- * A tag is an arbitrary number that can be assigned to several mixer channels,
- * to form groups of channels.
+ * A tag is an arbitrary number that can be assigned to several mixer
+ * channels, to form groups of channels.
  *
  * The default tag for a channel is -1.
  *
@@ -2215,8 +2215,8 @@ extern DECLSPEC int SDLCALL Mix_FadeOutChannel(int which, int ms);
  * current volumes to silence over `ms` milliseconds. After that time, those
  * channels are halted.
  *
- * A tag is an arbitrary number that can be assigned to several mixer channels,
- * to form groups of channels.
+ * A tag is an arbitrary number that can be assigned to several mixer
+ * channels, to form groups of channels.
  *
  * The default tag for a channel is -1.
  *
