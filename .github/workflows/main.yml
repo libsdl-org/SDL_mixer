@@ -46,7 +46,7 @@ jobs:
           ${{ matrix.platform.msys-env }}-wavpack
           ${{ matrix.platform.msys-env }}-ninja
           ${{ matrix.platform.msys-env }}-pkg-config
-    - name: Setup Ninja
+    - name: Set up Ninja
       if: ${{ !contains(matrix.platform.shell, 'msys2') }}
       uses: ashutoshvarma/setup-ninja@master
       with:
@@ -59,7 +59,7 @@ jobs:
         version: 3-head
         sdl-test: true
         shell: ${{ matrix.platform.shell }}
-    - name: Setup Macos dependencies
+    - name: Set up Macos dependencies
       if: runner.os == 'macOS'
       run: |
         brew install \
@@ -75,7 +75,7 @@ jobs:
           opusfile \
           wavpack \
           ${NULL+}
-    - name: Setup Linux dependencies
+    - name: Set up Linux dependencies
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update
@@ -99,7 +99,7 @@ jobs:
     - name: Check that versioning is consistent
       # We only need to run this once: arbitrarily use the Linux build
       if: "runner.os == 'Linux'"
-      run: ./test-versioning.sh
+      run: ./build-scripts/test-versioning.sh
 
     - name: Setup (CMake)
       if: ${{ !matrix.platform.msystem && !matrix.platform.msvc }}
@@ -115,7 +115,7 @@ jobs:
           -DSDL3MIXER_FLAC_LIBFLAC=ON \
           -DSDL3MIXER_GME=ON \
           -DSDL3MIXER_MOD_XMP=ON \
-          -DSDL3MIXER_MP3_MPG133=ON \
+          -DSDL3MIXER_MP3_MPG123=ON \
           -DSDL3MIXER_OPUS=ON \
           -DSDL3MIXER_VORBIS=VORBISFILE \
           -DSDL3MIXER_WERROR=ON \

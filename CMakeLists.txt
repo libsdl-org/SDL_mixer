@@ -268,7 +268,7 @@ endif()
 sdl_add_warning_options(${sdl3_mixer_target_name} WARNING_AS_ERROR ${SDL3MIXER_WERROR})
 if(WIN32 AND BUILD_SHARED_LIBS)
     target_sources(${sdl3_mixer_target_name} PRIVATE
-        version.rc
+        src/version.rc
     )
 endif()
 set_target_properties(${sdl3_mixer_target_name} PROPERTIES
@@ -316,7 +316,7 @@ if(SDL3MIXER_BUILD_SHARED_LIBS)
     sdl_target_link_options_no_undefined(${sdl3_mixer_target_name})
 endif()
 
-sdl_target_link_option_version_file(${sdl3_mixer_target_name} "${CMAKE_CURRENT_SOURCE_DIR}/SDL_mixer.sym")
+sdl_target_link_option_version_file(${sdl3_mixer_target_name} "${CMAKE_CURRENT_SOURCE_DIR}/src/SDL_mixer.sym")
 
 if(SDL3MIXER_BUILD_SHARED_LIBS)
     # Make sure static library dependencies are built with -fPIC when building a shared SDL3_mixer
@@ -925,6 +925,7 @@ if(SDL3MIXER_INSTALL)
         set(SDL3MIXER_INSTALL_CMAKEDIR_ROOT_DEFAULT "${CMAKE_INSTALL_LIBDIR}/cmake")
     endif()
     set(SDL3MIXER_INSTALL_CMAKEDIR_ROOT "${SDL3MIXER_INSTALL_CMAKEDIR_ROOT_DEFAULT}" CACHE STRING "Root folder where to install SDL3Config.cmake related files (SDL3 subfolder for non-MSVC projects)")
+    set(SDLMIXER_PKGCONFIG_INSTALLDIR "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
 
     if(WIN32 AND NOT MINGW)
         set(SDL3MIXER_INSTALL_CMAKEDIR "${SDL3MIXER_INSTALL_CMAKEDIR_ROOT}")
@@ -967,19 +968,17 @@ if(SDL3MIXER_INSTALL)
         COMPONENT devel
     )
 
+    file(RELATIVE_PATH SDL_PATH_PREFIX_RELATIVE_TO_PKGCONFIG "${CMAKE_INSTALL_PREFIX}/${SDLMIXER_PKGCONFIG_INSTALLDIR}" "${CMAKE_INSTALL_PREFIX}")
+    string(REGEX REPLACE "[/]+$" "" SDL_PATH_PREFIX_RELATIVE_TO_PKGCONFIG "${SDL_PATH_PREFIX_RELATIVE_TO_PKGCONFIG}")
+    set(SDL_PKGCONFIG_PREFIX "\${pcfiledir}/${SDL_PATH_PREFIX_RELATIVE_TO_PKGCONFIG}")
+
     string(JOIN " " PC_REQUIRES ${PC_REQUIRES})
     string(JOIN " " PC_LIBS ${PC_LIBS})
     configure_file(cmake/sdl3-mixer.pc.in sdl3-mixer.pc @ONLY)
 
-    if(CMAKE_SYSTEM_NAME MATCHES FreeBSD)
-        # FreeBSD uses ${PREFIX}/libdata/pkgconfig
-        set(PC_DESTDIR "libdata/pkgconfig")
-    else()
-        set(PC_DESTDIR "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
-    endif()
     # Always install sdl3-mixer.pc file: libraries might be different between config modes
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/sdl3-mixer.pc"
-        DESTINATION "${PC_DESTDIR}" COMPONENT devel)
+        DESTINATION "${SDLMIXER_PKGCONFIG_INSTALLDIR}" COMPONENT devel)
 
     install(FILES "LICENSE.txt"
         DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/licenses/${PROJECT_NAME}"
@@ -998,8 +997,8 @@ if(SDL3MIXER_SAMPLES)
     check_include_file("signal.h" HAVE_SIGNAL_H)
     check_symbol_exists("setbuf" "stdio.h" HAVE_SETBUF)
 
-    add_executable(playmus playmus.c)
-    add_executable(playwave playwave.c)
+    add_executable(playmus examples/playmus.c)
+    add_executable(playwave examples/playwave.c)
 
     foreach(prog playmus playwave)
         sdl_add_warning_options(${prog} WARNING_AS_ERROR ${SDL3MIXER_WERROR})

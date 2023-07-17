@@ -212,7 +212,7 @@
     <Bscmake />
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\playmus.c">
+    <ClCompile Include="..\..\examples\playmus.c">
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
