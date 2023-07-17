@@ -1477,7 +1477,7 @@ extern DECLSPEC int SDLCALL Mix_SetPanning(int channel, Uint8 left, Uint8 right)
  * Set the position of a channel.
  *
  * `angle` is an integer from 0 to 360, that specifies the location of the
- * sound in relation to the listener. `angle` will be reduced as neccesary
+ * sound in relation to the listener. `angle` will be reduced as necessary
  * (540 becomes 180 degrees, -100 becomes 260). Angle 0 is due north, and
  * rotates clockwise as the value increases. For efficiency, the precision of
  * this effect may be limited (angles 1 through 7 might all produce the same
@@ -1630,7 +1630,7 @@ extern DECLSPEC int SDLCALL Mix_ReserveChannels(int num);
 /**
  * Assign a tag to a channel.
  *
- * A tag is an arbitary number that can be assigned to several mixer channels,
+ * A tag is an arbitrary number that can be assigned to several mixer channels,
  * to form groups of channels.
  *
  * If 'tag' is -1, the tag is removed (actually -1 is the tag used to
@@ -1652,7 +1652,7 @@ extern DECLSPEC int SDLCALL Mix_GroupChannel(int which, int tag);
 /**
  * Assign several consecutive channels to the same tag.
  *
- * A tag is an arbitary number that can be assigned to several mixer channels,
+ * A tag is an arbitrary number that can be assigned to several mixer channels,
  * to form groups of channels.
  *
  * If 'tag' is -1, the tag is removed (actually -1 is the tag used to
@@ -1678,7 +1678,7 @@ extern DECLSPEC int SDLCALL Mix_GroupChannels(int from, int to, int tag);
 /**
  * Finds the first available channel in a group of channels.
  *
- * A tag is an arbitary number that can be assigned to several mixer channels,
+ * A tag is an arbitrary number that can be assigned to several mixer channels,
  * to form groups of channels.
  *
  * This function searches all channels with a specified tag, and returns the
@@ -2012,7 +2012,7 @@ extern DECLSPEC int SDLCALL Mix_Volume(int channel, int volume);
  * Set the volume for a specific chunk.
  *
  * In addition to channels having a volume setting, individual chunks also
- * maintain a seperate volume. Both values are considered when mixing, so both
+ * maintain a separate volume. Both values are considered when mixing, so both
  * affect the final attenuation of the sound. This lets an app adjust the
  * volume for all instances of a sound in addition to specific instances of
  * that sound.
@@ -2122,7 +2122,7 @@ extern DECLSPEC int SDLCALL Mix_HaltChannel(int channel);
  * This will stop further playback on all channels with a specific tag, until
  * a new chunk is started there.
  *
- * A tag is an arbitary number that can be assigned to several mixer channels,
+ * A tag is an arbitrary number that can be assigned to several mixer channels,
  * to form groups of channels.
  *
  * The default tag for a channel is -1.
@@ -2215,7 +2215,7 @@ extern DECLSPEC int SDLCALL Mix_FadeOutChannel(int which, int ms);
  * current volumes to silence over `ms` milliseconds. After that time, those
  * channels are halted.
  *
- * A tag is an arbitary number that can be assigned to several mixer channels,
+ * A tag is an arbitrary number that can be assigned to several mixer channels,
  * to form groups of channels.
  *
  * The default tag for a channel is -1.
