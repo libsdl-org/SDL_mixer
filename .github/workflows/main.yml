@@ -29,7 +29,7 @@ jobs:
       with:
         arch: x64
     - name: Set up MSYS2
-      if: matrix.platform.shell == 'msys2 {0}'
+      if: ${{ matrix.platform.shell == 'msys2 {0}' }}
       uses: msys2/setup-msys2@v2
       with:
         msystem: ${{ matrix.platform.msystem }}
@@ -60,7 +60,7 @@ jobs:
         sdl-test: true
         shell: ${{ matrix.platform.shell }}
     - name: Set up Macos dependencies
-      if: runner.os == 'macOS'
+      if: ${{ runner.os == 'macOS' }}
       run: |
         brew install \
           libtool \
@@ -76,7 +76,7 @@ jobs:
           wavpack \
           ${NULL+}
     - name: Set up Linux dependencies
-      if: runner.os == 'Linux'
+      if: ${{ runner.os == 'Linux' }}
       run: |
         sudo apt-get update
         sudo apt-get -y install \
@@ -98,8 +98,15 @@ jobs:
 
     - name: Check that versioning is consistent
       # We only need to run this once: arbitrarily use the Linux build
-      if: "runner.os == 'Linux'"
+      if: ${{ runner.os == 'Linux' }}
       run: ./build-scripts/test-versioning.sh
+
+    - name: Set up yasm for mpg123
+      if: ${{ matrix.platform.msvc }}
+      shell: pwsh
+      run: |
+        .github/fetch_yasm.ps1
+        echo "${{ github.workspace }}" >> $Env:GITHUB_PATH
 
     - name: Setup (CMake)
       if: ${{ !matrix.platform.msystem && !matrix.platform.msvc }}
