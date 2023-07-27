@@ -82,6 +82,7 @@ static int DRMP3_Seek(void *context, double position);
 static void *DRMP3_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
 {
     DRMP3_Music *music;
+    SDL_AudioSpec srcspec;
 
     music = (DRMP3_Music *)SDL_calloc(1, sizeof(DRMP3_Music));
     if (!music) {
@@ -111,12 +112,10 @@ static void *DRMP3_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
     }
 
     music->channels = music->dec.channels;
-    music->stream = SDL_CreateAudioStream(SDL_AUDIO_S16SYS,
-                                          (Uint8)music->channels,
-                                          (int)music->dec.sampleRate,
-                                          music_spec.format,
-                                          music_spec.channels,
-                                          music_spec.freq);
+    srcspec.format = SDL_AUDIO_S16SYS;
+    srcspec.channels = music->channels;
+    srcspec.freq = (int)music->dec.sampleRate;
+    music->stream = SDL_CreateAudioStream(&srcspec, &music_spec);
     if (!music->stream) {
         SDL_OutOfMemory();
         drmp3_uninit(&music->dec);
@@ -124,7 +123,7 @@ static void *DRMP3_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
         return NULL;
     }
 
-    music->buffer_size = music_spec.samples * sizeof(drmp3_int16) * music->channels;
+    music->buffer_size = 4096/*music_spec.samples*/ * sizeof(drmp3_int16) * music->channels;
     music->buffer = (drmp3_int16*)SDL_calloc(1, music->buffer_size);
     if (!music->buffer) {
         drmp3_uninit(&music->dec);
@@ -182,7 +181,7 @@ static int DRMP3_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         return 0;
     }
 
-    amount = drmp3_read_pcm_frames_s16(&music->dec, music_spec.samples, music->buffer);
+    amount = drmp3_read_pcm_frames_s16(&music->dec, 4096/*music_spec.samples*/, music->buffer);
     if (amount > 0) {
         if (SDL_PutAudioStreamData(music->stream, music->buffer, (int)amount * sizeof(drmp3_int16) * music->channels) < 0) {
             return -1;

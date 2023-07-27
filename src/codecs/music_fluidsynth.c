@@ -171,6 +171,7 @@ static int FLUIDSYNTH_Open(const SDL_AudioSpec *spec)
 
 static FLUIDSYNTH_Music *FLUIDSYNTH_LoadMusic(void *data)
 {
+    SDL_AudioSpec srcspec;
     SDL_RWops *src = (SDL_RWops *)data;
     FLUIDSYNTH_Music *music;
     double samplerate; /* as set by the lib. */
@@ -186,7 +187,7 @@ static FLUIDSYNTH_Music *FLUIDSYNTH_LoadMusic(void *data)
     }
 
     music->volume = MIX_MAX_VOLUME;
-    music->buffer_size = music_spec.samples * sizeof(Sint16) * channels;
+    music->buffer_size = 4096/*music_spec.samples*/ * sizeof(Sint16) * channels;
     music->synth_write = fluidsynth.fluid_synth_write_s16;
     if (music_spec.format & 0x0020) { /* 32 bit. */
         src_format = SDL_AUDIO_F32SYS;
@@ -234,8 +235,10 @@ static FLUIDSYNTH_Music *FLUIDSYNTH_LoadMusic(void *data)
         goto fail;
     }
 
-    if (!(music->stream = SDL_CreateAudioStream(src_format, channels, (int) samplerate,
-                          music_spec.format, music_spec.channels, music_spec.freq))) {
+    srcspec.format = src_format;
+    srcspec.channels = channels;
+    srcspec.freq = (int) samplerate;
+    if (!(music->stream = SDL_CreateAudioStream(&srcspec, &music_spec))) {
         goto fail;
     }
 
@@ -296,7 +299,7 @@ static int FLUIDSYNTH_GetSome(void *context, void *data, int bytes, SDL_bool *do
         return filled;
     }
 
-    if (music->synth_write(music->synth, music_spec.samples, music->buffer, 0, 2, music->buffer, 1, 2) != FLUID_OK) {
+    if (music->synth_write(music->synth, 4096/*music_spec.samples*/, music->buffer, 0, 2, music->buffer, 1, 2) != FLUID_OK) {
         Mix_SetError("Error generating FluidSynth audio");
         return -1;
     }

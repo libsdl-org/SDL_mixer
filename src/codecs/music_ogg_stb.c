@@ -123,6 +123,7 @@ static void OGG_Delete(void *context);
 static int OGG_UpdateSection(OGG_music *music)
 {
     stb_vorbis_info vi;
+    SDL_AudioSpec srcspec;
 
     vi = stb_vorbis_get_info(music->vf);
 
@@ -141,17 +142,15 @@ static int OGG_UpdateSection(OGG_music *music)
         music->stream = NULL;
     }
 
-    music->stream = SDL_CreateAudioStream(SDL_AUDIO_F32SYS,
-                                          (Uint8)vi.channels,
-                                          (int)vi.sample_rate,
-                                          music_spec.format,
-                                          music_spec.channels,
-                                          music_spec.freq);
+    srcspec.format = SDL_AUDIO_F32SYS;
+    srcspec.channels = vi.channels;
+    srcspec.freq = (int)vi.sample_rate;
+    music->stream = SDL_CreateAudioStream(&srcspec, &music_spec);
     if (!music->stream) {
         return -1;
     }
 
-    music->buffer_size = music_spec.samples * (int)sizeof(float) * vi.channels;
+    music->buffer_size = 4096/*music_spec.samples*/ * (int)sizeof(float) * vi.channels;
     if (music->buffer_size <= 0) {
         return -1;
     }
@@ -324,7 +323,7 @@ static int OGG_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     amount = stb_vorbis_get_samples_float_interleaved(music->vf,
                                                 music->vi.channels,
                                                 (float *)music->buffer,
-                                                music_spec.samples * music->vi.channels);
+                                                4096/*music_spec.samples*/ * music->vi.channels);
 
     amount *= music->vi.channels * sizeof(float);
 

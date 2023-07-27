@@ -372,6 +372,8 @@ static void flac_metadata_music_cb(
     (void)decoder;
 
     if (metadata->type == FLAC__METADATA_TYPE_STREAMINFO) {
+        SDL_AudioSpec srcspec;
+
         music->sample_rate = metadata->data.stream_info.sample_rate;
         music->channels = metadata->data.stream_info.channels;
         music->bits_per_sample = metadata->data.stream_info.bits_per_sample;
@@ -388,12 +390,10 @@ static void flac_metadata_music_cb(
 
         /* We check for NULL stream later when we get data */
         SDL_assert(!music->stream);
-        music->stream = SDL_CreateAudioStream(SDL_AUDIO_S16SYS,
-                                              (Uint8)channels,
-                                              (int)music->sample_rate,
-                                              music_spec.format,
-                                              music_spec.channels,
-                                              music_spec.freq);
+        srcspec.format = SDL_AUDIO_S16SYS;
+        srcspec.channels = channels;
+        srcspec.freq = (int)music->sample_rate;
+        music->stream = SDL_CreateAudioStream(&srcspec, &music_spec);
     } else if (metadata->type == FLAC__METADATA_TYPE_VORBIS_COMMENT) {
         FLAC__uint32 i;
 

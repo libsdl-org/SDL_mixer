@@ -207,6 +207,7 @@ static int initialize_from_track_info(GME_Music *music, int track)
 
 static void *GME_CreateFromRW(struct SDL_RWops *src, SDL_bool freesrc)
 {
+    SDL_AudioSpec spec;
     void *mem = 0;
     size_t size;
     GME_Music *music;
@@ -222,17 +223,16 @@ static void *GME_CreateFromRW(struct SDL_RWops *src, SDL_bool freesrc)
     music->tempo = 1.0;
     music->gain = 1.0;
 
-    music->stream = SDL_CreateAudioStream(SDL_AUDIO_S16SYS, 2,
-                                          music_spec.freq,
-                                          music_spec.format,
-                                          music_spec.channels,
-                                          music_spec.freq);
+    srcspec.format = SDL_AUDIO_S16SYS;
+    srcspec.channels = 2;
+    srcspec.freq = music_spec.freq;
+    music->stream = SDL_CreateAudioStream(&srcspec, &music_spec);
     if (!music->stream) {
         GME_Delete(music);
         return NULL;
     }
 
-    music->buffer_size = music_spec.samples * sizeof(Sint16) * 2/*channels*/ * music_spec.channels;
+    music->buffer_size = 4096/*music_spec.samples*/ * sizeof(Sint16) * 2/*channels*/ * music_spec.channels;
     music->buffer = SDL_malloc(music->buffer_size);
     if (!music->buffer) {
         SDL_OutOfMemory();

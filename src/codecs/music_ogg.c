@@ -188,6 +188,7 @@ static void OGG_Delete(void *context);
 
 static int OGG_UpdateSection(OGG_music *music)
 {
+    SDL_AudioSpec srcspec;
     vorbis_info *vi;
 
     vi = vorbis.ov_info(&music->vf, -1);
@@ -211,16 +212,15 @@ static int OGG_UpdateSection(OGG_music *music)
         music->stream = NULL;
     }
 
-    music->stream = SDL_CreateAudioStream(SDL_AUDIO_S16SYS,
-                                          (Uint8)vi->channels, (int)vi->rate,
-                                          music_spec.format,
-                                          music_spec.channels,
-                                          music_spec.freq);
+    srcspec.format = SDL_AUDIO_S16SYS;
+    srcspec.channels = vi->channels;
+    srcspec.freq = (int)vi->rate;
+    music->stream = SDL_CreateAudioStream(&srcspec, &music_spec);
     if (!music->stream) {
         return -1;
     }
 
-    music->buffer_size = music_spec.samples * (int)sizeof(Sint16) * vi->channels;
+    music->buffer_size = 4096/*music_spec.samples*/ * (int)sizeof(Sint16) * vi->channels;
     music->buffer = (char *)SDL_malloc((size_t)music->buffer_size);
     if (!music->buffer) {
         return -1;

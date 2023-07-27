@@ -450,8 +450,6 @@ SDL_AudioSpec *Mix_LoadVOC_RW (SDL_RWops *src, SDL_bool freesrc,
         fillptr = ((Uint8 *) ptr) + (*audio_len - v.rest);
     }
 
-    spec->samples = (Uint16)(*audio_len / v.size);
-
     /* Don't return a buffer that isn't a multiple of samplesize */
     samplesize = ((spec->format & 0xFF)/8)*spec->channels;
     *audio_len &= (Uint32) ~(samplesize-1);

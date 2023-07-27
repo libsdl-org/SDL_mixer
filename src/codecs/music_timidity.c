@@ -112,14 +112,13 @@ void *TIMIDITY_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
     }
 
     if (need_stream) {
-        music->stream = SDL_CreateAudioStream(spec.format, spec.channels, spec.freq,
-                                           music_spec.format, music_spec.channels, music_spec.freq);
+        music->stream = SDL_CreateAudioStream(&spec, &music_spec);
         if (!music->stream) {
             TIMIDITY_Delete(music);
             return NULL;
         }
 
-        music->buffer_size = spec.samples * (SDL_AUDIO_BITSIZE(spec.format) / 8) * spec.channels;
+        music->buffer_size = 4096/*spec.samples*/ * (SDL_AUDIO_BITSIZE(spec.format) / 8) * spec.channels;
         music->buffer = SDL_malloc((size_t)music->buffer_size);
         if (!music->buffer) {
             SDL_OutOfMemory();

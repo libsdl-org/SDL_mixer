@@ -343,6 +343,7 @@ static void *WAVPACK_CreateFromFile(const char *file)
 /* Load a WavPack stream from an SDL_RWops object */
 static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, SDL_bool freesrc, SDL_bool *freesrc2)
 {
+    SDL_AudioSpec srcspec;
     WAVPACK_music *music;
     SDL_AudioFormat format;
     char *tag;
@@ -413,14 +414,18 @@ static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, SDL
         format = (music->mode & MODE_FLOAT) ? SDL_AUDIO_F32SYS : SDL_AUDIO_S32SYS;
         break;
     }
-    music->stream = SDL_CreateAudioStream(format, (Uint8)music->channels, (int)music->samplerate / music->decimation,
-                                       music_spec.format, music_spec.channels, music_spec.freq);
+
+
+    srcspec.format = format;
+    srcspec.channels = music->channels;
+    srcspec.freq = (int)music->samplerate / music->decimation;
+    music->stream = SDL_CreateAudioStream(&srcspec, &music_spec);
     if (!music->stream) {
         WAVPACK_Delete(music);
         return NULL;
     }
 
-    music->frames = music_spec.samples;
+    music->frames = 4096/*music_spec.samples*/;
     music->buffer = SDL_malloc(music->frames * music->channels * sizeof(int32_t) * music->decimation);
     if (!music->buffer) {
         SDL_OutOfMemory();

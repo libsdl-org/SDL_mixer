@@ -227,7 +227,6 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, SDL_bool freesrc,
             goto done;
     }
     spec->channels = (Uint8) channels;
-    spec->samples = 4096;       /* Good default buffer size */
 
     *audio_len = channels * numsamples * (samplesize / 8);
     *audio_buf = (Uint8 *)SDL_malloc(*audio_len);
