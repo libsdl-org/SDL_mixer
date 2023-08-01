@@ -83,10 +83,10 @@
 		F37A8D502838A23400C38E95 /* music_drflac.c in Sources */ = {isa = PBXBuildFile; fileRef = F37A8D492838A23400C38E95 /* music_drflac.c */; };
 		F37A8DB52838AD1300C38E95 /* music_ogg_stb.c in Sources */ = {isa = PBXBuildFile; fileRef = F37A8DB42838AD1200C38E95 /* music_ogg_stb.c */; };
 		F382335F2731963800F7F527 /* native_midi.h in Headers */ = {isa = PBXBuildFile; fileRef = F51BFB0101F724BE01D3D55B /* native_midi.h */; };
-		F3B38D6B296F90FA005DA6D3 /* SDL3.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3B38D6A296F90FA005DA6D3 /* SDL3.xcframework */; };
 		F3D87C09281DFABD005DA540 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87C08281DFABD005DA540 /* AudioToolbox.framework */; };
 		F3D87C0B281DFAD4005DA540 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87C0A281DFAD4005DA540 /* AudioUnit.framework */; platformFilters = (macos, ); };
 		F3D87C0D281DFADB005DA540 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87C0C281DFADB005DA540 /* CoreServices.framework */; };
+		F3E1F8C92A794D4900AC76D3 /* SDL3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3E1F8C82A794D3400AC76D3 /* SDL3.framework */; };
 		F3F8794E29B30FDA0007FDA1 /* music_wavpack.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8794529B30FDA0007FDA1 /* music_wavpack.c */; };
 		F3F8795029B30FDA0007FDA1 /* load_sndfile.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8794929B30FDA0007FDA1 /* load_sndfile.c */; };
 		F3F8795229B30FDA0007FDA1 /* music_gme.h in Headers */ = {isa = PBXBuildFile; fileRef = F3F8794A29B30FDA0007FDA1 /* music_gme.h */; };
@@ -137,6 +137,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = F3B38D54296F8E79005DA6D3;
 			remoteInfo = SDL_mixer.xcframework;
+		};
+		F3E1F8C72A794D3400AC76D3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3E1F8C12A794D3400AC76D3 /* SDL.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BECDF66C0761BA81005FE872;
+			remoteInfo = SDL3;
 		};
 		F3E29D062882107B0006D108 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -198,12 +205,12 @@
 		F37A8DB42838AD1200C38E95 /* music_ogg_stb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_ogg_stb.c; sourceTree = "<group>"; };
 		F3968B90281F817E00661875 /* opus.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = opus.xcodeproj; path = opus/opus.xcodeproj; sourceTree = "<group>"; };
 		F3968D71281FB5E100661875 /* config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = config.xcconfig; sourceTree = "<group>"; };
-		F3B38D6A296F90FA005DA6D3 /* SDL3.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SDL3.xcframework; path = SDL/SDL3.xcframework; sourceTree = "<group>"; };
 		F3B38D97296F97BB005DA6D3 /* ogg.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ogg.xcodeproj; path = /Users/valve/projects/SDL_mixer/Xcode/ogg/ogg.xcodeproj; sourceTree = "<absolute>"; };
 		F3D87C08281DFABD005DA540 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		F3D87C0A281DFAD4005DA540 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		F3D87C0C281DFADB005DA540 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		F3D87C0E281DFB02005DA540 /* SDL3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL3.framework; path = macOS/SDL3.framework; sourceTree = "<group>"; };
+		F3E1F8C12A794D3400AC76D3 /* SDL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SDL.xcodeproj; path = ../external/SDL/Xcode/SDL/SDL.xcodeproj; sourceTree = "<group>"; };
 		F3E29D022882107B0006D108 /* xmp-lite.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "xmp-lite.xcodeproj"; path = "xmp-lite/xmp-lite.xcodeproj"; sourceTree = "<group>"; };
 		F3F8794529B30FDA0007FDA1 /* music_wavpack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_wavpack.c; sourceTree = "<group>"; };
 		F3F8794929B30FDA0007FDA1 /* load_sndfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = load_sndfile.c; sourceTree = "<group>"; };
@@ -222,10 +229,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3E1F8C92A794D4900AC76D3 /* SDL3.framework in Frameworks */,
 				F3D87C09281DFABD005DA540 /* AudioToolbox.framework in Frameworks */,
 				F3D87C0B281DFAD4005DA540 /* AudioUnit.framework in Frameworks */,
 				F3D87C0D281DFADB005DA540 /* CoreServices.framework in Frameworks */,
-				F3B38D6B296F90FA005DA6D3 /* SDL3.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -254,7 +261,7 @@
 			isa = PBXGroup;
 			children = (
 				F3968D71281FB5E100661875 /* config.xcconfig */,
-				F3B38D6A296F90FA005DA6D3 /* SDL3.xcframework */,
+				F3E1F8C12A794D3400AC76D3 /* SDL.xcodeproj */,
 				F3B38D97296F97BB005DA6D3 /* ogg.xcodeproj */,
 				F3968B90281F817E00661875 /* opus.xcodeproj */,
 				F3E29D022882107B0006D108 /* xmp-lite.xcodeproj */,
@@ -373,6 +380,14 @@
 			isa = PBXGroup;
 			children = (
 				F3B38D9F296F97BB005DA6D3 /* ogg.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F3E1F8C22A794D3400AC76D3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F3E1F8C82A794D3400AC76D3 /* SDL3.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -510,6 +525,10 @@
 					ProjectRef = F3968B90281F817E00661875 /* opus.xcodeproj */;
 				},
 				{
+					ProductGroup = F3E1F8C22A794D3400AC76D3 /* Products */;
+					ProjectRef = F3E1F8C12A794D3400AC76D3 /* SDL.xcodeproj */;
+				},
+				{
 					ProductGroup = F3E29D032882107B0006D108 /* Products */;
 					ProjectRef = F3E29D022882107B0006D108 /* xmp-lite.xcodeproj */;
 				},
@@ -536,6 +555,13 @@
 			fileType = wrapper.framework;
 			path = ogg.framework;
 			remoteRef = F3B38D9E296F97BB005DA6D3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F3E1F8C82A794D3400AC76D3 /* SDL3.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SDL3.framework;
+			remoteRef = F3E1F8C72A794D3400AC76D3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		F3E29D072882107B0006D108 /* xmp_lite.framework */ = {

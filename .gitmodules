@@ -1,3 +1,6 @@
+[submodule "external/SDL"]
+	path = external/SDL
+	url = https://github.com/libsdl-org/SDL.git
 [submodule "external/flac"]
 	path = external/flac
 	url = https://github.com/libsdl-org/flac.git
