@@ -1,10 +1,10 @@
 projectfullname = SDL_mixer
 projectshortname = SDL_mixer
-incsubdir = include/SDL3
+incsubdir = include/SDL3_mixer
 wikisubdir = SDL3_mixer
 apiprefixregex = (Mix_|MIX_)
-mainincludefname = SDL3/SDL_mixer.h
-versionfname = include/SDL3/SDL_mixer.h
+mainincludefname = SDL3_mixer/SDL_mixer.h
+versionfname = include/SDL3_mixer/SDL_mixer.h
 versionmajorregex = \A\#define\s+SDL_MIXER_MAJOR_VERSION\s+(\d+)\Z
 versionminorregex = \A\#define\s+SDL_MIXER_MINOR_VERSION\s+(\d+)\Z
 versionpatchregex = \A\#define\s+SDL_MIXER_PATCHLEVEL\s+(\d+)\Z

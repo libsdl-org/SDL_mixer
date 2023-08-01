@@ -28,7 +28,7 @@
 #ifndef LOAD_SNDFILE_H
 #define LOAD_SNDFILE_H
 
-#include <SDL3/SDL_mixer.h>
+#include <SDL3_mixer/SDL_mixer.h>
 
 /* Don't call this directly; use Mix_LoadWAV_RW() for now. */
 SDL_AudioSpec *Mix_LoadSndFile_RW (SDL_RWops *src, SDL_bool freesrc,

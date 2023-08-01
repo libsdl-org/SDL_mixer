@@ -156,7 +156,7 @@
 
 /* Begin PBXFileReference section */
 		0448E8AD108B937A00C9D3EA /* native_midi_macosx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = native_midi_macosx.c; sourceTree = "<group>"; };
-		1014BAEA010A4B677F000001 /* SDL_mixer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SDL_mixer.h; path = SDL3/SDL_mixer.h; sourceTree = "<group>"; };
+		1014BAEA010A4B677F000001 /* SDL_mixer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SDL_mixer.h; path = SDL3_mixer/SDL_mixer.h; sourceTree = "<group>"; };
 		630FBD8220D52105009867AB /* music_opus.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_opus.c; sourceTree = "<group>"; };
 		630FBD8420D5211F009867AB /* music_opus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_opus.h; sourceTree = "<group>"; };
 		639008C62385A822009019FA /* utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utils.c; sourceTree = "<group>"; };

@@ -250,7 +250,7 @@ target_include_directories(${sdl3_mixer_target_name}
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/SDL3>"
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
-        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/SDL3>"
+        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/SDL3_mixer>"
     PRIVATE
         src
         src/codecs
@@ -911,8 +911,8 @@ if(SDL3MIXER_INSTALL)
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}" COMPONENT library
     )
     install(FILES
-        "${CMAKE_CURRENT_SOURCE_DIR}/include/SDL3/SDL_mixer.h"
-        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/SDL3" COMPONENT devel
+        "${CMAKE_CURRENT_SOURCE_DIR}/include/SDL3_mixer/SDL_mixer.h"
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/SDL3_mixer" COMPONENT devel
     )
 
     if(INSTALL_EXTRA_TARGETS)
@@ -993,6 +993,7 @@ if(SDL3MIXER_INSTALL)
 
     if(SDL3MIXER_INSTALL_MAN)
         SDL_generate_manpages(
+            HEADERS_DIR "${PROJECT_SOURCE_DIR}/include/SDL3_mixer"
             SYMBOL "Mix_Init"
             WIKIHEADERS_PL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/build-scripts/wikiheaders.pl"
         )

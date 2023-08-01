@@ -32,7 +32,7 @@
 #include <AvailabilityMacros.h>
 
 #include <SDL3/SDL_endian.h>
-#include <SDL3/SDL_mixer.h>
+#include <SDL3_mixer/SDL_mixer.h>
 #include "../../mixer.h"
 #include "native_midi.h"
 

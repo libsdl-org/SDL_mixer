@@ -141,7 +141,7 @@
     <ClInclude Include="..\src\utils.h">
       <Filter>Sources</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\SDL_mixer.h">
+    <ClInclude Include="..\include\SDL3_mixer\SDL_mixer.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\src\codecs\load_aiff.h">

@@ -22,7 +22,7 @@
 #include <SDL3/SDL_log.h>
 #include <SDL3/SDL_timer.h>
 
-#include <SDL3/SDL_mixer.h>
+#include <SDL3_mixer/SDL_mixer.h>
 #include "mixer.h"
 #include "music.h"
 

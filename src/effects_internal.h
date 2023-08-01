@@ -26,7 +26,7 @@
 #error You should not include this file or use these functions.
 #endif
 
-#include <SDL3/SDL_mixer.h>
+#include <SDL3_mixer/SDL_mixer.h>
 
 extern int _Mix_effects_max_speed;
 extern void *_Eff_volume_table;
