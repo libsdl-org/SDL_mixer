@@ -10,27 +10,27 @@
 		F3016F2E296F99ED00C730E5 /* SDL3.xcframework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3B38DC3296F99A1005DA6D3 /* SDL3.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3016F39296F99F800C730E5 /* SDL3.xcframework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3B38DC3296F99A1005DA6D3 /* SDL3.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3016F3A296F9A0300C730E5 /* SDL3.xcframework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3B38DC3296F99A1005DA6D3 /* SDL3.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F3968ECF28203F3100661875 /* SDL3_mixer.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3ED80D4281D9ED600C33C5B /* SDL3_mixer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968ED328203F5800661875 /* ogg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EBC2820390500661875 /* ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968ED428203F5800661875 /* opus.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EAA282038E000661875 /* opus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968EF3282040B300661875 /* ogg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EBC2820390500661875 /* ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968EF4282040B300661875 /* opus.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EAA282038E000661875 /* opus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968F112820428F00661875 /* ogg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EBC2820390500661875 /* ogg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968F122820428F00661875 /* opus.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EAA282038E000661875 /* opus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F39CD44B281DC6C8006CF638 /* SDL3_mixer.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3ED80D4281D9ED600C33C5B /* SDL3_mixer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3B38DC4296F99A1005DA6D3 /* SDL3.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3B38DC3296F99A1005DA6D3 /* SDL3.xcframework */; };
 		F3B38DC5296F99A1005DA6D3 /* SDL3.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3B38DC3296F99A1005DA6D3 /* SDL3.xcframework */; };
 		F3B38DC6296F99A1005DA6D3 /* SDL3.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3B38DC3296F99A1005DA6D3 /* SDL3.xcframework */; };
+		F3E1F86F2A79456600AC76D3 /* SDL3_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3E1F86C2A79455B00AC76D3 /* SDL3_mixer.framework */; };
+		F3E1F8702A79456600AC76D3 /* SDL3_mixer.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3E1F86C2A79455B00AC76D3 /* SDL3_mixer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F3E1F8712A79458C00AC76D3 /* SDL3_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3E1F86C2A79455B00AC76D3 /* SDL3_mixer.framework */; };
+		F3E1F8722A79458C00AC76D3 /* SDL3_mixer.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3E1F86C2A79455B00AC76D3 /* SDL3_mixer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F3E1F8732A7945AB00AC76D3 /* SDL3_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3E1F86C2A79455B00AC76D3 /* SDL3_mixer.framework */; };
+		F3E1F8742A7945AB00AC76D3 /* SDL3_mixer.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3E1F86C2A79455B00AC76D3 /* SDL3_mixer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3E29D36288212480006D108 /* xmp_lite.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3E29D2D2882122B0006D108 /* xmp_lite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3E29D3C2882124D0006D108 /* xmp_lite.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3E29D2D2882122B0006D108 /* xmp_lite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3E29D3D288212520006D108 /* xmp_lite.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3E29D2D2882122B0006D108 /* xmp_lite.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3ED80CB281D9ECB00C33C5B /* playmus.c in Sources */ = {isa = PBXBuildFile; fileRef = F3ED80CA281D9ECB00C33C5B /* playmus.c */; };
 		F3ED80CC281D9ECB00C33C5B /* playmus.c in Sources */ = {isa = PBXBuildFile; fileRef = F3ED80CA281D9ECB00C33C5B /* playmus.c */; };
 		F3ED80DB281D9F2100C33C5B /* playmus.c in Sources */ = {isa = PBXBuildFile; fileRef = F3ED80CA281D9ECB00C33C5B /* playmus.c */; };
-		F3ED80E3281DA16500C33C5B /* SDL3_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3ED80D4281D9ED600C33C5B /* SDL3_mixer.framework */; };
-		F3ED80F5281DA3F600C33C5B /* SDL3_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3ED80D4281D9ED600C33C5B /* SDL3_mixer.framework */; };
-		F3ED80FF281DA63000C33C5B /* SDL3_mixer.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F3ED80D4281D9ED600C33C5B /* SDL3_mixer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F3ED8113281DC13D00C33C5B /* SDL3_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3ED80D4281D9ED600C33C5B /* SDL3_mixer.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,33 +48,19 @@
 			remoteGlobalIDString = F3F70EDA281F61B4005AA27D;
 			remoteInfo = ogg;
 		};
+		F3E1F86B2A79455B00AC76D3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3ED80CD281D9ED600C33C5B /* SDL_mixer.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BE1FA90607AF96B2004B6283;
+			remoteInfo = SDL3_mixer;
+		};
 		F3E29D2C2882122B0006D108 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F3E29D282882122B0006D108 /* xmp-lite.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = F3968D85281FBB1900661875;
 			remoteInfo = "xmp-lite";
-		};
-		F3ED80D3281D9ED600C33C5B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3ED80CD281D9ED600C33C5B /* SDL_mixer.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = BE1FA72E07AF4C45004B6283;
-			remoteInfo = Framework;
-		};
-		F3ED80D5281D9ED600C33C5B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3ED80CD281D9ED600C33C5B /* SDL_mixer.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = BE1FA74107AF4C45004B6283;
-			remoteInfo = "Static Library";
-		};
-		F3ED80D7281D9ED600C33C5B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3ED80CD281D9ED600C33C5B /* SDL_mixer.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = BE1FA74507AF4C45004B6283;
-			remoteInfo = "Create DMG";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -86,10 +72,10 @@
 			dstSubfolderSpec = 10;
 			files = (
 				F3016F3A296F9A0300C730E5 /* SDL3.xcframework in Copy Frameworks */,
-				F39CD44B281DC6C8006CF638 /* SDL3_mixer.framework in Copy Frameworks */,
 				F3968F112820428F00661875 /* ogg.framework in Copy Frameworks */,
 				F3968F122820428F00661875 /* opus.framework in Copy Frameworks */,
 				F3E29D3D288212520006D108 /* xmp_lite.framework in Copy Frameworks */,
+				F3E1F8742A7945AB00AC76D3 /* SDL3_mixer.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -101,10 +87,10 @@
 			dstSubfolderSpec = 10;
 			files = (
 				F3016F39296F99F800C730E5 /* SDL3.xcframework in Copy Frameworks */,
-				F3968ECF28203F3100661875 /* SDL3_mixer.framework in Copy Frameworks */,
 				F3968ED328203F5800661875 /* ogg.framework in Copy Frameworks */,
 				F3968ED428203F5800661875 /* opus.framework in Copy Frameworks */,
 				F3E29D3C2882124D0006D108 /* xmp_lite.framework in Copy Frameworks */,
+				F3E1F8702A79456600AC76D3 /* SDL3_mixer.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -116,10 +102,10 @@
 			dstSubfolderSpec = 10;
 			files = (
 				F3016F2E296F99ED00C730E5 /* SDL3.xcframework in Copy Frameworks */,
-				F3ED80FF281DA63000C33C5B /* SDL3_mixer.framework in Copy Frameworks */,
 				F3968EF3282040B300661875 /* ogg.framework in Copy Frameworks */,
 				F3968EF4282040B300661875 /* opus.framework in Copy Frameworks */,
 				F3E29D36288212480006D108 /* xmp_lite.framework in Copy Frameworks */,
+				F3E1F8722A79458C00AC76D3 /* SDL3_mixer.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -133,11 +119,12 @@
 		F3968EC0282039AC00661875 /* SDL3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL3.framework; path = ../iOS/SDL3.framework; sourceTree = "<group>"; };
 		F3968EC2282039BC00661875 /* SDL3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL3.framework; path = ../tvOS/SDL3.framework; sourceTree = "<group>"; };
 		F3B38DC3296F99A1005DA6D3 /* SDL3.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SDL3.xcframework; path = ../SDL/SDL3.xcframework; sourceTree = "<group>"; };
+		F3E1F7B52A78B3C400AC76D3 /* config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = config.xcconfig; sourceTree = "<group>"; };
 		F3E29D282882122B0006D108 /* xmp-lite.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "xmp-lite.xcodeproj"; path = "../xmp-lite/xmp-lite.xcodeproj"; sourceTree = "<group>"; };
 		F3ED80B3281D9E8900C33C5B /* playmus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = playmus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3ED80B9281D9E8900C33C5B /* playmus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = playmus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3ED80BB281D9E8900C33C5B /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
-		F3ED80CA281D9ECB00C33C5B /* playmus.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = playmus.c; path = ../../playmus.c; sourceTree = SOURCE_ROOT; };
+		F3ED80CA281D9ECB00C33C5B /* playmus.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = playmus.c; path = ../../examples/playmus.c; sourceTree = SOURCE_ROOT; };
 		F3ED80CD281D9ED600C33C5B /* SDL_mixer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SDL_mixer.xcodeproj; path = ../SDL_mixer.xcodeproj; sourceTree = "<group>"; };
 		F3ED80E1281D9F2100C33C5B /* playmus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = playmus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -147,8 +134,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3E1F8712A79458C00AC76D3 /* SDL3_mixer.framework in Frameworks */,
 				F3B38DC4296F99A1005DA6D3 /* SDL3.xcframework in Frameworks */,
-				F3ED80F5281DA3F600C33C5B /* SDL3_mixer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -156,8 +143,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3E1F86F2A79456600AC76D3 /* SDL3_mixer.framework in Frameworks */,
 				F3B38DC5296F99A1005DA6D3 /* SDL3.xcframework in Frameworks */,
-				F3ED80E3281DA16500C33C5B /* SDL3_mixer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -165,8 +152,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3E1F8732A7945AB00AC76D3 /* SDL3_mixer.framework in Frameworks */,
 				F3B38DC6296F99A1005DA6D3 /* SDL3.xcframework in Frameworks */,
-				F3ED8113281DC13D00C33C5B /* SDL3_mixer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -234,6 +221,7 @@
 		F3ED80A6281D9E8800C33C5B = {
 			isa = PBXGroup;
 			children = (
+				F3E1F7B52A78B3C400AC76D3 /* config.xcconfig */,
 				F3968EB72820390500661875 /* ogg.xcodeproj */,
 				F3968EA5282038E000661875 /* opus.xcodeproj */,
 				F3E29D282882122B0006D108 /* xmp-lite.xcodeproj */,
@@ -275,9 +263,7 @@
 		F3ED80CE281D9ED600C33C5B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F3ED80D4281D9ED600C33C5B /* SDL3_mixer.framework */,
-				F3ED80D6281D9ED600C33C5B /* libSDL3_mixer.a */,
-				F3ED80D8281D9ED600C33C5B /* Create DMG */,
+				F3E1F86C2A79455B00AC76D3 /* SDL3_mixer.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -410,32 +396,18 @@
 			remoteRef = F3968EBB2820390500661875 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		F3E1F86C2A79455B00AC76D3 /* SDL3_mixer.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SDL3_mixer.framework;
+			remoteRef = F3E1F86B2A79455B00AC76D3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		F3E29D2D2882122B0006D108 /* xmp_lite.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = xmp_lite.framework;
 			remoteRef = F3E29D2C2882122B0006D108 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F3ED80D4281D9ED600C33C5B /* SDL3_mixer.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SDL3_mixer.framework;
-			remoteRef = F3ED80D3281D9ED600C33C5B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F3ED80D6281D9ED600C33C5B /* libSDL3_mixer.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libSDL3_mixer.a;
-			remoteRef = F3ED80D5281D9ED600C33C5B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F3ED80D8281D9ED600C33C5B /* Create DMG */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = "Create DMG";
-			remoteRef = F3ED80D7281D9ED600C33C5B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -494,6 +466,7 @@
 /* Begin XCBuildConfiguration section */
 		F3ED80C2281D9E8900C33C5B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F3E1F7B52A78B3C400AC76D3 /* config.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -514,6 +487,7 @@
 		};
 		F3ED80C3281D9E8900C33C5B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F3E1F7B52A78B3C400AC76D3 /* config.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -529,7 +503,6 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = EH385AYQ6F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -554,7 +527,6 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = EH385AYQ6F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -620,7 +592,6 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = EH385AYQ6F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -641,7 +612,6 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = EH385AYQ6F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

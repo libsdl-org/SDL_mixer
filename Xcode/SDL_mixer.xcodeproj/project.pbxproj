@@ -7,22 +7,36 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		F3B38D54296F8E79005DA6D3 /* SDL_mixer.xcframework */ = {
+		F3B38D54296F8E79005DA6D3 /* SDL3_mixer.xcframework */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = F3B38D57296F8E79005DA6D3 /* Build configuration list for PBXAggregateTarget "SDL_mixer.xcframework" */;
+			buildConfigurationList = F3B38D57296F8E79005DA6D3 /* Build configuration list for PBXAggregateTarget "SDL3_mixer.xcframework" */;
 			buildPhases = (
 				F3B38D5A296F8E82005DA6D3 /* ShellScript */,
 			);
 			dependencies = (
 			);
-			name = SDL_mixer.xcframework;
+			name = SDL3_mixer.xcframework;
 			productName = xcFramework;
+		};
+		F3E1F78F2A78A23C00AC76D3 /* SDL3_mixer.dmg */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = F3E1F7902A78A23C00AC76D3 /* Build configuration list for PBXAggregateTarget "SDL3_mixer.dmg" */;
+			buildPhases = (
+				F3E1F79B2A78A27700AC76D3 /* ShellScript */,
+			);
+			dependencies = (
+				F3E1F79A2A78A27200AC76D3 /* PBXTargetDependency */,
+				F3E1F7962A78A24E00AC76D3 /* PBXTargetDependency */,
+				F3E1F7982A78A25400AC76D3 /* PBXTargetDependency */,
+				F3E1F7942A78A24A00AC76D3 /* PBXTargetDependency */,
+			);
+			name = SDL3_mixer.dmg;
+			productName = "Create DMG";
 		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
 		0448E8AE108B937A00C9D3EA /* native_midi_macosx.c in Sources */ = {isa = PBXBuildFile; fileRef = 0448E8AD108B937A00C9D3EA /* native_midi_macosx.c */; };
-		0448E8AF108B937A00C9D3EA /* native_midi_macosx.c in Sources */ = {isa = PBXBuildFile; fileRef = 0448E8AD108B937A00C9D3EA /* native_midi_macosx.c */; };
 		630FBD8320D52105009867AB /* music_opus.c in Sources */ = {isa = PBXBuildFile; fileRef = 630FBD8220D52105009867AB /* music_opus.c */; };
 		630FBD8520D5211F009867AB /* music_opus.h in Headers */ = {isa = PBXBuildFile; fileRef = 630FBD8420D5211F009867AB /* music_opus.h */; };
 		639008C82385A822009019FA /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 639008C62385A822009019FA /* utils.c */; };
@@ -61,75 +75,24 @@
 		AAE406051F9607C300EDAF53 /* effects_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE405E11F9607C300EDAF53 /* effects_internal.h */; };
 		BE1FA8CD07AF96B2004B6283 /* SDL_mixer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1014BAEA010A4B677F000001 /* SDL_mixer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F30240632881DF95002F32D6 /* music_xmp.h in Headers */ = {isa = PBXBuildFile; fileRef = F302405F2881DF94002F32D6 /* music_xmp.h */; };
-		F30240642881DF95002F32D6 /* music_xmp.h in Headers */ = {isa = PBXBuildFile; fileRef = F302405F2881DF94002F32D6 /* music_xmp.h */; };
 		F30240652881DF95002F32D6 /* music_xmp.c in Sources */ = {isa = PBXBuildFile; fileRef = F30240622881DF95002F32D6 /* music_xmp.c */; };
-		F30240662881DF95002F32D6 /* music_xmp.c in Sources */ = {isa = PBXBuildFile; fileRef = F30240622881DF95002F32D6 /* music_xmp.c */; };
 		F3249B39285C448100DB9B5C /* CMake in Resources */ = {isa = PBXBuildFile; fileRef = F3249B36285C448100DB9B5C /* CMake */; };
 		F37A8D2D2838924900C38E95 /* music_drmp3.h in Headers */ = {isa = PBXBuildFile; fileRef = F37A8D2B2838924900C38E95 /* music_drmp3.h */; };
-		F37A8D2E2838924900C38E95 /* music_drmp3.h in Headers */ = {isa = PBXBuildFile; fileRef = F37A8D2B2838924900C38E95 /* music_drmp3.h */; };
 		F37A8D2F2838924900C38E95 /* music_drmp3.c in Sources */ = {isa = PBXBuildFile; fileRef = F37A8D2C2838924900C38E95 /* music_drmp3.c */; };
-		F37A8D302838924900C38E95 /* music_drmp3.c in Sources */ = {isa = PBXBuildFile; fileRef = F37A8D2C2838924900C38E95 /* music_drmp3.c */; };
 		F37A8D4A2838A23400C38E95 /* music_drflac.h in Headers */ = {isa = PBXBuildFile; fileRef = F37A8D412838A23400C38E95 /* music_drflac.h */; };
-		F37A8D4B2838A23400C38E95 /* music_drflac.h in Headers */ = {isa = PBXBuildFile; fileRef = F37A8D412838A23400C38E95 /* music_drflac.h */; };
 		F37A8D502838A23400C38E95 /* music_drflac.c in Sources */ = {isa = PBXBuildFile; fileRef = F37A8D492838A23400C38E95 /* music_drflac.c */; };
-		F37A8D512838A23400C38E95 /* music_drflac.c in Sources */ = {isa = PBXBuildFile; fileRef = F37A8D492838A23400C38E95 /* music_drflac.c */; };
 		F37A8DB52838AD1300C38E95 /* music_ogg_stb.c in Sources */ = {isa = PBXBuildFile; fileRef = F37A8DB42838AD1200C38E95 /* music_ogg_stb.c */; };
-		F37A8DB62838AD1300C38E95 /* music_ogg_stb.c in Sources */ = {isa = PBXBuildFile; fileRef = F37A8DB42838AD1200C38E95 /* music_ogg_stb.c */; };
-		F3823337273195CC00F7F527 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 639008C62385A822009019FA /* utils.c */; };
-		F3823338273195CF00F7F527 /* utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 639008C72385A822009019FA /* utils.h */; };
-		F3823339273195D200F7F527 /* effect_position.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE405D01F9607C100EDAF53 /* effect_position.c */; };
-		F382333A273195D500F7F527 /* effect_stereoreverse.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE405E01F9607C300EDAF53 /* effect_stereoreverse.c */; };
-		F382333B273195D800F7F527 /* effects_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE405CE1F9607C100EDAF53 /* effects_internal.c */; };
-		F382333C273195DA00F7F527 /* effects_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE405E11F9607C300EDAF53 /* effects_internal.h */; };
-		F382333D273195DC00F7F527 /* mixer.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE405C11F9607C000EDAF53 /* mixer.c */; };
-		F382333E273195DF00F7F527 /* mixer.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE405C01F9607BF00EDAF53 /* mixer.h */; };
-		F382333F273195E100F7F527 /* music.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE405CD1F9607C000EDAF53 /* music.c */; };
-		F3823340273195E400F7F527 /* music.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE405C21F9607C000EDAF53 /* music.h */; };
-		F3823341273195E600F7F527 /* mp3utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 639197EF239FE66700F1D8F8 /* mp3utils.c */; };
-		F3823342273195E900F7F527 /* mp3utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 639197F0239FE66700F1D8F8 /* mp3utils.h */; };
-		F3823343273195EB00F7F527 /* music_cmd.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE405DE1F9607C300EDAF53 /* music_cmd.c */; };
-		F3823344273195EE00F7F527 /* music_cmd.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE405DB1F9607C200EDAF53 /* music_cmd.h */; };
-		F3823345273195F000F7F527 /* music_flac.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE405D41F9607C100EDAF53 /* music_flac.c */; };
-		F3823346273195F300F7F527 /* music_flac.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE405C71F9607C000EDAF53 /* music_flac.h */; };
-		F3823347273195F500F7F527 /* music_fluidsynth.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE405C61F9607C000EDAF53 /* music_fluidsynth.c */; };
-		F3823348273195F800F7F527 /* music_fluidsynth.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE405BF1F9607BF00EDAF53 /* music_fluidsynth.h */; };
-		F382334D2731960400F7F527 /* music_modplug.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE405C41F9607C000EDAF53 /* music_modplug.c */; };
-		F382334E2731960700F7F527 /* music_modplug.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE405C51F9607C000EDAF53 /* music_modplug.h */; };
-		F382334F2731960C00F7F527 /* music_mpg123.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE405DF1F9607C300EDAF53 /* music_mpg123.c */; };
-		F38233502731960F00F7F527 /* music_mpg123.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE405D31F9607C100EDAF53 /* music_mpg123.h */; };
-		F38233512731961100F7F527 /* music_nativemidi.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE405D51F9607C100EDAF53 /* music_nativemidi.c */; };
-		F38233522731961400F7F527 /* music_nativemidi.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE405DA1F9607C200EDAF53 /* music_nativemidi.h */; };
-		F38233532731961600F7F527 /* music_ogg.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE405D91F9607C200EDAF53 /* music_ogg.c */; };
-		F38233542731961800F7F527 /* music_ogg.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE405D11F9607C100EDAF53 /* music_ogg.h */; };
-		F38233552731961A00F7F527 /* music_timidity.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE405D71F9607C200EDAF53 /* music_timidity.c */; };
-		F38233562731961C00F7F527 /* music_timidity.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE405D61F9607C100EDAF53 /* music_timidity.h */; };
-		F38233572731961F00F7F527 /* music_wav.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE405C91F9607C000EDAF53 /* music_wav.c */; };
-		F38233582731962100F7F527 /* music_wav.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE405C81F9607C000EDAF53 /* music_wav.h */; };
-		F38233592731962400F7F527 /* load_aiff.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE405BE1F9607BF00EDAF53 /* load_aiff.c */; };
-		F382335A2731962600F7F527 /* load_aiff.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE405D21F9607C100EDAF53 /* load_aiff.h */; };
-		F382335B2731962900F7F527 /* load_voc.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE405CC1F9607C000EDAF53 /* load_voc.c */; };
-		F382335C2731962B00F7F527 /* load_voc.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE405C31F9607C000EDAF53 /* load_voc.h */; };
-		F382335D2731962D00F7F527 /* music_opus.h in Headers */ = {isa = PBXBuildFile; fileRef = 630FBD8420D5211F009867AB /* music_opus.h */; };
-		F382335E2731963000F7F527 /* music_opus.c in Sources */ = {isa = PBXBuildFile; fileRef = 630FBD8220D52105009867AB /* music_opus.c */; };
 		F382335F2731963800F7F527 /* native_midi.h in Headers */ = {isa = PBXBuildFile; fileRef = F51BFB0101F724BE01D3D55B /* native_midi.h */; };
-		F38233602731963800F7F527 /* native_midi.h in Headers */ = {isa = PBXBuildFile; fileRef = F51BFB0101F724BE01D3D55B /* native_midi.h */; };
 		F3B38D6B296F90FA005DA6D3 /* SDL3.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3B38D6A296F90FA005DA6D3 /* SDL3.xcframework */; };
-		F3B38D6C296F90FA005DA6D3 /* SDL3.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3B38D6A296F90FA005DA6D3 /* SDL3.xcframework */; };
 		F3D87C09281DFABD005DA540 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87C08281DFABD005DA540 /* AudioToolbox.framework */; };
 		F3D87C0B281DFAD4005DA540 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87C0A281DFAD4005DA540 /* AudioUnit.framework */; platformFilters = (macos, ); };
 		F3D87C0D281DFADB005DA540 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87C0C281DFADB005DA540 /* CoreServices.framework */; };
 		F3F8794E29B30FDA0007FDA1 /* music_wavpack.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8794529B30FDA0007FDA1 /* music_wavpack.c */; };
-		F3F8794F29B30FDA0007FDA1 /* music_wavpack.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8794529B30FDA0007FDA1 /* music_wavpack.c */; };
 		F3F8795029B30FDA0007FDA1 /* load_sndfile.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8794929B30FDA0007FDA1 /* load_sndfile.c */; };
-		F3F8795129B30FDA0007FDA1 /* load_sndfile.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8794929B30FDA0007FDA1 /* load_sndfile.c */; };
 		F3F8795229B30FDA0007FDA1 /* music_gme.h in Headers */ = {isa = PBXBuildFile; fileRef = F3F8794A29B30FDA0007FDA1 /* music_gme.h */; };
-		F3F8795329B30FDA0007FDA1 /* music_gme.h in Headers */ = {isa = PBXBuildFile; fileRef = F3F8794A29B30FDA0007FDA1 /* music_gme.h */; };
 		F3F8795429B30FDA0007FDA1 /* music_wavpack.h in Headers */ = {isa = PBXBuildFile; fileRef = F3F8794B29B30FDA0007FDA1 /* music_wavpack.h */; };
-		F3F8795529B30FDA0007FDA1 /* music_wavpack.h in Headers */ = {isa = PBXBuildFile; fileRef = F3F8794B29B30FDA0007FDA1 /* music_wavpack.h */; };
 		F3F8795629B30FDA0007FDA1 /* music_gme.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8794C29B30FDA0007FDA1 /* music_gme.c */; };
-		F3F8795729B30FDA0007FDA1 /* music_gme.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8794C29B30FDA0007FDA1 /* music_gme.c */; };
 		F3F8795829B30FDA0007FDA1 /* load_sndfile.h in Headers */ = {isa = PBXBuildFile; fileRef = F3F8794D29B30FDA0007FDA1 /* load_sndfile.h */; };
-		F3F8795929B30FDA0007FDA1 /* load_sndfile.h in Headers */ = {isa = PBXBuildFile; fileRef = F3F8794D29B30FDA0007FDA1 /* load_sndfile.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -140,40 +103,40 @@
 			remoteGlobalIDString = F3968A21281F704800661875;
 			remoteInfo = opus;
 		};
-		F3B38D5B296F8ED4005DA6D3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = F3B38D54296F8E79005DA6D3;
-			remoteInfo = xcFramework;
-		};
-		F3B38D77296F929C005DA6D3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3E29D022882107B0006D108 /* xmp-lite.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = F3B38D4F296F8E1F005DA6D3;
-			remoteInfo = xcFramework;
-		};
-		F3B38D79296F92A1005DA6D3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3968B90281F817E00661875 /* opus.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = F3B38D49296F8DDD005DA6D3;
-			remoteInfo = xcFramework;
-		};
-		F3B38D9A296F97BB005DA6D3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3B38D97296F97BB005DA6D3 /* ogg.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = F3B38D8F296F9773005DA6D3;
-			remoteInfo = xcFramework;
-		};
 		F3B38D9E296F97BB005DA6D3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F3B38D97296F97BB005DA6D3 /* ogg.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = F3F70EDA281F61B4005AA27D;
 			remoteInfo = ogg;
+		};
+		F3E1F7932A78A24A00AC76D3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3E29D022882107B0006D108 /* xmp-lite.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F3B38D4F296F8E1F005DA6D3;
+			remoteInfo = "xmp-lite.xcframework";
+		};
+		F3E1F7952A78A24E00AC76D3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3B38D97296F97BB005DA6D3 /* ogg.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F3B38D8F296F9773005DA6D3;
+			remoteInfo = ogg.xcframework;
+		};
+		F3E1F7972A78A25400AC76D3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3968B90281F817E00661875 /* opus.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F3B38D49296F8DDD005DA6D3;
+			remoteInfo = opus.xcframework;
+		};
+		F3E1F7992A78A27200AC76D3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F3B38D54296F8E79005DA6D3;
+			remoteInfo = SDL_mixer.xcframework;
 		};
 		F3E29D062882107B0006D108 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -225,8 +188,6 @@
 		AAE405E11F9607C300EDAF53 /* effects_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = effects_internal.h; sourceTree = "<group>"; };
 		BE1FA90507AF96B2004B6283 /* Info-Framework.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-Framework.plist"; sourceTree = "<group>"; };
 		BE1FA90607AF96B2004B6283 /* SDL3_mixer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SDL3_mixer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		BE1FA95407AF96B2004B6283 /* libSDL3_mixer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSDL3_mixer.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		BE1FA95807AF96B3004B6283 /* Create DMG */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Create DMG"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F302405F2881DF94002F32D6 /* music_xmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_xmp.h; sourceTree = "<group>"; };
 		F30240622881DF95002F32D6 /* music_xmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_xmp.c; sourceTree = "<group>"; };
 		F3249B36285C448100DB9B5C /* CMake */ = {isa = PBXFileReference; lastKnownFileType = folder; path = CMake; sourceTree = "<group>"; };
@@ -268,14 +229,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BE1FA95207AF96B2004B6283 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F3B38D6C296F90FA005DA6D3 /* SDL3.xcframework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -293,8 +246,6 @@
 			children = (
 				089C1665FE841158C02AAC07 /* Resources */,
 				BE1FA90607AF96B2004B6283 /* SDL3_mixer.framework */,
-				BE1FA95407AF96B2004B6283 /* libSDL3_mixer.a */,
-				BE1FA95807AF96B3004B6283 /* Create DMG */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -498,43 +449,12 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BE1FA90807AF96B2004B6283 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F3823346273195F300F7F527 /* music_flac.h in Headers */,
-				F3F8795529B30FDA0007FDA1 /* music_wavpack.h in Headers */,
-				F382333E273195DF00F7F527 /* mixer.h in Headers */,
-				F382335A2731962600F7F527 /* load_aiff.h in Headers */,
-				F3823348273195F800F7F527 /* music_fluidsynth.h in Headers */,
-				F37A8D4B2838A23400C38E95 /* music_drflac.h in Headers */,
-				F30240642881DF95002F32D6 /* music_xmp.h in Headers */,
-				F382333C273195DA00F7F527 /* effects_internal.h in Headers */,
-				F382334E2731960700F7F527 /* music_modplug.h in Headers */,
-				F3823340273195E400F7F527 /* music.h in Headers */,
-				F38233522731961400F7F527 /* music_nativemidi.h in Headers */,
-				F3823338273195CF00F7F527 /* utils.h in Headers */,
-				F38233562731961C00F7F527 /* music_timidity.h in Headers */,
-				F38233542731961800F7F527 /* music_ogg.h in Headers */,
-				F382335C2731962B00F7F527 /* load_voc.h in Headers */,
-				F382335D2731962D00F7F527 /* music_opus.h in Headers */,
-				F3F8795929B30FDA0007FDA1 /* load_sndfile.h in Headers */,
-				F3823342273195E900F7F527 /* mp3utils.h in Headers */,
-				F38233602731963800F7F527 /* native_midi.h in Headers */,
-				F38233502731960F00F7F527 /* music_mpg123.h in Headers */,
-				F3823344273195EE00F7F527 /* music_cmd.h in Headers */,
-				F37A8D2E2838924900C38E95 /* music_drmp3.h in Headers */,
-				F3F8795329B30FDA0007FDA1 /* music_gme.h in Headers */,
-				F38233582731962100F7F527 /* music_wav.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		BE1FA8B407AF96B2004B6283 /* Framework */ = {
+		BE1FA8B407AF96B2004B6283 /* SDL3_mixer */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 00B7E48B097EC6B300826121 /* Build configuration list for PBXNativeTarget "Framework" */;
+			buildConfigurationList = 00B7E48B097EC6B300826121 /* Build configuration list for PBXNativeTarget "SDL3_mixer" */;
 			buildPhases = (
 				BE1FA8B507AF96B2004B6283 /* Headers */,
 				BE1FA8CF07AF96B2004B6283 /* Resources */,
@@ -547,50 +467,11 @@
 			comments = "Installed into ~/Library/Frameworks/SDL_mixer.framework\n\nAdd -framework SDL_mixer to your linker flags\nAdd ~/Library/Frameworks/SDL_mixer.framework/Headers to your header search path\nAdd ~/Library/Frameworks to your library search path";
 			dependencies = (
 			);
-			name = Framework;
+			name = SDL3_mixer;
 			productInstallPath = "@executable_path/../Frameworks";
 			productName = SDL_mixer;
 			productReference = BE1FA90607AF96B2004B6283 /* SDL3_mixer.framework */;
 			productType = "com.apple.product-type.framework";
-		};
-		BE1FA90707AF96B2004B6283 /* Static Library */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 00B7E48F097EC6B300826121 /* Build configuration list for PBXNativeTarget "Static Library" */;
-			buildPhases = (
-				BE1FA90807AF96B2004B6283 /* Headers */,
-				BE1FA92107AF96B2004B6283 /* Sources */,
-				BE1FA95207AF96B2004B6283 /* Frameworks */,
-				BE1FA95307AF96B2004B6283 /* Rez */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "Static Library";
-			productInstallPath = /usr/local/lib;
-			productName = "Static Library";
-			productReference = BE1FA95407AF96B2004B6283 /* libSDL3_mixer.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		BE1FA95507AF96B2004B6283 /* Create DMG */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 00B7E493097EC6B300826121 /* Build configuration list for PBXNativeTarget "Create DMG" */;
-			buildPhases = (
-				BE1FA95707AF96B2004B6283 /* ShellScript */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				F3B38D5C296F8ED4005DA6D3 /* PBXTargetDependency */,
-				F3B38D9B296F97BB005DA6D3 /* PBXTargetDependency */,
-				F3B38D7A296F92A1005DA6D3 /* PBXTargetDependency */,
-				F3B38D78296F929C005DA6D3 /* PBXTargetDependency */,
-			);
-			name = "Create DMG";
-			productInstallPath = /usr/local/bin;
-			productName = "Standard Package";
-			productReference = BE1FA95807AF96B3004B6283 /* Create DMG */;
-			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
 
@@ -602,6 +483,9 @@
 				TargetAttributes = {
 					F3B38D54296F8E79005DA6D3 = {
 						CreatedOnToolsVersion = 14.2;
+					};
+					F3E1F78F2A78A23C00AC76D3 = {
+						CreatedOnToolsVersion = 14.3.1;
 					};
 				};
 			};
@@ -632,10 +516,9 @@
 			);
 			projectRoot = "";
 			targets = (
-				BE1FA8B407AF96B2004B6283 /* Framework */,
-				BE1FA90707AF96B2004B6283 /* Static Library */,
-				BE1FA95507AF96B2004B6283 /* Create DMG */,
-				F3B38D54296F8E79005DA6D3 /* SDL_mixer.xcframework */,
+				BE1FA8B407AF96B2004B6283 /* SDL3_mixer */,
+				F3B38D54296F8E79005DA6D3 /* SDL3_mixer.xcframework */,
+				F3E1F78F2A78A23C00AC76D3 /* SDL3_mixer.dmg */,
 			);
 		};
 /* End PBXProject section */
@@ -683,27 +566,12 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BE1FA95307AF96B2004B6283 /* Rez */ = {
-			isa = PBXRezBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXRezBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		BE1FA95707AF96B2004B6283 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 12;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "PRODUCT_NAME=SDL3_mixer\nOPTIONAL_FRAMEWORKS=\"FLAC mpg123 ogg opus vorbis xmp_lite\"\n\nmkdir -p build/dmg-tmp\ncp -a build/$PRODUCT_NAME.xcframework build/dmg-tmp/\ncp pkg-support/resources/ReadMe.txt build/dmg-tmp\nfor i in $OPTIONAL_FRAMEWORKS; do\n    if [ -d build/$i.xcframework ]; then\n        mkdir -p build/dmg-tmp/optional\n        cp -a build/$i.xcframework build/dmg-tmp/optional/\n    fi\ndone\n\n# remove the .DS_Store files if any (we may want to provide one in the future for fancy .dmgs)\nrm -rf build/dmg-tmp/.DS_Store\n\n# create the dmg\nhdiutil create -ov -fs HFS+ -volname $PRODUCT_NAME -srcfolder build/dmg-tmp build/$PRODUCT_NAME.dmg\n\n# clean up\nrm -rf build/dmg-tmp\n";
-		};
 		F3B38D5A296F8E82005DA6D3 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -717,7 +585,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Build an xcframework with both device and simulator files for all platforms.\n# Adapted from an answer in\n# https://developer.apple.com/forums/thread/666335?answerId=685927022#685927022\n\nif [ \"$XCODE_VERSION_ACTUAL\" -lt 1100 ]\nthen\n    echo \"error: Building an xcframework requires Xcode 11 minimum.\"\n    exit 1\nfi\n\nFRAMEWORK_NAME=\"SDL3_mixer\"\nPROJECT_NAME=\"SDL_mixer\"\nSCHEME=\"Framework\"\n\nMACOS_ARCHIVE_PATH=\"${BUILD_DIR}/${CONFIGURATION}/${FRAMEWORK_NAME}-macosx.xcarchive\"\nIOS_SIMULATOR_ARCHIVE_PATH=\"${BUILD_DIR}/${CONFIGURATION}/${FRAMEWORK_NAME}-iphonesimulator.xcarchive\"\nIOS_DEVICE_ARCHIVE_PATH=\"${BUILD_DIR}/${CONFIGURATION}/${FRAMEWORK_NAME}-iphoneos.xcarchive\"\nTVOS_SIMULATOR_ARCHIVE_PATH=\"${BUILD_DIR}/${CONFIGURATION}/${FRAMEWORK_NAME}-appletvsimulator.xcarchive\"\nTVOS_DEVICE_ARCHIVE_PATH=\"${BUILD_DIR}/${CONFIGURATION}/${FRAMEWORK_NAME}-appletvos.xcarchive\"\n\nOUTPUT_DIR=\"./build/\"\n\n# macOS\nxcodebuild archive \\\n    ONLY_ACTIVE_ARCH=NO \\\n    -scheme \"${SCHEME}\" \\\n    -project \"${PROJECT_NAME}.xcodeproj\" \\\n    -archivePath ${MACOS_ARCHIVE_PATH} \\\n    -sdk macosx \\\n    BUILD_LIBRARY_FOR_DISTRIBUTION=YES \\\n    SKIP_INSTALL=NO || exit $?\n    \n# iOS simulator\nxcodebuild archive \\\n    ONLY_ACTIVE_ARCH=NO \\\n    -scheme \"${SCHEME}\" \\\n    -project \"${PROJECT_NAME}.xcodeproj\" \\\n    -archivePath ${IOS_SIMULATOR_ARCHIVE_PATH} \\\n    -sdk iphonesimulator \\\n    BUILD_LIBRARY_FOR_DISTRIBUTION=YES \\\n    SKIP_INSTALL=NO || exit $?\n\n# iOS device\nxcodebuild archive \\\n    -scheme \"${SCHEME}\" \\\n    -project \"${PROJECT_NAME}.xcodeproj\" \\\n    -archivePath ${IOS_DEVICE_ARCHIVE_PATH} \\\n    -sdk iphoneos \\\n    BUILD_LIBRARY_FOR_DISTRIBUTION=YES \\\n    SKIP_INSTALL=NO || exit $?\n\n# tvOS simulator\nxcodebuild archive \\\n    ONLY_ACTIVE_ARCH=NO \\\n    -scheme \"${SCHEME}\" \\\n    -project \"${PROJECT_NAME}.xcodeproj\" \\\n    -archivePath ${TVOS_SIMULATOR_ARCHIVE_PATH} \\\n    -sdk appletvsimulator \\\n    BUILD_LIBRARY_FOR_DISTRIBUTION=YES \\\n    SKIP_INSTALL=NO || exit $?\n\n# tvOS device\nxcodebuild archive \\\n    -scheme \"${SCHEME}\" \\\n    -project \"${PROJECT_NAME}.xcodeproj\" \\\n    -archivePath ${TVOS_DEVICE_ARCHIVE_PATH} \\\n    -sdk appletvos \\\n    BUILD_LIBRARY_FOR_DISTRIBUTION=YES \\\n    SKIP_INSTALL=NO || exit $?\n\n# Clean-up any existing instance of this xcframework from the Products directory\nrm -rf \"${OUTPUT_DIR}${FRAMEWORK_NAME}.xcframework\"\n\n# Create final xcframework\nxcodebuild -create-xcframework \\\n    -framework \"${MACOS_ARCHIVE_PATH}\"/Products/Library/Frameworks/${FRAMEWORK_NAME}.framework \\\n    -framework \"${IOS_DEVICE_ARCHIVE_PATH}\"/Products/Library/Frameworks/${FRAMEWORK_NAME}.framework \\\n    -framework \"${IOS_SIMULATOR_ARCHIVE_PATH}\"/Products/Library/Frameworks/${FRAMEWORK_NAME}.framework \\\n    -framework \"${TVOS_DEVICE_ARCHIVE_PATH}\"/Products/Library/Frameworks/${FRAMEWORK_NAME}.framework \\\n    -framework \"${TVOS_SIMULATOR_ARCHIVE_PATH}\"/Products/Library/Frameworks/${FRAMEWORK_NAME}.framework \\\n    -output ${OUTPUT_DIR}/${FRAMEWORK_NAME}.xcframework\n\n# Ensure git doesn't pick up on our Products folder. \nrm -rf ${OUTPUT_DIR}/.gitignore\necho \"*\" >> ${OUTPUT_DIR}/.gitignore\n";
+			shellScript = "# Build an xcframework with both device and simulator files for all platforms.\n# Adapted from an answer in\n# https://developer.apple.com/forums/thread/666335?answerId=685927022#685927022\n\nif [ \"$XCODE_VERSION_ACTUAL\" -lt 1100 ]\nthen\n    echo \"error: Building an xcframework requires Xcode 11 minimum.\"\n    exit 1\nfi\n\nFRAMEWORK_NAME=\"SDL3_mixer\"\nPROJECT_NAME=\"SDL_mixer\"\nSCHEME=\"SDL3_mixer\"\n\nMACOS_ARCHIVE_PATH=\"${BUILD_DIR}/${CONFIGURATION}/${FRAMEWORK_NAME}-macosx.xcarchive\"\nIOS_SIMULATOR_ARCHIVE_PATH=\"${BUILD_DIR}/${CONFIGURATION}/${FRAMEWORK_NAME}-iphonesimulator.xcarchive\"\nIOS_DEVICE_ARCHIVE_PATH=\"${BUILD_DIR}/${CONFIGURATION}/${FRAMEWORK_NAME}-iphoneos.xcarchive\"\nTVOS_SIMULATOR_ARCHIVE_PATH=\"${BUILD_DIR}/${CONFIGURATION}/${FRAMEWORK_NAME}-appletvsimulator.xcarchive\"\nTVOS_DEVICE_ARCHIVE_PATH=\"${BUILD_DIR}/${CONFIGURATION}/${FRAMEWORK_NAME}-appletvos.xcarchive\"\n\nOUTPUT_DIR=\"./build/\"\n\n# macOS\nxcodebuild archive \\\n    ONLY_ACTIVE_ARCH=NO \\\n    -scheme \"${SCHEME}\" \\\n    -project \"${PROJECT_NAME}.xcodeproj\" \\\n    -archivePath ${MACOS_ARCHIVE_PATH} \\\n    -sdk macosx \\\n    BUILD_LIBRARY_FOR_DISTRIBUTION=YES \\\n    SKIP_INSTALL=NO || exit $?\n    \n# iOS simulator\nxcodebuild archive \\\n    ONLY_ACTIVE_ARCH=NO \\\n    -scheme \"${SCHEME}\" \\\n    -project \"${PROJECT_NAME}.xcodeproj\" \\\n    -archivePath ${IOS_SIMULATOR_ARCHIVE_PATH} \\\n    -sdk iphonesimulator \\\n    BUILD_LIBRARY_FOR_DISTRIBUTION=YES \\\n    SKIP_INSTALL=NO || exit $?\n\n# iOS device\nxcodebuild archive \\\n    -scheme \"${SCHEME}\" \\\n    -project \"${PROJECT_NAME}.xcodeproj\" \\\n    -archivePath ${IOS_DEVICE_ARCHIVE_PATH} \\\n    -sdk iphoneos \\\n    BUILD_LIBRARY_FOR_DISTRIBUTION=YES \\\n    SKIP_INSTALL=NO || exit $?\n\n# tvOS simulator\nxcodebuild archive \\\n    ONLY_ACTIVE_ARCH=NO \\\n    -scheme \"${SCHEME}\" \\\n    -project \"${PROJECT_NAME}.xcodeproj\" \\\n    -archivePath ${TVOS_SIMULATOR_ARCHIVE_PATH} \\\n    -sdk appletvsimulator \\\n    BUILD_LIBRARY_FOR_DISTRIBUTION=YES \\\n    SKIP_INSTALL=NO || exit $?\n\n# tvOS device\nxcodebuild archive \\\n    -scheme \"${SCHEME}\" \\\n    -project \"${PROJECT_NAME}.xcodeproj\" \\\n    -archivePath ${TVOS_DEVICE_ARCHIVE_PATH} \\\n    -sdk appletvos \\\n    BUILD_LIBRARY_FOR_DISTRIBUTION=YES \\\n    SKIP_INSTALL=NO || exit $?\n\n# Clean-up any existing instance of this xcframework from the Products directory\nrm -rf \"${OUTPUT_DIR}${FRAMEWORK_NAME}.xcframework\"\n\n# Create final xcframework\nxcodebuild -create-xcframework \\\n    -framework \"${MACOS_ARCHIVE_PATH}\"/Products/Library/Frameworks/${FRAMEWORK_NAME}.framework \\\n    -framework \"${IOS_DEVICE_ARCHIVE_PATH}\"/Products/Library/Frameworks/${FRAMEWORK_NAME}.framework \\\n    -framework \"${IOS_SIMULATOR_ARCHIVE_PATH}\"/Products/Library/Frameworks/${FRAMEWORK_NAME}.framework \\\n    -framework \"${TVOS_DEVICE_ARCHIVE_PATH}\"/Products/Library/Frameworks/${FRAMEWORK_NAME}.framework \\\n    -framework \"${TVOS_SIMULATOR_ARCHIVE_PATH}\"/Products/Library/Frameworks/${FRAMEWORK_NAME}.framework \\\n    -output ${OUTPUT_DIR}/${FRAMEWORK_NAME}.xcframework\n\n# Ensure git doesn't pick up on our Products folder. \nrm -rf ${OUTPUT_DIR}/.gitignore\necho \"*\" >> ${OUTPUT_DIR}/.gitignore\n";
+		};
+		F3E1F79B2A78A27700AC76D3 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "PRODUCT_NAME=SDL3_mixer\nOPTIONAL_FRAMEWORKS=\"FLAC mpg123 ogg opus vorbis xmp_lite\"\n\nmkdir -p build/dmg-tmp\ncp -a build/$PRODUCT_NAME.xcframework build/dmg-tmp/\ncp pkg-support/resources/ReadMe.txt build/dmg-tmp\nfor i in $OPTIONAL_FRAMEWORKS; do\n    if [ -d build/$i.xcframework ]; then\n        mkdir -p build/dmg-tmp/optional\n        cp -a build/$i.xcframework build/dmg-tmp/optional/\n    fi\ndone\n\n# remove the .DS_Store files if any (we may want to provide one in the future for fancy .dmgs)\nrm -rf build/dmg-tmp/.DS_Store\n\n# create the dmg\nhdiutil create -ov -fs HFS+ -volname $PRODUCT_NAME -srcfolder build/dmg-tmp build/$PRODUCT_NAME.dmg\n\n# clean up\nrm -rf build/dmg-tmp\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -756,62 +642,28 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BE1FA92107AF96B2004B6283 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F38233552731961A00F7F527 /* music_timidity.c in Sources */,
-				F37A8D302838924900C38E95 /* music_drmp3.c in Sources */,
-				F382334F2731960C00F7F527 /* music_mpg123.c in Sources */,
-				F382333B273195D800F7F527 /* effects_internal.c in Sources */,
-				0448E8AF108B937A00C9D3EA /* native_midi_macosx.c in Sources */,
-				F382333A273195D500F7F527 /* effect_stereoreverse.c in Sources */,
-				F382335B2731962900F7F527 /* load_voc.c in Sources */,
-				F382334D2731960400F7F527 /* music_modplug.c in Sources */,
-				F382333F273195E100F7F527 /* music.c in Sources */,
-				F3F8795129B30FDA0007FDA1 /* load_sndfile.c in Sources */,
-				F37A8DB62838AD1300C38E95 /* music_ogg_stb.c in Sources */,
-				F37A8D512838A23400C38E95 /* music_drflac.c in Sources */,
-				F3823341273195E600F7F527 /* mp3utils.c in Sources */,
-				F3823343273195EB00F7F527 /* music_cmd.c in Sources */,
-				F382335E2731963000F7F527 /* music_opus.c in Sources */,
-				F3F8794F29B30FDA0007FDA1 /* music_wavpack.c in Sources */,
-				F382333D273195DC00F7F527 /* mixer.c in Sources */,
-				F3F8795729B30FDA0007FDA1 /* music_gme.c in Sources */,
-				F3823347273195F500F7F527 /* music_fluidsynth.c in Sources */,
-				F38233592731962400F7F527 /* load_aiff.c in Sources */,
-				F30240662881DF95002F32D6 /* music_xmp.c in Sources */,
-				F3823345273195F000F7F527 /* music_flac.c in Sources */,
-				F38233572731961F00F7F527 /* music_wav.c in Sources */,
-				F38233512731961100F7F527 /* music_nativemidi.c in Sources */,
-				F38233532731961600F7F527 /* music_ogg.c in Sources */,
-				F3823337273195CC00F7F527 /* utils.c in Sources */,
-				F3823339273195D200F7F527 /* effect_position.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		F3B38D5C296F8ED4005DA6D3 /* PBXTargetDependency */ = {
+		F3E1F7942A78A24A00AC76D3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F3B38D54296F8E79005DA6D3 /* SDL_mixer.xcframework */;
-			targetProxy = F3B38D5B296F8ED4005DA6D3 /* PBXContainerItemProxy */;
+			name = "xmp-lite.xcframework";
+			targetProxy = F3E1F7932A78A24A00AC76D3 /* PBXContainerItemProxy */;
 		};
-		F3B38D78296F929C005DA6D3 /* PBXTargetDependency */ = {
+		F3E1F7962A78A24E00AC76D3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = xcFramework;
-			targetProxy = F3B38D77296F929C005DA6D3 /* PBXContainerItemProxy */;
+			name = ogg.xcframework;
+			targetProxy = F3E1F7952A78A24E00AC76D3 /* PBXContainerItemProxy */;
 		};
-		F3B38D7A296F92A1005DA6D3 /* PBXTargetDependency */ = {
+		F3E1F7982A78A25400AC76D3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = xcFramework;
-			targetProxy = F3B38D79296F92A1005DA6D3 /* PBXContainerItemProxy */;
+			name = opus.xcframework;
+			targetProxy = F3E1F7972A78A25400AC76D3 /* PBXContainerItemProxy */;
 		};
-		F3B38D9B296F97BB005DA6D3 /* PBXTargetDependency */ = {
+		F3E1F79A2A78A27200AC76D3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = xcFramework;
-			targetProxy = F3B38D9A296F97BB005DA6D3 /* PBXContainerItemProxy */;
+			target = F3B38D54296F8E79005DA6D3 /* SDL3_mixer.xcframework */;
+			targetProxy = F3E1F7992A78A27200AC76D3 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -827,61 +679,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				OTHER_LDFLAGS = "$(CONFIG_FRAMEWORK_LDFLAGS)";
-			};
-			name = Debug;
-		};
-		00B7E490097EC6B300826121 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-			};
-			name = Release;
-		};
-		00B7E491097EC6B300826121 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-			};
-			name = Debug;
-		};
-		00B7E494097EC6B300826121 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "Create DMG";
-				REZ_EXECUTABLE = YES;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
-				ZERO_LINK = NO;
-			};
-			name = Release;
-		};
-		00B7E495097EC6B300826121 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				DEBUGGING_SYMBOLS = YES;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-flat_namespace",
-					"-all_load",
-				);
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "Create DMG";
-				REZ_EXECUTABLE = YES;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
-				ZERO_LINK = YES;
 			};
 			name = Debug;
 		};
@@ -916,7 +713,12 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MARKETING_VERSION = 3.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.libsdl.SDL3-mixer";
 				PRODUCT_NAME = SDL3_mixer;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
@@ -958,7 +760,12 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MARKETING_VERSION = 3.0.0;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.libsdl.SDL3-mixer";
 				PRODUCT_NAME = SDL3_mixer;
@@ -972,45 +779,35 @@
 		F3B38D58296F8E79005DA6D3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
 		F3B38D59296F8E79005DA6D3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		F3E1F7912A78A23C00AC76D3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		F3E1F7922A78A23C00AC76D3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
 			};
 			name = Debug;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		00B7E48B097EC6B300826121 /* Build configuration list for PBXNativeTarget "Framework" */ = {
+		00B7E48B097EC6B300826121 /* Build configuration list for PBXNativeTarget "SDL3_mixer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				00B7E48C097EC6B300826121 /* Release */,
 				00B7E48D097EC6B300826121 /* Debug */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		00B7E48F097EC6B300826121 /* Build configuration list for PBXNativeTarget "Static Library" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				00B7E490097EC6B300826121 /* Release */,
-				00B7E491097EC6B300826121 /* Debug */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		00B7E493097EC6B300826121 /* Build configuration list for PBXNativeTarget "Create DMG" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				00B7E494097EC6B300826121 /* Release */,
-				00B7E495097EC6B300826121 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1024,11 +821,20 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F3B38D57296F8E79005DA6D3 /* Build configuration list for PBXAggregateTarget "SDL_mixer.xcframework" */ = {
+		F3B38D57296F8E79005DA6D3 /* Build configuration list for PBXAggregateTarget "SDL3_mixer.xcframework" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F3B38D58296F8E79005DA6D3 /* Release */,
 				F3B38D59296F8E79005DA6D3 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F3E1F7902A78A23C00AC76D3 /* Build configuration list for PBXAggregateTarget "SDL3_mixer.dmg" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F3E1F7912A78A23C00AC76D3 /* Release */,
+				F3E1F7922A78A23C00AC76D3 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
