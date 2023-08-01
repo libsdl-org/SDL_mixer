@@ -403,6 +403,8 @@ mix_channels(void *udata, Uint8 *stream, int len)
 
                     /* rcg06072001 Alert app if channel is done playing. */
                     if (!mix_channel[i].playing && !mix_channel[i].looping) {
+                        mix_channel[i].fading = MIX_NO_FADING;
+                        mix_channel[i].expire = 0;
                         _Mix_channel_done_playing(i);
 
                         /* Update the volume after the application callback */
