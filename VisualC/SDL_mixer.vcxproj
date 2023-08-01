@@ -215,7 +215,7 @@
     <Bscmake />
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\SDL_mixer.h" />
+    <ClInclude Include="..\include\SDL3_mixer\SDL_mixer.h" />
     <ClInclude Include="..\src\effects_internal.h" />
     <ClInclude Include="..\src\mixer.h" />
     <ClInclude Include="..\src\music.h" />

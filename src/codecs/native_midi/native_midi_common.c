@@ -22,7 +22,7 @@
 
 #include "native_midi_common.h"
 
-#include <SDL3/SDL_mixer.h>
+#include <SDL3_mixer/SDL_mixer.h>
 
 /* The constant 'MThd' */
 #define MIDI_MAGIC	0x4d546864

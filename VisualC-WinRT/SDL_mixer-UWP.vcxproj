@@ -64,7 +64,7 @@
     <ClCompile Include="..\src\codecs\timidity\timidity.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\SDL_mixer.h" />
+    <ClInclude Include="..\include\SDL3_mixer\SDL_mixer.h" />
     <ClInclude Include="..\src\codecs\load_aiff.h" />
     <ClInclude Include="..\src\codecs\load_sndfile.h" />
     <ClInclude Include="..\src\codecs\load_voc.h" />

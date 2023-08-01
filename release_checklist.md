@@ -6,7 +6,7 @@
 
 * Bump version number to 3.EVEN.0 in all these locations:
 
-    * `include/SDL3/SDL_mixer.h`:
+    * `include/SDL3_mixer/SDL_mixer.h`:
         `SDL_MIXER_MAJOR_VERSION`, `SDL_MIXER_MINOR_VERSION`, `SDL_MIXER_PATCHLEVEL`
     * `CMakeLists.txt`:
         `MAJOR_VERSION`, `MINOR_VERSION`, `MICRO_VERSION`
