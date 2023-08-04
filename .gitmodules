@@ -41,3 +41,4 @@
 [submodule "external/libgme"]
 	path = external/libgme
 	url = https://github.com/libsdl-org/game-music-emu.git
+	branch = v0.6.3-SDL
