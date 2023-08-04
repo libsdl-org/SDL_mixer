@@ -207,7 +207,7 @@ static int initialize_from_track_info(GME_Music *music, int track)
 
 static void *GME_CreateFromRW(struct SDL_RWops *src, SDL_bool freesrc)
 {
-    SDL_AudioSpec spec;
+    SDL_AudioSpec srcspec;
     void *mem = 0;
     size_t size;
     GME_Music *music;
