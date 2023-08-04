@@ -357,9 +357,7 @@ static void flip_sample(Mix_Chunk *wave)
 
 int main(int argc, char *argv[])
 {
-    int audio_rate;
-    Uint16 audio_format;
-    int audio_channels;
+    SDL_AudioSpec spec;
     int loops = 0;
     int i;
     int reverse_stereo = 0;
@@ -374,31 +372,31 @@ int main(int argc, char *argv[])
     output_test_warnings();
 
     /* Initialize variables */
-    audio_rate = MIX_DEFAULT_FREQUENCY;
-    audio_format = MIX_DEFAULT_FORMAT;
-    audio_channels = MIX_DEFAULT_CHANNELS;
+    spec.freq = MIX_DEFAULT_FREQUENCY;
+    spec.format = MIX_DEFAULT_FORMAT;
+    spec.channels = MIX_DEFAULT_CHANNELS;
 
     /* Check command line usage */
     for (i=1; argv[i] && (*argv[i] == '-'); ++i) {
         if ((SDL_strcmp(argv[i], "-r") == 0) && argv[i+1]) {
             ++i;
-            audio_rate = SDL_atoi(argv[i]);
+            spec.freq = SDL_atoi(argv[i]);
         } else
         if (SDL_strcmp(argv[i], "-m") == 0) {
-            audio_channels = 1;
+            spec.channels = 1;
         } else
         if ((SDL_strcmp(argv[i], "-c") == 0) && argv[i+1]) {
             ++i;
-            audio_channels = SDL_atoi(argv[i]);
+            spec.channels = SDL_atoi(argv[i]);
         } else
         if (SDL_strcmp(argv[i], "-l") == 0) {
             loops = -1;
         } else
         if (SDL_strcmp(argv[i], "-8") == 0) {
-            audio_format = SDL_AUDIO_U8;
+            spec.format = SDL_AUDIO_U8;
         } else
         if (SDL_strcmp(argv[i], "-f32") == 0) {
-            audio_format = SDL_AUDIO_F32;
+            spec.format = SDL_AUDIO_F32;
         } else
         if (SDL_strcmp(argv[i], "-f") == 0) { /* rcg06122001 flip stereo */
             reverse_stereo = 1;
@@ -426,16 +424,16 @@ int main(int argc, char *argv[])
 #endif
 
     /* Open the audio device */
-    if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, 4096) < 0) {
+    if (Mix_OpenAudio(0, &spec) < 0) {
         SDL_Log("Couldn't open audio: %s\n", SDL_GetError());
         CleanUp(2);
     } else {
-        Mix_QuerySpec(&audio_rate, &audio_format, &audio_channels);
-        SDL_Log("Opened audio at %d Hz %d bit%s %s", audio_rate,
-            (audio_format&0xFF),
-            (SDL_AUDIO_ISFLOAT(audio_format) ? " (float)" : ""),
-            (audio_channels > 2) ? "surround" :
-            (audio_channels > 1) ? "stereo" : "mono");
+        Mix_QuerySpec(&spec.freq, &spec.format, &spec.channels);
+        SDL_Log("Opened audio at %d Hz %d bit%s %s", spec.freq,
+            (spec.format&0xFF),
+            (SDL_AUDIO_ISFLOAT(spec.format) ? " (float)" : ""),
+            (spec.channels > 2) ? "surround" :
+            (spec.channels > 1) ? "stereo" : "mono");
         if (loops) {
           SDL_Log(" (looping)\n");
         } else {

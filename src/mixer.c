@@ -63,6 +63,10 @@ SDL_COMPILE_TIME_ASSERT(SDL_MIXER_PATCHLEVEL_max, SDL_MIXER_PATCHLEVEL <= 99);
 static int audio_opened = 0;
 static SDL_AudioSpec mixer;
 static SDL_AudioDeviceID audio_device;
+static SDL_AudioStream *audio_stream;
+static Uint8 *audio_mixbuf;
+static int audio_mixbuflen;
+
 
 typedef struct _Mix_effectinfo
 {
@@ -336,16 +340,29 @@ static void *Mix_DoEffects(int chan, void *snd, int len)
 
 /* Mixing function */
 static void SDLCALL
-mix_channels(void *udata, Uint8 *stream, int len)
+mix_channels(SDL_AudioStream *astream, int len, void *udata)
 {
+    Uint8 *stream;
     Uint8 *mix_input;
     int i, mixable, master_vol;
     Uint64 sdl_ticks;
 
     (void)udata;
 
+    if (audio_mixbuflen < len) {
+        void *ptr = SDL_aligned_alloc(SDL_SIMDGetAlignment(), len);
+        if (!ptr) {
+            return;  // oh well.
+        }
+        SDL_aligned_free(audio_mixbuf);
+        audio_mixbuf = (Uint8 *) ptr;
+        audio_mixbuflen = len;
+    }
+
+    stream = audio_mixbuf;
+
     /* Need to initialize the stream in SDL 1.3+ */
-    SDL_memset(stream, mixer.silence, (size_t)len);
+    SDL_memset(stream, SDL_GetSilenceValueForFormat(mixer.format), (size_t)len);
 
     /* Mix the music (must be done before the channels are added) */
     mix_music(music_data, stream, len);
@@ -453,6 +470,8 @@ mix_channels(void *udata, Uint8 *stream, int len)
     if (mix_postmix) {
         mix_postmix(mix_postmix_data, stream, len);
     }
+
+    SDL_PutAudioStreamData(astream, audio_mixbuf, len);
 }
 
 #if 0
@@ -466,15 +485,10 @@ static void PrintFormat(char *title, SDL_AudioSpec *fmt)
 #endif
 
 /* Open the mixer with a certain desired audio format */
-int Mix_OpenAudioDevice(int frequency, Uint16 format, int nchannels, int chunksize,
-                        const char* device, int allowed_changes)
+int Mix_OpenAudio(SDL_AudioDeviceID devid, const SDL_AudioSpec *spec)
 {
     int i;
-    SDL_AudioSpec desired;
 
-    /* This used to call SDL_OpenAudio(), which initializes the audio
-       subsystem if necessary. Since SDL_OpenAudioDevice() doesn't,
-       we have to handle this case here. */
     if (!SDL_WasInit(SDL_INIT_AUDIO)) {
         if (SDL_InitSubSystem(SDL_INIT_AUDIO) < 0) {
             return -1;
@@ -483,7 +497,7 @@ int Mix_OpenAudioDevice(int frequency, Uint16 format, int nchannels, int chunksi
 
     /* If the mixer is already opened, increment open count */
     if (audio_opened) {
-        if (format == mixer.format && nchannels == mixer.channels) {
+        if (spec && (spec->format == mixer.format) && (spec->channels == mixer.channels)) {
             ++audio_opened;
             return(0);
         }
@@ -492,18 +506,25 @@ int Mix_OpenAudioDevice(int frequency, Uint16 format, int nchannels, int chunksi
         }
     }
 
-    /* Set the desired format and frequency */
-    desired.freq = frequency;
-    desired.format = format;
-    desired.channels = nchannels;
-    desired.samples = chunksize;
-    desired.callback = mix_channels;
-    desired.userdata = NULL;
-
-    /* Accept nearly any audio format */
-    if ((audio_device = SDL_OpenAudioDevice(device, 0, &desired, &mixer, allowed_changes)) == 0) {
-        return(-1);
+    if (devid == 0) {
+        devid = SDL_AUDIO_DEVICE_DEFAULT_OUTPUT;
     }
+
+    if ((audio_device = SDL_OpenAudioDevice(devid, spec)) == 0) {
+        return -1;
+    }
+
+    SDL_GetAudioDeviceFormat(audio_device, &mixer);
+
+    audio_stream = SDL_CreateAndBindAudioStream(audio_device, &mixer);
+    if (!audio_stream) {
+        SDL_CloseAudioDevice(audio_device);
+        audio_device = 0;
+        return -1;
+    }
+
+    SDL_SetAudioStreamGetCallback(audio_stream, mix_channels, NULL);
+
 #if 0
     PrintFormat("Audio device", &mixer);
 #endif
@@ -537,16 +558,7 @@ int Mix_OpenAudioDevice(int frequency, Uint16 format, int nchannels, int chunksi
     open_music(&mixer);
 
     audio_opened = 1;
-    SDL_PlayAudioDevice(audio_device);
     return(0);
-}
-
-/* Open the mixer with a certain desired audio format */
-int Mix_OpenAudio(int frequency, Uint16 format, int nchannels, int chunksize)
-{
-    return Mix_OpenAudioDevice(frequency, format, nchannels, chunksize, NULL,
-                                SDL_AUDIO_ALLOW_FREQUENCY_CHANGE |
-                                SDL_AUDIO_ALLOW_CHANNELS_CHANGE);
 }
 
 /* Pause or resume the audio streaming */
@@ -555,7 +567,7 @@ void Mix_PauseAudio(int pause_on)
     if (pause_on) {
         SDL_PauseAudioDevice(audio_device);
     } else {
-        SDL_PlayAudioDevice(audio_device);
+        SDL_UnpauseAudioDevice(audio_device);
     }
     Mix_LockAudio();
     pause_async_music(pause_on);
@@ -647,7 +659,7 @@ static SDL_AudioSpec *Mix_LoadMusic_RW(SDL_RWops *src, SDL_bool freesrc, SDL_Aud
     *spec = mixer;
 
     /* Use fragments sized on full audio frame boundaries - this'll do */
-    fragment_size = spec->size;
+    fragment_size = 4096/*spec->samples*/ * (SDL_AUDIO_BITSIZE(spec->format) / 8) * spec->channels;
 
     start = SDL_RWtell(src);
     for (i = 0; i < get_num_music_interfaces(); ++i) {
@@ -818,7 +830,7 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, SDL_bool freesrc)
 
     if (!loaded)  {
         if (SDL_memcmp(magic, "WAVE", 4) == 0 || SDL_memcmp(magic, "RIFF", 4) == 0) {
-            loaded = SDL_LoadWAV_RW(src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
+            loaded = (SDL_LoadWAV_RW(src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen) == 0) ? &wavespec : NULL;
         } else if (SDL_memcmp(magic, "FORM", 4) == 0) {
             loaded = Mix_LoadAIFF_RW(src, freesrc, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
         } else if (SDL_memcmp(magic, "Crea", 4) == 0) {
@@ -849,8 +861,7 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, SDL_bool freesrc)
         Uint8 *dst_data = NULL;
         int dst_len = 0;
 
-        if (SDL_ConvertAudioSamples(wavespec.format, wavespec.channels, wavespec.freq, chunk->abuf, chunk->alen,
-                                    mixer.format, mixer.channels, mixer.freq, &dst_data, &dst_len) < 0) {
+        if (SDL_ConvertAudioSamples(&wavespec, chunk->abuf, chunk->alen, &mixer, &dst_data, &dst_len) < 0) {
             SDL_free(chunk->abuf);
             SDL_free(chunk);
             return NULL;
@@ -1366,11 +1377,15 @@ void Mix_CloseAudio(void)
             Mix_SetMusicCMD(NULL);
             Mix_HaltChannel(-1);
             _Mix_DeinitEffects();
+            SDL_DestroyAudioStream(audio_stream);
+            audio_stream = NULL;
             SDL_CloseAudioDevice(audio_device);
             audio_device = 0;
             SDL_free(mix_channel);
             mix_channel = NULL;
-
+            SDL_aligned_free(audio_mixbuf);
+            audio_mixbuf = NULL;
+            audio_mixbuflen = 0;
             /* rcg06042009 report available decoders at runtime. */
             SDL_free((void *)chunk_decoders);
             chunk_decoders = NULL;
@@ -1723,12 +1738,12 @@ int Mix_UnregisterAllEffects(int channel)
 
 void Mix_LockAudio(void)
 {
-    SDL_LockAudioDevice(audio_device);
+    SDL_LockAudioStream(audio_stream);
 }
 
 void Mix_UnlockAudio(void)
 {
-    SDL_UnlockAudioDevice(audio_device);
+    SDL_UnlockAudioStream(audio_stream);
 }
 
 int Mix_MasterVolume(int volume)

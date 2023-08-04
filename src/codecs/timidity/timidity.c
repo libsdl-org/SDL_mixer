@@ -577,10 +577,10 @@ static void do_song_load(SDL_RWops *rw, SDL_AudioSpec *audio, MidiSong **out)
     goto fail;
   }
 
-  song->buffer_size = audio->samples;
-  song->resample_buffer = SDL_malloc(audio->samples * sizeof(sample_t));
+  song->buffer_size = 4096/*audio->samples*/;
+  song->resample_buffer = SDL_malloc(4096/*audio->samples*/ * sizeof(sample_t));
   if (!song->resample_buffer) goto fail;
-  song->common_buffer = SDL_malloc(audio->samples * 2 * sizeof(Sint32));
+  song->common_buffer = SDL_malloc(4096/*audio->samples*/ * 2 * sizeof(Sint32));
   if (!song->common_buffer) goto fail;
 
   song->control_ratio = audio->freq / CONTROLS_PER_SECOND;

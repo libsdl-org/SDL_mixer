@@ -161,6 +161,7 @@ static int DRFLAC_Seek(void *context, double position);
 static void *DRFLAC_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
 {
     DRFLAC_Music *music;
+    SDL_AudioSpec srcspec;
 
     music = (DRFLAC_Music *)SDL_calloc(1, sizeof(DRFLAC_Music));
     if (!music) {
@@ -184,12 +185,10 @@ static void *DRFLAC_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
     }
 
     /* We should have channels and sample rate set up here */
-    music->stream = SDL_CreateAudioStream(SDL_AUDIO_S16SYS,
-                                          (Uint8)music->channels,
-                                          music->sample_rate,
-                                          music_spec.format,
-                                          music_spec.channels,
-                                          music_spec.freq);
+    srcspec.format = SDL_AUDIO_S16SYS;
+    srcspec.channels = music->channels;
+    srcspec.freq = music->sample_rate;
+    music->stream = SDL_CreateAudioStream(&srcspec, &music_spec);
     if (!music->stream) {
         SDL_OutOfMemory();
         drflac_close(music->dec);
@@ -197,7 +196,7 @@ static void *DRFLAC_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
         return NULL;
     }
 
-    music->buffer_size = music_spec.samples * sizeof(drflac_int16) * music->channels;
+    music->buffer_size = 4096/*music_spec.samples*/ * sizeof(drflac_int16) * music->channels;
     music->buffer = (drflac_int16*)SDL_calloc(1, music->buffer_size);
     if (!music->buffer) {
         drflac_close(music->dec);
@@ -277,7 +276,7 @@ static int DRFLAC_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         }
     }
 
-    amount = drflac_read_pcm_frames_s16(music->dec, music_spec.samples, music->buffer);
+    amount = drflac_read_pcm_frames_s16(music->dec, 4096/*music_spec.samples*/, music->buffer);
     if (amount > 0) {
         if (music->loop && (music->play_count != 1) &&
             ((Sint64)music->dec->currentPCMFrame >= music->loop_end)) {

@@ -86,6 +86,7 @@ typedef struct {
     Sint64 stop;
     Sint64 samplesize;
     Uint8 *buffer;
+    size_t buflen;
     size_t buffered;
     SDL_AudioStream *stream;
     ADPCM_DecoderState adpcm_state;
@@ -250,15 +251,18 @@ static void *WAV_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
         WAV_Delete(music);
         return NULL;
     }
-    music->buffer = (Uint8*)SDL_malloc(music->spec.size);
+
+    music->buflen = SDL_AUDIO_BITSIZE(music->spec.format) / 8;
+    music->buflen *= music->spec.channels;
+    music->buflen *= 4096;       /* Good default sample frame count */
+
+    music->buffer = (Uint8*)SDL_malloc(music->buflen);
     if (!music->buffer) {
         Mix_OutOfMemory();
         WAV_Delete(music);
         return NULL;
     }
-    music->stream = SDL_CreateAudioStream(
-        music->spec.format, music->spec.channels, music->spec.freq,
-        music_spec.format, music_spec.channels, music_spec.freq);
+    music->stream = SDL_CreateAudioStream(&music->spec, &music_spec);
     if (!music->stream) {
         WAV_Delete(music);
         return NULL;
@@ -1219,7 +1223,7 @@ static int WAV_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         loop = NULL;
     }
 
-    amount = (int)music->spec.size;
+    amount = (int)music->buflen;
     if ((stop - pos) < amount) {
         amount = (int)(stop - pos);
     }
@@ -1494,12 +1498,11 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
             return SDL_FALSE;
     }
     spec->channels = (Uint8) SDL_SwapLE16(fmt.format.channels);
-    spec->samples = 4096;       /* Good default buffer size */
     wave->samplesize = spec->channels * (bits / 8);
     /* SDL_CalculateAudioSpec */
-    spec->size = SDL_AUDIO_BITSIZE(spec->format) / 8;
-    spec->size *= spec->channels;
-    spec->size *= spec->samples;
+    wave->buflen = SDL_AUDIO_BITSIZE(spec->format) / 8;
+    wave->buflen *= spec->channels;
+    wave->buflen *= 4096;  /* reasonable sample frame count */
 
     return SDL_TRUE;
 }
@@ -1973,10 +1976,6 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
         return SDL_FALSE;
     }
     spec->channels = (Uint8) channels;
-    spec->samples = 4096;       /* Good default buffer size */
-    spec->size = SDL_AUDIO_BITSIZE(spec->format) / 8;
-    spec->size *= spec->channels;
-    spec->size *= spec->samples;
 
     return SDL_TRUE;
 }

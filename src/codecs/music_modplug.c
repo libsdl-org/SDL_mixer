@@ -163,6 +163,7 @@ static int MODPLUG_Open(const SDL_AudioSpec *spec)
 /* Load a modplug stream from an SDL_RWops object */
 void *MODPLUG_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
 {
+    SDL_AudioSpec srcspec;
     MODPLUG_Music *music;
     void *buffer;
     size_t size;
@@ -175,18 +176,16 @@ void *MODPLUG_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
 
     music->volume = MIX_MAX_VOLUME;
 
-    music->stream = SDL_CreateAudioStream((settings.mBits == 8) ? SDL_AUDIO_U8 : SDL_AUDIO_S16SYS,
-                                          (Uint8)settings.mChannels,
-                                          settings.mFrequency,
-                                          music_spec.format,
-                                          music_spec.channels,
-                                          music_spec.freq);
+    srcspec.format = (settings.mBits == 8) ? SDL_AUDIO_U8 : SDL_AUDIO_S16SYS;
+    srcspec.channels = settings.mChannels;
+    srcspec.freq = settings.mFrequency;
+    music->stream = SDL_CreateAudioStream(&srcspec, &music_spec);
     if (!music->stream) {
         MODPLUG_Delete(music);
         return NULL;
     }
 
-    music->buffer_size = music_spec.samples * (settings.mBits / 8) * settings.mChannels;
+    music->buffer_size = 4096/*music_spec.samples*/ * (settings.mBits / 8) * settings.mChannels;
     music->buffer = SDL_malloc((size_t)music->buffer_size);
     if (!music->buffer) {
         MODPLUG_Delete(music);

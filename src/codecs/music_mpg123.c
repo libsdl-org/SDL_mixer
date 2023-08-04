@@ -224,6 +224,7 @@ static int MPG123_Open(const SDL_AudioSpec *spec)
 
 static void *MPG123_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
 {
+    SDL_AudioSpec srcspec;
     MPG123_Music *music;
     int result, format, channels, encoding;
     long rate;
@@ -249,7 +250,7 @@ static void *MPG123_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
     }
 
     /* Just assume 16-bit 2 channel audio for now */
-    music->buffer_size = music_spec.samples * sizeof(Sint16) * 2;
+    music->buffer_size = 4096/*music_spec.samples*/ * sizeof(Sint16) * 2;
     music->buffer = (unsigned char *)SDL_malloc(music->buffer_size);
     if (!music->buffer) {
         MPG123_Delete(music);
@@ -315,8 +316,10 @@ static void *MPG123_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
     SDL_assert(format != -1);
     music->sample_rate = rate;
 
-    music->stream = SDL_CreateAudioStream((SDL_AudioFormat)format, (Uint8)channels, (int)rate,
-                                       music_spec.format, music_spec.channels, music_spec.freq);
+    srcspec.format = (SDL_AudioFormat)format;
+    srcspec.channels = channels;
+    srcspec.freq = (int)rate;
+    music->stream = SDL_CreateAudioStream(&srcspec, &music_spec);
     if (!music->stream) {
         MPG123_Delete(music);
         return NULL;
@@ -356,6 +359,7 @@ static void MPG123_Stop(void *context)
 /* read some mp3 stream data and convert it for output */
 static int MPG123_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 {
+    SDL_AudioSpec srcspec;
     MPG123_Music *music = (MPG123_Music *)context;
     int filled, result;
     size_t amount = 0;
@@ -401,8 +405,10 @@ static int MPG123_GetSome(void *context, void *data, int bytes, SDL_bool *done)
             SDL_DestroyAudioStream(music->stream);
         }
 
-        music->stream = SDL_CreateAudioStream((SDL_AudioFormat)format, (Uint8)channels, (int)rate,
-                                           music_spec.format, music_spec.channels, music_spec.freq);
+        srcspec.format = (SDL_AudioFormat)format;
+        srcspec.channels = channels;
+        srcspec.freq = (int)rate;
+        music->stream = SDL_CreateAudioStream(&srcspec, &music_spec);
         if (!music->stream) {
             return -1;
         }

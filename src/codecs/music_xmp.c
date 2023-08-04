@@ -193,6 +193,7 @@ static long xmp_ftell(void *src) {
 /* Load a libxmp stream from an SDL_RWops object */
 void *XMP_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
 {
+    SDL_AudioSpec srcspec;
     XMP_Music *music;
     struct xmp_callbacks file_callbacks = {
            xmp_fread, xmp_fseek, xmp_ftell, NULL
@@ -211,7 +212,7 @@ void *XMP_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
         goto e0;
     }
 
-    music->buffer_size = music_spec.samples * 2 * 2;
+    music->buffer_size = 4096/*music_spec.samples*/ * 2 * 2;
     music->buffer = SDL_malloc((size_t)music->buffer_size);
     if (!music->buffer) {
         SDL_OutOfMemory();
@@ -243,11 +244,10 @@ void *XMP_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
     }
 
     music->volume = MIX_MAX_VOLUME;
-    music->stream = SDL_CreateAudioStream(SDL_AUDIO_S16SYS, 2,
-                                          music_spec.freq,
-                                          music_spec.format,
-                                          music_spec.channels,
-                                          music_spec.freq);
+    srcspec.format = SDL_AUDIO_S16SYS;
+    srcspec.channels = 2;
+    srcspec.freq = music_spec.freq;
+    music->stream = SDL_CreateAudioStream(&srcspec, &music_spec);
     if (!music->stream) {
         goto e3;
     }
