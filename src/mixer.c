@@ -567,7 +567,7 @@ void Mix_PauseAudio(int pause_on)
     if (pause_on) {
         SDL_PauseAudioDevice(audio_device);
     } else {
-        SDL_UnpauseAudioDevice(audio_device);
+        SDL_ResumeAudioDevice(audio_device);
     }
     Mix_LockAudio();
     pause_async_music(pause_on);
