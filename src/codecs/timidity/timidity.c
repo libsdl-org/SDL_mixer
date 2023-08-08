@@ -65,7 +65,10 @@ static int read_config_file(const char *name, int rcf_count)
   char *w[MAXWORDS], *cp;
   char *endp;
   ToneBank *bank;
-  int i, j, k, line, r, words;
+  int i, j, k, r, words;
+#ifdef DEBUG_CHATTER
+  int line;
+#endif
 
   if (rcf_count >= MAX_RCFCOUNT) {
     SNDDBG(("Probable source loop in configuration files\n"));
@@ -76,12 +79,16 @@ static int read_config_file(const char *name, int rcf_count)
    return -1;
 
   bank = NULL;
+#ifdef DEBUG_CHATTER
   line = 0;
+#endif
   r = -1; /* start by assuming failure, */
 
   while (RWgets(rw, tmp, sizeof(tmp)))
   {
+#ifdef DEBUG_CHATTER
     line++;
+#endif
     words=0;
     w[0]=SDL_strtok_r(tmp, " \t\240", &endp);
     if (!w[0]) continue;
