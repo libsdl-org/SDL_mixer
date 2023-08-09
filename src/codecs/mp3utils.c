@@ -53,15 +53,12 @@ int MP3_RWinit(struct mp3file_t *fil, SDL_RWops *src) {
 
 size_t MP3_RWread(struct mp3file_t *fil, void *ptr, size_t size, size_t maxnum) {
     size_t remaining = (size_t)(fil->length - fil->pos);
-    Sint64 ret;
+    size_t ret;
     maxnum *= size;
     if (maxnum > remaining) maxnum = remaining;
     ret = SDL_RWread(fil->src, ptr, maxnum);
-    if (ret <= 0) {
-        return 0;
-    }
     fil->pos += ret;
-    return (size_t)ret;
+    return ret;
 }
 
 Sint64 MP3_RWseek(struct mp3file_t *fil, Sint64 offset, int whence) {

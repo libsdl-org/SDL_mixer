@@ -166,11 +166,10 @@ static int set_ov_error(const char *function, int error)
 
 static size_t sdl_read_func(void *ptr, size_t size, size_t nmemb, void *datasource)
 {
-    Sint64 amount = SDL_RWread((SDL_RWops*)datasource, ptr, size * nmemb);
-    if (amount <= 0) {
-        return 0;
+    if (size > 0 && nmemb > 0) {
+        return SDL_RWread((SDL_RWops*)datasource, ptr, size * nmemb) / size;
     }
-    return (size_t)(amount / size);
+    return 0;
 }
 
 static int sdl_seek_func(void *datasource, ogg_int64_t offset, int whence)

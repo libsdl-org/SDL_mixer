@@ -177,11 +177,10 @@ static void libxmp_set_error(int e)
 }
 
 static unsigned long xmp_fread(void *dst, unsigned long len, unsigned long nmemb, void *src) {
-    Sint64 amount = SDL_RWread((SDL_RWops*)src, dst, len * nmemb);
-    if (amount <= 0) {
-        return 0;
+    if (len > 0 && nmemb > 0) {
+        return SDL_RWread((SDL_RWops*)src, dst, len * nmemb) / len;
     }
-    return (unsigned long)(amount / len);
+    return 0;
 }
 static int xmp_fseek(void *src, long offset, int whence) {
     return (SDL_RWseek((SDL_RWops*)src, offset, whence) < 0)? -1 : 0;

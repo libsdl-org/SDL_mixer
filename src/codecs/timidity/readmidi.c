@@ -37,7 +37,7 @@ static Sint32 getvl(SDL_RWops *rw)
   Uint8 c;
   for (;;)
     {
-      if (SDL_RWread(rw, &c, 1) != 1) return l;
+      if (!SDL_ReadU8(rw, &c)) return l;
       l += (c & 0x7f);
       if (!(c & 0x80)) return l;
       l<<=7;
@@ -58,7 +58,7 @@ static int dumpstring(SDL_RWops *rw, Sint32 len, Uint8 type)
       SDL_RWseek(rw, len, SDL_RW_SEEK_CUR);/* should I ? */
       return -1;
     }
-  if (len != (Sint32) SDL_RWread(rw, s, len))
+  if (SDL_RWread(rw, s, len) != (size_t)len)
     {
       SDL_free(s);
       return -1;
@@ -102,7 +102,7 @@ static MidiEventList *read_midi_event(MidiSong *song)
   for (;;)
     {
       song->at += getvl(song->rw);
-      if (SDL_RWread(song->rw, &me, 1) != 1)
+      if (!SDL_ReadU8(song->rw, &me))
 	{
 	  SNDDBG(("read_midi_event: SDL_RWread() failure\n"));
 	  return NULL;
@@ -115,7 +115,11 @@ static MidiEventList *read_midi_event(MidiSong *song)
 	}
       else if(me==0xFF) /* Meta event */
 	{
-	  SDL_RWread(song->rw, &type, 1);
+	  if (!SDL_ReadU8(song->rw, &type))
+	  {
+	    SNDDBG(("read_midi_event: SDL_RWread() failure\n"));
+	    return NULL;
+	  }
 	  len=getvl(song->rw);
 	  if (type>0 && type<16)
 	    {
@@ -132,14 +136,22 @@ static MidiEventList *read_midi_event(MidiSong *song)
 		return MAGIC_EOT;
 
 	      case 0x51: /* Tempo */
-		SDL_RWread(song->rw, &a, 1);
-		SDL_RWread(song->rw, &b, 1);
-		SDL_RWread(song->rw, &c, 1);
+                if (!SDL_ReadU8(song->rw, &a) ||
+                    !SDL_ReadU8(song->rw, &b) ||
+                    !SDL_ReadU8(song->rw, &c))
+        	  {
+        	    SNDDBG(("read_midi_event: SDL_RWread() failure\n"));
+        	    return NULL;
+        	  }
 		MIDIEVENT(song->at, ME_TEMPO, c, a, b);
 
 	      default:
 		SNDDBG(("(Meta event type 0x%02x, length %d)\n", type, len));
-		SDL_RWseek(song->rw, len, SDL_RW_SEEK_CUR);
+                if (SDL_RWseek(song->rw, len, SDL_RW_SEEK_CUR) < 0)
+        	  {
+        	    SNDDBG(("read_midi_event: SDL_RWseek() failure\n"));
+        	    return NULL;
+        	  }
 		break;
 	      }
 	}
@@ -150,28 +162,48 @@ static MidiEventList *read_midi_event(MidiSong *song)
 	    {
 	      lastchan=a & 0x0F;
 	      laststatus=(a>>4) & 0x07;
-	      SDL_RWread(song->rw, &a, 1);
+              if (!SDL_ReadU8(song->rw, &a))
+                {
+        	  SNDDBG(("read_midi_event: SDL_RWread() failure\n"));
+                  return NULL;
+                }
 	      a &= 0x7F;
 	    }
 	  switch(laststatus)
 	    {
 	    case 0: /* Note off */
-	      SDL_RWread(song->rw, &b, 1);
+              if (!SDL_ReadU8(song->rw, &b))
+                {
+        	  SNDDBG(("read_midi_event: SDL_RWread() failure\n"));
+                  return NULL;
+                }
 	      b &= 0x7F;
 	      MIDIEVENT(song->at, ME_NOTEOFF, lastchan, a,b);
 
 	    case 1: /* Note on */
-	      SDL_RWread(song->rw, &b, 1);
+              if (!SDL_ReadU8(song->rw, &b))
+                {
+        	  SNDDBG(("read_midi_event: SDL_RWread() failure\n"));
+                  return NULL;
+                }
 	      b &= 0x7F;
 	      MIDIEVENT(song->at, ME_NOTEON, lastchan, a,b);
 
 	    case 2: /* Key Pressure */
-	      SDL_RWread(song->rw, &b, 1);
+              if (!SDL_ReadU8(song->rw, &b))
+                {
+        	  SNDDBG(("read_midi_event: SDL_RWread() failure\n"));
+                  return NULL;
+                }
 	      b &= 0x7F;
 	      MIDIEVENT(song->at, ME_KEYPRESSURE, lastchan, a, b);
 
 	    case 3: /* Control change */
-	      SDL_RWread(song->rw, &b, 1);
+              if (!SDL_ReadU8(song->rw, &b))
+                {
+        	  SNDDBG(("read_midi_event: SDL_RWread() failure\n"));
+                  return NULL;
+                }
 	      b &= 0x7F;
 	      {
 		int control=255;
@@ -251,7 +283,11 @@ static MidiEventList *read_midi_event(MidiSong *song)
 	      break;
 
 	    case 6: /* Pitch wheel */
-	      SDL_RWread(song->rw, &b, 1);
+              if (!SDL_ReadU8(song->rw, &b))
+                {
+        	  SNDDBG(("read_midi_event: SDL_RWread() failure\n"));
+                  return NULL;
+                }
 	      b &= 0x7F;
 	      MIDIEVENT(song->at, ME_PITCHWHEEL, lastchan, a, b);
 
@@ -554,12 +590,13 @@ MidiEvent *read_midi_file(MidiSong *song, Sint32 *count, Sint32 *sp)
     }
 
   format=tracks=divisions_tmp = -1;
-  SDL_RWread(song->rw, &format, 2);
-  SDL_RWread(song->rw, &tracks, 2);
-  SDL_RWread(song->rw, &divisions_tmp, 2);
-  format=SDL_SwapBE16(format);
-  tracks=SDL_SwapBE16(tracks);
-  divisions_tmp=SDL_SwapBE16(divisions_tmp);
+  if (!SDL_ReadS16BE(song->rw, &format) ||
+      !SDL_ReadS16BE(song->rw, &tracks) ||
+      !SDL_ReadS16BE(song->rw, &divisions_tmp))
+    {
+      SNDDBG(("Not a MIDI file!\n"));
+      return NULL;
+    }
 
   if (divisions_tmp<0)
     {

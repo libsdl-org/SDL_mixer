@@ -91,6 +91,9 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, SDL_bool freesrc,
     Uint8 sane_freq[10];
     Uint32 frequency = 0;
 
+    /* VHDR chunk */
+    Uint16 frequency16 = 0;
+
     /* Sanity checks */
     if (audio_buf) {
         *audio_buf = NULL;
@@ -112,14 +115,18 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, SDL_bool freesrc,
         goto done;
     }
 
-    FORMchunk   = SDL_ReadLE32(src);
-    chunk_length    = SDL_ReadBE32(src);
+    if (!SDL_ReadU32LE(src, &FORMchunk) ||
+        !SDL_ReadU32BE(src, &chunk_length)) {
+        goto done;
+    }
     if (chunk_length == AIFF) { /* The FORMchunk has already been read */
         AIFFmagic    = chunk_length;
         chunk_length = FORMchunk;
         FORMchunk    = FORM;
     } else {
-        AIFFmagic    = SDL_ReadLE32(src);
+        if (!SDL_ReadU32LE(src, &AIFFmagic)) {
+            goto done;
+        }
     }
     if ((FORMchunk != FORM) || ((AIFFmagic != AIFF) && (AIFFmagic != _8SVX))) {
         Mix_SetError("Unrecognized file type (not AIFF nor 8SVX)");
@@ -134,8 +141,10 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, SDL_bool freesrc,
     found_BODY = 0;
 
     do {
-        chunk_type  = SDL_ReadLE32(src);
-        chunk_length = SDL_ReadBE32(src);
+        if (!SDL_ReadU32LE(src, &chunk_type) ||
+            !SDL_ReadU32BE(src, &chunk_length)) {
+            goto done;
+        }
         next_chunk  = SDL_RWtell(src) + chunk_length;
         /* Paranoia to avoid infinite loops */
         if (chunk_length == 0)
@@ -144,22 +153,26 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, SDL_bool freesrc,
         switch (chunk_type) {
             case SSND:
                 found_SSND  = 1;
-                offset      = SDL_ReadBE32(src);
-                blocksize   = SDL_ReadBE32(src);
-                start       = SDL_RWtell(src) + offset;
+                if (!SDL_ReadU32BE(src, &offset) ||
+                    !SDL_ReadU32BE(src, &blocksize)) {
+                    goto done;
+                }
+                start = SDL_RWtell(src) + offset;
                 (void)blocksize; /* unused. */
                 break;
 
             case COMM:
                 found_COMM  = 1;
-                channels    = SDL_ReadBE16(src);
-                numsamples  = SDL_ReadBE32(src);
-                samplesize  = SDL_ReadBE16(src);
+                if (!SDL_ReadU16BE(src, &channels) ||
+                    !SDL_ReadU32BE(src, &numsamples) ||
+                    !SDL_ReadU16BE(src, &samplesize)) {
+                    goto done;
+                }
                 if (SDL_RWread(src, sane_freq, sizeof(sane_freq)) != sizeof(sane_freq)) {
                     Mix_SetError("Bad AIFF sample frequency");
                     goto done;
                 }
-                frequency   = SANE_to_Uint32(sane_freq);
+                frequency = SANE_to_Uint32(sane_freq);
                 if (frequency == 0) {
                     Mix_SetError("Bad AIFF sample frequency");
                     goto done;
@@ -168,12 +181,15 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, SDL_bool freesrc,
 
             case VHDR:
                 found_VHDR  = 1;
-                SDL_ReadBE32(src);
-                SDL_ReadBE32(src);
-                SDL_ReadBE32(src);
-                frequency = SDL_ReadBE16(src);
+                if (!SDL_ReadU32BE(src, NULL) ||
+                    !SDL_ReadU32BE(src, NULL) ||
+                    !SDL_ReadU32BE(src, NULL) ||
+                    !SDL_ReadU16BE(src, &frequency16)) {
+                    goto done;
+                }
                 channels = 1;
                 samplesize = 8;
+                frequency = frequency16;
                 break;
 
             case BODY:

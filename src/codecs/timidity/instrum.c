@@ -367,7 +367,7 @@ static void load_instrument(MidiSong *song, const char *name,
       sp->data = (sample_t *) SDL_malloc(sp->data_length+4);
       if (!sp->data) goto nomem;
 
-      if (sp->data_length != SDL_RWread(rw, sp->data, sp->data_length))
+      if (SDL_RWread(rw, sp->data, sp->data_length) != (size_t)sp->data_length)
 	goto badread;
 
       if (!(sp->modes & MODES_16BIT)) /* convert to 16-bit data */

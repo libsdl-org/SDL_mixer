@@ -239,13 +239,14 @@ static void *WAV_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
     music->decode = fetch_pcm;
     music->encoding = PCM_CODE;
 
-    magic = SDL_ReadLE32(src);
-    if (magic == RIFF || magic == WAVE) {
-        loaded = LoadWAVMusic(music);
-    } else if (magic == FORM) {
-        loaded = LoadAIFFMusic(music);
-    } else {
-        Mix_SetError("Unknown WAVE format");
+    if (SDL_ReadU32LE(src, &magic)) {
+        if (magic == RIFF || magic == WAVE) {
+            loaded = LoadWAVMusic(music);
+        } else if (magic == FORM) {
+            loaded = LoadAIFFMusic(music);
+        } else {
+            Mix_SetError("Unknown WAVE format");
+        }
     }
     if (!loaded) {
         WAV_Delete(music);
@@ -310,11 +311,7 @@ static void WAV_Stop(void *context)
 static int fetch_pcm(void *context, int length)
 {
     WAV_Music *music = (WAV_Music *)context;
-    Sint64 amount = SDL_RWread(music->src, music->buffer, length);
-    if (amount <= 0) {
-        return 0;
-    }
-    return (int)amount;
+    return (int)SDL_RWread(music->src, music->buffer, (size_t)length);
 }
 
 static Uint32 PCM_S24_to_S32_BE(Uint8 *x) {
@@ -339,12 +336,7 @@ static int fetch_pcm24be(void *context, int length)
 {
     WAV_Music *music = (WAV_Music *)context;
     int i = 0, o = 0;
-    Sint64 amount = SDL_RWread(music->src, music->buffer, ((length / 4) * 3));
-    if (amount <= 0) {
-        length = 0;
-    } else {
-        length = (int)amount;
-    }
+    length = (int)SDL_RWread(music->src, music->buffer, (size_t)((length / 4) * 3));
     if (length % music->samplesize != 0) {
         length -= length % music->samplesize;
     }
@@ -362,12 +354,7 @@ static int fetch_pcm24le(void *context, int length)
 {
     WAV_Music *music = (WAV_Music *)context;
     int i = 0, o = 0;
-    Sint64 amount = SDL_RWread(music->src, music->buffer, ((length / 4) * 3));
-    if (amount <= 0) {
-        length = 0;
-    } else {
-        length = (int)amount;
-    }
+    length = (int)SDL_RWread(music->src, music->buffer, (size_t)((length / 4) * 3));
     if (length % music->samplesize != 0) {
         length -= length % music->samplesize;
     }
@@ -406,12 +393,7 @@ static int fetch_float64be(void *context, int length)
 {
     WAV_Music *music = (WAV_Music *)context;
     int i = 0, o = 0;
-    Sint64 amount = SDL_RWread(music->src, music->buffer, length);
-    if (amount <= 0) {
-        length = 0;
-    } else {
-        length = (int)amount;
-    }
+    length = (int)SDL_RWread(music->src, music->buffer, (size_t)length);
     if (length % music->samplesize != 0) {
         length -= length % music->samplesize;
     }
@@ -434,12 +416,7 @@ static int fetch_float64le(void *context, int length)
 {
     WAV_Music *music = (WAV_Music *)context;
     int i = 0, o = 0;
-    Sint64 amount = SDL_RWread(music->src, music->buffer, length);
-    if (amount <= 0) {
-        length = 0;
-    } else {
-        length = (int)amount;
-    }
+    length = (int)SDL_RWread(music->src, music->buffer, (size_t)length);
     if (length % music->samplesize != 0) {
         length -= length % music->samplesize;
     }
@@ -1026,12 +1003,12 @@ static int fetch_adpcm(void *context, int length, int (*DecodeBlockHeader)(ADPCM
 
     while (left > 0) {
         if (state->output.read == state->output.pos) {
-            Sint64 bytesread = SDL_RWread(music->src, state->block.data, state->blocksize);
-            if (bytesread < 0) {
-                return -1;
+            size_t bytesread = SDL_RWread(music->src, state->block.data, state->blocksize);
+            if (bytesread == 0) {
+                break;
             }
 
-            state->block.size = (size_t)bytesread < state->blocksize ? (size_t)bytesread : state->blocksize;
+            state->block.size = bytesread < state->blocksize ? bytesread : state->blocksize;
             state->block.pos = 0;
             state->output.pos = 0;
             state->output.read = 0;
@@ -1150,12 +1127,7 @@ static int fetch_xlaw(Sint16 (*decode_sample)(Uint8), void *context, int length)
 {
     WAV_Music *music = (WAV_Music *)context;
     int i = 0, o = 0;
-    Sint64 amount = SDL_RWread(music->src, music->buffer, length / 2);
-    if (amount <= 0) {
-        length = 0;
-    } else {
-        length = (int)amount;
-    }
+    length = (int)SDL_RWread(music->src, music->buffer, (size_t)(length / 2));
     if (length % music->samplesize != 0) {
         length -= length % music->samplesize;
     }
@@ -1374,7 +1346,6 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
     WaveFMTEx fmt;
     size_t size;
     int bits;
-    Sint64 nbread;
     Uint8 *chunk;
 
     if (chunk_length < sizeof(fmt.format)) {
@@ -1388,8 +1359,7 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
         return SDL_FALSE;
     }
 
-    nbread = SDL_RWread(wave->src, chunk, chunk_length);
-    if (nbread < 0 || (Uint64)nbread != (Uint64)chunk_length) {
+    if (SDL_RWread(wave->src, chunk, chunk_length) != chunk_length) {
         Mix_SetError("Couldn't read %d bytes from WAV file", chunk_length);
         SDL_free(chunk);
         return SDL_FALSE;
@@ -1672,16 +1642,20 @@ static SDL_bool LoadWAVMusic(WAV_Music *wave)
     meta_tags_init(&wave->tags);
 
     /* Check the magic header */
-    wavelen = SDL_ReadLE32(src);
-    WAVEmagic = SDL_ReadLE32(src);
+    if (!SDL_ReadU32LE(src, &wavelen) ||
+        !SDL_ReadU32LE(src, &WAVEmagic)) {
+        return SDL_FALSE;
+    }
 
     (void)wavelen;   /* unused */
     (void)WAVEmagic; /* unused */
 
     /* Read the chunks */
     for (; ;) {
-        chunk_type = SDL_ReadLE32(src);
-        chunk_length = SDL_ReadLE32(src);
+        if (!SDL_ReadU32LE(src, &chunk_type) ||
+            !SDL_ReadU32LE(src, &chunk_length)) {
+            return SDL_FALSE;
+        }
 
         if (chunk_length == 0)
             break;
@@ -1787,8 +1761,10 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
     file_length = SDL_RWsize(src);
 
     /* Check the magic header */
-    chunk_length = SDL_ReadBE32(src);
-    AIFFmagic = SDL_ReadLE32(src);
+    if (!SDL_ReadU32BE(src, &chunk_length) ||
+        !SDL_ReadU32LE(src, &AIFFmagic)) {
+        return SDL_FALSE;
+    }
     if (AIFFmagic != AIFF && AIFFmagic != AIFC) {
         Mix_SetError("Unrecognized file type (not AIFF or AIFC)");
         return SDL_FALSE;
@@ -1804,9 +1780,11 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
      *       contains compressed sound data?
      */
     do {
-        chunk_type      = SDL_ReadLE32(src);
-        chunk_length    = SDL_ReadBE32(src);
-        next_chunk      = SDL_RWtell(src) + chunk_length;
+        if (!SDL_ReadU32LE(src, &chunk_type) ||
+            !SDL_ReadU32BE(src, &chunk_length)) {
+            return SDL_FALSE;
+        }
+        next_chunk = SDL_RWtell(src) + chunk_length;
 
         if (chunk_length % 2) {
             next_chunk++;
@@ -1815,15 +1793,19 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
         switch (chunk_type) {
         case SSND:
             found_SSND = SDL_TRUE;
-            offset = SDL_ReadBE32(src);
-            blocksize = SDL_ReadBE32(src);
+            if (!SDL_ReadU32BE(src, &offset) ||
+                !SDL_ReadU32BE(src, &blocksize)) {
+                return SDL_FALSE;
+            }
             wave->start = SDL_RWtell(src) + offset;
             (void)blocksize; /* unused */
             break;
 
         case FVER:
             found_FVER = SDL_TRUE;
-            AIFCVersion1 = SDL_ReadBE32(src);
+            if (!SDL_ReadU32BE(src, &AIFCVersion1)) {
+                return SDL_FALSE;
+            }
             (void)AIFCVersion1; /* unused */
             break;
 
@@ -1857,15 +1839,17 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
             found_COMM = SDL_TRUE;
 
             /* Read the audio data format chunk */
-            channels = SDL_ReadBE16(src);
-            numsamples = SDL_ReadBE32(src);
-            samplesize = SDL_ReadBE16(src);
-            if (SDL_RWread(src, sane_freq, sizeof(sane_freq)) != sizeof(sane_freq)) {
+            if (!SDL_ReadU16BE(src, &channels) ||
+                !SDL_ReadU32BE(src, &numsamples) ||
+                !SDL_ReadU16BE(src, &samplesize) ||
+                SDL_RWread(src, sane_freq, sizeof(sane_freq)) != sizeof(sane_freq)) {
                 return SDL_FALSE;
             }
             frequency = SANE_to_Uint32(sane_freq);
             if (is_AIFC) {
-                compressionType = SDL_ReadLE32(src);
+                if (!SDL_ReadU32LE(src, &compressionType)) {
+                    return SDL_FALSE;
+                }
                 /* here must be a "compressionName" which is a padded string */
             }
             break;

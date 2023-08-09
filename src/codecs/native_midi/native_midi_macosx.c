@@ -200,22 +200,11 @@ NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *src, SDL_bool freesrc)
 {
     NativeMidiSong *retval = NULL;
     void *buf = NULL;
-    Sint64 len = 0;
+    size_t len = 0;
     CFDataRef data = NULL;
 
-    if (SDL_RWseek(src, 0, SDL_RW_SEEK_END) < 0)
-        goto fail;
-    len = SDL_RWtell(src);
-    if (len < 0)
-        goto fail;
-    if (SDL_RWseek(src, 0, SDL_RW_SEEK_SET) < 0)
-        goto fail;
-
-    buf = SDL_malloc(len);
+    buf = SDL_LoadFile_RW(src, &len, SDL_FALSE);
     if (buf == NULL)
-        goto fail;
-
-    if (SDL_RWread(src, buf, len) != len)
         goto fail;
 
     retval = SDL_malloc(sizeof(NativeMidiSong));

@@ -146,11 +146,7 @@ static int set_op_error(const char *function, int error)
 
 static int sdl_read_func(void *datasource, unsigned char *ptr, int size)
 {
-    Sint64 amount = SDL_RWread((SDL_RWops*)datasource, ptr, size);
-    if (amount <= 0) {
-        return 0;
-    }
-    return (int)amount;
+    return (int)SDL_RWread((SDL_RWops*)datasource, ptr, (size_t)size);
 }
 
 static int sdl_seek_func(void *datasource, opus_int64 offset, int whence)

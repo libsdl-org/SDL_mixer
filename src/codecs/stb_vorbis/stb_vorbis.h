@@ -1417,7 +1417,7 @@ static uint32 get32(vorb *f)
 static int getn(vorb *z, uint8 *data, int n)
 {
    #ifdef STB_VORBIS_SDL
-   if (SDL_RWread(z->rwops, data, n) == n) return 1;
+   if (SDL_RWread(z->rwops, data, n) == (size_t)n) return 1;
    z->eof = 1;
    return 0;
 

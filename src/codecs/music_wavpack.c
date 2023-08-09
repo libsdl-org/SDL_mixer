@@ -198,11 +198,7 @@ typedef struct {
 
 static int32_t sdl_read_bytes(void *id, void *data, int32_t bcount)
 {
-    Sint64 amount = SDL_RWread((SDL_RWops*)id, data, bcount);
-    if (amount <= 0) {
-        return 0;
-    }
-    return (int32_t)amount;
+    return (int32_t)SDL_RWread((SDL_RWops*)id, data, (size_t)bcount);
 }
 
 static uint32_t sdl_get_pos32(void *id)

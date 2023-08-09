@@ -3,8 +3,6 @@
 
 * Much of the code looks ugly to me.
 
-* The return value from SDL_RWread() is checked inconsistenly.
-
 * Group the members of MidiSong into logical units, i.e. structs?
 
 * The debug messages are probably a bit too noisy. I've removed one
