@@ -1654,6 +1654,9 @@ static SDL_bool LoadWAVMusic(WAV_Music *wave)
     for (; ;) {
         if (!SDL_ReadU32LE(src, &chunk_type) ||
             !SDL_ReadU32LE(src, &chunk_length)) {
+            if (src->status == SDL_RWOPS_STATUS_EOF) {
+                break;
+            }
             return SDL_FALSE;
         }
 
