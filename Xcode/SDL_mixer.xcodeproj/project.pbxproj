@@ -112,10 +112,10 @@
 		};
 		F3E1F7932A78A24A00AC76D3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = F3E29D022882107B0006D108 /* xmp-lite.xcodeproj */;
+			containerPortal = F3E29D022882107B0006D108 /* xmp.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = F3B38D4F296F8E1F005DA6D3;
-			remoteInfo = "xmp-lite.xcframework";
+			remoteInfo = "xmp.xcframework";
 		};
 		F3E1F7952A78A24E00AC76D3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -147,7 +147,7 @@
 		};
 		F3E29D062882107B0006D108 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = F3E29D022882107B0006D108 /* xmp-lite.xcodeproj */;
+			containerPortal = F3E29D022882107B0006D108 /* xmp.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = F3968D85281FBB1900661875;
 			remoteInfo = xmp;
@@ -211,7 +211,7 @@
 		F3D87C0C281DFADB005DA540 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		F3D87C0E281DFB02005DA540 /* SDL3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL3.framework; path = macOS/SDL3.framework; sourceTree = "<group>"; };
 		F3E1F8C12A794D3400AC76D3 /* SDL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SDL.xcodeproj; path = ../external/SDL/Xcode/SDL/SDL.xcodeproj; sourceTree = "<group>"; };
-		F3E29D022882107B0006D108 /* xmp-lite.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "xmp-lite.xcodeproj"; path = "xmp-lite/xmp-lite.xcodeproj"; sourceTree = "<group>"; };
+		F3E29D022882107B0006D108 /* xmp.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "xmp.xcodeproj"; path = "xmp/xmp.xcodeproj"; sourceTree = "<group>"; };
 		F3F8794529B30FDA0007FDA1 /* music_wavpack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_wavpack.c; sourceTree = "<group>"; };
 		F3F8794929B30FDA0007FDA1 /* load_sndfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = load_sndfile.c; sourceTree = "<group>"; };
 		F3F8794A29B30FDA0007FDA1 /* music_gme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_gme.h; sourceTree = "<group>"; };
@@ -264,7 +264,7 @@
 				F3E1F8C12A794D3400AC76D3 /* SDL.xcodeproj */,
 				F3B38D97296F97BB005DA6D3 /* ogg.xcodeproj */,
 				F3968B90281F817E00661875 /* opus.xcodeproj */,
-				F3E29D022882107B0006D108 /* xmp-lite.xcodeproj */,
+				F3E29D022882107B0006D108 /* xmp.xcodeproj */,
 				F59C70FC00D5CB5801000001 /* pkg-support */,
 				0153844A006D81B07F000001 /* Public Headers */,
 				08FB77ACFE841707C02AAC07 /* Library Source */,
@@ -395,7 +395,7 @@
 		F3E29D032882107B0006D108 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F3E29D072882107B0006D108 /* xmp_lite.framework */,
+				F3E29D072882107B0006D108 /* xmp.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -530,7 +530,7 @@
 				},
 				{
 					ProductGroup = F3E29D032882107B0006D108 /* Products */;
-					ProjectRef = F3E29D022882107B0006D108 /* xmp-lite.xcodeproj */;
+					ProjectRef = F3E29D022882107B0006D108 /* xmp.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -564,10 +564,10 @@
 			remoteRef = F3E1F8C72A794D3400AC76D3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3E29D072882107B0006D108 /* xmp_lite.framework */ = {
+		F3E29D072882107B0006D108 /* xmp.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = xmp_lite.framework;
+			path = xmp.framework;
 			remoteRef = F3E29D062882107B0006D108 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -629,7 +629,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "PRODUCT_NAME=SDL3_mixer\nOPTIONAL_FRAMEWORKS=\"FLAC mpg123 ogg opus vorbis xmp_lite\"\n\nmkdir -p build/dmg-tmp\ncp -a build/$PRODUCT_NAME.xcframework build/dmg-tmp/\ncp pkg-support/resources/ReadMe.txt build/dmg-tmp\nfor i in $OPTIONAL_FRAMEWORKS; do\n    if [ -d build/$i.xcframework ]; then\n        mkdir -p build/dmg-tmp/optional\n        cp -a build/$i.xcframework build/dmg-tmp/optional/\n    fi\ndone\n\n# remove the .DS_Store files if any (we may want to provide one in the future for fancy .dmgs)\nrm -rf build/dmg-tmp/.DS_Store\n\n# create the dmg\nhdiutil create -ov -fs HFS+ -volname $PRODUCT_NAME -srcfolder build/dmg-tmp build/$PRODUCT_NAME.dmg\n\n# clean up\nrm -rf build/dmg-tmp\n";
+			shellScript = "PRODUCT_NAME=SDL3_mixer\nOPTIONAL_FRAMEWORKS=\"FLAC mpg123 ogg opus vorbis xmp\"\n\nmkdir -p build/dmg-tmp\ncp -a build/$PRODUCT_NAME.xcframework build/dmg-tmp/\ncp pkg-support/resources/ReadMe.txt build/dmg-tmp\nfor i in $OPTIONAL_FRAMEWORKS; do\n    if [ -d build/$i.xcframework ]; then\n        mkdir -p build/dmg-tmp/optional\n        cp -a build/$i.xcframework build/dmg-tmp/optional/\n    fi\ndone\n\n# remove the .DS_Store files if any (we may want to provide one in the future for fancy .dmgs)\nrm -rf build/dmg-tmp/.DS_Store\n\n# create the dmg\nhdiutil create -ov -fs HFS+ -volname $PRODUCT_NAME -srcfolder build/dmg-tmp build/$PRODUCT_NAME.dmg\n\n# clean up\nrm -rf build/dmg-tmp\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -673,7 +673,7 @@
 /* Begin PBXTargetDependency section */
 		F3E1F7942A78A24A00AC76D3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "xmp-lite.xcframework";
+			name = "xmp.xcframework";
 			targetProxy = F3E1F7932A78A24A00AC76D3 /* PBXContainerItemProxy */;
 		};
 		F3E1F7962A78A24E00AC76D3 /* PBXTargetDependency */ = {
