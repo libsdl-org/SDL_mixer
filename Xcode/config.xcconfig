@@ -15,7 +15,7 @@
 // Uncomment these lines to enable MOD support
 // If you do this, you should run external/download.sh to download the decode libraries and add xmp.framework to your application bundle.
 //CONFIG_PREPROCESSOR_DEFINITIONS = $(inherited) MUSIC_MOD_XMP LIBXMP_HEADER=\"../external/libxmp/include/xmp.h\"
-//CONFIG_FRAMEWORK_LDFLAGS = $(inherited) -weak_framework xmp_lite
+//CONFIG_FRAMEWORK_LDFLAGS = $(inherited) -weak_framework xmp
 
 // Uncomment these lines to enable Opus support
 // If you do this, you should run external/download.sh to download the decode libraries and add opus.framework to your application bundle.

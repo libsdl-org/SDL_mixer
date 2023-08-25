@@ -122,7 +122,7 @@
 		};
 		F3E29D062882107B0006D108 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = F3E29D022882107B0006D108 /* xmp-lite.xcodeproj */;
+			containerPortal = F3E29D022882107B0006D108 /* xmp.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = F3968D85281FBB1900661875;
 			remoteInfo = xmp;
@@ -186,7 +186,7 @@
 		F3D87C0A281DFAD4005DA540 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		F3D87C0C281DFADB005DA540 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		F3D87C0E281DFB02005DA540 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = macOS/SDL2.framework; sourceTree = "<group>"; };
-		F3E29D022882107B0006D108 /* xmp-lite.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "xmp-lite.xcodeproj"; path = "xmp-lite/xmp-lite.xcodeproj"; sourceTree = "<group>"; };
+		F3E29D022882107B0006D108 /* xmp.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "xmp.xcodeproj"; path = "xmp/xmp.xcodeproj"; sourceTree = "<group>"; };
 		F51BFB0101F724BE01D3D55B /* native_midi.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = native_midi.h; sourceTree = "<group>"; };
 		F59C710300D5CB5801000001 /* ReadMe.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = ReadMe.txt; sourceTree = "<group>"; };
 		F59C710400D5CB5801000001 /* Welcome.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Welcome.txt; sourceTree = "<group>"; };
@@ -240,7 +240,7 @@
 			children = (
 				F3968D71281FB5E100661875 /* config.xcconfig */,
 				F3968B90281F817E00661875 /* opus.xcodeproj */,
-				F3E29D022882107B0006D108 /* xmp-lite.xcodeproj */,
+				F3E29D022882107B0006D108 /* xmp.xcodeproj */,
 				F59C70FC00D5CB5801000001 /* pkg-support */,
 				0153844A006D81B07F000001 /* Public Headers */,
 				08FB77ACFE841707C02AAC07 /* Library Source */,
@@ -349,7 +349,7 @@
 		F3E29D032882107B0006D108 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F3E29D072882107B0006D108 /* xmp_lite.framework */,
+				F3E29D072882107B0006D108 /* xmp.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -530,7 +530,7 @@
 				},
 				{
 					ProductGroup = F3E29D032882107B0006D108 /* Products */;
-					ProjectRef = F3E29D022882107B0006D108 /* xmp-lite.xcodeproj */;
+					ProjectRef = F3E29D022882107B0006D108 /* xmp.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -550,10 +550,10 @@
 			remoteRef = F3968B96281F817E00661875 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3E29D072882107B0006D108 /* xmp_lite.framework */ = {
+		F3E29D072882107B0006D108 /* xmp.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = xmp_lite.framework;
+			path = xmp.framework;
 			remoteRef = F3E29D062882107B0006D108 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -609,7 +609,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "PRODUCT_NAME=SDL2_mixer\nOPTIONAL_FRAMEWORKS=\"ogg opus xmp_lite\"\n\n# Sign framework\nif [ \"$SDL_CODESIGN_IDENTITY\" != \"\" ]; then\n    codesign --force --deep --sign \"$SDL_CODESIGN_IDENTITY\" --preserve-metadata\\=identifier,entitlements,flags --generate-entitlement-der $TARGET_BUILD_DIR/$PRODUCT_NAME.framework/Versions/A || exit $?\nfi\n\n# clean up the framework, remove headers, extra files\nmkdir -p build/dmg-tmp\ncp -a $TARGET_BUILD_DIR/$PRODUCT_NAME.framework build/dmg-tmp/\ncp pkg-support/resources/ReadMe.txt build/dmg-tmp\nfor i in $OPTIONAL_FRAMEWORKS; do\n    if [ -d $TARGET_BUILD_DIR/$i.framework ]; then\n        if [ \"$SDL_CODESIGN_IDENTITY\" != \"\" ]; then\n            codesign --force --deep --sign \"$SDL_CODESIGN_IDENTITY\"  --preserve-metadata\\=identifier,entitlements,flags --generate-entitlement-der $TARGET_BUILD_DIR/$i.framework/Versions/A\n        fi\n        mkdir -p build/dmg-tmp/optional\n        cp -a $TARGET_BUILD_DIR/$i.framework build/dmg-tmp/optional/\n    fi\ndone\n\n# remove the .DS_Store files if any (we may want to provide one in the future for fancy .dmgs)\nrm -rf build/dmg-tmp/.DS_Store\n\n# create the dmg\nhdiutil create -ov -fs HFS+ -volname $PRODUCT_NAME -srcfolder build/dmg-tmp build/$PRODUCT_NAME.dmg\n\n# clean up\nrm -rf build/dmg-tmp\n";
+			shellScript = "PRODUCT_NAME=SDL2_mixer\nOPTIONAL_FRAMEWORKS=\"ogg opus xmp\"\n\n# Sign framework\nif [ \"$SDL_CODESIGN_IDENTITY\" != \"\" ]; then\n    codesign --force --deep --sign \"$SDL_CODESIGN_IDENTITY\" --preserve-metadata\\=identifier,entitlements,flags --generate-entitlement-der $TARGET_BUILD_DIR/$PRODUCT_NAME.framework/Versions/A || exit $?\nfi\n\n# clean up the framework, remove headers, extra files\nmkdir -p build/dmg-tmp\ncp -a $TARGET_BUILD_DIR/$PRODUCT_NAME.framework build/dmg-tmp/\ncp pkg-support/resources/ReadMe.txt build/dmg-tmp\nfor i in $OPTIONAL_FRAMEWORKS; do\n    if [ -d $TARGET_BUILD_DIR/$i.framework ]; then\n        if [ \"$SDL_CODESIGN_IDENTITY\" != \"\" ]; then\n            codesign --force --deep --sign \"$SDL_CODESIGN_IDENTITY\"  --preserve-metadata\\=identifier,entitlements,flags --generate-entitlement-der $TARGET_BUILD_DIR/$i.framework/Versions/A\n        fi\n        mkdir -p build/dmg-tmp/optional\n        cp -a $TARGET_BUILD_DIR/$i.framework build/dmg-tmp/optional/\n    fi\ndone\n\n# remove the .DS_Store files if any (we may want to provide one in the future for fancy .dmgs)\nrm -rf build/dmg-tmp/.DS_Store\n\n# create the dmg\nhdiutil create -ov -fs HFS+ -volname $PRODUCT_NAME -srcfolder build/dmg-tmp build/$PRODUCT_NAME.dmg\n\n# clean up\nrm -rf build/dmg-tmp\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
