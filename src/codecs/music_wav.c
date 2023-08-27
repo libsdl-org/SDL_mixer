@@ -1691,6 +1691,12 @@ static SDL_bool LoadWAVMusic(WAV_Music *wave)
                 return SDL_FALSE;
             break;
         }
+
+        /* RIFF chunks have a 2-byte alignment. Skip padding byte. */
+        if (chunk_length & 1) {
+            if (SDL_RWseek(src, 1, SDL_RW_SEEK_CUR) < 0)
+                return SDL_FALSE;
+        }
     }
 
     if (!found_FMT) {
