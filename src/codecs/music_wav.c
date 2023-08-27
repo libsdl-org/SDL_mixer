@@ -344,7 +344,7 @@ static int fetch_float64be(void *context, int length)
     if (length % music->samplesize != 0) {
         length -= length % music->samplesize;
     }
-    for (i = 0, o = 0; i <= length; i += 8, o += 4) {
+    for (i = 0, o = 0; i < length; i += 8, o += 4) {
         union
         {
             float f;
@@ -367,7 +367,7 @@ static int fetch_float64le(void *context, int length)
     if (length % music->samplesize != 0) {
         length -= length % music->samplesize;
     }
-    for (i = 0, o = 0; i <= length; i += 8, o += 4) {
+    for (i = 0, o = 0; i < length; i += 8, o += 4) {
         union
         {
             float f;
