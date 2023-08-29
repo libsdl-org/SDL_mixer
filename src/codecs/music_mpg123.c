@@ -197,7 +197,12 @@ static char const* mpg_err(mpg123_handle* mpg, int result)
 /* we're gonna override mpg123's I/O with these wrappers for RWops */
 static MIX_SSIZE_T rwops_read(void* p, void* dst, size_t n)
 {
-    return (MIX_SSIZE_T)MP3_RWread((struct mp3file_t *)p, dst, 1, n);
+    struct mp3file_t *mp3file = (struct mp3file_t *)p;
+    MIX_SSIZE_T r = (MIX_SSIZE_T)MP3_RWread(mp3file, dst, 1, n);
+    if (!r && mp3file->src->status != SDL_RWOPS_STATUS_EOF) {
+        return -1;
+    }
+    return r < 0 ? -1 : r;
 }
 
 static off_t rwops_seek(void* p, off_t offset, int whence)
