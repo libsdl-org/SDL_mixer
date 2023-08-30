@@ -561,7 +561,7 @@ static int MS_ADPCM_Init(ADPCM_DecoderState *state, const Uint8 *chunk_data, Uin
 
     state->output.read = 0;
     state->output.pos = 0;
-    state->output.size = state->samplesperblock;
+    state->output.size = state->samplesperblock * state->channels;
     state->output.data = (Sint16 *)SDL_malloc(state->output.size * sizeof(Sint16));
     if (!state->output.data) {
         return Mix_OutOfMemory();
@@ -791,7 +791,7 @@ static int IMA_ADPCM_Init(ADPCM_DecoderState *state, const Uint8 *chunk_data, Ui
 
     state->output.read = 0;
     state->output.pos = 0;
-    state->output.size = state->samplesperblock;
+    state->output.size = state->samplesperblock * state->channels;
     state->output.data = (Sint16 *)SDL_malloc(state->output.size * sizeof(Sint16));
     if (!state->output.data) {
         return Mix_OutOfMemory();
