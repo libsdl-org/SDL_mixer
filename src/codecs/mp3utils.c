@@ -1155,6 +1155,7 @@ int read_id3v2_from_mem(Mix_MusicMetaTags *out_tags, Uint8 *data, size_t length)
         fil.src = src;
         fil.start = 0;
         fil.length = (Sint64)length;
+        fil.pos = 0;
 
         if (!is_id3v2(data, length)) {
             SDL_RWclose(src);
