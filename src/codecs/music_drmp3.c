@@ -112,7 +112,7 @@ static void *DRMP3_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
     }
 
     music->channels = music->dec.channels;
-    srcspec.format = SDL_AUDIO_S16SYS;
+    srcspec.format = SDL_AUDIO_S16;
     srcspec.channels = music->channels;
     srcspec.freq = (int)music->dec.sampleRate;
     music->stream = SDL_CreateAudioStream(&srcspec, &music_spec);

@@ -243,7 +243,7 @@ void *XMP_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
     }
 
     music->volume = MIX_MAX_VOLUME;
-    srcspec.format = SDL_AUDIO_S16SYS;
+    srcspec.format = SDL_AUDIO_S16;
     srcspec.channels = 2;
     srcspec.freq = music_spec.freq;
     music->stream = SDL_CreateAudioStream(&srcspec, &music_spec);

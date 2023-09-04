@@ -1898,12 +1898,12 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
         case raw_: spec->format = SDL_AUDIO_U8; break;
         case sowt: spec->format = SDL_AUDIO_S8; break;
         case ulaw:
-            spec->format = SDL_AUDIO_S16LSB;
+            spec->format = SDL_AUDIO_S16LE;
             wave->encoding = MULAW_CODE;
             wave->decode = fetch_ulaw;
             break;
         case alaw:
-            spec->format = SDL_AUDIO_S16LSB;
+            spec->format = SDL_AUDIO_S16LE;
             wave->encoding = ALAW_CODE;
             wave->decode = fetch_alaw;
             break;
@@ -1912,17 +1912,17 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
         break;
     case 16:
         if (!is_AIFC)
-            spec->format = SDL_AUDIO_S16MSB;
+            spec->format = SDL_AUDIO_S16BE;
         else switch (compressionType) {
-        case sowt: spec->format = SDL_AUDIO_S16LSB; break;
-        case NONE: spec->format = SDL_AUDIO_S16MSB; break;
+        case sowt: spec->format = SDL_AUDIO_S16LE; break;
+        case NONE: spec->format = SDL_AUDIO_S16BE; break;
         case ULAW:
-            spec->format = SDL_AUDIO_S16LSB;
+            spec->format = SDL_AUDIO_S16LE;
             wave->encoding = MULAW_CODE;
             wave->decode = fetch_ulaw;
             break;
         case ALAW:
-            spec->format = SDL_AUDIO_S16LSB;
+            spec->format = SDL_AUDIO_S16LE;
             wave->encoding = ALAW_CODE;
             wave->decode = fetch_alaw;
             break;
@@ -1933,21 +1933,21 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
         wave->encoding = PCM_CODE;
         wave->decode = fetch_pcm24be;
         if (!is_AIFC)
-            spec->format = SDL_AUDIO_S32MSB;
+            spec->format = SDL_AUDIO_S32BE;
         else switch (compressionType) {
-        case sowt: spec->format = SDL_AUDIO_S32LSB; break;
-        case NONE: spec->format = SDL_AUDIO_S32MSB; break;
+        case sowt: spec->format = SDL_AUDIO_S32LE; break;
+        case NONE: spec->format = SDL_AUDIO_S32BE; break;
         default: goto unsupported_format;
         }
         break;
     case 32:
         if (!is_AIFC)
-            spec->format = SDL_AUDIO_S32MSB;
+            spec->format = SDL_AUDIO_S32BE;
         else switch (compressionType) {
-        case sowt: spec->format = SDL_AUDIO_S32LSB; break;
-        case NONE: spec->format = SDL_AUDIO_S32MSB; break;
+        case sowt: spec->format = SDL_AUDIO_S32LE; break;
+        case NONE: spec->format = SDL_AUDIO_S32BE; break;
         case fl32:
-        case FL32: spec->format = SDL_AUDIO_F32MSB; break;
+        case FL32: spec->format = SDL_AUDIO_F32BE; break;
         default: goto unsupported_format;
         }
         break;

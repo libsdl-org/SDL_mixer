@@ -185,7 +185,7 @@ static void *DRFLAC_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
     }
 
     /* We should have channels and sample rate set up here */
-    srcspec.format = SDL_AUDIO_S16SYS;
+    srcspec.format = SDL_AUDIO_S16;
     srcspec.channels = music->channels;
     srcspec.freq = music->sample_rate;
     music->stream = SDL_CreateAudioStream(&srcspec, &music_spec);

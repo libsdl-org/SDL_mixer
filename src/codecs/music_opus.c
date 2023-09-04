@@ -188,7 +188,7 @@ static int OPUS_UpdateSection(OPUS_music *music)
         music->stream = NULL;
     }
 
-    srcspec.format = SDL_AUDIO_S16SYS;
+    srcspec.format = SDL_AUDIO_S16;
     srcspec.channels = op_info->channel_count;
     srcspec.freq = 48000;
     music->stream = SDL_CreateAudioStream(&srcspec, &music_spec);
