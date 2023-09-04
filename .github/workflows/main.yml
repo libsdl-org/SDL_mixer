@@ -125,6 +125,7 @@ jobs:
           -DSDL3MIXER_MP3_MPG123=ON \
           -DSDL3MIXER_OPUS=ON \
           -DSDL3MIXER_VORBIS=VORBISFILE \
+          -DSDL3MIXER_STRICT=ON \
           -DSDL3MIXER_WERROR=ON \
           -DCMAKE_INSTALL_PREFIX=prefix_cmake \
           ${NULL+}
