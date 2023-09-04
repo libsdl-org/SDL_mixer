@@ -176,7 +176,7 @@ void *MODPLUG_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
 
     music->volume = MIX_MAX_VOLUME;
 
-    srcspec.format = (settings.mBits == 8) ? SDL_AUDIO_U8 : SDL_AUDIO_S16SYS;
+    srcspec.format = (settings.mBits == 8) ? SDL_AUDIO_U8 : SDL_AUDIO_S16;
     srcspec.channels = settings.mChannels;
     srcspec.freq = settings.mFrequency;
     music->stream = SDL_CreateAudioStream(&srcspec, &music_spec);

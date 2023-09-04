@@ -223,7 +223,7 @@ static void *GME_CreateFromRW(struct SDL_RWops *src, SDL_bool freesrc)
     music->tempo = 1.0;
     music->gain = 1.0;
 
-    srcspec.format = SDL_AUDIO_S16SYS;
+    srcspec.format = SDL_AUDIO_S16;
     srcspec.channels = 2;
     srcspec.freq = music_spec.freq;
     music->stream = SDL_CreateAudioStream(&srcspec, &music_spec);

@@ -404,10 +404,10 @@ static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, SDL
         format = SDL_AUDIO_U8;
         break;
     case 16:
-        format = SDL_AUDIO_S16SYS;
+        format = SDL_AUDIO_S16;
         break;
     default:
-        format = (music->mode & MODE_FLOAT) ? SDL_AUDIO_F32SYS : SDL_AUDIO_S32SYS;
+        format = (music->mode & MODE_FLOAT) ? SDL_AUDIO_F32 : SDL_AUDIO_S32;
         break;
     }
 

@@ -211,7 +211,7 @@ static int OGG_UpdateSection(OGG_music *music)
         music->stream = NULL;
     }
 
-    srcspec.format = SDL_AUDIO_S16SYS;
+    srcspec.format = SDL_AUDIO_S16;
     srcspec.channels = vi->channels;
     srcspec.freq = (int)vi->rate;
     music->stream = SDL_CreateAudioStream(&srcspec, &music_spec);
