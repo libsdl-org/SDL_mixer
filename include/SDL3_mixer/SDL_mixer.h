@@ -220,11 +220,7 @@ extern DECLSPEC void SDLCALL Mix_Quit(void);
 
 /* Good default values for a PC soundcard */
 #define MIX_DEFAULT_FREQUENCY   44100
-#if SDL_BYTEORDER == SDL_LIL_ENDIAN
-#define MIX_DEFAULT_FORMAT  SDL_AUDIO_S16LE
-#else
-#define MIX_DEFAULT_FORMAT  SDL_AUDIO_S16BE
-#endif
+#define MIX_DEFAULT_FORMAT      SDL_AUDIO_S16
 #define MIX_DEFAULT_CHANNELS    2
 #define MIX_MAX_VOLUME          SDL_MIX_MAXVOLUME /* Volume of a chunk */
 
