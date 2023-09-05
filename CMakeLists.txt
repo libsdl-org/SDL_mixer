@@ -103,7 +103,7 @@ option(SDL2MIXER_CMD "Support an external music player" ${sdl2mixer_cmd_default}
 
 option(SDL2MIXER_FLAC "Enable FLAC music" ON)
 
-cmake_dependent_option(SDL2MIXER_FLAC_LIBFLAC "Enable FLAC music using libFLAC" ON SDL2MIXER_FLAC OFF)
+cmake_dependent_option(SDL2MIXER_FLAC_LIBFLAC "Enable FLAC music using libFLAC" OFF SDL2MIXER_FLAC OFF)
 cmake_dependent_option(SDL2MIXER_FLAC_LIBFLAC_SHARED "Dynamically load LIBFLAC" "${SDL2MIXER_DEPS_SHARED}" SDL2MIXER_FLAC_LIBFLAC OFF)
 
 cmake_dependent_option(SDL2MIXER_FLAC_DRFLAC "Enable FLAC music using drflac" ON SDL2MIXER_FLAC OFF)
