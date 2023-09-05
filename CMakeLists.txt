@@ -111,7 +111,7 @@ option(SDL3MIXER_SNDFILE_SHARED "Dynamically load libsndfile" "${SDL3MIXER_DEPS_
 
 option(SDL3MIXER_FLAC "Enable FLAC music" ON)
 
-cmake_dependent_option(SDL3MIXER_FLAC_LIBFLAC "Enable FLAC music using libFLAC" ON SDL3MIXER_FLAC OFF)
+cmake_dependent_option(SDL3MIXER_FLAC_LIBFLAC "Enable FLAC music using libFLAC" OFF SDL3MIXER_FLAC OFF)
 cmake_dependent_option(SDL3MIXER_FLAC_LIBFLAC_SHARED "Dynamically load LIBFLAC" "${SDL3MIXER_DEPS_SHARED}" SDL3MIXER_FLAC_LIBFLAC OFF)
 
 cmake_dependent_option(SDL3MIXER_FLAC_DRFLAC "Enable FLAC music using drflac" ON SDL3MIXER_FLAC OFF)
