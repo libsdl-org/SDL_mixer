@@ -173,7 +173,8 @@ typedef enum
  * behavior.
  *
  * After initializing SDL_mixer, the next step is to open an audio device to
- * prepare to play sound (with Mix_OpenAudio()), and load audio data to play with that device.
+ * prepare to play sound (with Mix_OpenAudio()), and load audio data to play
+ * with that device.
  *
  * \param flags initialization flags, OR'd together.
  * \returns all currently initialized flags.
