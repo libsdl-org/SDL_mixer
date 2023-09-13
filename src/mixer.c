@@ -340,7 +340,7 @@ static void *Mix_DoEffects(int chan, void *snd, int len)
 
 /* Mixing function */
 static void SDLCALL
-mix_channels(void *udata, SDL_AudioStream *astream, int len)
+mix_channels(void *udata, SDL_AudioStream *astream, int len, int total)
 {
     Uint8 *stream;
     Uint8 *mix_input;
@@ -348,6 +348,7 @@ mix_channels(void *udata, SDL_AudioStream *astream, int len)
     Uint64 sdl_ticks;
 
     (void)udata;
+    (void)total;
 
     if (audio_mixbuflen < len) {
         void *ptr = SDL_aligned_alloc(SDL_SIMDGetAlignment(), len);
@@ -514,7 +515,7 @@ int Mix_OpenAudio(SDL_AudioDeviceID devid, const SDL_AudioSpec *spec)
         return -1;
     }
 
-    SDL_GetAudioDeviceFormat(audio_device, &mixer);
+    SDL_GetAudioDeviceFormat(audio_device, &mixer, NULL);
     audio_stream = SDL_CreateAudioStream(&mixer, &mixer);
     if (!audio_stream) {
         SDL_CloseAudioDevice(audio_device);
