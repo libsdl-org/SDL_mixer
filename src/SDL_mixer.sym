@@ -1,6 +1,7 @@
 SDL3_mixer_0.0.0 {
   global:
     Mix_AllocateChannels;
+    Mix_ChannelFinished;
     Mix_CloseAudio;
     Mix_ExpireChannel;
     Mix_FadeInChannel;
