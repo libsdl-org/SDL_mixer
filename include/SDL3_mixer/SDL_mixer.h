@@ -2181,6 +2181,31 @@ extern DECLSPEC Mix_Fading SDLCALL Mix_FadingChannel(int which);
 extern DECLSPEC void SDLCALL Mix_Pause(int channel);
 
 /**
+ * Pause playing of a group of channels by arbitrary tag.
+ *
+ * Pausing a channel will prevent further playback of the assigned chunk but
+ * will maintain the chunk's current mixing position. When resumed, this
+ * channel will continue to mix the chunk where it left off.
+ *
+ * A paused channel can be resumed by calling Mix_Resume() or
+ * Mix_ResumeGroup().
+ *
+ * A paused channel with an expiration will not expire while paused (the
+ * expiration countdown will be adjusted once resumed).
+ *
+ * A tag is an arbitrary number that can be assigned to several mixer
+ * channels, to form groups of channels.
+ *
+ * The default tag for a channel is -1.
+ *
+ * \param tag an arbitrary value, assigned to channels, to search for.
+ * \returns zero, whether any channels were halted or not.
+ *
+ * \since This function is available since SDL_mixer 3.0.0.
+ */
+extern DECLSPEC int SDLCALL Mix_PauseGroup(int tag);
+
+/**
  * Resume a particular channel.
  *
  * It is legal to resume an unpaused or invalid channel; it causes no effect
@@ -2197,6 +2222,27 @@ extern DECLSPEC void SDLCALL Mix_Pause(int channel);
  * \since This function is available since SDL_mixer 3.0.0.
  */
 extern DECLSPEC void SDLCALL Mix_Resume(int channel);
+
+/**
+ * Resume playing of a group of channels by arbitrary tag.
+ *
+ * It is legal to resume an unpaused or invalid channel; it causes no effect
+ * and reports no error.
+ *
+ * If the paused channel has an expiration, its expiration countdown resumes
+ * now, as well.
+ *
+ * A tag is an arbitrary number that can be assigned to several mixer
+ * channels, to form groups of channels.
+ *
+ * The default tag for a channel is -1.
+ *
+ * \param tag an arbitrary value, assigned to channels, to search for.
+ * \returns zero, whether any channels were resumed or not.
+ *
+ * \since This function is available since SDL_mixer 3.0.0.
+ */
+extern DECLSPEC int SDLCALL Mix_ResumeGroup(int tag);
 
 /**
  * Query whether a particular channel is paused.
