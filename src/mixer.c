@@ -1415,6 +1415,19 @@ void Mix_Pause(int which)
     }
 }
 
+/* Pause playing of a particular group of channels */
+int Mix_PauseGroup(int tag)
+{
+    int i;
+
+    for (i=0; i<num_channels; ++i) {
+        if (mix_channel[i].tag == tag) {
+            Mix_Pause(i);
+        }
+    }
+    return(0);
+}
+
 /* Resume a paused channel */
 void Mix_Resume(int which)
 {
@@ -1439,6 +1452,19 @@ void Mix_Resume(int which)
         }
     }
     Mix_UnlockAudio();
+}
+
+/* Resume playing of a particular group of channels */
+int Mix_ResumeGroup(int tag)
+{
+    int i;
+
+    for (i=0; i<num_channels; ++i) {
+        if (mix_channel[i].tag == tag) {
+            Mix_Resume(i);
+        }
+    }
+    return(0);
 }
 
 int Mix_Paused(int which)
