@@ -546,6 +546,7 @@ static BOOL MOD_Load(BOOL curious)
 		q->seekpos = pos;
 		/* Test for MODPlugin ADPCM. These are indicated by "ADPCM"
 		 * embedded at the start of each sample's data. :( */
+		memset(adpcm, 0, sizeof(adpcm));
 		_mm_read_UBYTES(adpcm, 5, modreader);
 		if (!memcmp(adpcm, "ADPCM", 5)) {
 			q->flags |= SF_ADPCM4;

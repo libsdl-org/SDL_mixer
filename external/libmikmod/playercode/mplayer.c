@@ -369,6 +369,12 @@ static SWORD StartEnvelope(ENVPR *t,UBYTE flg,UBYTE pts,UBYTE susbeg,UBYTE susen
 		return t->env[0].val;
 	}
 
+	/* Ignore junk loops */
+	if (beg > pts || beg > end)
+		t->flg &= ~EF_LOOP;
+	if (susbeg > pts || susbeg > susend)
+		t->flg &= ~EF_SUSTAIN;
+
 	/* Imago Orpheus sometimes stores an extra initial point in the envelope */
 	if ((t->pts>=2)&&(t->env[0].pos==t->env[1].pos)) {
 		t->a++;

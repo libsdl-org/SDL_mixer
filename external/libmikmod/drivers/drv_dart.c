@@ -20,7 +20,7 @@
 
 /*==============================================================================
 
-  $Id: drv_dart.c,v 1.1.1.1 2004/06/01 12:16:17 raph Exp $
+  $Id$
 
   Driver for output on OS/2 MMPM/2 using direct audio (DART)
 
@@ -42,6 +42,7 @@
 
 #ifdef DRV_DART
 
+#undef VERSION /* stop conflict with os2medef.h */
 #define INCL_DOS
 #define INCL_OS2MM
 #include <os2.h>

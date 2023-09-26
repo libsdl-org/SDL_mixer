@@ -74,14 +74,11 @@ typedef long long       SLONGLONG;
 #endif
 typedef int __s64_typetest [(sizeof(SLONGLONG)==8) * 2 - 1];
 
-/* pointer-sized signed int (ssize_t/intptr_t) : */
-#if defined(_WIN64) /* win64 is LLP64, not LP64  */
-typedef long long       SINTPTR_T;
-#else
-/* long should be pointer-sized for all others : */
-typedef long            SINTPTR_T;
+/* signed size type (ssize_t) */
+#if !defined(_WIN32) /* Win32 SDK has SSIZE_T */
+typedef long            SSIZE_T;
 #endif
-typedef int __iptr_typetest [(sizeof(SINTPTR_T)==sizeof(void*)) * 2 - 1];
+typedef int __ssize_typetest [(sizeof(SSIZE_T)==sizeof(size_t)) * 2 - 1];
 
 /*========== Error handling */
 

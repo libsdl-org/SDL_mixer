@@ -61,7 +61,7 @@
 
 #ifdef MIKMOD_DYNAMIC
 /* runtime link with libasound */
-#ifndef HAVE_RTLD_GLOBAL
+#ifndef RTLD_GLOBAL
 #define RTLD_GLOBAL (0)
 #endif
 static int (*alsa_pcm_subformat_mask_malloc)(snd_pcm_subformat_mask_t **);
@@ -139,29 +139,52 @@ static int ALSA_Link(void)
 	if (!libasound) libasound = dlopen("libasound.so",RTLD_LAZY|RTLD_GLOBAL);
 	if (!libasound) return 1;
 
-	if (!(alsa_pcm_subformat_mask_malloc = dlsym(libasound,"snd_pcm_subformat_mask_malloc"))) return 1;
-	if (!(alsa_strerror = dlsym(libasound,"snd_strerror"))) return 1;
-	if (!(alsa_pcm_prepare = dlsym(libasound,"snd_pcm_prepare"))) return 1;
-	if (!(alsa_pcm_sw_params_sizeof = dlsym(libasound,"snd_pcm_sw_params_sizeof"))) return 1;
-	if (!(alsa_pcm_hw_params_sizeof = dlsym(libasound,"snd_pcm_hw_params_sizeof"))) return 1;
-	if (!(alsa_pcm_resume = dlsym(libasound,"snd_pcm_resume"))) return 1;
-	if (!(alsa_pcm_hw_params_any = dlsym(libasound,"snd_pcm_hw_params_any"))) return 1;
-	if (!(alsa_pcm_hw_params = dlsym(libasound,"snd_pcm_hw_params"))) return 1;
-	if (!(alsa_pcm_hw_params_current = dlsym(libasound,"snd_pcm_hw_params_current"))) return 1;
-	if (!(alsa_pcm_hw_params_set_access = dlsym(libasound,"snd_pcm_hw_params_set_access"))) return 1;
-	if (!(alsa_pcm_hw_params_set_format = dlsym(libasound,"snd_pcm_hw_params_set_format"))) return 1;
-	if (!(alsa_pcm_hw_params_set_rate_near = dlsym(libasound,"snd_pcm_hw_params_set_rate_near"))) return 1;
-	if (!(alsa_pcm_hw_params_set_channels_near = dlsym(libasound,"snd_pcm_hw_params_set_channels_near"))) return 1;
-	if (!(alsa_pcm_hw_params_set_buffer_time_near = dlsym(libasound,"snd_pcm_hw_params_set_buffer_time_near"))) return 1;
-	if (!(alsa_pcm_hw_params_set_period_time_near = dlsym(libasound,"snd_pcm_hw_params_set_period_time_near"))) return 1;
-	if (!(alsa_pcm_hw_params_get_buffer_size = dlsym(libasound,"snd_pcm_hw_params_get_buffer_size"))) return 1;
-	if (!(alsa_pcm_hw_params_get_period_size = dlsym(libasound,"snd_pcm_hw_params_get_period_size"))) return 1;
-	if (!(alsa_pcm_open = dlsym(libasound,"snd_pcm_open"))) return 1;
-	if (!(alsa_pcm_close = dlsym(libasound,"snd_pcm_close"))) return 1;
-	if (!(alsa_pcm_nonblock = dlsym(libasound,"snd_pcm_nonblock"))) return 1;
-	if (!(alsa_pcm_drop = dlsym(libasound,"snd_pcm_drop"))) return 1;
-	if (!(alsa_pcm_start = dlsym(libasound,"snd_pcm_start"))) return 1;
-	if (!(alsa_pcm_writei = dlsym(libasound,"snd_pcm_writei"))) return 1;
+	if (!(alsa_pcm_subformat_mask_malloc = (int (*)(snd_pcm_subformat_mask_t **))
+						 dlsym(libasound,"snd_pcm_subformat_mask_malloc"))) return 1;
+	if (!(alsa_strerror = (const char* (*)(int))
+						 dlsym(libasound,"snd_strerror"))) return 1;
+	if (!(alsa_pcm_prepare = (int (*)(snd_pcm_t *))
+						 dlsym(libasound,"snd_pcm_prepare"))) return 1;
+	if (!(alsa_pcm_sw_params_sizeof = (int (*)(void))
+						 dlsym(libasound,"snd_pcm_sw_params_sizeof"))) return 1;
+	if (!(alsa_pcm_hw_params_sizeof = (int (*)(void))
+						 dlsym(libasound,"snd_pcm_hw_params_sizeof"))) return 1;
+	if (!(alsa_pcm_resume = (int (*)(snd_pcm_t *))
+						 dlsym(libasound,"snd_pcm_resume"))) return 1;
+	if (!(alsa_pcm_hw_params_any = (int (*)(snd_pcm_t *, snd_pcm_hw_params_t *))
+						 dlsym(libasound,"snd_pcm_hw_params_any"))) return 1;
+	if (!(alsa_pcm_hw_params = (int (*)(snd_pcm_t *, snd_pcm_hw_params_t *))
+						 dlsym(libasound,"snd_pcm_hw_params"))) return 1;
+	if (!(alsa_pcm_hw_params_current = (int (*)(snd_pcm_t *, snd_pcm_hw_params_t *))
+						 dlsym(libasound,"snd_pcm_hw_params_current"))) return 1;
+	if (!(alsa_pcm_hw_params_set_access = (int (*)(snd_pcm_t *, snd_pcm_hw_params_t *, snd_pcm_access_t))
+						 dlsym(libasound,"snd_pcm_hw_params_set_access"))) return 1;
+	if (!(alsa_pcm_hw_params_set_format = (int (*)(snd_pcm_t *, snd_pcm_hw_params_t *, snd_pcm_format_t))
+						 dlsym(libasound,"snd_pcm_hw_params_set_format"))) return 1;
+	if (!(alsa_pcm_hw_params_set_rate_near = (int (*)(snd_pcm_t *, snd_pcm_hw_params_t *, unsigned int *, int *))
+						 dlsym(libasound,"snd_pcm_hw_params_set_rate_near"))) return 1;
+	if (!(alsa_pcm_hw_params_set_channels_near = (int (*)(snd_pcm_t *, snd_pcm_hw_params_t *, unsigned int *))
+						 dlsym(libasound,"snd_pcm_hw_params_set_channels_near"))) return 1;
+	if (!(alsa_pcm_hw_params_set_buffer_time_near = (int (*)(snd_pcm_t *, snd_pcm_hw_params_t *, unsigned int *, int *))
+						 dlsym(libasound,"snd_pcm_hw_params_set_buffer_time_near"))) return 1;
+	if (!(alsa_pcm_hw_params_set_period_time_near = (int (*)(snd_pcm_t *, snd_pcm_hw_params_t *, unsigned int *, int *))
+						 dlsym(libasound,"snd_pcm_hw_params_set_period_time_near"))) return 1;
+	if (!(alsa_pcm_hw_params_get_buffer_size = (int (*)(const snd_pcm_hw_params_t *, snd_pcm_uframes_t *))
+						 dlsym(libasound,"snd_pcm_hw_params_get_buffer_size"))) return 1;
+	if (!(alsa_pcm_hw_params_get_period_size = (int (*)(const snd_pcm_hw_params_t *, snd_pcm_uframes_t *, int *))
+						 dlsym(libasound,"snd_pcm_hw_params_get_period_size"))) return 1;
+	if (!(alsa_pcm_open = (int (*)(snd_pcm_t**, const char *, int, int))
+						 dlsym(libasound,"snd_pcm_open"))) return 1;
+	if (!(alsa_pcm_close = (int (*)(snd_pcm_t*))
+						 dlsym(libasound,"snd_pcm_close"))) return 1;
+	if (!(alsa_pcm_nonblock = (int (*)(snd_pcm_t*, int))
+						 dlsym(libasound,"snd_pcm_nonblock"))) return 1;
+	if (!(alsa_pcm_drop = (int (*)(snd_pcm_t*))
+						 dlsym(libasound,"snd_pcm_drop"))) return 1;
+	if (!(alsa_pcm_start = (int (*)(snd_pcm_t *))
+						 dlsym(libasound,"snd_pcm_start"))) return 1;
+	if (!(alsa_pcm_writei = (snd_pcm_sframes_t (*)(snd_pcm_t*,const void*,snd_pcm_uframes_t))
+						 dlsym(libasound,"snd_pcm_writei"))) return 1;
 
 	return 0;
 }
@@ -426,6 +449,7 @@ MIKMODAPI MDRIVER drv_alsa = {
 	"Advanced Linux Sound Architecture (ALSA) driver v1.10",
 	0,255,
 	"alsa",
+
 	ALSA_CommandLine,
 	ALSA_IsThere,
 	VC_SampleLoad,

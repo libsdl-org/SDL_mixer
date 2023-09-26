@@ -64,7 +64,7 @@
 static int(*esd_closestream)(int);
 static int(*esd_playstream)(esd_format_t,int,const char*,const char*);
 static void* libesd=NULL;
-#ifndef HAVE_RTLD_GLOBAL
+#ifndef RTLD_GLOBAL
 #define RTLD_GLOBAL (0)
 #endif
 #else /* MIKMOD_DYNAMIC */

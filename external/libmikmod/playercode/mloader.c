@@ -105,18 +105,20 @@ MIKMODAPI void MikMod_RegisterLoader(struct MLOADER* ldr)
 BOOL ReadComment(UWORD len)
 {
 	if(len) {
-		int i;
+		CHAR *ptr;
 
-		if(!(of.comment=(CHAR*)_mm_malloc(len+1))) return 0;
+		of.comment=(CHAR*)_mm_calloc(1,len+1);
+		if(!of.comment) return 0;
 		_mm_read_UBYTES(of.comment,len,modreader);
 
 		/* translate IT linefeeds */
-		for(i=0;i<len;i++)
-			if(of.comment[i]=='\r') of.comment[i]='\n';
-
-		of.comment[len]=0;	/* just in case */
+		ptr=of.comment;
+		while(*ptr) {
+			if(*ptr=='\r') *ptr='\n';
+			++ptr;
+		}
 	}
-	if(!of.comment[0]) {
+	if(of.comment && !of.comment[0]) {
 		free(of.comment);
 		of.comment=NULL;
 	}

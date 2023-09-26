@@ -12,7 +12,6 @@ AC_CONFIG_AUX_DIR([autotools])
 AM_INIT_AUTOMAKE([1.10 foreign subdir-objects])
 AC_CONFIG_SRCDIR([include/mikmod_internals.h])
 AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_LIBOBJ_DIR([posix])
 AM_MAINTAINER_MODE
 
 # Library versioning for libtool: CURRENT, REVISION, AGE
@@ -65,8 +64,7 @@ case $host_os in
 	haiku*) libmikmod_haiku=yes ;;
 	hpux*) libmikmod_hpux=yes ;;
 	irix*) libmikmod_irix=yes ;;
-	aix*) AC_DEFINE([AIX], 1, [Define if your system is AIX 3.x - might be needed for 4.x too])
-		libmikmod_aix=yes ;;
+	aix*) libmikmod_aix=yes ;;
 	sunos*|solaris*)
 		if test "$cross_compiling" != yes
 		then
@@ -115,6 +113,7 @@ libmikmod_driver_pipe=yes
 
 libmikmod_dynload=yes
 libmikmod_dynload_underscores=no
+libmikmod_dynload_used=no
 libmikmod_debug=no
 libmikmod_threads=yes
 
@@ -234,7 +233,6 @@ case $host_os in
   mingw*|emx*|*djgpp|amigaos*|aros*|morphos*)
      libmikmod_driver_oss=no
      libmikmod_driver_esd=no
-     libmikmod_driver_nas=no
      libmikmod_driver_af=no
      # windows, dos, os2 don't need stdout or pipe.
      # so default to disabled, but still user-selectable.
@@ -382,17 +380,8 @@ LT_INIT([win32-dll])
 # Check for typedefs, structures, and compiler characteristics.
 # =============================================================
 
-AC_PROG_GCC_TRADITIONAL
 AC_C_CONST
 AC_C_INLINE
-AC_CACHE_CHECK([if compiler understands the signed keyword],[libmikmod_cv_gcc_signed],
-	AC_LANG_PUSH([C])
-	AC_TRY_COMPILE(,[signed int t = 0;],[libmikmod_cv_gcc_signed=yes],[libmikmod_cv_gcc_signed=no])
-	AC_LANG_POP([C]))
-if test $libmikmod_cv_gcc_signed = no
-then
-	AC_DEFINE(signed,,[Define to empty if compiler does not understand the `signed' keyword.])
-fi
 
 AC_TYPE_PID_T
 AC_TYPE_SIZE_T
@@ -402,16 +391,15 @@ AC_C_BIGENDIAN
 # Check for header files.
 # =======================
 
-AC_HEADER_STDC
-AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS([fcntl.h limits.h malloc.h memory.h sys/ioctl.h unistd.h])
+
+AC_HEADER_SYS_WAIT
 
 # ============================
 # Check for library functions.
 # ============================
 
 AC_CHECK_FUNCS([setenv snprintf srandom])
-AC_REPLACE_FUNCS([memcmp strstr])
 
 # ====================
 # Check for libraries.
@@ -455,19 +443,19 @@ then
 		libmikmod_oldlibs=$LIBS
 		LIBS="$LIBS $libmikmod_dllib"
 		AC_LANG_PUSH([C])
-		AC_TRY_RUN(
-[#include <dlfcn.h>
+		AC_RUN_IFELSE([AC_LANG_SOURCE(
+[[#include <dlfcn.h>
 #ifndef RTLD_GLOBAL
 #define RTLD_GLOBAL 0
 #endif
 int main(void) {
 	void *libc, *printfptr;
 	libc = dlopen("libc.so", RTLD_LAZY | RTLD_GLOBAL);
-	if (!libc) exit(1);
+	if (!libc) return 1;
 	printfptr = dlsym(libc, "_printf");
 	dlclose(libc);
-	exit(!printfptr);
-}],
+	return !printfptr;
+}]])],
 			[libmikmod_cv_dynload_underscores=yes],
 			[libmikmod_cv_dynload_underscores=no],
 			[libmikmod_cv_dynload_underscores=no])
@@ -484,7 +472,7 @@ fi
 # ---------------
 if test $libmikmod_mingw = yes || test $libmikmod_amiga = yes
 then
-	dnl libmikmod_threads variable is for pthreads only
+	# libmikmod_threads variable is for pthreads only
 	libmikmod_threads=no
 fi
 
@@ -495,8 +483,8 @@ then
 		ac_save_CFLAGS=$CFLAGS
 		CFLAGS="$CFLAGS -pthread"
 		AC_LANG_PUSH([C])
-		AC_TRY_LINK([#include <pthread.h>],
-			[int p = pthread_create(NULL,NULL,NULL,NULL);],
+		AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <pthread.h>]],
+			[int p = pthread_create(NULL,NULL,NULL,NULL);])],
 			[libmikmod_cv_gcc_pthread=yes],
 			[libmikmod_cv_gcc_pthread=no])
 		AC_LANG_POP([C])
@@ -504,15 +492,15 @@ then
 	)
 	if test $libmikmod_cv_gcc_pthread = yes
 	then
-		dnl There is no need for -pthread on darwin or haiku, as gcc
-		dnl complains about unrecognized option -pthread
+		# There is no need for -pthread on darwin or haiku, as gcc
+		# complains about unrecognized option -pthread
 		if test $libmikmod_darwin = no && test $libmikmod_haiku = no
 		then
 			libmikmod_threads=""
 			CFLAGS="$CFLAGS -pthread"
 		fi
 	else
-		dnl AC_CHECK_HEADERS(pthread.h) unreliable
+		# AC_CHECK_HEADERS(pthread.h) unreliable
 		AC_CHECK_LIB([pthread],[pthread_create],[libmikmod_threads=-lpthread],
 				[AC_CHECK_LIB([c_r],[pthread_create],[libmikmod_threads=-lc_r])])
 	fi
@@ -586,11 +574,13 @@ then
 	if test $ac_cv_header_libgus_h = yes
 	then
 		AC_CACHE_CHECK([if libgus is new enough],[libmikmod_cv_libgus_h_good],
-		 [AC_TRY_COMPILE([#include <libgus.h>],
+		 [AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
+[[#include <libgus.h>]],
 [gus_info_t *info;
 int flg1=GUS_INSTR_SIMPLE;
-int flg2=GUS_WAVE_BIDIR;],
-				[libmikmod_cv_libgus_h_good=yes],[libmikmod_cv_libgus_h_good=no])])
+int flg2=GUS_WAVE_BIDIR;])],
+				[libmikmod_cv_libgus_h_good=yes],
+				[libmikmod_cv_libgus_h_good=no])])
 
 		if test $libmikmod_cv_libgus_h_good = yes
 		then
@@ -725,6 +715,8 @@ then
 	if test $libmikmod_dynload = no
 	then
 		LIBRARY_LIB="-lasound $LIBRARY_LIB"
+	else
+		libmikmod_dynload_used=yes
 	fi
 fi
 
@@ -740,6 +732,8 @@ then
 	if test $libmikmod_dynload != no
 	then
 		ESD_LIBS="`echo $ESD_LIBS|sed -e 's/-lesd//'|sed -e 's/-lasound//'|sed -e 's/-laudiofile//'|sed -e 's/-lossaudio//'`"
+	else
+		libmikmod_dynload_used=yes
 	fi
 	LIBRARY_LIB="$ESD_LIBS $LIBRARY_LIB"
 fi
@@ -764,7 +758,8 @@ then
 	esac
 
 	AC_MSG_CHECKING([whether OSS code compiles])
-	AC_TRY_COMPILE([#ifdef HAVE_SYS_IOCTL_H
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
+[[#ifdef HAVE_SYS_IOCTL_H
 # include <sys/ioctl.h>
 #endif
 #ifdef HAVE_SYS_SOUNDCARD_H
@@ -775,8 +770,8 @@ then
 # include <soundcard.h>
 #else
 error No OSS header present.
-#endif],
-			[int i=SNDCTL_DSP_RESET;],
+#endif]],
+			[int i=SNDCTL_DSP_RESET;])],
 			[libmikmod_driver_oss=yes],
 			[libmikmod_driver_oss=no])
 	AC_MSG_RESULT([$libmikmod_driver_oss])
@@ -824,6 +819,8 @@ then
 	if test $libmikmod_dynload = no
 	then
 		LIBRARY_LIB="-lgus $LIBRARY_LIB"
+	else
+		libmikmod_dynload_used=yes
 	fi
 fi
 
@@ -837,18 +834,9 @@ if test $libmikmod_dynload != no
 then
 	AC_DEFINE([MIKMOD_DYNAMIC], 1, [Define if you want runtime dynamic linking of ALSA and EsounD drivers])
 
-	LIBRARY_LIB="$libmikmod_dllib $LIBRARY_LIB"
-	if test $libmikmod_dynload = sun
+	if test -n $libmikmod_dllib && test $libmikmod_dynload_used = yes
 	then
-		# RTLD_GLOBAL is not defined under every system
-		AC_CACHE_CHECK([if RTLD_GLOBAL is defined],libmikmod_cv_decl_rtld_global,
-		 [AC_TRY_COMPILE([#include <dlfcn.h>],[int flag=RTLD_GLOBAL;],
-			[libmikmod_cv_decl_rtld_global=yes],
-			[libmikmod_cv_decl_rtld_global=no])])
-		if test $libmikmod_cv_decl_rtld_global = yes
-		then
-			AC_DEFINE([HAVE_RTLD_GLOBAL], 1, [Define if your system has RTLD_GLOBAL defined in <dlfcn.h>])
-		fi
+		LIBRARY_LIB="$libmikmod_dllib $LIBRARY_LIB"
 	fi
 fi
 
@@ -868,15 +856,14 @@ then
 
 	# On at least x86 platforms, gcc 2.7.2.1 and earlier won't work if -O3 (or
 	# -finline-functions) are used. Versions 2.7.2.3, 2.8.x and egcs are ok
-	# (didn't test 2.7.2.2).
-	# Until there's an easy way to catch broken inlining, we choose flags known
-	# to work correctly depending of the compiler version.
+	# (didn't test 2.7.2.2). Using flags known to work correctly depending on
+	# the compiler version:
 	AC_CACHE_CHECK([if inlining functions is safe],[libmikmod_cv_gcc_inline_safe],
-	 [AC_TRY_COMPILE(,[
-#if !(defined __GNUC__ && (__GNUC__ > 2 || __GNUC__ == 2 && __GNUC_MINOR__ > 7))
+	 [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [[
+#if defined __GNUC__ && !(__GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 7))
 #error inlining functions not safe
 #endif
-], [libmikmod_cv_gcc_inline_safe=yes], [libmikmod_cv_gcc_inline_safe=no])])
+]])], [libmikmod_cv_gcc_inline_safe=yes], [libmikmod_cv_gcc_inline_safe=no])])
 	if test $libmikmod_cv_gcc_inline_safe = no
 	then
 		CFLAGS="$CFLAGS -fno-strength-reduce"
@@ -891,8 +878,8 @@ then
 	REENTRANT="-D_REENTRANT"
 	if test $libmikmod_cv_gcc_pthread = yes
 	then
-		dnl There is no need for -pthread on darwin or haiku, as gcc
-		dnl complains about unrecognized option -pthread
+		# There is no need for -pthread on darwin or haiku, as gcc
+		# complains about unrecognized option -pthread
 		if test $libmikmod_darwin = no && test $libmikmod_haiku = no
 		then
 			REENTRANT="-pthread $REENTRANT"
@@ -917,12 +904,12 @@ ac_save_CFLAGS="$CFLAGS"
 CFLAGS="$CFLAGS -fvisibility=hidden -Werror"
 AC_CACHE_CHECK([if compiler supports visibility attributes],[libmikmod_cv_gcc_visibility],
 	AC_LANG_PUSH([C])
-	AC_TRY_COMPILE([
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
 __attribute__((visibility("default"))) int foo(void);
 __attribute__((visibility("hidden")))  int bar(void);
 int foo(void) { return 0; }
 int bar(void) { return 1; }],
-		[],
+		[])],
 		[libmikmod_cv_gcc_visibility=yes],
 		[libmikmod_cv_gcc_visibility=no])
 	AC_LANG_POP([C]))

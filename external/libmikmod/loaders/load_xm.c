@@ -73,7 +73,8 @@ typedef struct XMINSTHEADER {
 	ULONG ssize;
 } XMINSTHEADER;
 
-#define XMENVCNT (12*2)
+#define XMENVPTS (12)
+#define XMENVCNT (XMENVPTS*2)
 #define XMNOTECNT (8*OCTAVE)
 typedef struct XMPATCHHEADER {
 	UBYTE what[XMNOTECNT];  /*  Sample number for all notes */
@@ -518,10 +519,10 @@ static BOOL LoadInstruments(void)
 				/* we can't trust the envelope point count here, as some
 				   modules have incorrect values (K_OSPACE.XM reports 32 volume
 				   points, for example). */
-				if(pth.volpts>XMENVCNT/2) pth.volpts=XMENVCNT/2;
-				if(pth.panpts>XMENVCNT/2) pth.panpts=XMENVCNT/2;
+				if(pth.volpts>XMENVPTS) pth.volpts=XMENVPTS;
+				if(pth.panpts>XMENVPTS) pth.panpts=XMENVPTS;
 
-				if((_mm_eof(modreader))||(pth.volpts>XMENVCNT/2)||(pth.panpts>XMENVCNT/2)) {
+				if(_mm_eof(modreader)) {
 					if(nextwav) { free(nextwav);nextwav=NULL; }
 					if(wh) { free(wh);wh=NULL; }
 					_mm_errno = MMERR_LOADING_SAMPLEINFO;
@@ -534,7 +535,7 @@ static BOOL LoadInstruments(void)
 
 #if defined __STDC__ || defined _MSC_VER || defined __WATCOMC__ || defined MPW_C
 #define XM_ProcessEnvelope(name) 										\
-				for (u = 0; u < (XMENVCNT >> 1); u++) {					\
+				for (u = 0; u < XMENVPTS; u++) {					\
 					d-> name##env[u].pos = pth. name##env[u << 1];		\
 					d-> name##env[u].val = pth. name##env[(u << 1)+ 1];	\
 				}														\
@@ -547,14 +548,14 @@ static BOOL LoadInstruments(void)
 				d-> name##pts=pth. name##pts;							\
 																		\
 				/* scale envelope */									\
-				for (p=0;p<XMENVCNT/2;p++)								\
+				for (p = 0; p < XMENVPTS; p++)								\
 					d-> name##env[p].val<<=2;							\
 																		\
 				if ((d-> name##flg&EF_ON)&&(d-> name##pts<2))			\
 					d-> name##flg&=~EF_ON
 #else
 #define XM_ProcessEnvelope(name) 											\
-				for (u = 0; u < (XMENVCNT >> 1); u++) {						\
+				for (u = 0; u < XMENVPTS; u++) {						\
 					d-> name/**/env[u].pos = pth. name/**/env[u << 1];		\
 					d-> name/**/env[u].val = pth. name/**/env[(u << 1)+ 1];	\
 				}															\
@@ -568,7 +569,7 @@ static BOOL LoadInstruments(void)
 				d-> name/**/pts=pth. name/**/pts;							\
 																			\
 				/* scale envelope */										\
-				for (p=0;p<XMENVCNT/2;p++)									\
+				for (p = 0; p < XMENVPTS; p++)									\
 					d-> name/**/env[p].val<<=2;								\
 																			\
 				if ((d-> name/**/flg&EF_ON)&&(d-> name/**/pts<2))			\

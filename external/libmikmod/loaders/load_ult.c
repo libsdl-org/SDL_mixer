@@ -20,8 +20,6 @@
 
 /*==============================================================================
 
-  $Id: load_ult.c,v 1.1.1.1 2004/06/01 12:16:17 raph Exp $
-
   Ultratracker (ULT) module loader
 
 ==============================================================================*/
@@ -194,6 +192,7 @@ static BOOL ULT_Load(BOOL curious)
 		q->loopend   = s.loopend;
 		q->flags = SF_SIGNED;
 		if(s.flags&ULTS_LOOP) q->flags|=SF_LOOP;
+		else q->loopstart = q->loopend = 0;
 		if(s.flags&ULTS_16BITS) {
 			s.sizeend+=(s.sizeend-s.sizestart);
 			s.sizestart<<=1;
@@ -246,6 +245,11 @@ static BOOL ULT_Load(BOOL curious)
 
 	for(t=0;t<of.numtrk;t++) {
 		int rep,row=0;
+		/* FIXME: unrolling continuous portamento is a HACK and needs to
+		 * be replaced with a real continuous effect. This implementation
+		 * breaks when tone portamento continues between patterns. See
+		 * discussion in https://github.com/sezero/mikmod/pull/40 . */
+		int continuePortaToNote = 0;
 
 		UniReset();
 		while(row<64) {
@@ -261,14 +265,22 @@ static BOOL ULT_Load(BOOL curious)
 				int offset;
 
 				if(ev.sample) UniInstrument(ev.sample-1);
-				if(ev.note)   UniNote(ev.note+2*OCTAVE-1);
+				if(ev.note) {
+					UniNote(ev.note+2*OCTAVE-1);
+					continuePortaToNote = 0;
+				}
 
 				/* first effect - various fixes by Alexander Kerkhove and
 				                  Thomas Neumann */
 				eff = ev.eff>>4;
+
+				if (continuePortaToNote && (eff != 0x3) && ((ev.eff & 0xf) != 0x3))
+					UniEffect(UNI_ITEFFECTG, 0);
+
 				switch(eff) {
 					case 0x3: /* tone portamento */
 						UniEffect(UNI_ITEFFECTG,ev.dat2);
+						continuePortaToNote = 1;
 						break;
 					case 0x5:
 						break;
@@ -293,6 +305,7 @@ static BOOL ULT_Load(BOOL curious)
 				switch(eff) {
 					case 0x3: /* tone portamento */
 						UniEffect(UNI_ITEFFECTG,ev.dat1);
+						continuePortaToNote = 1;
 						break;
 					case 0x5:
 						break;
@@ -343,6 +356,5 @@ MIKMODAPI MLOADER load_ult={
 	ULT_Cleanup,
 	ULT_LoadTitle
 };
-
 
 /* ex:set ts=4: */

@@ -483,7 +483,7 @@ static BOOL LoadMEDPatterns(void)
 			return 0;
 	}
 	/* sanity check */
-	if (! of.numchn)	/* docs say 4, 8, 12 or 16 */
+	if (! of.numchn || of.numchn > 16)	/* docs say 4, 8, 12 or 16 */
 		return 0;
 
 	of.numtrk = of.numpat * of.numchn;
@@ -541,7 +541,7 @@ static BOOL LoadMMD1Patterns(void)
 			return 0;
 	}
 	/* sanity check */
-	if (! of.numchn)	/* docs say 4, 8, 12 or 16 */
+	if (! of.numchn || of.numchn > 16)	/* docs say 4, 8, 12 or 16 */
 		return 0;
 
 	of.numtrk = of.numpat * of.numchn;

@@ -56,7 +56,7 @@ typedef struct ITPACK {
 BOOL SL_Init(SAMPLOAD* s)
 {
 	if(!sl_buffer)
-		if(!(sl_buffer=(SWORD*)_mm_malloc(SLBUFSIZE*sizeof(SWORD)))) return 0;
+		if(!(sl_buffer=(SWORD*)_mm_calloc(1,SLBUFSIZE*sizeof(SWORD)))) return 0;
 
 	sl_rlength = s->length;
 	if(s->infmt & SF_16BITS) sl_rlength>>=1;

@@ -3,9 +3,6 @@
 /* Define if building universal (internal helper macro) */
 #undef AC_APPLE_UNIVERSAL_BUILD
 
-/* Define if your system is AIX 3.x - might be needed for 4.x too */
-#undef AIX
-
 /* Define if your system needs leading underscore to function names in dlsym()
    calls */
 #undef DLSYM_NEEDS_UNDERSCORE
@@ -104,9 +101,6 @@
 /* Define to 1 if you have the <malloc.h> header file. */
 #undef HAVE_MALLOC_H
 
-/* Define to 1 if you have the `memcmp' function. */
-#undef HAVE_MEMCMP
-
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
@@ -115,9 +109,6 @@
 
 /* Define if your system provides POSIX.4 threads */
 #undef HAVE_PTHREAD
-
-/* Define if your system has RTLD_GLOBAL defined in <dlfcn.h> */
-#undef HAVE_RTLD_GLOBAL
 
 /* Define to 1 if you have the `setenv' function. */
 #undef HAVE_SETENV
@@ -145,9 +136,6 @@
 
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
-
-/* Define to 1 if you have the `strstr' function. */
-#undef HAVE_STRSTR
 
 /* Define to 1 if you have the <sun/audioio.h> header file. */
 #undef HAVE_SUN_AUDIOIO_H
@@ -253,9 +241,6 @@
 
 /* Define to `int' if <sys/types.h> does not define. */
 #undef pid_t
-
-/* Define to empty if compiler does not understand the `signed' keyword. */
-#undef signed
 
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 #undef size_t

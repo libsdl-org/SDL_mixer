@@ -38,7 +38,7 @@ void* _mm_malloc(size_t size)
 {
 	void *d;
 
-	if(!(d=calloc(1,size))) {
+	if(!(d=malloc(size))) {
 		_mm_errno = MMERR_OUT_OF_MEMORY;
 		if(_mm_errorhandler) _mm_errorhandler();
 	}
@@ -66,8 +66,8 @@ char* _mm_strdup(const char *s)
 	if (!s) return NULL;
 
 	l = strlen(s) + 1;
-	d = (char *) _mm_calloc(1, l * sizeof(char));
-	if (d) strcpy(d, s);
+	d = (char *) _mm_malloc(l);
+	if (d) memcpy(d, s, l);
 	return d;
 }
 

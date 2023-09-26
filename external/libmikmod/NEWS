@@ -1,4 +1,4 @@
-Summary of changes between libmikmod 3.1.21.1 and libmikmod 3.1.22:
+Summary of changes between libmikmod 3.1.21 and libmikmod 3.1.22:
 ========================================================================
 
 libmikmod v3.1.22 was released on ???? ??, ????.
@@ -55,6 +55,7 @@ libmikmod v3.1.22 was released on ???? ??, ????.
   github PR #34.)
 - Fix UltraTracker sample speed calculation. (e.g. 'Break the beat.ult'
   now plays correctly. github PR #40.)
+- Fix UltraTracker portamento to note (github PR #40.)
 - Fix STM blank patterns handling. (github bug #9, PR #55.)
 - Fix sample loop and detection for invalid values in Scream Tracker 2
   loader. (e.g. N.S. Beat.stm and Batman.stm. github PR #38.)

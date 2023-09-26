@@ -1,1 +1,1 @@
-EXTRA_DIST = memcmp.c strcasecmp.c strstr.c
+EXTRA_DIST = strcasecmp.c

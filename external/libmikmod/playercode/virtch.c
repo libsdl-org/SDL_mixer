@@ -20,19 +20,14 @@
 
 /*==============================================================================
 
-  $Id: virtch.c,v 1.1.1.1 2004/06/01 12:16:18 raph Exp $
-
   Sample mixing routines, using a 32 bits mixing buffer.
-
-==============================================================================*/
-
-/*
 
   Optional features include:
     (a) 4-step reverb (for 16 bit output only)
     (b) Interpolation of sample data during mixing
     (c) Dolby Surround Sound
-*/
+
+==============================================================================*/
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -689,9 +684,10 @@ static void AddChannel(SLONG* ptr,NATIVE todo)
 		     (vnf->flags&SF_LOOP)?idxlend:idxsize;
 
 		/* if the sample is not blocked... */
-		if((end==vnf->current)||(!vnf->increment))
+		if((vnf->increment>0 && vnf->current>=end) ||
+		   (vnf->increment<0 && vnf->current<=end) || !vnf->increment) {
 			done=0;
-		else {
+		} else {
 			done=MIN((end-vnf->current)/vnf->increment+1,todo);
 			if(done<0) done=0;
 		}

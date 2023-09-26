@@ -1,0 +1,19 @@
+sdlplayer/
+	Shows a way of initializing the library, loading and
+	playing a module using SDL's audio output facilities.
+
+simpleplay/
+	Shows the simplest way of initializing the library
+	loading and playing a module.
+
+simpleplayFP/
+	Shows how to initialize the library, load a module from
+	a FILE* and play it.
+
+simpleplayMEM/
+	Shows how to initialize the library, load a module using a
+	custom MREADER (which will read from memory), and play it.
+
+umxplay/
+	Shows how to initialize the library, load an Unreal UMX
+	music module using a custom MREADER, and play it.

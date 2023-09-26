@@ -593,7 +593,6 @@ PACKAGE_BUGREPORT=''
 PACKAGE_URL=''
 
 ac_unique_file="include/mikmod_internals.h"
-ac_config_libobj_dir=posix
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -633,6 +632,7 @@ ac_includes_default="\
 ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
+LIBOBJS
 LIB_LDADD
 LIBMIKMOD_VERSION
 LIBMIKMOD_MICRO_VERSION
@@ -645,7 +645,6 @@ BUILD_DOCS_TRUE
 ESD_LIBS
 ESD_CFLAGS
 ESD_CONFIG
-LIBOBJS
 CPP
 LT_SYS_LIBRARY_PATH
 OTOOL64
@@ -749,7 +748,6 @@ infodir
 docdir
 oldincludedir
 includedir
-runstatedir
 localstatedir
 sharedstatedir
 sysconfdir
@@ -862,7 +860,6 @@ datadir='${datarootdir}'
 sysconfdir='${prefix}/etc'
 sharedstatedir='${prefix}/com'
 localstatedir='${prefix}/var'
-runstatedir='${localstatedir}/run'
 includedir='${prefix}/include'
 oldincludedir='/usr/include'
 docdir='${datarootdir}/doc/${PACKAGE_TARNAME}'
@@ -1115,15 +1112,6 @@ do
   | -silent | --silent | --silen | --sile | --sil)
     silent=yes ;;
 
-  -runstatedir | --runstatedir | --runstatedi | --runstated \
-  | --runstate | --runstat | --runsta | --runst | --runs \
-  | --run | --ru | --r)
-    ac_prev=runstatedir ;;
-  -runstatedir=* | --runstatedir=* | --runstatedi=* | --runstated=* \
-  | --runstate=* | --runstat=* | --runsta=* | --runst=* | --runs=* \
-  | --run=* | --ru=* | --r=*)
-    runstatedir=$ac_optarg ;;
-
   -sbindir | --sbindir | --sbindi | --sbind | --sbin | --sbi | --sb)
     ac_prev=sbindir ;;
   -sbindir=* | --sbindir=* | --sbindi=* | --sbind=* | --sbin=* \
@@ -1261,7 +1249,7 @@ fi
 for ac_var in	exec_prefix prefix bindir sbindir libexecdir datarootdir \
 		datadir sysconfdir sharedstatedir localstatedir includedir \
 		oldincludedir docdir infodir htmldir dvidir pdfdir psdir \
-		libdir localedir mandir runstatedir
+		libdir localedir mandir
 do
   eval ac_val=\$$ac_var
   # Remove trailing slashes.
@@ -1414,7 +1402,6 @@ Fine tuning of the installation directories:
   --sysconfdir=DIR        read-only single-machine data [PREFIX/etc]
   --sharedstatedir=DIR    modifiable architecture-independent data [PREFIX/com]
   --localstatedir=DIR     modifiable single-machine data [PREFIX/var]
-  --runstatedir=DIR       modifiable per-process data [LOCALSTATEDIR/run]
   --libdir=DIR            object code libraries [EPREFIX/lib]
   --includedir=DIR        C header files [PREFIX/include]
   --oldincludedir=DIR     C header files for non-gcc [/usr/include]
@@ -1849,7 +1836,7 @@ choke me
 #endif
 
 int
-main (void)
+main ()
 {
 return $2 ();
   ;
@@ -1888,7 +1875,7 @@ else
 /* end confdefs.h.  */
 $4
 int
-main (void)
+main ()
 {
 if (sizeof ($2))
 	 return 0;
@@ -1901,7 +1888,7 @@ if ac_fn_c_try_compile "$LINENO"; then :
 /* end confdefs.h.  */
 $4
 int
-main (void)
+main ()
 {
 if (sizeof (($2)))
 	    return 0;
@@ -2990,7 +2977,6 @@ fi
 
 
 
-
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to enable maintainer-specific portions of Makefiles" >&5
 $as_echo_n "checking whether to enable maintainer-specific portions of Makefiles... " >&6; }
     # Check whether --enable-maintainer-mode was given.
@@ -3134,10 +3120,7 @@ case $host_os in
 	haiku*) libmikmod_haiku=yes ;;
 	hpux*) libmikmod_hpux=yes ;;
 	irix*) libmikmod_irix=yes ;;
-	aix*)
-$as_echo "#define AIX 1" >>confdefs.h
-
-		libmikmod_aix=yes ;;
+	aix*) libmikmod_aix=yes ;;
 	sunos*|solaris*)
 		if test "$cross_compiling" != yes
 		then
@@ -3188,6 +3171,7 @@ libmikmod_driver_pipe=yes
 
 libmikmod_dynload=yes
 libmikmod_dynload_underscores=no
+libmikmod_dynload_used=no
 libmikmod_debug=no
 libmikmod_threads=yes
 
@@ -3340,7 +3324,6 @@ case $host_os in
   mingw*|emx*|*djgpp|amigaos*|aros*|morphos*)
      libmikmod_driver_oss=no
      libmikmod_driver_esd=no
-     libmikmod_driver_nas=no
      libmikmod_driver_af=no
      # windows, dos, os2 don't need stdout or pipe.
      # so default to disabled, but still user-selectable.
@@ -3854,7 +3837,7 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -3994,7 +3977,7 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <stdio.h>
 int
-main (void)
+main ()
 {
 FILE *f = fopen ("conftest.out", "w");
  return ferror (f) || fclose (f) != 0;
@@ -4060,7 +4043,7 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -4111,7 +4094,7 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 #ifndef __GNUC__
        choke me
@@ -4152,7 +4135,7 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -4167,7 +4150,7 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -4183,7 +4166,7 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -4269,7 +4252,7 @@ int pairnames (int, char **, FILE *(*)(struct buf *, struct stat *, int), int, i
 int argc;
 char **argv;
 int
-main (void)
+main ()
 {
 return f (e, argv, 0) != argv[0]  ||  f (e, argv, 1) != argv[1];
   ;
@@ -4327,7 +4310,7 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -6212,7 +6195,7 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -7159,7 +7142,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -7883,7 +7866,7 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -7943,7 +7926,7 @@ $as_echo "$lt_cv_ld_force_load" >&6; }
     darwin1.*)
       _lt_dar_allow_undefined='$wl-flat_namespace $wl-undefined ${wl}suppress' ;;
     darwin*)
-      case ${MACOSX_DEPLOYMENT_TARGET},$host in
+      case $MACOSX_DEPLOYMENT_TARGET,$host in
         10.[012],*|,*powerpc*-darwin[5-8]*)
           _lt_dar_allow_undefined='$wl-flat_namespace $wl-undefined ${wl}suppress' ;;
         *)
@@ -8153,7 +8136,7 @@ else
 #include <float.h>
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -8223,7 +8206,7 @@ else
 
 #define XOR(e, f) (((e) && !(f)) || (!(e) && (f)))
 int
-main (void)
+main ()
 {
   int i;
   for (i = 0; i < 256; i++)
@@ -10318,7 +10301,7 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -10371,7 +10354,7 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -11829,7 +11812,7 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -12286,7 +12269,7 @@ extern "C"
 #endif
 char dlopen ();
 int
-main (void)
+main ()
 {
 return dlopen ();
   ;
@@ -12347,7 +12330,7 @@ extern "C"
 #endif
 char shl_load ();
 int
-main (void)
+main ()
 {
 return shl_load ();
   ;
@@ -12390,7 +12373,7 @@ extern "C"
 #endif
 char dlopen ();
 int
-main (void)
+main ()
 {
 return dlopen ();
   ;
@@ -12429,7 +12412,7 @@ extern "C"
 #endif
 char dlopen ();
 int
-main (void)
+main ()
 {
 return dlopen ();
   ;
@@ -12468,7 +12451,7 @@ extern "C"
 #endif
 char dld_link ();
 int
-main (void)
+main ()
 {
 return dld_link ();
   ;
@@ -12901,48 +12884,6 @@ CC=$lt_save_CC
 # Check for typedefs, structures, and compiler characteristics.
 # =============================================================
 
-if test $ac_cv_c_compiler_gnu = yes; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether $CC needs -traditional" >&5
-$as_echo_n "checking whether $CC needs -traditional... " >&6; }
-if ${ac_cv_prog_gcc_traditional+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-    ac_pattern="Autoconf.*'x'"
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <sgtty.h>
-Autoconf TIOCGETP
-_ACEOF
-if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-  $EGREP "$ac_pattern" >/dev/null 2>&1; then :
-  ac_cv_prog_gcc_traditional=yes
-else
-  ac_cv_prog_gcc_traditional=no
-fi
-rm -f conftest*
-
-
-  if test $ac_cv_prog_gcc_traditional = no; then
-    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <termio.h>
-Autoconf TCGETA
-_ACEOF
-if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-  $EGREP "$ac_pattern" >/dev/null 2>&1; then :
-  ac_cv_prog_gcc_traditional=yes
-fi
-rm -f conftest*
-
-  fi
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_prog_gcc_traditional" >&5
-$as_echo "$ac_cv_prog_gcc_traditional" >&6; }
-  if test $ac_cv_prog_gcc_traditional = yes; then
-    CC="$CC -traditional"
-  fi
-fi
-
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for an ANSI C-conforming const" >&5
 $as_echo_n "checking for an ANSI C-conforming const... " >&6; }
 if ${ac_cv_c_const+:} false; then :
@@ -12952,7 +12893,7 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
 #ifndef __cplusplus
@@ -13066,49 +13007,6 @@ _ACEOF
     ;;
 esac
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking if compiler understands the signed keyword" >&5
-$as_echo_n "checking if compiler understands the signed keyword... " >&6; }
-if ${libmikmod_cv_gcc_signed+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
-
-	cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-int
-main (void)
-{
-signed int t = 0;
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  libmikmod_cv_gcc_signed=yes
-else
-  libmikmod_cv_gcc_signed=no
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-	ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
-
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $libmikmod_cv_gcc_signed" >&5
-$as_echo "$libmikmod_cv_gcc_signed" >&6; }
-if test $libmikmod_cv_gcc_signed = no
-then
-
-$as_echo "#define signed /**/" >>confdefs.h
-
-fi
 
 ac_fn_c_check_type "$LINENO" "pid_t" "ac_cv_type_pid_t" "$ac_includes_default"
 if test "x$ac_cv_type_pid_t" = xyes; then :
@@ -13180,7 +13078,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 	     #include <sys/param.h>
 
 int
-main (void)
+main ()
 {
 #if ! (defined BYTE_ORDER && defined BIG_ENDIAN \
 		     && defined LITTLE_ENDIAN && BYTE_ORDER && BIG_ENDIAN \
@@ -13200,7 +13098,7 @@ if ac_fn_c_try_compile "$LINENO"; then :
 		#include <sys/param.h>
 
 int
-main (void)
+main ()
 {
 #if BYTE_ORDER != BIG_ENDIAN
 		 not big endian
@@ -13226,7 +13124,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 #include <limits.h>
 
 int
-main (void)
+main ()
 {
 #if ! (defined _LITTLE_ENDIAN || defined _BIG_ENDIAN)
 	      bogus endian macros
@@ -13243,7 +13141,7 @@ if ac_fn_c_try_compile "$LINENO"; then :
 #include <limits.h>
 
 int
-main (void)
+main ()
 {
 #ifndef _BIG_ENDIAN
 		 not big endian
@@ -13282,21 +13180,22 @@ unsigned short int ascii_mm[] =
 		int use_ebcdic (int i) {
 		  return ebcdic_mm[i] + ebcdic_ii[i];
 		}
-		extern int foo;
-
-int
-main (void)
-{
-return use_ascii (foo) == use_ebcdic (foo);
-  ;
-  return 0;
-}
+		int
+		main (int argc, char **argv)
+		{
+		  /* Intimidate the compiler so that it does not
+		     optimize the arrays away.  */
+		  char *p = argv[0];
+		  ascii_mm[1] = *p++; ebcdic_mm[1] = *p++;
+		  ascii_ii[1] = *p++; ebcdic_ii[1] = *p++;
+		  return use_ascii (argc) == use_ebcdic (*p);
+		}
 _ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  if grep BIGenDianSyS conftest.$ac_objext >/dev/null; then
+if ac_fn_c_try_link "$LINENO"; then :
+  if grep BIGenDianSyS conftest$ac_exeext >/dev/null; then
 	      ac_cv_c_bigendian=yes
 	    fi
-	    if grep LiTTleEnDian conftest.$ac_objext >/dev/null ; then
+	    if grep LiTTleEnDian conftest$ac_exeext >/dev/null ; then
 	      if test "$ac_cv_c_bigendian" = unknown; then
 		ac_cv_c_bigendian=no
 	      else
@@ -13305,13 +13204,14 @@ if ac_fn_c_try_compile "$LINENO"; then :
 	      fi
 	    fi
 fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
 else
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 $ac_includes_default
 int
-main (void)
+main ()
 {
 
 	     /* Are we little or big endian?  From Harbison&Steele.  */
@@ -13361,117 +13261,19 @@ $as_echo "#define AC_APPLE_UNIVERSAL_BUILD 1" >>confdefs.h
 # Check for header files.
 # =======================
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for ANSI C header files" >&5
-$as_echo_n "checking for ANSI C header files... " >&6; }
-if ${ac_cv_header_stdc+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
-#include <float.h>
-
-int
-main (void)
-{
-
-  ;
-  return 0;
-}
+for ac_header in fcntl.h limits.h malloc.h memory.h sys/ioctl.h unistd.h
+do :
+  as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
+ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
+if eval test \"x\$"$as_ac_Header"\" = x"yes"; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_header" | $as_tr_cpp` 1
 _ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  ac_cv_header_stdc=yes
-else
-  ac_cv_header_stdc=no
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-
-if test $ac_cv_header_stdc = yes; then
-  # SunOS 4.x string.h does not declare mem*, contrary to ANSI.
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <string.h>
-
-_ACEOF
-if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-  $EGREP "memchr" >/dev/null 2>&1; then :
-
-else
-  ac_cv_header_stdc=no
-fi
-rm -f conftest*
 
 fi
 
-if test $ac_cv_header_stdc = yes; then
-  # ISC 2.0.2 stdlib.h does not declare free, contrary to ANSI.
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <stdlib.h>
+done
 
-_ACEOF
-if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-  $EGREP "free" >/dev/null 2>&1; then :
-
-else
-  ac_cv_header_stdc=no
-fi
-rm -f conftest*
-
-fi
-
-if test $ac_cv_header_stdc = yes; then
-  # /bin/cc in Irix-4.0.5 gets non-ANSI ctype macros unless using -ansi.
-  if test "$cross_compiling" = yes; then :
-  :
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <ctype.h>
-#include <stdlib.h>
-#if ((' ' & 0x0FF) == 0x020)
-# define ISLOWER(c) ('a' <= (c) && (c) <= 'z')
-# define TOUPPER(c) (ISLOWER(c) ? 'A' + ((c) - 'a') : (c))
-#else
-# define ISLOWER(c) \
-		   (('a' <= (c) && (c) <= 'i') \
-		     || ('j' <= (c) && (c) <= 'r') \
-		     || ('s' <= (c) && (c) <= 'z'))
-# define TOUPPER(c) (ISLOWER(c) ? ((c) | 0x40) : (c))
-#endif
-
-#define XOR(e, f) (((e) && !(f)) || (!(e) && (f)))
-int
-main (void)
-{
-  int i;
-  for (i = 0; i < 256; i++)
-    if (XOR (islower (i), ISLOWER (i))
-	|| toupper (i) != TOUPPER (i))
-      return 2;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_run "$LINENO"; then :
-
-else
-  ac_cv_header_stdc=no
-fi
-rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
-  conftest.$ac_objext conftest.beam conftest.$ac_ext
-fi
-
-fi
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_header_stdc" >&5
-$as_echo "$ac_cv_header_stdc" >&6; }
-if test $ac_cv_header_stdc = yes; then
-
-$as_echo "#define STDC_HEADERS 1" >>confdefs.h
-
-fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for sys/wait.h that is POSIX.1 compatible" >&5
 $as_echo_n "checking for sys/wait.h that is POSIX.1 compatible... " >&6; }
@@ -13490,7 +13292,7 @@ else
 #endif
 
 int
-main (void)
+main ()
 {
   int s;
   wait (&s);
@@ -13514,19 +13316,6 @@ $as_echo "#define HAVE_SYS_WAIT_H 1" >>confdefs.h
 
 fi
 
-for ac_header in fcntl.h limits.h malloc.h memory.h sys/ioctl.h unistd.h
-do :
-  as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
-ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
-if eval test \"x\$"$as_ac_Header"\" = x"yes"; then :
-  cat >>confdefs.h <<_ACEOF
-#define `$as_echo "HAVE_$ac_header" | $as_tr_cpp` 1
-_ACEOF
-
-fi
-
-done
-
 
 # ============================
 # Check for library functions.
@@ -13543,33 +13332,6 @@ _ACEOF
 
 fi
 done
-
-ac_fn_c_check_func "$LINENO" "memcmp" "ac_cv_func_memcmp"
-if test "x$ac_cv_func_memcmp" = xyes; then :
-  $as_echo "#define HAVE_MEMCMP 1" >>confdefs.h
-
-else
-  case " $LIBOBJS " in
-  *" memcmp.$ac_objext "* ) ;;
-  *) LIBOBJS="$LIBOBJS memcmp.$ac_objext"
- ;;
-esac
-
-fi
-
-ac_fn_c_check_func "$LINENO" "strstr" "ac_cv_func_strstr"
-if test "x$ac_cv_func_strstr" = xyes; then :
-  $as_echo "#define HAVE_STRSTR 1" >>confdefs.h
-
-else
-  case " $LIBOBJS " in
-  *" strstr.$ac_objext "* ) ;;
-  *) LIBOBJS="$LIBOBJS strstr.$ac_objext"
- ;;
-esac
-
-fi
-
 
 
 # ====================
@@ -13621,7 +13383,7 @@ extern "C"
 #endif
 char dlopen ();
 int
-main (void)
+main ()
 {
 return dlopen ();
   ;
@@ -13660,7 +13422,7 @@ extern "C"
 #endif
 char dlopen ();
 int
-main (void)
+main ()
 {
 return dlopen ();
   ;
@@ -13721,7 +13483,7 @@ extern "C"
 #endif
 char shl_load ();
 int
-main (void)
+main ()
 {
 return shl_load ();
   ;
@@ -13778,10 +13540,10 @@ else
 int main(void) {
 	void *libc, *printfptr;
 	libc = dlopen("libc.so", RTLD_LAZY | RTLD_GLOBAL);
-	if (!libc) exit(1);
+	if (!libc) return 1;
 	printfptr = dlsym(libc, "_printf");
 	dlclose(libc);
-	exit(!printfptr);
+	return !printfptr;
 }
 _ACEOF
 if ac_fn_c_try_run "$LINENO"; then :
@@ -13816,7 +13578,8 @@ fi
 # ---------------
 if test $libmikmod_mingw = yes || test $libmikmod_amiga = yes
 then
-		libmikmod_threads=no
+	# libmikmod_threads variable is for pthreads only
+	libmikmod_threads=no
 fi
 
 if test $libmikmod_threads = yes
@@ -13839,7 +13602,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 /* end confdefs.h.  */
 #include <pthread.h>
 int
-main (void)
+main ()
 {
 int p = pthread_create(NULL,NULL,NULL,NULL);
   ;
@@ -13866,13 +13629,16 @@ fi
 $as_echo "$libmikmod_cv_gcc_pthread" >&6; }
 	if test $libmikmod_cv_gcc_pthread = yes
 	then
-						if test $libmikmod_darwin = no && test $libmikmod_haiku = no
+		# There is no need for -pthread on darwin or haiku, as gcc
+		# complains about unrecognized option -pthread
+		if test $libmikmod_darwin = no && test $libmikmod_haiku = no
 		then
 			libmikmod_threads=""
 			CFLAGS="$CFLAGS -pthread"
 		fi
 	else
-				{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for pthread_create in -lpthread" >&5
+		# AC_CHECK_HEADERS(pthread.h) unreliable
+		{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for pthread_create in -lpthread" >&5
 $as_echo_n "checking for pthread_create in -lpthread... " >&6; }
 if ${ac_cv_lib_pthread_pthread_create+:} false; then :
   $as_echo_n "(cached) " >&6
@@ -13890,7 +13656,7 @@ extern "C"
 #endif
 char pthread_create ();
 int
-main (void)
+main ()
 {
 return pthread_create ();
   ;
@@ -13929,7 +13695,7 @@ extern "C"
 #endif
 char pthread_create ();
 int
-main (void)
+main ()
 {
 return pthread_create ();
   ;
@@ -13986,7 +13752,7 @@ extern "C"
 #endif
 char snd_pcm_open ();
 int
-main (void)
+main ()
 {
 return snd_pcm_open ();
   ;
@@ -14193,10 +13959,7 @@ $as_echo "yes" >&6; }
      { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
      if test "$ESD_CONFIG" = "no" ; then
-       echo "*** The esd-config script installed by ESD could not be found"
-       echo "*** If ESD was installed in PREFIX, make sure PREFIX/bin is in"
-       echo "*** your path, or set the ESD_CONFIG environment variable to the"
-       echo "*** full path to esd-config."
+      :
      else
        if test -f conf.esdtest ; then
         :
@@ -14217,7 +13980,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 #include <esd.h>
 
 int
-main (void)
+main ()
 {
  return 0;
   ;
@@ -14357,7 +14120,7 @@ extern "C"
 #endif
 char ALseterrorhandler ();
 int
-main (void)
+main ()
 {
 return ALseterrorhandler ();
   ;
@@ -14415,7 +14178,7 @@ extern "C"
 #endif
 char AFOpenAudioConn ();
 int
-main (void)
+main ()
 {
 return AFOpenAudioConn ();
   ;
@@ -14471,7 +14234,7 @@ else
 /* end confdefs.h.  */
 #include <libgus.h>
 int
-main (void)
+main ()
 {
 gus_info_t *info;
 int flg1=GUS_INSTR_SIMPLE;
@@ -14510,7 +14273,7 @@ extern "C"
 #endif
 char gus_cards ();
 int
-main (void)
+main ()
 {
 return gus_cards ();
   ;
@@ -14628,7 +14391,7 @@ extern "C"
 #endif
 char sio_open ();
 int
-main (void)
+main ()
 {
 return sio_open ();
   ;
@@ -14780,6 +14543,8 @@ $as_echo "#define DRV_ALSA 1" >>confdefs.h
 	if test $libmikmod_dynload = no
 	then
 		LIBRARY_LIB="-lasound $LIBRARY_LIB"
+	else
+		libmikmod_dynload_used=yes
 	fi
 fi
 
@@ -14797,6 +14562,8 @@ $as_echo "#define DRV_ESD 1" >>confdefs.h
 	if test $libmikmod_dynload != no
 	then
 		ESD_LIBS="`echo $ESD_LIBS|sed -e 's/-lesd//'|sed -e 's/-lasound//'|sed -e 's/-laudiofile//'|sed -e 's/-lossaudio//'`"
+	else
+		libmikmod_dynload_used=yes
 	fi
 	LIBRARY_LIB="$ESD_LIBS $LIBRARY_LIB"
 fi
@@ -14848,7 +14615,7 @@ extern "C"
 #endif
 char _oss_ioctl ();
 int
-main (void)
+main ()
 {
 return _oss_ioctl ();
   ;
@@ -14890,7 +14657,7 @@ $as_echo_n "checking whether OSS code compiles... " >&6; }
 error No OSS header present.
 #endif
 int
-main (void)
+main ()
 {
 int i=SNDCTL_DSP_RESET;
   ;
@@ -14961,6 +14728,8 @@ $as_echo "#define DRV_ULTRA 1" >>confdefs.h
 	if test $libmikmod_dynload = no
 	then
 		LIBRARY_LIB="-lgus $LIBRARY_LIB"
+	else
+		libmikmod_dynload_used=yes
 	fi
 fi
 
@@ -14978,41 +14747,9 @@ then
 $as_echo "#define MIKMOD_DYNAMIC 1" >>confdefs.h
 
 
-	LIBRARY_LIB="$libmikmod_dllib $LIBRARY_LIB"
-	if test $libmikmod_dynload = sun
+	if test -n $libmikmod_dllib && test $libmikmod_dynload_used = yes
 	then
-		# RTLD_GLOBAL is not defined under every system
-		{ $as_echo "$as_me:${as_lineno-$LINENO}: checking if RTLD_GLOBAL is defined" >&5
-$as_echo_n "checking if RTLD_GLOBAL is defined... " >&6; }
-if ${libmikmod_cv_decl_rtld_global+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <dlfcn.h>
-int
-main (void)
-{
-int flag=RTLD_GLOBAL;
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  libmikmod_cv_decl_rtld_global=yes
-else
-  libmikmod_cv_decl_rtld_global=no
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $libmikmod_cv_decl_rtld_global" >&5
-$as_echo "$libmikmod_cv_decl_rtld_global" >&6; }
-		if test $libmikmod_cv_decl_rtld_global = yes
-		then
-
-$as_echo "#define HAVE_RTLD_GLOBAL 1" >>confdefs.h
-
-		fi
+		LIBRARY_LIB="$libmikmod_dllib $LIBRARY_LIB"
 	fi
 fi
 
@@ -15032,9 +14769,8 @@ then
 
 	# On at least x86 platforms, gcc 2.7.2.1 and earlier won't work if -O3 (or
 	# -finline-functions) are used. Versions 2.7.2.3, 2.8.x and egcs are ok
-	# (didn't test 2.7.2.2).
-	# Until there's an easy way to catch broken inlining, we choose flags known
-	# to work correctly depending of the compiler version.
+	# (didn't test 2.7.2.2). Using flags known to work correctly depending on
+	# the compiler version:
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking if inlining functions is safe" >&5
 $as_echo_n "checking if inlining functions is safe... " >&6; }
 if ${libmikmod_cv_gcc_inline_safe+:} false; then :
@@ -15044,10 +14780,10 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
-#if !(defined __GNUC__ && (__GNUC__ > 2 || __GNUC__ == 2 && __GNUC_MINOR__ > 7))
+#if defined __GNUC__ && !(__GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 7))
 #error inlining functions not safe
 #endif
 
@@ -15080,7 +14816,9 @@ $as_echo "#define HAVE_PTHREAD 1" >>confdefs.h
 	REENTRANT="-D_REENTRANT"
 	if test $libmikmod_cv_gcc_pthread = yes
 	then
-						if test $libmikmod_darwin = no && test $libmikmod_haiku = no
+		# There is no need for -pthread on darwin or haiku, as gcc
+		# complains about unrecognized option -pthread
+		if test $libmikmod_darwin = no && test $libmikmod_haiku = no
 		then
 			REENTRANT="-pthread $REENTRANT"
 			LIB_LDADD="-pthread"
@@ -15127,7 +14865,7 @@ __attribute__((visibility("hidden")))  int bar(void);
 int foo(void) { return 0; }
 int bar(void) { return 1; }
 int
-main (void)
+main ()
 {
 
   ;

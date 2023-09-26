@@ -82,7 +82,7 @@
 /* Compatibility with not-so-old versions of OSS
    (OSS < 3.7, Linux kernel < 2.1.16) */
 #ifndef AFMT_S16_NE
-#if defined(_AIX) || defined(AIX) || defined(sparc) || defined(HPPA) || defined(PPC)
+#if defined(WORDS_BIGENDIAN)
 #define AFMT_S16_NE AFMT_S16_BE
 #else
 #define AFMT_S16_NE AFMT_S16_LE

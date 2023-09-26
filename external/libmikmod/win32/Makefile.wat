@@ -19,6 +19,7 @@
 target = dll
 !endif
 
+INCLUDES=-I. -I"../include"
 CPPFLAGS=-DMIKMOD_BUILD -DHAVE_FCNTL_H -DHAVE_LIMITS_H -DHAVE_MALLOC_H
 
 # To build a debug version :
@@ -89,24 +90,11 @@ $(DLLNAME): $(OBJ)
 $(LIBSTATIC): $(OBJ)
 	wlib -q -b -n -c -pa -s -t -zld -ii -io $@ $(OBJ)
 
+.c: ../drivers;../loaders;../mmio;../playercode;../posix;
 .c.obj:
 	$(COMPILE) -fo=$^@ $<
 
-!ifndef __UNIX__
-distclean: clean .symbolic
-	@if exist $(LIBSTATIC) del $(LIBSTATIC)
-	@if exist $(DLLNAME) del $(DLLNAME)
-	@if exist $(EXPNAME) del $(EXPNAME)
-	@if exist $(LIBNAME) del $(LIBNAME)
-clean: .symbolic
-	@if exist *.obj del *.obj
-.c: ..\drivers;..\loaders;..\mmio;..\playercode;..\posix
-INCLUDES=-I..\win32 -I..\include
-!else
 distclean: clean .symbolic
 	rm -f $(DLLNAME) $(EXPNAME) $(LIBNAME) $(LIBSTATIC)
 clean: .symbolic
 	rm -f *.obj
-.c: ../drivers;../loaders;../mmio;../playercode;../posix
-INCLUDES=-I../win32 -I../include
-!endif

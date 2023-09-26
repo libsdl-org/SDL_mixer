@@ -8,8 +8,8 @@ SUBDIRS = drivers include loaders mmio playercode posix \
 bin_SCRIPTS = libmikmod-config
 
 EXTRA_DIST = libmikmod-config.in libmikmod.m4 libmikmod.pc.in \
-	     libmikmod.spec.in libmikmod.spec COPYING.LESSER \
-	     macintosh os2 win32
+	     libmikmod.spec.in libmikmod.spec COPYING.LESSER  \
+	     examples macintosh os2 win32 
 
 m4datadir = $(datadir)/aclocal
 m4data_DATA = libmikmod.m4

@@ -53,6 +53,9 @@
 #include <basetyps.h> /* guiddef.h not in all SDKs, e.g. mingw.org */
 #endif
 
+#if !defined(__cplusplus) && !defined(CINTERFACE)
+#define CINTERFACE
+#endif
 #include <dsound.h>
 
 #ifdef __WATCOMC__
@@ -89,14 +92,6 @@ static BOOL threadInUse = FALSE;
 static int fragsize=1<<FRAGSIZE;
 static DWORD controlflags = DSBCAPS_CTRLALL & ~DSBCAPS_GLOBALFOCUS;
 
-#define SAFE_RELEASE(p) \
-	do { \
-		if (p) { \
-			(p)->lpVtbl->Release((p)); \
-			(p) = NULL; \
-		} \
-	} while (0)
-
 static DWORD WINAPI updateBufferProc(LPVOID lpParameter)
 {
 	LPVOID pBlock1 = NULL, pBlock2 = NULL;
@@ -108,7 +103,7 @@ static DWORD WINAPI updateBufferProc(LPVOID lpParameter)
 
 			if (!threadInUse) break;
 
-			pSoundBuffer->lpVtbl->GetCurrentPosition
+			IDirectSoundBuffer_GetCurrentPosition
 						(pSoundBuffer,&soundBufferCurrentPosition,NULL);
 
 			if (soundBufferCurrentPosition < fragsize)
@@ -116,11 +111,11 @@ static DWORD WINAPI updateBufferProc(LPVOID lpParameter)
 			else
 				start = 0;
 
-			if (pSoundBuffer->lpVtbl->Lock
+			if (IDirectSoundBuffer_Lock
 						(pSoundBuffer,start,fragsize,&pBlock1,&blockBytes1,
 						 &pBlock2,&blockBytes2,0)==DSERR_BUFFERLOST) {
-				pSoundBuffer->lpVtbl->Restore(pSoundBuffer);
-				pSoundBuffer->lpVtbl->Lock
+				IDirectSoundBuffer_Restore(pSoundBuffer);
+				IDirectSoundBuffer_Lock
 						(pSoundBuffer,start,fragsize,&pBlock1,&blockBytes1,
 						 &pBlock2,&blockBytes2,0);
 			}
@@ -137,7 +132,7 @@ static DWORD WINAPI updateBufferProc(LPVOID lpParameter)
 			}
 			MUTEX_UNLOCK(vars);
 
-			pSoundBuffer->lpVtbl->Unlock
+			IDirectSoundBuffer_Unlock
 						(pSoundBuffer,pBlock1,blockBytes1,pBlock2,blockBytes2);
 		}
 	}
@@ -169,7 +164,10 @@ static BOOL DS_IsPresent(void)
 {
 	if(DirectSoundCreate(NULL,&pSoundCard,NULL)!=DS_OK)
 		return 0;
-	SAFE_RELEASE(pSoundCard);
+	if (pSoundCard) {
+		IDirectSound_Release(pSoundCard);
+		pSoundCard = NULL;
+	}
 	return 1;
 }
 
@@ -186,7 +184,7 @@ static int DS_Init(void)
 		return 1;
 	}
 
-	if (pSoundCard->lpVtbl->SetCooperativeLevel
+	if (IDirectSound_SetCooperativeLevel
 				(pSoundCard,GetForegroundWindow(),DSSCL_PRIORITY)!=DS_OK) {
 		_mm_errno=MMERR_DS_PRIORITY;
 		return 1;
@@ -198,7 +196,7 @@ static int DS_Init(void)
 	soundBufferFormat.dwBufferBytes = 0;
 	soundBufferFormat.lpwfxFormat = NULL;
 
-	if (pSoundCard->lpVtbl->CreateSoundBuffer
+	if (IDirectSound_CreateSoundBuffer
 				(pSoundCard,&soundBufferFormat,&pPrimarySoundBuffer,NULL)!=DS_OK) {
 		_mm_errno=MMERR_DS_BUFFER;
 		return 1;
@@ -212,11 +210,11 @@ static int DS_Init(void)
 	pcmwf.nBlockAlign    =(pcmwf.wBitsPerSample * pcmwf.nChannels) / 8;
 	pcmwf.nAvgBytesPerSec=pcmwf.nSamplesPerSec*pcmwf.nBlockAlign;
 
-	if (pPrimarySoundBuffer->lpVtbl->SetFormat(pPrimarySoundBuffer,&pcmwf)!=DS_OK) {
+	if (IDirectSoundBuffer_SetFormat(pPrimarySoundBuffer,&pcmwf)!=DS_OK) {
 		_mm_errno=MMERR_DS_FORMAT;
 		return 1;
 	}
-	pPrimarySoundBuffer->lpVtbl->Play(pPrimarySoundBuffer,0,0,DSBPLAY_LOOPING);
+	IDirectSoundBuffer_Play(pPrimarySoundBuffer,0,0,DSBPLAY_LOOPING);
 
 	memset(&soundBufferFormat,0,sizeof(DSBUFFERDESC));
 	soundBufferFormat.dwSize	=sizeof(DSBUFFERDESC);
@@ -224,13 +222,17 @@ static int DS_Init(void)
 	soundBufferFormat.dwBufferBytes =fragsize*UPDATES;
 	soundBufferFormat.lpwfxFormat	=&pcmwf;
 
-	if (pSoundCard->lpVtbl->CreateSoundBuffer
+	if (IDirectSound_CreateSoundBuffer
 				(pSoundCard,&soundBufferFormat,&pSoundBuffer,NULL)!=DS_OK) {
 		_mm_errno=MMERR_DS_BUFFER;
 		return 1;
 	}
 
-	pSoundBuffer->lpVtbl->QueryInterface(pSoundBuffer,&IID_IDirectSoundNotify,&p);
+#ifdef __cplusplus
+	IDirectSoundBuffer_QueryInterface(pSoundBuffer, IID_IDirectSoundNotify,&p);
+#else
+	IDirectSoundBuffer_QueryInterface(pSoundBuffer,&IID_IDirectSoundNotify,&p);
+#endif
 	if (!p) {
 		_mm_errno=MMERR_DS_NOTIFY;
 		return 1;
@@ -256,7 +258,7 @@ static int DS_Init(void)
 	positionNotifications[0].hEventNotify=notifyUpdateHandle;
 	positionNotifications[1].dwOffset    =fragsize;
 	positionNotifications[1].hEventNotify=notifyUpdateHandle;
-	if (pSoundBufferNotify->lpVtbl->SetNotificationPositions
+	if (IDirectSoundNotify_SetNotificationPositions
 				(pSoundBufferNotify,2,positionNotifications) != DS_OK) {
 		_mm_errno=MMERR_DS_UPDATE;
 		return 1;
@@ -287,23 +289,30 @@ static void DS_Exit(void)
 		notifyUpdateHandle = NULL;
 	}
 
-	SAFE_RELEASE(pSoundBufferNotify);
+	if (pSoundBufferNotify) {
+		IDirectSoundNotify_Release(pSoundBufferNotify);
+		pSoundBufferNotify = NULL;
+	}
 	if(pSoundBuffer) {
-		if(pSoundBuffer->lpVtbl->GetStatus(pSoundBuffer,&statusInfo)==DS_OK)
+		if(IDirectSoundBuffer_GetStatus(pSoundBuffer,&statusInfo)==DS_OK)
 			if(statusInfo&DSBSTATUS_PLAYING)
-				pSoundBuffer->lpVtbl->Stop(pSoundBuffer);
-		SAFE_RELEASE(pSoundBuffer);
+				IDirectSoundBuffer_Stop(pSoundBuffer);
+		IDirectSoundBuffer_Release(pSoundBuffer);
+		pSoundBuffer = NULL;
 	}
 
 	if(pPrimarySoundBuffer) {
-		if(pPrimarySoundBuffer->lpVtbl->GetStatus
-						(pPrimarySoundBuffer,&statusInfo)==DS_OK)
+		if(IDirectSoundBuffer_GetStatus(pPrimarySoundBuffer,&statusInfo)==DS_OK)
 			if(statusInfo&DSBSTATUS_PLAYING)
-				pPrimarySoundBuffer->lpVtbl->Stop(pPrimarySoundBuffer);
-		SAFE_RELEASE(pPrimarySoundBuffer);
+				IDirectSoundBuffer_Stop(pPrimarySoundBuffer);
+		IDirectSoundBuffer_Release(pPrimarySoundBuffer);
+		pPrimarySoundBuffer = NULL;
 	}
 
-	SAFE_RELEASE(pSoundCard);
+	if (pSoundCard) {
+		IDirectSound_Release(pSoundCard);
+		pSoundCard = NULL;
+	}
 
 	VC_Exit();
 }
@@ -320,10 +329,10 @@ static void DS_Update(void)
 	if (do_update && pSoundBuffer) {
 		do_update = 0;
 
-		if (pSoundBuffer->lpVtbl->Lock (pSoundBuffer, 0, fragsize, &block, &bBytes, NULL, NULL, 0)
+		if (IDirectSoundBuffer_Lock(pSoundBuffer, 0, fragsize, &block, &bBytes, NULL, NULL, 0)
 											== DSERR_BUFFERLOST) {
-			pSoundBuffer->lpVtbl->Restore (pSoundBuffer);
-			pSoundBuffer->lpVtbl->Lock (pSoundBuffer, 0, fragsize, &block, &bBytes, NULL, NULL, 0);
+			IDirectSoundBuffer_Restore (pSoundBuffer);
+			IDirectSoundBuffer_Lock (pSoundBuffer, 0, fragsize, &block, &bBytes, NULL, NULL, 0);
 		}
 
 		if (Player_Paused_internal()) {
@@ -332,10 +341,10 @@ static void DS_Update(void)
 			VC_WriteBytes ((SBYTE *)block, (ULONG)bBytes);
 		}
 
-		pSoundBuffer->lpVtbl->Unlock (pSoundBuffer, block, bBytes, NULL, 0);
+		IDirectSoundBuffer_Unlock (pSoundBuffer, block, bBytes, NULL, 0);
 
-		pSoundBuffer->lpVtbl->SetCurrentPosition(pSoundBuffer, 0);
-		pSoundBuffer->lpVtbl->Play(pSoundBuffer, 0, 0, DSBPLAY_LOOPING);
+		IDirectSoundBuffer_SetCurrentPosition(pSoundBuffer, 0);
+		IDirectSoundBuffer_Play(pSoundBuffer, 0, 0, DSBPLAY_LOOPING);
 
 		threadInUse=1;
 		ResumeThread (updateBufferHandle);
@@ -346,7 +355,7 @@ static void DS_PlayStop(void)
 {
 	do_update = 0;
 	if (pSoundBuffer)
-		pSoundBuffer->lpVtbl->Stop(pSoundBuffer);
+		IDirectSoundBuffer_Stop(pSoundBuffer);
 	VC_PlayStop();
 }
 

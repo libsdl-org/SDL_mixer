@@ -136,9 +136,8 @@ am__uninstall_files_from_dir = { \
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" \
 	"$(DESTDIR)$(m4datadir)" "$(DESTDIR)$(pkgconfigdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
-LIBOBJDIR = posix/
-am__dirstamp = $(am__leading_dot)dirstamp
 libmikmod_la_DEPENDENCIES = @LTLIBOBJS@
+am__dirstamp = $(am__leading_dot)dirstamp
 am_libmikmod_la_OBJECTS = dlapi/dl_hpux.lo drivers/drv_AF.lo \
 	drivers/drv_aix.lo drivers/drv_alsa.lo drivers/drv_dart.lo \
 	drivers/drv_ds.lo drivers/drv_esd.lo drivers/drv_hp.lo \
@@ -219,8 +218,7 @@ am__depfiles_remade = dlapi/$(DEPDIR)/dl_hpux.Plo \
 	playercode/$(DEPDIR)/virtch.Plo \
 	playercode/$(DEPDIR)/virtch2.Plo \
 	playercode/$(DEPDIR)/virtch_common.Plo \
-	posix/$(DEPDIR)/memcmp.Plo posix/$(DEPDIR)/strcasecmp.Plo \
-	posix/$(DEPDIR)/strstr.Plo
+	posix/$(DEPDIR)/strcasecmp.Plo
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -292,8 +290,7 @@ am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/config.h.in \
 	$(top_srcdir)/autotools/depcomp \
 	$(top_srcdir)/autotools/install-sh \
 	$(top_srcdir)/autotools/ltmain.sh \
-	$(top_srcdir)/autotools/missing $(top_srcdir)/posix/memcmp.c \
-	$(top_srcdir)/posix/strstr.c AUTHORS COPYING.LESSER \
+	$(top_srcdir)/autotools/missing AUTHORS COPYING.LESSER \
 	COPYING.LIB INSTALL NEWS README TODO autotools/compile \
 	autotools/config.guess autotools/config.sub autotools/depcomp \
 	autotools/install-sh autotools/ltmain.sh autotools/missing \
@@ -467,7 +464,6 @@ pdfdir = @pdfdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
-runstatedir = @runstatedir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
@@ -483,8 +479,8 @@ SUBDIRS = drivers include loaders mmio playercode posix \
 
 bin_SCRIPTS = libmikmod-config
 EXTRA_DIST = libmikmod-config.in libmikmod.m4 libmikmod.pc.in \
-	     libmikmod.spec.in libmikmod.spec COPYING.LESSER \
-	     macintosh os2 win32
+	     libmikmod.spec.in libmikmod.spec COPYING.LESSER  \
+	     examples macintosh os2 win32 
 
 m4datadir = $(datadir)/aclocal
 m4data_DATA = libmikmod.m4
@@ -653,13 +649,6 @@ clean-libLTLIBRARIES:
 	  echo rm -f $${locs}; \
 	  rm -f $${locs}; \
 	}
-posix/$(am__dirstamp):
-	@$(MKDIR_P) posix/
-	@: > posix/$(am__dirstamp)
-posix/memcmp.$(OBJEXT): posix/$(am__dirstamp)
-posix/memcmp.lo: posix/$(am__dirstamp)
-posix/strstr.$(OBJEXT): posix/$(am__dirstamp)
-posix/strstr.lo: posix/$(am__dirstamp)
 dlapi/$(am__dirstamp):
 	@$(MKDIR_P) dlapi
 	@: > dlapi/$(am__dirstamp)
@@ -767,6 +756,9 @@ mmio/$(DEPDIR)/$(am__dirstamp):
 mmio/mmalloc.lo: mmio/$(am__dirstamp) mmio/$(DEPDIR)/$(am__dirstamp)
 mmio/mmerror.lo: mmio/$(am__dirstamp) mmio/$(DEPDIR)/$(am__dirstamp)
 mmio/mmio.lo: mmio/$(am__dirstamp) mmio/$(DEPDIR)/$(am__dirstamp)
+posix/$(am__dirstamp):
+	@$(MKDIR_P) posix
+	@: > posix/$(am__dirstamp)
 posix/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) posix/$(DEPDIR)
 	@: > posix/$(DEPDIR)/$(am__dirstamp)
@@ -920,9 +912,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@playercode/$(DEPDIR)/virtch.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@playercode/$(DEPDIR)/virtch2.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@playercode/$(DEPDIR)/virtch_common.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@posix/$(DEPDIR)/memcmp.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@posix/$(DEPDIR)/strcasecmp.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@posix/$(DEPDIR)/strstr.Plo@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -1341,10 +1331,6 @@ install-strip:
 	    "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'" install; \
 	fi
 mostlyclean-generic:
-	-rm -f posix/memcmp.$(OBJEXT)
-	-rm -f posix/memcmp.lo
-	-rm -f posix/strstr.$(OBJEXT)
-	-rm -f posix/strstr.lo
 
 clean-generic:
 
@@ -1431,9 +1417,7 @@ distclean: distclean-recursive
 	-rm -f playercode/$(DEPDIR)/virtch.Plo
 	-rm -f playercode/$(DEPDIR)/virtch2.Plo
 	-rm -f playercode/$(DEPDIR)/virtch_common.Plo
-	-rm -f posix/$(DEPDIR)/memcmp.Plo
 	-rm -f posix/$(DEPDIR)/strcasecmp.Plo
-	-rm -f posix/$(DEPDIR)/strstr.Plo
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-libtool distclean-tags
@@ -1538,9 +1522,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f playercode/$(DEPDIR)/virtch.Plo
 	-rm -f playercode/$(DEPDIR)/virtch2.Plo
 	-rm -f playercode/$(DEPDIR)/virtch_common.Plo
-	-rm -f posix/$(DEPDIR)/memcmp.Plo
 	-rm -f posix/$(DEPDIR)/strcasecmp.Plo
-	-rm -f posix/$(DEPDIR)/strstr.Plo
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
