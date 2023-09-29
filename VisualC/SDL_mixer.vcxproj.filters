@@ -91,7 +91,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Version.rc">
+    <ResourceCompile Include="..\src\version.rc">
       <Filter>Sources</Filter>
     </ResourceCompile>
   </ItemGroup>
