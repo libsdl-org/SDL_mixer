@@ -219,12 +219,16 @@ function(target_get_dynamic_library DEST TARGET)
     set(${DEST} ${result} PARENT_SCOPE)
 endfunction()
 
-macro(sdl_check_project_in_subfolder relative_subfolder name vendored_option)
-    if(NOT EXISTS "${PROJECT_SOURCE_DIR}/${relative_subfolder}/CMakeLists.txt")
-        message(FATAL_ERROR "No cmake project for ${name} found in ${relative_subfolder}.\n"
+function(sdl_check_project_in_subfolder relative_subfolder name vendored_option)
+    cmake_parse_arguments(ARG "" "FILE" "" ${ARGN})
+    if(NOT ARG_FILE)
+        set(ARG_FILE "CMakeLists.txt")
+    endif()
+    if(NOT EXISTS "${PROJECT_SOURCE_DIR}/${relative_subfolder}/${ARG_FILE}")
+        message(FATAL_ERROR "Could not find ${ARG_FILE} for ${name} in ${relative_subfolder}.\n"
             "Run the download script in the external folder, or re-configure with -D${vendored_option}=OFF to use system packages.")
     endif()
-endmacro()
+endfunction()
 
 macro(sdl_check_linker_flag flag var)
     # FIXME: Use CheckLinkerFlag module once cmake minimum version >= 3.18
@@ -281,4 +285,25 @@ function(sdl_no_deprecated_errors TARGET)
         if(HAVE_WNO_ERROR_DEPRECATED_DECLARATIONS)
     target_compile_options(${TARGET} PRIVATE "-Wno-error=deprecated-declarations")
 endif()
+endfunction()
+
+function(sdl_get_git_revision_hash VARNAME)
+
+    set("${VARNAME}" "" CACHE STRING "${PROJECT_NAME} revision")
+    set(revision "${${VARNAME}}")
+    if(NOT revision)
+      if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/VERSION.txt")
+        # If VERSION.txt exists, it contains the SDL version
+        file(READ "${CMAKE_CURRENT_SOURCE_DIR}/VERSION.txt" revision_version)
+        string(STRIP "${revision_version}" revision_version)
+      else()
+        # If VERSION.txt does not exist, use git to calculate a version
+        git_describe(revision_version)
+        if(NOT revision_version)
+          set(revision_version "${PROJECT_VERSION}-no-vcs")
+        endif()
+      endif()
+      set(revision "${revision_version}")
+    endif()
+    set("${VARNAME}" "${revision}" PARENT_SCOPE)
 endfunction()
