@@ -64,7 +64,7 @@ if(NOT TARGET SDL3_mixer::SDL3_mixer)
     add_library(SDL3_mixer::SDL3_mixer SHARED IMPORTED)
     set_target_properties(SDL3_mixer::SDL3_mixer
         PROPERTIES
-            INTERFACE_INCLUDE_DIRECTORIES "${_sdl3mixer_incdir};${_sdl3mixer_incdir}/SDL3_mixer"
+            INTERFACE_INCLUDE_DIRECTORIES "${_sdl3mixer_incdir}"
             IMPORTED_IMPLIB "${_sdl3mixer_library}"
             IMPORTED_LOCATION "${_sdl3mixer_dll}"
             COMPATIBLE_INTERFACE_BOOL "SDL3_SHARED"
