@@ -61,7 +61,6 @@ ifeq ($(SUPPORT_MID_TIMIDITY),true)
     include $(SDL_MIXER_LOCAL_PATH)/$(TIMIDITY_LIBRARY_PATH)/Android.mk
 endif
 
-
 # Restore local path
 LOCAL_PATH := $(SDL_MIXER_LOCAL_PATH)
 
@@ -134,7 +133,7 @@ ifeq ($(SUPPORT_MID_TIMIDITY),true)
     LOCAL_STATIC_LIBRARIES += timidity
 endif
 
-LOCAL_EXPORT_C_INCLUDES += $(LOCAL_PATH)/include $(LOCAL_PATH)/include/SDL3
+LOCAL_EXPORT_C_INCLUDES += $(LOCAL_PATH)/include
 
 include $(BUILD_SHARED_LIBRARY)
 
