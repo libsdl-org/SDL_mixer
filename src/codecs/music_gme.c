@@ -38,11 +38,7 @@ typedef struct {
     void (*gme_set_tempo)(Music_Emu*, double tempo);
     int (*gme_voice_count)(Music_Emu const*);
     void (*gme_mute_voice)(Music_Emu*, int index, int mute);
-#if GME_VERSION >= 0x000700
-    void (*gme_set_fade)(Music_Emu*, int start_msec, int fade_msec);
-#else
     void (*gme_set_fade)(Music_Emu*, int start_msec);
-#endif
     void (*gme_set_autoload_playback_limit)(Music_Emu*, int do_autoload_limit);
     gme_err_t (*gme_track_info)(Music_Emu const*, gme_info_t** out, int track);
     void (*gme_free_info)(gme_info_t*);
@@ -80,11 +76,7 @@ static int GME_Load(void)
         FUNCTION_LOADER(gme_set_tempo, void (*)(Music_Emu*,double))
         FUNCTION_LOADER(gme_voice_count, int (*)(Music_Emu const*))
         FUNCTION_LOADER(gme_mute_voice, void (*)(Music_Emu*,int,int))
-#if GME_VERSION >= 0x000700
-        FUNCTION_LOADER(gme_set_fade, void (*)(Music_Emu*,int,int))
-#else
         FUNCTION_LOADER(gme_set_fade, void (*)(Music_Emu*,int))
-#endif
         FUNCTION_LOADER(gme_track_info, gme_err_t (*)(Music_Emu const*, gme_info_t**, int))
         FUNCTION_LOADER(gme_free_info, void (*)(gme_info_t*))
         FUNCTION_LOADER(gme_seek, gme_err_t (*)(Music_Emu*,int))
@@ -288,11 +280,10 @@ static int GME_Play(void *music_p, int play_count)
         SDL_AudioStreamClear(music->stream);
         music->play_count = play_count;
         fade_start = play_count > 0 ? music->intro_length + (music->loop_length * play_count) : -1;
-#if GME_VERSION >= 0x000700
-        gme.gme_set_fade(music->game_emu, fade_start, 8000);
-#else
+        /* libgme >= 0.6.4 has gme_set_fade_msecs(),
+         * but gme_set_fade() sets msecs to 8000 by
+         * default and we are OK with that.  */
         gme.gme_set_fade(music->game_emu, fade_start);
-#endif
         gme.gme_seek(music->game_emu, 0);
     }
     return 0;
