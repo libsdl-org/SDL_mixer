@@ -99,9 +99,6 @@ typedef ptrdiff_t ssize_t;
 
 /* A safe realloc also for very old systems where realloc(NULL, size) returns NULL. */
 void *safe_realloc(void *ptr, size_t size);
-#ifndef HAVE_STRERROR
-const char *strerror(int errnum);
-#endif
 
 #ifndef HAVE_STRDUP
 char *strdup(const char *s);

@@ -15,7 +15,6 @@ LIB_PATCHLEVEL=0
 dnl Since we want to be backwards compatible, both sides get set to API_VERSION.
 LIBMPG123_VERSION=$API_VERSION:$LIB_PATCHLEVEL:$API_VERSION
 AC_SUBST(LIBMPG123_VERSION)
-AC_SUBST(API_VERSION)
 
 AC_CONFIG_SRCDIR(src/libmpg123.c)
 AC_CONFIG_AUX_DIR(build)
@@ -901,47 +900,12 @@ AC_SUBST(LFS_LOBJ)
 
 dnl ############## Function Checks
 
-AC_CHECK_FUNCS( strerror )
-
 AC_CHECK_FUNCS( strdup )
-
-dnl ############## Header and Library Checks
-
-# Substitutions for the installable mpg123.h header
-if test "x$ac_cv_header_stdio_h" = "xyes"; then
-	INCLUDE_STDIO_H="#include <stdio.h>"
-else
-	INCLUDE_STDIO_H="/* #include <stdio.h> is not available on this system */"
-fi
-AC_SUBST(INCLUDE_STDIO_H)
-
-if test "x$ac_cv_header_stdlib_h" = "xyes"; then
-	INCLUDE_STDLIB_H="#include <stdlib.h>"
-else
-	INCLUDE_STDLIB_H="/* #include <stdlib.h> is not available on this system */"
-fi
-AC_SUBST(INCLUDE_STDLIB_H)
-
-if test "x$ac_cv_header_sys_types_h" = "xyes"; then
-	INCLUDE_SYS_TYPE_H="#include <sys/types.h>"
-else
-	INCLUDE_SYS_TYPE_H="/* #include <sys/types.h> is not available on this system */"
-fi
-AC_SUBST(INCLUDE_SYS_TYPE_H)
 
 
 # Checks for maths libraries.
 AC_CHECK_LIB([m], [sqrt])
 
-# attempt to make the signal stuff work... also with GENERIC - later
-#if test x"$ac_cv_header_sys_signal_h" = xyes; then
-#	AC_CHECK_FUNCS( sigemptyset sigaddset sigprocmask sigaction )
-#	if test x"$ac_cv_func_sigemptyset" = xyes &&
-#	   test x"$ac_cv_func_sigaddset" = xyes &&
-#	   test x"$ac_cv_func_sigprocmask" = xyes &&
-#	   test x"$ac_cv_func_sigaction" = xyes; then
-#	AC_DEFINE( 
-#fi
 
 dnl ############## Choose compiler flags and CPU
 
@@ -953,8 +917,6 @@ LIBS="$LIBS"
 
 # Consider moving that stuff.
 AC_CHECK_HEADER([os2.h], [ADD_CPPFLAGS="$ADD_CPPFLAGS -DOS2"])
-# On OS/2, we need to link to os2term to make terminal control actually work.
-AC_CHECK_LIB([os2term], [tcsetattr], [ADD_LDFLAGS="$ADD_LDFLAGS -los2term"])
 
 # If debugging is enabled then make warnings errors
 if test x"$debugging" = xenabled; then
@@ -1412,7 +1374,6 @@ AC_CONFIG_FILES([
 	Makefile
 	libmpg123.pc
 	src/Makefile
-	src/mpg123.h
 ])
 
 AC_OUTPUT

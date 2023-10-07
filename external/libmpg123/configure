@@ -644,9 +644,6 @@ DECODER_OBJ
 YASM_FORMAT
 USE_YASM_FOR_AVX_FALSE
 USE_YASM_FOR_AVX_TRUE
-INCLUDE_SYS_TYPE_H
-INCLUDE_STDLIB_H
-INCLUDE_STDIO_H
 LFS_LOBJ
 YASMFLAGS
 YASM
@@ -736,7 +733,6 @@ build
 MAINT
 MAINTAINER_MODE_FALSE
 MAINTAINER_MODE_TRUE
-API_VERSION
 LIBMPG123_VERSION
 target_alias
 host_alias
@@ -757,7 +753,6 @@ infodir
 docdir
 oldincludedir
 includedir
-runstatedir
 localstatedir
 sharedstatedir
 sysconfdir
@@ -870,7 +865,6 @@ datadir='${datarootdir}'
 sysconfdir='${prefix}/etc'
 sharedstatedir='${prefix}/com'
 localstatedir='${prefix}/var'
-runstatedir='${localstatedir}/run'
 includedir='${prefix}/include'
 oldincludedir='/usr/include'
 docdir='${datarootdir}/doc/${PACKAGE_TARNAME}'
@@ -1123,15 +1117,6 @@ do
   | -silent | --silent | --silen | --sile | --sil)
     silent=yes ;;
 
-  -runstatedir | --runstatedir | --runstatedi | --runstated \
-  | --runstate | --runstat | --runsta | --runst | --runs \
-  | --run | --ru | --r)
-    ac_prev=runstatedir ;;
-  -runstatedir=* | --runstatedir=* | --runstatedi=* | --runstated=* \
-  | --runstate=* | --runstat=* | --runsta=* | --runst=* | --runs=* \
-  | --run=* | --ru=* | --r=*)
-    runstatedir=$ac_optarg ;;
-
   -sbindir | --sbindir | --sbindi | --sbind | --sbin | --sbi | --sb)
     ac_prev=sbindir ;;
   -sbindir=* | --sbindir=* | --sbindi=* | --sbind=* | --sbin=* \
@@ -1269,7 +1254,7 @@ fi
 for ac_var in	exec_prefix prefix bindir sbindir libexecdir datarootdir \
 		datadir sysconfdir sharedstatedir localstatedir includedir \
 		oldincludedir docdir infodir htmldir dvidir pdfdir psdir \
-		libdir localedir mandir runstatedir
+		libdir localedir mandir
 do
   eval ac_val=\$$ac_var
   # Remove trailing slashes.
@@ -1422,7 +1407,6 @@ Fine tuning of the installation directories:
   --sysconfdir=DIR        read-only single-machine data [PREFIX/etc]
   --sharedstatedir=DIR    modifiable architecture-independent data [PREFIX/com]
   --localstatedir=DIR     modifiable single-machine data [PREFIX/var]
-  --runstatedir=DIR       modifiable per-process data [LOCALSTATEDIR/run]
   --libdir=DIR            object code libraries [EPREFIX/lib]
   --includedir=DIR        C header files [PREFIX/include]
   --oldincludedir=DIR     C header files for non-gcc [/usr/include]
@@ -1723,6 +1707,52 @@ fi
 
 } # ac_fn_c_try_cpp
 
+# ac_fn_c_try_link LINENO
+# -----------------------
+# Try to link conftest.$ac_ext, and return whether this succeeded.
+ac_fn_c_try_link ()
+{
+  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
+  rm -f conftest.$ac_objext conftest$ac_exeext
+  if { { ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
+$as_echo "$ac_try_echo"; } >&5
+  (eval "$ac_link") 2>conftest.err
+  ac_status=$?
+  if test -s conftest.err; then
+    grep -v '^ *+' conftest.err >conftest.er1
+    cat conftest.er1 >&5
+    mv -f conftest.er1 conftest.err
+  fi
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext && {
+	 test "$cross_compiling" = yes ||
+	 test -x conftest$ac_exeext
+       }; then :
+  ac_retval=0
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_retval=1
+fi
+  # Delete the IPA/IPO (Inter Procedural Analysis/Optimization) information
+  # created by the PGI compiler (conftest_ipa8_conftest.oo), as it would
+  # interfere with the next link command; also delete a directory that is
+  # left behind by Apple's compiler.  We do this before executing the actions.
+  rm -rf conftest.dSYM conftest_ipa8_conftest.oo
+  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
+  as_fn_set_status $ac_retval
+
+} # ac_fn_c_try_link
+
 # ac_fn_c_try_run LINENO
 # ----------------------
 # Try to run conftest.$ac_ext, and return whether this succeeded. Assumes that
@@ -1796,52 +1826,6 @@ $as_echo "$ac_res" >&6; }
 
 } # ac_fn_c_check_header_compile
 
-# ac_fn_c_try_link LINENO
-# -----------------------
-# Try to link conftest.$ac_ext, and return whether this succeeded.
-ac_fn_c_try_link ()
-{
-  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
-  rm -f conftest.$ac_objext conftest$ac_exeext
-  if { { ac_try="$ac_link"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
-$as_echo "$ac_try_echo"; } >&5
-  (eval "$ac_link") 2>conftest.err
-  ac_status=$?
-  if test -s conftest.err; then
-    grep -v '^ *+' conftest.err >conftest.er1
-    cat conftest.er1 >&5
-    mv -f conftest.er1 conftest.err
-  fi
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; } && {
-	 test -z "$ac_c_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest$ac_exeext && {
-	 test "$cross_compiling" = yes ||
-	 test -x conftest$ac_exeext
-       }; then :
-  ac_retval=0
-else
-  $as_echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-	ac_retval=1
-fi
-  # Delete the IPA/IPO (Inter Procedural Analysis/Optimization) information
-  # created by the PGI compiler (conftest_ipa8_conftest.oo), as it would
-  # interfere with the next link command; also delete a directory that is
-  # left behind by Apple's compiler.  We do this before executing the actions.
-  rm -rf conftest.dSYM conftest_ipa8_conftest.oo
-  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
-  as_fn_set_status $ac_retval
-
-} # ac_fn_c_try_link
-
 # ac_fn_c_check_func LINENO FUNC VAR
 # ----------------------------------
 # Tests whether FUNC exists, setting the cache variable VAR accordingly
@@ -1887,7 +1871,7 @@ choke me
 #endif
 
 int
-main (void)
+main ()
 {
 return $2 ();
   ;
@@ -2017,7 +2001,7 @@ else
 /* end confdefs.h.  */
 $4
 int
-main (void)
+main ()
 {
 if (sizeof ($2))
 	 return 0;
@@ -2030,7 +2014,7 @@ if ac_fn_c_try_compile "$LINENO"; then :
 /* end confdefs.h.  */
 $4
 int
-main (void)
+main ()
 {
 if (sizeof (($2)))
 	    return 0;
@@ -2068,7 +2052,7 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 $4
 int
-main (void)
+main ()
 {
 static int test_array [1 - 2 * !(($2) >= 0)];
 test_array [0] = 0;
@@ -2085,7 +2069,7 @@ if ac_fn_c_try_compile "$LINENO"; then :
 /* end confdefs.h.  */
 $4
 int
-main (void)
+main ()
 {
 static int test_array [1 - 2 * !(($2) <= $ac_mid)];
 test_array [0] = 0;
@@ -2112,7 +2096,7 @@ else
 /* end confdefs.h.  */
 $4
 int
-main (void)
+main ()
 {
 static int test_array [1 - 2 * !(($2) < 0)];
 test_array [0] = 0;
@@ -2129,7 +2113,7 @@ if ac_fn_c_try_compile "$LINENO"; then :
 /* end confdefs.h.  */
 $4
 int
-main (void)
+main ()
 {
 static int test_array [1 - 2 * !(($2) >= $ac_mid)];
 test_array [0] = 0;
@@ -2164,7 +2148,7 @@ while test "x$ac_lo" != "x$ac_hi"; do
 /* end confdefs.h.  */
 $4
 int
-main (void)
+main ()
 {
 static int test_array [1 - 2 * !(($2) <= $ac_mid)];
 test_array [0] = 0;
@@ -2194,7 +2178,7 @@ static unsigned long int ulongval () { return $2; }
 #include <stdio.h>
 #include <stdlib.h>
 int
-main (void)
+main ()
 {
 
   FILE *f = fopen ("conftest.val", "w");
@@ -2593,7 +2577,6 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 API_VERSION=42
 LIB_PATCHLEVEL=0
 LIBMPG123_VERSION=$API_VERSION:$LIB_PATCHLEVEL:$API_VERSION
-
 
 
 
@@ -3755,7 +3738,7 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -3895,9 +3878,11 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <stdio.h>
 int
-main (void)
+main ()
 {
 FILE *f = fopen ("conftest.out", "w");
+ if (!f)
+  return 1;
  return ferror (f) || fclose (f) != 0;
 
   ;
@@ -3961,7 +3946,7 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -4012,7 +3997,7 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 #ifndef __GNUC__
        choke me
@@ -4053,7 +4038,7 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -4068,7 +4053,7 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -4084,7 +4069,7 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -4170,7 +4155,7 @@ int pairnames (int, char **, FILE *(*)(struct buf *, struct stat *, int), int, i
 int argc;
 char **argv;
 int
-main (void)
+main ()
 {
 return f (e, argv, 0) != argv[0]  ||  f (e, argv, 1) != argv[1];
   ;
@@ -4228,7 +4213,7 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -4871,7 +4856,7 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 #ifndef __GNUC__
        choke me
@@ -4912,7 +4897,7 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -4927,7 +4912,7 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -4943,7 +4928,7 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -5029,7 +5014,7 @@ int pairnames (int, char **, FILE *(*)(struct buf *, struct stat *, int), int, i
 int argc;
 char **argv;
 int
-main (void)
+main ()
 {
 return f (e, argv, 0) != argv[0]  ||  f (e, argv, 1) != argv[1];
   ;
@@ -5087,7 +5072,7 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -5539,7 +5524,7 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
 #ifndef __cplusplus
@@ -5667,7 +5652,7 @@ else
 #include <float.h>
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -5737,7 +5722,7 @@ else
 
 #define XOR(e, f) (((e) && !(f)) || (!(e) && (f)))
 int
-main (void)
+main ()
 {
   int i;
   for (i = 0; i < 256; i++)
@@ -5831,7 +5816,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 	     #include <sys/param.h>
 
 int
-main (void)
+main ()
 {
 #if ! (defined BYTE_ORDER && defined BIG_ENDIAN \
 		     && defined LITTLE_ENDIAN && BYTE_ORDER && BIG_ENDIAN \
@@ -5851,7 +5836,7 @@ if ac_fn_c_try_compile "$LINENO"; then :
 		#include <sys/param.h>
 
 int
-main (void)
+main ()
 {
 #if BYTE_ORDER != BIG_ENDIAN
 		 not big endian
@@ -5877,7 +5862,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 #include <limits.h>
 
 int
-main (void)
+main ()
 {
 #if ! (defined _LITTLE_ENDIAN || defined _BIG_ENDIAN)
 	      bogus endian macros
@@ -5894,7 +5879,7 @@ if ac_fn_c_try_compile "$LINENO"; then :
 #include <limits.h>
 
 int
-main (void)
+main ()
 {
 #ifndef _BIG_ENDIAN
 		 not big endian
@@ -5933,21 +5918,22 @@ unsigned short int ascii_mm[] =
 		int use_ebcdic (int i) {
 		  return ebcdic_mm[i] + ebcdic_ii[i];
 		}
-		extern int foo;
-
-int
-main (void)
-{
-return use_ascii (foo) == use_ebcdic (foo);
-  ;
-  return 0;
-}
+		int
+		main (int argc, char **argv)
+		{
+		  /* Intimidate the compiler so that it does not
+		     optimize the arrays away.  */
+		  char *p = argv[0];
+		  ascii_mm[1] = *p++; ebcdic_mm[1] = *p++;
+		  ascii_ii[1] = *p++; ebcdic_ii[1] = *p++;
+		  return use_ascii (argc) == use_ebcdic (*p);
+		}
 _ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  if grep BIGenDianSyS conftest.$ac_objext >/dev/null; then
+if ac_fn_c_try_link "$LINENO"; then :
+  if grep BIGenDianSyS conftest$ac_exeext >/dev/null; then
 	      ac_cv_c_bigendian=yes
 	    fi
-	    if grep LiTTleEnDian conftest.$ac_objext >/dev/null ; then
+	    if grep LiTTleEnDian conftest$ac_exeext >/dev/null ; then
 	      if test "$ac_cv_c_bigendian" = unknown; then
 		ac_cv_c_bigendian=no
 	      else
@@ -5956,13 +5942,14 @@ if ac_fn_c_try_compile "$LINENO"; then :
 	      fi
 	    fi
 fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
 else
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 $ac_includes_default
 int
-main (void)
+main ()
 {
 
 	     /* Are we little or big endian?  From Harbison&Steele.  */
@@ -7566,7 +7553,7 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -8513,7 +8500,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -9237,7 +9224,7 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -9297,7 +9284,7 @@ $as_echo "$lt_cv_ld_force_load" >&6; }
     darwin1.*)
       _lt_dar_allow_undefined='$wl-flat_namespace $wl-undefined ${wl}suppress' ;;
     darwin*)
-      case ${MACOSX_DEPLOYMENT_TARGET},$host in
+      case $MACOSX_DEPLOYMENT_TARGET,$host in
         10.[012],*|,*powerpc*-darwin[5-8]*)
           _lt_dar_allow_undefined='$wl-flat_namespace $wl-undefined ${wl}suppress' ;;
         *)
@@ -11345,7 +11332,7 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -11398,7 +11385,7 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -12856,7 +12843,7 @@ else
 /* end confdefs.h.  */
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -13313,7 +13300,7 @@ extern "C"
 #endif
 char dlopen ();
 int
-main (void)
+main ()
 {
 return dlopen ();
   ;
@@ -13374,7 +13361,7 @@ extern "C"
 #endif
 char shl_load ();
 int
-main (void)
+main ()
 {
 return shl_load ();
   ;
@@ -13417,7 +13404,7 @@ extern "C"
 #endif
 char dlopen ();
 int
-main (void)
+main ()
 {
 return dlopen ();
   ;
@@ -13456,7 +13443,7 @@ extern "C"
 #endif
 char dlopen ();
 int
-main (void)
+main ()
 {
 return dlopen ();
   ;
@@ -13495,7 +13482,7 @@ extern "C"
 #endif
 char dld_link ();
 int
-main (void)
+main ()
 {
 return dld_link ();
   ;
@@ -14786,7 +14773,7 @@ else
 #include <float.h>
 
 int
-main (void)
+main ()
 {
 
   ;
@@ -14856,7 +14843,7 @@ else
 
 #define XOR(e, f) (((e) && !(f)) || (!(e) && (f)))
 int
-main (void)
+main ()
 {
   int i;
   for (i = 0; i < 256; i++)
@@ -14926,12 +14913,12 @@ else
     We can't simply define LARGE_OFF_T to be 9223372036854775807,
     since some C++ compilers masquerading as C compilers
     incorrectly reject 9223372036854775807.  */
-#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
+#define LARGE_OFF_T (((off_t) 1 << 31 << 31) - 1 + ((off_t) 1 << 31 << 31))
   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
 		       && LARGE_OFF_T % 2147483647 == 1)
 		      ? 1 : -1];
 int
-main (void)
+main ()
 {
 
   ;
@@ -14972,12 +14959,12 @@ else
     We can't simply define LARGE_OFF_T to be 9223372036854775807,
     since some C++ compilers masquerading as C compilers
     incorrectly reject 9223372036854775807.  */
-#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
+#define LARGE_OFF_T (((off_t) 1 << 31 << 31) - 1 + ((off_t) 1 << 31 << 31))
   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
 		       && LARGE_OFF_T % 2147483647 == 1)
 		      ? 1 : -1];
 int
-main (void)
+main ()
 {
 
   ;
@@ -14996,12 +14983,12 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
     We can't simply define LARGE_OFF_T to be 9223372036854775807,
     since some C++ compilers masquerading as C compilers
     incorrectly reject 9223372036854775807.  */
-#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
+#define LARGE_OFF_T (((off_t) 1 << 31 << 31) - 1 + ((off_t) 1 << 31 << 31))
   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
 		       && LARGE_OFF_T % 2147483647 == 1)
 		      ? 1 : -1];
 int
-main (void)
+main ()
 {
 
   ;
@@ -15041,12 +15028,12 @@ else
     We can't simply define LARGE_OFF_T to be 9223372036854775807,
     since some C++ compilers masquerading as C compilers
     incorrectly reject 9223372036854775807.  */
-#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
+#define LARGE_OFF_T (((off_t) 1 << 31 << 31) - 1 + ((off_t) 1 << 31 << 31))
   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
 		       && LARGE_OFF_T % 2147483647 == 1)
 		      ? 1 : -1];
 int
-main (void)
+main ()
 {
 
   ;
@@ -15065,12 +15052,12 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
     We can't simply define LARGE_OFF_T to be 9223372036854775807,
     since some C++ compilers masquerading as C compilers
     incorrectly reject 9223372036854775807.  */
-#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
+#define LARGE_OFF_T (((off_t) 1 << 31 << 31) - 1 + ((off_t) 1 << 31 << 31))
   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
 		       && LARGE_OFF_T % 2147483647 == 1)
 		      ? 1 : -1];
 int
-main (void)
+main ()
 {
 
   ;
@@ -15097,10 +15084,6 @@ _ACEOF
 esac
 rm -rf conftest*
   fi
-
-
-$as_echo "#define _DARWIN_USE_64_BIT_INODE 1" >>confdefs.h
-
 fi
 
 if test "x$ac_cv_sys_file_offset_bits" = x || echo "$ac_cv_sys_file_offset_bits" | $GREP  '[^0-9]' > /dev/null; then
@@ -15439,19 +15422,6 @@ fi
 
 
 
-for ac_func in strerror
-do :
-  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
-ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
-if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
-  cat >>confdefs.h <<_ACEOF
-#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
-_ACEOF
-
-fi
-done
-
-
 for ac_func in strdup
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
@@ -15463,29 +15433,6 @@ _ACEOF
 
 fi
 done
-
-
-
-# Substitutions for the installable mpg123.h header
-if test "x$ac_cv_header_stdio_h" = "xyes"; then
-	INCLUDE_STDIO_H="#include <stdio.h>"
-else
-	INCLUDE_STDIO_H="/* #include <stdio.h> is not available on this system */"
-fi
-
-
-if test "x$ac_cv_header_stdlib_h" = "xyes"; then
-	INCLUDE_STDLIB_H="#include <stdlib.h>"
-else
-	INCLUDE_STDLIB_H="/* #include <stdlib.h> is not available on this system */"
-fi
-
-
-if test "x$ac_cv_header_sys_types_h" = "xyes"; then
-	INCLUDE_SYS_TYPE_H="#include <sys/types.h>"
-else
-	INCLUDE_SYS_TYPE_H="/* #include <sys/types.h> is not available on this system */"
-fi
 
 
 
@@ -15508,7 +15455,7 @@ extern "C"
 #endif
 char sqrt ();
 int
-main (void)
+main ()
 {
 return sqrt ();
   ;
@@ -15536,15 +15483,6 @@ _ACEOF
 fi
 
 
-# attempt to make the signal stuff work... also with GENERIC - later
-#if test x"$ac_cv_header_sys_signal_h" = xyes; then
-#	AC_CHECK_FUNCS( sigemptyset sigaddset sigprocmask sigaction )
-#	if test x"$ac_cv_func_sigemptyset" = xyes &&
-#	   test x"$ac_cv_func_sigaddset" = xyes &&
-#	   test x"$ac_cv_func_sigprocmask" = xyes &&
-#	   test x"$ac_cv_func_sigaction" = xyes; then
-#	AC_DEFINE(
-#fi
 
 
 # do not assume gcc here, so no flags by default
@@ -15559,47 +15497,6 @@ if test "x$ac_cv_header_os2_h" = xyes; then :
   ADD_CPPFLAGS="$ADD_CPPFLAGS -DOS2"
 fi
 
-
-# On OS/2, we need to link to os2term to make terminal control actually work.
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for tcsetattr in -los2term" >&5
-$as_echo_n "checking for tcsetattr in -los2term... " >&6; }
-if ${ac_cv_lib_os2term_tcsetattr+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-los2term  $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char tcsetattr ();
-int
-main (void)
-{
-return tcsetattr ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_os2term_tcsetattr=yes
-else
-  ac_cv_lib_os2term_tcsetattr=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_os2term_tcsetattr" >&5
-$as_echo "$ac_cv_lib_os2term_tcsetattr" >&6; }
-if test "x$ac_cv_lib_os2term_tcsetattr" = xyes; then :
-  ADD_LDFLAGS="$ADD_LDFLAGS -los2term"
-fi
 
 
 # If debugging is enabled then make warnings errors
@@ -16149,7 +16046,7 @@ fi
 LIBMPG123_LIBS=$LIBS
 
 
-ac_config_files="$ac_config_files Makefile libmpg123.pc src/Makefile src/mpg123.h"
+ac_config_files="$ac_config_files Makefile libmpg123.pc src/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -17189,7 +17086,6 @@ do
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "libmpg123.pc") CONFIG_FILES="$CONFIG_FILES libmpg123.pc" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
-    "src/mpg123.h") CONFIG_FILES="$CONFIG_FILES src/mpg123.h" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

@@ -988,22 +988,6 @@ static struct reader readers[] =
 		stream_rewind,
 		buffered_forget
 	},
-#ifdef READ_SYSTEM
-	,{
-		system_init,
-		NULL,	/* filled in by system_init() */
-		fullread,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-	}
-#endif
 };
 
 static struct reader bad_reader =

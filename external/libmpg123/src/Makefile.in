@@ -82,8 +82,7 @@ host_triplet = @host@
 EXTRA_PROGRAMS = testcpu$(EXEEXT)
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(srcdir)/config.h.in $(srcdir)/mpg123.h.in \
-	$(top_srcdir)/build/depcomp
+	$(srcdir)/config.h.in $(top_srcdir)/build/depcomp
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
 	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
@@ -93,7 +92,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
-CONFIG_CLEAN_FILES = mpg123.h
+CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
@@ -216,7 +215,6 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
-API_VERSION = @API_VERSION@
 AR = @AR@
 AS = @AS@
 AUTOCONF = @AUTOCONF@
@@ -247,9 +245,6 @@ EXEC_LT_LDFLAGS = @EXEC_LT_LDFLAGS@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 GREP = @GREP@
-INCLUDE_STDIO_H = @INCLUDE_STDIO_H@
-INCLUDE_STDLIB_H = @INCLUDE_STDLIB_H@
-INCLUDE_SYS_TYPE_H = @INCLUDE_SYS_TYPE_H@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -339,7 +334,6 @@ pdfdir = @pdfdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
-runstatedir = @runstatedir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
@@ -352,7 +346,7 @@ top_srcdir = @top_srcdir@
 #AM_CFLAGS = 
 #AM_LDFLAGS = 
 AM_CPPFLAGS = -I$(top_srcdir)/src
-EXTRA_DIST = mpg123.h.in
+EXTRA_DIST = 
 testcpu_dependencies = getcpuflags.$(OBJEXT)
 testcpu_sources = testcpu.c
 testcpu_LDADD = getcpuflags.$(OBJEXT)
@@ -567,8 +561,6 @@ $(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f config.h stamp-h1
-mpg123.h: $(top_builddir)/config.status $(srcdir)/mpg123.h.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 
 install-libLTLIBRARIES: $(lib_LTLIBRARIES)
 	@$(NORMAL_INSTALL)

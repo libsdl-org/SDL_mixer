@@ -34,25 +34,14 @@ void *safe_realloc(void *ptr, size_t size)
 	else return realloc(ptr, size);
 }
 
-#ifndef HAVE_STRERROR
-const char *strerror(int errnum)
-{
-	extern int sys_nerr;
-	extern char *sys_errlist[];
-
-	return (errnum < sys_nerr) ?  sys_errlist[errnum]  :  "";
-}
-#endif
-
 #ifndef HAVE_STRDUP
 char *strdup(const char *src)
 {
-	char *dest;
+	const size_t sz = strlen(src) +1;
+	char *dest = (char *) malloc(sz);
 
-	if (!(dest = (char *) malloc(strlen(src)+1)))
-	return NULL;
-	else
-	return strcpy(dest, src);
+	if (!dest) return NULL;
+	return memcpy(dest, src, sz);
 }
 #endif
 

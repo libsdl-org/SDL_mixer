@@ -127,13 +127,6 @@ void open_bad(mpg123_handle *);
 #define READER_BUF_STREAM 3
 #define READER_BUF_ICY_STREAM 4
 
-#ifdef READ_SYSTEM
-#define READER_SYSTEM 5
-#define READERS 6
-#else
-#define READERS 5
-#endif
-
 #define READER_ERROR MPG123_ERR
 #define READER_MORE  MPG123_NEED_MORE
 

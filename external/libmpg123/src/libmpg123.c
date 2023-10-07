@@ -496,6 +496,7 @@ int decode_update(mpg123_handle *mh)
 	long native_rate;
 	int b;
 
+	mh->state_flags &= ~FRAME_DECODER_LIVE;
 	if(mh->num < 0)
 	{
 		if(!(mh->p.flags & MPG123_QUIET)) error("decode_update() has been called before reading the first MPEG frame! Internal programming error.");
@@ -559,6 +560,7 @@ int decode_update(mpg123_handle *mh)
 	do_rva(mh);
 	debug3("done updating decoder structure with native rate %li and af.rate %li and down_sample %i", frame_freq(mh), mh->af.rate, mh->down_sample);
 
+	mh->state_flags |= FRAME_DECODER_LIVE;
 	return 0;
 }
 
@@ -752,12 +754,15 @@ int attribute_align_arg mpg123_framebyframe_decode(mpg123_handle *mh, off_t *num
 	if(mh == NULL)    return MPG123_BAD_HANDLE;
 	if(mh->buffer.size < mh->outblock) return MPG123_NO_SPACE;
 
+	*audio = NULL;
 	*bytes = 0;
 	mh->buffer.fill = 0; /* always start fresh */
 	if(!mh->to_decode) return MPG123_OK;
 
 	if(num != NULL) *num = mh->num;
 	debug("decoding");
+	if(!(mh->state_flags & FRAME_DECODER_LIVE))
+		return MPG123_ERR;
 	decode_the_frame(mh);
 	mh->to_decode = mh->to_ignore = FALSE;
 	mh->buffer.p = mh->buffer.data;
@@ -834,6 +839,8 @@ int attribute_align_arg mpg123_decode_frame(mpg123_handle *mh, off_t *num, unsig
 			if(num != NULL) *num = mh->num;
 			debug("decoding");
 
+			if(!(mh->state_flags & FRAME_DECODER_LIVE))
+				return MPG123_ERR;
 			decode_the_frame(mh);
 
 			mh->to_decode = mh->to_ignore = FALSE;
@@ -935,6 +942,11 @@ int attribute_align_arg mpg123_decode(mpg123_handle *mh, const unsigned char *in
 			if(mh->buffer.size - mh->buffer.fill < mh->outblock)
 			{
 				ret = MPG123_NO_SPACE;
+				goto decodeend;
+			}
+			if(!(mh->state_flags & FRAME_DECODER_LIVE))
+			{
+				ret = MPG123_ERR;
 				goto decodeend;
 			}
 			decode_the_frame(mh);

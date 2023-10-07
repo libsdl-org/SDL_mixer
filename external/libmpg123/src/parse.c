@@ -974,23 +974,6 @@ int attribute_align_arg mpg123_position(mpg123_handle *fr, off_t no, off_t buffs
 	return MPG123_OK;
 }
 
-int get_songlen(mpg123_handle *fr,int no)
-{
-	double tpf;
-	
-	if(!fr)
-		return 0;
-	
-	if(no < 0) {
-		if(!fr->rd || fr->rdat.filelen < 0)
-			return 0;
-		no = (int) ((double) fr->rdat.filelen / compute_bpf(fr));
-	}
-
-	tpf = mpg123_tpf(fr);
-	return (int) (no*tpf);
-}
-
 /* first attempt of read ahead check to find the real first header; cannot believe what junk is out there! */
 static int do_readahead(mpg123_handle *fr, unsigned long newhead)
 {

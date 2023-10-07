@@ -8,7 +8,7 @@
 #AM_LDFLAGS = 
 AM_CPPFLAGS = -I$(top_srcdir)/src
 
-EXTRA_DIST = mpg123.h.in
+EXTRA_DIST = 
 
 LIBS = @LIBMPG123_LIBS@
 
