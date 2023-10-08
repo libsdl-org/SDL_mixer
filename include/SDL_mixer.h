@@ -1375,7 +1375,7 @@ extern DECLSPEC int SDLCALL Mix_RegisterEffect(int chan, Mix_EffectFunc_t f, Mix
  * zero if there's an error, not on success. We apologize for the API design
  * inconsistency here.
  *
- * \param chan the channel to unregister an effect on, or MIX_CHANNEL_POST.
+ * \param channel the channel to unregister an effect on, or MIX_CHANNEL_POST.
  * \param f effect the callback stop calling in future mixing iterations.
  * \returns zero if error (no such channel or effect), nonzero if removed.
  *          Error messages can be retrieved from Mix_GetError().
@@ -1401,7 +1401,7 @@ extern DECLSPEC int SDLCALL Mix_UnregisterEffect(int channel, Mix_EffectFunc_t f
  * zero if there's an error, not on success. We apologize for the API design
  * inconsistency here.
  *
- * \param chan the channel to unregister all effects on, or MIX_CHANNEL_POST.
+ * \param channel the channel to unregister all effects on, or MIX_CHANNEL_POST.
  * \returns zero if error (no such channel), nonzero if all effects removed.
  *          Error messages can be retrieved from Mix_GetError().
  *
@@ -1759,7 +1759,7 @@ extern DECLSPEC int SDLCALL Mix_GroupNewer(int tag);
  *
  * \param channel the channel on which to play the new chunk.
  * \param chunk the new chunk to play.
- * \param loop the number of times the chunk should loop, -1 to loop (not
+ * \param loops the number of times the chunk should loop, -1 to loop (not
  *             actually) infinitely.
  * \returns which channel was used to play the sound, or -1 if sound could not
  *          be played.
@@ -1791,7 +1791,7 @@ extern DECLSPEC int SDLCALL Mix_PlayChannel(int channel, Mix_Chunk *chunk, int l
  *
  * \param channel the channel on which to play the new chunk.
  * \param chunk the new chunk to play.
- * \param loop the number of times the chunk should loop, -1 to loop (not
+ * \param loops the number of times the chunk should loop, -1 to loop (not
  *             actually) infinitely.
  * \param ticks the maximum number of milliseconds of this chunk to mix for
  *              playback.
@@ -1843,7 +1843,7 @@ extern DECLSPEC int SDLCALL Mix_PlayMusic(Mix_Music *music, int loops);
  * Mix_VolumeMusic() on fading music).
  *
  * \param music the new music object to play.
- * \param loop the number of times the chunk should loop, -1 to loop (not
+ * \param loops the number of times the chunk should loop, -1 to loop (not
  *             actually) infinitely.
  * \param ms the number of milliseconds to spend fading in.
  * \returns zero on success, -1 on error.
@@ -1880,7 +1880,7 @@ extern DECLSPEC int SDLCALL Mix_FadeInMusic(Mix_Music *music, int loops, int ms)
  * To convert from milliseconds, divide by 1000.0.
  *
  * \param music the new music object to play.
- * \param loop the number of times the chunk should loop, -1 to loop (not
+ * \param loops the number of times the chunk should loop, -1 to loop (not
  *             actually) infinitely.
  * \param ms the number of milliseconds to spend fading in.
  * \param position the start position within the music, in seconds, where
@@ -1921,7 +1921,7 @@ extern DECLSPEC int SDLCALL Mix_FadeInMusicPos(Mix_Music *music, int loops, int 
  * \param channel the channel on which to play the new chunk, or -1 to find
  *                any available.
  * \param chunk the new chunk to play.
- * \param loop the number of times the chunk should loop, -1 to loop (not
+ * \param loops the number of times the chunk should loop, -1 to loop (not
  *             actually) infinitely.
  * \param ms the number of milliseconds to spend fading in.
  * \returns which channel was used to play the sound, or -1 if sound could not
@@ -1964,7 +1964,7 @@ extern DECLSPEC int SDLCALL Mix_FadeInChannel(int channel, Mix_Chunk *chunk, int
  * \param channel the channel on which to play the new chunk, or -1 to find
  *                any available.
  * \param chunk the new chunk to play.
- * \param loop the number of times the chunk should loop, -1 to loop (not
+ * \param loops the number of times the chunk should loop, -1 to loop (not
  *             actually) infinitely.
  * \param ms the number of milliseconds to spend fading in.
  * \param ticks the maximum number of milliseconds of this chunk to mix for
@@ -2252,7 +2252,6 @@ extern DECLSPEC int SDLCALL Mix_FadeOutGroup(int tag, int ms);
  * requested; it just schedules the music to fade and notes the time for the
  * mixer to manage later, and returns immediately.
  *
- * \param which the channel to fade out.
  * \param ms number of milliseconds to fade before halting the channel.
  * \returns non-zero if music was scheduled to fade, zero otherwise. If no
  *          music is currently playing, this returns zero.
