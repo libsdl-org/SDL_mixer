@@ -22,19 +22,24 @@
     <ProjectName>SDL2_mixer</ProjectName>
     <ProjectGuid>{F7E944B3-0815-40CD-B3E4-90B2A15B0E33}</ProjectGuid>
     <RootNamespace>SDL_mixer</RootNamespace>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' != '10.0'">$(DefaultPlatformToolset)</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' != '10.0'">$(DefaultPlatformToolset)</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' != '10.0'">$(DefaultPlatformToolset)</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' != '10.0'">$(DefaultPlatformToolset)</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -109,7 +114,7 @@
       <AdditionalOptions>/D OGG_DYNAMIC=\"libvorbisfile-3.dll\" %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\include;..\src;..\src\codecs;..\src\codecs\timidity;..\src\codecs\native_midi;external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>DLL_EXPORT;_DEBUG;WIN32;_WINDOWS;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MOD_XMP;XMP_DYNAMIC="libxmp.dll";MUSIC_MP3_DRMP3;MUSIC_OGG;OGG_USE_STB;MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DLL_EXPORT;_DEBUG;WIN32;_WINDOWS;MUSIC_WAV;MUSIC_WAVPACK;MUSIC_FLAC_DRFLAC;MUSIC_MOD_XMP;XMP_DYNAMIC="libxmp.dll";MUSIC_MP3_DRMP3;MUSIC_OGG;OGG_USE_STB;MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";WAVPACK_DYNAMIC="libwavpack-1.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
@@ -139,7 +144,7 @@
       <AdditionalOptions>/D OGG_DYNAMIC=\"libvorbisfile-3.dll\" %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\include;..\src;..\src\codecs;..\src\codecs\timidity;..\src\codecs\native_midi;external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>DLL_EXPORT;_DEBUG;WIN32;_WINDOWS;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MOD_XMP;XMP_DYNAMIC="libxmp.dll";MUSIC_MP3_DRMP3;MUSIC_OGG;OGG_USE_STB;MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DLL_EXPORT;_DEBUG;WIN32;_WINDOWS;MUSIC_WAV;MUSIC_WAVPACK;MUSIC_FLAC_DRFLAC;MUSIC_MOD_XMP;XMP_DYNAMIC="libxmp.dll";MUSIC_MP3_DRMP3;MUSIC_OGG;OGG_USE_STB;MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";WAVPACK_DYNAMIC="libwavpack-1.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
@@ -168,7 +173,7 @@
     <ClCompile>
       <AdditionalOptions>/D OGG_DYNAMIC=\"libvorbisfile-3.dll\" %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>..\include;..\src;..\src\codecs;..\src\codecs\timidity;..\src\codecs\native_midi;external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>DLL_EXPORT;NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MOD_XMP;XMP_DYNAMIC="libxmp.dll";MUSIC_MP3_DRMP3;MUSIC_OGG;OGG_USE_STB;MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DLL_EXPORT;NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;MUSIC_WAVPACK;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MOD_XMP;XMP_DYNAMIC="libxmp.dll";MUSIC_MP3_DRMP3;MUSIC_OGG;OGG_USE_STB;MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";WAVPACK_DYNAMIC="libwavpack-1.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
@@ -195,7 +200,7 @@
     <ClCompile>
       <AdditionalOptions>/D OGG_DYNAMIC=\"libvorbisfile-3.dll\" %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>..\include;..\src;..\src\codecs;..\src\codecs\timidity;..\src\codecs\native_midi;external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>DLL_EXPORT;NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MOD_XMP;XMP_DYNAMIC="libxmp.dll";MUSIC_MP3_DRMP3;MUSIC_OGG;OGG_USE_STB;MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DLL_EXPORT;NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;MUSIC_WAVPACK;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MOD_XMP;XMP_DYNAMIC="libxmp.dll";MUSIC_MP3_DRMP3;MUSIC_OGG;OGG_USE_STB;MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";WAVPACK_DYNAMIC="libwavpack-1.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
@@ -223,6 +228,7 @@
     <ClInclude Include="..\src\codecs\music_drmp3.h" />
     <ClInclude Include="..\src\codecs\music_flac.h" />
     <ClInclude Include="..\src\codecs\music_fluidsynth.h" />
+    <ClInclude Include="..\src\codecs\music_gme.h" />
     <ClInclude Include="..\src\codecs\music_modplug.h" />
     <ClInclude Include="..\src\codecs\music_mpg123.h" />
     <ClInclude Include="..\src\codecs\music_nativemidi.h" />
@@ -230,6 +236,7 @@
     <ClInclude Include="..\src\codecs\music_opus.h" />
     <ClInclude Include="..\src\codecs\music_timidity.h" />
     <ClInclude Include="..\src\codecs\music_wav.h" />
+    <ClInclude Include="..\src\codecs\music_wavpack.h" />
     <ClInclude Include="..\src\codecs\music_xmp.h" />
   </ItemGroup>
   <ItemGroup>
@@ -295,6 +302,15 @@
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Copying %(Filename)%(Extension)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
     </CustomBuild>
+    <CustomBuild Include="external\optional\x64\libwavpack-1.dll">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Copying %(Filename)%(Extension)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Copying %(Filename)%(Extension)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
+    </CustomBuild>
     <CustomBuild Include="external\optional\x64\LICENSE.xmp.txt">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Copying %(Filename)%(Extension)</Message>
@@ -320,6 +336,14 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
     </CustomBuild>
     <CustomBuild Include="external\optional\x64\LICENSE.opusfile.txt">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Copying %(Filename)%(Extension)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Copying %(Filename)%(Extension)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="external\optional\x64\LICENSE.wavpack.txt">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Copying %(Filename)%(Extension)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
@@ -363,6 +387,15 @@
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Copying %(Filename)%(Extension)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
     </CustomBuild>
+    <CustomBuild Include="external\optional\x86\libwavpack-1.dll">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copying %(Filename)%(Extension)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Copying %(Filename)%(Extension)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
+    </CustomBuild>
     <CustomBuild Include="external\optional\x86\LICENSE.xmp.txt">
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copying %(Filename)%(Extension)</Message>
@@ -395,6 +428,14 @@
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Copying %(Filename)%(Extension)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
     </CustomBuild>
+    <CustomBuild Include="external\optional\x86\LICENSE.wavpack.txt">
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copying %(Filename)%(Extension)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy %(FullPath) $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Copying %(Filename)%(Extension)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\effect_position.c" />
@@ -411,6 +452,7 @@
     <ClCompile Include="..\src\codecs\music_drmp3.c" />
     <ClCompile Include="..\src\codecs\music_flac.c" />
     <ClCompile Include="..\src\codecs\music_fluidsynth.c" />
+    <ClCompile Include="..\src\codecs\music_gme.c" />
     <ClCompile Include="..\src\codecs\music_modplug.c" />
     <ClCompile Include="..\src\codecs\music_mpg123.c" />
     <ClCompile Include="..\src\codecs\music_nativemidi.c" />
@@ -419,6 +461,7 @@
     <ClCompile Include="..\src\codecs\music_opus.c" />
     <ClCompile Include="..\src\codecs\music_timidity.c" />
     <ClCompile Include="..\src\codecs\music_wav.c" />
+    <ClCompile Include="..\src\codecs\music_wavpack.c" />
     <ClCompile Include="..\src\codecs\music_xmp.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
