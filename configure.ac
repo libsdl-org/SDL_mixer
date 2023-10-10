@@ -987,6 +987,9 @@ if test x$enable_music_wavpack = xyes; then
                 ;;
             *-*-cygwin* | *-*-mingw*)
                 wavpack_lib=[`find_lib "libwavpack*.dll"`]
+                if test x$wavpack_lib = x; then
+                   wavpack_lib=[`find_lib wavpackdll.dll`]
+                fi
                 ;;
             *)
                 wavpack_lib=[`find_lib "libwavpack[0-9]*.so.*"`]

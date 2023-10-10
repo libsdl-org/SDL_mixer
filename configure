@@ -19522,6 +19522,9 @@ fi
                 ;;
             *-*-cygwin* | *-*-mingw*)
                 wavpack_lib=`find_lib "libwavpack*.dll"`
+                if test x$wavpack_lib = x; then
+                   wavpack_lib=`find_lib wavpackdll.dll`
+                fi
                 ;;
             *)
                 wavpack_lib=`find_lib "libwavpack[0-9]*.so.*"`
@@ -19694,6 +19697,7 @@ case "$_lcl_notation" in
 esac
   eval $_lcl_result_var='$_lcl_result_tmp'
 done
+
 
 
 
