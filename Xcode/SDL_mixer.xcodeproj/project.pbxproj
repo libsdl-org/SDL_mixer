@@ -11,6 +11,14 @@
 		0448E8AF108B937A00C9D3EA /* native_midi_macosx.c in Sources */ = {isa = PBXBuildFile; fileRef = 0448E8AD108B937A00C9D3EA /* native_midi_macosx.c */; };
 		630FBD8320D52105009867AB /* music_opus.c in Sources */ = {isa = PBXBuildFile; fileRef = 630FBD8220D52105009867AB /* music_opus.c */; };
 		630FBD8520D5211F009867AB /* music_opus.h in Headers */ = {isa = PBXBuildFile; fileRef = 630FBD8420D5211F009867AB /* music_opus.h */; };
+		635731CD2AD5B658000AC38E /* music_wavpack.c in Sources */ = {isa = PBXBuildFile; fileRef = 635731CB2AD5B658000AC38E /* music_wavpack.c */; };
+		635731CE2AD5B658000AC38E /* music_wavpack.h in Headers */ = {isa = PBXBuildFile; fileRef = 635731CC2AD5B658000AC38E /* music_wavpack.h */; };
+		635731CF2AD5B658000AC38E /* music_wavpack.c in Sources */ = {isa = PBXBuildFile; fileRef = 635731CB2AD5B658000AC38E /* music_wavpack.c */; };
+		635731D02AD5B658000AC38E /* music_wavpack.h in Headers */ = {isa = PBXBuildFile; fileRef = 635731CC2AD5B658000AC38E /* music_wavpack.h */; };
+		635731D32AD5B66A000AC38E /* music_gme.c in Sources */ = {isa = PBXBuildFile; fileRef = 635731D12AD5B66A000AC38E /* music_gme.c */; };
+		635731D42AD5B66A000AC38E /* music_gme.h in Headers */ = {isa = PBXBuildFile; fileRef = 635731D22AD5B66A000AC38E /* music_gme.h */; };
+		635731D52AD5B66A000AC38E /* music_gme.c in Sources */ = {isa = PBXBuildFile; fileRef = 635731D12AD5B66A000AC38E /* music_gme.c */; };
+		635731D62AD5B66A000AC38E /* music_gme.h in Headers */ = {isa = PBXBuildFile; fileRef = 635731D22AD5B66A000AC38E /* music_gme.h */; };
 		639008C82385A822009019FA /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 639008C62385A822009019FA /* utils.c */; };
 		639008C92385A822009019FA /* utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 639008C72385A822009019FA /* utils.h */; };
 		639197F1239FE66700F1D8F8 /* mp3utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 639197EF239FE66700F1D8F8 /* mp3utils.c */; };
@@ -134,6 +142,10 @@
 		1014BAEA010A4B677F000001 /* SDL_mixer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SDL_mixer.h; sourceTree = "<group>"; };
 		630FBD8220D52105009867AB /* music_opus.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_opus.c; sourceTree = "<group>"; };
 		630FBD8420D5211F009867AB /* music_opus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_opus.h; sourceTree = "<group>"; };
+		635731CB2AD5B658000AC38E /* music_wavpack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_wavpack.c; sourceTree = "<group>"; };
+		635731CC2AD5B658000AC38E /* music_wavpack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_wavpack.h; sourceTree = "<group>"; };
+		635731D12AD5B66A000AC38E /* music_gme.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_gme.c; sourceTree = "<group>"; };
+		635731D22AD5B66A000AC38E /* music_gme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_gme.h; sourceTree = "<group>"; };
 		639008C62385A822009019FA /* utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utils.c; sourceTree = "<group>"; };
 		639008C72385A822009019FA /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
 		639197EF239FE66700F1D8F8 /* mp3utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mp3utils.c; sourceTree = "<group>"; };
@@ -285,6 +297,8 @@
 				F37A8D2B2838924900C38E95 /* music_drmp3.h */,
 				AAE405D41F9607C100EDAF53 /* music_flac.c */,
 				AAE405C71F9607C000EDAF53 /* music_flac.h */,
+				635731D12AD5B66A000AC38E /* music_gme.c */,
+				635731D22AD5B66A000AC38E /* music_gme.h */,
 				AAE405C61F9607C000EDAF53 /* music_fluidsynth.c */,
 				AAE405BF1F9607BF00EDAF53 /* music_fluidsynth.h */,
 				AAE405C41F9607C000EDAF53 /* music_modplug.c */,
@@ -302,6 +316,8 @@
 				AAE405D61F9607C100EDAF53 /* music_timidity.h */,
 				AAE405C91F9607C000EDAF53 /* music_wav.c */,
 				AAE405C81F9607C000EDAF53 /* music_wav.h */,
+				635731CB2AD5B658000AC38E /* music_wavpack.c */,
+				635731CC2AD5B658000AC38E /* music_wavpack.h */,
 				F30240622881DF95002F32D6 /* music_xmp.c */,
 				F302405F2881DF94002F32D6 /* music_xmp.h */,
 			);
@@ -412,6 +428,8 @@
 				630FBD8520D5211F009867AB /* music_opus.h in Headers */,
 				639008C92385A822009019FA /* utils.h in Headers */,
 				639197F2239FE66700F1D8F8 /* mp3utils.h in Headers */,
+				635731CE2AD5B658000AC38E /* music_wavpack.h in Headers */,
+				635731D42AD5B66A000AC38E /* music_gme.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -440,6 +458,8 @@
 				F3823344273195EE00F7F527 /* music_cmd.h in Headers */,
 				F37A8D2E2838924900C38E95 /* music_drmp3.h in Headers */,
 				F38233582731962100F7F527 /* music_wav.h in Headers */,
+				635731D02AD5B658000AC38E /* music_wavpack.h in Headers */,
+				635731D62AD5B66A000AC38E /* music_gme.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -642,6 +662,8 @@
 				630FBD8320D52105009867AB /* music_opus.c in Sources */,
 				639008C82385A822009019FA /* utils.c in Sources */,
 				639197F1239FE66700F1D8F8 /* mp3utils.c in Sources */,
+				635731CD2AD5B658000AC38E /* music_wavpack.c in Sources */,
+				635731D32AD5B66A000AC38E /* music_gme.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -673,6 +695,8 @@
 				F38233532731961600F7F527 /* music_ogg.c in Sources */,
 				F3823337273195CC00F7F527 /* utils.c in Sources */,
 				F3823339273195D200F7F527 /* effect_position.c in Sources */,
+				635731CF2AD5B658000AC38E /* music_wavpack.c in Sources */,
+				635731D52AD5B66A000AC38E /* music_gme.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
