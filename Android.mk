@@ -26,6 +26,10 @@ SUPPORT_MP3_DRMP3 ?= true
 SUPPORT_MP3_MPG123 ?= false
 MPG123_LIBRARY_PATH := external/mpg123
 
+# Enable this if you want to support loading WavPack music via libwavpack
+SUPPORT_WAVPACK ?= true
+WAVPACK_LIBRARY_PATH := external/wavpack
+
 # Enable this if you want to support loading MOD music via XMP-lite
 SUPPORT_MOD_XMP ?= false
 XMP_LIBRARY_PATH := external/libxmp
@@ -49,6 +53,11 @@ endif
 # Build the library
 ifeq ($(SUPPORT_MP3_MPG123),true)
     include $(SDL_MIXER_LOCAL_PATH)/$(MPG123_LIBRARY_PATH)/Android.mk
+endif
+
+# Build the library
+ifeq ($(SUPPORT_WAVPACK),true)
+    include $(SDL_MIXER_LOCAL_PATH)/$(WAVPACK_LIBRARY_PATH)/Android.mk
 endif
 
 # Build the library
