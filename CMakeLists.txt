@@ -190,6 +190,7 @@ cmake_dependent_option(SDL3MIXER_VORBIS_VORBISFILE_SHARED "Dynamically load vorb
 option(SDL3MIXER_WAVE "Enable streaming WAVE music" ON)
 
 option(SDL3MIXER_WAVPACK "Enable WavPack music" ON)
+cmake_dependent_option(SDL3MIXER_WAVPACK_DSD "Enable WavPack DSD music support" OFF SDL3MIXER_WAVPACK OFF)
 cmake_dependent_option(SDL3MIXER_WAVPACK_SHARED "Dynamically load WavPack library" "${SDL3MIXER_DEPS_SHARED}" SDL3MIXER_WAVPACK OFF)
 
 if(SDL3MIXER_VORBIS_TREMOR OR SDL3MIXER_VORBIS_VORBISFILE OR SDL3MIXER_FLAC_LIBFLAC OR SDL3MIXER_OPUS)
@@ -1061,6 +1062,9 @@ if(SDL3MIXER_WAVPACK)
     endif()
     if(SDL3MIXER_WAVPACK_ENABLED)
         target_compile_definitions(${sdl3_mixer_target_name} PRIVATE MUSIC_WAVPACK)
+        if(SDL3MIXER_WAVPACK_DSD)
+          target_compile_definitions(${sdl3_mixer_target_name} PRIVATE MUSIC_WAVPACK_DSD)
+        endif()
         if(SDL3MIXER_WAVPACK_SHARED)
             target_include_directories(${sdl3_mixer_target_name} PRIVATE
                 $<TARGET_PROPERTY:WavPack::WavPack,INCLUDE_DIRECTORIES>
