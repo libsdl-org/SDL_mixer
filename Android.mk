@@ -131,6 +131,11 @@ ifeq ($(SUPPORT_MP3_MPG123),true)
     LOCAL_SHARED_LIBRARIES += mpg123
 endif
 
+ifeq ($(SUPPORT_WAVPACK),true)
+    LOCAL_CFLAGS += -DMUSIC_WAVPACK -DWAVPACK_HEADER=\"../external/wavpack/include/wavpack.h\"
+    LOCAL_STATIC_LIBRARIES += wavpack
+endif
+
 ifeq ($(SUPPORT_MOD_XMP),true)
     LOCAL_CFLAGS += -DMUSIC_MOD_XMP -DLIBXMP_HEADER=\"../external/libxmp/include/xmp.h\"
     LOCAL_STATIC_LIBRARIES += xmp
