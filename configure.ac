@@ -960,6 +960,9 @@ AC_ARG_ENABLE([music-wavpack],
 AC_ARG_ENABLE([music-wavpack-shared],
 [AS_HELP_STRING([--enable-music-wavpack-shared], [dynamically load WavPack library [default=yes]])],
               [], [enable_music_wavpack_shared=yes])
+AC_ARG_ENABLE([music-wavpack-dsd],
+[AS_HELP_STRING([--enable-music-wavpack-dsd], [enable WavPack DSD music support [default=no]])],
+                [], [enable_music_wavpack_dsd=no])
 if test x$enable_music_wavpack = xyes; then
     LIBS_SAVED="$LIBS"
     PKG_CHECK_MODULES([WAVPACK], [wavpack >= 4.0], [dnl
@@ -999,6 +1002,9 @@ if test x$enable_music_wavpack = xyes; then
                 ;;
         esac
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_WAVPACK $WAVPACK_CFLAGS"
+        if test x$enable_music_wavpack_dsd = xyes; then
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_WAVPACK_DSD"
+        fi
         if test x$have_wavpack_hdr2 = xyes; then
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DHAVE_WAVPACK_H"
         fi

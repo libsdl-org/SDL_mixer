@@ -181,6 +181,7 @@ cmake_dependent_option(SDL2MIXER_VORBIS_VORBISFILE_SHARED "Dynamically load vorb
 option(SDL2MIXER_WAVE "Enable streaming WAVE music" ON)
 
 option(SDL2MIXER_WAVPACK "Enable WavPack music" ON)
+cmake_dependent_option(SDL2MIXER_WAVPACK_DSD "Enable WavPack DSD music support" OFF SDL2MIXER_WAVPACK OFF)
 cmake_dependent_option(SDL2MIXER_WAVPACK_SHARED "Dynamically load WavPack library" "${SDL2MIXER_DEPS_SHARED}" SDL2MIXER_WAVPACK OFF)
 
 if(SDL2MIXER_VORBIS_TREMOR OR SDL2MIXER_VORBIS_VORBISFILE OR SDL2MIXER_FLAC_LIBFLAC OR SDL2MIXER_OPUS)
@@ -860,6 +861,9 @@ if(SDL2MIXER_WAVPACK)
         if(NOT SDL2MIXER_WAVPACK_SHARED)
             list(APPEND PC_REQUIRES wavpack)
         endif()
+    endif()
+    if(SDL2MIXER_WAVPACK_DSD)
+        target_compile_definitions(SDL2_mixer PRIVATE MUSIC_WAVPACK_DSD)
     endif()
     if(SDL2MIXER_WAVPACK_SHARED)
         target_include_directories(SDL2_mixer PRIVATE
