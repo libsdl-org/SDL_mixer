@@ -87,7 +87,7 @@ option(SDL3MIXER_DEPS_SHARED "Default value for loading dependencies dynamically
 option(SDL3MIXER_VENDORED "Use vendored third-party libraries" ${vendored_default})
 option(SDL3MIXER_WERROR "Treat warnings as errors" OFF)
 
-cmake_dependent_option(SDL3MIXER_STRICT "Fail when a dependency could not be found" OFF "NOT SDL3MIXER_VENDORED" OFF)
+option(SDL3MIXER_STRICT "Fail when a dependency could not be found" OFF)
 set(required "")
 set(fatal_error "STATUS")
 if(SDL3MIXER_STRICT)
