@@ -348,10 +348,9 @@ extern DECLSPEC void SDLCALL Mix_PauseAudio(int pause_on);
  *                 count.
  * \returns 1 if the audio device has been opened, 0 otherwise.
  *
- * \since This function is available since SDL_mixer 2.0.0.
+ * \since This function is available since SDL_mixer 3.0.0.
  *
  * \sa Mix_OpenAudio
- * \sa Mix_OpenAudioDevice
  */
 extern DECLSPEC int SDLCALL Mix_QuerySpec(int *frequency, Uint16 *format, int *channels);
 
@@ -701,8 +700,8 @@ extern DECLSPEC void SDLCALL Mix_FreeMusic(Mix_Music *music);
  *
  * This list can change between builds AND runs of the program, if external
  * libraries that add functionality become available. You must successfully
- * call Mix_OpenAudio() or Mix_OpenAudioDevice() before calling this function,
- * as decoders are activated at device open time.
+ * call Mix_OpenAudio() before calling this function, as decoders are
+ * activated at device open time.
  *
  * Appearing in this list doesn't promise your specific audio file will
  * decode...but it's handy to know if you have, say, a functioning Ogg Vorbis
@@ -729,8 +728,8 @@ extern DECLSPEC int SDLCALL Mix_GetNumChunkDecoders(void);
  *
  * This list can change between builds AND runs of the program, if external
  * libraries that add functionality become available. You must successfully
- * call Mix_OpenAudio() or Mix_OpenAudioDevice() before calling this function,
- * as decoders are activated at device open time.
+ * call Mix_OpenAudio() before calling this function, as decoders are
+ * activated at device open time.
  *
  * \param index index of the chunk decoder.
  * \returns the chunk decoder's name.
@@ -746,8 +745,8 @@ extern DECLSPEC const char * SDLCALL Mix_GetChunkDecoder(int index);
  *
  * This result can change between builds AND runs of the program, if external
  * libraries that add functionality become available. You must successfully
- * call Mix_OpenAudio() or Mix_OpenAudioDevice() before calling this function,
- * as decoders are activated at device open time.
+ * call Mix_OpenAudio() before calling this function, as decoders are
+ * activated at device open time.
  *
  * Decoder names are arbitrary but also obvious, so you have to know what
  * you're looking for ahead of time, but usually it's the file extension in
@@ -769,8 +768,8 @@ extern DECLSPEC SDL_bool SDLCALL Mix_HasChunkDecoder(const char *name);
  *
  * This list can change between builds AND runs of the program, if external
  * libraries that add functionality become available. You must successfully
- * call Mix_OpenAudio() or Mix_OpenAudioDevice() before calling this function,
- * as decoders are activated at device open time.
+ * call Mix_OpenAudio() before calling this function, as decoders are
+ * activated at device open time.
  *
  * Appearing in this list doesn't promise your specific audio file will
  * decode...but it's handy to know if you have, say, a functioning Ogg Vorbis
@@ -797,8 +796,8 @@ extern DECLSPEC int SDLCALL Mix_GetNumMusicDecoders(void);
  *
  * This list can change between builds AND runs of the program, if external
  * libraries that add functionality become available. You must successfully
- * call Mix_OpenAudio() or Mix_OpenAudioDevice() before calling this function,
- * as decoders are activated at device open time.
+ * call Mix_OpenAudio() before calling this function, as decoders are
+ * activated at device open time.
  *
  * \param index index of the music decoder.
  * \returns the music decoder's name.
@@ -814,8 +813,8 @@ extern DECLSPEC const char * SDLCALL Mix_GetMusicDecoder(int index);
  *
  * This result can change between builds AND runs of the program, if external
  * libraries that add functionality become available. You must successfully
- * call Mix_OpenAudio() or Mix_OpenAudioDevice() before calling this function,
- * as decoders are activated at device open time.
+ * call Mix_OpenAudio() before calling this function, as decoders are
+ * activated at device open time.
  *
  * Decoder names are arbitrary but also obvious, so you have to know what
  * you're looking for ahead of time, but usually it's the file extension in
@@ -1255,8 +1254,7 @@ extern DECLSPEC int SDLCALL Mix_UnregisterEffect(int channel, Mix_EffectFunc_t f
  * zero if there's an error, not on success. We apologize for the API design
  * inconsistency here.
  *
- * \param channel the channel to unregister all effects on, or
- *                MIX_CHANNEL_POST.
+ * \param channel the channel to unregister all effects on, or MIX_CHANNEL_POST.
  * \returns zero if error (no such channel), nonzero if all effects removed.
  *          Error messages can be retrieved from Mix_GetError().
  *
