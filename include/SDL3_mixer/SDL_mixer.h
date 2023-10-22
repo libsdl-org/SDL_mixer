@@ -1254,7 +1254,8 @@ extern DECLSPEC int SDLCALL Mix_UnregisterEffect(int channel, Mix_EffectFunc_t f
  * zero if there's an error, not on success. We apologize for the API design
  * inconsistency here.
  *
- * \param channel the channel to unregister all effects on, or MIX_CHANNEL_POST.
+ * \param channel the channel to unregister all effects on, or
+ *                MIX_CHANNEL_POST.
  * \returns zero if error (no such channel), nonzero if all effects removed.
  *          Error messages can be retrieved from Mix_GetError().
  *
