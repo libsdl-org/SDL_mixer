@@ -518,7 +518,7 @@ static void *FLAC_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
         return NULL;
     }
     SDL_RWseek(src, -4, SDL_RW_SEEK_CUR);
-    is_ogg_flac = !SDL_memcmp(magic, "OggS", 4);
+    is_ogg_flac = (SDL_memcmp(magic, "OggS", 4) == 0);
 
     music = (FLAC_Music *)SDL_calloc(1, sizeof(*music));
     if (!music) {
@@ -543,8 +543,7 @@ static void *FLAC_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
                 flac_eof_music_cb, flac_write_music_cb,
                 flac_metadata_music_cb, flac_error_music_cb,
                 music);
-        }
-        else {
+        } else {
             ret = flac.FLAC__stream_decoder_init_stream(
                 music->flac_decoder,
                 flac_read_music_cb, flac_seek_music_cb,
