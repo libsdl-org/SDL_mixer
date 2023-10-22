@@ -3,6 +3,7 @@ SDL3_mixer_0.0.0 {
     Mix_AllocateChannels;
     Mix_ChannelFinished;
     Mix_CloseAudio;
+    Mix_EachSoundFont;
     Mix_ExpireChannel;
     Mix_FadeInChannel;
     Mix_FadeInChannelTimed;
@@ -47,6 +48,8 @@ SDL3_mixer_0.0.0 {
     Mix_HaltMusic;
     Mix_HasChunkDecoder;
     Mix_HasMusicDecoder;
+    Mix_HookMusic;
+    Mix_HookMusicFinished;
     Mix_Init;
     Mix_Linked_Version;
     Mix_LoadMUS;
@@ -58,7 +61,6 @@ SDL3_mixer_0.0.0 {
     Mix_ModMusicJumpToOrder;
     Mix_MusicDuration;
     Mix_OpenAudio;
-    Mix_OpenAudioDevice;
     Mix_Pause;
     Mix_PauseGroup;
     Mix_PauseAudio;
@@ -85,6 +87,7 @@ SDL3_mixer_0.0.0 {
     Mix_SetMusicPosition;
     Mix_SetPanning;
     Mix_SetPosition;
+    Mix_SetPostMix;
     Mix_SetReverseStereo;
     Mix_SetSoundFonts;
     Mix_SetSynchroValue;
