@@ -573,6 +573,9 @@ Mix_MusicType detect_music_type(SDL_RWops *src)
         if (SDL_memcmp(magic, "OpusHead", 8) == 0) {
             return MUS_OPUS;
         }
+        if (magic[0] == 0x7F && SDL_memcmp(magic + 1, "FLAC", 4) == 0) {
+            return MUS_FLAC;
+        }
         return MUS_OGG;
     }
 
