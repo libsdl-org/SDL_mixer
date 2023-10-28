@@ -253,7 +253,6 @@ static void *OGG_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
     music->volume = MIX_MAX_VOLUME;
     music->section = -1;
 
-    SDL_zero(callbacks);
     callbacks.read_func = sdl_read_func;
     callbacks.seek_func = sdl_seek_func;
     callbacks.close_func = sdl_close_func;
@@ -568,4 +567,3 @@ Mix_MusicInterface Mix_MusicInterface_OGG =
 
 #endif /* MUSIC_OGG */
 
-/* vi: set ts=4 sw=4 expandtab: */
