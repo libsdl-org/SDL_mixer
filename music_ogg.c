@@ -83,7 +83,6 @@ OGG_music *OGG_new_RW(SDL_RWops *rw, int freerw)
 		return(NULL);
 	}
 
-	SDL_memset(&callbacks, 0, sizeof(callbacks));
 	callbacks.read_func = sdl_read_func;
 	callbacks.seek_func = sdl_seek_func;
 	callbacks.close_func = sdl_close_func;
