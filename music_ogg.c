@@ -64,6 +64,12 @@ static long sdl_tell_func(void *datasource)
     return SDL_RWtell((SDL_RWops*)datasource);
 }
 
+static int sdl_close_func(void *datasource)
+{
+    (void) datasource;
+    return 0;
+}
+
 /* Load an OGG stream from an SDL_RWops object */
 OGG_music *OGG_new_RW(SDL_RWops *rw, int freerw)
 {
@@ -80,6 +86,7 @@ OGG_music *OGG_new_RW(SDL_RWops *rw, int freerw)
 	SDL_memset(&callbacks, 0, sizeof(callbacks));
 	callbacks.read_func = sdl_read_func;
 	callbacks.seek_func = sdl_seek_func;
+	callbacks.close_func = sdl_close_func;
 	callbacks.tell_func = sdl_tell_func;
 
 	music = (OGG_music *)SDL_malloc(sizeof *music);
