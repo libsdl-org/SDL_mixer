@@ -61,6 +61,10 @@ static gme_loader gme;
 #endif
 
 static int GME_Load(void)
+#ifdef __APPLE__
+    /* Need to turn off optimizations so weak framework load check works */
+    __attribute__ ((optnone))
+#endif
 {
     if (gme.loaded == 0) {
 #ifdef GME_DYNAMIC

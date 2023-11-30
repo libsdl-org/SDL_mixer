@@ -74,6 +74,10 @@ static vorbis_loader vorbis;
 #endif
 
 static int OGG_Load(void)
+#ifdef __APPLE__
+    /* Need to turn off optimizations so weak framework load check works */
+    __attribute__ ((optnone))
+#endif
 {
     if (vorbis.loaded == 0) {
 #ifdef OGG_DYNAMIC

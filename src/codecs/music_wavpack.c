@@ -98,6 +98,10 @@ static wavpack_loader wvpk;
 #endif
 
 static int WAVPACK_Load(void)
+#ifdef __APPLE__
+    /* Need to turn off optimizations so weak framework load check works */
+    __attribute__ ((optnone))
+#endif
 {
     if (wvpk.loaded == 0) {
 #ifdef WAVPACK_DYNAMIC
