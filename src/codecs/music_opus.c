@@ -61,6 +61,10 @@ static opus_loader opus;
 #endif
 
 static int OPUS_Load(void)
+#ifdef __APPLE__
+    /* Need to turn off optimizations so weak framework load check works */
+    __attribute__ ((optnone))
+#endif
 {
     if (opus.loaded == 0) {
 #ifdef OPUS_DYNAMIC

@@ -82,6 +82,10 @@ static mpg123_loader mpg123;
 #endif
 
 static int MPG123_Load(void)
+#ifdef __APPLE__
+    /* Need to turn off optimizations so weak framework load check works */
+    __attribute__ ((optnone))
+#endif
 {
     if (mpg123.loaded == 0) {
 #ifdef MPG123_DYNAMIC

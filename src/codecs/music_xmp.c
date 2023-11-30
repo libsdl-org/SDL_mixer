@@ -77,6 +77,10 @@ static xmp_loader libxmp;
 #endif
 
 static int XMP_Load(void)
+#ifdef __APPLE__
+    /* Need to turn off optimizations so weak framework load check works */
+    __attribute__ ((optnone))
+#endif
 {
     if (libxmp.loaded == 0) {
 #ifdef XMP_DYNAMIC
