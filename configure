@@ -18081,8 +18081,8 @@ fi
         fi
         SDL2MIXER_GME=1
     else
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: *** Unable to find GME library (https://bitbucket.org/mpyne/game-music-emu)" >&5
-printf "%s\n" "$as_me: WARNING: *** Unable to find GME library (https://bitbucket.org/mpyne/game-music-emu)" >&2;}
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: *** Unable to find GME library (https://github.com/libgme/game-music-emu)" >&5
+printf "%s\n" "$as_me: WARNING: *** Unable to find GME library (https://github.com/libgme/game-music-emu)" >&2;}
         { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Game Music Emu support disabled." >&5
 printf "%s\n" "$as_me: WARNING: Game Music Emu support disabled." >&2;}
     fi

@@ -627,7 +627,7 @@ if test x$enable_music_gme = xyes; then
         fi
         SDL2MIXER_GME=1
     else
-        AC_MSG_WARN([*** Unable to find GME library (https://bitbucket.org/mpyne/game-music-emu)])
+        AC_MSG_WARN([*** Unable to find GME library (https://github.com/libgme/game-music-emu)])
         AC_MSG_WARN([Game Music Emu support disabled.])
     fi
 fi
