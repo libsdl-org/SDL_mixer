@@ -295,6 +295,7 @@ if(SDL2MIXER_BUILD_SHARED_LIBS)
     if(WIN32 OR OS2)
         set_target_properties(SDL2_mixer PROPERTIES
             PREFIX ""
+            DLL_NAME_WITH_SOVERSION FALSE
         )
     endif()
     if(OS2)
