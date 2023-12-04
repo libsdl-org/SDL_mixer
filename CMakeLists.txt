@@ -310,6 +310,7 @@ if(SDL3MIXER_BUILD_SHARED_LIBS)
     if(WIN32)
         set_target_properties(${sdl3_mixer_target_name} PROPERTIES
             PREFIX ""
+            DLL_NAME_WITH_SOVERSION FALSE
         )
     endif()
 else()
