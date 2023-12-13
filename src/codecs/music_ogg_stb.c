@@ -36,7 +36,7 @@
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 #define STB_VORBIS_BIG_ENDIAN 1
 #endif
-#define STBV_CDECL SDLCALL /* for SDL_qsort */
+#define STBV_CDECL SDLCALL /* for SDL_qsort() */
 
 #ifdef assert
 #undef assert
