@@ -25,18 +25,16 @@ set(Ogg_LINK_OPTIONS "${_ogg_link_options}" CACHE STRING "Extra link flags of og
 
 set(Ogg_LINK_DIRECTORIES "${_ogg_link_directories}" CACHE PATH "Extra link directories of ogg")
 
-find_package(Ogg)
-
 find_package_handle_standard_args(Ogg
-    REQUIRED_VARS Ogg_LIBRARY Ogg_INCLUDE_PATH Ogg_FOUND
+    REQUIRED_VARS Ogg_LIBRARY Ogg_INCLUDE_PATH
 )
 
 if(Ogg_FOUND)
     set(Ogg_dirs ${Ogg_INCLUDE_PATH})
-    if(EXISTS "${Ogg_INCLUDE_PATH}/opus")
-        list(APPEND Ogg_dirs "${Ogg_INCLUDE_PATH}/opus")
+    if(EXISTS "${Ogg_INCLUDE_PATH}/ogg")
+        list(APPEND Ogg_dirs "${Ogg_INCLUDE_PATH}/ogg")
     endif()
-    if (NOT TARGET Ogg::Ogg)
+    if(NOT TARGET Ogg::Ogg)
         add_library(Ogg::Ogg UNKNOWN IMPORTED)
         set_target_properties(Ogg::Ogg PROPERTIES
             IMPORTED_LOCATION "${Ogg_LIBRARY}"

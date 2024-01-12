@@ -31,12 +31,12 @@ find_package_handle_standard_args(OpusFile
     REQUIRED_VARS OpusFile_LIBRARY OpusFile_INCLUDE_PATH Ogg_FOUND
 )
 
-if(OpusFile_FOUND AND Ogg_FOUND)
+if(OpusFile_FOUND)
     set(OpusFile_dirs ${OpusFile_INCLUDE_PATH})
     if(EXISTS "${OpusFile_INCLUDE_PATH}/opus")
         list(APPEND OpusFile_dirs "${OpusFile_INCLUDE_PATH}/opus")
     endif()
-    if (NOT TARGET OpusFile::opusfile)
+    if(NOT TARGET OpusFile::opusfile)
         add_library(OpusFile::opusfile UNKNOWN IMPORTED)
         set_target_properties(OpusFile::opusfile PROPERTIES
             IMPORTED_LOCATION "${OpusFile_LIBRARY}"

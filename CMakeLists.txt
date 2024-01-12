@@ -1146,6 +1146,7 @@ if(SDL3MIXER_INSTALL)
             cmake/Findlibxmp.cmake
             cmake/Findlibxmp-lite.cmake
             cmake/Findmodplug.cmake
+            cmake/FindOgg.cmake
             cmake/FindOpusFile.cmake
             cmake/Findmpg123.cmake
             cmake/FindVorbis.cmake
