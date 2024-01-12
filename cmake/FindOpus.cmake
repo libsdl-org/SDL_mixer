@@ -13,7 +13,9 @@ find_path(Opus_INCLUDE_PATH
     PATH_SUFFIXES opus
     HINTS ${PC_OPUS_INCLUDEDIR}
 )
-list(APPEND Opus_INCLUDE_PATH "${Opus_INCLUDE_PATH}/opus")
+if(EXISTS "${Opus_INCLUDE_PATH}/opus")
+    list(APPEND Opus_INCLUDE_PATH "${Opus_INCLUDE_PATH}/opus")
+endif()
 
 if(PC_OPUS_FOUND)
     get_flags_from_pkg_config("${Opus_LIBRARY}" "PC_OPUS" "_opus")
