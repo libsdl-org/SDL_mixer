@@ -82,7 +82,7 @@ if(VITA OR PSP OR PS2 OR N3DS OR RISCOS)
   set(PLATFORM_SUPPORTS_SHARED OFF)
 endif()
 
-option(CMAKE_POSITION_INDEPENDENT_CODE "Build static libraries with -fPIC" ON)
+option(CMAKE_POSITION_INDEPENDENT_CODE "Build static libraries with -fPIC" ${PLATFORM_SUPPORTS_SHARED})
 cmake_dependent_option(BUILD_SHARED_LIBS "Build the library as a shared library" ON PLATFORM_SUPPORTS_SHARED OFF)
 
 cmake_dependent_option(SDL3MIXER_INSTALL "Enable SDL3mixer install target" ${SDL3MIXER_ROOTPROJECT} "${sdl3mixer_install_enableable}" OFF)
