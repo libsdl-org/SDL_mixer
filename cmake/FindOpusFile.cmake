@@ -25,10 +25,10 @@ set(OpusFile_LINK_OPTIONS "${_opusfile_link_options}" CACHE STRING "Extra link f
 
 set(OpusFile_LINK_DIRECTORIES "${_opusfile_link_directories}" CACHE PATH "Extra link directories of opusfile")
 
-find_package(Ogg ${required})
+find_package(Opus)
 
 find_package_handle_standard_args(OpusFile
-    REQUIRED_VARS OpusFile_LIBRARY OpusFile_INCLUDE_PATH Ogg_FOUND
+    REQUIRED_VARS OpusFile_LIBRARY OpusFile_INCLUDE_PATH Opus_FOUND
 )
 
 if(OpusFile_FOUND)
@@ -40,7 +40,7 @@ if(OpusFile_FOUND)
         add_library(OpusFile::opusfile UNKNOWN IMPORTED)
         set_target_properties(OpusFile::opusfile PROPERTIES
             IMPORTED_LOCATION "${OpusFile_LIBRARY}"
-            INTERFACE_INCLUDE_DIRECTORIES "${OpusFile_dirs};$<TARGET_PROPERTY:Ogg::ogg,INTERFACE_INCLUDE_DIRECTORIES>"
+            INTERFACE_INCLUDE_DIRECTORIES "${OpusFile_dirs};$<TARGET_PROPERTY:Opus::opus,INTERFACE_INCLUDE_DIRECTORIES>"
             INTERFACE_COMPILE_OPTIONS "${OpusFile_COMPILE_OPTIONS}"
             INTERFACE_LINK_LIBRARIES "${OpusFile_LINK_LIBRARIES}"
             INTERFACE_LINK_OPTIONS "${OpusFile_LINK_OPTIONS}"
