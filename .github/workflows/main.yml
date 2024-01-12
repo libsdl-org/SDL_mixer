@@ -48,10 +48,8 @@ jobs:
           ${{ matrix.platform.msys-env }}-perl
           ${{ matrix.platform.msys-env }}-pkg-config
     - name: Set up Ninja
+      uses: turtlesec-no/get-ninja@main
       if: ${{ !contains(matrix.platform.shell, 'msys2') }}
-      uses: ashutoshvarma/setup-ninja@master
-      with:
-        version: 1.11.1
     - name: Set up SDL
       id: sdl
       uses: libsdl-org/setup-sdl@main
