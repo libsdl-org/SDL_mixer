@@ -75,11 +75,15 @@ include(CheckSymbolExists)
 include(CMakeDependentOption)
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
-
 include(PkgConfigHelper)
 
+set(BUILD_SHARED_LIBS_DEFAULT ON)
+if(VITA OR PSP OR PS2 OR N3DS OR RISCOS)
+  set(BUILD_SHARED_LIBS_DEFAULT OFF)
+endif()
+
 option(CMAKE_POSITION_INDEPENDENT_CODE "Build static libraries with -fPIC" ON)
-option(BUILD_SHARED_LIBS "Build the library as a shared library" ON)
+option(BUILD_SHARED_LIBS "Build the library as a shared library" ${BUILD_SHARED_LIBS_DEFAULT})
 
 cmake_dependent_option(SDL3MIXER_INSTALL "Enable SDL3mixer install target" ${SDL3MIXER_ROOTPROJECT} "${sdl3mixer_install_enableable}" OFF)
 cmake_dependent_option(SDL3MIXER_INSTALL_MAN "Install man pages for SDL3_mixer" ${SDL3MIXER_ROOTPROJECT} "SDL3MIXER_INSTALL" OFF)
