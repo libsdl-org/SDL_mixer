@@ -468,7 +468,6 @@ if(SDL3MIXER_OPUS)
         endif()
     else()
         find_package(OpusFile ${required})
-        find_package(Ogg ${required})
         if(OpusFile_FOUND AND Ogg_FOUND)
             set(SDL3MIXER_OPUS_ENABLED TRUE)
             message(STATUS "Using system opusfile")
@@ -486,9 +485,6 @@ if(SDL3MIXER_OPUS)
                 $<TARGET_PROPERTY:OpusFile::opusfile,INCLUDE_DIRECTORIES>
                 $<TARGET_PROPERTY:OpusFile::opusfile,INTERFACE_INCLUDE_DIRECTORIES>
                 $<TARGET_PROPERTY:OpusFile::opusfile,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
-                $<TARGET_PROPERTY:Ogg::Ogg,INCLUDE_DIRECTORIES>
-                $<TARGET_PROPERTY:Ogg::Ogg,INTERFACE_INCLUDE_DIRECTORIES>
-                $<TARGET_PROPERTY:Ogg::Ogg,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
             )
             target_get_dynamic_library(dynamic_opusfile OpusFile::opusfile)
             message(STATUS "Dynamic opus (opusfile): ${dynamic_opusfile}")
