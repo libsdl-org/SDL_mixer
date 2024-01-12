@@ -9,8 +9,7 @@ find_library(OpusFile_LIBRARY
 )
 
 find_path(OpusFile_INCLUDE_PATH
-    NAMES opusfile.h
-    PATH_SUFFIXES opus
+    NAMES opus/opusfile.h
     HINTS ${PC_OPUSFILE_INCLUDEDIR}
 )
 
