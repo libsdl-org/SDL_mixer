@@ -40,7 +40,7 @@ if(OpusFile_FOUND)
         add_library(OpusFile::opusfile UNKNOWN IMPORTED)
         set_target_properties(OpusFile::opusfile PROPERTIES
             IMPORTED_LOCATION "${OpusFile_LIBRARY}"
-            INTERFACE_INCLUDE_DIRECTORIES "${OpusFile_dirs};${Ogg_dirs}"
+            INTERFACE_INCLUDE_DIRECTORIES "${OpusFile_dirs};$<TARGET_PROPERTY:Ogg::ogg,INTERFACE_INCLUDE_DIRECTORIES>"
             INTERFACE_COMPILE_OPTIONS "${OpusFile_COMPILE_OPTIONS}"
             INTERFACE_LINK_LIBRARIES "${OpusFile_LINK_LIBRARIES}"
             INTERFACE_LINK_OPTIONS "${OpusFile_LINK_OPTIONS}"

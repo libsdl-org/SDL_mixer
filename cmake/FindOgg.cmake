@@ -34,9 +34,9 @@ if(Ogg_FOUND)
     if(EXISTS "${Ogg_INCLUDE_PATH}/ogg")
         list(APPEND Ogg_dirs "${Ogg_INCLUDE_PATH}/ogg")
     endif()
-    if(NOT TARGET Ogg::Ogg)
-        add_library(Ogg::Ogg UNKNOWN IMPORTED)
-        set_target_properties(Ogg::Ogg PROPERTIES
+    if(NOT TARGET Ogg::ogg)
+        add_library(Ogg::ogg UNKNOWN IMPORTED)
+        set_target_properties(Ogg::ogg PROPERTIES
             IMPORTED_LOCATION "${Ogg_LIBRARY}"
             INTERFACE_INCLUDE_DIRECTORIES "${Ogg_dirs}"
             INTERFACE_COMPILE_OPTIONS "${Ogg_COMPILE_OPTIONS}"
@@ -46,3 +46,5 @@ if(Ogg_FOUND)
         )
     endif()
 endif()
+
+set(Ogg_INCLUDE_DIRS ${Ogg_INCLUDE_PATH})
