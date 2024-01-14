@@ -236,6 +236,7 @@ void *XMP_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
     }
 
     if (libxmp.xmp_load_module_from_callbacks) {
+        music->src = src;
         music->src_offset = SDL_RWtell(src);
         err = libxmp.xmp_load_module_from_callbacks(music->ctx, music, file_callbacks);
     } else {
