@@ -132,7 +132,7 @@ ifeq ($(SUPPORT_MP3_MPG123),true)
 endif
 
 ifeq ($(SUPPORT_WAVPACK),true)
-    LOCAL_CFLAGS += -DMUSIC_WAVPACK -DWAVPACK_HEADER=\"../external/wavpack/include/wavpack.h\"
+    LOCAL_CFLAGS += -DMUSIC_WAVPACK -DMUSIC_WAVPACK_DSD -DWAVPACK_HEADER=\"../external/wavpack/include/wavpack.h\"
     LOCAL_STATIC_LIBRARIES += wavpack
 endif
 
