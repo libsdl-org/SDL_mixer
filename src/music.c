@@ -35,7 +35,7 @@
 #include "music_timidity.h"
 #include "music_ogg.h"
 #include "music_opus.h"
-#include "music_drmp3.h"
+#include "music_minimp3.h"
 #include "music_mpg123.h"
 #include "music_drflac.h"
 #include "music_flac.h"
@@ -181,8 +181,8 @@ static Mix_MusicInterface *s_music_interfaces[] =
 #ifdef MUSIC_OPUS
     &Mix_MusicInterface_Opus,
 #endif
-#ifdef MUSIC_MP3_DRMP3
-    &Mix_MusicInterface_DRMP3,
+#ifdef MUSIC_MP3_MINIMP3
+    &Mix_MusicInterface_MINIMP3,
 #endif
 #ifdef MUSIC_MP3_MPG123
     &Mix_MusicInterface_MPG123,

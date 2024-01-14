@@ -28,4 +28,4 @@ Support for software MIDI, MOD, and Opus are not included by default because of 
 - When building with Xcode, you can edit the config at the top of the project to enable them, and you will need to include the appropriate framework in your application.
 - For Android, you can edit the config at the top of Android.mk to enable them.
 
-The default MP3 support is provided using dr_mp3. SDL_mixer also supports using libmpg123: you can enable it by passing --enable-music-mp3-mpg123 to configure.
+The default MP3 support is provided using minimp3. SDL_mixer also supports using libmpg123: you can enable it by passing --enable-music-mp3-mpg123 to configure.

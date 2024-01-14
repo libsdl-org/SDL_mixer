@@ -139,13 +139,13 @@ endif()
 
 option(SDL3MIXER_MP3 "Enable MP3 music" ON)
 
-cmake_dependent_option(SDL3MIXER_MP3_DRMP3 "Support loading MP3 music via dr_mp3" ON SDL3MIXER_MP3 OFF)
+cmake_dependent_option(SDL3MIXER_MP3_MINIMP3 "Support loading MP3 music via minimp3" ON SDL3MIXER_MP3 OFF)
 
 cmake_dependent_option(SDL3MIXER_MP3_MPG123 "Support loading MP3 music via MPG123" OFF SDL3MIXER_MP3 OFF)
 cmake_dependent_option(SDL3MIXER_MP3_MPG123_SHARED "Dynamically load mpg123" "${SDL3MIXER_DEPS_SHARED}" SDL3MIXER_MP3_MPG123 OFF)
 
-if(SDL3MIXER_MP3 AND NOT (SDL3MIXER_MP3_DRMP3 OR SDL3MIXER_MP3_MPG123))
-    message(FATAL_ERROR "MP3 support was enabled (SDL3MIXER_MP3) but neither drmp3 (SDL3MIXER_MP3_DRMP3) or mpg123 (SDL3MIXER_MP3_MPG123) were enabled.")
+if(SDL3MIXER_MP3 AND NOT (SDL3MIXER_MP3_MINIMP3 OR SDL3MIXER_MP3_MPG123))
+    message(FATAL_ERROR "MP3 support was enabled (SDL3MIXER_MP3) but neither minimp3 (SDL3MIXER_MP3_MINIMP3) or mpg123 (SDL3MIXER_MP3_MPG123) were enabled.")
 endif()
 
 option(SDL3MIXER_MIDI "Enable MIDI music" ON)
@@ -240,10 +240,10 @@ add_library(${sdl3_mixer_target_name}
     src/codecs/mp3utils.c
     src/codecs/music_cmd.c
     src/codecs/music_drflac.c
-    src/codecs/music_drmp3.c
     src/codecs/music_flac.c
     src/codecs/music_fluidsynth.c
     src/codecs/music_gme.c
+    src/codecs/music_minimp3.c
     src/codecs/music_modplug.c
     src/codecs/music_mpg123.c
     src/codecs/music_nativemidi.c
@@ -873,11 +873,11 @@ if(SDL3MIXER_MOD_MODPLUG_ENABLED OR SDL3MIXER_MOD_XMP_ENABLED OR SDL3MIXER_MOD_X
     set(SDL3MIXER_MOD_ENABLED TRUE)
 endif()
 
-list(APPEND SDL3MIXER_BACKENDS MP3_DRMP3)
-set(SDL3MIXER_MP3_DRMP3_ENABLED FALSE)
-if(SDL3MIXER_MP3_DRMP3)
-    set(SDL3MIXER_MP3_DRMP3_ENABLED TRUE)
-    target_compile_definitions(${sdl3_mixer_target_name} PRIVATE MUSIC_MP3_DRMP3)
+list(APPEND SDL3MIXER_BACKENDS MP3_MINIMP3)
+set(SDL3MIXER_MP3_MINIMP3_ENABLED FALSE)
+if(SDL3MIXER_MP3_MINIMP3)
+    set(SDL3MIXER_MP3_MINIMP3_ENABLED TRUE)
+    target_compile_definitions(${sdl3_mixer_target_name} PRIVATE MUSIC_MP3_MINIMP3)
 endif()
 
 list(APPEND SDL3MIXER_BACKENDS MP3_MPG123)
@@ -933,7 +933,7 @@ if(SDL3MIXER_MP3_MPG123)
 endif()
 
 set(SDL3MIXER_MP3_ENABLED FALSE)
-if(SDL3MIXER_MP3_DRMP3_ENABLED OR SDL3MIXER_MP3_MPG123_ENABLED)
+if(SDL3MIXER_MP3_MINIMP3_ENABLED OR SDL3MIXER_MP3_MPG123_ENABLED)
     set(SDL3MIXER_MP3_ENABLED TRUE)
 endif()
 
