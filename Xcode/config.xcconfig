@@ -1,6 +1,5 @@
 //
 //  config.xcconfig
-//  SDL_mixer
 //
 
 // Configuration settings file format documentation can be found at:
@@ -10,14 +9,17 @@
 #include? "build.xcconfig"
 
 // Uncomment these lines to enable native MIDI support on OSX
-//CONFIG_PREPROCESSOR_DEFINITIONS[sdk=mac*] = $(inherited) MUSIC_MID_NATIVE
+//MIDI_PREPROCESSOR_DEFINITIONS[sdk=macosx*] = MUSIC_MID_NATIVE
 
 // Uncomment these lines to enable MOD support
 // If you do this, you should run external/download.sh to download the decode libraries and add xmp.framework to your application bundle.
-//CONFIG_PREPROCESSOR_DEFINITIONS = $(inherited) MUSIC_MOD_XMP LIBXMP_HEADER=\"../external/libxmp/include/xmp.h\"
-//CONFIG_FRAMEWORK_LDFLAGS = $(inherited) -weak_framework xmp
+//MOD_PREPROCESSOR_DEFINITIONS = MUSIC_MOD_XMP LIBXMP_HEADER=\"../external/libxmp/include/xmp.h\"
+//MOD_FRAMEWORK_LDFLAGS = -weak_framework xmp
 
 // Uncomment these lines to enable Opus support
 // If you do this, you should run external/download.sh to download the decode libraries and add opus.framework to your application bundle.
-//CONFIG_PREPROCESSOR_DEFINITIONS = $(inherited) MUSIC_OPUS
-//CONFIG_FRAMEWORK_LDFLAGS = $(inherited) -weak_framework opus
+//OPUS_PREPROCESSOR_DEFINITIONS = MUSIC_OPUS
+//OPUS_FRAMEWORK_LDFLAGS = -weak_framework opus
+
+CONFIG_PREPROCESSOR_DEFINITIONS = $(inherited) $(MIDI_PREPROCESSOR_DEFINITIONS) $(MOD_PREPROCESSOR_DEFINITIONS) $(OPUS_PREPROCESSOR_DEFINITIONS)
+CONFIG_FRAMEWORK_LDFLAGS = $(inherited) $(MIDI_FRAMEWORK_LDFLAGS) $(MOD_FRAMEWORK_LDFLAGS) $(OPUS_FRAMEWORK_LDFLAGS)
