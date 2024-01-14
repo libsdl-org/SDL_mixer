@@ -133,6 +133,8 @@ static void XMP_Unload(void)
 
 typedef struct
 {
+    SDL_RWops *src;
+    Sint64 src_offset;
     int volume;
     int play_count;
     struct xmp_module_info mi;
@@ -180,17 +182,28 @@ static void libxmp_set_error(int e)
     Mix_SetError("XMP: %s", msg);
 }
 
-static unsigned long xmp_fread(void *dst, unsigned long len, unsigned long nmemb, void *src) {
+static unsigned long xmp_fread(void *dst, unsigned long len, unsigned long nmemb, void *src)
+{
+    XMP_Music *music = (XMP_Music *)src;
     if (len > 0 && nmemb > 0) {
-        return SDL_RWread((SDL_RWops*)src, dst, len * nmemb) / len;
+        return SDL_RWread(music->src, dst, len * nmemb) / len;
     }
     return 0;
 }
-static int xmp_fseek(void *src, long offset, int whence) {
-    return (SDL_RWseek((SDL_RWops*)src, offset, whence) < 0)? -1 : 0;
+
+static int xmp_fseek(void *src, long offset, int whence)
+{
+    XMP_Music *music = (XMP_Music *)src;
+    if (whence == SDL_RW_SEEK_SET) {
+        offset += music->src_offset;
+    }
+    return (SDL_RWseek(music->src, offset, whence) < 0) ? -1 : 0;
 }
-static long xmp_ftell(void *src) {
-    return (long)SDL_RWtell((SDL_RWops*)src);
+
+static long xmp_ftell(void *src)
+{
+    XMP_Music *music = (XMP_Music *)src;
+    return (long)(SDL_RWtell(music->src) - music->src_offset);
 }
 
 /* Load a libxmp stream from an SDL_RWops object */
@@ -223,7 +236,8 @@ void *XMP_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
     }
 
     if (libxmp.xmp_load_module_from_callbacks) {
-        err = libxmp.xmp_load_module_from_callbacks(music->ctx, src, file_callbacks);
+        music->src_offset = SDL_RWtell(src);
+        err = libxmp.xmp_load_module_from_callbacks(music->ctx, music, file_callbacks);
     } else {
         size_t size;
         void *mem = SDL_LoadFile_RW(src, &size, SDL_FALSE);
