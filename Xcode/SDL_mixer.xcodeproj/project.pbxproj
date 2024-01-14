@@ -96,6 +96,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		F307A2622B542F110012534B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F307A25D2B542F110012534B /* wavpack.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F3F70EDA281F61B4005AA27D;
+			remoteInfo = wavpack;
+		};
+		F307A2782B5431700012534B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F307A2732B5431700012534B /* gme.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F3F70EDA281F61B4005AA27D;
+			remoteInfo = gme;
+		};
 		F3968B96281F817E00661875 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F3968B90281F817E00661875 /* opus.xcodeproj */;
@@ -115,7 +129,7 @@
 			containerPortal = F3E29D022882107B0006D108 /* xmp.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = F3B38D4F296F8E1F005DA6D3;
-			remoteInfo = "xmp.xcframework";
+			remoteInfo = xmp.xcframework;
 		};
 		F3E1F7952A78A24E00AC76D3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -197,6 +211,8 @@
 		BE1FA90607AF96B2004B6283 /* SDL3_mixer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SDL3_mixer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F302405F2881DF94002F32D6 /* music_xmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_xmp.h; sourceTree = "<group>"; };
 		F30240622881DF95002F32D6 /* music_xmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_xmp.c; sourceTree = "<group>"; };
+		F307A25D2B542F110012534B /* wavpack.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = wavpack.xcodeproj; path = wavpack/wavpack.xcodeproj; sourceTree = "<group>"; };
+		F307A2732B5431700012534B /* gme.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = gme.xcodeproj; path = gme/gme.xcodeproj; sourceTree = "<group>"; };
 		F3249B36285C448100DB9B5C /* CMake */ = {isa = PBXFileReference; lastKnownFileType = folder; path = CMake; sourceTree = "<group>"; };
 		F37A8D2B2838924900C38E95 /* music_drmp3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_drmp3.h; sourceTree = "<group>"; };
 		F37A8D2C2838924900C38E95 /* music_drmp3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_drmp3.c; sourceTree = "<group>"; };
@@ -211,7 +227,7 @@
 		F3D87C0C281DFADB005DA540 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		F3D87C0E281DFB02005DA540 /* SDL3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL3.framework; path = macOS/SDL3.framework; sourceTree = "<group>"; };
 		F3E1F8C12A794D3400AC76D3 /* SDL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SDL.xcodeproj; path = ../external/SDL/Xcode/SDL/SDL.xcodeproj; sourceTree = "<group>"; };
-		F3E29D022882107B0006D108 /* xmp.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "xmp.xcodeproj"; path = "xmp/xmp.xcodeproj"; sourceTree = "<group>"; };
+		F3E29D022882107B0006D108 /* xmp.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = xmp.xcodeproj; path = xmp/xmp.xcodeproj; sourceTree = "<group>"; };
 		F3F8794529B30FDA0007FDA1 /* music_wavpack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_wavpack.c; sourceTree = "<group>"; };
 		F3F8794929B30FDA0007FDA1 /* load_sndfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = load_sndfile.c; sourceTree = "<group>"; };
 		F3F8794A29B30FDA0007FDA1 /* music_gme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_gme.h; sourceTree = "<group>"; };
@@ -262,8 +278,10 @@
 			children = (
 				F3968D71281FB5E100661875 /* config.xcconfig */,
 				F3E1F8C12A794D3400AC76D3 /* SDL.xcodeproj */,
+				F307A2732B5431700012534B /* gme.xcodeproj */,
 				F3B38D97296F97BB005DA6D3 /* ogg.xcodeproj */,
 				F3968B90281F817E00661875 /* opus.xcodeproj */,
+				F307A25D2B542F110012534B /* wavpack.xcodeproj */,
 				F3E29D022882107B0006D108 /* xmp.xcodeproj */,
 				F59C70FC00D5CB5801000001 /* pkg-support */,
 				0153844A006D81B07F000001 /* Public Headers */,
@@ -366,6 +384,22 @@
 				F3D87C0E281DFB02005DA540 /* SDL3.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F307A25E2B542F110012534B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F307A2632B542F110012534B /* wavpack.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F307A2742B5431700012534B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F307A2792B5431700012534B /* gme.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		F3968B91281F817E00661875 /* Products */ = {
@@ -517,6 +551,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = F307A2742B5431700012534B /* Products */;
+					ProjectRef = F307A2732B5431700012534B /* gme.xcodeproj */;
+				},
+				{
 					ProductGroup = F3B38D98296F97BB005DA6D3 /* Products */;
 					ProjectRef = F3B38D97296F97BB005DA6D3 /* ogg.xcodeproj */;
 				},
@@ -527,6 +565,10 @@
 				{
 					ProductGroup = F3E1F8C22A794D3400AC76D3 /* Products */;
 					ProjectRef = F3E1F8C12A794D3400AC76D3 /* SDL.xcodeproj */;
+				},
+				{
+					ProductGroup = F307A25E2B542F110012534B /* Products */;
+					ProjectRef = F307A25D2B542F110012534B /* wavpack.xcodeproj */;
 				},
 				{
 					ProductGroup = F3E29D032882107B0006D108 /* Products */;
@@ -543,6 +585,20 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		F307A2632B542F110012534B /* wavpack.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = wavpack.framework;
+			remoteRef = F307A2622B542F110012534B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F307A2792B5431700012534B /* gme.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = gme.framework;
+			remoteRef = F307A2782B5431700012534B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		F3968B97281F817E00661875 /* opus.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -673,7 +729,7 @@
 /* Begin PBXTargetDependency section */
 		F3E1F7942A78A24A00AC76D3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "xmp.xcframework";
+			name = xmp.xcframework;
 			targetProxy = F3E1F7932A78A24A00AC76D3 /* PBXContainerItemProxy */;
 		};
 		F3E1F7962A78A24E00AC76D3 /* PBXTargetDependency */ = {

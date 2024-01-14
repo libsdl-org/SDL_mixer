@@ -94,7 +94,7 @@ static wavpack_loader wvpk;
 #else
 #define FUNCTION_LOADER(FUNC, SIG) \
     wvpk.FUNC = FUNC; \
-    if (wvpk.FUNC == NULL) { Mix_SetError("Missing WavPack.framework"); return -1; }
+    if (wvpk.FUNC == NULL) { Mix_SetError("Missing wavpack.framework"); return -1; }
 #endif
 
 static int WAVPACK_Load(void)

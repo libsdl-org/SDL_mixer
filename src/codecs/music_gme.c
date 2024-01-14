@@ -57,7 +57,7 @@ static gme_loader gme;
 #else
 #define FUNCTION_LOADER(FUNC, SIG) \
     gme.FUNC = FUNC; \
-    if (gme.FUNC == NULL) { Mix_SetError("Missing GME.framework"); return -1; }
+    if (gme.FUNC == NULL) { Mix_SetError("Missing gme.framework"); return -1; }
 #endif
 
 static int GME_Load(void)
