@@ -1051,6 +1051,8 @@ void Mix_ChannelFinished(void (SDLCALL *channel_finished)(int channel))
  */
 int Mix_ReserveChannels(int num)
 {
+    if (num < 0)
+        num = 0;
     if (num > num_channels)
         num = num_channels;
     reserved_channels = num;
