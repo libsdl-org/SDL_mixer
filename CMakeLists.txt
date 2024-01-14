@@ -126,13 +126,13 @@ endif()
 
 option(SDL2MIXER_MP3 "Enable MP3 music" ON)
 
-cmake_dependent_option(SDL2MIXER_MP3_DRMP3 "Support loading MP3 music via dr_mp3" ON SDL2MIXER_MP3 OFF)
+cmake_dependent_option(SDL2MIXER_MP3_MINIMP3 "Support loading MP3 music via minimp3" ON SDL2MIXER_MP3 OFF)
 
 cmake_dependent_option(SDL2MIXER_MP3_MPG123 "Support loading MP3 music via MPG123" OFF SDL2MIXER_MP3 OFF)
 cmake_dependent_option(SDL2MIXER_MP3_MPG123_SHARED "Dynamically load mpg123" "${SDL2MIXER_DEPS_SHARED}" SDL2MIXER_MP3_MPG123 OFF)
 
-if(SDL2MIXER_MP3 AND NOT (SDL2MIXER_MP3_DRMP3 OR SDL2MIXER_MP3_MPG123))
-    message(FATAL_ERROR "MP3 support was enabled (SDL2MIXER_MP3) but neither drmp3 (SDL2MIXER_MP3_DRMP3) or mpg123 (SDL2MIXER_MP3_MPG123) were enabled.")
+if(SDL2MIXER_MP3 AND NOT (SDL2MIXER_MP3_MINIMP3 OR SDL2MIXER_MP3_MPG123))
+    message(FATAL_ERROR "MP3 support was enabled (SDL2MIXER_MP3) but neither minimp3 (SDL2MIXER_MP3_MINIMP3) or mpg123 (SDL2MIXER_MP3_MPG123) were enabled.")
 endif()
 
 option(SDL2MIXER_MIDI "Enable MIDI music" ON)
@@ -219,10 +219,10 @@ add_library(SDL2_mixer
     src/codecs/mp3utils.c
     src/codecs/music_cmd.c
     src/codecs/music_drflac.c
-    src/codecs/music_drmp3.c
     src/codecs/music_flac.c
     src/codecs/music_fluidsynth.c
     src/codecs/music_gme.c
+    src/codecs/music_minimp3.c
     src/codecs/music_modplug.c
     src/codecs/music_mpg123.c
     src/codecs/music_nativemidi.c
@@ -726,8 +726,8 @@ if(SDL2MIXER_MOD_XMP)
     endif()
 endif()
 
-if(SDL2MIXER_MP3_DRMP3)
-    target_compile_definitions(SDL2_mixer PRIVATE MUSIC_MP3_DRMP3)
+if(SDL2MIXER_MP3_MINIMP3)
+    target_compile_definitions(SDL2_mixer PRIVATE MUSIC_MP3_MINIMP3)
 endif()
 
 if(SDL2MIXER_MP3_MPG123)

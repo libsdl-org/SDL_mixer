@@ -860,14 +860,13 @@ AC_ARG_ENABLE(music-mp3,
 [AS_HELP_STRING([--enable-music-mp3], [enable MP3 music [default=yes]])],
               [], enable_music_mp3=yes)
 
-SDL2MIXER_MP3_DRMP3=0
-AC_ARG_ENABLE(music-mp3-drmp3,
-[AS_HELP_STRING([--enable-music-mp3-drmp3], [enable MP3 music via dr_mp3 [default=yes]])],
-              [], [enable_music_mp3_drmp3=yes])
-if test x$enable_music_mp3 = xyes -a x$enable_music_mp3_drmp3 = xyes; then
-    have_drmp3=yes
-    EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MP3_DRMP3"
-    SDL2MIXER_MP3_DRMP3=1
+SDL2MIXER_MP3_MINIMP3=0
+AC_ARG_ENABLE(music-mp3-minimp3,
+[AS_HELP_STRING([--enable-music-mp3-minimp3], [enable MP3 music via minimp3 [default=yes]])],
+                  [], [enable_music_mp3_minimp3=yes])
+if test x$enable_music_mp3 = xyes -a x$enable_music_mp3_minimp3 = xyes; then
+    EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MP3_MINIMP3"
+    SDL2MIXER_MP3_MINIMP3=1
 fi
 
 SDL2MIXER_MP3_MPG123=0
@@ -920,7 +919,7 @@ if test x$enable_music_mp3 = xyes -a x$enable_music_mp3_mpg123 = xyes; then
     fi
 fi
 
-if test x$enable_music_mp3 = xyes -a x$have_drmp3 != xyes -a x$have_libmpg123 != xyes; then
+if test x$enable_music_mp3 = xyes -a x$have_minimp3 != xyes -a x$have_libmpg123 != xyes; then
     AC_MSG_WARN([MP3 support disabled])
 fi
 
@@ -1136,7 +1135,7 @@ AC_SUBST(SDL2MIXER_GME)
 AC_SUBST(SDL2MIXER_MOD_MODPLUG)
 AC_SUBST(SDL2MIXER_MOD_XMP)
 AC_SUBST(SDL2MIXER_MOD_XMP_LITE)
-AC_SUBST(SDL2MIXER_MP3_DRMP3)
+AC_SUBST(SDL2MIXER_MP3_MINIMP3)
 AC_SUBST(SDL2MIXER_MP3_MPG123)
 AC_SUBST(SDL2MIXER_MIDI_FLUIDSYNTH)
 AC_SUBST(SDL2MIXER_MIDI_NATIVE)

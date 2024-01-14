@@ -1,6 +1,7 @@
 2.8.0:
  * Added support for loading wavpack sound files (https://www.wavpack.com/)
  * Added support for loading classic console sound files using Game_Music_Emu (https://github.com/libgme/game-music-emu)
+ * Use minimp3 instead of dr_mp3 as the default backend for MP3 music
  * Use libxmp instead of modplug as the default backend for MOD music
    To use libmodplug instead, configure using --enable-music-mod-modplug --disable-music-mod-xmp
  * Added support for FLAC audio in Ogg containers
