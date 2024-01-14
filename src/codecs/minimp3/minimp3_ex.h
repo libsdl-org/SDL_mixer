@@ -139,11 +139,7 @@ static void mp3dec_skip_id3v1(const uint8_t *buf, size_t *pbuf_size)
     size_t buf_size = *pbuf_size;
 #ifndef MINIMP3_NOSKIP_ID3V1
     if (buf_size >= 128 && !memcmp(buf + buf_size - 128, "TAG", 3))
-    {
         buf_size -= 128;
-        if (buf_size >= 227 && !memcmp(buf + buf_size - 227, "TAG+", 4))
-            buf_size -= 227;
-    }
 #endif
 #ifndef MINIMP3_NOSKIP_APEV2
     if (buf_size > 32 && !memcmp(buf + buf_size - 32, "APETAGEX", 8))
