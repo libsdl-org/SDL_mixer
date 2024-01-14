@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F307A4992B544CA20012534B /* gme.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F307A48B2B544C880012534B /* gme.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F307A49A2B544CAA0012534B /* wavpack.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F307A4982B544C920012534B /* wavpack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F307A49B2B544CB90012534B /* gme.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F307A48B2B544C880012534B /* gme.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F307A49C2B544CBF0012534B /* wavpack.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F307A4982B544C920012534B /* wavpack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F307A49D2B544CD60012534B /* gme.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F307A48B2B544C880012534B /* gme.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F307A49E2B544CDC0012534B /* wavpack.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F307A4982B544C920012534B /* wavpack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F3968EBF2820392700661875 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EBE2820392700661875 /* SDL2.framework */; };
 		F3968EC1282039AC00661875 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EC0282039AC00661875 /* SDL2.framework */; };
 		F3968EC3282039BC00661875 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3968EC2282039BC00661875 /* SDL2.framework */; };
@@ -36,6 +42,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		F307A48A2B544C880012534B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F307A4852B544C880012534B /* gme.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F3F70EDA281F61B4005AA27D;
+			remoteInfo = gme;
+		};
+		F307A4972B544C920012534B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F307A4922B544C920012534B /* wavpack.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F3968A21281F704800661875;
+			remoteInfo = wavpack;
+		};
 		F3968EA9282038E000661875 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F3968EA5282038E000661875 /* opus.xcodeproj */;
@@ -55,7 +75,7 @@
 			containerPortal = F3E29D282882122B0006D108 /* xmp.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = F3968D85281FBB1900661875;
-			remoteInfo = "xmp";
+			remoteInfo = xmp;
 		};
 		F3ED80D3281D9ED600C33C5B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -89,8 +109,10 @@
 			files = (
 				F3968F142820428F00661875 /* SDL2.framework in Copy Frameworks */,
 				F39CD44B281DC6C8006CF638 /* SDL2_mixer.framework in Copy Frameworks */,
+				F307A49D2B544CD60012534B /* gme.framework in Copy Frameworks */,
 				F3968F112820428F00661875 /* ogg.framework in Copy Frameworks */,
 				F3968F122820428F00661875 /* opus.framework in Copy Frameworks */,
+				F307A49E2B544CDC0012534B /* wavpack.framework in Copy Frameworks */,
 				F3E29D3D288212520006D108 /* xmp.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
@@ -107,6 +129,8 @@
 				F3968ED328203F5800661875 /* ogg.framework in Copy Frameworks */,
 				F3968ED428203F5800661875 /* opus.framework in Copy Frameworks */,
 				F3E29D3C2882124D0006D108 /* xmp.framework in Copy Frameworks */,
+				F307A49B2B544CB90012534B /* gme.framework in Copy Frameworks */,
+				F307A49C2B544CBF0012534B /* wavpack.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -119,8 +143,10 @@
 			files = (
 				F3968EEF2820409F00661875 /* SDL2.framework in Copy Frameworks */,
 				F3ED80FF281DA63000C33C5B /* SDL2_mixer.framework in Copy Frameworks */,
+				F307A4992B544CA20012534B /* gme.framework in Copy Frameworks */,
 				F3968EF3282040B300661875 /* ogg.framework in Copy Frameworks */,
 				F3968EF4282040B300661875 /* opus.framework in Copy Frameworks */,
+				F307A49A2B544CAA0012534B /* wavpack.framework in Copy Frameworks */,
 				F3E29D36288212480006D108 /* xmp.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
@@ -129,12 +155,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F307A4852B544C880012534B /* gme.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = gme.xcodeproj; path = ../gme/gme.xcodeproj; sourceTree = "<group>"; };
+		F307A4922B544C920012534B /* wavpack.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = wavpack.xcodeproj; path = ../wavpack/wavpack.xcodeproj; sourceTree = "<group>"; };
 		F3968EA5282038E000661875 /* opus.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = opus.xcodeproj; path = ../opus/opus.xcodeproj; sourceTree = "<group>"; };
 		F3968EB72820390500661875 /* ogg.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ogg.xcodeproj; path = ../ogg/ogg.xcodeproj; sourceTree = "<group>"; };
 		F3968EBE2820392700661875 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../macOS/SDL2.framework; sourceTree = "<group>"; };
 		F3968EC0282039AC00661875 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../iOS/SDL2.framework; sourceTree = "<group>"; };
 		F3968EC2282039BC00661875 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../tvOS/SDL2.framework; sourceTree = "<group>"; };
-		F3E29D282882122B0006D108 /* xmp.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "xmp.xcodeproj"; path = "../xmp/xmp.xcodeproj"; sourceTree = "<group>"; };
+		F3E29D282882122B0006D108 /* xmp.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = xmp.xcodeproj; path = ../xmp/xmp.xcodeproj; sourceTree = "<group>"; };
 		F3ED80B3281D9E8900C33C5B /* playmus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = playmus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3ED80B9281D9E8900C33C5B /* playmus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = playmus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3ED80BB281D9E8900C33C5B /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
@@ -175,6 +203,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F307A4862B544C880012534B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F307A48B2B544C880012534B /* gme.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F307A4932B544C920012534B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F307A4982B544C920012534B /* wavpack.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		F3968EA6282038E000661875 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -236,9 +280,11 @@
 		F3ED80A6281D9E8800C33C5B = {
 			isa = PBXGroup;
 			children = (
+				F307A4852B544C880012534B /* gme.xcodeproj */,
 				F3968EB72820390500661875 /* ogg.xcodeproj */,
 				F3968EA5282038E000661875 /* opus.xcodeproj */,
 				F3E29D282882122B0006D108 /* xmp.xcodeproj */,
+				F307A4922B544C920012534B /* wavpack.xcodeproj */,
 				F3ED80CD281D9ED600C33C5B /* SDL_mixer.xcodeproj */,
 				F3ED80AB281D9E8800C33C5B /* Shared */,
 				F3ED80BA281D9E8900C33C5B /* macOS */,
@@ -372,6 +418,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = F307A4862B544C880012534B /* Products */;
+					ProjectRef = F307A4852B544C880012534B /* gme.xcodeproj */;
+				},
+				{
 					ProductGroup = F3968EB82820390500661875 /* Products */;
 					ProjectRef = F3968EB72820390500661875 /* ogg.xcodeproj */;
 				},
@@ -382,6 +432,10 @@
 				{
 					ProductGroup = F3ED80CE281D9ED600C33C5B /* Products */;
 					ProjectRef = F3ED80CD281D9ED600C33C5B /* SDL_mixer.xcodeproj */;
+				},
+				{
+					ProductGroup = F307A4932B544C920012534B /* Products */;
+					ProjectRef = F307A4922B544C920012534B /* wavpack.xcodeproj */;
 				},
 				{
 					ProductGroup = F3E29D292882122B0006D108 /* Products */;
@@ -398,6 +452,20 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		F307A48B2B544C880012534B /* gme.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = gme.framework;
+			remoteRef = F307A48A2B544C880012534B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F307A4982B544C920012534B /* wavpack.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = wavpack.framework;
+			remoteRef = F307A4972B544C920012534B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		F3968EAA282038E000661875 /* opus.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
