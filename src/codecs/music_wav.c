@@ -1360,7 +1360,7 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
     }
 
     if (SDL_RWread(wave->src, chunk, chunk_length) != chunk_length) {
-        Mix_SetError("Couldn't read %d bytes from WAV file", chunk_length);
+        Mix_SetError("Couldn't read %" SDL_PRIu32 " bytes from WAV file", chunk_length);
         SDL_free(chunk);
         return SDL_FALSE;
     }
@@ -1519,7 +1519,7 @@ static SDL_bool ParseSMPL(WAV_Music *wave, Uint32 chunk_length)
         return SDL_FALSE;
     }
     if (SDL_RWread(wave->src, data, chunk_length) != chunk_length) {
-        Mix_SetError("Couldn't read %d bytes from WAV file", chunk_length);
+        Mix_SetError("Couldn't read %" SDL_PRIu32 " bytes from WAV file", chunk_length);
         SDL_free(data);
         return SDL_FALSE;
     }
@@ -1570,7 +1570,7 @@ static SDL_bool ParseLIST(WAV_Music *wave, Uint32 chunk_length)
     }
 
     if (SDL_RWread(wave->src, data, chunk_length) != chunk_length) {
-        Mix_SetError("Couldn't read %d bytes from WAV file", chunk_length);
+        Mix_SetError("Couldn't read %" SDL_PRIu32 " bytes from WAV file", chunk_length);
         SDL_free(data);
         return SDL_FALSE;
     }
@@ -1614,7 +1614,7 @@ static SDL_bool ParseID3(WAV_Music *wave, Uint32 chunk_length)
     }
 
     if (SDL_RWread(wave->src, data, chunk_length) != chunk_length) {
-        Mix_SetError("Couldn't read %d bytes from WAV file", chunk_length);
+        Mix_SetError("Couldn't read %" SDL_PRIu32 " bytes from WAV file", chunk_length);
         loaded = SDL_FALSE;
     }
 
