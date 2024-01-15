@@ -66,7 +66,6 @@ typedef struct {
     uint32_t libversion;
     uint32_t (*WavpackGetLibraryVersion)(void);
     char *(*WavpackGetErrorMessage)(WavpackContext*);
-    WavpackContext *(*WavpackOpenFileInput)(const char *infilename, char *error, int flags, int norm_offset);
     WavpackContext *(*WavpackOpenFileInputEx)(WavpackStreamReader *reader, void *wv_id, void *wvc_id, char *error, int flags, int norm_offset);
     WavpackContext *(*WavpackCloseFile)(WavpackContext*);
     int (*WavpackGetMode)(WavpackContext*);
@@ -112,7 +111,6 @@ static int WAVPACK_Load(void)
 #endif
         FUNCTION_LOADER(WavpackGetLibraryVersion, uint32_t (*)(void));
         FUNCTION_LOADER(WavpackGetErrorMessage, char *(*)(WavpackContext*));
-        FUNCTION_LOADER(WavpackOpenFileInput, WavpackContext *(*)(const char*, char*, int, int));
         FUNCTION_LOADER(WavpackOpenFileInputEx, WavpackContext *(*)(WavpackStreamReader*, void*, void*, char*, int, int));
         FUNCTION_LOADER(WavpackCloseFile, WavpackContext *(*)(WavpackContext*));
         FUNCTION_LOADER(WavpackGetMode, int (*)(WavpackContext*));
