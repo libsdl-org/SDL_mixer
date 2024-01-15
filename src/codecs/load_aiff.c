@@ -65,11 +65,11 @@ static Uint32 SANE_to_Uint32 (Uint8 *sanebuf)
 SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, SDL_bool freesrc,
     SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
 {
-    SDL_bool was_error = SDL_TRUE;
     int found_SSND;
     int found_COMM;
     int found_VHDR;
     int found_BODY;
+    SDL_bool was_error = SDL_TRUE;
     Sint64 start = 0;
 
     Uint32 chunk_type;
@@ -146,9 +146,11 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, SDL_bool freesrc,
             goto done;
         }
         next_chunk  = SDL_RWtell(src) + chunk_length;
+
         /* Paranoia to avoid infinite loops */
-        if (chunk_length == 0)
+        if (chunk_length == 0) {
             break;
+        }
 
         switch (chunk_type) {
             case SSND:

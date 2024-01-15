@@ -123,7 +123,7 @@ static int ParseCommandLine(char *cmdline, char **argv)
     if (argv) {
         argv[argc] = NULL;
     }
-    return(argc);
+    return argc;
 }
 
 static char **parse_args(char *command, char *last_arg)
@@ -138,7 +138,7 @@ static char **parse_args(char *command, char *last_arg)
     }
     argv = (char **)SDL_malloc((argc+1)*(sizeof *argv));
     if (argv == NULL) {
-        return(NULL);
+        return NULL;
     }
     argc = ParseCommandLine(command, argv);
 
@@ -149,7 +149,7 @@ static char **parse_args(char *command, char *last_arg)
     argv[argc] = NULL;
 
     /* We're ready! */
-    return(argv);
+    return argv;
 }
 
 /* Start playback of a given music stream */

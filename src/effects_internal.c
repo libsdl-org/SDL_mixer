@@ -63,7 +63,7 @@ void *_Eff_build_volume_table_u8(void)
     Uint8 *rc;
 
     if (!_Mix_effects_max_speed) {
-        return(NULL);
+        return NULL;
     }
 
     if (!_Eff_volume_table) {
@@ -80,7 +80,7 @@ void *_Eff_build_volume_table_u8(void)
         }
     }
 
-    return(_Eff_volume_table);
+    return _Eff_volume_table;
 }
 
 
@@ -110,7 +110,7 @@ void *_Eff_build_volume_table_s8(void)
         }
     }
 
-    return(_Eff_volume_table);
+    return _Eff_volume_table;
 }
 
 
