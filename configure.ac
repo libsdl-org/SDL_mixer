@@ -863,8 +863,9 @@ AC_ARG_ENABLE(music-mp3,
 SDL2MIXER_MP3_MINIMP3=0
 AC_ARG_ENABLE(music-mp3-minimp3,
 [AS_HELP_STRING([--enable-music-mp3-minimp3], [enable MP3 music via minimp3 [default=yes]])],
-                  [], [enable_music_mp3_minimp3=yes])
+              [], [enable_music_mp3_minimp3=yes])
 if test x$enable_music_mp3 = xyes -a x$enable_music_mp3_minimp3 = xyes; then
+    have_minimp3=yes
     EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MP3_MINIMP3"
     SDL2MIXER_MP3_MINIMP3=1
 fi

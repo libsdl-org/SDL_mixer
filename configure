@@ -18879,6 +18879,7 @@ else $as_nop
 fi
 
 if test x$enable_music_mp3 = xyes -a x$enable_music_mp3_minimp3 = xyes; then
+    have_minimp3=yes
     EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MP3_MINIMP3"
     SDL2MIXER_MP3_MINIMP3=1
 fi
