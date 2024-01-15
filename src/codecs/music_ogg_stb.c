@@ -343,8 +343,7 @@ static int OGG_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         amount -= (int)((pcmPos - music->loop_end) * music->vi.channels) * (int)sizeof(float);
         result = stb_vorbis_seek(music->vf, (Uint32)music->loop_start);
         if (!result) {
-            set_ov_error("stb_vorbis_seek", stb_vorbis_get_error(music->vf));
-            return -1;
+            return set_ov_error("stb_vorbis_seek", stb_vorbis_get_error(music->vf));
         } else {
             int play_count = -1;
             if (music->play_count > 0) {
@@ -389,8 +388,7 @@ static int OGG_Seek(void *context, double time)
 
     result = stb_vorbis_seek(music->vf, (unsigned int)(time * music->vi.sample_rate));
     if (!result) {
-        set_ov_error("stb_vorbis_seek", stb_vorbis_get_error(music->vf));
-        return -1;
+        return set_ov_error("stb_vorbis_seek", stb_vorbis_get_error(music->vf));
     }
     return 0;
 }
@@ -408,7 +406,7 @@ static double OGG_Duration(void *context)
     return (double)music->full_length / music->vi.sample_rate;
 }
 
-static double   OGG_LoopStart(void *music_p)
+static double OGG_LoopStart(void *music_p)
 {
     OGG_music *music = (OGG_music *)music_p;
     if (music->loop > 0) {
@@ -417,7 +415,7 @@ static double   OGG_LoopStart(void *music_p)
     return -1.0;
 }
 
-static double   OGG_LoopEnd(void *music_p)
+static double OGG_LoopEnd(void *music_p)
 {
     OGG_music *music = (OGG_music *)music_p;
     if (music->loop > 0) {
@@ -426,7 +424,7 @@ static double   OGG_LoopEnd(void *music_p)
     return -1.0;
 }
 
-static double   OGG_LoopLength(void *music_p)
+static double OGG_LoopLength(void *music_p)
 {
     OGG_music *music = (OGG_music *)music_p;
     if (music->loop > 0) {

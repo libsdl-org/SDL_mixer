@@ -265,8 +265,7 @@ static int DRFLAC_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 
     if (music->loop_flag) {
         if (!drflac_seek_to_pcm_frame(music->dec, music->loop_start)) {
-            SDL_SetError("drflac_seek_to_pcm_frame() failed");
-            return -1;
+            return Mix_SetError("drflac_seek_to_pcm_frame() failed");
         } else {
             int play_count = -1;
             if (music->play_count > 0) {

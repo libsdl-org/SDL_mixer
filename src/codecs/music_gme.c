@@ -161,8 +161,7 @@ static int initialize_from_track_info(GME_Music *music, int track)
 
     err = gme.gme_track_info(music->game_emu, &musInfo, track);
     if (err != 0) {
-        Mix_SetError("GME: %s", err);
-        return -1;
+        return Mix_SetError("GME: %s", err);
     }
 
     music->track_length = musInfo->length;
@@ -266,7 +265,7 @@ static void *GME_CreateFromRW(struct SDL_RWops *src, int freesrc)
     music->volume = MIX_MAX_VOLUME;
 
     meta_tags_init(&music->tags);
-    if (initialize_from_track_info(music, 0) == -1) {
+    if (initialize_from_track_info(music, 0) < 0) {
         GME_Delete(music);
         return NULL;
     }
@@ -396,17 +395,12 @@ static int GME_StartTrack(void *music_p, int track)
 
     err = gme.gme_start_track(music->game_emu, track);
     if (err != 0) {
-        Mix_SetError("GME: %s", err);
-        return -1;
+        return Mix_SetError("GME: %s", err);
     }
 
     GME_Play(music, music->play_count);
 
-    if (initialize_from_track_info(music, track) == -1) {
-        return -1;
-    }
-
-    return 0;
+    return initialize_from_track_info(music, track);
 }
 
 

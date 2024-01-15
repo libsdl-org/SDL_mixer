@@ -221,8 +221,7 @@ static int MPG123_Open(const SDL_AudioSpec *spec)
 {
     (void)spec;
     if (mpg123.mpg123_init() != MPG123_OK) {
-        Mix_SetError("mpg123_init() failed");
-        return -1;
+        return Mix_SetError("mpg123_init() failed");
     }
     return 0;
 }
@@ -392,8 +391,7 @@ static int MPG123_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     case MPG123_NEW_FORMAT:
         result = mpg123.mpg123_getformat(music->handle, &rate, &channels, &encoding);
         if (result != MPG123_OK) {
-            Mix_SetError("mpg123_getformat: %s", mpg_err(music->handle, result));
-            return -1;
+            return Mix_SetError("mpg123_getformat: %s", mpg_err(music->handle, result));
         }
 #ifdef DEBUG_MPG123
         printf("MPG123 format: %s, channels: %d, rate: %ld\n",
@@ -436,8 +434,7 @@ static int MPG123_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         }
         break;
     default:
-        Mix_SetError("mpg123_read: %s", mpg_err(music->handle, result));
-        return -1;
+        return Mix_SetError("mpg123_read: %s", mpg_err(music->handle, result));
     }
     return 0;
 }
