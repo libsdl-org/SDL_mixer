@@ -947,14 +947,12 @@ int Mix_FadeInMusicPos(Mix_Music *music, int loops, int ms, double position)
     int retval;
 
     if (ms_per_step == 0) {
-        Mix_SetError("Audio device hasn't been opened");
-        return -1;
+        return Mix_SetError("Audio device hasn't been opened");
     }
 
     /* Don't play null pointers :-) */
     if (music == NULL) {
-        Mix_SetError("music parameter was NULL");
-        return -1;
+        return Mix_SetError("music parameter was NULL");
     }
 
     /* Setup the data */
