@@ -65,11 +65,11 @@ static Uint32 SANE_to_Uint32 (Uint8 *sanebuf)
 SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
     SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
 {
-    int was_error;
     int found_SSND;
     int found_COMM;
     int found_VHDR;
     int found_BODY;
+    int was_error = 0;
     Sint64 start = 0;
 
     Uint32 chunk_type;
@@ -92,7 +92,6 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
     Uint32 frequency = 0;
 
     /* Make sure we are passed a valid data source */
-    was_error = 0;
     if (src == NULL) {
         was_error = 1;
         goto done;
@@ -124,9 +123,11 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
         chunk_type  = SDL_ReadLE32(src);
         chunk_length = SDL_ReadBE32(src);
         next_chunk  = SDL_RWtell(src) + chunk_length;
+
         /* Paranoia to avoid infinite loops */
-        if (chunk_length == 0)
+        if (chunk_length == 0) {
             break;
+        }
 
         switch (chunk_type) {
             case SSND:
@@ -223,12 +224,12 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, int freesrc,
     *audio_buf = (Uint8 *)SDL_malloc(*audio_len);
     if (*audio_buf == NULL) {
         Mix_OutOfMemory();
-        return(NULL);
+        return NULL;
     }
     SDL_RWseek(src, start, RW_SEEK_SET);
     if (SDL_RWread(src, *audio_buf, *audio_len, 1) != 1) {
         Mix_SetError("Unable to read audio data");
-        return(NULL);
+        return NULL;
     }
 
     /* Don't return a buffer that isn't a multiple of samplesize */
@@ -241,7 +242,7 @@ done:
     if (was_error) {
         spec = NULL;
     }
-    return(spec);
+    return spec;
 }
 
 /* vi: set ts=4 sw=4 expandtab: */

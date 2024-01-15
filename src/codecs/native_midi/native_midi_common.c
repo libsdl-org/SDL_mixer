@@ -58,19 +58,18 @@ typedef struct
 #endif
 
 
-
 /* Get Variable Length Quantity */
 static int GetVLQ(MIDITrack *track, int *currentPos)
 {
     int l = 0;
     Uint8 c;
-    while(1)
-    {
+    while (1) {
         c = track->data[*currentPos];
         (*currentPos)++;
         l += (c & 0x7f);
-        if (!(c & 0x80))
+        if (!(c & 0x80)) {
             return l;
+        }
         l <<= 7;
     }
 }
@@ -82,15 +81,14 @@ static MIDIEvent *CreateEvent(Uint32 time, Uint8 event, Uint8 a, Uint8 b)
 
     newEvent = SDL_calloc(1, sizeof(MIDIEvent));
 
-    if (newEvent)
-    {
+    if (newEvent) {
         newEvent->time = time;
         newEvent->status = event;
         newEvent->data[0] = a;
         newEvent->data[1] = b;
-    }
-    else
+    } else {
         Mix_OutOfMemory();
+    }
 
     return newEvent;
 }
@@ -108,23 +106,20 @@ static MIDIEvent *MIDITracktoStream(MIDITrack *track)
     MIDIEvent *head = CreateEvent(0,0,0,0); /* dummy event to make handling the list easier */
     MIDIEvent *currentEvent = head;
 
-    while (!end)
-    {
-        if (currentPos >= track->len)
+    while (!end) {
+        if (currentPos >= track->len) {
             break; /* End of data stream reached */
+        }
 
         atime += GetVLQ(track, &currentPos);
         event = track->data[currentPos++];
 
         /* Handle SysEx seperatly */
-        if (((event>>4) & 0x0F) == MIDI_STATUS_SYSEX)
-        {
-            if (event == 0xFF)
-            {
+        if (((event>>4) & 0x0F) == MIDI_STATUS_SYSEX) {
+            if (event == 0xFF) {
                 type = track->data[currentPos];
                 currentPos++;
-                switch(type)
-                {
+                switch(type) {
                     case 0x2f: /* End of data marker */
                         end = 1;
                     case 0x51: /* Tempo change */
@@ -136,33 +131,28 @@ static MIDIEvent *MIDITracktoStream(MIDITrack *track)
                         */
                         break;
                 }
-            }
-            else
+            } else {
                 type = 0;
+            }
 
             len = GetVLQ(track, &currentPos);
 
             /* Create an event and attach the extra data, if any */
             currentEvent->next = CreateEvent(atime, event, type, 0);
             currentEvent = currentEvent->next;
-            if (NULL == currentEvent)
-            {
+            if (NULL == currentEvent) {
                 FreeMIDIEventList(head);
                 return NULL;
             }
-            if (len)
-            {
+            if (len) {
                 currentEvent->extraLen = len;
                 currentEvent->extraData = SDL_malloc(len);
                 SDL_memcpy(currentEvent->extraData, &(track->data[currentPos]), len);
                 currentPos += len;
             }
-        }
-        else
-        {
+        } else {
             a = event;
-            if (a & 0x80) /* It's a status byte */
-            {
+            if (a & 0x80) { /* It's a status byte */
                 /* Extract channel and status information */
                 lastchan = a & 0x0F;
                 laststatus = (a>>4) & 0x0F;
@@ -170,8 +160,7 @@ static MIDIEvent *MIDITracktoStream(MIDITrack *track)
                 /* Read the next byte which should always be a data byte */
                 a = track->data[currentPos++] & 0x7F;
             }
-            switch(laststatus)
-            {
+            switch(laststatus) {
                 case MIDI_STATUS_NOTE_OFF:
                 case MIDI_STATUS_NOTE_ON: /* Note on */
                 case MIDI_STATUS_AFTERTOUCH: /* Key Pressure */
@@ -180,8 +169,7 @@ static MIDIEvent *MIDITracktoStream(MIDITrack *track)
                     b = track->data[currentPos++] & 0x7F;
                     currentEvent->next = CreateEvent(atime, (Uint8)((laststatus<<4)+lastchan), a, b);
                     currentEvent = currentEvent->next;
-                    if (NULL == currentEvent)
-                    {
+                    if (NULL == currentEvent) {
                         FreeMIDIEventList(head);
                         return NULL;
                     }
@@ -192,8 +180,7 @@ static MIDIEvent *MIDITracktoStream(MIDITrack *track)
                     a &= 0x7f;
                     currentEvent->next = CreateEvent(atime, (Uint8)((laststatus<<4)+lastchan), a, 0);
                     currentEvent = currentEvent->next;
-                    if (NULL == currentEvent)
-                    {
+                    if (NULL == currentEvent) {
                         FreeMIDIEventList(head);
                         return NULL;
                     }
@@ -222,46 +209,44 @@ static MIDIEvent *MIDItoStream(MIDIFile *mididata)
     MIDIEvent *currentEvent = head;
     int trackID;
 
-    if (NULL == head)
+    if (NULL == head) {
         return NULL;
+    }
 
     track = (MIDIEvent**) SDL_calloc(1, sizeof(MIDIEvent*) * mididata->nTracks);
-    if (NULL == track)
-    {
+    if (NULL == track) {
         SDL_free(head);
         return NULL;
     }
 
     /* First, convert all tracks to MIDIEvent lists */
-    for (trackID = 0; trackID < mididata->nTracks; trackID++)
+    for (trackID = 0; trackID < mididata->nTracks; trackID++) {
         track[trackID] = MIDITracktoStream(&mididata->track[trackID]);
+    }
 
     /* Now, merge the lists. */
     /* TODO */
-    while(1)
-    {
+    while (1) {
         Uint32 lowestTime = 0x7FFFFFFF; /* INT_MAX */
         int currentTrackID = -1;
 
         /* Find the next event */
-        for (trackID = 0; trackID < mididata->nTracks; trackID++)
-        {
-            if (track[trackID] && (track[trackID]->time < lowestTime))
-            {
+        for (trackID = 0; trackID < mididata->nTracks; trackID++) {
+            if (track[trackID] && (track[trackID]->time < lowestTime)) {
                 currentTrackID = trackID;
                 lowestTime = track[currentTrackID]->time;
             }
         }
 
         /* Check if we processes all events */
-        if (currentTrackID == -1)
+        if (currentTrackID == -1) {
             break;
+        }
 
         currentEvent->next = track[currentTrackID];
         track[currentTrackID] = track[currentTrackID]->next;
 
         currentEvent = currentEvent->next;
-
 
         lowestTime = 0;
     }
@@ -278,16 +263,18 @@ static MIDIEvent *MIDItoStream(MIDIFile *mididata)
 static int ReadMIDIFile(MIDIFile *mididata, SDL_RWops *src)
 {
     int i = 0;
-    Uint32  ID;
-    Uint32  size;
-    Uint16  format;
-    Uint16  tracks;
-    Uint16  division;
+    Uint32 ID;
+    Uint32 size;
+    Uint16 format;
+    Uint16 tracks;
+    Uint16 division;
 
-    if (!mididata)
+    if (!mididata) {
         return 0;
-    if (!src)
+    }
+    if (!src) {
         return 0;
+    }
 
     /* Make sure this is really a MIDI file */
     SDL_RWread(src, &ID, 1, 4);
@@ -295,20 +282,23 @@ static int ReadMIDIFile(MIDIFile *mididata, SDL_RWops *src)
         SDL_RWseek(src, 16, RW_SEEK_CUR);
         SDL_RWread(src, &ID, 1, 4);
     }
-    if (BE_LONG(ID) != MIDI_MAGIC)
+    if (BE_LONG(ID) != MIDI_MAGIC) {
         return 0;
+    }
 
     /* Header size must be 6 */
     SDL_RWread(src, &size, 1, 4);
     size = BE_LONG(size);
-    if (size != 6)
+    if (size != 6) {
         return 0;
+    }
 
     /* We only support format 0 and 1, but not 2 */
     SDL_RWread(src, &format, 1, 2);
     format = BE_SHORT(format);
-    if (format != 0 && format != 1)
+    if (format != 0 && format != 1) {
         return 0;
+    }
 
     SDL_RWread(src, &tracks, 1, 2);
     tracks = BE_SHORT(tracks);
@@ -316,8 +306,7 @@ static int ReadMIDIFile(MIDIFile *mididata, SDL_RWops *src)
 
     /* Allocate tracks */
     mididata->track = (MIDITrack*) SDL_calloc(1, sizeof(MIDITrack) * mididata->nTracks);
-    if (NULL == mididata->track)
-    {
+    if (NULL == mididata->track) {
         Mix_OutOfMemory();
         goto bail;
     }
@@ -327,15 +316,13 @@ static int ReadMIDIFile(MIDIFile *mididata, SDL_RWops *src)
     mididata->division = BE_SHORT(division);
 
 
-    for (i=0; i<tracks; i++)
-    {
+    for (i = 0; i < tracks; i++) {
         SDL_RWread(src, &ID, 1, 4);  /* We might want to verify this is MTrk... */
         SDL_RWread(src, &size, 1, 4);
         size = BE_LONG(size);
         mididata->track[i].len = size;
         mididata->track[i].data = SDL_malloc(size);
-        if (NULL == mididata->track[i].data)
-        {
+        if (NULL == mididata->track[i].data) {
             Mix_OutOfMemory();
             goto bail;
         }
@@ -344,10 +331,10 @@ static int ReadMIDIFile(MIDIFile *mididata, SDL_RWops *src)
     return 1;
 
 bail:
-    for(;i >= 0; i--)
-    {
-        if (mididata->track[i].data)
+    for (; i >= 0; i--) {
+        if (mididata->track[i].data) {
             SDL_free(mididata->track[i].data);
+        }
     }
 
     SDL_free(mididata->track);
@@ -361,38 +348,35 @@ MIDIEvent *CreateMIDIEventList(SDL_RWops *src, Uint16 *division)
     int trackID;
 
     mididata = SDL_calloc(1, sizeof(MIDIFile));
-    if (!mididata)
+    if (!mididata) {
         return NULL;
+    }
 
     /* Open the file */
-    if ( src != NULL )
-    {
+    if (src != NULL) {
         /* Read in the data */
-        if ( ! ReadMIDIFile(mididata, src))
-        {
+        if (!ReadMIDIFile(mididata, src)) {
             SDL_free(mididata);
             return NULL;
         }
-    }
-    else
-    {
+    } else {
         SDL_free(mididata);
         return NULL;
     }
 
-    if (division)
+    if (division) {
         *division = mididata->division;
+    }
 
     eventList = MIDItoStream(mididata);
-    if (eventList == NULL)
-    {
+    if (eventList == NULL) {
         SDL_free(mididata);
         return NULL;
     }
-    for(trackID = 0; trackID < mididata->nTracks; trackID++)
-    {
-        if (mididata->track[trackID].data)
+    for (trackID = 0; trackID < mididata->nTracks; trackID++) {
+        if (mididata->track[trackID].data) {
             SDL_free(mididata->track[trackID].data);
+        }
     }
     SDL_free(mididata->track);
     SDL_free(mididata);
@@ -406,12 +390,12 @@ void FreeMIDIEventList(MIDIEvent *head)
 
     cur = head;
 
-    while (cur)
-    {
+    while (cur) {
         next = cur->next;
-        if (cur->extraData)
-            SDL_free (cur->extraData);
-        SDL_free (cur);
+        if (cur->extraData) {
+            SDL_free(cur->extraData);
+        }
+        SDL_free(cur);
         cur = next;
     }
 }

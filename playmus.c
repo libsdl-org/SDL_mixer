@@ -75,7 +75,7 @@ void Menu(void)
     printf("Available commands: (p)ause (r)esume (h)alt volume(v#) > ");
     fflush(stdin);
     if (scanf("%s",buf) == 1) {
-        switch(buf[0]){
+        switch(buf[0]) {
 #if defined(SEEK_TEST)
         case '0': Mix_SetMusicPosition(0); break;
         case '1': Mix_SetMusicPosition(10);break;
@@ -105,9 +105,9 @@ void Menu(void)
 void IntHandler(int sig)
 {
     switch (sig) {
-            case SIGINT:
-            next_track++;
-            break;
+    case SIGINT:
+        next_track++;
+        break;
     }
 }
 #endif
@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
     audio_buffers = 4096;
 
     /* Check command line usage */
-    for (i=1; argv[i] && (*argv[i] == '-'); ++i) {
+    for (i = 1; argv[i] && (*argv[i] == '-'); ++i) {
         if ((strcmp(argv[i], "-r") == 0) && argv[i+1]) {
             ++i;
             audio_rate = atoi(argv[i]);
@@ -175,18 +175,18 @@ int main(int argc, char *argv[])
             rwops = 1;
         } else {
             Usage(argv[0]);
-            return(1);
+            return 1;
         }
     }
-    if (! argv[i]) {
+    if (!argv[i]) {
         Usage(argv[0]);
-        return(1);
+        return 1;
     }
 
     /* Initialize the SDL library */
     if (SDL_Init(SDL_INIT_AUDIO) < 0) {
         SDL_Log("Couldn't initialize SDL: %s\n",SDL_GetError());
-        return(255);
+        return 255;
     }
 
 #ifdef HAVE_SIGNAL_H
@@ -197,7 +197,7 @@ int main(int argc, char *argv[])
     /* Open the audio device */
     if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) < 0) {
         SDL_Log("Couldn't open audio: %s\n", SDL_GetError());
-        return(2);
+        return 2;
     } else {
         Mix_QuerySpec(&audio_rate, &audio_format, &audio_channels);
         SDL_Log("Opened audio at %d Hz %d bit%s %s %d bytes audio buffer\n", audio_rate,
@@ -224,8 +224,7 @@ int main(int argc, char *argv[])
             music = Mix_LoadMUS(argv[i]);
         }
         if (music == NULL) {
-            SDL_Log("Couldn't load %s: %s\n",
-                argv[i], SDL_GetError());
+            SDL_Log("Couldn't load %s: %s\n", argv[i], SDL_GetError());
             CleanUp(2);
         }
 
@@ -297,9 +296,9 @@ int main(int argc, char *argv[])
         }
         Mix_FadeInMusic(music,looping,2000);
         while (!next_track && (Mix_PlayingMusic() || Mix_PausedMusic())) {
-            if(interactive)
+            if (interactive) {
                 Menu();
-            else {
+            } else {
                 current_position = Mix_GetMusicPosition(music);
                 if (current_position >= 0.0) {
                     printf("Position: %g seconds             \r", current_position);
@@ -313,7 +312,9 @@ int main(int argc, char *argv[])
 
         /* If the user presses Ctrl-C more than once, exit. */
         SDL_Delay(500);
-        if (next_track > 1) break;
+        if (next_track > 1) {
+            break;
+        }
 
         i++;
     }

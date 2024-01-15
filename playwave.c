@@ -148,9 +148,9 @@ static void SDLCALL channel_complete_callback (int chan)
 static int still_playing(void)
 {
 #ifdef TEST_MIX_CHANNELFINISHED
-    return(!channel_is_done);
+    return !channel_is_done;
 #else
-    return(Mix_Playing(0));
+    return Mix_Playing(0);
 #endif
 }
 
@@ -165,7 +165,7 @@ static void do_panning_update(void)
     static int panningok = 1;
     static Uint32 next_panning_update = 0;
 
-    if ((panningok) && (SDL_GetTicks() >= next_panning_update)) {
+    if (panningok && (SDL_GetTicks() >= next_panning_update)) {
         panningok = Mix_SetPanning(0, leftvol, rightvol);
         if (!panningok) {
             SDL_Log("Mix_SetPanning(0, %d, %d) failed!\n",
@@ -236,7 +236,7 @@ static void do_position_update(void)
     static int positionok = 1;
     static Uint32 next_position_update = 0;
 
-    if ((positionok) && (SDL_GetTicks() >= next_position_update)) {
+    if (positionok && (SDL_GetTicks() >= next_position_update)) {
         positionok = Mix_SetPosition(0, angle, (Uint8)distance);
         if (!positionok) {
             SDL_Log("Mix_SetPosition(0, %d, %d) failed!\n",
@@ -380,7 +380,7 @@ int main(int argc, char *argv[])
     audio_channels = MIX_DEFAULT_CHANNELS;
 
     /* Check command line usage */
-    for (i=1; argv[i] && (*argv[i] == '-'); ++i) {
+    for (i = 1; argv[i] && (*argv[i] == '-'); ++i) {
         if ((strcmp(argv[i], "-r") == 0) && argv[i+1]) {
             ++i;
             audio_rate = atoi(argv[i]);
@@ -408,18 +408,18 @@ int main(int argc, char *argv[])
             reverse_sample = 1;
         } else {
             Usage(argv[0]);
-            return(1);
+            return 1;
         }
     }
-    if (! argv[i]) {
+    if (!argv[i]) {
         Usage(argv[0]);
-        return(1);
+        return 1;
     }
 
     /* Initialize the SDL library */
     if (SDL_Init(SDL_INIT_AUDIO) < 0) {
         SDL_Log("Couldn't initialize SDL: %s\n",SDL_GetError());
-        return(255);
+        return 255;
     }
 #ifdef HAVE_SIGNAL_H
     signal(SIGINT, CleanUp);
@@ -456,8 +456,7 @@ int main(int argc, char *argv[])
     /* Load the requested wave file */
     wave = Mix_LoadWAV(argv[i]);
     if (wave == NULL) {
-        SDL_Log("Couldn't load %s: %s\n",
-                        argv[i], SDL_GetError());
+        SDL_Log("Couldn't load %s: %s\n", argv[i], SDL_GetError());
         CleanUp(2);
     }
 

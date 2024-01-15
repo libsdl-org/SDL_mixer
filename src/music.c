@@ -219,7 +219,7 @@ Mix_MusicInterface *get_music_interface(int index)
 
 int Mix_GetNumMusicDecoders(void)
 {
-    return(num_decoders);
+    return num_decoders;
 }
 
 const char *Mix_GetMusicDecoder(int index)
@@ -227,7 +227,7 @@ const char *Mix_GetMusicDecoder(int index)
     if ((index < 0) || (index >= num_decoders)) {
         return NULL;
     }
-    return(music_decoders[index]);
+    return music_decoders[index];
 }
 
 SDL_bool Mix_HasMusicDecoder(const char *name)
@@ -253,7 +253,7 @@ static void add_music_decoder(const char *decoder)
         }
     }
 
-    ptr = SDL_realloc((void *)music_decoders, ((size_t)num_decoders + 1) * sizeof (const char *));
+    ptr = SDL_realloc((void *)music_decoders, ((size_t)num_decoders + 1) * sizeof(const char *));
     if (ptr == NULL) {
         return;  /* oh well, go on without it. */
     }
@@ -847,7 +847,7 @@ Mix_MusicType Mix_GetMusicType(const Mix_Music *music)
         }
         Mix_UnlockAudio();
     }
-    return(type);
+    return type;
 }
 
 static const char * get_music_tag_internal(const Mix_Music *music, Mix_MusicMetaTag tag_type)
@@ -938,7 +938,7 @@ static int music_internal_play(Mix_Music *music, int play_count, double position
         music->playing = SDL_FALSE;
         music_playing = NULL;
     }
-    return(retval);
+    return retval;
 }
 
 int Mix_FadeInMusicPos(Mix_Music *music, int loops, int ms, double position)
@@ -947,13 +947,13 @@ int Mix_FadeInMusicPos(Mix_Music *music, int loops, int ms, double position)
 
     if (ms_per_step == 0) {
         Mix_SetError("Audio device hasn't been opened");
-        return(-1);
+        return -1;
     }
 
     /* Don't play null pointers :-) */
     if (music == NULL) {
         Mix_SetError("music parameter was NULL");
-        return(-1);
+        return -1;
     }
 
     /* Setup the data */
@@ -982,7 +982,7 @@ int Mix_FadeInMusicPos(Mix_Music *music, int loops, int ms, double position)
     music_active = (retval == 0);
     Mix_UnlockAudio();
 
-    return(retval);
+    return retval;
 }
 int Mix_FadeInMusic(Mix_Music *music, int loops, int ms)
 {
@@ -1037,7 +1037,7 @@ int Mix_SetMusicPosition(double position)
     }
     Mix_UnlockAudio();
 
-    return(retval);
+    return retval;
 }
 
 /* Set the playing music position */
@@ -1063,7 +1063,7 @@ double Mix_GetMusicPosition(Mix_Music *music)
     }
     Mix_UnlockAudio();
 
-    return(retval);
+    return retval;
 }
 
 static double music_internal_duration(Mix_Music *music)
@@ -1090,7 +1090,7 @@ double Mix_MusicDuration(Mix_Music *music)
     }
     Mix_UnlockAudio();
 
-    return(retval);
+    return retval;
 }
 
 /* Get Loop start position */
@@ -1116,7 +1116,7 @@ double Mix_GetMusicLoopStartTime(Mix_Music *music)
     }
     Mix_UnlockAudio();
 
-    return(retval);
+    return retval;
 }
 
 /* Get Loop end position */
@@ -1142,7 +1142,7 @@ double Mix_GetMusicLoopEndTime(Mix_Music *music)
     }
     Mix_UnlockAudio();
 
-    return(retval);
+    return retval;
 }
 
 /* Get Loop end position */
@@ -1168,7 +1168,7 @@ double Mix_GetMusicLoopLengthTime(Mix_Music *music)
     }
     Mix_UnlockAudio();
 
-    return(retval);
+    return retval;
 }
 
 /* Set the music's initial volume */
@@ -1205,7 +1205,7 @@ int Mix_VolumeMusic(int volume)
         music_internal_volume(music_volume);
     }
     Mix_UnlockAudio();
-    return(prev_volume);
+    return prev_volume;
 }
 
 int Mix_GetMusicVolume(Mix_Music *music)
@@ -1245,7 +1245,7 @@ int Mix_HaltMusic(void)
     }
     Mix_UnlockAudio();
 
-    return(0);
+    return 0;
 }
 
 /* Progressively stop the music */
@@ -1284,7 +1284,7 @@ int Mix_FadeOutMusic(int ms)
     }
     Mix_UnlockAudio();
 
-    return(retval);
+    return retval;
 }
 
 Mix_Fading Mix_FadingMusic(void)
@@ -1297,7 +1297,7 @@ Mix_Fading Mix_FadingMusic(void)
     }
     Mix_UnlockAudio();
 
-    return(fading);
+    return fading;
 }
 
 /* Pause/Resume the music stream */

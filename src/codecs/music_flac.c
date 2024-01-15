@@ -197,7 +197,7 @@ static FLAC__StreamDecoderReadStatus flac_read_music_cb(
 
     /* make sure there is something to be reading */
     if (*bytes > 0) {
-        *bytes = SDL_RWread (data->src, buffer, sizeof (FLAC__byte), *bytes);
+        *bytes = SDL_RWread (data->src, buffer, sizeof(FLAC__byte), *bytes);
 
         if (*bytes == 0) { /* error or no data was read (EOF) */
             return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
