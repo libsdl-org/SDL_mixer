@@ -287,6 +287,8 @@ AM_PATH_SDL2($SDL_VERSION,
             :,
             AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])
 )
+CFLAGS="$CFLAGS $SDL_CFLAGS"
+LIBS="$LIBS $SDL_LIBS"
 EXTRA_CFLAGS="$EXTRA_CFLAGS $SDL_CFLAGS"
 
 dnl For use in static assertions
