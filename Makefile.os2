@@ -199,6 +199,9 @@ $(LNKFILE):
 .c.obj:
   wcc386 $(CFLAGS) -fo=$^@ $<
 
+music_minimp3.obj: music_minimp3.c
+  wcc386 $(CFLAGS) -za99 -fo=$^@ $<
+
 playmus.obj: playmus.c
   wcc386 $(CFLAGS_BASE) -fo=$^@ $<
 
