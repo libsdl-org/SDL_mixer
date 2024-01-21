@@ -1694,7 +1694,7 @@ Optional Features:
                           enable FluidSynth MIDI output [default=yes]
   --enable-music-midi-fluidsynth-shared
                           dynamically load FluidSynth library [default=yes]
-  --enable-music-gme      enable Game Music Emu support [default=no]
+  --enable-music-gme      enable Game Music Emu support [default=yes]
   --enable-music-gme-shared
                           dynamically load libgme library [default=yes]
   --enable-music-ogg      enable Ogg Vorbis music [default=yes]
@@ -17875,7 +17875,7 @@ if test ${enable_music_gme+y}
 then :
   enableval=$enable_music_gme;
 else $as_nop
-  enable_music_gme=no
+  enable_music_gme=yes
 fi
 
 # Check whether --enable-music-gme-shared was given.

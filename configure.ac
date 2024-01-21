@@ -585,8 +585,8 @@ fi
 
 SDL2MIXER_GME=0
 AC_ARG_ENABLE([music-gme],
-[AS_HELP_STRING([--enable-music-gme], [enable Game Music Emu support [default=no]])],
-              [], [enable_music_gme=no])
+[AS_HELP_STRING([--enable-music-gme], [enable Game Music Emu support [default=yes]])],
+              [], [enable_music_gme=yes])
 AC_ARG_ENABLE([music-gme-shared],
 [AS_HELP_STRING([--enable-music-gme-shared], [dynamically load libgme library [default=yes]])],
               [], [enable_music_gme_shared=yes])
