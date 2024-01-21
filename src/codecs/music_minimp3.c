@@ -172,7 +172,7 @@ static int MINIMP3_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         return 0;
     }
 
-    amount = mp3dec_ex_read(&music->dec, music->buffer, 4096/*music_spec.samples*/ * music->channels);
+    amount = (int)mp3dec_ex_read(&music->dec, music->buffer, 4096/*music_spec.samples*/ * music->channels);
     if (amount > 0) {
         if (SDL_PutAudioStreamData(music->stream, music->buffer, (int)amount * sizeof(mp3d_sample_t)) < 0) {
             return -1;
