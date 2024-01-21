@@ -121,7 +121,7 @@ cmake_dependent_option(SDL3MIXER_FLAC_LIBFLAC_SHARED "Dynamically load LIBFLAC" 
 
 cmake_dependent_option(SDL3MIXER_FLAC_DRFLAC "Enable FLAC music using drflac" ON SDL3MIXER_FLAC OFF)
 
-option(SDL3MIXER_GME "Support loading GME music via game-music-emu" OFF)
+option(SDL3MIXER_GME "Support loading GME music via game-music-emu" ON)
 option(SDL3MIXER_GME_SHARED "Dynamically load libgme" "${SDL3MIXER_DEPS_SHARED}")
 
 option(SDL3MIXER_MOD "Support loading MOD music" ON)
