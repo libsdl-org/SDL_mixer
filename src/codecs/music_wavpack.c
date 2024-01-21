@@ -584,7 +584,7 @@ static int WAVPACK_Seek(void *context, double time)
     int64_t sample = (int64_t)(time * music->samplerate);
     int success = (wvpk.WavpackSeekSample64 != NULL) ?
                    wvpk.WavpackSeekSample64(music->ctx, sample) :
-                   wvpk.WavpackSeekSample(music->ctx, sample);
+                   wvpk.WavpackSeekSample(music->ctx, (uint32_t)sample);
     if (!success) {
         return Mix_SetError("%s", wvpk.WavpackGetErrorMessage(music->ctx));
     }

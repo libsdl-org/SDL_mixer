@@ -191,10 +191,11 @@ static unsigned long xmp_fread(void *dst, unsigned long len, unsigned long nmemb
 static int xmp_fseek(void *src, long offset, int whence)
 {
     XMP_Music *music = (XMP_Music *)src;
+    Sint64 offset64 = (Sint64)offset;
     if (whence == RW_SEEK_SET) {
-        offset += music->src_offset;
+        offset64 += music->src_offset;
     }
-    return (SDL_RWseek(music->src, offset, whence) < 0) ? -1 : 0;
+    return (SDL_RWseek(music->src, offset64, whence) < 0) ? -1 : 0;
 }
 
 static long xmp_ftell(void *src)
