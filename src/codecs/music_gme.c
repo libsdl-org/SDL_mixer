@@ -235,7 +235,7 @@ static void *GME_CreateFromRW(struct SDL_RWops *src, int freesrc)
     SDL_RWseek(src, 0, RW_SEEK_SET);
     mem = SDL_LoadFile_RW(src, &size, SDL_FALSE);
     if (mem) {
-        err = gme.gme_open_data(mem, size, &music->game_emu, music_spec.freq);
+        err = gme.gme_open_data(mem, (long)size, &music->game_emu, music_spec.freq);
         SDL_free(mem);
         if (err != 0) {
             GME_Delete(music);
@@ -309,13 +309,13 @@ static int GME_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         return 0;
     }
 
-    err = gme.gme_play(music->game_emu, (music->buffer_size / 2), (short*)music->buffer);
+    err = gme.gme_play(music->game_emu, (int)(music->buffer_size / 2), (short*)music->buffer);
     if (err != NULL) {
         Mix_SetError("GME: %s", err);
         return 0;
     }
 
-    if (SDL_AudioStreamPut(music->stream, music->buffer, music->buffer_size) < 0) {
+    if (SDL_AudioStreamPut(music->stream, music->buffer, (int)music->buffer_size) < 0) {
         return -1;
     }
     return 0;
