@@ -21,7 +21,7 @@
 
 #include <SDL3/SDL_platform.h>
 
-#if __MACOS__
+#ifdef SDL_PLATFORM_MACOS
 
 /* Mac OS X 10.6+, using Core MIDI. */
 

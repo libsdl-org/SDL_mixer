@@ -20,7 +20,7 @@
 */
 #include <SDL3/SDL_platform.h>
 
-#ifdef __HAIKU__
+#ifdef SDL_PLATFORM_HAIKU
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -292,4 +292,4 @@ const char* native_midi_error(void)
   return lasterr;
 }
 
-#endif /* __HAIKU__ */
+#endif /* SDL_PLATFORM_HAIKU */
