@@ -21,7 +21,7 @@
 
 #include "SDL_config.h"
 
-#if __MACOSX__
+#ifdef __MACOSX__
 
 /* Mac OS X 10.6+, using Core MIDI. */
 
