@@ -142,7 +142,7 @@ const char *meta_tags_get(Mix_MusicMetaTags *tags, Mix_MusicMetaTag type)
 }
 
 /* for music->filename */
-#if defined(__WIN32__)||defined(__OS2__)
+#if defined(_WIN32) || defined(__OS2__)
 static SDL_INLINE const char *get_last_dirsep (const char *p) {
     const char *p1 = SDL_strrchr(p, '/');
     const char *p2 = SDL_strrchr(p, '\\');
