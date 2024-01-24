@@ -433,7 +433,7 @@ fail:
   return r;
 }
 
-#if defined(_WIN32)||defined(__CYGWIN__)||defined(__OS2__)
+#if defined(_WIN32) || defined(__CYGWIN__)
 /* FIXME: What about C:FOO ? */
 static SDL_INLINE char *get_last_dirsep (const char *p) {
   char *p1 = SDL_strrchr(p, '/');
