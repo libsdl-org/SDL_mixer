@@ -48,11 +48,11 @@ SDL_COMPILE_TIME_ASSERT(SDL_BUILD_MICRO_VERSION,
 
 #if defined(SDL_COMPILE_TIME_ASSERT)
 SDL_COMPILE_TIME_ASSERT(SDL_MIXER_MAJOR_VERSION_min, SDL_MIXER_MAJOR_VERSION >= 0);
-/* Limited only by the need to fit in SDL_version */
+/* Limited only by the need to fit in SDL_Version */
 SDL_COMPILE_TIME_ASSERT(SDL_MIXER_MAJOR_VERSION_max, SDL_MIXER_MAJOR_VERSION <= 255);
 
 SDL_COMPILE_TIME_ASSERT(SDL_MIXER_MINOR_VERSION_min, SDL_MIXER_MINOR_VERSION >= 0);
-/* Limited only by the need to fit in SDL_version */
+/* Limited only by the need to fit in SDL_Version */
 SDL_COMPILE_TIME_ASSERT(SDL_MIXER_MINOR_VERSION_max, SDL_MIXER_MINOR_VERSION <= 255);
 
 SDL_COMPILE_TIME_ASSERT(SDL_MIXER_PATCHLEVEL_min, SDL_MIXER_PATCHLEVEL >= 0);
@@ -162,9 +162,9 @@ void add_chunk_decoder(const char *decoder)
 }
 
 /* rcg06192001 get linked library's version. */
-const SDL_version *Mix_Linked_Version(void)
+const SDL_Version *Mix_Linked_Version(void)
 {
-    static SDL_version linked_version;
+    static SDL_Version linked_version;
     SDL_MIXER_VERSION(&linked_version);
     return &linked_version;
 }

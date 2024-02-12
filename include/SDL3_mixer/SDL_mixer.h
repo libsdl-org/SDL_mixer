@@ -29,11 +29,7 @@
 #ifndef SDL_MIXER_H_
 #define SDL_MIXER_H_
 
-#include <SDL3/SDL_stdinc.h>
-#include <SDL3/SDL_rwops.h>
-#include <SDL3/SDL_audio.h>
-#include <SDL3/SDL_endian.h>
-#include <SDL3/SDL_version.h>
+#include <SDL3/SDL.h>
 #include <SDL3/SDL_begin_code.h>
 
 /* Set up for C function definitions, even when using C++ */
@@ -100,7 +96,7 @@ extern "C" {
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
-extern DECLSPEC const SDL_version * SDLCALL Mix_Linked_Version(void);
+extern DECLSPEC const SDL_Version * SDLCALL Mix_Linked_Version(void);
 
 /**
  * Initialization flags
