@@ -413,6 +413,7 @@ SDL_AudioSpec *Mix_LoadVOC_RW (SDL_RWops *src, SDL_bool freesrc,
     v.rate = VOC_BAD_RATE;
     v.rest = 0;
     v.has_extended = 0;
+    SDL_zerop(spec);
 
     if (!voc_get_block(src, &v, spec)) {
         goto done;
@@ -428,7 +429,6 @@ SDL_AudioSpec *Mix_LoadVOC_RW (SDL_RWops *src, SDL_bool freesrc,
         goto done;
     }
 
-    SDL_zerop(spec);
     spec->format = ((v.size == ST_SIZE_WORD) ? SDL_AUDIO_S16 : SDL_AUDIO_U8);
     if (spec->channels == 0) {
         spec->channels = v.channels;
