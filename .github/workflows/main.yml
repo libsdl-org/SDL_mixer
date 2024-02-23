@@ -79,6 +79,7 @@ jobs:
         sudo apt-get update
         sudo apt-get -y install \
           cmake \
+          libasound2-dev \
           libflac-dev \
           libfluidsynth-dev \
           libgme-dev \
