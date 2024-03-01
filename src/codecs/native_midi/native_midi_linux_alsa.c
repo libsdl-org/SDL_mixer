@@ -42,6 +42,145 @@
 #include <string.h>
 #include <sys/stat.h>
 
+//#define SDL_NATIVE_MIDI_ALSA_DYNAMIC "libasound.so.2"
+
+static int load_alsa_syms(void);
+
+#ifdef SDL_NATIVE_MIDI_ALSA_DYNAMIC
+#define snd_seq_client_info_sizeof ALSA_snd_seq_client_info_sizeof
+#define snd_seq_port_info_sizeof   ALSA_snd_seq_port_info_sizeof
+#define snd_seq_queue_tempo_sizeof ALSA_snd_seq_queue_tempo_sizeof
+#define snd_seq_control_queue      ALSA_snd_seq_control_queue
+
+static void *alsa_handle = NULL;
+
+static int load_alsa_sym(const char *fn, void **addr)
+{
+    *addr = SDL_LoadFunction(alsa_handle, fn);
+    if (!*addr) {
+        // Don't call SDL_SetError(): SDL_LoadFunction already did.
+        return 0;
+    }
+
+    return 1;
+}
+
+// cast funcs to char* first, to please GCC's strict aliasing rules.
+#define SDL_ALSA_SYM(x)                                 \
+    if (!load_alsa_sym(#x, (void **)(char *)&ALSA_##x)) \
+    return -1
+
+static void unload_alsa_library(void)
+{
+    if (alsa_handle) {
+        SDL_UnloadObject(alsa_handle);
+        alsa_handle = NULL;
+    }
+}
+
+static int load_alsa_library(void)
+{
+    int retval = 0;
+    if (!alsa_handle) {
+        alsa_handle = SDL_LoadObject(SDL_NATIVE_MIDI_ALSA_DYNAMIC);
+        if (!alsa_handle) {
+            retval = -1;
+            // Don't call SDL_SetError(): SDL_LoadObject already did.
+        } else {
+            retval = load_alsa_syms();
+            if (retval < 0) {
+                unload_alsa_library();
+            }
+        }
+    }
+    return retval;
+}
+
+#else
+
+#define SDL_ALSA_SYM(x) ALSA_##x = x
+static void unload_alsa_library(void)
+{
+}
+
+static int load_alsa_library(void)
+{
+    return load_alsa_syms();
+}
+#endif // SDL_NATIVE_MIDI_ALSA_DYNAMIC
+
+static int (*ALSA_snd_seq_alloc_named_queue)(snd_seq_t *seq, const char *name);
+static int (*ALSA_snd_seq_client_id)(snd_seq_t *handle);
+static int (*ALSA_snd_seq_client_info_get_client)(const snd_seq_client_info_t *info);
+static size_t (*ALSA_snd_seq_client_info_sizeof)(void);
+static int (*ALSA_snd_seq_close)(snd_seq_t *handle);
+static int (*ALSA_snd_seq_connect_to)(snd_seq_t *seq, int my_port, int dest_client, int dest_port);
+static int (*ALSA_snd_seq_control_queue)(snd_seq_t *seq, int q, int type, int value, snd_seq_event_t *ev);
+static int (*ALSA_snd_seq_create_simple_port)(snd_seq_t *seq, const char *name, unsigned int caps, unsigned int type);
+static int (*ALSA_snd_seq_delete_simple_port)(snd_seq_t *seq, int port);
+static int (*ALSA_snd_seq_drain_output)(snd_seq_t *handle);
+static int (*ALSA_snd_seq_drop_output)(snd_seq_t *handle);
+static int (*ALSA_snd_seq_event_input)(snd_seq_t *handle, snd_seq_event_t **ev);
+static int (*ALSA_snd_seq_event_output)(snd_seq_t *handle, snd_seq_event_t *ev);
+static int (*ALSA_snd_seq_event_output_direct)(snd_seq_t *handle, snd_seq_event_t *ev);
+static int (*ALSA_snd_seq_free_queue)(snd_seq_t *handle, int q);
+static int (*ALSA_snd_seq_get_any_client_info)(snd_seq_t *handle, int client, snd_seq_client_info_t *info);
+static int (*ALSA_snd_seq_get_any_port_info)(snd_seq_t *handle, int client, int port, snd_seq_port_info_t *info);
+static int (*ALSA_snd_seq_nonblock)(snd_seq_t *handle, int nonblock);
+static int (*ALSA_snd_seq_open)(snd_seq_t **handle, const char *name, int streams, int mode);
+static int (*ALSA_snd_seq_parse_address)(snd_seq_t *seq, snd_seq_addr_t *addr, const char *str);
+static int (*ALSA_snd_seq_poll_descriptors)(snd_seq_t *handle, struct pollfd *pfds, unsigned int space, short events);
+static unsigned int (*ALSA_snd_seq_port_info_get_capability)(const snd_seq_port_info_t *info);
+static int (*ALSA_snd_seq_port_info_get_port)(const snd_seq_port_info_t *info);
+static unsigned int (*ALSA_snd_seq_port_info_get_type)(const snd_seq_port_info_t *info);
+static size_t (*ALSA_snd_seq_port_info_sizeof)(void);
+static int (*ALSA_snd_seq_query_next_client)(snd_seq_t *handle, snd_seq_client_info_t *info);
+static int (*ALSA_snd_seq_query_next_port)(snd_seq_t *handle, snd_seq_port_info_t *info);
+static void (*ALSA_snd_seq_queue_tempo_set_ppq)(snd_seq_queue_tempo_t *info, int ppq);
+static void (*ALSA_snd_seq_queue_tempo_set_tempo)(snd_seq_queue_tempo_t *info, unsigned int tempo);
+static size_t (*ALSA_snd_seq_queue_tempo_sizeof)(void);
+static int (*ALSA_snd_seq_set_client_event_filter)(snd_seq_t *seq, int event_type);
+static int (*ALSA_snd_seq_set_client_name)(snd_seq_t *seq, const char *name);
+static int (*ALSA_snd_seq_set_queue_tempo)(snd_seq_t *handle, int q, snd_seq_queue_tempo_t *tempo);
+
+static int load_alsa_syms(void)
+{
+    SDL_ALSA_SYM(snd_seq_alloc_named_queue);
+    SDL_ALSA_SYM(snd_seq_client_id);
+    SDL_ALSA_SYM(snd_seq_client_info_get_client);
+    SDL_ALSA_SYM(snd_seq_client_info_sizeof);
+    SDL_ALSA_SYM(snd_seq_close);
+    SDL_ALSA_SYM(snd_seq_connect_to);
+    SDL_ALSA_SYM(snd_seq_control_queue);
+    SDL_ALSA_SYM(snd_seq_create_simple_port);
+    SDL_ALSA_SYM(snd_seq_delete_simple_port);
+    SDL_ALSA_SYM(snd_seq_drain_output);
+    SDL_ALSA_SYM(snd_seq_drop_output);
+    SDL_ALSA_SYM(snd_seq_event_input);
+    SDL_ALSA_SYM(snd_seq_event_output);
+    SDL_ALSA_SYM(snd_seq_event_output_direct);
+    SDL_ALSA_SYM(snd_seq_free_queue);
+    SDL_ALSA_SYM(snd_seq_get_any_client_info);
+    SDL_ALSA_SYM(snd_seq_get_any_port_info);
+    SDL_ALSA_SYM(snd_seq_nonblock);
+    SDL_ALSA_SYM(snd_seq_open);
+    SDL_ALSA_SYM(snd_seq_parse_address);
+    SDL_ALSA_SYM(snd_seq_poll_descriptors);
+    SDL_ALSA_SYM(snd_seq_port_info_get_capability);
+    SDL_ALSA_SYM(snd_seq_port_info_get_port);
+    SDL_ALSA_SYM(snd_seq_port_info_get_type);
+    SDL_ALSA_SYM(snd_seq_port_info_sizeof);
+    SDL_ALSA_SYM(snd_seq_query_next_client);
+    SDL_ALSA_SYM(snd_seq_query_next_port);
+    SDL_ALSA_SYM(snd_seq_queue_tempo_set_ppq);
+    SDL_ALSA_SYM(snd_seq_queue_tempo_set_tempo);
+    SDL_ALSA_SYM(snd_seq_queue_tempo_sizeof);
+    SDL_ALSA_SYM(snd_seq_set_client_event_filter);
+    SDL_ALSA_SYM(snd_seq_set_client_name);
+    SDL_ALSA_SYM(snd_seq_set_queue_tempo);
+    return 0;
+}
+
 #ifndef NDEBUG
 #define MIDIDbgLog(...) SDL_LogDebug(SDL_LOG_CATEGORY_AUDIO, __VA_ARGS__)
 #else
@@ -163,24 +302,29 @@ static snd_seq_t *open_seq(int *srcport_out)
     snd_seq_t *seq;
     int ret;
 
-    if ((ret = snd_seq_open(&seq, "default", SND_SEQ_OPEN_DUPLEX, 0)) < 0) {
+    if (load_alsa_library()) {
+        MIDI_SET_ERROR("Failed to load libasound");
+        return NULL;
+    }
+
+    if ((ret = ALSA_snd_seq_open(&seq, "default", SND_SEQ_OPEN_DUPLEX, 0)) < 0) {
         MIDI_SET_ERROR("snd_seq_open returned %d", ret);
         return NULL;
     }
 
     char *seq_name = get_app_name();
     if (!seq_name) {
-        snd_seq_close(seq);
+        ALSA_snd_seq_close(seq);
         return NULL;
     }
 
-    snd_seq_set_client_name(seq, seq_name);
+    ALSA_snd_seq_set_client_name(seq, seq_name);
 
-    if ((ret = snd_seq_create_simple_port(seq, seq_name,
-                                          SND_SEQ_PORT_CAP_READ | SND_SEQ_PORT_CAP_WRITE | SND_SEQ_PORT_CAP_SUBS_READ | SND_SEQ_PORT_CAP_SYNC_READ,
-                                          SND_SEQ_PORT_TYPE_APPLICATION | SND_SEQ_PORT_TYPE_MIDI_GENERIC)) < 0) {
+    if ((ret = ALSA_snd_seq_create_simple_port(seq, seq_name,
+                                               SND_SEQ_PORT_CAP_READ | SND_SEQ_PORT_CAP_WRITE | SND_SEQ_PORT_CAP_SUBS_READ | SND_SEQ_PORT_CAP_SYNC_READ,
+                                               SND_SEQ_PORT_TYPE_APPLICATION | SND_SEQ_PORT_TYPE_MIDI_GENERIC)) < 0) {
         MIDI_SET_ERROR("snd_seq_create_simple_port failed with %d", ret);
-        snd_seq_close(seq);
+        ALSA_snd_seq_close(seq);
         SDL_free(seq_name);
         return NULL;
     }
@@ -194,8 +338,9 @@ static snd_seq_t *open_seq(int *srcport_out)
 
 static void close_seq(snd_seq_t *seq, const int port)
 {
-    snd_seq_delete_simple_port(seq, port);
-    snd_seq_close(seq);
+    ALSA_snd_seq_delete_simple_port(seq, port);
+    ALSA_snd_seq_close(seq);
+    unload_alsa_library();
 }
 
 bool native_midi_detect(void)
@@ -222,27 +367,27 @@ static SDL_INLINE int subscribe_to_first_available_port(snd_seq_t *seq, const in
     snd_seq_client_info_alloca(&clientinfo);
 
     /* Query System to fill the struct initially */
-    if (snd_seq_get_any_client_info(seq, 0, clientinfo))
+    if (ALSA_snd_seq_get_any_client_info(seq, 0, clientinfo))
         return -1;
 
-    while (snd_seq_query_next_client(seq, clientinfo) == 0) {
-        int client = snd_seq_client_info_get_client(clientinfo);
+    while (ALSA_snd_seq_query_next_client(seq, clientinfo) == 0) {
+        int client = ALSA_snd_seq_client_info_get_client(clientinfo);
 
         /* Not necessary, as we don't allow subscription to our ports, but let's ignore ourselves anyway */
-        if (client == snd_seq_client_id(seq))
+        if (client == ALSA_snd_seq_client_id(seq))
             continue;
 
         snd_seq_port_info_t *portinfo;
         snd_seq_port_info_alloca(&portinfo);
 
         /* Start with port 0 */
-        if (snd_seq_get_any_port_info(seq, client, 0, portinfo))
+        if (ALSA_snd_seq_get_any_port_info(seq, client, 0, portinfo))
             continue;
 
         do {
-            int port = snd_seq_port_info_get_port(portinfo);
-            unsigned int cap = snd_seq_port_info_get_capability(portinfo);
-            unsigned int type = snd_seq_port_info_get_type(portinfo);
+            int port = ALSA_snd_seq_port_info_get_port(portinfo);
+            unsigned int cap = ALSA_snd_seq_port_info_get_capability(portinfo);
+            unsigned int type = ALSA_snd_seq_port_info_get_type(portinfo);
 
             if ((type & required_type) == required_type &&
                 cap & SND_SEQ_PORT_CAP_WRITE &&
@@ -252,11 +397,11 @@ static SDL_INLINE int subscribe_to_first_available_port(snd_seq_t *seq, const in
                 MIDIDbgLog("Client %d Cap %x Type %x", client, cap, type);
 
                 /* Could we connect to it? */
-                if (snd_seq_connect_to(seq, srcport, client, port) == 0)
+                if (ALSA_snd_seq_connect_to(seq, srcport, client, port) == 0)
                     return 0;
             }
 
-        } while (snd_seq_query_next_port(seq, portinfo) == 0);
+        } while (ALSA_snd_seq_query_next_port(seq, portinfo) == 0);
     }
     return 1;
 }
@@ -274,8 +419,8 @@ static SDL_INLINE void pick_seq_dest_addr(NativeMidiSong *song)
     /* If ALSA_OUTPUT_PORTS is specified, try to parse it and connect to it */
     snd_seq_addr_t conn_addr;
     const char *ports_env = SDL_getenv("ALSA_OUTPUT_PORTS");
-    if (ports_env && snd_seq_parse_address(song->seq, &conn_addr, ports_env) == 0)
-        if (snd_seq_connect_to(song->seq, song->srcport, conn_addr.client, conn_addr.port) == 0)
+    if (ports_env && ALSA_snd_seq_parse_address(song->seq, &conn_addr, ports_env) == 0)
+        if (ALSA_snd_seq_connect_to(song->seq, song->srcport, conn_addr.client, conn_addr.port) == 0)
             return;
 
     /* If we're not connecting to a specific client, pick the first one available after System (0) */
@@ -327,7 +472,7 @@ NativeMidiSong *native_midi_loadsong_IO(SDL_IOStream *src, bool closeio)
     }
 
     /* Only allow echo events to be sent */
-    snd_seq_set_client_event_filter(song->seq, SND_SEQ_EVENT_ECHO);
+    ALSA_snd_seq_set_client_event_filter(song->seq, SND_SEQ_EVENT_ECHO);
 
     pick_seq_dest_addr(song);
 
@@ -367,9 +512,9 @@ static SDL_INLINE void enqueue_echo_event(const NativeMidiSong *song, const int 
     snd_seq_ev_clear(&evt);
     evt.type = SND_SEQ_EVENT_ECHO;
     snd_seq_ev_set_source(&evt, song->srcport);
-    snd_seq_ev_set_dest(&evt, snd_seq_client_id(song->seq), song->srcport);
+    snd_seq_ev_set_dest(&evt, ALSA_snd_seq_client_id(song->seq), song->srcport);
     snd_seq_ev_schedule_tick(&evt, queue, 0, song->endtime + 1);
-    while (snd_seq_event_output(song->seq, &evt) == -EAGAIN)
+    while (ALSA_snd_seq_event_output(song->seq, &evt) == -EAGAIN)
         ;
 }
 
@@ -383,7 +528,7 @@ static SDL_INLINE void enqueue_queue_reset_event(const NativeMidiSong *song, con
     /* Schedule it to some point in the past, so that it is guaranteed */
     /* to run immediately and before the echo */
     snd_seq_ev_schedule_tick(&evt, queue, 0, 0);
-    while (snd_seq_event_output(song->seq, &evt) == -EAGAIN)
+    while (ALSA_snd_seq_event_output(song->seq, &evt) == -EAGAIN)
         ;
 }
 
@@ -398,7 +543,7 @@ static SDL_INLINE void send_volume_sysex(const NativeMidiSong *song, const unsig
     snd_seq_ev_set_dest(&evt, song->dstaddr.client, song->dstaddr.port);
     snd_seq_ev_set_direct(&evt);
     snd_seq_ev_set_sysex(&evt, sizeof(vol_sysex), vol_sysex);
-    snd_seq_event_output_direct(song->seq, &evt);
+    ALSA_snd_seq_event_output_direct(song->seq, &evt);
 }
 
 /* Sequencer queue control */
@@ -408,7 +553,7 @@ static SDL_INLINE void stop_queue(const NativeMidiSong *song, const int queue)
     snd_seq_ev_clear(&evt);
     snd_seq_ev_set_queue_control(&evt, SND_SEQ_EVENT_STOP, queue, 0);
     snd_seq_ev_set_direct(&evt);
-    snd_seq_event_output_direct(song->seq, &evt);
+    ALSA_snd_seq_event_output_direct(song->seq, &evt);
 }
 
 static SDL_INLINE void continue_queue(const NativeMidiSong *song, const int queue)
@@ -417,7 +562,7 @@ static SDL_INLINE void continue_queue(const NativeMidiSong *song, const int queu
     snd_seq_ev_clear(&evt);
     snd_seq_ev_set_queue_control(&evt, SND_SEQ_EVENT_CONTINUE, queue, 0);
     snd_seq_ev_set_direct(&evt);
-    snd_seq_event_output_direct(song->seq, &evt);
+    ALSA_snd_seq_event_output_direct(song->seq, &evt);
 }
 
 /* Playback thread */
@@ -428,7 +573,7 @@ static int native_midi_player_thread(void *d)
     NativeMidiSong *song = d;
     MIDIEvent *event = song->evtlist;
 
-    int queue = snd_seq_alloc_named_queue(song->seq, "SDL_Mixer Playback");
+    int queue = ALSA_snd_seq_alloc_named_queue(song->seq, "SDL_Mixer Playback");
     snd_seq_start_queue(song->seq, queue, NULL);
 
     /* Prepare main sequencer event */
@@ -442,15 +587,15 @@ static int native_midi_player_thread(void *d)
         .fd = song->threadsock,
         .events = POLLIN,
     } };
-    snd_seq_poll_descriptors(song->seq, pfds + 1, 1, POLLIN | POLLOUT);
-    snd_seq_nonblock(song->seq, 1);
+    ALSA_snd_seq_poll_descriptors(song->seq, pfds + 1, 1, POLLIN | POLLOUT);
+    ALSA_snd_seq_nonblock(song->seq, 1);
 
     /* Set initial queue tempo and ppqn */
     snd_seq_queue_tempo_t *tempo;
     snd_seq_queue_tempo_alloca(&tempo);
-    snd_seq_queue_tempo_set_tempo(tempo, 500000);
-    snd_seq_queue_tempo_set_ppq(tempo, song->ppqn);
-    snd_seq_set_queue_tempo(song->seq, queue, tempo);
+    ALSA_snd_seq_queue_tempo_set_tempo(tempo, 500000);
+    ALSA_snd_seq_queue_tempo_set_ppq(tempo, song->ppqn);
+    ALSA_snd_seq_set_queue_tempo(song->seq, queue, tempo);
 
     /* We use this to know when the track has finished playing */
     enqueue_echo_event(song, queue);
@@ -501,7 +646,7 @@ static int native_midi_player_thread(void *d)
         if (pfds[1].revents & POLLIN) {
             snd_seq_event_t *revt;
             /* Make sure we read an echo event, and that it came from us */
-            if (snd_seq_event_input(song->seq, &revt) >= 0 && revt->type == SND_SEQ_EVENT_ECHO && revt->source.client == snd_seq_client_id(song->seq) && revt->source.port == song->srcport)
+            if (ALSA_snd_seq_event_input(song->seq, &revt) >= 0 && revt->type == SND_SEQ_EVENT_ECHO && revt->source.client == ALSA_snd_seq_client_id(song->seq) && revt->source.port == song->srcport)
                 playback_finished = true;
         }
 
@@ -532,7 +677,7 @@ static int native_midi_player_thread(void *d)
                 /* If not, keep draining, otherwise we'll never reach the echo event */
                 /* When we finish though, prevent any "ready to write to alsa" polls */
                 MIDIDbgLog("Draining output!");
-                if (snd_seq_drain_output(song->seq) == 0)
+                if (ALSA_snd_seq_drain_output(song->seq) == 0)
                     pfds[1].events &= ~POLLOUT;
                 continue;
             }
@@ -593,8 +738,8 @@ static int native_midi_player_thread(void *d)
             unhandled = true;
         }
 
-        if (unhandled || snd_seq_event_output(song->seq, &evt) != -EAGAIN) {
-            MIDIDbgLog("%s %"SDL_PRIu32": %hhx %hhx %hhx (extraLen %"SDL_PRIu32")", (unhandled ? "Unhandled" : "Event"), event->time, event->status, event->data[0], event->data[1], event->extraLen);
+        if (unhandled || ALSA_snd_seq_event_output(song->seq, &evt) != -EAGAIN) {
+            MIDIDbgLog("%s %" SDL_PRIu32 ": %hhx %hhx %hhx (extraLen %" SDL_PRIu32 ")", (unhandled ? "Unhandled" : "Event"), event->time, event->status, event->data[0], event->data[1], event->extraLen);
             event = event->next;
         }
     }
@@ -602,24 +747,24 @@ static int native_midi_player_thread(void *d)
     SDL_SetAtomicInt(&song->playerstate, NATIVE_MIDI_STOPPED);
 
     /* Switch back to blocking mode and drop everything */
-    snd_seq_nonblock(song->seq, 0);
-    snd_seq_drop_output(song->seq);
+    ALSA_snd_seq_nonblock(song->seq, 0);
+    ALSA_snd_seq_drop_output(song->seq);
     snd_seq_stop_queue(song->seq, queue, NULL);
-    snd_seq_drain_output(song->seq);
-    snd_seq_free_queue(song->seq, queue);
+    ALSA_snd_seq_drain_output(song->seq);
+    ALSA_snd_seq_free_queue(song->seq, queue);
 
     /* Stop all audio */
     /* Some of these are bound to work */
     snd_seq_ev_set_direct(&evt);
     for (int i = 0; i < MIDI_CHANNELS; i++) {
         snd_seq_ev_set_controller(&evt, i, MIDI_CTL_SUSTAIN, 0);
-        snd_seq_event_output_direct(song->seq, &evt);
+        ALSA_snd_seq_event_output_direct(song->seq, &evt);
         snd_seq_ev_set_controller(&evt, i, MIDI_CTL_ALL_NOTES_OFF, 0);
-        snd_seq_event_output_direct(song->seq, &evt);
+        ALSA_snd_seq_event_output_direct(song->seq, &evt);
         snd_seq_ev_set_controller(&evt, i, MIDI_CTL_RESET_CONTROLLERS, 0);
-        snd_seq_event_output_direct(song->seq, &evt);
+        ALSA_snd_seq_event_output_direct(song->seq, &evt);
         snd_seq_ev_set_controller(&evt, i, MIDI_CTL_ALL_SOUNDS_OFF, 0);
-        snd_seq_event_output_direct(song->seq, &evt);
+        ALSA_snd_seq_event_output_direct(song->seq, &evt);
     }
 
     MIDIDbgLog("Playback thread returns");
