@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////
 //                           **** WAVPACK ****                            //
 //                  Hybrid Lossless Wavefile Compressor                   //
-//                Copyright (c) 1998 - 2022 David Bryant.                 //
+//                Copyright (c) 1998 - 2024 David Bryant.                 //
 //                          All Rights Reserved.                          //
 //      Distributed under the BSD Software License (see license.txt)      //
 ////////////////////////////////////////////////////////////////////////////
@@ -189,6 +189,7 @@ typedef struct {
 #define ID_ALT_MD5_CHECKSUM     (ID_OPTIONAL_DATA | 0x9)
 #define ID_NEW_CONFIG_BLOCK     (ID_OPTIONAL_DATA | 0xa)
 #define ID_CHANNEL_IDENTITIES   (ID_OPTIONAL_DATA | 0xb)
+#define ID_WVX_NEW_BITSTREAM    (ID_OPTIONAL_DATA | ID_WVX_BITSTREAM)
 #define ID_BLOCK_CHECKSUM       (ID_OPTIONAL_DATA | 0xf)
 
 ///////////////////////// WavPack Configuration ///////////////////////////////
@@ -201,7 +202,7 @@ typedef struct {
     float bitrate, shaping_weight;
     int bits_per_sample, bytes_per_sample;
     int qmode, flags, xmode, num_channels, float_norm_exp;
-    int32_t block_samples, extra_flags, sample_rate, channel_mask;
+    int32_t block_samples, worker_threads, sample_rate, channel_mask;
     unsigned char md5_checksum [16], md5_read;
     int num_tag_strings;                // this field is not used
     char **tag_strings;                 // this field is not used
@@ -228,6 +229,7 @@ typedef struct {
 #define CONFIG_MD5_CHECKSUM     0x8000000 // store MD5 signature
 #define CONFIG_MERGE_BLOCKS     0x10000000 // merge blocks of equal redundancy (for lossyWAV)
 #define CONFIG_PAIR_UNDEF_CHANS 0x20000000 // encode undefined channels in stereo pairs
+#define CONFIG_OPTIMIZE_32BIT   0x40000000 // new optimizations for 32-bit integer files
 #define CONFIG_OPTIMIZE_MONO    0x80000000 // optimize for mono streams posing as stereo
 
 // The lower 8 bits of qmode indicate the use of new features in version 5 that (presently)
@@ -327,6 +329,11 @@ WavpackContext *WavpackOpenFileInput (const char *infilename, char *error, int f
 #define OPEN_ALT_TYPES  0x400   // application is aware of alternate file types & qmode
                                 // (just affects retrieving wrappers & MD5 checksums)
 #define OPEN_NO_CHECKSUM 0x800  // don't verify block checksums before decoding
+
+// new for multithreaded
+
+#define OPEN_THREADS_SHFT 12     // specify number of additional worker threads here for
+#define OPEN_THREADS_MASK 0xF000 // decode; 0 to disable, otherwise 1-15 added threads
 
 int WavpackGetMode (WavpackContext *wpc);
 
