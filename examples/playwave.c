@@ -105,8 +105,8 @@ static void report_decoders(void)
 
 /* rcg06192001 Check new Mixer version API. */
 #if (defined TEST_MIX_VERSIONS)
-static void output_versions(const char *libname, const SDL_version *compiled,
-                            const SDL_version *linked)
+static void output_versions(const char *libname, const SDL_Version *compiled,
+                            const SDL_Version *linked)
 {
     SDL_Log("This program was compiled against %s %d.%d.%d,\n"
             " and is dynamically linked to %d.%d.%d.\n", libname,
@@ -116,15 +116,15 @@ static void output_versions(const char *libname, const SDL_version *compiled,
 
 static void test_versions(void)
 {
-    SDL_version compiled;
-    SDL_version linked;
+    SDL_Version compiled;
+    SDL_Version linked;
 
     SDL_VERSION(&compiled);
     SDL_GetVersion(&linked);
     output_versions("SDL", &compiled, &linked);
 
     SDL_MIXER_VERSION(&compiled);
-    SDL_memcpy(&linked, Mix_Linked_Version(), sizeof(SDL_version));
+    SDL_memcpy(&linked, Mix_Linked_Version(), sizeof(SDL_Version));
     output_versions("SDL_mixer", &compiled, &linked);
 }
 #endif

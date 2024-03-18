@@ -87,12 +87,12 @@ typedef struct
     /* Initialize for the audio output */
     int (*Open)(const SDL_AudioSpec *spec);
 
-    /* Create a music object from an SDL_RWops stream
+    /* Create a music object from an SDL_IOStream stream
      * If the function returns NULL, 'src' will be freed if needed by the caller.
      */
-    void *(*CreateFromRW)(SDL_RWops *src, SDL_bool freesrc);
+    void *(*CreateFromIO)(SDL_IOStream *src, SDL_bool closeio);
 
-    /* Create a music object from a file, if SDL_RWops are not supported */
+    /* Create a music object from a file, if SDL_IOStream are not supported */
     void *(*CreateFromFile)(const char *file);
 
     /* Set the volume */
@@ -162,7 +162,7 @@ typedef struct
 
 extern int get_num_music_interfaces(void);
 extern Mix_MusicInterface *get_music_interface(int index);
-extern Mix_MusicType detect_music_type(SDL_RWops *src);
+extern Mix_MusicType detect_music_type(SDL_IOStream *src);
 extern SDL_bool load_music_type(Mix_MusicType type);
 extern SDL_bool open_music_type(Mix_MusicType type);
 extern SDL_bool has_music(Mix_MusicType type);

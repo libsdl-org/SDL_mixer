@@ -140,7 +140,7 @@ typedef struct
 {
     struct mp3file_t mp3file;
     int play_count;
-    SDL_bool freesrc;
+    SDL_bool closeio;
     int volume;
 
     mpg123_handle* handle;
@@ -198,23 +198,23 @@ static char const* mpg_err(mpg123_handle* mpg, int result)
     return err;
 }
 
-/* we're gonna override mpg123's I/O with these wrappers for RWops */
-static MIX_SSIZE_T rwops_read(void* p, void* dst, size_t n)
+/* we're gonna override mpg123's I/O with these wrappers for SDL_IOStream */
+static MIX_SSIZE_T IO_read(void* p, void* dst, size_t n)
 {
     struct mp3file_t *mp3file = (struct mp3file_t *)p;
-    MIX_SSIZE_T r = (MIX_SSIZE_T)MP3_RWread(mp3file, dst, 1, n);
-    if (!r && mp3file->src->status != SDL_RWOPS_STATUS_EOF) {
+    MIX_SSIZE_T r = (MIX_SSIZE_T)MP3_IOread(mp3file, dst, 1, n);
+    if (!r && SDL_GetIOStatus(mp3file->src) != SDL_IO_STATUS_EOF) {
         return -1;
     }
     return r < 0 ? -1 : r;
 }
 
-static off_t rwops_seek(void* p, off_t offset, int whence)
+static off_t IO_seek(void* p, off_t offset, int whence)
 {
-    return (off_t)MP3_RWseek((struct mp3file_t *)p, (Sint64)offset, whence);
+    return (off_t)MP3_IOseek((struct mp3file_t *)p, (Sint64)offset, whence);
 }
 
-static void rwops_cleanup(void* p)
+static void IO_cleanup(void* p)
 {
     (void)p;
     /* do nothing, we will free the file later */
@@ -230,7 +230,7 @@ static int MPG123_Open(const SDL_AudioSpec *spec)
     return 0;
 }
 
-static void *MPG123_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
+static void *MPG123_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
 {
     SDL_AudioSpec srcspec;
     MPG123_Music *music;
@@ -246,7 +246,7 @@ static void *MPG123_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
     }
     music->volume = MIX_MAX_VOLUME;
 
-    if (MP3_RWinit(&music->mp3file, src) < 0) {
+    if (MP3_IOinit(&music->mp3file, src) < 0) {
         SDL_free(music);
         return NULL;
     }
@@ -275,7 +275,7 @@ static void *MPG123_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
 
     result = mpg123.mpg123_replace_reader_handle(
         music->handle,
-        rwops_read, rwops_seek, rwops_cleanup
+        IO_read, IO_seek, IO_cleanup
     );
     if (result != MPG123_OK) {
         Mix_SetError("mpg123_replace_reader_handle: %s", mpg_err(music->handle, result));
@@ -335,7 +335,7 @@ static void *MPG123_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
 
     music->total_length = mpg123.mpg123_length(music->handle);
 
-    music->freesrc = freesrc;
+    music->closeio = closeio;
     return music;
 }
 
@@ -508,8 +508,8 @@ static void MPG123_Delete(void *context)
     if (music->buffer) {
         SDL_free(music->buffer);
     }
-    if (music->freesrc) {
-        SDL_RWclose(music->mp3file.src);
+    if (music->closeio) {
+        SDL_CloseIO(music->mp3file.src);
     }
     SDL_free(music);
 }
@@ -529,7 +529,7 @@ Mix_MusicInterface Mix_MusicInterface_MPG123 =
 
     MPG123_Load,
     MPG123_Open,
-    MPG123_CreateFromRW,
+    MPG123_CreateFromIO,
     NULL,   /* CreateFromFile */
     MPG123_SetVolume,
     MPG123_GetVolume,

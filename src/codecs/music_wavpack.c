@@ -178,9 +178,9 @@ static void WAVPACK_Unload(void)
 
 
 typedef struct {
-    SDL_RWops *src1; /* wavpack file    */
-    SDL_RWops *src2; /* correction file */
-    SDL_bool freesrc;
+    SDL_IOStream *src1; /* wavpack file    */
+    SDL_IOStream *src2; /* correction file */
+    SDL_bool closeio;
     int play_count;
     int volume;
 
@@ -203,28 +203,28 @@ typedef struct {
 
 static int32_t sdl_read_bytes(void *id, void *data, int32_t bcount)
 {
-    return (int32_t)SDL_RWread((SDL_RWops*)id, data, (size_t)bcount);
+    return (int32_t) SDL_ReadIO((SDL_IOStream*)id, data, (size_t)bcount);
 }
 
 static uint32_t sdl_get_pos32(void *id)
 {
-    return (uint32_t)SDL_RWtell((SDL_RWops*)id);
+    return (uint32_t) SDL_TellIO((SDL_IOStream*)id);
 }
 
 static int64_t sdl_get_pos64(void *id)
 {
-    return SDL_RWtell((SDL_RWops*)id);
+    return SDL_TellIO((SDL_IOStream*)id);
 }
 
 static int sdl_setpos_rel64(void *id, int64_t delta, int mode)
 {
-    switch (mode) { /* just in case SDL_RW doesn't match stdio.. */
-    case SEEK_SET: mode = SDL_RW_SEEK_SET; break;
-    case SEEK_CUR: mode = SDL_RW_SEEK_CUR; break;
-    case SEEK_END: mode = SDL_RW_SEEK_END; break;
+    switch (mode) { /* just in case SDL_IO doesn't match stdio.. */
+    case SEEK_SET: mode = SDL_IO_SEEK_SET; break;
+    case SEEK_CUR: mode = SDL_IO_SEEK_CUR; break;
+    case SEEK_END: mode = SDL_IO_SEEK_END; break;
     default: return -1;
     }
-    return (SDL_RWseek((SDL_RWops*)id, delta, mode) < 0)? -1 : 0;
+    return (SDL_SeekIO((SDL_IOStream*)id, delta, mode) < 0)? -1 : 0;
 }
 
 static int sdl_setpos_rel32(void *id, int32_t delta, int mode)
@@ -234,34 +234,34 @@ static int sdl_setpos_rel32(void *id, int32_t delta, int mode)
 
 static int sdl_setpos_abs64(void *id, int64_t pos)
 {
-    return (SDL_RWseek((SDL_RWops*)id, pos, SDL_RW_SEEK_SET) < 0)? -1 : 0;
+    return (SDL_SeekIO((SDL_IOStream*)id, pos, SDL_IO_SEEK_SET) < 0)? -1 : 0;
 }
 
 static int sdl_setpos_abs32(void *id, uint32_t pos)
 {
-    return (SDL_RWseek((SDL_RWops*)id, pos, SDL_RW_SEEK_SET) < 0)? -1 : 0;
+    return (SDL_SeekIO((SDL_IOStream*)id, pos, SDL_IO_SEEK_SET) < 0)? -1 : 0;
 }
 
 static int sdl_pushback_byte(void *id, int c)
 {
     (void)c;
     /* libwavpack calls ungetc(), but doesn't really modify buffer. */
-    return (SDL_RWseek((SDL_RWops*)id, -1, SDL_RW_SEEK_CUR) < 0)? -1 : 0;
+    return (SDL_SeekIO((SDL_IOStream*)id, -1, SDL_IO_SEEK_CUR) < 0)? -1 : 0;
 }
 
 static uint32_t sdl_get_length32(void *id)
 {
-    return (uint32_t)SDL_RWsize((SDL_RWops*)id);
+    return (uint32_t) SDL_GetIOSize((SDL_IOStream*)id);
 }
 
 static int64_t sdl_get_length64(void *id)
 {
-    return SDL_RWsize((SDL_RWops*)id);
+    return SDL_GetIOSize((SDL_IOStream*)id);
 }
 
 static int sdl_can_seek(void *id)
 {
-    return (SDL_RWseek((SDL_RWops*)id, 0, SDL_RW_SEEK_CUR) < 0)? 0 : 1;
+    return (SDL_SeekIO((SDL_IOStream*)id, 0, SDL_IO_SEEK_CUR) < 0)? 0 : 1;
 }
 
 static WavpackStreamReader sdl_reader32 = {
@@ -290,7 +290,7 @@ static WavpackStreamReader64 sdl_reader64 = {
 
 static int WAVPACK_Seek(void *context, double time);
 static void WAVPACK_Delete(void *context);
-static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, SDL_bool freesrc, SDL_bool *freesrc2);
+static void *WAVPACK_CreateFromIO_internal(SDL_IOStream *src1, SDL_IOStream *src2, SDL_bool closeio, SDL_bool *closeio2);
 
 #ifdef MUSIC_WAVPACK_DSD
 static void *decimation_init(int num_channels, int ratio);
@@ -303,20 +303,20 @@ static void decimation_reset(void *context);
 #define DECIMATION(x) 1
 #endif
 
-static void *WAVPACK_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
+static void *WAVPACK_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
 {
-    return WAVPACK_CreateFromRW_internal(src, NULL, freesrc, NULL);
+    return WAVPACK_CreateFromIO_internal(src, NULL, closeio, NULL);
 }
 
 static void *WAVPACK_CreateFromFile(const char *file)
 {
-    SDL_RWops *src1, *src2;
+    SDL_IOStream *src1, *src2;
     WAVPACK_music *music;
-    SDL_bool freesrc2 = SDL_TRUE;
+    SDL_bool closeio2 = SDL_TRUE;
     size_t len;
     char *file2;
 
-    src1 = SDL_RWFromFile(file, "rb");
+    src1 = SDL_IOFromFile(file, "rb");
     if (!src1) {
         Mix_SetError("Couldn't open '%s'", file);
         return NULL;
@@ -329,7 +329,7 @@ static void *WAVPACK_CreateFromFile(const char *file)
         SDL_memcpy(file2, file, len);
         file2[len] =  'c';
         file2[len + 1] = '\0';
-        src2 = SDL_RWFromFile(file2, "rb");
+        src2 = SDL_IOFromFile(file2, "rb");
         #if WAVPACK_DBG
         if (src2) {
             SDL_Log("Loaded WavPack correction file %s", file2);
@@ -338,18 +338,18 @@ static void *WAVPACK_CreateFromFile(const char *file)
         SDL_stack_free(file2);
     }
 
-    music = WAVPACK_CreateFromRW_internal(src1, src2, SDL_TRUE, &freesrc2);
+    music = WAVPACK_CreateFromIO_internal(src1, src2, SDL_TRUE, &closeio2);
     if (!music) {
-        SDL_RWclose(src1);
-        if (freesrc2 && src2) {
-            SDL_RWclose(src2);
+        SDL_CloseIO(src1);
+        if (closeio2 && src2) {
+            SDL_CloseIO(src2);
         }
     }
     return music;
 }
 
-/* Load a WavPack stream from an SDL_RWops object */
-static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, SDL_bool freesrc, SDL_bool *freesrc2)
+/* Load a WavPack stream from an SDL_IOStream object */
+static void *WAVPACK_CreateFromIO_internal(SDL_IOStream *src1, SDL_IOStream *src2, SDL_bool closeio, SDL_bool *closeio2)
 {
     SDL_AudioSpec srcspec;
     WAVPACK_music *music;
@@ -374,7 +374,7 @@ static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, SDL
         Mix_SetError("%s", err);
         SDL_free(music);
         if (src2) {
-            SDL_RWclose(src2);
+            SDL_CloseIO(src2);
         }
         return NULL;
     }
@@ -387,8 +387,8 @@ static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, SDL
     music->channels = wvpk.WavpackGetNumChannels(music->ctx);
     music->mode = wvpk.WavpackGetMode(music->ctx);
 
-    if (freesrc2) {
-       *freesrc2 = SDL_FALSE; /* WAVPACK_Delete() will free it */
+    if (closeio2) {
+       *closeio2 = SDL_FALSE; /* WAVPACK_Delete() will free it */
     }
 
     #ifdef MUSIC_WAVPACK_DSD
@@ -469,7 +469,7 @@ static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, SDL
     }
     SDL_free(tag);
 
-    music->freesrc = freesrc;
+    music->closeio = closeio;
     return music;
 }
 
@@ -630,10 +630,10 @@ static void WAVPACK_Delete(void *context)
     SDL_free(music->decimation_ctx);
     #endif
     if (music->src2) {
-        SDL_RWclose(music->src2);
+        SDL_CloseIO(music->src2);
     }
-    if (music->freesrc) {
-        SDL_RWclose(music->src1);
+    if (music->closeio) {
+        SDL_CloseIO(music->src1);
     }
     SDL_free(music);
 }
@@ -738,7 +738,7 @@ Mix_MusicInterface Mix_MusicInterface_WAVPACK =
 
     WAVPACK_Load,
     NULL,   /* Open */
-    WAVPACK_CreateFromRW,
+    WAVPACK_CreateFromIO,
     WAVPACK_CreateFromFile,
     WAVPACK_SetVolume,
     WAVPACK_GetVolume,

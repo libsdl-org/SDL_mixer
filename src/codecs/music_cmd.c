@@ -277,7 +277,7 @@ Mix_MusicInterface Mix_MusicInterface_CMD =
 
     NULL,   /* Load */
     NULL,   /* Open */
-    NULL,   /* CreateFromRW */
+    NULL,   /* CreateFromIO */
     MusicCMD_CreateFromFile,
     NULL,   /* SetVolume */
     NULL,   /* GetVolume */

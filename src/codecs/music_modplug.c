@@ -164,8 +164,8 @@ static int MODPLUG_Open(const SDL_AudioSpec *spec)
     return 0;
 }
 
-/* Load a modplug stream from an SDL_RWops object */
-void *MODPLUG_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
+/* Load a modplug stream from an SDL_IOStream object */
+void *MODPLUG_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
 {
     SDL_AudioSpec srcspec;
     MODPLUG_Music *music;
@@ -196,7 +196,7 @@ void *MODPLUG_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
         return NULL;
     }
 
-    buffer = SDL_LoadFile_RW(src, &size, SDL_FALSE);
+    buffer = SDL_LoadFile_IO(src, &size, SDL_FALSE);
     if (buffer) {
         music->file = modplug.ModPlug_Load(buffer, (int)size);
         if (!music->file) {
@@ -213,8 +213,8 @@ void *MODPLUG_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
     meta_tags_init(&music->tags);
     meta_tags_set(&music->tags, MIX_META_TITLE, modplug.ModPlug_GetName(music->file));
 
-    if (freesrc) {
-        SDL_RWclose(src);
+    if (closeio) {
+        SDL_CloseIO(src);
     }
     return music;
 }
@@ -358,7 +358,7 @@ Mix_MusicInterface Mix_MusicInterface_MODPLUG =
 
     MODPLUG_Load,
     MODPLUG_Open,
-    MODPLUG_CreateFromRW,
+    MODPLUG_CreateFromIO,
     NULL,   /* CreateFromFile */
     MODPLUG_SetVolume,
     MODPLUG_GetVolume,

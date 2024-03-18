@@ -103,8 +103,8 @@ static void OPUS_Unload(void)
 
 
 typedef struct {
-    SDL_RWops *src;
-    SDL_bool freesrc;
+    SDL_IOStream *src;
+    SDL_bool closeio;
     int play_count;
     int volume;
     OggOpusFile *of;
@@ -150,17 +150,17 @@ static int set_op_error(const char *function, int error)
 
 static int sdl_read_func(void *datasource, unsigned char *ptr, int size)
 {
-    return (int)SDL_RWread((SDL_RWops*)datasource, ptr, (size_t)size);
+    return (int) SDL_ReadIO((SDL_IOStream*)datasource, ptr, (size_t)size);
 }
 
 static int sdl_seek_func(void *datasource, opus_int64 offset, int whence)
 {
-    return (SDL_RWseek((SDL_RWops*)datasource, offset, whence) < 0)? -1 : 0;
+    return (SDL_SeekIO((SDL_IOStream*)datasource, offset, whence) < 0)? -1 : 0;
 }
 
 static opus_int64 sdl_tell_func(void *datasource)
 {
-    return SDL_RWtell((SDL_RWops*)datasource);
+    return SDL_TellIO((SDL_IOStream*)datasource);
 }
 
 static int OPUS_Seek(void*, double);
@@ -207,8 +207,8 @@ static int OPUS_UpdateSection(OPUS_music *music)
     return 0;
 }
 
-/* Load an Opus stream from an SDL_RWops object */
-static void *OPUS_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
+/* Load an Opus stream from an SDL_IOStream object */
+static void *OPUS_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
 {
     OPUS_music *music;
     OpusFileCallbacks callbacks;
@@ -309,7 +309,7 @@ static void *OPUS_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
     }
 
     music->full_length = full_length;
-    music->freesrc = freesrc;
+    music->closeio = closeio;
     return music;
 }
 
@@ -488,8 +488,8 @@ static void OPUS_Delete(void *context)
     if (music->buffer) {
         SDL_free(music->buffer);
     }
-    if (music->freesrc) {
-        SDL_RWclose(music->src);
+    if (music->closeio) {
+        SDL_CloseIO(music->src);
     }
     SDL_free(music);
 }
@@ -504,7 +504,7 @@ Mix_MusicInterface Mix_MusicInterface_Opus =
 
     OPUS_Load,
     NULL,   /* Open */
-    OPUS_CreateFromRW,
+    OPUS_CreateFromIO,
     NULL,   /* CreateFromFile */
     OPUS_SetVolume,
     OPUS_GetVolume,

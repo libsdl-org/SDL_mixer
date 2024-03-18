@@ -27,9 +27,9 @@
 #include "native_midi/native_midi.h"
 
 
-static void *NATIVEMIDI_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
+static void *NATIVEMIDI_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
 {
-    NativeMidiSong *music = native_midi_loadsong_RW(src, freesrc);
+    NativeMidiSong *music = native_midi_loadsong_IO(src, closeio);
     if (!music) {
         Mix_SetError("%s", native_midi_error());
     }
@@ -93,7 +93,7 @@ Mix_MusicInterface Mix_MusicInterface_NATIVEMIDI =
 
     NULL,   /* Load */
     NULL,   /* Open */
-    NATIVEMIDI_CreateFromRW,
+    NATIVEMIDI_CreateFromIO,
     NULL,   /* CreateFromFile */
     NATIVEMIDI_SetVolume,
     NULL,   /* GetVolume */

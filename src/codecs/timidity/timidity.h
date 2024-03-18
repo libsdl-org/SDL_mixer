@@ -34,8 +34,8 @@ typedef struct {
   float
     volume;
   sample_t *data;
-  Sint32 
-    tremolo_sweep_increment, tremolo_phase_increment, 
+  Sint32
+    tremolo_sweep_increment, tremolo_phase_increment,
     vibrato_sweep_increment, vibrato_control_ratio;
   Uint8
     tremolo_depth, vibrato_depth,
@@ -46,7 +46,7 @@ typedef struct {
 
 typedef struct {
   int
-    bank, program, volume, sustain, panning, pitchbend, expression, 
+    bank, program, volume, sustain, panning, pitchbend, expression,
     mono, /* one note only on this channel -- not implemented yet */
     pitchsens;
   /* chorus, reverb... Coming soon to a 300-MHz, eight-way superscalar
@@ -66,7 +66,7 @@ typedef struct {
     tremolo_sweep, tremolo_sweep_position,
     tremolo_phase, tremolo_phase_increment,
     vibrato_sweep, vibrato_sweep_position;
-  
+
   final_volume_t left_mix, right_mix;
 
   float
@@ -108,7 +108,7 @@ typedef struct _MidiEventList {
 typedef struct {
     int oom; /* malloc() failed */
     int playing;
-    SDL_RWops *rw;
+    SDL_IOStream *io;
     Sint32 rate;
     Sint32 encoding;
     float master_volume;
@@ -151,7 +151,7 @@ extern int Timidity_Init(const char *config_file);
 extern int Timidity_Init_NoConfig(void);
 extern void Timidity_SetVolume(MidiSong *song, int volume);
 extern int Timidity_PlaySome(MidiSong *song, void *stream, Sint32 len);
-extern MidiSong *Timidity_LoadSong(SDL_RWops *rw, SDL_AudioSpec *audio);
+extern MidiSong *Timidity_LoadSong(SDL_IOStream *io, SDL_AudioSpec *audio);
 extern void Timidity_Start(MidiSong *song);
 extern void Timidity_Seek(MidiSong *song, Uint32 ms);
 extern Uint32 Timidity_GetSongLength(MidiSong *song); /* returns millseconds */

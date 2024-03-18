@@ -20,8 +20,8 @@
 
   This is the source needed to decode an AIFF file into a waveform.
   It's pretty straightforward once you get going. The only
-  externally-callable function is Mix_LoadAIFF_RW(), which is meant to
-  act as identically to SDL_LoadWAV_RW() as possible.
+  externally-callable function is Mix_LoadAIFF_IO(), which is meant to
+  act as identically to SDL_LoadWAV_IO() as possible.
 
   This file by Torbjörn Andersson (torbjorn.andersson@eurotime.se)
   8SVX file support added by Marc Le Douarain (mavati@club-internet.fr)
@@ -60,10 +60,10 @@ static Uint32 SANE_to_Uint32 (Uint8 *sanebuf)
         | (sanebuf[5] >> 1)) >> (29 - sanebuf[1]);
 }
 
-/* This function is based on SDL_LoadWAV_RW(). */
+/* This function is based on SDL_LoadWAV_IO(). */
 
-SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, SDL_bool freesrc,
-    SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
+SDL_AudioSpec *Mix_LoadAIFF_IO (SDL_IOStream *src, SDL_bool closeio,
+                                SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
 {
     int found_SSND;
     int found_COMM;
@@ -145,7 +145,7 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, SDL_bool freesrc,
             !SDL_ReadU32BE(src, &chunk_length)) {
             goto done;
         }
-        next_chunk  = SDL_RWtell(src) + chunk_length;
+        next_chunk  = SDL_TellIO(src) + chunk_length;
 
         /* Paranoia to avoid infinite loops */
         if (chunk_length == 0) {
@@ -159,7 +159,7 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, SDL_bool freesrc,
                     !SDL_ReadU32BE(src, &blocksize)) {
                     goto done;
                 }
-                start = SDL_RWtell(src) + offset;
+                start = SDL_TellIO(src) + offset;
                 (void)blocksize; /* unused. */
                 break;
 
@@ -170,7 +170,7 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, SDL_bool freesrc,
                     !SDL_ReadU16BE(src, &samplesize)) {
                     goto done;
                 }
-                if (SDL_RWread(src, sane_freq, sizeof(sane_freq)) != sizeof(sane_freq)) {
+                if (SDL_ReadIO(src, sane_freq, sizeof(sane_freq)) != sizeof(sane_freq)) {
                     Mix_SetError("Bad AIFF sample frequency");
                     goto done;
                 }
@@ -197,7 +197,7 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, SDL_bool freesrc,
             case BODY:
                 found_BODY  = 1;
                 numsamples  = chunk_length;
-                start       = SDL_RWtell(src);
+                start       = SDL_TellIO(src);
                 break;
 
             default:
@@ -208,7 +208,7 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, SDL_bool freesrc,
             next_chunk++;
     } while ((((AIFFmagic == AIFF) && (!found_SSND || !found_COMM))
           || ((AIFFmagic == _8SVX) && (!found_VHDR || !found_BODY)))
-          && SDL_RWseek(src, next_chunk, SDL_RW_SEEK_SET) != 1);
+          && SDL_SeekIO(src, next_chunk, SDL_IO_SEEK_SET) != 1);
 
     if ((AIFFmagic == AIFF) && !found_SSND) {
         Mix_SetError("Bad AIFF (no SSND chunk)");
@@ -252,8 +252,8 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, SDL_bool freesrc,
         Mix_OutOfMemory();
         goto done;
     }
-    SDL_RWseek(src, start, SDL_RW_SEEK_SET);
-    if (SDL_RWread(src, *audio_buf, *audio_len) != *audio_len) {
+    SDL_SeekIO(src, start, SDL_IO_SEEK_SET);
+    if (SDL_ReadIO(src, *audio_buf, *audio_len) != *audio_len) {
         Mix_SetError("Unable to read audio data");
         goto done;
     }
@@ -264,8 +264,8 @@ SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, SDL_bool freesrc,
     was_error = SDL_FALSE;
 
 done:
-    if (freesrc && src) {
-        SDL_RWclose(src);
+    if (closeio && src) {
+        SDL_CloseIO(src);
     }
     if (was_error) {
         if (audio_buf && *audio_buf) {

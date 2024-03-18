@@ -11,7 +11,7 @@
 #ifndef TIMIDITY_COMMON_H
 #define TIMIDITY_COMMON_H
 
-extern SDL_RWops *timi_openfile(const char *name);
+extern SDL_IOStream *timi_openfile(const char *name);
 
 /* pathlist funcs only to be used during Timidity_Init/Timidity_Exit */
 extern int timi_add_pathlist(const char *s, size_t len);

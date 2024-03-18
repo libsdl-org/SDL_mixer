@@ -83,7 +83,7 @@ static void TIMIDITY_Close(void)
     Timidity_Exit();
 }
 
-void *TIMIDITY_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
+void *TIMIDITY_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
 {
     TIMIDITY_Music *music;
     SDL_AudioSpec spec;
@@ -124,8 +124,8 @@ void *TIMIDITY_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
         }
     }
 
-    if (freesrc) {
-        SDL_RWclose(src);
+    if (closeio) {
+        SDL_CloseIO(src);
     }
     return music;
 }
@@ -265,7 +265,7 @@ Mix_MusicInterface Mix_MusicInterface_TIMIDITY =
 
     NULL,   /* Load */
     TIMIDITY_Open,
-    TIMIDITY_CreateFromRW,
+    TIMIDITY_CreateFromIO,
     NULL,   /* CreateFromFile */
     TIMIDITY_SetVolume,
     TIMIDITY_GetVolume,

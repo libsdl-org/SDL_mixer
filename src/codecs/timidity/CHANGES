@@ -2,7 +2,7 @@ This version of TiMidity should contain all the fixes from the
 September 25 2003 SDL_mixer CVS snapshot. In addition, I've made some
 changes of my own, e.g.:
 
-* All file access is done through SDL_RWops. This means the MIDI
+* All file access is done through SDL_IOStream. This means the MIDI
   stream no longer has to be a file. (The config file and instruments
   still have to be though.)
 

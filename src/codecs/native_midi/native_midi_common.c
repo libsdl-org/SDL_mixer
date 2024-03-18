@@ -260,7 +260,7 @@ static MIDIEvent *MIDItoStream(MIDIFile *mididata)
     return currentEvent;
 }
 
-static int ReadMIDIFile(MIDIFile *mididata, SDL_RWops *src)
+static int ReadMIDIFile(MIDIFile *mididata, SDL_IOStream *src)
 {
     int i = 0;
     Uint32 ID = 0;
@@ -277,12 +277,12 @@ static int ReadMIDIFile(MIDIFile *mididata, SDL_RWops *src)
     }
 
     /* Make sure this is really a MIDI file */
-    if (SDL_RWread(src, &ID, 4) != 4) {
+    if (SDL_ReadIO(src, &ID, 4) != 4) {
         return 0;
     }
     if (BE_LONG(ID) == RIFF_MAGIC) {
-        SDL_RWseek(src, 16, SDL_RW_SEEK_CUR);
-        if (SDL_RWread(src, &ID, 4) != 4) {
+        SDL_SeekIO(src, 16, SDL_IO_SEEK_CUR);
+        if (SDL_ReadIO(src, &ID, 4) != 4) {
             return 0;
         }
     }
@@ -291,7 +291,7 @@ static int ReadMIDIFile(MIDIFile *mididata, SDL_RWops *src)
     }
 
     /* Header size must be 6 */
-    if (SDL_RWread(src, &size, 4) != 4) {
+    if (SDL_ReadIO(src, &size, 4) != 4) {
         return 0;
     }
     size = BE_LONG(size);
@@ -300,7 +300,7 @@ static int ReadMIDIFile(MIDIFile *mididata, SDL_RWops *src)
     }
 
     /* We only support format 0 and 1, but not 2 */
-    if (SDL_RWread(src, &format, 2) != 2) {
+    if (SDL_ReadIO(src, &format, 2) != 2) {
         return 0;
     }
     format = BE_SHORT(format);
@@ -308,7 +308,7 @@ static int ReadMIDIFile(MIDIFile *mididata, SDL_RWops *src)
         return 0;
     }
 
-    if (SDL_RWread(src, &tracks, 2) != 2) {
+    if (SDL_ReadIO(src, &tracks, 2) != 2) {
         return 0;
     }
     tracks = BE_SHORT(tracks);
@@ -322,16 +322,16 @@ static int ReadMIDIFile(MIDIFile *mididata, SDL_RWops *src)
     }
 
     /* Retrieve the PPQN value, needed for playback */
-    if (SDL_RWread(src, &division, 2) != 2) {
+    if (SDL_ReadIO(src, &division, 2) != 2) {
         goto bail;
     }
     mididata->division = BE_SHORT(division);
 
     for (i = 0; i < tracks; i++) {
-        if (SDL_RWread(src, &ID, 4) != 4) {  /* We might want to verify this is MTrk... */
+        if (SDL_ReadIO(src, &ID, 4) != 4) {  /* We might want to verify this is MTrk... */
             goto bail;
         }
-        if (SDL_RWread(src, &size, 4) != 4) {
+        if (SDL_ReadIO(src, &size, 4) != 4) {
             goto bail;
         }
         size = BE_LONG(size);
@@ -341,7 +341,7 @@ static int ReadMIDIFile(MIDIFile *mididata, SDL_RWops *src)
             Mix_OutOfMemory();
             goto bail;
         }
-        if (SDL_RWread(src, mididata->track[i].data, size) != size) {
+        if (SDL_ReadIO(src, mididata->track[i].data, size) != size) {
             goto bail;
         }
     }
@@ -358,7 +358,7 @@ bail:
     return 0;
 }
 
-MIDIEvent *CreateMIDIEventList(SDL_RWops *src, Uint16 *division)
+MIDIEvent *CreateMIDIEventList(SDL_IOStream *src, Uint16 *division)
 {
     MIDIFile *mididata = NULL;
     MIDIEvent *eventList;

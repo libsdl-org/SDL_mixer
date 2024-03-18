@@ -32,7 +32,7 @@
 typedef struct {
     struct mp3file_t file;
     int play_count;
-    int freesrc;
+    int closeio;
     mp3dec_ex_t dec;
     mp3dec_io_t io;
     int volume;
@@ -50,13 +50,13 @@ typedef struct {
 static size_t MiniMP3_ReadCB(void *buf, size_t size, void *context)
 {
     MiniMP3_Music *music = (MiniMP3_Music *)context;
-    return MP3_RWread(&music->file, buf, 1, size);
+    return MP3_IOread(&music->file, buf, 1, size);
 }
 
 static int MiniMP3_SeekCB(uint64_t position, void *context)
 {
     MiniMP3_Music *music = (MiniMP3_Music *)context;
-    if (MP3_RWseek(&music->file, position, SDL_RW_SEEK_SET) < 0) {
+    if (MP3_IOseek(&music->file, position, SDL_IO_SEEK_SET) < 0) {
         return -1;
     }
     return 0;
@@ -64,7 +64,7 @@ static int MiniMP3_SeekCB(uint64_t position, void *context)
 
 static int MINIMP3_Seek(void *context, double position);
 
-static void *MINIMP3_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
+static void *MINIMP3_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
 {
     MiniMP3_Music *music;
     SDL_AudioSpec file_spec;
@@ -76,7 +76,7 @@ static void *MINIMP3_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
     }
     music->volume = MIX_MAX_VOLUME;
 
-    if (MP3_RWinit(&music->file, src) < 0) {
+    if (MP3_IOinit(&music->file, src) < 0) {
         SDL_free(music);
         return NULL;
     }
@@ -93,7 +93,7 @@ static void *MINIMP3_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
     music->io.seek = MiniMP3_SeekCB;
     music->io.seek_data = music;
 
-    MP3_RWseek(&music->file, 0, SDL_RW_SEEK_SET);
+    MP3_IOseek(&music->file, 0, SDL_IO_SEEK_SET);
 
     if (mp3dec_ex_open_cb(&music->dec, &music->io, MP3D_SEEK_TO_SAMPLE) != 0) {
         mp3dec_ex_close(&music->dec);
@@ -124,7 +124,7 @@ static void *MINIMP3_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
         return NULL;
     }
 
-    music->freesrc = freesrc;
+    music->closeio = closeio;
     return music;
 }
 
@@ -243,8 +243,8 @@ static void MINIMP3_Delete(void *context)
     if (music->buffer) {
         SDL_free(music->buffer);
     }
-    if (music->freesrc) {
-        SDL_RWclose(music->file.src);
+    if (music->closeio) {
+        SDL_CloseIO(music->file.src);
     }
     SDL_free(music);
 }
@@ -259,7 +259,7 @@ Mix_MusicInterface Mix_MusicInterface_MINIMP3 =
 
     NULL,   /* Load */
     NULL,   /* Open */
-    MINIMP3_CreateFromRW,
+    MINIMP3_CreateFromIO,
     NULL,   /* CreateFromFile */
     MINIMP3_SetVolume,
     MINIMP3_GetVolume,

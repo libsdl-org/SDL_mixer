@@ -19,8 +19,8 @@
   3. This notice may not be removed or altered from any source distribution.
 
   This is the source needed to decode a file in any format supported by
-  libsndfile. The only externally-callable function is Mix_LoadSndFile_RW(),
-  which is meant to act as identically to SDL_LoadWAV_RW() as possible.
+  libsndfile. The only externally-callable function is Mix_LoadSndFile_IO(),
+  which is meant to act as identically to SDL_LoadWAV_IO() as possible.
 
   This file by Fabian Greffrath (fabian@greffrath.com).
 */
@@ -95,30 +95,30 @@ void SNDFILE_uninit (void)
 
 static sf_count_t sfvio_size(void *user_data)
 {
-    SDL_RWops *RWops = user_data;
-    return SDL_RWsize(RWops);
+    SDL_IOStream *io = user_data;
+    return SDL_GetIOSize(io);
 }
 
 static sf_count_t sfvio_seek(sf_count_t offset, int whence, void *user_data)
 {
-    SDL_RWops *RWops = user_data;
-    return SDL_RWseek(RWops, offset, whence);
+    SDL_IOStream *io = user_data;
+    return SDL_SeekIO(io, offset, whence);
 }
 
 static sf_count_t sfvio_read(void *ptr, sf_count_t count, void *user_data)
 {
-    SDL_RWops *RWops = user_data;
-    return SDL_RWread(RWops, ptr, count);
+    SDL_IOStream *io = user_data;
+    return SDL_ReadIO(io, ptr, count);
 }
 
 static sf_count_t sfvio_tell(void *user_data)
 {
-    SDL_RWops *RWops = user_data;
-    return SDL_RWtell(RWops);
+    SDL_IOStream *io = user_data;
+    return SDL_TellIO(io);
 }
 
-SDL_AudioSpec *Mix_LoadSndFile_RW (SDL_RWops *src, SDL_bool freesrc,
-        SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
+SDL_AudioSpec *Mix_LoadSndFile_IO (SDL_IOStream *src, SDL_bool closeio,
+                                   SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
 {
     SDL_bool was_error = SDL_TRUE;
     SNDFILE *sndfile = NULL;
@@ -207,8 +207,8 @@ done:
     if (sndfile) {
         SF_sf_close(sndfile);
     }
-    if (freesrc && src) {
-        SDL_RWclose(src);
+    if (closeio && src) {
+        SDL_CloseIO(src);
     }
     if (was_error) {
         if (audio_buf && *audio_buf) {
@@ -225,11 +225,11 @@ done:
 
 #else
 
-SDL_AudioSpec *Mix_LoadSndFile_RW (SDL_RWops *src, SDL_bool freesrc,
-        SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
+SDL_AudioSpec *Mix_LoadSndFile_IO (SDL_IOStream *src, SDL_bool closeio,
+                                   SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
 {
     (void) src;
-    (void) freesrc;
+    (void) closeio;
     (void) spec;
     (void) audio_buf;
     (void) audio_len;
