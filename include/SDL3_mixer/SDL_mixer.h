@@ -442,15 +442,16 @@ extern DECLSPEC Mix_Chunk * SDLCALL Mix_LoadWAV_IO(SDL_IOStream *src, SDL_bool c
  * fly. Also, crucially, there are as many channels for chunks as the app can
  * allocate, but SDL_mixer only offers a single "music" channel.
  *
- * If you would rather use the abstract SDL_IOStream interface to load data from
- * somewhere other than the filesystem, you can use Mix_LoadWAV_IO() instead.
+ * If you would rather use the abstract SDL_IOStream interface to load data
+ * from somewhere other than the filesystem, you can use Mix_LoadWAV_IO()
+ * instead.
  *
  * When done with a chunk, the app should dispose of it with a call to
  * Mix_FreeChunk().
  *
  * Note that before SDL_mixer 3.0.0, this function was a macro that called
- * Mix_LoadWAV_IO(), creating a IOStream and setting `closeio` to SDL_TRUE. This
- * macro has since been promoted to a proper API function. Older binaries
+ * Mix_LoadWAV_IO(), creating a IOStream and setting `closeio` to SDL_TRUE.
+ * This macro has since been promoted to a proper API function. Older binaries
  * linked against a newer SDL_mixer will still call Mix_LoadWAV_IO directly,
  * as they are using the macro, which was available since the dawn of time.
  *
