@@ -63,7 +63,7 @@ static void CleanUp(int exitcode)
 
 static void Usage(char *argv0)
 {
-    SDL_Log("Usage: %s [-i] [-l] [-8] [-f32] [-r rate] [-c channels] [-b buffers] [-v N] [-rwops] <musicfile>\n", argv0);
+    SDL_Log("Usage: %s [-i] [-l] [-8] [-f32] [-r rate] [-c channels] [-b buffers] [-v N] [-io] <musicfile>\n", argv0);
 }
 
 /*#define SEEK_TEST */
@@ -114,8 +114,8 @@ int main(int argc, char *argv[])
 {
     int audio_volume = MIX_MAX_VOLUME;
     int looping = 0;
-    int interactive = 0;
-    int rwops = 0;
+    SDL_bool interactive = SDL_FALSE;
+    SDL_bool use_io = SDL_FALSE;
     int i;
     const char *typ;
     const char *tag_title = NULL;
@@ -157,7 +157,7 @@ int main(int argc, char *argv[])
             looping = -1;
         } else
         if (SDL_strcmp(argv[i], "-i") == 0) {
-            interactive = 1;
+            interactive = SDL_TRUE;
         } else
         if (SDL_strcmp(argv[i], "-8") == 0) {
             spec.format = SDL_AUDIO_U8;
@@ -165,8 +165,8 @@ int main(int argc, char *argv[])
         if (SDL_strcmp(argv[i], "-f32") == 0) {
             spec.format = SDL_AUDIO_F32;
         } else
-        if (SDL_strcmp(argv[i], "-rwops") == 0) {
-            rwops = 1;
+        if (SDL_strcmp(argv[i], "-io") == 0) {
+            use_io = 1;
         } else {
             Usage(argv[0]);
             return 1;
@@ -211,8 +211,8 @@ int main(int argc, char *argv[])
         next_track = 0;
 
         /* Load the requested music file */
-        if (rwops) {
-            music = Mix_LoadMUS_RW(SDL_RWFromFile(argv[i], "rb"), SDL_TRUE);
+        if (use_io) {
+            music = Mix_LoadMUS_IO(SDL_IOFromFile(argv[i], "rb"), SDL_TRUE);
         } else {
             music = Mix_LoadMUS(argv[i]);
         }

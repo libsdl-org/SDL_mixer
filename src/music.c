@@ -549,15 +549,15 @@ SDL_bool has_music(Mix_MusicType type)
     return SDL_FALSE;
 }
 
-Mix_MusicType detect_music_type(SDL_RWops *src)
+Mix_MusicType detect_music_type(SDL_IOStream *src)
 {
     Uint8 magic[12];
 
-    if (SDL_RWread(src, magic, 12) != 12) {
+    if (SDL_ReadIO(src, magic, 12) != 12) {
         Mix_SetError("Couldn't read first 12 bytes of audio data");
         return MUS_NONE;
     }
-    SDL_RWseek(src, -12, SDL_RW_SEEK_CUR);
+    SDL_SeekIO(src, -12, SDL_IO_SEEK_CUR);
 
     /* WAVE files have the magic four bytes "RIFF"
        AIFF files have the magic 12 bytes "FORM" XXXX "AIFF" */
@@ -568,9 +568,9 @@ Mix_MusicType detect_music_type(SDL_RWops *src)
 
     /* Ogg Vorbis files have the magic four bytes "OggS" */
     if (SDL_memcmp(magic, "OggS", 4) == 0) {
-        SDL_RWseek(src, 28, SDL_RW_SEEK_CUR);
-        SDL_RWread(src, magic, 8);
-        SDL_RWseek(src,-36, SDL_RW_SEEK_CUR);
+        SDL_SeekIO(src, 28, SDL_IO_SEEK_CUR);
+        SDL_ReadIO(src, magic, 8);
+        SDL_SeekIO(src,-36, SDL_IO_SEEK_CUR);
         if (SDL_memcmp(magic, "OpusHead", 8) == 0) {
             return MUS_OPUS;
         }
@@ -647,7 +647,7 @@ Mix_Music *Mix_LoadMUS(const char *file)
     void *context;
     char *ext;
     Mix_MusicType type;
-    SDL_RWops *src;
+    SDL_IOStream *src;
 
     for (i = 0; i < get_num_music_interfaces(); ++i) {
         Mix_MusicInterface *interface = s_music_interfaces[i];
@@ -672,7 +672,7 @@ Mix_Music *Mix_LoadMUS(const char *file)
         }
     }
 
-    src = SDL_RWFromFile(file, "rb");
+    src = SDL_IOFromFile(file, "rb");
     if (src == NULL) {
         Mix_SetError("Couldn't open '%s'", file);
         return NULL;
@@ -733,33 +733,33 @@ Mix_Music *Mix_LoadMUS(const char *file)
             type = MUS_GME;
         }
     }
-    return Mix_LoadMUSType_RW(src, type, SDL_TRUE);
+    return Mix_LoadMUSType_IO(src, type, SDL_TRUE);
 }
 
-Mix_Music *Mix_LoadMUS_RW(SDL_RWops *src, SDL_bool freesrc)
+Mix_Music *Mix_LoadMUS_IO(SDL_IOStream *src, SDL_bool closeio)
 {
-    return Mix_LoadMUSType_RW(src, MUS_NONE, freesrc);
+    return Mix_LoadMUSType_IO(src, MUS_NONE, closeio);
 }
 
-Mix_Music *Mix_LoadMUSType_RW(SDL_RWops *src, Mix_MusicType type, SDL_bool freesrc)
+Mix_Music *Mix_LoadMUSType_IO(SDL_IOStream *src, Mix_MusicType type, SDL_bool closeio)
 {
     int i;
     void *context;
     Sint64 start;
 
     if (!src) {
-        Mix_SetError("RWops pointer is NULL");
+        Mix_SetError("src pointer is NULL");
         return NULL;
     }
-    start = SDL_RWtell(src);
+    start = SDL_TellIO(src);
 
     /* If the caller wants auto-detection, figure out what kind of file
      * this is. */
     if (type == MUS_NONE) {
         if ((type = detect_music_type(src)) == MUS_NONE) {
             /* Don't call Mix_SetError() since detect_music_type() does that. */
-            if (freesrc) {
-                SDL_RWclose(src);
+            if (closeio) {
+                SDL_CloseIO(src);
             }
             return NULL;
         }
@@ -770,11 +770,11 @@ Mix_Music *Mix_LoadMUSType_RW(SDL_RWops *src, Mix_MusicType type, SDL_bool frees
     if (load_music_type(type) && open_music_type(type)) {
         for (i = 0; i < get_num_music_interfaces(); ++i) {
             Mix_MusicInterface *interface = s_music_interfaces[i];
-            if (!interface->opened || type != interface->type || !interface->CreateFromRW) {
+            if (!interface->opened || type != interface->type || !interface->CreateFromIO) {
                 continue;
             }
 
-            context = interface->CreateFromRW(src, freesrc);
+            context = interface->CreateFromIO(src, closeio);
             if (context) {
                 /* Allocate memory for the music structure */
                 Mix_Music *music = (Mix_Music *)SDL_calloc(1, sizeof(Mix_Music));
@@ -793,17 +793,17 @@ Mix_Music *Mix_LoadMUSType_RW(SDL_RWops *src, Mix_MusicType type, SDL_bool frees
             }
 
             /* Reset the stream for the next decoder */
-            SDL_RWseek(src, start, SDL_RW_SEEK_SET);
+            SDL_SeekIO(src, start, SDL_IO_SEEK_SET);
         }
     }
 
     if (!*Mix_GetError()) {
         Mix_SetError("Unrecognized audio format");
     }
-    if (freesrc) {
-        SDL_RWclose(src);
+    if (closeio) {
+        SDL_CloseIO(src);
     } else {
-        SDL_RWseek(src, start, SDL_RW_SEEK_SET);
+        SDL_SeekIO(src, start, SDL_IO_SEEK_SET);
     }
     return NULL;
 }
@@ -1535,9 +1535,9 @@ const char* Mix_GetSoundFonts(void)
         unsigned i;
 
         for (i = 0; i < SDL_arraysize(s_soundfont_paths); ++i) {
-            SDL_RWops *rwops = SDL_RWFromFile(s_soundfont_paths[i], "rb");
-            if (rwops) {
-                SDL_RWclose(rwops);
+            SDL_IOStream *io = SDL_IOFromFile(s_soundfont_paths[i], "rb");
+            if (io) {
+                SDL_CloseIO(io);
                 return s_soundfont_paths[i];
             }
         }

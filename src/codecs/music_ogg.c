@@ -125,8 +125,8 @@ static void OGG_Unload(void)
 
 
 typedef struct {
-    SDL_RWops *src;
-    SDL_bool freesrc;
+    SDL_IOStream *src;
+    SDL_bool closeio;
     int play_count;
     int volume;
     OggVorbis_File vf;
@@ -171,19 +171,19 @@ static int set_ov_error(const char *function, int error)
 static size_t sdl_read_func(void *ptr, size_t size, size_t nmemb, void *datasource)
 {
     if (size > 0 && nmemb > 0) {
-        return SDL_RWread((SDL_RWops*)datasource, ptr, size * nmemb) / size;
+        return SDL_ReadIO((SDL_IOStream*)datasource, ptr, size * nmemb) / size;
     }
     return 0;
 }
 
 static int sdl_seek_func(void *datasource, ogg_int64_t offset, int whence)
 {
-    return (SDL_RWseek((SDL_RWops*)datasource, offset, whence) < 0)? -1 : 0;
+    return (SDL_SeekIO((SDL_IOStream*)datasource, offset, whence) < 0)? -1 : 0;
 }
 
 static long sdl_tell_func(void *datasource)
 {
-    return (long)SDL_RWtell((SDL_RWops*)datasource);
+    return (long) SDL_TellIO((SDL_IOStream*)datasource);
 }
 
 static int sdl_close_func(void *datasource)
@@ -236,8 +236,8 @@ static int OGG_UpdateSection(OGG_music *music)
     return 0;
 }
 
-/* Load an OGG stream from an SDL_RWops object */
-static void *OGG_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
+/* Load an OGG stream from an SDL_IOStream object */
+static void *OGG_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
 {
     OGG_music *music;
     ov_callbacks callbacks;
@@ -331,7 +331,7 @@ static void *OGG_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
         music->loop = 1;
     }
 
-    music->freesrc = freesrc;
+    music->closeio = closeio;
     return music;
 }
 
@@ -525,8 +525,8 @@ static void OGG_Delete(void *context)
     if (music->buffer) {
         SDL_free(music->buffer);
     }
-    if (music->freesrc) {
-        SDL_RWclose(music->src);
+    if (music->closeio) {
+        SDL_CloseIO(music->src);
     }
     SDL_free(music);
 }
@@ -541,7 +541,7 @@ Mix_MusicInterface Mix_MusicInterface_OGG =
 
     OGG_Load,
     NULL,   /* Open */
-    OGG_CreateFromRW,
+    OGG_CreateFromIO,
     NULL,   /* CreateFromFile */
     OGG_SetVolume,
     OGG_GetVolume,

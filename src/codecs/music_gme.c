@@ -121,7 +121,7 @@ typedef struct
 {
     int play_count;
     Music_Emu* game_emu;
-    SDL_bool freesrc;
+    SDL_bool closeio;
     SDL_bool has_track_length;
     int track_length;
     int intro_length;
@@ -200,7 +200,7 @@ static int initialize_from_track_info(GME_Music *music, int track)
     return 0;
 }
 
-static void *GME_CreateFromRW(struct SDL_RWops *src, SDL_bool freesrc)
+static void *GME_CreateFromIO(struct SDL_IOStream *src, SDL_bool closeio)
 {
     SDL_AudioSpec srcspec;
     void *mem = 0;
@@ -235,8 +235,8 @@ static void *GME_CreateFromRW(struct SDL_RWops *src, SDL_bool freesrc)
         return NULL;
     }
 
-    SDL_RWseek(src, 0, SDL_RW_SEEK_SET);
-    mem = SDL_LoadFile_RW(src, &size, SDL_FALSE);
+    SDL_SeekIO(src, 0, SDL_IO_SEEK_SET);
+    mem = SDL_LoadFile_IO(src, &size, SDL_FALSE);
     if (mem) {
         err = gme.gme_open_data(mem, (long)size, &music->game_emu, music_spec.freq);
         SDL_free(mem);
@@ -273,7 +273,7 @@ static void *GME_CreateFromRW(struct SDL_RWops *src, SDL_bool freesrc)
         return NULL;
     }
 
-    music->freesrc = freesrc;
+    music->closeio = closeio;
     return music;
 }
 
@@ -337,7 +337,7 @@ static void GME_Delete(void *context)
     GME_Music *music = (GME_Music*)context;
     if (music) {
         meta_tags_clear(&music->tags);
-        if (music->game_emu && music->freesrc) {
+        if (music->game_emu && music->closeio) {
             gme.gme_delete(music->game_emu);
             music->game_emu = NULL;
         }
@@ -417,7 +417,7 @@ Mix_MusicInterface Mix_MusicInterface_GME =
 
     GME_Load,
     NULL,   /* Open */
-    GME_CreateFromRW,
+    GME_CreateFromIO,
     NULL,   /* CreateFromFile */
     GME_SetVolume,
     GME_GetVolume,

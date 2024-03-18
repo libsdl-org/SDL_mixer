@@ -68,8 +68,8 @@
 #include "stb_vorbis/stb_vorbis.h"
 
 typedef struct {
-    SDL_RWops *src;
-    SDL_bool freesrc;
+    SDL_IOStream *src;
+    SDL_bool closeio;
     int play_count;
     int volume;
     stb_vorbis *vf;
@@ -162,8 +162,8 @@ static int OGG_UpdateSection(OGG_music *music)
     return 0;
 }
 
-/* Load an OGG stream from an SDL_RWops object */
-static void *OGG_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
+/* Load an OGG stream from an SDL_IOStream object */
+static void *OGG_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
 {
     OGG_music *music;
     stb_vorbis_comment vc;
@@ -180,10 +180,10 @@ static void *OGG_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
     music->volume = MIX_MAX_VOLUME;
     music->section = -1;
 
-    music->vf = stb_vorbis_open_rwops(src, 0, &error, NULL);
+    music->vf = stb_vorbis_open_IO(src, 0, &error, NULL);
 
     if (music->vf == NULL) {
-        set_ov_error("stb_vorbis_open_rwops", error);
+        set_ov_error("stb_vorbis_open_IO", error);
         SDL_free(music);
         return NULL;
     }
@@ -268,7 +268,7 @@ static void *OGG_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
 
     OGG_Seek(music, 0.0);
 
-    music->freesrc = freesrc;
+    music->closeio = closeio;
     return music;
 }
 
@@ -449,8 +449,8 @@ static void OGG_Delete(void *context)
     if (music->buffer) {
         SDL_free(music->buffer);
     }
-    if (music->freesrc) {
-        SDL_RWclose(music->src);
+    if (music->closeio) {
+        SDL_CloseIO(music->src);
     }
     SDL_free(music);
 }
@@ -465,7 +465,7 @@ Mix_MusicInterface Mix_MusicInterface_OGG =
 
     NULL,   /* Load */
     NULL,   /* Open */
-    OGG_CreateFromRW,
+    OGG_CreateFromIO,
     NULL,   /* CreateFromFile */
     OGG_SetVolume,
     OGG_GetVolume,

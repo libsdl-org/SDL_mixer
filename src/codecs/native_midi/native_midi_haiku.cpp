@@ -47,7 +47,7 @@ class MidiEventsStore : public BMidi
     fPlaying = false;
     fLoops = 0;
   }
-  virtual status_t Import(SDL_RWops *src)
+  virtual status_t Import(SDL_IOStream *src)
   {
     fEvs = CreateMIDIEventList(src, &fDivision);
     if (!fEvs) {
@@ -219,7 +219,7 @@ void native_midi_setvolume(int volume)
   synth.SetVolume(volume / 128.0);
 }
 
-NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *src, SDL_bool freesrc)
+NativeMidiSong *native_midi_loadsong_IO(SDL_IOStream *src, SDL_bool closeio)
 {
   NativeMidiSong *song = new NativeMidiSong;
   song->store = new MidiEventsStore;
@@ -234,8 +234,8 @@ NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *src, SDL_bool freesrc)
   }
   else
   {
-    if (freesrc) {
-      SDL_RWclose(src);
+    if (closeio) {
+      SDL_CloseIO(src);
     }
   }
   return song;

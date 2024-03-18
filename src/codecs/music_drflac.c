@@ -51,7 +51,7 @@ typedef struct {
     struct mp3file_t file;
     drflac *dec;
     int play_count;
-    SDL_bool freesrc;
+    SDL_bool closeio;
     int volume;
     int status;
     int sample_rate;
@@ -71,14 +71,14 @@ typedef struct {
 static size_t DRFLAC_ReadCB(void *context, void *buf, size_t size)
 {
     DRFLAC_Music *music = (DRFLAC_Music *)context;
-    return MP3_RWread(&music->file, buf, 1, size);
+    return MP3_IOread(&music->file, buf, 1, size);
 }
 
 static drflac_bool32 DRFLAC_SeekCB(void *context, int offset, drflac_seek_origin origin)
 {
     DRFLAC_Music *music = (DRFLAC_Music *)context;
-    int whence = (origin == drflac_seek_origin_start) ? SDL_RW_SEEK_SET : SDL_RW_SEEK_CUR;
-    if (MP3_RWseek(&music->file, offset, whence) < 0) {
+    int whence = (origin == drflac_seek_origin_start) ? SDL_IO_SEEK_SET : SDL_IO_SEEK_CUR;
+    if (MP3_IOseek(&music->file, offset, whence) < 0) {
         return DRFLAC_FALSE;
     }
     return DRFLAC_TRUE;
@@ -158,7 +158,7 @@ static void DRFLAC_MetaCB(void *context, drflac_metadata *metadata)
 
 static int DRFLAC_Seek(void *context, double position);
 
-static void *DRFLAC_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
+static void *DRFLAC_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
 {
     DRFLAC_Music *music;
     SDL_AudioSpec srcspec;
@@ -170,7 +170,7 @@ static void *DRFLAC_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
     }
     music->volume = MIX_MAX_VOLUME;
 
-    if (MP3_RWinit(&music->file, src) < 0) {
+    if (MP3_IOinit(&music->file, src) < 0) {
         SDL_free(music);
         return NULL;
     }
@@ -213,7 +213,7 @@ static void *DRFLAC_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
         music->loop = 1;
     }
 
-    music->freesrc = freesrc;
+    music->closeio = closeio;
     return music;
 }
 
@@ -376,8 +376,8 @@ static void DRFLAC_Delete(void *context)
     if (music->buffer) {
         SDL_free(music->buffer);
     }
-    if (music->freesrc) {
-        SDL_RWclose(music->file.src);
+    if (music->closeio) {
+        SDL_CloseIO(music->file.src);
     }
     SDL_free(music);
 }
@@ -392,7 +392,7 @@ Mix_MusicInterface Mix_MusicInterface_DRFLAC =
 
     NULL,   /* Load */
     NULL,   /* Open */
-    DRFLAC_CreateFromRW,
+    DRFLAC_CreateFromIO,
     NULL,   /* CreateFromFile */
     DRFLAC_SetVolume,
     DRFLAC_GetVolume,

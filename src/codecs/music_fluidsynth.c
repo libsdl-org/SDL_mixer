@@ -24,8 +24,7 @@
 
 #ifdef MUSIC_MID_FLUIDSYNTH
 
-#include <SDL3/SDL_loadso.h>
-#include <SDL3/SDL_rwops.h>
+#include <SDL3/SDL.h>
 
 #include "music_fluidsynth.h"
 
@@ -144,11 +143,11 @@ static void FLUIDSYNTH_Delete(void *context);
 
 static int SDLCALL fluidsynth_check_soundfont(const char *path, void *data)
 {
-    SDL_RWops *rw = SDL_RWFromFile(path, "rb");
+    SDL_IOStream *io = SDL_IOFromFile(path, "rb");
 
     (void)data;
-    if (rw) {
-        SDL_RWclose(rw);
+    if (io) {
+        SDL_CloseIO(io);
         return 1;
     } else {
         Mix_SetError("Failed to access the SoundFont %s", path);
@@ -175,13 +174,13 @@ static int FLUIDSYNTH_Open(const SDL_AudioSpec *spec)
 static FLUIDSYNTH_Music *FLUIDSYNTH_LoadMusic(void *data)
 {
     SDL_AudioSpec srcspec;
-    SDL_RWops *src = (SDL_RWops *)data;
+    SDL_IOStream *src = (SDL_IOStream *)data;
     FLUIDSYNTH_Music *music;
     double samplerate; /* as set by the lib. */
     const Uint8 channels = 2;
     int src_format = SDL_AUDIO_S16;
-    void *rw_mem;
-    size_t rw_size;
+    void *io_mem;
+    size_t io_size;
     int ret;
 
     if (!(music = SDL_calloc(1, sizeof(FLUIDSYNTH_Music)))) {
@@ -225,14 +224,14 @@ static FLUIDSYNTH_Music *FLUIDSYNTH_LoadMusic(void *data)
         goto fail;
     }
 
-    rw_mem = SDL_LoadFile_RW(src, &rw_size, SDL_FALSE);
-    if (!rw_mem) {
+    io_mem = SDL_LoadFile_IO(src, &io_size, SDL_FALSE);
+    if (!io_mem) {
         SDL_OutOfMemory();
         goto fail;
     }
 
-    ret = fluidsynth.fluid_player_add_mem(music->player, rw_mem, rw_size);
-    SDL_free(rw_mem);
+    ret = fluidsynth.fluid_player_add_mem(music->player, io_mem, io_size);
+    SDL_free(io_mem);
     if (ret != FLUID_OK) {
         Mix_SetError("FluidSynth failed to load in-memory song");
         goto fail;
@@ -251,13 +250,13 @@ fail:
     return NULL;
 }
 
-static void *FLUIDSYNTH_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
+static void *FLUIDSYNTH_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
 {
     FLUIDSYNTH_Music *music;
 
     music = FLUIDSYNTH_LoadMusic(src);
-    if (music && freesrc) {
-        SDL_RWclose(src);
+    if (music && closeio) {
+        SDL_CloseIO(src);
     }
     return music;
 }
@@ -375,7 +374,7 @@ Mix_MusicInterface Mix_MusicInterface_FLUIDSYNTH =
 
     FLUIDSYNTH_Load,
     FLUIDSYNTH_Open,
-    FLUIDSYNTH_CreateFromRW,
+    FLUIDSYNTH_CreateFromIO,
     NULL,   /* CreateFromFile */
     FLUIDSYNTH_SetVolume,
     FLUIDSYNTH_GetVolume,

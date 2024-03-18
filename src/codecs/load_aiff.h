@@ -20,14 +20,14 @@
 
     This is the source needed to decode an AIFF file into a waveform.
     It's pretty straightforward once you get going. The only
-    externally-callable function is Mix_LoadAIFF_RW(), which is meant to
-    act as identically to SDL_LoadWAV_RW() as possible.
+    externally-callable function is Mix_LoadAIFF_IO(), which is meant to
+    act as identically to SDL_LoadWAV_IO() as possible.
 
     This file by Torbjörn Andersson (torbjorn.andersson@eurotime.se)
 */
 
-/* Don't call this directly; use Mix_LoadWAV_RW() for now. */
-SDL_AudioSpec *Mix_LoadAIFF_RW (SDL_RWops *src, SDL_bool freesrc,
-    SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len);
+/* Don't call this directly; use Mix_LoadWAV_IO() for now. */
+SDL_AudioSpec *Mix_LoadAIFF_IO (SDL_IOStream *src, SDL_bool closeio,
+				SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len);
 
 /* vi: set ts=4 sw=4 expandtab: */

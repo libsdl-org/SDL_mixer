@@ -53,10 +53,10 @@ SDL3_mixer_0.0.0 {
     Mix_Init;
     Mix_Linked_Version;
     Mix_LoadMUS;
-    Mix_LoadMUSType_RW;
-    Mix_LoadMUS_RW;
+    Mix_LoadMUSType_IO;
+    Mix_LoadMUS_IO;
     Mix_LoadWAV;
-    Mix_LoadWAV_RW;
+    Mix_LoadWAV_IO;
     Mix_MasterVolume;
     Mix_ModMusicJumpToOrder;
     Mix_MusicDuration;

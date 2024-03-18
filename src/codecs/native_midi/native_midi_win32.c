@@ -213,7 +213,7 @@ int native_midi_detect(void)
   return 1;
 }
 
-NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *src, SDL_bool freesrc)
+NativeMidiSong *native_midi_loadsong_IO(SDL_IOStream *src, SDL_bool closeio)
 {
     NativeMidiSong *newsong;
     MIDIEvent       *evntlist = NULL;
@@ -238,8 +238,8 @@ NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *src, SDL_bool freesrc)
 
     newsong->mutex = SDL_CreateMutex();
 
-    if (freesrc) {
-        SDL_RWclose(src);
+    if (closeio) {
+        SDL_CloseIO(src);
     }
     return newsong;
 }

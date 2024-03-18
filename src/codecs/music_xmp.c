@@ -133,7 +133,7 @@ static void XMP_Unload(void)
 
 typedef struct
 {
-    SDL_RWops *src;
+    SDL_IOStream *src;
     Sint64 src_offset;
     int volume;
     int play_count;
@@ -186,7 +186,7 @@ static unsigned long xmp_fread(void *dst, unsigned long len, unsigned long nmemb
 {
     XMP_Music *music = (XMP_Music *)src;
     if (len > 0 && nmemb > 0) {
-        return SDL_RWread(music->src, dst, len * nmemb) / len;
+        return SDL_ReadIO(music->src, dst, len * nmemb) / len;
     }
     return 0;
 }
@@ -195,20 +195,20 @@ static int xmp_fseek(void *src, long offset, int whence)
 {
     XMP_Music *music = (XMP_Music *)src;
     Sint64 offset64 = (Sint64)offset;
-    if (whence == SDL_RW_SEEK_SET) {
+    if (whence == SDL_IO_SEEK_SET) {
         offset64 += music->src_offset;
     }
-    return (SDL_RWseek(music->src, offset64, whence) < 0) ? -1 : 0;
+    return (SDL_SeekIO(music->src, offset64, whence) < 0) ? -1 : 0;
 }
 
 static long xmp_ftell(void *src)
 {
     XMP_Music *music = (XMP_Music *)src;
-    return (long)(SDL_RWtell(music->src) - music->src_offset);
+    return (long)(SDL_TellIO(music->src) - music->src_offset);
 }
 
-/* Load a libxmp stream from an SDL_RWops object */
-void *XMP_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
+/* Load a libxmp stream from an SDL_IOStream object */
+void *XMP_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
 {
     SDL_AudioSpec srcspec;
     XMP_Music *music;
@@ -238,11 +238,11 @@ void *XMP_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
 
     if (libxmp.xmp_load_module_from_callbacks) {
         music->src = src;
-        music->src_offset = SDL_RWtell(src);
+        music->src_offset = SDL_TellIO(src);
         err = libxmp.xmp_load_module_from_callbacks(music->ctx, music, file_callbacks);
     } else {
         size_t size;
-        void *mem = SDL_LoadFile_RW(src, &size, SDL_FALSE);
+        void *mem = SDL_LoadFile_IO(src, &size, SDL_FALSE);
         if (!mem) {
             SDL_OutOfMemory();
             goto e1;
@@ -280,8 +280,8 @@ void *XMP_CreateFromRW(SDL_RWops *src, SDL_bool freesrc)
         meta_tags_set(&music->tags, MIX_META_COPYRIGHT, music->mi.comment);
     }
 
-    if (freesrc) {
-        SDL_RWclose(src);
+    if (closeio) {
+        SDL_CloseIO(src);
     }
     return music;
 
@@ -440,7 +440,7 @@ Mix_MusicInterface Mix_MusicInterface_XMP =
 
     XMP_Load,
     NULL,   /* Open */
-    XMP_CreateFromRW,
+    XMP_CreateFromIO,
     NULL,   /* CreateFromFile */
     XMP_SetVolume,
     XMP_GetVolume,
