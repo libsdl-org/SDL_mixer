@@ -180,10 +180,10 @@ static void *OGG_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
     music->volume = MIX_MAX_VOLUME;
     music->section = -1;
 
-    music->vf = stb_vorbis_open_IO(src, 0, &error, NULL);
+    music->vf = stb_vorbis_open_io(src, 0, &error, NULL);
 
     if (music->vf == NULL) {
-        set_ov_error("stb_vorbis_open_IO", error);
+        set_ov_error("stb_vorbis_open_io", error);
         SDL_free(music);
         return NULL;
     }
