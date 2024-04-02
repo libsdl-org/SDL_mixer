@@ -271,11 +271,11 @@ if(NOT ANDROID)
         DEBUG_POSTFIX "${SDL2MIXER_DEBUG_POSTFIX}"
     )
     if(APPLE)
-        # the SOVERSION property corresponds to the compatibility version and VERSION corresponds to the current version
-        # https://cmake.org/cmake/help/latest/prop_tgt/SOVERSION.html#mach-o-versions
+        cmake_minimum_required(VERSION 3.17)
         set_target_properties(SDL2_mixer PROPERTIES
-            SOVERSION "${DYLIB_COMPATIBILITY_VERSION}"
-            VERSION "${DYLIB_CURRENT_VERSION}"
+            SOVERSION "${LT_MAJOR}"
+            MACHO_COMPATIBILITY_VERSION "${DYLIB_COMPATIBILITY_VERSION}"
+            MACHO_CURRENT_VERSION "${MACHO_CURRENT_VERSION}"
         )
     else()
         set_target_properties(SDL2_mixer PROPERTIES
