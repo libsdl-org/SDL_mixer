@@ -117,11 +117,6 @@ jobs:
       if: "runner.os == 'Linux' && matrix.platform.cmake"
       run: ./test-versioning.sh
 
-    - name: Setup (CMake)
-      if: ${{ matrix.platform.cmake && !matrix.platform.msystem && !matrix.platform.msvc }}
-      uses: jwlawson/actions-setup-cmake@v1.13.1
-      with:
-        cmake-version: '3.16'
     - name: Configure (CMake)
       if: "matrix.platform.cmake"
       run: |
