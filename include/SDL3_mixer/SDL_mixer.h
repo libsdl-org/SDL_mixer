@@ -101,7 +101,7 @@ extern DECLSPEC const SDL_Version * SDLCALL Mix_Linked_Version(void);
 /**
  * Initialization flags
  */
-typedef enum
+typedef enum MIX_InitFlags
 {
     MIX_INIT_FLAC   = 0x00000001,
     MIX_INIT_MOD    = 0x00000002,
@@ -233,7 +233,7 @@ typedef struct Mix_Chunk {
 /**
  * The different fading types supported
  */
-typedef enum {
+typedef enum Mix_Fading {
     MIX_NO_FADING,
     MIX_FADING_OUT,
     MIX_FADING_IN
@@ -242,7 +242,7 @@ typedef enum {
 /**
  * These are types of music files (not libraries used to load them)
  */
-typedef enum {
+typedef enum Mix_MusicType {
     MUS_NONE,
     MUS_CMD,
     MUS_WAV,
