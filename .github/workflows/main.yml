@@ -107,11 +107,6 @@ jobs:
         .github/fetch_yasm.ps1
         echo "${{ github.workspace }}" >> $Env:GITHUB_PATH
 
-    - name: Setup (CMake)
-      if: ${{ !matrix.platform.msystem && !matrix.platform.msvc }}
-      uses: jwlawson/actions-setup-cmake@v1.14
-      with:
-        cmake-version: '3.16'
     - name: Configure (CMake)
       run: |
         set -- \
