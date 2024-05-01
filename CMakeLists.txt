@@ -269,18 +269,14 @@ set_target_properties(SDL2_mixer PROPERTIES
 if(NOT ANDROID)
     set_target_properties(SDL2_mixer PROPERTIES
         DEBUG_POSTFIX "${SDL2MIXER_DEBUG_POSTFIX}"
+        SOVERSION "${LT_MAJOR}"
+        VERSION "${LT_VERSION}"
     )
     if(APPLE)
         cmake_minimum_required(VERSION 3.17)
         set_target_properties(SDL2_mixer PROPERTIES
-            SOVERSION "${LT_MAJOR}"
             MACHO_COMPATIBILITY_VERSION "${DYLIB_COMPATIBILITY_VERSION}"
-            MACHO_CURRENT_VERSION "${MACHO_CURRENT_VERSION}"
-        )
-    else()
-        set_target_properties(SDL2_mixer PROPERTIES
-            SOVERSION "${LT_MAJOR}"
-            VERSION "${LT_VERSION}"
+            MACHO_CURRENT_VERSION "${DYLIB_CURRENT_VERSION}"
         )
     endif()
 endif()
