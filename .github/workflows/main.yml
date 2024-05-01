@@ -55,7 +55,6 @@ jobs:
           autoconf \
           automake \
           libtool \
-          ninja \
           pkg-config \
           flac \
           fluidsynth \
@@ -83,7 +82,6 @@ jobs:
           libvorbis-dev \
           libxmp-dev \
           libwavpack-dev \
-          ninja-build \
           pkg-config \
           ${NULL+}
     - uses: actions/checkout@v3
@@ -103,10 +101,8 @@ jobs:
         echo "${{ github.workspace }}" >> $Env:GITHUB_PATH
         echo "::endgroup::"
     - name: Setup Ninja for MSVC
-      if: "matrix.platform.msvc"
-      uses: ashutoshvarma/setup-ninja@master
-      with:
-        version: 1.10.2
+      if: ${{ !contains(matrix.platform.shell, 'msys2') }}
+      uses: aseprite/get-ninja@main
     - uses: ilammy/msvc-dev-cmd@v1
       if: "matrix.platform.msvc"
       with:
