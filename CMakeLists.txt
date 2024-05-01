@@ -98,8 +98,6 @@ if(SDL3MIXER_STRICT)
   set(required "REQUIRED")
   set(fatal_error "FATAL_ERROR")
 endif()
-set(SDL3MIXER_DEPS_FOUND )
-set(SDL3MIXER_DEPS_NOT_FOUND )
 
 option(SDL3MIXER_SAMPLES "Build the SDL3_mixer sample program(s)" ${SDL3MIXER_SAMPLES_DEFAULT})
 cmake_dependent_option(SDL3MIXER_SAMPLES_INSTALL "Install the SDL3_mixer sample program(s)" OFF "SDL3MIXER_SAMPLES;SDL3MIXER_INSTALL" OFF)
@@ -296,17 +294,15 @@ set_target_properties(${sdl3_mixer_target_name} PROPERTIES
     C_VISIBILITY_PRESET "hidden"
 )
 if(NOT ANDROID)
+    set_target_properties(${sdl3_mixer_target_name} PROPERTIES
+        SOVERSION "${SO_VERSION_MAJOR}"
+        VERSION "${SO_VERSION}"
+    )
     if(APPLE)
-        # the SOVERSION property corresponds to the compatibility version and VERSION corresponds to the current version
-        # https://cmake.org/cmake/help/latest/prop_tgt/SOVERSION.html#mach-o-versions
+        cmake_minimum_required(VERSION 3.17)
         set_target_properties(${sdl3_mixer_target_name} PROPERTIES
-            SOVERSION "${DYLIB_COMPAT_VERSION}"
-            VERSION "${DYLIB_CURRENT_VERSION}"
-        )
-    else()
-        set_target_properties(${sdl3_mixer_target_name} PROPERTIES
-            SOVERSION "${SO_VERSION_MAJOR}"
-            VERSION "${SO_VERSION}"
+            MACHO_COMPATIBILITY_VERSION "${DYLIB_COMPAT_VERSION}"
+            MACHO_CURRENT_VERSION "${DYLIB_CURRENT_VERSION}"
         )
     endif()
 endif()
