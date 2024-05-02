@@ -121,6 +121,7 @@ jobs:
           -DSDL3MIXER_VORBIS=VORBISFILE \
           -DSDL3MIXER_STRICT=ON \
           -DSDL3MIXER_WERROR=ON \
+          -DSDL3MIXER_INSTALL_MAN=ON \
           -DCMAKE_INSTALL_PREFIX=prefix_cmake \
           ${NULL+}
 
