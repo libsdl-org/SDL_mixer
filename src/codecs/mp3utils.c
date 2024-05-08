@@ -41,7 +41,7 @@ int MP3_IOinit(struct mp3file_t *fil, SDL_IOStream *src) {
     fil->length = SDL_SeekIO(src, 0, SDL_IO_SEEK_END) - fil->start;
     fil->pos = 0;
     if (fil->start < 0 || fil->length < 0) {
-        return SDL_Error(SDL_EFSEEK);
+        return Mix_SetError("Error seeking in datastream");
     }
     SDL_SeekIO(src, fil->start, SDL_IO_SEEK_SET);
     return 0;
