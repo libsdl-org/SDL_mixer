@@ -183,7 +183,6 @@ SDL_AudioSpec *Mix_LoadSndFile_IO (SDL_IOStream *src, SDL_bool closeio,
     buf = SDL_malloc(len);
 
     if (buf == NULL) {
-        Mix_OutOfMemory();
         goto done;
     }
 

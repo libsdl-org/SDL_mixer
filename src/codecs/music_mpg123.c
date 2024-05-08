@@ -241,7 +241,6 @@ static void *MPG123_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
 
     music = (MPG123_Music*)SDL_calloc(1, sizeof(*music));
     if (!music) {
-        SDL_OutOfMemory();
         return NULL;
     }
     music->volume = MIX_MAX_VOLUME;
@@ -262,7 +261,6 @@ static void *MPG123_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
     music->buffer = (unsigned char *)SDL_malloc(music->buffer_size);
     if (!music->buffer) {
         MPG123_Delete(music);
-        SDL_OutOfMemory();
         return NULL;
     }
 

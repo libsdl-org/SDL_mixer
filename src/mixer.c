@@ -761,7 +761,6 @@ static SDL_AudioSpec *Mix_LoadMusic_IO(SDL_IOStream *src, SDL_bool closeio, SDL_
                 dst += fragment->size;
             }
         } else {
-            Mix_OutOfMemory();
             spec = NULL;
         }
     } else {
@@ -807,7 +806,6 @@ Mix_Chunk *Mix_LoadWAV_IO(SDL_IOStream *src, SDL_bool closeio)
     /* Allocate the chunk memory */
     chunk = (Mix_Chunk *)SDL_malloc(sizeof(Mix_Chunk));
     if (chunk == NULL) {
-        Mix_OutOfMemory();
         if (closeio) {
             SDL_CloseIO(src);
         }
@@ -897,7 +895,6 @@ Mix_Chunk *Mix_QuickLoad_WAV(Uint8 *mem)
     /* Allocate the chunk memory */
     chunk = (Mix_Chunk *)SDL_calloc(1,sizeof(Mix_Chunk));
     if (chunk == NULL) {
-        Mix_OutOfMemory();
         return NULL;
     }
 
@@ -931,7 +928,6 @@ Mix_Chunk *Mix_QuickLoad_RAW(Uint8 *mem, Uint32 len)
     /* Allocate the chunk memory */
     chunk = (Mix_Chunk *)SDL_malloc(sizeof(Mix_Chunk));
     if (chunk == NULL) {
-        Mix_OutOfMemory();
         return NULL;
     }
 
@@ -1596,7 +1592,6 @@ static int _Mix_register_effect(effect_info **e, Mix_EffectFunc_t f,
 
     new_e = SDL_malloc(sizeof(effect_info));
     if (new_e == NULL) {
-        Mix_OutOfMemory();
         return 0;
     }
 

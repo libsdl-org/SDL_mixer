@@ -204,8 +204,9 @@ SDL_AudioSpec *Mix_LoadAIFF_IO (SDL_IOStream *src, SDL_bool closeio,
                 break;
         }
         /* a 0 pad byte can be stored for any odd-length chunk */
-        if (chunk_length&1)
+        if (chunk_length&1) {
             next_chunk++;
+        }
     } while ((((AIFFmagic == AIFF) && (!found_SSND || !found_COMM))
           || ((AIFFmagic == _8SVX) && (!found_VHDR || !found_BODY)))
           && SDL_SeekIO(src, next_chunk, SDL_IO_SEEK_SET) != 1);
@@ -249,7 +250,6 @@ SDL_AudioSpec *Mix_LoadAIFF_IO (SDL_IOStream *src, SDL_bool closeio,
     *audio_len = channels * numsamples * (samplesize / 8);
     *audio_buf = (Uint8 *)SDL_malloc(*audio_len);
     if (*audio_buf == NULL) {
-        Mix_OutOfMemory();
         goto done;
     }
     SDL_SeekIO(src, start, SDL_IO_SEEK_SET);

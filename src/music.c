@@ -661,7 +661,6 @@ Mix_Music *Mix_LoadMUS(const char *file)
             /* Allocate memory for the music structure */
             Mix_Music *music = (Mix_Music *)SDL_calloc(1, sizeof(Mix_Music));
             if (music == NULL) {
-                Mix_OutOfMemory();
                 return NULL;
             }
             music->interface = interface;
@@ -780,7 +779,6 @@ Mix_Music *Mix_LoadMUSType_IO(SDL_IOStream *src, Mix_MusicType type, SDL_bool cl
                 Mix_Music *music = (Mix_Music *)SDL_calloc(1, sizeof(Mix_Music));
                 if (music == NULL) {
                     interface->Delete(context);
-                    Mix_OutOfMemory();
                     return NULL;
                 }
                 music->interface = interface;
@@ -1401,7 +1399,7 @@ int Mix_SetMusicCMD(const char *command)
         size_t length = SDL_strlen(command) + 1;
         music_cmd = (char *)SDL_malloc(length);
         if (music_cmd == NULL) {
-            return SDL_OutOfMemory();
+            return -1;
         }
         SDL_memcpy(music_cmd, command, length);
     }

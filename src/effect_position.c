@@ -1301,7 +1301,6 @@ static position_args *get_position_arg(int channel)
         if (pos_args_global == NULL) {
             pos_args_global = SDL_malloc(sizeof(position_args));
             if (pos_args_global == NULL) {
-                Mix_OutOfMemory();
                 return NULL;
             }
             init_position_args(pos_args_global);
@@ -1313,7 +1312,6 @@ static position_args *get_position_arg(int channel)
     if (channel >= position_channels) {
         rc = SDL_realloc(pos_args_array, (size_t)(channel + 1) * sizeof(position_args *));
         if (rc == NULL) {
-            Mix_OutOfMemory();
             return NULL;
         }
         pos_args_array = (position_args **) rc;
@@ -1326,7 +1324,6 @@ static position_args *get_position_arg(int channel)
     if (pos_args_array[channel] == NULL) {
         pos_args_array[channel] = (position_args *)SDL_malloc(sizeof(position_args));
         if (pos_args_array[channel] == NULL) {
-            Mix_OutOfMemory();
             return NULL;
         }
         init_position_args(pos_args_array[channel]);
@@ -1676,7 +1673,6 @@ int Mix_SetPanning(int channel, Uint8 left, Uint8 right)
     return retval;
 }
 
-
 int Mix_SetDistance(int channel, Uint8 distance)
 {
     Mix_EffectFunc_t f = NULL;
@@ -1721,7 +1717,6 @@ int Mix_SetDistance(int channel, Uint8 distance)
     Mix_UnlockAudio();
     return retval;
 }
-
 
 int Mix_SetPosition(int channel, Sint16 angle, Uint8 distance)
 {

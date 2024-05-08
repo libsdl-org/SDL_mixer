@@ -215,24 +215,22 @@ void *XMP_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
     struct xmp_callbacks file_callbacks = {
            xmp_fread, xmp_fseek, xmp_ftell, NULL
     };
-    int err = 0;
+    int err;
 
     music = (XMP_Music *)SDL_calloc(1, sizeof(*music));
     if (!music) {
-        SDL_OutOfMemory();
         return NULL;
     }
 
     music->ctx = libxmp.xmp_create_context();
     if (!music->ctx) {
-        SDL_OutOfMemory();
+        Mix_OutOfMemory();
         goto e0;
     }
 
     music->buffer_size = 4096/*music_spec.samples*/ * 2 * 2;
     music->buffer = SDL_malloc((size_t)music->buffer_size);
     if (!music->buffer) {
-        SDL_OutOfMemory();
         goto e1;
     }
 
@@ -244,7 +242,6 @@ void *XMP_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
         size_t size;
         void *mem = SDL_LoadFile_IO(src, &size, SDL_FALSE);
         if (!mem) {
-            SDL_OutOfMemory();
             goto e1;
         }
         err = libxmp.xmp_load_module_from_memory(music->ctx, mem, (long)size);

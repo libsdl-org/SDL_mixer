@@ -91,7 +91,6 @@ void *TIMIDITY_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
 
     music = (TIMIDITY_Music *)SDL_calloc(1, sizeof(*music));
     if (!music) {
-        SDL_OutOfMemory();
         return NULL;
     }
 
@@ -118,7 +117,6 @@ void *TIMIDITY_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
         music->buffer_size = 4096/*spec.samples*/ * (SDL_AUDIO_BITSIZE(spec.format) / 8) * spec.channels;
         music->buffer = SDL_malloc((size_t)music->buffer_size);
         if (!music->buffer) {
-            SDL_OutOfMemory();
             TIMIDITY_Delete(music);
             return NULL;
         }

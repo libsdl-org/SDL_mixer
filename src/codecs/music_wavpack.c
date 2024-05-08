@@ -360,7 +360,6 @@ static void *WAVPACK_CreateFromIO_internal(SDL_IOStream *src1, SDL_IOStream *src
 
     music = (WAVPACK_music *)SDL_calloc(1, sizeof *music);
     if (!music) {
-        SDL_OutOfMemory();
         return NULL;
     }
     music->src1 = src1;
@@ -399,7 +398,6 @@ static void *WAVPACK_CreateFromIO_internal(SDL_IOStream *src1, SDL_IOStream *src
         music->decimation = 4;
         music->decimation_ctx = decimation_init(music->channels, music->decimation);
         if (!music->decimation_ctx) {
-            SDL_OutOfMemory();
             WAVPACK_Delete(music);
             return NULL;
         }
@@ -408,7 +406,7 @@ static void *WAVPACK_CreateFromIO_internal(SDL_IOStream *src1, SDL_IOStream *src
 
     #if WAVPACK_DBG
     SDL_Log("WavPack loader:\n numsamples: %" SDL_PRIs64 "\n samplerate: %d\n bitspersample: %d\n channels: %d\n mode: 0x%x\n lossy: %d\n duration: %f\n",
-            (Sint64)music->numsamples, music->samplerate, music->bps, music->channels, music->mode, !(music->mode & MODE_LOSSLESS), music->numsamples/(double)music->samplerate);
+            (Sint64)music->numsamples, music->samplerate, music->bps, music->channels, music->mode, !(music->mode & MODE_LOSSLESS), music->numsamples / (double)music->samplerate);
     #endif
 
     /* library returns the samples in 8, 16, 24, or 32 bit depth, but
@@ -437,7 +435,6 @@ static void *WAVPACK_CreateFromIO_internal(SDL_IOStream *src1, SDL_IOStream *src
     music->frames = 4096/*music_spec.samples*/;
     music->buffer = SDL_malloc(music->frames * music->channels * sizeof(int32_t) * DECIMATION(music));
     if (!music->buffer) {
-        SDL_OutOfMemory();
         WAVPACK_Delete(music);
         return NULL;
     }

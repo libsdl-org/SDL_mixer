@@ -184,7 +184,6 @@ static FLUIDSYNTH_Music *FLUIDSYNTH_LoadMusic(void *data)
     int ret;
 
     if (!(music = SDL_calloc(1, sizeof(FLUIDSYNTH_Music)))) {
-        SDL_OutOfMemory();
         return NULL;
     }
 
@@ -198,7 +197,6 @@ static FLUIDSYNTH_Music *FLUIDSYNTH_LoadMusic(void *data)
     }
 
     if (!(music->buffer = SDL_malloc((size_t)music->buffer_size))) {
-        SDL_OutOfMemory();
         goto fail;
     }
 
@@ -226,7 +224,6 @@ static FLUIDSYNTH_Music *FLUIDSYNTH_LoadMusic(void *data)
 
     io_mem = SDL_LoadFile_IO(src, &io_size, SDL_FALSE);
     if (!io_mem) {
-        SDL_OutOfMemory();
         goto fail;
     }
 

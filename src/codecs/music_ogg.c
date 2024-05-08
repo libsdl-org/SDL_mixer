@@ -249,7 +249,6 @@ static void *OGG_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
 
     music = (OGG_music *)SDL_calloc(1, sizeof *music);
     if (!music) {
-        SDL_OutOfMemory();
         return NULL;
     }
     music->src = src;

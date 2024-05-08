@@ -46,7 +46,6 @@ typedef struct {
     Mix_MusicMetaTags tags;
 } MiniMP3_Music;
 
-
 static size_t MiniMP3_ReadCB(void *buf, size_t size, void *context)
 {
     MiniMP3_Music *music = (MiniMP3_Music *)context;
@@ -71,7 +70,6 @@ static void *MINIMP3_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
 
     music = (MiniMP3_Music *)SDL_calloc(1, sizeof(MiniMP3_Music));
     if (!music) {
-        SDL_OutOfMemory();
         return NULL;
     }
     music->volume = MIX_MAX_VOLUME;
@@ -107,7 +105,6 @@ static void *MINIMP3_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
     file_spec.freq = (int)music->dec.info.hz;
     music->stream = SDL_CreateAudioStream(&file_spec, &music_spec);
     if (!music->stream) {
-        SDL_OutOfMemory();
         mp3dec_ex_close(&music->dec);
         SDL_free(music);
         return NULL;
@@ -119,7 +116,6 @@ static void *MINIMP3_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
     music->buffer = (mp3d_sample_t*)SDL_calloc(1, music->buffer_size);
     if (!music->buffer) {
         mp3dec_ex_close(&music->dec);
-        SDL_OutOfMemory();
         SDL_free(music);
         return NULL;
     }

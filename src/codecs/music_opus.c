@@ -219,7 +219,6 @@ static void *OPUS_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
 
     music = (OPUS_music *)SDL_calloc(1, sizeof *music);
     if (!music) {
-        SDL_OutOfMemory();
         return NULL;
     }
     music->src = src;

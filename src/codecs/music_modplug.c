@@ -174,7 +174,6 @@ void *MODPLUG_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
 
     music = (MODPLUG_Music *)SDL_calloc(1, sizeof(*music));
     if (!music) {
-        SDL_OutOfMemory();
         return NULL;
     }
 

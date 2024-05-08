@@ -230,7 +230,6 @@ static void *WAV_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
 
     music = (WAV_Music *)SDL_calloc(1, sizeof(*music));
     if (!music) {
-        Mix_OutOfMemory();
         return NULL;
     }
     music->src = src;
@@ -259,7 +258,6 @@ static void *WAV_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
 
     music->buffer = (Uint8*)SDL_malloc(music->buflen);
     if (!music->buffer) {
-        Mix_OutOfMemory();
         WAV_Delete(music);
         return NULL;
     }
@@ -498,7 +496,7 @@ static int MS_ADPCM_Init(ADPCM_DecoderState *state, const Uint8 *chunk_data, Uin
 
     coeffdata = (MS_ADPCM_CoeffData *)SDL_malloc(sizeof(MS_ADPCM_CoeffData) + coeffcount * 4);
     if (coeffdata == NULL) {
-        return Mix_OutOfMemory();
+        return -1;
     }
     coeffdata->coeff = &coeffdata->aligndummy;
     coeffdata->coeffcount = (Uint16)coeffcount;
@@ -549,14 +547,14 @@ static int MS_ADPCM_Init(ADPCM_DecoderState *state, const Uint8 *chunk_data, Uin
 
     state->cstate = SDL_calloc(channels, sizeof(MS_ADPCM_ChannelState));
     if (!state->cstate) {
-        return Mix_OutOfMemory();
+        return -1;
     }
 
     state->block.pos = 0;
     state->block.size = blockalign;
     state->block.data = (Uint8 *)SDL_malloc(state->block.size);
     if (!state->block.data) {
-        return Mix_OutOfMemory();
+        return -1;
     }
 
     state->output.read = 0;
@@ -564,7 +562,7 @@ static int MS_ADPCM_Init(ADPCM_DecoderState *state, const Uint8 *chunk_data, Uin
     state->output.size = state->samplesperblock * state->channels;
     state->output.data = (Sint16 *)SDL_malloc(state->output.size * sizeof(Sint16));
     if (!state->output.data) {
-        return Mix_OutOfMemory();
+        return -1;
     }
 
     return 0;
@@ -779,14 +777,14 @@ static int IMA_ADPCM_Init(ADPCM_DecoderState *state, const Uint8 *chunk_data, Ui
 
     state->cstate = SDL_calloc(channels, sizeof(Sint8));
     if (!state->cstate) {
-        return Mix_OutOfMemory();
+        return -1;
     }
 
     state->block.pos = 0;
     state->block.size = blockalign;
     state->block.data = (Uint8 *)SDL_malloc(state->block.size);
     if (!state->block.data) {
-        return Mix_OutOfMemory();
+        return -1;
     }
 
     state->output.read = 0;
@@ -794,7 +792,7 @@ static int IMA_ADPCM_Init(ADPCM_DecoderState *state, const Uint8 *chunk_data, Ui
     state->output.size = state->samplesperblock * state->channels;
     state->output.data = (Sint16 *)SDL_malloc(state->output.size * sizeof(Sint16));
     if (!state->output.data) {
-        return Mix_OutOfMemory();
+        return -1;
     }
 
     return 0;
@@ -1355,7 +1353,6 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
 
     chunk = (Uint8 *)SDL_malloc(chunk_length);
     if (!chunk) {
-        Mix_OutOfMemory();
         return SDL_FALSE;
     }
 
@@ -1491,7 +1488,6 @@ static SDL_bool AddLoopPoint(WAV_Music *wave, Uint32 play_count, Uint32 start, U
     WAVLoopPoint *loop;
     WAVLoopPoint *loops = SDL_realloc(wave->loops, (wave->numloops + 1) * sizeof(*wave->loops));
     if (!loops) {
-        Mix_OutOfMemory();
         return SDL_FALSE;
     }
 
@@ -1515,7 +1511,6 @@ static SDL_bool ParseSMPL(WAV_Music *wave, Uint32 chunk_length)
 
     data = (Uint8 *)SDL_malloc(chunk_length);
     if (!data) {
-        Mix_OutOfMemory();
         return SDL_FALSE;
     }
     if (SDL_ReadIO(wave->src, data, chunk_length) != chunk_length) {
@@ -1565,7 +1560,6 @@ static SDL_bool ParseLIST(WAV_Music *wave, Uint32 chunk_length)
 
     data = (Uint8 *)SDL_malloc(chunk_length);
     if (!data) {
-        Mix_OutOfMemory();
         return SDL_FALSE;
     }
 
@@ -1609,7 +1603,6 @@ static SDL_bool ParseID3(WAV_Music *wave, Uint32 chunk_length)
     data = (Uint8 *)SDL_malloc(chunk_length);
 
     if (!data) {
-        Mix_OutOfMemory();
         return SDL_FALSE;
     }
 
