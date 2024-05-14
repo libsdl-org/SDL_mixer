@@ -1264,7 +1264,8 @@ extern DECLSPEC int SDLCALL Mix_UnregisterEffect(int channel, Mix_EffectFunc_t f
 extern DECLSPEC int SDLCALL Mix_UnregisterAllEffects(int channel);
 
 /**
- * Environment variable that makes some mixing effects favor speed over quality.
+ * Environment variable that makes some mixing effects favor speed over
+ * quality.
  */
 #define MIX_EFFECTSMAXSPEED  "MIX_EFFECTSMAXSPEED"
 
