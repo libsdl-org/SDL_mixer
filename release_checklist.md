@@ -46,7 +46,7 @@
 
     * `Xcode/SDL_mixer.xcodeproj/project.pbxproj`:
         `DYLIB_CURRENT_VERSION`, `DYLIB_COMPATIBILITY_VERSION`
-        * set second number in `DYLIB_CURRENT_VERSION` to *patchlevel*
+        * set second number in `DYLIB_CURRENT_VERSION` to *micro*
         * Leave `DYLIB_COMPATIBILITY_VERSION` unchanged
 
 * Regenerate `configure`
@@ -83,7 +83,7 @@
     * `Xcode/SDL_mixer.xcodeproj/project.pbxproj`:
         `DYLIB_CURRENT_VERSION`, `DYLIB_COMPATIBILITY_VERSION`
         * set first number in `DYLIB_CURRENT_VERSION` to
-            (100 * *minor*) + *patchlevel* + 1
+            (100 * *minor*) + *micro* + 1
         * set second number in `DYLIB_CURRENT_VERSION` to 0
         * set `DYLIB_COMPATIBILITY_VERSION` to the same value
 
