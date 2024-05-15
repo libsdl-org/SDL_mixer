@@ -46,8 +46,8 @@
 #include "utils.h"
 
 /* Check to make sure we are building with a new enough SDL */
-#if SDL_COMPILEDVERSION < SDL_VERSIONNUM(2, 0, 7)
-#error You need SDL 2.0.7 or newer from http://www.libsdl.org
+#if !SDL_VERSION_ATLEAST(3, 0, 0)
+#error You need SDL 3.0.0 or newer from http://www.libsdl.org
 #endif
 
 /* Set this hint to true if you want verbose logging of music interfaces */
