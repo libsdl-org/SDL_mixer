@@ -1190,6 +1190,8 @@ if(SDLMIXER_INSTALL)
 endif()
 
 if(SDLMIXER_SAMPLES)
+    find_package(SDL3 REQUIRED COMPONENTS SDL3_test)
+
     check_include_file("signal.h" HAVE_SIGNAL_H)
     check_symbol_exists("setbuf" "stdio.h" HAVE_SETBUF)
 
@@ -1198,6 +1200,7 @@ if(SDLMIXER_SAMPLES)
 
     foreach(prog playmus playwave)
         sdl_add_warning_options(${prog} WARNING_AS_ERROR ${SDLMIXER_WERROR})
+        target_link_libraries(${prog} PRIVATE SDL3::SDL3_test)
         target_link_libraries(${prog} PRIVATE SDL3_mixer::${sdl3_mixer_target_name})
         target_link_libraries(${prog} PRIVATE ${sdl3_target_name})
         if(HAVE_SIGNAL_H)

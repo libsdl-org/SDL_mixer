@@ -19,6 +19,11 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
+#include <SDL3/SDL_test.h>
+#include <SDL3_mixer/SDL_mixer.h>
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -27,65 +32,18 @@
 #include <unistd.h>
 #endif
 
-#include <SDL3/SDL.h>
-#include <SDL3/SDL_main.h>
-#include <SDL3_mixer/SDL_mixer.h>
-
 #ifdef HAVE_SIGNAL_H
 #include <signal.h>
 #endif
 
-
-/*
- * rcg06132001 various mixer tests. Define the ones you want.
- */
-/*#define TEST_MIX_DECODERS*/
-/*#define TEST_MIX_VERSIONS*/
-/*#define TEST_MIX_CHANNELFINISHED*/
-/*#define TEST_MIX_PANNING*/
-/*#define TEST_MIX_DISTANCE*/
-/*#define TEST_MIX_POSITION*/
-
-
-#if (defined TEST_MIX_POSITION)
-
-#if (defined TEST_MIX_PANNING)
-#error TEST_MIX_POSITION interferes with TEST_MIX_PANNING.
-#endif
-
-#if (defined TEST_MIX_DISTANCE)
-#error TEST_MIX_POSITION interferes with TEST_MIX_DISTANCE.
-#endif
-
-#endif
-
-
-/* rcg06192001 for debugging purposes. */
-static void output_test_warnings(void)
-{
-#if (defined TEST_MIX_CHANNELFINISHED)
-    SDL_Log("Warning: TEST_MIX_CHANNELFINISHED is enabled in this binary...\n");
-#endif
-#if (defined TEST_MIX_PANNING)
-    SDL_Log("Warning: TEST_MIX_PANNING is enabled in this binary...\n");
-#endif
-#if (defined TEST_MIX_VERSIONS)
-    SDL_Log("Warning: TEST_MIX_VERSIONS is enabled in this binary...\n");
-#endif
-#if (defined TEST_MIX_DISTANCE)
-    SDL_Log("Warning: TEST_MIX_DISTANCE is enabled in this binary...\n");
-#endif
-#if (defined TEST_MIX_POSITION)
-    SDL_Log("Warning: TEST_MIX_POSITION is enabled in this binary...\n");
-#endif
-}
-
-
 static int audio_open = 0;
 static Mix_Chunk *g_wave = NULL;
+static SDLTest_CommonState *state;
+static SDL_bool verbose = SDL_FALSE;
+static SDL_bool test_position = SDL_FALSE;
+static SDL_bool test_distance = SDL_FALSE;
+static SDL_bool test_panning = SDL_FALSE;
 
-/* rcg06042009 Report available decoders. */
-#if (defined TEST_MIX_DECODERS)
 static void report_decoders(void)
 {
     int i, total;
@@ -101,60 +59,43 @@ static void report_decoders(void)
         SDL_Log(" - music decoder: %s\n", Mix_GetMusicDecoder(i));
     }
 }
-#endif
 
-/* rcg06192001 Check new Mixer version API. */
-#if (defined TEST_MIX_VERSIONS)
-static void output_versions(const char *libname, const SDL_Version *compiled,
-                            const SDL_Version *linked)
+static void output_versions(const char *libname, int compiled, int linked)
 {
     SDL_Log("This program was compiled against %s %d.%d.%d,\n"
             " and is dynamically linked to %d.%d.%d.\n", libname,
-            compiled->major, compiled->minor, compiled->patch,
-            linked->major, linked->minor, linked->patch);
+        SDL_VERSIONNUM_MAJOR(compiled),
+        SDL_VERSIONNUM_MINOR(compiled),
+        SDL_VERSIONNUM_MICRO(compiled),
+        SDL_VERSIONNUM_MAJOR(linked),
+        SDL_VERSIONNUM_MINOR(linked),
+        SDL_VERSIONNUM_MICRO(linked));
 }
 
 static void test_versions(void)
 {
-    SDL_Version compiled;
-    SDL_Version linked;
-
-    SDL_VERSION(&compiled);
-    SDL_GetVersion(&linked);
-    output_versions("SDL", &compiled, &linked);
-
-    SDL_MIXER_VERSION(&compiled);
-    SDL_memcpy(&linked, Mix_Linked_Version(), sizeof(SDL_Version));
-    output_versions("SDL_mixer", &compiled, &linked);
+    output_versions("SDL", SDL_VERSION, SDL_GetVersion());
+    output_versions("SDL_mixer", SDL_MIXER_VERSION, Mix_Version());
 }
-#endif
 
-
-#ifdef TEST_MIX_CHANNELFINISHED  /* rcg06072001 */
 static int channel_is_done = 0;
 static void SDLCALL channel_complete_callback (int chan)
 {
-    Mix_Chunk *done_chunk = Mix_GetChunk(chan);
-    SDL_Log("We were just alerted that Mixer channel #%d is done.\n", chan);
-    SDL_Log("Channel's chunk pointer is (%p).\n", (void*)done_chunk);
-    SDL_Log(" Which %s correct.\n", (g_wave == done_chunk) ? "is" : "is NOT");
+    if (verbose) {
+        Mix_Chunk *done_chunk = Mix_GetChunk(chan);
+        SDL_Log("We were just alerted that Mixer channel #%d is done.\n", chan);
+        SDL_Log("Channel's chunk pointer is (%p).\n", (void *) done_chunk);
+        SDL_Log(" Which %s correct.\n", (g_wave == done_chunk) ? "is" : "is NOT");
+    }
     channel_is_done = 1;
 }
-#endif
-
 
 /* rcg06192001 abstract this out for testing purposes. */
 static int still_playing(void)
 {
-#ifdef TEST_MIX_CHANNELFINISHED
-    return !channel_is_done;
-#else
     return Mix_Playing(0);
-#endif
 }
 
-
-#if (defined TEST_MIX_PANNING)
 static void do_panning_update(void)
 {
     static Uint8 leftvol = 128;
@@ -191,10 +132,7 @@ static void do_panning_update(void)
         next_panning_update = SDL_GetTicks() + 10;
     }
 }
-#endif
 
-
-#if (defined TEST_MIX_DISTANCE)
 static void do_distance_update(void)
 {
     static Uint8 distance = 1;
@@ -222,10 +160,7 @@ static void do_distance_update(void)
         next_distance_update = SDL_GetTicks() + 15;
     }
 }
-#endif
 
-
-#if (defined TEST_MIX_POSITION)
 static void do_position_update(void)
 {
     static Sint16 distance = 1;
@@ -268,8 +203,6 @@ static void do_position_update(void)
         next_position_update = SDL_GetTicks() + 30;
     }
 }
-#endif
-
 
 static void CleanUp(int exitcode)
 {
@@ -282,16 +215,10 @@ static void CleanUp(int exitcode)
         audio_open = 0;
     }
     SDL_Quit();
+    SDLTest_CommonDestroyState(state);
 
     exit(exitcode);
 }
-
-
-static void Usage(char *argv0)
-{
-    SDL_Log("Usage: %s [-8] [-f32] [-r rate] [-c channels] [-f] [-F] [-l] [-m] <wavefile>\n", argv0);
-}
-
 
 /*
  * rcg06182001 This is sick, but cool.
@@ -313,7 +240,7 @@ static void flip_sample(Mix_Chunk *wave)
     Uint8 *end = wave->abuf + wave->alen;
 
     Mix_QuerySpec(NULL, &format, &channels);
-    incr = (format & 0xFF) * channels;
+    incr = SDL_AUDIO_BITSIZE(format) * channels;
 
     end -= incr;
 
@@ -348,6 +275,16 @@ static void flip_sample(Mix_Chunk *wave)
             }
             break;
 
+        case 64:
+            for (i = wave->alen / 2; i >= 0; i -= 8) {
+                Uint64 tmp = *start;
+                *((Uint64 *) start) = *((Uint64 *) end);
+                *((Uint64 *) end) = tmp;
+                start += 8;
+                end -= 8;
+            }
+            break;
+
         default:
             SDL_Log("Unhandled format in sample flipping.\n");
             return;
@@ -362,55 +299,91 @@ int main(int argc, char *argv[])
     int i;
     int reverse_stereo = 0;
     int reverse_sample = 0;
+    const char *filename = NULL;
 
-    (void) argc;
+    /* Initialize test framework */
+    state = SDLTest_CommonCreateState(argv, 0);
+    if (!state) {
+        return 1;
+    }
+
+    /* Enable standard application logging */
+    SDL_SetLogPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO);
 
 #ifdef HAVE_SETBUF
     setbuf(stdout, NULL);    /* rcg06132001 for debugging purposes. */
     setbuf(stderr, NULL);    /* rcg06192001 for debugging purposes, too. */
 #endif
-    output_test_warnings();
 
     /* Initialize variables */
     spec.freq = MIX_DEFAULT_FREQUENCY;
     spec.format = MIX_DEFAULT_FORMAT;
     spec.channels = MIX_DEFAULT_CHANNELS;
 
-    /* Check command line usage */
-    for (i = 1; argv[i] && (*argv[i] == '-'); ++i) {
-        if ((SDL_strcmp(argv[i], "-r") == 0) && argv[i+1]) {
-            ++i;
-            spec.freq = SDL_atoi(argv[i]);
-        } else
-        if (SDL_strcmp(argv[i], "-m") == 0) {
-            spec.channels = 1;
-        } else
-        if ((SDL_strcmp(argv[i], "-c") == 0) && argv[i+1]) {
-            ++i;
-            spec.channels = SDL_atoi(argv[i]);
-        } else
-        if (SDL_strcmp(argv[i], "-l") == 0) {
-            loops = -1;
-        } else
-        if (SDL_strcmp(argv[i], "-8") == 0) {
-            spec.format = SDL_AUDIO_U8;
-        } else
-        if (SDL_strcmp(argv[i], "-f32") == 0) {
-            spec.format = SDL_AUDIO_F32;
-        } else
-        if (SDL_strcmp(argv[i], "-f") == 0) { /* rcg06122001 flip stereo */
-            reverse_stereo = 1;
-        } else
-        if (SDL_strcmp(argv[i], "-F") == 0) { /* rcg06172001 flip sample */
-            reverse_sample = 1;
-        } else {
-            Usage(argv[0]);
+    /* Parse commandline */
+    for (i = 1; i < argc;) {
+        int consumed;
+
+        consumed = SDLTest_CommonArg(state, i);
+        if (!consumed) {
+            if (SDL_strcmp("-r", argv[i]) == 0) {
+                spec.freq = SDL_atoi(argv[i + 1]);
+                consumed = 2;
+            } else if (SDL_strcmp("-m", argv[i]) == 0) {
+                spec.channels = 1;
+                consumed = 1;
+            } else if (SDL_strcmp("-c", argv[i]) == 0) {
+                spec.channels = SDL_atoi(argv[i + 1]);
+                consumed = 2;
+            } else if (SDL_strcmp("-l", argv[i]) == 0) {
+                loops = -1;
+                consumed = 1;
+            } else if (SDL_strcmp("-8", argv[i]) == 0) {
+                spec.format = SDL_AUDIO_U8;
+                consumed = 1;
+            } else if (SDL_strcmp("-f32", argv[i]) == 0) {
+                spec.format = SDL_AUDIO_F32;
+                consumed = 1;
+            } else if (SDL_strcmp("-f", argv[i]) == 0) {
+                reverse_stereo = 1;
+                consumed = 1;
+            } else if (SDL_strcmp("-F", argv[i]) == 0) {
+                reverse_sample = 1;
+                consumed = 1;
+            } else if (SDL_strcmp("--panning", argv[i]) == 0) {
+                test_panning = SDL_TRUE;
+                consumed = 1;
+            } else if (SDL_strcmp("--distance", argv[i]) == 0) {
+                test_distance = SDL_TRUE;
+                consumed = 1;
+            } else if (SDL_strcmp("--position", argv[i]) == 0) {
+                test_position = SDL_TRUE;
+                consumed = 1;
+            } else if (SDL_strcmp("--version", argv[i]) == 0) {
+                test_versions();
+                CleanUp(0);
+                consumed = 1;
+            } else if (SDL_strcmp("--verbose", argv[i]) == 0) {
+                verbose = SDL_TRUE;
+                consumed = 1;
+            } else if (argv[i][0] != '-' && !filename) {
+                filename = argv[i];
+                consumed = 1;
+            }
+        }
+        if (consumed <= 0) {
+            static const char *options[] = { "[-r rate]", "[-m]", "[-c channels]", "[-l]", "[-8]",
+                                             "[-f32]", "[-f]", "[-F]", "[--distance]", "[--panning]",
+                                             "[--position]", "[--version]", "<wavefile>", NULL };
+            SDLTest_CommonLogUsage(state, argv[0], options);
             return 1;
         }
+
+        i += consumed;
     }
-    if (!argv[i]) {
-        Usage(argv[0]);
-        return 1;
+    if (test_position && (test_distance || test_panning)) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "position cannot be combined with distance or panning");
+        CleanUp(1);
     }
 
     /* Initialize the SDL library */
@@ -442,18 +415,14 @@ int main(int argc, char *argv[])
     }
     audio_open = 1;
 
-#if (defined TEST_MIX_VERSIONS)
-    test_versions();
-#endif
-
-#if (defined TEST_MIX_DECODERS)
-    report_decoders();
-#endif
+    if (verbose) {
+        report_decoders();
+    }
 
     /* Load the requested wave file */
-    g_wave = Mix_LoadWAV(argv[i]);
+    g_wave = Mix_LoadWAV(filename);
     if (g_wave == NULL) {
-        SDL_Log("Couldn't load %s: %s\n", argv[i], SDL_GetError());
+        SDL_Log("Couldn't load %s: %s\n", filename, SDL_GetError());
         CleanUp(2);
     }
 
@@ -461,9 +430,7 @@ int main(int argc, char *argv[])
         flip_sample(g_wave);
     }
 
-#ifdef TEST_MIX_CHANNELFINISHED  /* rcg06072001 */
     Mix_ChannelFinished(channel_complete_callback);
-#endif
 
     if ((!Mix_SetReverseStereo(MIX_CHANNEL_POST, reverse_stereo)) &&
          (reverse_stereo))
@@ -477,17 +444,17 @@ int main(int argc, char *argv[])
 
     while (still_playing()) {
 
-#if (defined TEST_MIX_PANNING)  /* rcg06132001 */
-        do_panning_update();
-#endif
+        if (test_panning) {
+            do_panning_update();
+        }
 
-#if (defined TEST_MIX_DISTANCE) /* rcg06192001 */
-        do_distance_update();
-#endif
+        if (test_distance) {
+            do_distance_update();
+        }
 
-#if (defined TEST_MIX_POSITION) /* rcg06202001 */
-        do_position_update();
-#endif
+        if (test_position) {
+            do_position_update();
+        }
 
         SDL_Delay(1);
 
@@ -500,5 +467,3 @@ int main(int argc, char *argv[])
 }
 
 /* end of playwave.c ... */
-
-/* vi: set ts=4 sw=4 expandtab: */
