@@ -51,7 +51,6 @@ SDL3_mixer_0.0.0 {
     Mix_HookMusic;
     Mix_HookMusicFinished;
     Mix_Init;
-    Mix_Linked_Version;
     Mix_LoadMUS;
     Mix_LoadMUSType_IO;
     Mix_LoadMUS_IO;
@@ -95,6 +94,7 @@ SDL3_mixer_0.0.0 {
     Mix_StartTrack;
     Mix_UnregisterAllEffects;
     Mix_UnregisterEffect;
+    Mix_Version;
     Mix_Volume;
     Mix_VolumeChunk;
     Mix_VolumeMusic;
