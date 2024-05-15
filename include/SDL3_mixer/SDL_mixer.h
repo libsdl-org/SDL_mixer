@@ -38,43 +38,17 @@ extern "C" {
 #endif
 
 /**
- * Printable format: "%d.%d.%d", MAJOR, MINOR, PATCHLEVEL
+ * Printable format: "%d.%d.%d", MAJOR, MINOR, MICRO
  */
 #define SDL_MIXER_MAJOR_VERSION 3
 #define SDL_MIXER_MINOR_VERSION 0
-#define SDL_MIXER_PATCHLEVEL    0
-
-/**
- * This macro can be used to fill a version structure with the compile-time
- * version of the SDL_mixer library.
- */
-#define SDL_MIXER_VERSION(X)                        \
-{                                                   \
-    (X)->major = SDL_MIXER_MAJOR_VERSION;           \
-    (X)->minor = SDL_MIXER_MINOR_VERSION;           \
-    (X)->patch = SDL_MIXER_PATCHLEVEL;              \
-}
-
-/* Backwards compatibility */
-#define MIX_MAJOR_VERSION   SDL_MIXER_MAJOR_VERSION
-#define MIX_MINOR_VERSION   SDL_MIXER_MINOR_VERSION
-#define MIX_PATCHLEVEL      SDL_MIXER_PATCHLEVEL
-#define MIX_VERSION(X)      SDL_MIXER_VERSION(X)
-
-#if SDL_MIXER_MAJOR_VERSION < 3 && SDL_MAJOR_VERSION < 3
+#define SDL_MIXER_MICRO_VERSION 0
 
 /**
  * This is the version number macro for the current SDL_mixer version.
- *
- * In versions higher than 2.9.0, the minor version overflows into the
- * thousands digit: for example, 2.23.0 is encoded as 4300. This macro will
- * not be available in SDL 3.x or SDL_mixer 3.x.
- *
- * Deprecated, use SDL_MIXER_VERSION_ATLEAST or SDL_MIXER_VERSION instead.
  */
-#define SDL_MIXER_COMPILEDVERSION \
-    SDL_VERSIONNUM(SDL_MIXER_MAJOR_VERSION, SDL_MIXER_MINOR_VERSION, SDL_MIXER_PATCHLEVEL)
-#endif /* SDL_MIXER_MAJOR_VERSION < 3 && SDL_MAJOR_VERSION < 3 */
+#define SDL_MIXER_VERSION \
+    SDL_VERSIONNUM(SDL_MIXER_MAJOR_VERSION, SDL_MIXER_MINOR_VERSION, SDL_MIXER_MICRO_VERSION)
 
 /**
  * This macro will evaluate to true if compiled with SDL_mixer at least X.Y.Z.
@@ -82,22 +56,16 @@ extern "C" {
 #define SDL_MIXER_VERSION_ATLEAST(X, Y, Z) \
     ((SDL_MIXER_MAJOR_VERSION >= X) && \
      (SDL_MIXER_MAJOR_VERSION > X || SDL_MIXER_MINOR_VERSION >= Y) && \
-     (SDL_MIXER_MAJOR_VERSION > X || SDL_MIXER_MINOR_VERSION > Y || SDL_MIXER_PATCHLEVEL >= Z))
+     (SDL_MIXER_MAJOR_VERSION > X || SDL_MIXER_MINOR_VERSION > Y || SDL_MIXER_MICRO_VERSION >= Z))
 
 /**
- * Query the version of SDL_mixer that the program is linked against.
- *
  * This function gets the version of the dynamically linked SDL_mixer library.
- * This is separate from the SDL_MIXER_VERSION() macro, which tells you what
- * version of the SDL_mixer headers you compiled against.
  *
- * This returns static internal data; do not free or modify it!
- *
- * \returns a pointer to the version information.
+ * \returns SDL_mixer version
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
-extern DECLSPEC const SDL_Version * SDLCALL Mix_Linked_Version(void);
+extern DECLSPEC int SDLCALL Mix_Version(void);
 
 /**
  * Initialization flags

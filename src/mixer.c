@@ -37,28 +37,22 @@
 #define FORM        0x4d524f46      /* "FORM" */
 #define CREA        0x61657243      /* "Crea" */
 
-#if defined(SDL_BUILD_MAJOR_VERSION) && defined(SDL_COMPILE_TIME_ASSERT)
+#if defined(SDL_BUILD_MAJOR_VERSION)
 SDL_COMPILE_TIME_ASSERT(SDL_BUILD_MAJOR_VERSION,
                         SDL_MIXER_MAJOR_VERSION == SDL_BUILD_MAJOR_VERSION);
 SDL_COMPILE_TIME_ASSERT(SDL_BUILD_MINOR_VERSION,
                         SDL_MIXER_MINOR_VERSION == SDL_BUILD_MINOR_VERSION);
 SDL_COMPILE_TIME_ASSERT(SDL_BUILD_MICRO_VERSION,
-                        SDL_MIXER_PATCHLEVEL == SDL_BUILD_MICRO_VERSION);
+                        SDL_MIXER_MICRO_VERSION == SDL_BUILD_MICRO_VERSION);
 #endif
 
-#if defined(SDL_COMPILE_TIME_ASSERT)
+/* Limited by its encoding in SDL_VERSIONNUM */
 SDL_COMPILE_TIME_ASSERT(SDL_MIXER_MAJOR_VERSION_min, SDL_MIXER_MAJOR_VERSION >= 0);
-/* Limited only by the need to fit in SDL_Version */
-SDL_COMPILE_TIME_ASSERT(SDL_MIXER_MAJOR_VERSION_max, SDL_MIXER_MAJOR_VERSION <= 255);
-
+SDL_COMPILE_TIME_ASSERT(SDL_MIXER_MAJOR_VERSION_max, SDL_MIXER_MAJOR_VERSION <= 10);
 SDL_COMPILE_TIME_ASSERT(SDL_MIXER_MINOR_VERSION_min, SDL_MIXER_MINOR_VERSION >= 0);
-/* Limited only by the need to fit in SDL_Version */
-SDL_COMPILE_TIME_ASSERT(SDL_MIXER_MINOR_VERSION_max, SDL_MIXER_MINOR_VERSION <= 255);
-
-SDL_COMPILE_TIME_ASSERT(SDL_MIXER_PATCHLEVEL_min, SDL_MIXER_PATCHLEVEL >= 0);
-/* Limited by its encoding in SDL_VERSIONNUM and in the ABI versions */
-SDL_COMPILE_TIME_ASSERT(SDL_MIXER_PATCHLEVEL_max, SDL_MIXER_PATCHLEVEL <= 99);
-#endif
+SDL_COMPILE_TIME_ASSERT(SDL_MIXER_MINOR_VERSION_max, SDL_MIXER_MINOR_VERSION <= 999);
+SDL_COMPILE_TIME_ASSERT(SDL_MIXER_MICRO_VERSION_min, SDL_MIXER_MICRO_VERSION >= 0);
+SDL_COMPILE_TIME_ASSERT(SDL_MIXER_MICRO_VERSION_max, SDL_MIXER_MICRO_VERSION <= 999);
 
 static int audio_opened = 0;
 static SDL_AudioSpec mixer;
@@ -162,11 +156,9 @@ void add_chunk_decoder(const char *decoder)
 }
 
 /* rcg06192001 get linked library's version. */
-const SDL_Version *Mix_Linked_Version(void)
+int Mix_Version(void)
 {
-    static SDL_Version linked_version;
-    SDL_MIXER_VERSION(&linked_version);
-    return &linked_version;
+    return SDL_MIXER_VERSION;
 }
 
 /*

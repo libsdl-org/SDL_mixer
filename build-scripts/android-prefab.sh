@@ -44,8 +44,8 @@ android_stl="c++_shared"
 
 sdlmixer_major=$(sed -ne 's/^#define SDL_MIXER_MAJOR_VERSION  *//p' "${sdlmixer_root}/include/SDL3_mixer/SDL_mixer.h")
 sdlmixer_minor=$(sed -ne 's/^#define SDL_MIXER_MINOR_VERSION  *//p' "${sdlmixer_root}/include/SDL3_mixer/SDL_mixer.h")
-sdlmixer_patch=$(sed -ne 's/^#define SDL_MIXER_PATCHLEVEL  *//p' "${sdlmixer_root}/include/SDL3_mixer/SDL_mixer.h")
-sdlmixer_version="${sdlmixer_major}.${sdlmixer_minor}.${sdlmixer_patch}"
+sdlmixer_micro=$(sed -ne 's/^#define SDL_MIXER_MICRO_VERSION  *//p' "${sdlmixer_root}/include/SDL3_mixer/SDL_mixer.h")
+sdlmixer_version="${sdlmixer_major}.${sdlmixer_minor}.${sdlmixer_micro}"
 echo "Building Android prefab package for SDL_mixer version $sdlmixer_version"
 
 if test ! -d "${sdl_build_root}"; then

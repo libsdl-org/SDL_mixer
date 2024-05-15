@@ -12,7 +12,7 @@ export LC_CTYPE=C
 header=include/SDL3_mixer/SDL_mixer.h
 ref_major=$(sed -ne 's/^#define SDL_MIXER_MAJOR_VERSION  *//p' $header)
 ref_minor=$(sed -ne 's/^#define SDL_MIXER_MINOR_VERSION  *//p' $header)
-ref_micro=$(sed -ne 's/^#define SDL_MIXER_PATCHLEVEL  *//p' $header)
+ref_micro=$(sed -ne 's/^#define SDL_MIXER_MICRO_VERSION  *//p' $header)
 ref_version="${ref_major}.${ref_minor}.${ref_micro}"
 
 tests=0
