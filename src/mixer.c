@@ -343,7 +343,7 @@ mix_channels(void *udata, SDL_AudioStream *astream, int len, int total)
     (void)total;
 
     if (audio_mixbuflen < len) {
-        void *ptr = SDL_aligned_alloc(SDL_SIMDGetAlignment(), len);
+        void *ptr = SDL_aligned_alloc(SDL_GetSIMDAlignment(), len);
         if (!ptr) {
             return;  // oh well.
         }
