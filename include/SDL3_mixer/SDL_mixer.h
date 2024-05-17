@@ -187,7 +187,7 @@ extern DECLSPEC void SDLCALL Mix_Quit(void);
 #define MIX_DEFAULT_FREQUENCY   44100
 #define MIX_DEFAULT_FORMAT      SDL_AUDIO_S16
 #define MIX_DEFAULT_CHANNELS    2
-#define MIX_MAX_VOLUME          SDL_MIX_MAXVOLUME /* Volume of a chunk */
+#define MIX_MAX_VOLUME          128 /* Volume of a chunk */
 
 /**
  * The internal format for an audio chunk

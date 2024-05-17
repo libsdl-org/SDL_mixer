@@ -317,7 +317,7 @@ int music_pcm_getaudio(void *context, void *data, int bytes, int volume,
         if (volume == MIX_MAX_VOLUME) {
             dst += consumed;
         } else {
-            SDL_MixAudioFormat(snd, dst, music_spec.format, (Uint32)consumed, volume);
+            SDL_MixAudio(snd, dst, music_spec.format, (Uint32)consumed, volume/(float)MIX_MAX_VOLUME);
             snd += consumed;
         }
         len -= consumed;
@@ -1193,8 +1193,8 @@ int Mix_VolumeMusic(int volume)
     if (volume < 0) {
         return prev_volume;
     }
-    if (volume > SDL_MIX_MAXVOLUME) {
-        volume = SDL_MIX_MAXVOLUME;
+    if (volume > MIX_MAX_VOLUME) {
+        volume = MIX_MAX_VOLUME;
     }
     music_volume = volume;
     Mix_LockAudio();
