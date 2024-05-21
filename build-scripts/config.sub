@@ -887,6 +887,10 @@ case $basic_machine in
 		cpu=i386
 		vendor=ibm
 		;;
+	psp)
+		basic_machine=mipsallegrexel-psp
+		os=-elf
+		;;
 	rm[46]00)
 		cpu=mips
 		vendor=siemens
