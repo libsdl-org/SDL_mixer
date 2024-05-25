@@ -260,7 +260,7 @@ static MIDIEvent *MIDItoStream(MIDIFile *mididata)
 
 static int ReadMIDIFile(MIDIFile *mididata, SDL_IOStream *src)
 {
-    int i = 0;
+    int i = -1;
     Uint32 ID = 0;
     Uint32 size = 0;
     Uint16 format = 0;
