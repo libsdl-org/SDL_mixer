@@ -262,7 +262,7 @@ static MIDIEvent *MIDItoStream(MIDIFile *mididata)
 
 static int ReadMIDIFile(MIDIFile *mididata, SDL_RWops *src)
 {
-    int i = 0;
+    int i = -1;
     Uint32 ID;
     Uint32 size;
     Uint16 format;
