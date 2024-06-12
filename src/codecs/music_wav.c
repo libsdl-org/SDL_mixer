@@ -436,9 +436,9 @@ static int fetch_float64le(void *context, int length)
 static int MS_ADPCM_Init(ADPCM_DecoderState *state, const Uint8 *chunk_data, Uint32 chunk_length)
 {
     const WaveFMTEx *fmt = (WaveFMTEx *)chunk_data;
-    const Uint16 channels = SDL_SwapLE16(fmt->format.channels);
-    const Uint16 blockalign = SDL_SwapLE16(fmt->format.blockalign);
-    const Uint16 bitspersample = SDL_SwapLE16(fmt->format.bitspersample);
+    const Uint16 channels = SDL_Swap16LE(fmt->format.channels);
+    const Uint16 blockalign = SDL_Swap16LE(fmt->format.blockalign);
+    const Uint16 bitspersample = SDL_Swap16LE(fmt->format.bitspersample);
     const size_t blockheadersize = (size_t)channels * 7;
     const size_t blockdatasize = (size_t)blockalign - blockheadersize;
     const size_t blockframebitsize = (size_t)bitspersample * channels;
@@ -474,8 +474,8 @@ static int MS_ADPCM_Init(ADPCM_DecoderState *state, const Uint8 *chunk_data, Uin
         return Mix_SetError("Could not read MS ADPCM format header");
     }
 
-    cbExtSize = SDL_SwapLE16(fmt->cbSize);
-    samplesperblock = SDL_SwapLE16(fmt->Samples.samplesperblock);
+    cbExtSize = SDL_Swap16LE(fmt->cbSize);
+    samplesperblock = SDL_Swap16LE(fmt->Samples.samplesperblock);
     /* Number of coefficient pairs. A pair has two 16-bit integers. */
     coeffcount = chunk_data[20] | ((size_t)chunk_data[21] << 8);
     /* bPredictor, the integer offset into the coefficients array, is only
@@ -711,10 +711,10 @@ static int MS_ADPCM_DecodeBlockData(ADPCM_DecoderState *state)
 static int IMA_ADPCM_Init(ADPCM_DecoderState *state, const Uint8 *chunk_data, Uint32 chunk_length)
 {
     const WaveFMTEx *fmt = (WaveFMTEx *)chunk_data;
-    const Uint16 formattag = SDL_SwapLE16(fmt->format.encoding);
-    const Uint16 channels = SDL_SwapLE16(fmt->format.channels);
-    const Uint16 blockalign = SDL_SwapLE16(fmt->format.blockalign);
-    const Uint16 bitspersample = SDL_SwapLE16(fmt->format.bitspersample);
+    const Uint16 formattag = SDL_Swap16LE(fmt->format.encoding);
+    const Uint16 channels = SDL_Swap16LE(fmt->format.channels);
+    const Uint16 blockalign = SDL_Swap16LE(fmt->format.blockalign);
+    const Uint16 bitspersample = SDL_Swap16LE(fmt->format.bitspersample);
     const size_t blockheadersize = (size_t)channels * 4;
     const size_t blockdatasize = (size_t)blockalign - blockheadersize;
     const size_t blockframebitsize = (size_t)bitspersample * channels;
@@ -742,9 +742,9 @@ static int IMA_ADPCM_Init(ADPCM_DecoderState *state, const Uint8 *chunk_data, Ui
          * format because the extensible header has wSampePerBlocks too.
          */
     } else if (chunk_length >= 20) {
-        Uint16 cbExtSize = SDL_SwapLE16(fmt->cbSize);
+        Uint16 cbExtSize = SDL_Swap16LE(fmt->cbSize);
         if (cbExtSize >= 2) {
-            samplesperblock = SDL_SwapLE16(fmt->Samples.samplesperblock);
+            samplesperblock = SDL_Swap16LE(fmt->Samples.samplesperblock);
         }
     }
 
@@ -1365,7 +1365,7 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
     SDL_zero(fmt);
     SDL_memcpy(&fmt, chunk, size);
 
-    wave->encoding = SDL_SwapLE16(fmt.format.encoding);
+    wave->encoding = SDL_Swap16LE(fmt.format.encoding);
 
     if (wave->encoding == EXTENSIBLE_CODE) {
         if (size < sizeof(fmt)) {
@@ -1373,7 +1373,7 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
             SDL_free(chunk);
             return SDL_FALSE;
         }
-        wave->encoding = (Uint16)SDL_SwapLE32(fmt.subencoding);
+        wave->encoding = (Uint16)SDL_Swap32LE(fmt.subencoding);
     }
 
     /* Decode the audio data format */
@@ -1410,8 +1410,8 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
     }
     SDL_free(chunk);
 
-    spec->freq = (int)SDL_SwapLE32(fmt.format.frequency);
-    bits = (int)SDL_SwapLE16(fmt.format.bitspersample);
+    spec->freq = (int)SDL_Swap32LE(fmt.format.frequency);
+    bits = (int)SDL_Swap16LE(fmt.format.bitspersample);
     switch (bits) {
         case 4:
             switch(wave->encoding) {
@@ -1464,7 +1464,7 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
             Mix_SetError("Unknown PCM format with %d bits", bits);
             return SDL_FALSE;
     }
-    spec->channels = (Uint8) SDL_SwapLE16(fmt.format.channels);
+    spec->channels = (Uint8) SDL_Swap16LE(fmt.format.channels);
     wave->samplesize = spec->channels * (bits / 8);
     /* SDL_CalculateAudioSpec */
     wave->buflen = SDL_AUDIO_BITSIZE(spec->format) / 8;
@@ -1520,11 +1520,11 @@ static SDL_bool ParseSMPL(WAV_Music *wave, Uint32 chunk_length)
     }
     chunk = (SamplerChunk *)data;
 
-    for (i = 0; i < SDL_SwapLE32(chunk->sample_loops); ++i) {
+    for (i = 0; i < SDL_Swap32LE(chunk->sample_loops); ++i) {
         const Uint32 LOOP_TYPE_FORWARD = 0;
-        Uint32 loop_type = SDL_SwapLE32(chunk->loops[i].type);
+        Uint32 loop_type = SDL_Swap32LE(chunk->loops[i].type);
         if (loop_type == LOOP_TYPE_FORWARD) {
-            AddLoopPoint(wave, SDL_SwapLE32(chunk->loops[i].play_count), SDL_SwapLE32(chunk->loops[i].start), SDL_SwapLE32(chunk->loops[i].end));
+            AddLoopPoint(wave, SDL_Swap32LE(chunk->loops[i].play_count), SDL_Swap32LE(chunk->loops[i].start), SDL_Swap32LE(chunk->loops[i].end));
         }
     }
 
@@ -1540,8 +1540,8 @@ static void read_meta_field(Mix_MusicMetaTags *tags, Mix_MusicMetaTag tag_type, 
     char *field = NULL;
     *i += 4;
     len = isID3 ?
-          SDL_SwapBE32(*((Uint32 *)(data + *i))) : /* ID3  */
-          SDL_SwapLE32(*((Uint32 *)(data + *i))); /* LIST */
+          SDL_Swap32BE(*((Uint32 *)(data + *i))) : /* ID3  */
+          SDL_Swap32LE(*((Uint32 *)(data + *i))); /* LIST */
     if (len > chunk_length) {
         return; /* Do nothing due to broken lenght */
     }

@@ -647,17 +647,17 @@ static void SDLCALL _Eff_position_s16lsb(int chan, void *stream, int len, void *
 #endif
 
     for (i = 0; i < len; i += sizeof(Sint16) * 2) {
-        Sint16 swapl = (Sint16) ((((float) (Sint16) SDL_SwapLE16(*(ptr+0))) *
+        Sint16 swapl = (Sint16) ((((float) (Sint16) SDL_Swap16LE(*(ptr+0))) *
                                     left_f) * dist_f);
-        Sint16 swapr = (Sint16) ((((float) (Sint16) SDL_SwapLE16(*(ptr+1))) *
+        Sint16 swapr = (Sint16) ((((float) (Sint16) SDL_Swap16LE(*(ptr+1))) *
                                     right_f) * dist_f);
         if (opp) {
-            *(ptr++) = (Sint16) SDL_SwapLE16(swapr);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swapl);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swapr);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swapl);
         }
         else {
-            *(ptr++) = (Sint16) SDL_SwapLE16(swapl);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swapr);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swapl);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swapr);
         }
     }
 }
@@ -671,38 +671,38 @@ static void SDLCALL _Eff_position_s16lsb_c4(int chan, void *stream, int len, voi
     (void)chan;
 
     for (i = 0; i < len; i += sizeof(Sint16) * 4) {
-        Sint16 swapl = (Sint16) ((((float) (Sint16) SDL_SwapLE16(*(ptr+0))) *
+        Sint16 swapl = (Sint16) ((((float) (Sint16) SDL_Swap16LE(*(ptr+0))) *
                                     args->left_f) * args->distance_f);
-        Sint16 swapr = (Sint16) ((((float) (Sint16) SDL_SwapLE16(*(ptr+1))) *
+        Sint16 swapr = (Sint16) ((((float) (Sint16) SDL_Swap16LE(*(ptr+1))) *
                                     args->right_f) * args->distance_f);
-        Sint16 swaplr = (Sint16) ((((float) (Sint16) SDL_SwapLE16(*(ptr+1))) *
+        Sint16 swaplr = (Sint16) ((((float) (Sint16) SDL_Swap16LE(*(ptr+1))) *
                                     args->left_rear_f) * args->distance_f);
-        Sint16 swaprr = (Sint16) ((((float) (Sint16) SDL_SwapLE16(*(ptr+2))) *
+        Sint16 swaprr = (Sint16) ((((float) (Sint16) SDL_Swap16LE(*(ptr+2))) *
                                     args->right_rear_f) * args->distance_f);
         switch (args->room_angle) {
         case 0:
-            *(ptr++) = (Sint16) SDL_SwapLE16(swapl);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swapr);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swaplr);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swaprr);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swapl);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swapr);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swaplr);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swaprr);
             break;
         case 90:
-            *(ptr++) = (Sint16) SDL_SwapLE16(swapr);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swaprr);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swapl);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swaplr);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swapr);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swaprr);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swapl);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swaplr);
             break;
         case 180:
-            *(ptr++) = (Sint16) SDL_SwapLE16(swaprr);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swaplr);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swapr);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swapl);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swaprr);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swaplr);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swapr);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swapl);
             break;
         case 270:
-            *(ptr++) = (Sint16) SDL_SwapLE16(swaplr);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swapl);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swaprr);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swapr);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swaplr);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swapl);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swaprr);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swapr);
             break;
         }
     }
@@ -718,50 +718,50 @@ static void SDLCALL _Eff_position_s16lsb_c6(int chan, void *stream, int len, voi
     (void)chan;
 
     for (i = 0; i < len; i += sizeof(Sint16) * 6) {
-        Sint16 swapl = (Sint16) ((((float) (Sint16) SDL_SwapLE16(*(ptr+0))) *
+        Sint16 swapl = (Sint16) ((((float) (Sint16) SDL_Swap16LE(*(ptr+0))) *
                                     args->left_f) * args->distance_f);
-        Sint16 swapr = (Sint16) ((((float) (Sint16) SDL_SwapLE16(*(ptr+1))) *
+        Sint16 swapr = (Sint16) ((((float) (Sint16) SDL_Swap16LE(*(ptr+1))) *
                                     args->right_f) * args->distance_f);
-        Sint16 swaplr = (Sint16) ((((float) (Sint16) SDL_SwapLE16(*(ptr+2))) *
+        Sint16 swaplr = (Sint16) ((((float) (Sint16) SDL_Swap16LE(*(ptr+2))) *
                                     args->left_rear_f) * args->distance_f);
-        Sint16 swaprr = (Sint16) ((((float) (Sint16) SDL_SwapLE16(*(ptr+3))) *
+        Sint16 swaprr = (Sint16) ((((float) (Sint16) SDL_Swap16LE(*(ptr+3))) *
                                     args->right_rear_f) * args->distance_f);
-        Sint16 swapce = (Sint16) ((((float) (Sint16) SDL_SwapLE16(*(ptr+4))) *
+        Sint16 swapce = (Sint16) ((((float) (Sint16) SDL_Swap16LE(*(ptr+4))) *
                                     args->center_f) * args->distance_f);
-        Sint16 swapwf = (Sint16) ((((float) (Sint16) SDL_SwapLE16(*(ptr+5))) *
+        Sint16 swapwf = (Sint16) ((((float) (Sint16) SDL_Swap16LE(*(ptr+5))) *
                                     args->lfe_f) * args->distance_f);
         switch (args->room_angle) {
         case 0:
-            *(ptr++) = (Sint16) SDL_SwapLE16(swapl);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swapr);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swaplr);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swaprr);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swapce);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swapwf);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swapl);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swapr);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swaplr);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swaprr);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swapce);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swapwf);
             break;
         case 90:
-            *(ptr++) = (Sint16) SDL_SwapLE16(swapr);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swaprr);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swapl);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swaplr);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swapr)/2 + (Sint16) SDL_SwapLE16(swaprr)/2;
-            *(ptr++) = (Sint16) SDL_SwapLE16(swapwf);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swapr);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swaprr);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swapl);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swaplr);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swapr)/2 + (Sint16) SDL_Swap16LE(swaprr)/2;
+            *(ptr++) = (Sint16) SDL_Swap16LE(swapwf);
             break;
         case 180:
-            *(ptr++) = (Sint16) SDL_SwapLE16(swaprr);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swaplr);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swapr);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swapl);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swaprr)/2 + (Sint16) SDL_SwapLE16(swaplr)/2;
-            *(ptr++) = (Sint16) SDL_SwapLE16(swapwf);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swaprr);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swaplr);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swapr);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swapl);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swaprr)/2 + (Sint16) SDL_Swap16LE(swaplr)/2;
+            *(ptr++) = (Sint16) SDL_Swap16LE(swapwf);
             break;
         case 270:
-            *(ptr++) = (Sint16) SDL_SwapLE16(swaplr);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swapl);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swaprr);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swapr);
-            *(ptr++) = (Sint16) SDL_SwapLE16(swapl)/2 + (Sint16) SDL_SwapLE16(swaplr)/2;
-            *(ptr++) = (Sint16) SDL_SwapLE16(swapwf);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swaplr);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swapl);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swaprr);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swapr);
+            *(ptr++) = (Sint16) SDL_Swap16LE(swapl)/2 + (Sint16) SDL_Swap16LE(swaplr)/2;
+            *(ptr++) = (Sint16) SDL_Swap16LE(swapwf);
             break;
         }
     }
@@ -779,12 +779,12 @@ static void SDLCALL _Eff_position_s16msb(int chan, void *stream, int len, void *
     (void)chan;
 
     for (i = 0; i < len; i += sizeof(Sint16) * 2) {
-        Sint16 swapl = (Sint16) ((((float) (Sint16) SDL_SwapBE16(*(ptr+0))) *
+        Sint16 swapl = (Sint16) ((((float) (Sint16) SDL_Swap16BE(*(ptr+0))) *
                                     left_f) * dist_f);
-        Sint16 swapr = (Sint16) ((((float) (Sint16) SDL_SwapBE16(*(ptr+1))) *
+        Sint16 swapr = (Sint16) ((((float) (Sint16) SDL_Swap16BE(*(ptr+1))) *
                                     right_f) * dist_f);
-        *(ptr++) = (Sint16) SDL_SwapBE16(swapl);
-        *(ptr++) = (Sint16) SDL_SwapBE16(swapr);
+        *(ptr++) = (Sint16) SDL_Swap16BE(swapl);
+        *(ptr++) = (Sint16) SDL_Swap16BE(swapr);
     }
 }
 
@@ -798,38 +798,38 @@ static void SDLCALL _Eff_position_s16msb_c4(int chan, void *stream, int len, voi
     (void)chan;
 
     for (i = 0; i < len; i += sizeof(Sint16) * 4) {
-        Sint16 swapl = (Sint16) ((((float) (Sint16) SDL_SwapBE16(*(ptr+0))) *
+        Sint16 swapl = (Sint16) ((((float) (Sint16) SDL_Swap16BE(*(ptr+0))) *
                                     args->left_f) * args->distance_f);
-        Sint16 swapr = (Sint16) ((((float) (Sint16) SDL_SwapBE16(*(ptr+1))) *
+        Sint16 swapr = (Sint16) ((((float) (Sint16) SDL_Swap16BE(*(ptr+1))) *
                                     args->right_f) * args->distance_f);
-        Sint16 swaplr = (Sint16) ((((float) (Sint16) SDL_SwapBE16(*(ptr+2))) *
+        Sint16 swaplr = (Sint16) ((((float) (Sint16) SDL_Swap16BE(*(ptr+2))) *
                                     args->left_rear_f) * args->distance_f);
-        Sint16 swaprr = (Sint16) ((((float) (Sint16) SDL_SwapBE16(*(ptr+3))) *
+        Sint16 swaprr = (Sint16) ((((float) (Sint16) SDL_Swap16BE(*(ptr+3))) *
                                     args->right_rear_f) * args->distance_f);
         switch (args->room_angle) {
         case 0:
-            *(ptr++) = (Sint16) SDL_SwapBE16(swapl);
-            *(ptr++) = (Sint16) SDL_SwapBE16(swapr);
-            *(ptr++) = (Sint16) SDL_SwapBE16(swaplr);
-            *(ptr++) = (Sint16) SDL_SwapBE16(swaprr);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swapl);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swapr);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swaplr);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swaprr);
             break;
         case 90:
-            *(ptr++) = (Sint16) SDL_SwapBE16(swapr);
-            *(ptr++) = (Sint16) SDL_SwapBE16(swaprr);
-            *(ptr++) = (Sint16) SDL_SwapBE16(swapl);
-            *(ptr++) = (Sint16) SDL_SwapBE16(swaplr);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swapr);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swaprr);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swapl);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swaplr);
             break;
         case 180:
-            *(ptr++) = (Sint16) SDL_SwapBE16(swaprr);
-            *(ptr++) = (Sint16) SDL_SwapBE16(swaplr);
-            *(ptr++) = (Sint16) SDL_SwapBE16(swapr);
-            *(ptr++) = (Sint16) SDL_SwapBE16(swapl);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swaprr);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swaplr);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swapr);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swapl);
             break;
         case 270:
-            *(ptr++) = (Sint16) SDL_SwapBE16(swaplr);
-            *(ptr++) = (Sint16) SDL_SwapBE16(swapl);
-            *(ptr++) = (Sint16) SDL_SwapBE16(swaprr);
-            *(ptr++) = (Sint16) SDL_SwapBE16(swapr);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swaplr);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swapl);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swaprr);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swapr);
             break;
         }
     }
@@ -845,51 +845,51 @@ static void SDLCALL _Eff_position_s16msb_c6(int chan, void *stream, int len, voi
     (void)chan;
 
     for (i = 0; i < len; i += sizeof(Sint16) * 6) {
-        Sint16 swapl = (Sint16) ((((float) (Sint16) SDL_SwapBE16(*(ptr+0))) *
+        Sint16 swapl = (Sint16) ((((float) (Sint16) SDL_Swap16BE(*(ptr+0))) *
                                     args->left_f) * args->distance_f);
-        Sint16 swapr = (Sint16) ((((float) (Sint16) SDL_SwapBE16(*(ptr+1))) *
+        Sint16 swapr = (Sint16) ((((float) (Sint16) SDL_Swap16BE(*(ptr+1))) *
                                     args->right_f) * args->distance_f);
-        Sint16 swaplr = (Sint16) ((((float) (Sint16) SDL_SwapBE16(*(ptr+2))) *
+        Sint16 swaplr = (Sint16) ((((float) (Sint16) SDL_Swap16BE(*(ptr+2))) *
                                     args->left_rear_f) * args->distance_f);
-        Sint16 swaprr = (Sint16) ((((float) (Sint16) SDL_SwapBE16(*(ptr+3))) *
+        Sint16 swaprr = (Sint16) ((((float) (Sint16) SDL_Swap16BE(*(ptr+3))) *
                                     args->right_rear_f) * args->distance_f);
-        Sint16 swapce = (Sint16) ((((float) (Sint16) SDL_SwapBE16(*(ptr+4))) *
+        Sint16 swapce = (Sint16) ((((float) (Sint16) SDL_Swap16BE(*(ptr+4))) *
                                     args->center_f) * args->distance_f);
-        Sint16 swapwf = (Sint16) ((((float) (Sint16) SDL_SwapBE16(*(ptr+5))) *
+        Sint16 swapwf = (Sint16) ((((float) (Sint16) SDL_Swap16BE(*(ptr+5))) *
                                     args->lfe_f) * args->distance_f);
 
         switch (args->room_angle) {
         case 0:
-            *(ptr++) = (Sint16) SDL_SwapBE16(swapl);
-            *(ptr++) = (Sint16) SDL_SwapBE16(swapr);
-            *(ptr++) = (Sint16) SDL_SwapBE16(swaplr);
-            *(ptr++) = (Sint16) SDL_SwapBE16(swaprr);
-            *(ptr++) = (Sint16) SDL_SwapBE16(swapce);
-            *(ptr++) = (Sint16) SDL_SwapBE16(swapwf);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swapl);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swapr);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swaplr);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swaprr);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swapce);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swapwf);
             break;
         case 90:
-            *(ptr++) = (Sint16) SDL_SwapBE16(swapr);
-            *(ptr++) = (Sint16) SDL_SwapBE16(swaprr);
-            *(ptr++) = (Sint16) SDL_SwapBE16(swapl);
-            *(ptr++) = (Sint16) SDL_SwapBE16(swaplr);
-            *(ptr++) = (Sint16) SDL_SwapBE16(swapr)/2 + (Sint16) SDL_SwapBE16(swaprr)/2;
-            *(ptr++) = (Sint16) SDL_SwapBE16(swapwf);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swapr);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swaprr);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swapl);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swaplr);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swapr)/2 + (Sint16) SDL_Swap16BE(swaprr)/2;
+            *(ptr++) = (Sint16) SDL_Swap16BE(swapwf);
             break;
         case 180:
-            *(ptr++) = (Sint16) SDL_SwapBE16(swaprr);
-            *(ptr++) = (Sint16) SDL_SwapBE16(swaplr);
-            *(ptr++) = (Sint16) SDL_SwapBE16(swapr);
-            *(ptr++) = (Sint16) SDL_SwapBE16(swapl);
-            *(ptr++) = (Sint16) SDL_SwapBE16(swaprr)/2 + (Sint16) SDL_SwapBE16(swaplr)/2;
-            *(ptr++) = (Sint16) SDL_SwapBE16(swapwf);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swaprr);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swaplr);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swapr);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swapl);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swaprr)/2 + (Sint16) SDL_Swap16BE(swaplr)/2;
+            *(ptr++) = (Sint16) SDL_Swap16BE(swapwf);
             break;
         case 270:
-            *(ptr++) = (Sint16) SDL_SwapBE16(swaplr);
-            *(ptr++) = (Sint16) SDL_SwapBE16(swapl);
-            *(ptr++) = (Sint16) SDL_SwapBE16(swaprr);
-            *(ptr++) = (Sint16) SDL_SwapBE16(swapr);
-            *(ptr++) = (Sint16) SDL_SwapBE16(swapl)/2 + (Sint16) SDL_SwapBE16(swaplr)/2;
-            *(ptr++) = (Sint16) SDL_SwapBE16(swapwf);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swaplr);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swapl);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swaprr);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swapr);
+            *(ptr++) = (Sint16) SDL_Swap16BE(swapl)/2 + (Sint16) SDL_Swap16BE(swaplr)/2;
+            *(ptr++) = (Sint16) SDL_Swap16BE(swapwf);
             break;
         }
     }
@@ -915,17 +915,17 @@ static void SDLCALL _Eff_position_s32lsb(int chan, void *stream, int len, void *
 #endif
 
     for (i = 0; i < len; i += sizeof(Sint32) * 2) {
-        Sint32 swapl = (Sint32) ((((float) (Sint32) SDL_SwapLE32(*(ptr+0))) *
+        Sint32 swapl = (Sint32) ((((float) (Sint32) SDL_Swap32LE(*(ptr+0))) *
                                     left_f) * dist_f);
-        Sint32 swapr = (Sint32) ((((float) (Sint32) SDL_SwapLE32(*(ptr+1))) *
+        Sint32 swapr = (Sint32) ((((float) (Sint32) SDL_Swap32LE(*(ptr+1))) *
                                     right_f) * dist_f);
         if (opp) {
-            *(ptr++) = (Sint32) SDL_SwapLE32(swapr);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swapl);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swapr);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swapl);
         }
         else {
-            *(ptr++) = (Sint32) SDL_SwapLE32(swapl);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swapr);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swapl);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swapr);
         }
     }
 }
@@ -940,38 +940,38 @@ static void SDLCALL _Eff_position_s32lsb_c4(int chan, void *stream, int len, voi
     (void)chan;
 
     for (i = 0; i < len; i += sizeof(Sint32) * 4) {
-        Sint32 swapl = (Sint32) ((((float) (Sint32) SDL_SwapLE32(*(ptr+0))) *
+        Sint32 swapl = (Sint32) ((((float) (Sint32) SDL_Swap32LE(*(ptr+0))) *
                                     args->left_f) * args->distance_f);
-        Sint32 swapr = (Sint32) ((((float) (Sint32) SDL_SwapLE32(*(ptr+1))) *
+        Sint32 swapr = (Sint32) ((((float) (Sint32) SDL_Swap32LE(*(ptr+1))) *
                                     args->right_f) * args->distance_f);
-        Sint32 swaplr = (Sint32) ((((float) (Sint32) SDL_SwapLE32(*(ptr+1))) *
+        Sint32 swaplr = (Sint32) ((((float) (Sint32) SDL_Swap32LE(*(ptr+1))) *
                                     args->left_rear_f) * args->distance_f);
-        Sint32 swaprr = (Sint32) ((((float) (Sint32) SDL_SwapLE32(*(ptr+2))) *
+        Sint32 swaprr = (Sint32) ((((float) (Sint32) SDL_Swap32LE(*(ptr+2))) *
                                     args->right_rear_f) * args->distance_f);
         switch (args->room_angle) {
         case 0:
-            *(ptr++) = (Sint32) SDL_SwapLE32(swapl);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swapr);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swaplr);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swaprr);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swapl);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swapr);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swaplr);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swaprr);
             break;
         case 90:
-            *(ptr++) = (Sint32) SDL_SwapLE32(swapr);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swaprr);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swapl);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swaplr);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swapr);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swaprr);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swapl);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swaplr);
             break;
         case 180:
-            *(ptr++) = (Sint32) SDL_SwapLE32(swaprr);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swaplr);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swapr);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swapl);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swaprr);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swaplr);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swapr);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swapl);
             break;
         case 270:
-            *(ptr++) = (Sint32) SDL_SwapLE32(swaplr);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swapl);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swaprr);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swapr);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swaplr);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swapl);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swaprr);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swapr);
             break;
         }
     }
@@ -987,50 +987,50 @@ static void SDLCALL _Eff_position_s32lsb_c6(int chan, void *stream, int len, voi
     (void)chan;
 
     for (i = 0; i < len; i += sizeof(Sint32) * 6) {
-        Sint32 swapl = (Sint32) ((((float) (Sint32) SDL_SwapLE32(*(ptr+0))) *
+        Sint32 swapl = (Sint32) ((((float) (Sint32) SDL_Swap32LE(*(ptr+0))) *
                                     args->left_f) * args->distance_f);
-        Sint32 swapr = (Sint32) ((((float) (Sint32) SDL_SwapLE32(*(ptr+1))) *
+        Sint32 swapr = (Sint32) ((((float) (Sint32) SDL_Swap32LE(*(ptr+1))) *
                                     args->right_f) * args->distance_f);
-        Sint32 swaplr = (Sint32) ((((float) (Sint32) SDL_SwapLE32(*(ptr+2))) *
+        Sint32 swaplr = (Sint32) ((((float) (Sint32) SDL_Swap32LE(*(ptr+2))) *
                                     args->left_rear_f) * args->distance_f);
-        Sint32 swaprr = (Sint32) ((((float) (Sint32) SDL_SwapLE32(*(ptr+3))) *
+        Sint32 swaprr = (Sint32) ((((float) (Sint32) SDL_Swap32LE(*(ptr+3))) *
                                     args->right_rear_f) * args->distance_f);
-        Sint32 swapce = (Sint32) ((((float) (Sint32) SDL_SwapLE32(*(ptr+4))) *
+        Sint32 swapce = (Sint32) ((((float) (Sint32) SDL_Swap32LE(*(ptr+4))) *
                                     args->center_f) * args->distance_f);
-        Sint32 swapwf = (Sint32) ((((float) (Sint32) SDL_SwapLE32(*(ptr+5))) *
+        Sint32 swapwf = (Sint32) ((((float) (Sint32) SDL_Swap32LE(*(ptr+5))) *
                                     args->lfe_f) * args->distance_f);
         switch (args->room_angle) {
         case 0:
-            *(ptr++) = (Sint32) SDL_SwapLE32(swapl);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swapr);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swaplr);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swaprr);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swapce);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swapwf);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swapl);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swapr);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swaplr);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swaprr);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swapce);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swapwf);
             break;
         case 90:
-            *(ptr++) = (Sint32) SDL_SwapLE32(swapr);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swaprr);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swapl);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swaplr);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swapr)/2 + (Sint32) SDL_SwapLE32(swaprr)/2;
-            *(ptr++) = (Sint32) SDL_SwapLE32(swapwf);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swapr);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swaprr);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swapl);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swaplr);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swapr)/2 + (Sint32) SDL_Swap32LE(swaprr)/2;
+            *(ptr++) = (Sint32) SDL_Swap32LE(swapwf);
             break;
         case 180:
-            *(ptr++) = (Sint32) SDL_SwapLE32(swaprr);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swaplr);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swapr);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swapl);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swaprr)/2 + (Sint32) SDL_SwapLE32(swaplr)/2;
-            *(ptr++) = (Sint32) SDL_SwapLE32(swapwf);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swaprr);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swaplr);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swapr);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swapl);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swaprr)/2 + (Sint32) SDL_Swap32LE(swaplr)/2;
+            *(ptr++) = (Sint32) SDL_Swap32LE(swapwf);
             break;
         case 270:
-            *(ptr++) = (Sint32) SDL_SwapLE32(swaplr);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swapl);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swaprr);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swapr);
-            *(ptr++) = (Sint32) SDL_SwapLE32(swapl)/2 + (Sint32) SDL_SwapLE32(swaplr)/2;
-            *(ptr++) = (Sint32) SDL_SwapLE32(swapwf);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swaplr);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swapl);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swaprr);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swapr);
+            *(ptr++) = (Sint32) SDL_Swap32LE(swapl)/2 + (Sint32) SDL_Swap32LE(swaplr)/2;
+            *(ptr++) = (Sint32) SDL_Swap32LE(swapwf);
             break;
         }
     }
@@ -1048,12 +1048,12 @@ static void SDLCALL _Eff_position_s32msb(int chan, void *stream, int len, void *
     (void)chan;
 
     for (i = 0; i < len; i += sizeof(Sint32) * 2) {
-        Sint32 swapl = (Sint32) ((((float) (Sint32) SDL_SwapBE32(*(ptr+0))) *
+        Sint32 swapl = (Sint32) ((((float) (Sint32) SDL_Swap32BE(*(ptr+0))) *
                                     left_f) * dist_f);
-        Sint32 swapr = (Sint32) ((((float) (Sint32) SDL_SwapBE32(*(ptr+1))) *
+        Sint32 swapr = (Sint32) ((((float) (Sint32) SDL_Swap32BE(*(ptr+1))) *
                                     right_f) * dist_f);
-        *(ptr++) = (Sint32) SDL_SwapBE32(swapl);
-        *(ptr++) = (Sint32) SDL_SwapBE32(swapr);
+        *(ptr++) = (Sint32) SDL_Swap32BE(swapl);
+        *(ptr++) = (Sint32) SDL_Swap32BE(swapr);
     }
 }
 
@@ -1067,38 +1067,38 @@ static void SDLCALL _Eff_position_s32msb_c4(int chan, void *stream, int len, voi
     (void)chan;
 
     for (i = 0; i < len; i += sizeof(Sint32) * 4) {
-        Sint32 swapl = (Sint32) ((((float) (Sint32) SDL_SwapBE32(*(ptr+0))) *
+        Sint32 swapl = (Sint32) ((((float) (Sint32) SDL_Swap32BE(*(ptr+0))) *
                                     args->left_f) * args->distance_f);
-        Sint32 swapr = (Sint32) ((((float) (Sint32) SDL_SwapBE32(*(ptr+1))) *
+        Sint32 swapr = (Sint32) ((((float) (Sint32) SDL_Swap32BE(*(ptr+1))) *
                                     args->right_f) * args->distance_f);
-        Sint32 swaplr = (Sint32) ((((float) (Sint32) SDL_SwapBE32(*(ptr+2))) *
+        Sint32 swaplr = (Sint32) ((((float) (Sint32) SDL_Swap32BE(*(ptr+2))) *
                                     args->left_rear_f) * args->distance_f);
-        Sint32 swaprr = (Sint32) ((((float) (Sint32) SDL_SwapBE32(*(ptr+3))) *
+        Sint32 swaprr = (Sint32) ((((float) (Sint32) SDL_Swap32BE(*(ptr+3))) *
                                     args->right_rear_f) * args->distance_f);
         switch (args->room_angle) {
         case 0:
-            *(ptr++) = (Sint32) SDL_SwapBE32(swapl);
-            *(ptr++) = (Sint32) SDL_SwapBE32(swapr);
-            *(ptr++) = (Sint32) SDL_SwapBE32(swaplr);
-            *(ptr++) = (Sint32) SDL_SwapBE32(swaprr);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swapl);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swapr);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swaplr);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swaprr);
             break;
         case 90:
-            *(ptr++) = (Sint32) SDL_SwapBE32(swapr);
-            *(ptr++) = (Sint32) SDL_SwapBE32(swaprr);
-            *(ptr++) = (Sint32) SDL_SwapBE32(swapl);
-            *(ptr++) = (Sint32) SDL_SwapBE32(swaplr);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swapr);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swaprr);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swapl);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swaplr);
             break;
         case 180:
-            *(ptr++) = (Sint32) SDL_SwapBE32(swaprr);
-            *(ptr++) = (Sint32) SDL_SwapBE32(swaplr);
-            *(ptr++) = (Sint32) SDL_SwapBE32(swapr);
-            *(ptr++) = (Sint32) SDL_SwapBE32(swapl);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swaprr);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swaplr);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swapr);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swapl);
             break;
         case 270:
-            *(ptr++) = (Sint32) SDL_SwapBE32(swaplr);
-            *(ptr++) = (Sint32) SDL_SwapBE32(swapl);
-            *(ptr++) = (Sint32) SDL_SwapBE32(swaprr);
-            *(ptr++) = (Sint32) SDL_SwapBE32(swapr);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swaplr);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swapl);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swaprr);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swapr);
             break;
         }
     }
@@ -1114,51 +1114,51 @@ static void SDLCALL _Eff_position_s32msb_c6(int chan, void *stream, int len, voi
     (void)chan;
 
     for (i = 0; i < len; i += sizeof(Sint32) * 6) {
-        Sint32 swapl = (Sint32) ((((float) (Sint32) SDL_SwapBE32(*(ptr+0))) *
+        Sint32 swapl = (Sint32) ((((float) (Sint32) SDL_Swap32BE(*(ptr+0))) *
                                     args->left_f) * args->distance_f);
-        Sint32 swapr = (Sint32) ((((float) (Sint32) SDL_SwapBE32(*(ptr+1))) *
+        Sint32 swapr = (Sint32) ((((float) (Sint32) SDL_Swap32BE(*(ptr+1))) *
                                     args->right_f) * args->distance_f);
-        Sint32 swaplr = (Sint32) ((((float) (Sint32) SDL_SwapBE32(*(ptr+2))) *
+        Sint32 swaplr = (Sint32) ((((float) (Sint32) SDL_Swap32BE(*(ptr+2))) *
                                     args->left_rear_f) * args->distance_f);
-        Sint32 swaprr = (Sint32) ((((float) (Sint32) SDL_SwapBE32(*(ptr+3))) *
+        Sint32 swaprr = (Sint32) ((((float) (Sint32) SDL_Swap32BE(*(ptr+3))) *
                                     args->right_rear_f) * args->distance_f);
-        Sint32 swapce = (Sint32) ((((float) (Sint32) SDL_SwapBE32(*(ptr+4))) *
+        Sint32 swapce = (Sint32) ((((float) (Sint32) SDL_Swap32BE(*(ptr+4))) *
                                     args->center_f) * args->distance_f);
-        Sint32 swapwf = (Sint32) ((((float) (Sint32) SDL_SwapBE32(*(ptr+5))) *
+        Sint32 swapwf = (Sint32) ((((float) (Sint32) SDL_Swap32BE(*(ptr+5))) *
                                     args->lfe_f) * args->distance_f);
 
         switch (args->room_angle) {
         case 0:
-            *(ptr++) = (Sint32) SDL_SwapBE32(swapl);
-            *(ptr++) = (Sint32) SDL_SwapBE32(swapr);
-            *(ptr++) = (Sint32) SDL_SwapBE32(swaplr);
-            *(ptr++) = (Sint32) SDL_SwapBE32(swaprr);
-            *(ptr++) = (Sint32) SDL_SwapBE32(swapce);
-            *(ptr++) = (Sint32) SDL_SwapBE32(swapwf);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swapl);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swapr);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swaplr);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swaprr);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swapce);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swapwf);
             break;
         case 90:
-            *(ptr++) = (Sint32) SDL_SwapBE32(swapr);
-            *(ptr++) = (Sint32) SDL_SwapBE32(swaprr);
-            *(ptr++) = (Sint32) SDL_SwapBE32(swapl);
-            *(ptr++) = (Sint32) SDL_SwapBE32(swaplr);
-            *(ptr++) = (Sint32) SDL_SwapBE32(swapr)/2 + (Sint32) SDL_SwapBE32(swaprr)/2;
-            *(ptr++) = (Sint32) SDL_SwapBE32(swapwf);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swapr);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swaprr);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swapl);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swaplr);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swapr)/2 + (Sint32) SDL_Swap32BE(swaprr)/2;
+            *(ptr++) = (Sint32) SDL_Swap32BE(swapwf);
             break;
         case 180:
-            *(ptr++) = (Sint32) SDL_SwapBE32(swaprr);
-            *(ptr++) = (Sint32) SDL_SwapBE32(swaplr);
-            *(ptr++) = (Sint32) SDL_SwapBE32(swapr);
-            *(ptr++) = (Sint32) SDL_SwapBE32(swapl);
-            *(ptr++) = (Sint32) SDL_SwapBE32(swaprr)/2 + (Sint32) SDL_SwapBE32(swaplr)/2;
-            *(ptr++) = (Sint32) SDL_SwapBE32(swapwf);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swaprr);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swaplr);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swapr);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swapl);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swaprr)/2 + (Sint32) SDL_Swap32BE(swaplr)/2;
+            *(ptr++) = (Sint32) SDL_Swap32BE(swapwf);
             break;
         case 270:
-            *(ptr++) = (Sint32) SDL_SwapBE32(swaplr);
-            *(ptr++) = (Sint32) SDL_SwapBE32(swapl);
-            *(ptr++) = (Sint32) SDL_SwapBE32(swaprr);
-            *(ptr++) = (Sint32) SDL_SwapBE32(swapr);
-            *(ptr++) = (Sint32) SDL_SwapBE32(swapl)/2 + (Sint32) SDL_SwapBE32(swaplr)/2;
-            *(ptr++) = (Sint32) SDL_SwapBE32(swapwf);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swaplr);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swapl);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swaprr);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swapr);
+            *(ptr++) = (Sint32) SDL_Swap32BE(swapl)/2 + (Sint32) SDL_Swap32BE(swaplr)/2;
+            *(ptr++) = (Sint32) SDL_Swap32BE(swapwf);
             break;
         }
     }

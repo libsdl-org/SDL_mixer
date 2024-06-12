@@ -225,10 +225,10 @@ static void load_instrument(MidiSong *song, const char *name,
   thing = tmpchar;
 #define READ_SHORT(thing)					\
   if (2 != SDL_ReadIO(io, &tmpshort, 2)) goto badread;	\
-  thing = SDL_SwapLE16(tmpshort);
+  thing = SDL_Swap16LE(tmpshort);
 #define READ_LONG(thing)					\
   if (4 != SDL_ReadIO(io, &tmplong, 4))  goto badread;	\
-  thing = (Sint32)SDL_SwapLE32((Uint32)tmplong);
+  thing = (Sint32)SDL_Swap32LE((Uint32)tmplong);
 
       SDL_SeekIO(io, 7, SDL_IO_SEEK_CUR); /* Skip the wave name */
 
@@ -393,7 +393,7 @@ static void load_instrument(MidiSong *song, const char *name,
 	  Sint16 *tmp16=(Sint16 *)sp->data,s;
 	  while (k--)
 	    {
-	      s=SDL_SwapLE16(*tmp16);
+	      s=SDL_Swap16LE(*tmp16);
 	      *tmp16++=s;
 	    }
 	}
