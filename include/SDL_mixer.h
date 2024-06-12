@@ -1116,6 +1116,8 @@ extern DECLSPEC const char *SDLCALL Mix_GetMusicAlbumTag(const Mix_Music *music)
  */
 extern DECLSPEC const char *SDLCALL Mix_GetMusicCopyrightTag(const Mix_Music *music);
 
+typedef void (SDLCALL *Mix_MixCallback)(void *udata, Uint8 *stream, int len);
+
 /**
  * Set a function that is called after all mixing is performed.
  *
@@ -1152,7 +1154,7 @@ extern DECLSPEC const char *SDLCALL Mix_GetMusicCopyrightTag(const Mix_Music *mu
  *
  * \sa Mix_HookMusic
  */
-extern DECLSPEC void SDLCALL Mix_SetPostMix(void (SDLCALL *mix_func)(void *udata, Uint8 *stream, int len), void *arg);
+extern DECLSPEC void SDLCALL Mix_SetPostMix(Mix_MixCallback mix_func, void *arg);
 
 /**
  * Add your own music player or additional mixer function.
@@ -1198,7 +1200,9 @@ extern DECLSPEC void SDLCALL Mix_SetPostMix(void (SDLCALL *mix_func)(void *udata
  *
  * \sa Mix_SetPostMix
  */
-extern DECLSPEC void SDLCALL Mix_HookMusic(void (SDLCALL *mix_func)(void *udata, Uint8 *stream, int len), void *arg);
+extern DECLSPEC void SDLCALL Mix_HookMusic(Mix_MixCallback mix_func, void *arg);
+
+typedef void (SDLCALL *Mix_MusicFinishedCallback)(void);
 
 /**
  * Set a callback that runs when a music object has stopped playing.
@@ -1223,7 +1227,7 @@ extern DECLSPEC void SDLCALL Mix_HookMusic(void (SDLCALL *mix_func)(void *udata,
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
-extern DECLSPEC void SDLCALL Mix_HookMusicFinished(void (SDLCALL *music_finished)(void));
+extern DECLSPEC void SDLCALL Mix_HookMusicFinished(Mix_MusicFinishedCallback music_finished);
 
 /**
  * Get a pointer to the user data for the current music hook.
@@ -1236,6 +1240,8 @@ extern DECLSPEC void SDLCALL Mix_HookMusicFinished(void (SDLCALL *music_finished
  * \since This function is available since SDL_mixer 2.0.0.
  */
 extern DECLSPEC void * SDLCALL Mix_GetMusicHookData(void);
+
+typedef void (SDLCALL *Mix_ChannelFinishedCallback)(int channel);
 
 /**
  * Set a callback that runs when a channel has finished playing.
@@ -1257,7 +1263,7 @@ extern DECLSPEC void * SDLCALL Mix_GetMusicHookData(void);
  *
  * \since This function is available since SDL_mixer 2.0.0.
  */
-extern DECLSPEC void SDLCALL Mix_ChannelFinished(void (SDLCALL *channel_finished)(int channel));
+extern DECLSPEC void SDLCALL Mix_ChannelFinished(Mix_ChannelFinishedCallback channel_finished);
 
 
 #define MIX_CHANNEL_POST  (-2)
@@ -2672,6 +2678,8 @@ extern DECLSPEC int SDLCALL Mix_SetSoundFonts(const char *paths);
  */
 extern DECLSPEC const char* SDLCALL Mix_GetSoundFonts(void);
 
+typedef int (SDLCALL *Mix_EachSoundFontCallback)(const char*, void*);
+
 /**
  * Iterate SoundFonts paths to use by supported MIDI backends.
  *
@@ -2697,7 +2705,7 @@ extern DECLSPEC const char* SDLCALL Mix_GetSoundFonts(void);
  *
  * \sa Mix_GetSoundFonts
  */
-extern DECLSPEC int SDLCALL Mix_EachSoundFont(int (SDLCALL *function)(const char*, void*), void *data);
+extern DECLSPEC int SDLCALL Mix_EachSoundFont(Mix_EachSoundFontCallback function, void *data);
 
 /**
  * Set full path of the Timidity config file.
