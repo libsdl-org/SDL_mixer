@@ -102,7 +102,7 @@ static int voc_check_header(SDL_IOStream *src)
         return 0;
     }
 
-    datablockofs = SDL_SwapLE16(datablockofs);
+    datablockofs = SDL_Swap16LE(datablockofs);
 
     if (SDL_SeekIO(src, datablockofs, SDL_IO_SEEK_SET) != datablockofs) {
         return 0;
@@ -183,7 +183,7 @@ static int voc_get_block(SDL_IOStream *src, vs_t *v, SDL_AudioSpec *spec)
                 if (SDL_ReadIO(src, &new_rate_long, sizeof(new_rate_long)) != sizeof(new_rate_long)) {
                     return 0;
                 }
-                new_rate_long = SDL_SwapLE32(new_rate_long);
+                new_rate_long = SDL_Swap32LE(new_rate_long);
                 if (new_rate_long == 0) {
                     Mix_SetError("VOC Sample rate is zero?");
                     return 0;
@@ -226,7 +226,7 @@ static int voc_get_block(SDL_IOStream *src, vs_t *v, SDL_AudioSpec *spec)
                 if (SDL_ReadIO(src, &period, sizeof(period)) != sizeof(period)) {
                     return 0;
                 }
-                period = SDL_SwapLE16(period);
+                period = SDL_Swap16LE(period);
 
                 if (SDL_ReadIO(src, &uc, sizeof(uc)) != sizeof(uc)) {
                     return 0;
@@ -267,7 +267,7 @@ static int voc_get_block(SDL_IOStream *src, vs_t *v, SDL_AudioSpec *spec)
                 if (SDL_ReadIO(src, &new_rate_short, sizeof(new_rate_short)) != sizeof(new_rate_short)) {
                     return 0;
                 }
-                new_rate_short = SDL_SwapLE16(new_rate_short);
+                new_rate_short = SDL_Swap16LE(new_rate_short);
                 if (new_rate_short == 0) {
                    Mix_SetError("VOC sample rate is zero");
                    return 0;
@@ -362,7 +362,7 @@ static Uint32 voc_read(SDL_IOStream *src, vs_t *v, Uint8 *buf, SDL_AudioSpec *sp
             #if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
             Uint16 *samples = (Uint16 *)buf;
             for (; v->rest > 0; v->rest -= 2) {
-                *samples = SDL_SwapLE16(*samples);
+                *samples = SDL_Swap16LE(*samples);
                 samples++;
             }
             #endif
