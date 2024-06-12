@@ -1021,6 +1021,7 @@ extern SDL_DECLSPEC void SDLCALL Mix_SetPostMix(Mix_MixCallback mix_func, void *
 extern SDL_DECLSPEC void SDLCALL Mix_HookMusic(Mix_MixCallback mix_func, void *arg);
 
 typedef void (SDLCALL *Mix_MusicFinishedCallback)(void);
+
 /**
  * Set a callback that runs when a music object has stopped playing.
  *
