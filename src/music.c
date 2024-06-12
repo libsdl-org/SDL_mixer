@@ -1544,7 +1544,7 @@ const char* Mix_GetSoundFonts(void)
     return NULL;
 }
 
-int Mix_EachSoundFont(int (SDLCALL *function)(const char*, void*), void *data)
+int Mix_EachSoundFont(Mix_EachSoundFontCallback function, void *data)
 {
     char *context, *path, *paths;
     const char* cpaths = Mix_GetSoundFonts();
