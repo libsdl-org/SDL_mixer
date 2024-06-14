@@ -61,7 +61,7 @@ extern "C" {
 /**
  * This function gets the version of the dynamically linked SDL_mixer library.
  *
- * \returns SDL_mixer version
+ * \returns SDL_mixer version.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
@@ -1176,8 +1176,8 @@ typedef void (SDLCALL *Mix_EffectDone_t)(int chan, void *udata);
  * \param chan the channel to register an effect to, or MIX_CHANNEL_POST.
  * \param f effect the callback to run when more of this channel is to be
  *          mixed.
- * \param d effect done callback
- * \param arg argument
+ * \param d effect done callback.
+ * \param arg argument.
  * \returns zero if error (no such channel), nonzero if added. Error messages
  *          can be retrieved from Mix_GetError().
  *
@@ -1495,7 +1495,7 @@ extern SDL_DECLSPEC int SDLCALL Mix_GroupChannel(int which, int tag);
  * \param from the first channel to set the tag on.
  * \param to the last channel to set the tag on, inclusive.
  * \param tag an arbitrary value to assign a channel.
- * \returns 0 if successful, negative on error
+ * \returns 0 if successful, negative on error.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
@@ -1542,7 +1542,7 @@ extern SDL_DECLSPEC int SDLCALL Mix_GroupCount(int tag);
  * If no channel with this tag is currently playing, this function returns -1.
  *
  * \param tag an arbitrary value, assigned to channels, to search through.
- * \returns the "oldest" sample playing in a group of channels
+ * \returns the "oldest" sample playing in a group of channels.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  *
@@ -1560,7 +1560,7 @@ extern SDL_DECLSPEC int SDLCALL Mix_GroupOldest(int tag);
  * If no channel with this tag is currently playing, this function returns -1.
  *
  * \param tag an arbitrary value, assigned to channels, to search through.
- * \returns the "most recent" sample playing in a group of channels
+ * \returns the "most recent" sample playing in a group of channels.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  *
@@ -2287,7 +2287,7 @@ extern SDL_DECLSPEC int SDLCALL Mix_PausedMusic(void);
  *
  * This only applies to MOD music formats.
  *
- * \param order order
+ * \param order order.
  * \returns 0 if successful, or -1 if failed or isn't implemented.
  *
  * \since This function is available since SDL_mixer 3.0.0.
@@ -2370,7 +2370,7 @@ extern SDL_DECLSPEC double SDLCALL Mix_MusicDuration(Mix_Music *music);
  *
  * \param music the music object to query.
  * \returns -1.0 if this feature is not used for this music or not supported
- *          for some codec
+ *          for some codec.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
@@ -2385,7 +2385,7 @@ extern SDL_DECLSPEC double SDLCALL Mix_GetMusicLoopStartTime(Mix_Music *music);
  *
  * \param music the music object to query.
  * \returns -1.0 if this feature is not used for this music or not supported
- *          for some codec
+ *          for some codec.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
@@ -2400,7 +2400,7 @@ extern SDL_DECLSPEC double SDLCALL Mix_GetMusicLoopEndTime(Mix_Music *music);
  *
  * \param music the music object to query.
  * \returns -1.0 if this feature is not used for this music or not supported
- *          for some codec
+ *          for some codec.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
@@ -2420,7 +2420,7 @@ extern SDL_DECLSPEC double SDLCALL Mix_GetMusicLoopLengthTime(Mix_Music *music);
  * Paused channels are treated as playing, even though they are not currently
  * making forward progress in mixing.
  *
- * \param channel channel
+ * \param channel channel.
  * \returns non-zero if channel is playing, zero otherwise. If `channel` is
  *          -1, return the total number of channel playings.
  *
@@ -2459,8 +2459,8 @@ extern SDL_DECLSPEC int SDLCALL Mix_PlayingMusic(void);
  * You are strongly encouraged not to use this function without an extremely
  * good reason.
  *
- * \param command command
- * \returns 0 if successful, -1 on error
+ * \param command command.
+ * \returns 0 if successful, -1 on error.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
@@ -2582,7 +2582,7 @@ extern SDL_DECLSPEC int SDLCALL Mix_EachSoundFont(Mix_EachSoundFontCallback func
  * play MIDI files.
  *
  * \param path path to a Timidity config file.
- * \returns 1 if successful, 0 on error
+ * \returns 1 if successful, 0 on error.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
