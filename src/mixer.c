@@ -502,7 +502,7 @@ int Mix_OpenAudio(SDL_AudioDeviceID devid, const SDL_AudioSpec *spec)
     }
 
     if (devid == 0) {
-        devid = SDL_AUDIO_DEVICE_DEFAULT_OUTPUT;
+        devid = SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK;
     }
 
     if ((audio_device = SDL_OpenAudioDevice(devid, spec)) == 0) {
