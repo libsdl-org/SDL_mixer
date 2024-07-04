@@ -423,6 +423,7 @@ static void *WAVPACK_CreateFromIO_internal(SDL_IOStream *src1, SDL_IOStream *src
         break;
     }
 
+    SDL_zero(srcspec);
     srcspec.format = format;
     srcspec.channels = music->channels;
     srcspec.freq = (int)music->samplerate / DECIMATION(music);

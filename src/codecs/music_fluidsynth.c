@@ -234,6 +234,7 @@ static FLUIDSYNTH_Music *FLUIDSYNTH_LoadMusic(void *data)
         goto fail;
     }
 
+    SDL_zero(srcspec);
     srcspec.format = src_format;
     srcspec.channels = channels;
     srcspec.freq = (int) samplerate;

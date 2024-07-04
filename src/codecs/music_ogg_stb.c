@@ -142,6 +142,7 @@ static int OGG_UpdateSection(OGG_music *music)
         music->stream = NULL;
     }
 
+    SDL_zero(srcspec);
     srcspec.format = SDL_AUDIO_F32;
     srcspec.channels = vi.channels;
     srcspec.freq = (int)vi.sample_rate;

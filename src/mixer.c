@@ -836,6 +836,7 @@ Mix_Chunk *Mix_LoadWAV_IO(SDL_IOStream *src, SDL_bool closeio)
     SDL_SeekIO(src, -4, SDL_IO_SEEK_CUR);
 
     /* First try loading via libsndfile */
+    SDL_zero(wavespec);
     loaded = Mix_LoadSndFile_IO(src, closeio, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
 
     if (!loaded)  {

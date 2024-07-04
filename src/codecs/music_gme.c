@@ -218,6 +218,7 @@ static void *GME_CreateFromIO(struct SDL_IOStream *src, SDL_bool closeio)
     music->tempo = 1.0;
     music->gain = 1.0;
 
+    SDL_zero(srcspec);
     srcspec.format = SDL_AUDIO_S16;
     srcspec.channels = 2;
     srcspec.freq = music_spec.freq;

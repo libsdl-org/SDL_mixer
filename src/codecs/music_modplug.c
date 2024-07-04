@@ -179,6 +179,7 @@ void *MODPLUG_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
 
     music->volume = MIX_MAX_VOLUME;
 
+    SDL_zero(srcspec);
     srcspec.format = (settings.mBits == 8) ? SDL_AUDIO_U8 : SDL_AUDIO_S16;
     srcspec.channels = settings.mChannels;
     srcspec.freq = settings.mFrequency;

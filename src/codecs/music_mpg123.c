@@ -322,6 +322,7 @@ static void *MPG123_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
     SDL_assert(format != -1);
     music->sample_rate = rate;
 
+    SDL_zero(srcspec);
     srcspec.format = (SDL_AudioFormat)format;
     srcspec.channels = channels;
     srcspec.freq = (int)rate;
@@ -410,6 +411,7 @@ static int MPG123_GetSome(void *context, void *data, int bytes, SDL_bool *done)
             SDL_DestroyAudioStream(music->stream);
         }
 
+        SDL_zero(srcspec);
         srcspec.format = (SDL_AudioFormat)format;
         srcspec.channels = channels;
         srcspec.freq = (int)rate;

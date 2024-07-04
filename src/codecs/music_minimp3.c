@@ -100,6 +100,7 @@ static void *MINIMP3_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
         return NULL;
     }
 
+    SDL_zero(file_spec);
     file_spec.format = SDL_AUDIO_S16;
     file_spec.channels = (Uint8)music->dec.info.channels;
     file_spec.freq = (int)music->dec.info.hz;

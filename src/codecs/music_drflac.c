@@ -184,6 +184,7 @@ static void *DRFLAC_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
     }
 
     /* We should have channels and sample rate set up here */
+    SDL_zero(srcspec);
     srcspec.format = SDL_AUDIO_S16;
     srcspec.channels = music->channels;
     srcspec.freq = music->sample_rate;

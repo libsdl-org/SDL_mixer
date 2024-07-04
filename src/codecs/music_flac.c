@@ -421,6 +421,7 @@ static void flac_metadata_music_cb(
 
         /* We check for NULL stream later when we get data */
         SDL_assert(!music->stream);
+        SDL_zero(srcspec);
         srcspec.format = SDL_AUDIO_S16;
         srcspec.channels = channels;
         srcspec.freq = (int)music->sample_rate;
