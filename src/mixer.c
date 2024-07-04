@@ -590,9 +590,15 @@ int Mix_AllocateChannels(int numchans)
     }
     Mix_LockAudio();
     /* Allocate channels into temporary pointer */
-    mix_channel_tmp = (struct _Mix_Channel *) SDL_realloc(mix_channel, numchans * sizeof(struct _Mix_Channel));
+    if (numchans) {
+        mix_channel_tmp = (struct _Mix_Channel *) SDL_realloc(mix_channel, numchans * sizeof(struct _Mix_Channel));
+    } else {
+        /* Handle 0 numchans */
+        SDL_free(mix_channel);
+        mix_channel_tmp = NULL;
+    }
     /* Check the allocation */
-    if (mix_channel_tmp) {
+    if (mix_channel_tmp || !numchans) {
         /* Apply the temporary pointer on success */
         mix_channel = mix_channel_tmp;
         if (numchans > num_channels) {
