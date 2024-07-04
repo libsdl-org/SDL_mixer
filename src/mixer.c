@@ -575,6 +575,8 @@ void Mix_PauseAudio(int pause_on)
  */
 int Mix_AllocateChannels(int numchans)
 {
+    struct _Mix_Channel *mix_channel_tmp;
+
     if (numchans<0 || numchans==num_channels)
         return num_channels;
 
@@ -587,27 +589,36 @@ int Mix_AllocateChannels(int numchans)
         }
     }
     Mix_LockAudio();
-    mix_channel = (struct _Mix_Channel *) SDL_realloc(mix_channel, numchans * sizeof(struct _Mix_Channel));
-    if (numchans > num_channels) {
-        /* Initialize the new channels */
-        int i;
-        for (i = num_channels; i < numchans; i++) {
-            mix_channel[i].chunk = NULL;
-            mix_channel[i].playing = 0;
-            mix_channel[i].looping = 0;
-            mix_channel[i].volume = MIX_MAX_VOLUME;
-            mix_channel[i].fade_volume = MIX_MAX_VOLUME;
-            mix_channel[i].fade_volume_reset = MIX_MAX_VOLUME;
-            mix_channel[i].fading = MIX_NO_FADING;
-            mix_channel[i].tag = -1;
-            mix_channel[i].expire = 0;
-            mix_channel[i].effects = NULL;
-            mix_channel[i].paused = 0;
+    /* Allocate channels into temporary pointer */
+    mix_channel_tmp = (struct _Mix_Channel *) SDL_realloc(mix_channel, numchans * sizeof(struct _Mix_Channel));
+    /* Check the allocation */
+    if (mix_channel_tmp) {
+        /* Apply the temporary pointer on success */
+        mix_channel = mix_channel_tmp;
+        if (numchans > num_channels) {
+            /* Initialize the new channels */
+            int i;
+            for (i = num_channels; i < numchans; i++) {
+                mix_channel[i].chunk = NULL;
+                mix_channel[i].playing = 0;
+                mix_channel[i].looping = 0;
+                mix_channel[i].volume = MIX_MAX_VOLUME;
+                mix_channel[i].fade_volume = MIX_MAX_VOLUME;
+                mix_channel[i].fade_volume_reset = MIX_MAX_VOLUME;
+                mix_channel[i].fading = MIX_NO_FADING;
+                mix_channel[i].tag = -1;
+                mix_channel[i].expire = 0;
+                mix_channel[i].effects = NULL;
+                mix_channel[i].paused = 0;
+            }
         }
+        num_channels = numchans;
+    } else {
+        /* On error mix_channel remains intact */
+        Mix_SetError("Channel allocation failed");
     }
-    num_channels = numchans;
     Mix_UnlockAudio();
-    return num_channels;
+    return num_channels; /* If the return value equals numchans the allocation was successful */
 }
 
 /* Return the actual mixer parameters */
