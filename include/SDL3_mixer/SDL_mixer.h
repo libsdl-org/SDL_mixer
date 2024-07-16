@@ -317,7 +317,7 @@ extern SDL_DECLSPEC void SDLCALL Mix_PauseAudio(int pause_on);
  *
  * \sa Mix_OpenAudio
  */
-extern SDL_DECLSPEC int SDLCALL Mix_QuerySpec(int *frequency, Uint16 *format, int *channels);
+extern SDL_DECLSPEC int SDLCALL Mix_QuerySpec(int *frequency, SDL_AudioFormat *format, int *channels);
 
 /**
  * Dynamically change the number of channels managed by the mixer.

@@ -307,7 +307,7 @@ static void Usage(char *argv0)
  */
 static void flip_sample(Mix_Chunk *wave)
 {
-    Uint16 format;
+    SDL_AudioFormat format;
     int channels, i, incr;
     Uint8 *start = wave->abuf;
     Uint8 *end = wave->abuf + wave->alen;

@@ -1332,7 +1332,7 @@ static position_args *get_position_arg(int channel)
     return pos_args_array[channel];
 }
 
-static Mix_EffectFunc_t get_position_effect_func(Uint16 format, int channels)
+static Mix_EffectFunc_t get_position_effect_func(SDL_AudioFormat format, int channels)
 {
     Mix_EffectFunc_t f = NULL;
 
@@ -1613,7 +1613,7 @@ int Mix_SetPanning(int channel, Uint8 left, Uint8 right)
 {
     Mix_EffectFunc_t f = NULL;
     int channels;
-    Uint16 format;
+    SDL_AudioFormat format;
     position_args *args = NULL;
     int retval = 1;
 
@@ -1676,7 +1676,7 @@ int Mix_SetPanning(int channel, Uint8 left, Uint8 right)
 int Mix_SetDistance(int channel, Uint8 distance)
 {
     Mix_EffectFunc_t f = NULL;
-    Uint16 format;
+    SDL_AudioFormat format;
     position_args *args = NULL;
     int channels;
     int retval = 1;
@@ -1721,7 +1721,7 @@ int Mix_SetDistance(int channel, Uint8 distance)
 int Mix_SetPosition(int channel, Sint16 angle, Uint8 distance)
 {
     Mix_EffectFunc_t f = NULL;
-    Uint16 format;
+    SDL_AudioFormat format;
     int channels;
     position_args *args = NULL;
     Sint16 room_angle = 0;

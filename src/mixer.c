@@ -628,7 +628,7 @@ int Mix_AllocateChannels(int numchans)
 }
 
 /* Return the actual mixer parameters */
-int Mix_QuerySpec(int *frequency, Uint16 *format, int *channels)
+int Mix_QuerySpec(int *frequency, SDL_AudioFormat *format, int *channels)
 {
     if (audio_opened) {
         if (frequency) {

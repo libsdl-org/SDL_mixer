@@ -105,7 +105,7 @@ int Mix_SetReverseStereo(int channel, int flip)
 {
     Mix_EffectFunc_t f = NULL;
     int channels;
-    Uint16 format;
+    SDL_AudioFormat format;
 
     Mix_QuerySpec(NULL, &format, &channels);
 
