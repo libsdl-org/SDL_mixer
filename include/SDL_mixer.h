@@ -266,7 +266,7 @@ typedef enum Mix_MusicType {
 /**
  * The internal format for a music chunk interpreted via codecs
  */
-typedef struct _Mix_Music Mix_Music;
+typedef struct Mix_Music Mix_Music;
 
 /**
  * Open the default audio device for playback.

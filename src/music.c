@@ -60,7 +60,7 @@ static int music_volume = MIX_MAX_VOLUME;
 static Mix_Music * volatile music_playing = NULL;
 SDL_AudioSpec music_spec;
 
-struct _Mix_Music {
+struct Mix_Music {
     Mix_MusicInterface *interface;
     void *context;
 
