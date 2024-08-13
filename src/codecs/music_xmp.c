@@ -76,11 +76,11 @@ static xmp_loader libxmp;
     if (libxmp.FUNC == NULL) { Mix_SetError("Missing xmp.framework"); return -1; }
 #endif
 
-static int XMP_Load(void)
 #ifdef __APPLE__
     /* Need to turn off optimizations so weak framework load check works */
     __attribute__ ((optnone))
 #endif
+static int XMP_Load(void)
 {
     if (libxmp.loaded == 0) {
 #ifdef XMP_DYNAMIC
