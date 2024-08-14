@@ -62,11 +62,11 @@ static ModPlug_Settings settings;
     if (modplug.FUNC == NULL) { Mix_SetError("Missing libmodplug.framework"); return -1; }
 #endif
 
-static int MODPLUG_Load(void)
 #ifdef __APPLE__
     /* Need to turn off optimizations so weak framework load check works */
     __attribute__ ((optnone))
 #endif
+static int MODPLUG_Load(void)
 {
     if (modplug.loaded == 0) {
 #ifdef MODPLUG_DYNAMIC
