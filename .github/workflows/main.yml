@@ -15,12 +15,12 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { name: Windows (MSVC),       os: windows-2019, shell: sh,   cmake: '-DPerl_ROOT=C:/Strawberry/perl/bin/ -DSDL3MIXER_VENDORED=ON -GNinja', msvc: 1, shared: 1, static: 0 }
+        - { name: Windows (MSVC),       os: windows-2019, shell: sh,   cmake: '-DPerl_ROOT=C:/Strawberry/perl/bin/ -DSDLMIXER_VENDORED=ON -GNinja', msvc: 1, shared: 1, static: 0 }
         - { name: Windows (mingw64),    os: windows-latest, shell: 'msys2 {0}', msystem: mingw64, msys-env: mingw-w64-x86_64, shared: 1, static: 0,
-            cmake: '-DSDL3MIXER_VENDORED=OFF -G "Ninja Multi-Config"' }
-        - { name: Linux,                os: ubuntu-20.04,   shell: sh, cmake: '-DSDL3MIXER_VENDORED=ON -GNinja', shared: 1, static: 0 }
-        - { name: 'Linux (static)',     os: ubuntu-20.04,   shell: sh, cmake: '-DSDL3MIXER_VENDORED=ON -DBUILD_SHARED_LIBS=OFF -GNinja', shared: 0, static: 1 }
-        - { name: Macos,                os: macos-latest,   shell: sh, cmake: '-DSDL3MIXER_VENDORED=ON -GNinja', shared: 1, static: 0 }
+            cmake: '-DSDLMIXER_VENDORED=OFF -G "Ninja Multi-Config"' }
+        - { name: Linux,                os: ubuntu-20.04,   shell: sh, cmake: '-DSDLMIXER_VENDORED=ON -GNinja', shared: 1, static: 0 }
+        - { name: 'Linux (static)',     os: ubuntu-20.04,   shell: sh, cmake: '-DSDLMIXER_VENDORED=ON -DBUILD_SHARED_LIBS=OFF -GNinja', shared: 0, static: 1 }
+        - { name: Macos,                os: macos-latest,   shell: sh, cmake: '-DSDLMIXER_VENDORED=ON -GNinja', shared: 1, static: 0 }
 
 
     steps:
@@ -91,7 +91,7 @@ jobs:
           ninja-build \
           pkg-config \
           ${NULL+}
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: recursive
 
@@ -112,16 +112,16 @@ jobs:
         set -- \
           -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
           -DCMAKE_BUILD_TYPE=Release \
-          -DSDL3MIXER_FLAC=ON \
-          -DSDL3MIXER_FLAC_LIBFLAC=ON \
-          -DSDL3MIXER_GME=ON \
-          -DSDL3MIXER_MOD_XMP=ON \
-          -DSDL3MIXER_MP3_MPG123=ON \
-          -DSDL3MIXER_OPUS=ON \
-          -DSDL3MIXER_VORBIS=VORBISFILE \
-          -DSDL3MIXER_STRICT=ON \
-          -DSDL3MIXER_WERROR=ON \
-          -DSDL3MIXER_INSTALL_MAN=ON \
+          -DSDLMIXER_FLAC=ON \
+          -DSDLMIXER_FLAC_LIBFLAC=ON \
+          -DSDLMIXER_GME=ON \
+          -DSDLMIXER_MOD_XMP=ON \
+          -DSDLMIXER_MP3_MPG123=ON \
+          -DSDLMIXER_OPUS=ON \
+          -DSDLMIXER_VORBIS=VORBISFILE \
+          -DSDLMIXER_STRICT=ON \
+          -DSDLMIXER_WERROR=ON \
+          -DSDLMIXER_INSTALL_MAN=ON \
           -DCMAKE_INSTALL_PREFIX=prefix_cmake \
           ${NULL+}
 

@@ -10,44 +10,44 @@ set_package_properties(SDL3_mixer PROPERTIES
 
 set(SDL3_mixer_FOUND                ON)
 
-set(SDL3MIXER_VENDORED              @SDL3MIXER_VENDORED@)
+set(SDLMIXER_VENDORED              @SDLMIXER_VENDORED@)
 
-set(SDL3MIXER_CMD                   @SDL3MIXER_CMD_ENABLED@)
+set(SDLMIXER_CMD                   @SDLMIXER_CMD_ENABLED@)
 
-set(SDL3MIXER_SNDFILE               @SDL3MIXER_SNDFILE_ENABLED@)
+set(SDLMIXER_SNDFILE               @SDLMIXER_SNDFILE_ENABLED@)
 
-set(SDL3MIXER_FLAC                  @SDL3MIXER_FLAC_ENABLED@)
-set(SDL3MIXER_FLAC_LIBFLAC          @SDL3MIXER_FLAC_LIBFLAC_ENABLED@)
-set(SDL3MIXER_FLAC_DRFLAC           @SDL3MIXER_FLAC_DRFLAC_ENABLED@)
+set(SDLMIXER_FLAC                  @SDLMIXER_FLAC_ENABLED@)
+set(SDLMIXER_FLAC_LIBFLAC          @SDLMIXER_FLAC_LIBFLAC_ENABLED@)
+set(SDLMIXER_FLAC_DRFLAC           @SDLMIXER_FLAC_DRFLAC_ENABLED@)
 
-set(SDL3MIXER_GME                   @SDL3MIXER_GME_ENABLED@)
+set(SDLMIXER_GME                   @SDLMIXER_GME_ENABLED@)
 
-set(SDL3MIXER_MOD                   @SDL3MIXER_MOD_ENABLED@)
-set(SDL3MIXER_MOD_MODPLUG           @SDL3MIXER_MOD_MODPLUG_ENABLED@)
-set(SDL3MIXER_MOD_XMP               @SDL3MIXER_MOD_XMP_ENABLED@)
-set(SDL3MIXER_MOD_XMP_LITE          @SDL3MIXER_MOD_XMP_ENABLED@)
+set(SDLMIXER_MOD                   @SDLMIXER_MOD_ENABLED@)
+set(SDLMIXER_MOD_MODPLUG           @SDLMIXER_MOD_MODPLUG_ENABLED@)
+set(SDLMIXER_MOD_XMP               @SDLMIXER_MOD_XMP_ENABLED@)
+set(SDLMIXER_MOD_XMP_LITE          @SDLMIXER_MOD_XMP_ENABLED@)
 
-set(SDL3MIXER_MP3                   @SDL3MIXER_MP3_ENABLED@)
-set(SDL3MIXER_MP3_DRMP3             @SDL3MIXER_MP3_DRMP3_ENABLED@)
-set(SDL3MIXER_MP3_MPG123            @SDL3MIXER_MP3_MPG123_ENABLED@)
+set(SDLMIXER_MP3                   @SDLMIXER_MP3_ENABLED@)
+set(SDLMIXER_MP3_DRMP3             @SDLMIXER_MP3_DRMP3_ENABLED@)
+set(SDLMIXER_MP3_MPG123            @SDLMIXER_MP3_MPG123_ENABLED@)
 
-set(SDL3MIXER_MIDI                  @SDL3MIXER_MIDI_ENABLED@)
-set(SDL3MIXER_MIDI_FLUIDSYNTH       @SDL3MIXER_MIDI_FLUIDSYNTH_ENABLED@)
-set(SDL3MIXER_MIDI_NATIVE           @SDL3MIXER_MIDI_NATIVE_ENABLED@)
-set(SDL3MIXER_MIDI_TIMIDITY         @SDL3MIXER_MIDI_TIMIDITY_ENABLED@)
+set(SDLMIXER_MIDI                  @SDLMIXER_MIDI_ENABLED@)
+set(SDLMIXER_MIDI_FLUIDSYNTH       @SDLMIXER_MIDI_FLUIDSYNTH_ENABLED@)
+set(SDLMIXER_MIDI_NATIVE           @SDLMIXER_MIDI_NATIVE_ENABLED@)
+set(SDLMIXER_MIDI_TIMIDITY         @SDLMIXER_MIDI_TIMIDITY_ENABLED@)
 
-set(SDL3MIXER_OPUS                  @SDL3MIXER_OPUS_ENABLED@)
+set(SDLMIXER_OPUS                  @SDLMIXER_OPUS_ENABLED@)
 
-set(SDL3MIXER_VORBIS                @SDL3MIXER_VORBIS_ENABLED@)
-set(SDL3MIXER_VORBIS_STB            @SDL3MIXER_VORBIS_STB_ENABLED@)
-set(SDL3MIXER_VORBIS_TREMOR         @SDL3MIXER_VORBIS_TREMOR_ENABLED@)
-set(SDL3MIXER_VORBIS_VORBISFILE     @SDL3MIXER_VORBIS_VORBISFILE_ENABLED@)
+set(SDLMIXER_VORBIS                @SDLMIXER_VORBIS_ENABLED@)
+set(SDLMIXER_VORBIS_STB            @SDLMIXER_VORBIS_STB_ENABLED@)
+set(SDLMIXER_VORBIS_TREMOR         @SDLMIXER_VORBIS_TREMOR_ENABLED@)
+set(SDLMIXER_VORBIS_VORBISFILE     @SDLMIXER_VORBIS_VORBISFILE_ENABLED@)
 
-set(SDL3MIXER_WAVE                  @SDL3MIXER_WAVE_ENABLED@)
+set(SDLMIXER_WAVE                  @SDLMIXER_WAVE_ENABLED@)
 
-set(SDL3MIXER_WAVPACK               @SDL3MIXER_WAVPACK_ENABLED@)
+set(SDLMIXER_WAVPACK               @SDLMIXER_WAVPACK_ENABLED@)
 
-set(SDL3MIXER_SDL3_REQUIRED_VERSION @SDL_REQUIRED_VERSION@)
+set(SDLMIXER_SDL3_REQUIRED_VERSION @SDL_REQUIRED_VERSION@)
 
 if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/SDL3_mixer-shared-targets.cmake")
     include("${CMAKE_CURRENT_LIST_DIR}/SDL3_mixer-shared-targets.cmake")
@@ -55,8 +55,8 @@ endif()
 
 if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/SDL3_mixer-static-targets.cmake")
 
-    if(SDL3MIXER_VENDORED)
-        if(SDL3MIXER_GME)
+    if(SDLMIXER_VENDORED)
+        if(SDLMIXER_GME)
             include(CheckLanguage)
             check_language(CXX)
             if(NOT CMAKE_CXX_COMPILER)
@@ -74,54 +74,54 @@ if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/SDL3_mixer-static-targets.cmake")
             set(CMAKE_FIND_PACKAGE_PREFER_CONFIG ON)
         endif()
 
-        if(SDL3MIXER_SNDFILE AND NOT TARGET SndFile::sndfile)
+        if(SDLMIXER_SNDFILE AND NOT TARGET SndFile::sndfile)
             find_dependency(SndFile)
         endif()
 
-        if(SDL3MIXER_FLAC_LIBFLAC AND NOT TARGET FLAC::FLAC)
+        if(SDLMIXER_FLAC_LIBFLAC AND NOT TARGET FLAC::FLAC)
             find_dependency(FLAC)
         endif()
 
-        if(SDL3MIXER_MOD_MODPLUG AND NOT TARGET modplug::modplug)
+        if(SDLMIXER_MOD_MODPLUG AND NOT TARGET modplug::modplug)
             find_dependency(modplug)
         endif()
 
-        if(SDL3MIXER_MOD_XMP AND NOT TARGET libxmp::libxmp)
+        if(SDLMIXER_MOD_XMP AND NOT TARGET libxmp::libxmp)
             find_dependency(libxmp)
         endif()
 
-        if(SDL3MIXER_MOD_XMP_LITE AND NOT TARGET libxmp-lite::libxmp-lite)
+        if(SDLMIXER_MOD_XMP_LITE AND NOT TARGET libxmp-lite::libxmp-lite)
             find_dependency(libxmp-lite)
         endif()
 
-        if(SDL3MIXER_MP3_MPG123 AND NOT TARGET MPG123::mpg123)
+        if(SDLMIXER_MP3_MPG123 AND NOT TARGET MPG123::mpg123)
             find_dependency(mpg123)
         endif()
 
-        if(SDL3MIXER_MIDI_FLUIDSYNTH AND NOT TARGET FluidSynth::libfluidsynth)
+        if(SDLMIXER_MIDI_FLUIDSYNTH AND NOT TARGET FluidSynth::libfluidsynth)
             find_dependency(FluidSynth)
         endif()
 
-        if(SDL3MIXER_VORBIS_TREMOR AND NOT TARGET tremor::tremor)
+        if(SDLMIXER_VORBIS_TREMOR AND NOT TARGET tremor::tremor)
             find_dependency(tremor)
         endif()
 
-        if(SDL3MIXER_VORBIS_VORBISFILE AND NOT TARGET Vorbis::vorbisfile)
+        if(SDLMIXER_VORBIS_VORBISFILE AND NOT TARGET Vorbis::vorbisfile)
             find_dependency(Vorbis)
         endif()
 
-        if(SDL3MIXER_OPUS AND NOT TARGET OpusFile::opusfile)
+        if(SDLMIXER_OPUS AND NOT TARGET OpusFile::opusfile)
             find_dependency(OpusFile)
         endif()
 
-        if(SDL3MIXER_WAVPACK AND NOT TARGET WavPack::WavPack)
+        if(SDLMIXER_WAVPACK AND NOT TARGET WavPack::WavPack)
             find_dependency(wavpack)
         endif()
 
         set(CMAKE_MODULE_PATH "${_sdl_cmake_module_path}")
         unset(_sdl_cmake_module_path)
 
-        if(HAIKU AND SDL3MIXER_MIDI_NATIVE)
+        if(HAIKU AND SDLMIXER_MIDI_NATIVE)
             include(CheckLanguage)
             check_language(CXX)
             if(NOT CMAKE_CXX_COMPILER)

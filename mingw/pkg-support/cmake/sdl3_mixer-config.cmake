@@ -19,4 +19,4 @@ endif()
 include("${sdl3_mixer_config_path}")
 
 # The SDL_mixer MinGW development package ships with vendored libraries
-set(SDL3MIXER_VENDORED              1)
+set(SDLMIXER_VENDORED              1)

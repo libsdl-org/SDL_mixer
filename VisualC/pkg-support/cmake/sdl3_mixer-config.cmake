@@ -11,37 +11,37 @@ cmake_minimum_required(VERSION 3.0)
 
 set(SDL3_mixer_FOUND                TRUE)
 
-set(SDL3MIXER_VENDORED              TRUE)
+set(SDLMIXER_VENDORED              TRUE)
 
-set(SDL3MIXER_CMD                   FALSE)
+set(SDLMIXER_CMD                   FALSE)
 
-set(SDL3MIXER_FLAC_LIBFLAC          FALSE)
-set(SDL3MIXER_FLAC_DRFLAC           TRUE)
+set(SDLMIXER_FLAC_LIBFLAC          FALSE)
+set(SDLMIXER_FLAC_DRFLAC           TRUE)
 
-set(SDL3MIXER_GME                   FALSE)
+set(SDLMIXER_GME                   FALSE)
 
-set(SDL3MIXER_MOD                   TRUE)
-set(SDL3MIXER_MOD_MODPLUG           TRUE)
-set(SDL3MIXER_MOD_XMP               FALSE)
-set(SDL3MIXER_MOD_XMP_LITE          FALSE)
+set(SDLMIXER_MOD                   TRUE)
+set(SDLMIXER_MOD_MODPLUG           TRUE)
+set(SDLMIXER_MOD_XMP               FALSE)
+set(SDLMIXER_MOD_XMP_LITE          FALSE)
 
-set(SDL3MIXER_MP3                   TRUE)
-set(SDL3MIXER_MP3_DRMP3             TRUE)
-set(SDL3MIXER_MP3_MPG123            FALSE)
+set(SDLMIXER_MP3                   TRUE)
+set(SDLMIXER_MP3_DRMP3             TRUE)
+set(SDLMIXER_MP3_MPG123            FALSE)
 
-set(SDL3MIXER_MIDI                  TRUE)
-set(SDL3MIXER_MIDI_FLUIDSYNTH       FALSE)
-set(SDL3MIXER_MIDI_NATIVE           TRUE)
-set(SDL3MIXER_MIDI_TIMIDITY         TRUE)
+set(SDLMIXER_MIDI                  TRUE)
+set(SDLMIXER_MIDI_FLUIDSYNTH       FALSE)
+set(SDLMIXER_MIDI_NATIVE           TRUE)
+set(SDLMIXER_MIDI_TIMIDITY         TRUE)
 
-set(SDL3MIXER_OPUS                  TRUE)
+set(SDLMIXER_OPUS                  TRUE)
 
-set(SDL3MIXER_VORBIS                STB)
-set(SDL3MIXER_VORBIS_STB            TRUE)
-set(SDL3MIXER_VORBIS_TREMOR         FALSE)
-set(SDL3MIXER_VORBIS_VORBISFILE     FALSE)
+set(SDLMIXER_VORBIS                STB)
+set(SDLMIXER_VORBIS_STB            TRUE)
+set(SDLMIXER_VORBIS_TREMOR         FALSE)
+set(SDLMIXER_VORBIS_VORBISFILE     FALSE)
 
-set(SDL3MIXER_WAVE                  TRUE)
+set(SDLMIXER_WAVE                  TRUE)
 
 if(CMAKE_SIZEOF_VOID_P STREQUAL "4")
     set(_sdl_arch_subdir "x86")

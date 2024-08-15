@@ -67,21 +67,21 @@ build_cmake_projects() {
         for build_shared_libs in ON OFF; do
             echo "Configuring CMake project for $android_abi (shared=${build_shared_libs})"
             cmake -S "${sdlmixer_root}" -B "${build_root}/build_${android_abi}/shared_${build_shared_libs}" \
-                -DSDL3MIXER_DEPS_SHARED=ON \
-                -DSDL3MIXER_VENDORED=ON \
-                -DSDL3MIXER_FLAC=ON \
+                -DSDLMIXER_DEPS_SHARED=ON \
+                -DSDLMIXER_VENDORED=ON \
+                -DSDLMIXER_FLAC=ON \
                 -DWITH_ASM=OFF \
-                -DSDL3MIXER_FLAC_LIBFLAC=ON \
-                -DSDL3MIXER_MOD=ON \
-                -DSDL3MIXER_MOD_MODPLUG=OFF \
-                -DSDL3MIXER_MOD_XMP=ON \
-                -DSDL3MIXER_MP3=ON \
-                -DSDL3MIXER_MP3_MPG123=ON \
-                -DSDL3MIXER_MIDI=ON \
-                -DSDL3MIXER_MIDI_TIMIDITY=ON \
-                -DSDL3MIXER_OPUS=ON \
-                -DSDL3MIXER_VORBIS=STB \
-                -DSDL3MIXER_WAVPACK=ON \
+                -DSDLMIXER_FLAC_LIBFLAC=ON \
+                -DSDLMIXER_MOD=ON \
+                -DSDLMIXER_MOD_MODPLUG=OFF \
+                -DSDLMIXER_MOD_XMP=ON \
+                -DSDLMIXER_MP3=ON \
+                -DSDLMIXER_MP3_MPG123=ON \
+                -DSDLMIXER_MIDI=ON \
+                -DSDLMIXER_MIDI_TIMIDITY=ON \
+                -DSDLMIXER_OPUS=ON \
+                -DSDLMIXER_VORBIS=STB \
+                -DSDLMIXER_WAVPACK=ON \
                 -DCMAKE_TOOLCHAIN_FILE="$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake" \
                 -DSDL${sdlmixer_major}_DIR="${sdl_build_root}/build_${android_abi}/prefix/lib/cmake/SDL${sdlmixer_major}" \
                 -DANDROID_PLATFORM=${ANDROID_PLATFORM} \
