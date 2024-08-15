@@ -12,37 +12,37 @@ set_package_properties(SDL3_mixer PROPERTIES
 
 set(SDL3_mixer_FOUND                TRUE)
 
-set(SDL3MIXER_VENDORED              TRUE)
+set(SDLMIXER_VENDORED              TRUE)
 
-set(SDL3MIXER_CMD                   FALSE)
+set(SDLMIXER_CMD                   FALSE)
 
-set(SDL3MIXER_FLAC_LIBFLAC          FALSE)
-set(SDL3MIXER_FLAC_DRFLAC           TRUE)
+set(SDLMIXER_FLAC_LIBFLAC          FALSE)
+set(SDLMIXER_FLAC_DRFLAC           TRUE)
 
-set(SDL3MIXER_GME                   FALSE)
+set(SDLMIXER_GME                   FALSE)
 
-set(SDL3MIXER_MOD                   FALSE)
-set(SDL3MIXER_MOD_MODPLUG           FALSE)
-set(SDL3MIXER_MOD_XMP               FALSE)
-set(SDL3MIXER_MOD_XMP_LITE          FALSE)
+set(SDLMIXER_MOD                   FALSE)
+set(SDLMIXER_MOD_MODPLUG           FALSE)
+set(SDLMIXER_MOD_XMP               FALSE)
+set(SDLMIXER_MOD_XMP_LITE          FALSE)
 
-set(SDL3MIXER_MP3                   TRUE)
-set(SDL3MIXER_MP3_DRMP3             TRUE)
-set(SDL3MIXER_MP3_MPG123            FALSE)
+set(SDLMIXER_MP3                   TRUE)
+set(SDLMIXER_MP3_DRMP3             TRUE)
+set(SDLMIXER_MP3_MPG123            FALSE)
 
-set(SDL3MIXER_MIDI                  FALSE)
-set(SDL3MIXER_MIDI_FLUIDSYNTH       FALSE)
-set(SDL3MIXER_MIDI_NATIVE           FALSE)
-set(SDL3MIXER_MIDI_TIMIDITY         FALSE)
+set(SDLMIXER_MIDI                  FALSE)
+set(SDLMIXER_MIDI_FLUIDSYNTH       FALSE)
+set(SDLMIXER_MIDI_NATIVE           FALSE)
+set(SDLMIXER_MIDI_TIMIDITY         FALSE)
 
-set(SDL3MIXER_OPUS                  FALSE)
+set(SDLMIXER_OPUS                  FALSE)
 
-set(SDL3MIXER_VORBIS                STB)
-set(SDL3MIXER_VORBIS_STB            TRUE)
-set(SDL3MIXER_VORBIS_TREMOR         FALSE)
-set(SDL3MIXER_VORBIS_VORBISFILE     FALSE)
+set(SDLMIXER_VORBIS                STB)
+set(SDLMIXER_VORBIS_STB            TRUE)
+set(SDLMIXER_VORBIS_TREMOR         FALSE)
+set(SDLMIXER_VORBIS_VORBISFILE     FALSE)
 
-set(SDL3MIXER_WAVE                  TRUE)
+set(SDLMIXER_WAVE                  TRUE)
 
 string(REGEX REPLACE "SDL3_mixer\\.framework.*" "SDL3_mixer.framework" _sdl3mixer_framework_path "${CMAKE_CURRENT_LIST_DIR}")
 string(REGEX REPLACE "SDL3_mixer\\.framework.*" "" _sdl3mixer_framework_parent_path "${CMAKE_CURRENT_LIST_DIR}")
