@@ -588,7 +588,8 @@ static int WAVPACK_Seek(void *context, double time)
                    wvpk.WavpackSeekSample64(music->ctx, sample) :
                    wvpk.WavpackSeekSample(music->ctx, (uint32_t)sample);
     if (!success) {
-        return Mix_SetError("%s", wvpk.WavpackGetErrorMessage(music->ctx));
+        Mix_SetError("%s", wvpk.WavpackGetErrorMessage(music->ctx));
+        return -1;
     }
     #ifdef MUSIC_WAVPACK_DSD
     if (music->decimation_ctx) {

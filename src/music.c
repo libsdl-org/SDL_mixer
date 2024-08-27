@@ -945,12 +945,14 @@ int Mix_FadeInMusicPos(Mix_Music *music, int loops, int ms, double position)
     int retval;
 
     if (ms_per_step == 0) {
-        return Mix_SetError("Audio device hasn't been opened");
+        Mix_SetError("Audio device hasn't been opened");
+        return -1;
     }
 
     /* Don't play null pointers :-) */
     if (music == NULL) {
-        return Mix_SetError("music parameter was NULL");
+        Mix_SetError("music parameter was NULL");
+        return -1;
     }
 
     /* Setup the data */
@@ -1343,7 +1345,8 @@ int Mix_StartTrack(Mix_Music *music, int track)
         }
         result = music->interface->StartTrack(music->context, track);
     } else {
-        result = Mix_SetError("That operation is not supported");
+        Mix_SetError("That operation is not supported");
+        result = -1;
     }
     Mix_UnlockAudio();
 
@@ -1358,7 +1361,8 @@ int Mix_GetNumTracks(Mix_Music *music)
     if (music && music->interface->GetNumTracks) {
         result = music->interface->GetNumTracks(music->context);
     } else {
-        result = Mix_SetError("That operation is not supported");
+        Mix_SetError("That operation is not supported");
+        result = -1;
     }
     Mix_UnlockAudio();
     return result;

@@ -455,23 +455,27 @@ static int MS_ADPCM_Init(ADPCM_DecoderState *state, const Uint8 *chunk_data, Uin
      * about supporting more than stereo anyway.
      */
     if (channels > 2) {
-        return Mix_SetError("Invalid number of channels");
+        Mix_SetError("Invalid number of channels");
+        return -1;
     }
 
     if (bitspersample != 4) {
-        return Mix_SetError("Invalid MS ADPCM bits per sample of %u", (unsigned int)bitspersample);
+        Mix_SetError("Invalid MS ADPCM bits per sample of %u", (unsigned int)bitspersample);
+        return -1;
     }
 
     /* The block size must be big enough to contain the block header. */
     if (blockalign < blockheadersize) {
-        return Mix_SetError("Invalid MS ADPCM block size (nBlockAlign)");
+        Mix_SetError("Invalid MS ADPCM block size (nBlockAlign)");
+        return -1;
     }
 
     /* There are wSamplesPerBlock, wNumCoef, and at least 7 coefficient pairs in
      * the extended part of the header.
      */
     if (chunk_length < 22) {
-        return Mix_SetError("Could not read MS ADPCM format header");
+        Mix_SetError("Could not read MS ADPCM format header");
+        return -1;
     }
 
     cbExtSize = SDL_Swap16LE(fmt->cbSize);
@@ -487,11 +491,14 @@ static int MS_ADPCM_Init(ADPCM_DecoderState *state, const Uint8 *chunk_data, Uin
     }
 
     if (chunk_length < 22 + coeffcount * 4) {
-        return Mix_SetError("Could not read custom coefficients in MS ADPCM format header");
+        Mix_SetError("Could not read custom coefficients in MS ADPCM format header");
+        return -1;
     } else if (cbExtSize < 4 + coeffcount * 4) {
-        return Mix_SetError("Invalid MS ADPCM format header (too small)");
+        Mix_SetError("Invalid MS ADPCM format header (too small)");
+        return -1;
     } else if (coeffcount < 7) {
-        return Mix_SetError("Missing required coefficients in MS ADPCM format header");
+        Mix_SetError("Missing required coefficients in MS ADPCM format header");
+        return -1;
     }
 
     coeffdata = (MS_ADPCM_CoeffData *)SDL_malloc(sizeof(MS_ADPCM_CoeffData) + coeffcount * 4);
@@ -509,7 +516,8 @@ static int MS_ADPCM_Init(ADPCM_DecoderState *state, const Uint8 *chunk_data, Uin
             c -= 0x10000;
         }
         if (i < 14 && c != presetcoeffs[i]) {
-            return Mix_SetError("Wrong preset coefficients in MS ADPCM format header");
+            Mix_SetError("Wrong preset coefficients in MS ADPCM format header");
+            return -1;
         }
         coeffdata->coeff[i] = (Sint16)c;
     }
@@ -537,7 +545,8 @@ static int MS_ADPCM_Init(ADPCM_DecoderState *state, const Uint8 *chunk_data, Uin
      * A truncated block header with just one sample is not supported.
      */
     if (samplesperblock == 1 || blockdatasamples < (size_t)(samplesperblock - 2)) {
-        return Mix_SetError("Invalid number of samples per MS ADPCM block (wSamplesPerBlock)");
+        Mix_SetError("Invalid number of samples per MS ADPCM block (wSamplesPerBlock)");
+        return -1;
     }
 
     state->blocksize = blockalign;
@@ -614,7 +623,8 @@ static int MS_ADPCM_DecodeBlockHeader(ADPCM_DecoderState *state)
     MS_ADPCM_CoeffData *ddata = (MS_ADPCM_CoeffData *)state->ddata;
 
     if (state->block.size < state->blockheadersize) {
-        return Mix_SetError("Invalid ADPCM header");
+        Mix_SetError("Invalid ADPCM header");
+        return -1;
     }
 
     for (c = 0; c < channels; c++) {
@@ -623,7 +633,8 @@ static int MS_ADPCM_DecodeBlockHeader(ADPCM_DecoderState *state)
         /* Load the coefficient pair into the channel state. */
         coeffindex = state->block.data[o];
         if (coeffindex > ddata->coeffcount) {
-            return Mix_SetError("Invalid MS ADPCM coefficient index in block header");
+            Mix_SetError("Invalid MS ADPCM coefficient index in block header");
+            return -1;
         }
         cstate[c].coeff1 = ddata->coeff[coeffindex * 2];
         cstate[c].coeff2 = ddata->coeff[coeffindex * 2 + 1];
@@ -725,16 +736,19 @@ static int IMA_ADPCM_Init(ADPCM_DecoderState *state, const Uint8 *chunk_data, Ui
 
     /* IMA ADPCM can also have 3-bit samples, but it's not supported by SDL at this time. */
     if (bitspersample == 3) {
-        return Mix_SetError("3-bit IMA ADPCM currently not supported");
+        Mix_SetError("3-bit IMA ADPCM currently not supported");
+        return -1;
     } else if (bitspersample != 4) {
-        return Mix_SetError("Invalid IMA ADPCM bits per sample of %u", (unsigned int)bitspersample);
+        Mix_SetError("Invalid IMA ADPCM bits per sample of %u", (unsigned int)bitspersample);
+        return -1;
     }
 
     /* The block size is required to be a multiple of 4 and it must be able to
      * hold a block header.
      */
     if (blockalign < blockheadersize || blockalign % 4) {
-        return Mix_SetError("Invalid IMA ADPCM block size (nBlockAlign)");
+        Mix_SetError("Invalid IMA ADPCM block size (nBlockAlign)");
+        return -1;
     }
 
     if (formattag == EXTENSIBLE_CODE) {
@@ -767,7 +781,8 @@ static int IMA_ADPCM_Init(ADPCM_DecoderState *state, const Uint8 *chunk_data, Ui
      * not enforced here as there are no compatibility issues.
      */
     if (blockdatasamples < (size_t)(samplesperblock - 1)) {
-        return Mix_SetError("Invalid number of samples per IMA ADPCM block (wSamplesPerBlock)");
+        Mix_SetError("Invalid number of samples per IMA ADPCM block (wSamplesPerBlock)");
+        return -1;
     }
 
     state->blocksize = blockalign;
@@ -874,7 +889,8 @@ static int IMA_ADPCM_DecodeBlockHeader(ADPCM_DecoderState *state)
     Uint8 *cstate = (Uint8 *)state->cstate;
 
     if (state->block.size < state->blockheadersize) {
-        return Mix_SetError("Invalid ADPCM header");
+        Mix_SetError("Invalid ADPCM header");
+        return -1;
     }
 
     for (c = 0; c < state->channels; c++) {

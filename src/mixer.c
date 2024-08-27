@@ -1068,10 +1068,12 @@ int Mix_PlayChannelTimed(int which, Mix_Chunk *chunk, int loops, int ticks)
 
     /* Don't play null pointers :-) */
     if (chunk == NULL) {
-        return Mix_SetError("Tried to play a NULL chunk");
+        Mix_SetError("Tried to play a NULL chunk");
+        return -1;
     }
     if (!checkchunkintegral(chunk)) {
-        return Mix_SetError("Tried to play a chunk with a bad frame");
+        Mix_SetError("Tried to play a chunk with a bad frame");
+        return -1;
     }
 
     /* Lock the mixer while modifying the playing channels */
@@ -1147,7 +1149,8 @@ int Mix_FadeInChannelTimed(int which, Mix_Chunk *chunk, int loops, int ms, int t
         return -1;
     }
     if (!checkchunkintegral(chunk)) {
-        return Mix_SetError("Tried to play a chunk with a bad frame");
+        Mix_SetError("Tried to play a chunk with a bad frame");
+        return -1;
     }
 
     /* Lock the mixer while modifying the playing channels */

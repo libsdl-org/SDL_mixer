@@ -161,7 +161,8 @@ static int initialize_from_track_info(GME_Music *music, int track)
 
     err = gme.gme_track_info(music->game_emu, &musInfo, track);
     if (err != 0) {
-        return Mix_SetError("GME: %s", err);
+        Mix_SetError("GME: %s", err);
+        return -1;
     }
 
     music->track_length = musInfo->length;
@@ -397,7 +398,8 @@ static int GME_StartTrack(void *music_p, int track)
 
     err = gme.gme_start_track(music->game_emu, track);
     if (err != 0) {
-        return Mix_SetError("GME: %s", err);
+        Mix_SetError("GME: %s", err);
+        return -1;
     }
 
     GME_Play(music, music->play_count);

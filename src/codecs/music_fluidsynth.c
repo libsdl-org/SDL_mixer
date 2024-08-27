@@ -311,7 +311,8 @@ static int FLUIDSYNTH_GetSome(void *context, void *data, int bytes, SDL_bool *do
     }
 
     if (music->synth_write(music->synth, 4096/*music_spec.samples*/, music->buffer, 0, 2, music->buffer, 1, 2) != FLUID_OK) {
-        return Mix_SetError("Error generating FluidSynth audio");
+        Mix_SetError("Error generating FluidSynth audio");
+        return -1;
     }
     if (!SDL_PutAudioStreamData(music->stream, music->buffer, music->buffer_size)) {
         return -1;

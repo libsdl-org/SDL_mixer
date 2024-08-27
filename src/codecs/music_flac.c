@@ -654,7 +654,8 @@ static int FLAC_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     }
 
     if (!flac.FLAC__stream_decoder_process_single(music->flac_decoder)) {
-        return Mix_SetError("FLAC__stream_decoder_process_single() failed");
+        Mix_SetError("FLAC__stream_decoder_process_single() failed");
+        return -1;
     }
 
     if (music->loop_flag) {
@@ -662,7 +663,8 @@ static int FLAC_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         if (flac.FLAC__stream_decoder_seek_absolute(music->flac_decoder, (FLAC__uint64)music->loop_start) ==
                 FLAC__STREAM_DECODER_SEEK_ERROR) {
             flac.FLAC__stream_decoder_flush(music->flac_decoder);
-            return Mix_SetError("FLAC__stream_decoder_seek_absolute() failed");
+            Mix_SetError("FLAC__stream_decoder_seek_absolute() failed");
+            return -1;
         } else {
             int play_count = -1;
             if (music->play_count > 0) {
@@ -711,7 +713,8 @@ static int FLAC_Seek(void *context, double position)
             flac.FLAC__stream_decoder_flush(music->flac_decoder);
         }
 
-        return Mix_SetError("Seeking of FLAC stream failed: libFLAC seek failed.");
+        Mix_SetError("Seeking of FLAC stream failed: libFLAC seek failed.");
+        return -1;
     }
     return 0;
 }

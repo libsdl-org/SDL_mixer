@@ -173,7 +173,8 @@ static int OPUS_UpdateSection(OPUS_music *music)
 
     op_info = opus.op_head(music->of, -1);
     if (!op_info) {
-        return Mix_SetError("op_head returned NULL");
+        Mix_SetError("op_head returned NULL");
+        return -1;
     }
 
     if (music->op_info && op_info->channel_count == music->op_info->channel_count) {

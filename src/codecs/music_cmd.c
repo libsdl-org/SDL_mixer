@@ -167,7 +167,8 @@ static int MusicCMD_Play(void *context, int play_count)
     switch(music->pid) {
     /* Failed fork() system call */
     case -1:
-        return Mix_SetError("fork() failed");
+        Mix_SetError("fork() failed");
+        return -1;
 
     /* Child process - executes here */
     case 0: {

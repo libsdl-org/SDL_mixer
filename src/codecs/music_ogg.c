@@ -202,7 +202,8 @@ static int OGG_UpdateSection(OGG_music *music)
 
     vi = vorbis.ov_info(&music->vf, -1);
     if (!vi) {
-        return Mix_SetError("ov_info returned NULL");
+        Mix_SetError("ov_info returned NULL");
+        return -1;
     }
 
     if (vi->channels == music->vi.channels && vi->rate == music->vi.rate) {
