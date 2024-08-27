@@ -176,7 +176,7 @@ static int TIMIDITY_GetSome(void *context, void *data, int bytes, SDL_bool *done
     if (music->stream) {
         expected = music->buffer_size;
         amount = Timidity_PlaySome(music->song, music->buffer, music->buffer_size);
-        if (SDL_PutAudioStreamData(music->stream, music->buffer, amount) < 0) {
+        if (!SDL_PutAudioStreamData(music->stream, music->buffer, amount)) {
             return -1;
         }
     } else {

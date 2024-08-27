@@ -399,7 +399,7 @@ static int OPUS_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 
     if (samples > 0) {
         filled = samples * music->op_info->channel_count * 2;
-        if (SDL_PutAudioStreamData(music->stream, music->buffer, filled) < 0) {
+        if (!SDL_PutAudioStreamData(music->stream, music->buffer, filled)) {
             return -1;
         }
     } else if (!looped) {

@@ -267,7 +267,7 @@ static int MODPLUG_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 
     amount = modplug.ModPlug_Read(music->file, music->buffer, music->buffer_size);
     if (amount > 0) {
-        if (SDL_PutAudioStreamData(music->stream, music->buffer, amount) < 0) {
+        if (!SDL_PutAudioStreamData(music->stream, music->buffer, amount)) {
             return -1;
         }
     } else {

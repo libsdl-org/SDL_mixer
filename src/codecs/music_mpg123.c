@@ -389,7 +389,7 @@ static int MPG123_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     result = mpg123.mpg123_read(music->handle, music->buffer, music->buffer_size, &amount);
     switch (result) {
     case MPG123_OK:
-        if (SDL_PutAudioStreamData(music->stream, music->buffer, (int)amount) < 0) {
+        if (!SDL_PutAudioStreamData(music->stream, music->buffer, (int)amount)) {
             return -1;
         }
         break;
@@ -424,7 +424,7 @@ static int MPG123_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 
     case MPG123_DONE:
         if (amount > 0) {
-            if (SDL_PutAudioStreamData(music->stream, music->buffer, (int)amount) < 0) {
+            if (!SDL_PutAudioStreamData(music->stream, music->buffer, (int)amount)) {
                 return -1;
             }
             break;

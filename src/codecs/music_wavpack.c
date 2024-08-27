@@ -554,7 +554,7 @@ static int WAVPACK_GetSome(void *context, void *data, int bytes, SDL_bool *done)
             amount *= sizeof(Sint32);
             break;
         }
-        if (SDL_PutAudioStreamData(music->stream, music->buffer, amount) < 0) {
+        if (!SDL_PutAudioStreamData(music->stream, music->buffer, amount)) {
             return -1;
         }
     } else {

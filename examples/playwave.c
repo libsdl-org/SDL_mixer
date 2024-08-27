@@ -414,7 +414,7 @@ int main(int argc, char *argv[])
     }
 
     /* Initialize the SDL library */
-    if (SDL_Init(SDL_INIT_AUDIO) < 0) {
+    if (!SDL_Init(SDL_INIT_AUDIO)) {
         SDL_Log("Couldn't initialize SDL: %s\n",SDL_GetError());
         return 255;
     }

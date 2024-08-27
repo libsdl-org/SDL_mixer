@@ -317,7 +317,7 @@ static int GME_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         return 0;
     }
 
-    if (SDL_PutAudioStreamData(music->stream, music->buffer, (int)music->buffer_size) < 0) {
+    if (!SDL_PutAudioStreamData(music->stream, music->buffer, (int)music->buffer_size)) {
         return -1;
     }
     return 0;

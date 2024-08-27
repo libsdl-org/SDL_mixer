@@ -344,7 +344,7 @@ static int XMP_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     amount = music->buffer_size;
 
     if (ret == 0) {
-        if (SDL_PutAudioStreamData(music->stream, music->buffer, amount) < 0) {
+        if (!SDL_PutAudioStreamData(music->stream, music->buffer, amount)) {
             return -1;
         }
     } else {

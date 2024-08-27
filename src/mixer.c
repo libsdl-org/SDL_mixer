@@ -485,7 +485,7 @@ int Mix_OpenAudio(SDL_AudioDeviceID devid, const SDL_AudioSpec *spec)
     int i;
 
     if (!SDL_WasInit(SDL_INIT_AUDIO)) {
-        if (SDL_InitSubSystem(SDL_INIT_AUDIO) < 0) {
+        if (!SDL_InitSubSystem(SDL_INIT_AUDIO)) {
             return -1;
         }
     }
@@ -841,7 +841,7 @@ Mix_Chunk *Mix_LoadWAV_IO(SDL_IOStream *src, SDL_bool closeio)
 
     if (!loaded)  {
         if (SDL_memcmp(magic, "WAVE", 4) == 0 || SDL_memcmp(magic, "RIFF", 4) == 0) {
-            loaded = (SDL_LoadWAV_IO(src, closeio, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen) == 0) ? &wavespec : NULL;
+            loaded = SDL_LoadWAV_IO(src, closeio, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen) ? &wavespec : NULL;
         } else if (SDL_memcmp(magic, "FORM", 4) == 0) {
             loaded = Mix_LoadAIFF_IO(src, closeio, &wavespec, (Uint8 **)&chunk->abuf, &chunk->alen);
         } else if (SDL_memcmp(magic, "Crea", 4) == 0) {
@@ -872,7 +872,7 @@ Mix_Chunk *Mix_LoadWAV_IO(SDL_IOStream *src, SDL_bool closeio)
         Uint8 *dst_data = NULL;
         int dst_len = 0;
 
-        if (SDL_ConvertAudioSamples(&wavespec, chunk->abuf, chunk->alen, &mixer, &dst_data, &dst_len) < 0) {
+        if (!SDL_ConvertAudioSamples(&wavespec, chunk->abuf, chunk->alen, &mixer, &dst_data, &dst_len)) {
             SDL_free(chunk->abuf);
             SDL_free(chunk);
             return NULL;
