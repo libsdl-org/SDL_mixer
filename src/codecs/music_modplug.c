@@ -59,7 +59,7 @@ static ModPlug_Settings settings;
 #else
 #define FUNCTION_LOADER(FUNC, SIG) \
     modplug.FUNC = FUNC; \
-    if (modplug.FUNC == NULL) { Mix_SetError("Missing libmodplug.framework"); return -1; }
+    if (modplug.FUNC == NULL) { SDL_SetError("Missing libmodplug.framework"); return -1; }
 #endif
 
 #ifdef __APPLE__
@@ -200,7 +200,7 @@ void *MODPLUG_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
     if (buffer) {
         music->file = modplug.ModPlug_Load(buffer, (int)size);
         if (!music->file) {
-            Mix_SetError("ModPlug_Load failed");
+            SDL_SetError("ModPlug_Load failed");
         }
         SDL_free(buffer);
     }

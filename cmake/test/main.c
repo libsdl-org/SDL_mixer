@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
         return 1;
     }
     if (Mix_Init(0) == 0) {
-        SDL_Log("Mix_Init: no sound/music loaders supported (%s)\n", Mix_GetError());
+        SDL_Log("Mix_Init: no sound/music loaders supported (%s)\n", SDL_GetError());
     }
     Mix_Quit();
     SDL_Quit();

@@ -129,7 +129,7 @@ SDL_AudioSpec *Mix_LoadAIFF_IO (SDL_IOStream *src, SDL_bool closeio,
         }
     }
     if ((FORMchunk != FORM) || ((AIFFmagic != AIFF) && (AIFFmagic != _8SVX))) {
-        Mix_SetError("Unrecognized file type (not AIFF nor 8SVX)");
+        SDL_SetError("Unrecognized file type (not AIFF nor 8SVX)");
         goto done;
     }
 
@@ -171,12 +171,12 @@ SDL_AudioSpec *Mix_LoadAIFF_IO (SDL_IOStream *src, SDL_bool closeio,
                     goto done;
                 }
                 if (SDL_ReadIO(src, sane_freq, sizeof(sane_freq)) != sizeof(sane_freq)) {
-                    Mix_SetError("Bad AIFF sample frequency");
+                    SDL_SetError("Bad AIFF sample frequency");
                     goto done;
                 }
                 frequency = SANE_to_Uint32(sane_freq);
                 if (frequency == 0) {
-                    Mix_SetError("Bad AIFF sample frequency");
+                    SDL_SetError("Bad AIFF sample frequency");
                     goto done;
                 }
                 break;
@@ -212,22 +212,22 @@ SDL_AudioSpec *Mix_LoadAIFF_IO (SDL_IOStream *src, SDL_bool closeio,
           && SDL_SeekIO(src, next_chunk, SDL_IO_SEEK_SET) != 1);
 
     if ((AIFFmagic == AIFF) && !found_SSND) {
-        Mix_SetError("Bad AIFF (no SSND chunk)");
+        SDL_SetError("Bad AIFF (no SSND chunk)");
         goto done;
     }
 
     if ((AIFFmagic == AIFF) && !found_COMM) {
-        Mix_SetError("Bad AIFF (no COMM chunk)");
+        SDL_SetError("Bad AIFF (no COMM chunk)");
         goto done;
     }
 
     if ((AIFFmagic == _8SVX) && !found_VHDR) {
-        Mix_SetError("Bad 8SVX (no VHDR chunk)");
+        SDL_SetError("Bad 8SVX (no VHDR chunk)");
         goto done;
     }
 
     if ((AIFFmagic == _8SVX) && !found_BODY) {
-        Mix_SetError("Bad 8SVX (no BODY chunk)");
+        SDL_SetError("Bad 8SVX (no BODY chunk)");
         goto done;
     }
 
@@ -242,7 +242,7 @@ SDL_AudioSpec *Mix_LoadAIFF_IO (SDL_IOStream *src, SDL_bool closeio,
             spec->format = SDL_AUDIO_S16BE;
             break;
         default:
-            Mix_SetError("Unsupported AIFF samplesize");
+            SDL_SetError("Unsupported AIFF samplesize");
             goto done;
     }
     spec->channels = (Uint8) channels;
@@ -254,7 +254,7 @@ SDL_AudioSpec *Mix_LoadAIFF_IO (SDL_IOStream *src, SDL_bool closeio,
     }
     SDL_SeekIO(src, start, SDL_IO_SEEK_SET);
     if (SDL_ReadIO(src, *audio_buf, *audio_len) != *audio_len) {
-        Mix_SetError("Unable to read audio data");
+        SDL_SetError("Unable to read audio data");
         goto done;
     }
 

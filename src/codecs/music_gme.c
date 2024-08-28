@@ -57,7 +57,7 @@ static gme_loader gme;
 #else
 #define FUNCTION_LOADER(FUNC, SIG) \
     gme.FUNC = FUNC; \
-    if (gme.FUNC == NULL) { Mix_SetError("Missing gme.framework"); return -1; }
+    if (gme.FUNC == NULL) { SDL_SetError("Missing gme.framework"); return -1; }
 #endif
 
 #ifdef __APPLE__
@@ -161,7 +161,7 @@ static int initialize_from_track_info(GME_Music *music, int track)
 
     err = gme.gme_track_info(music->game_emu, &musInfo, track);
     if (err != 0) {
-        Mix_SetError("GME: %s", err);
+        SDL_SetError("GME: %s", err);
         return -1;
     }
 
@@ -210,7 +210,7 @@ static void *GME_CreateFromIO(struct SDL_IOStream *src, SDL_bool closeio)
     const char *err;
 
     if (src == NULL) {
-        Mix_SetError("GME: Empty source given");
+        SDL_SetError("GME: Empty source given");
         return NULL;
     }
 
@@ -243,7 +243,7 @@ static void *GME_CreateFromIO(struct SDL_IOStream *src, SDL_bool closeio)
         SDL_free(mem);
         if (err != 0) {
             GME_Delete(music);
-            Mix_SetError("GME: %s", err);
+            SDL_SetError("GME: %s", err);
             return NULL;
         }
     } else {
@@ -259,7 +259,7 @@ static void *GME_CreateFromIO(struct SDL_IOStream *src, SDL_bool closeio)
     err = gme.gme_start_track(music->game_emu, 0);
     if (err != 0) {
         GME_Delete(music);
-        Mix_SetError("GME: %s", err);
+        SDL_SetError("GME: %s", err);
         return NULL;
     }
 
@@ -314,7 +314,7 @@ static int GME_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 
     err = gme.gme_play(music->game_emu, (int)(music->buffer_size / 2), (short*)music->buffer);
     if (err != NULL) {
-        Mix_SetError("GME: %s", err);
+        SDL_SetError("GME: %s", err);
         return 0;
     }
 
@@ -398,7 +398,7 @@ static int GME_StartTrack(void *music_p, int track)
 
     err = gme.gme_start_track(music->game_emu, track);
     if (err != 0) {
-        Mix_SetError("GME: %s", err);
+        SDL_SetError("GME: %s", err);
         return -1;
     }
 

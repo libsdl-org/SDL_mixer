@@ -93,7 +93,7 @@ static wavpack_loader wvpk;
 #else
 #define FUNCTION_LOADER(FUNC, SIG) \
     wvpk.FUNC = FUNC; \
-    if (wvpk.FUNC == NULL) { Mix_SetError("Missing wavpack.framework"); return -1; }
+    if (wvpk.FUNC == NULL) { SDL_SetError("Missing wavpack.framework"); return -1; }
 #endif
 
 #ifdef __APPLE__
@@ -318,7 +318,7 @@ static void *WAVPACK_CreateFromFile(const char *file)
 
     src1 = SDL_IOFromFile(file, "rb");
     if (!src1) {
-        Mix_SetError("Couldn't open '%s'", file);
+        SDL_SetError("Couldn't open '%s'", file);
         return NULL;
     }
 
@@ -370,7 +370,7 @@ static void *WAVPACK_CreateFromIO_internal(SDL_IOStream *src1, SDL_IOStream *src
                   wvpk.WavpackOpenFileInputEx64(&sdl_reader64, src1, src2, err, OPEN_NORMALIZE|OPEN_TAGS|FLAGS_DSD, 0) :
                   wvpk.WavpackOpenFileInputEx(&sdl_reader32, src1, src2, err, OPEN_NORMALIZE|OPEN_TAGS, 0);
     if (!music->ctx) {
-        Mix_SetError("%s", err);
+        SDL_SetError("%s", err);
         SDL_free(music);
         if (src2) {
             SDL_CloseIO(src2);
@@ -588,7 +588,7 @@ static int WAVPACK_Seek(void *context, double time)
                    wvpk.WavpackSeekSample64(music->ctx, sample) :
                    wvpk.WavpackSeekSample(music->ctx, (uint32_t)sample);
     if (!success) {
-        Mix_SetError("%s", wvpk.WavpackGetErrorMessage(music->ctx));
+        SDL_SetError("%s", wvpk.WavpackGetErrorMessage(music->ctx));
         return -1;
     }
     #ifdef MUSIC_WAVPACK_DSD

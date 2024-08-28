@@ -189,7 +189,7 @@ int main(int argc, char *argv[])
 #endif
 
     /* Open the audio device */
-    if (Mix_OpenAudio(0, &spec) < 0) {
+    if (!Mix_OpenAudio(0, &spec)) {
         SDL_Log("Couldn't open audio: %s\n", SDL_GetError());
         return 2;
     } else {

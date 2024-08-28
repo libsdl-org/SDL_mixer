@@ -70,7 +70,7 @@ static vorbis_loader vorbis;
 #else
 #define FUNCTION_LOADER(FUNC, SIG) \
     vorbis.FUNC = FUNC; \
-    if (vorbis.FUNC == NULL) { Mix_SetError("Missing vorbis.framework or tremor.framework"); return -1; }
+    if (vorbis.FUNC == NULL) { SDL_SetError("Missing vorbis.framework or tremor.framework"); return -1; }
 #endif
 
 #ifdef __APPLE__
@@ -145,7 +145,7 @@ typedef struct {
 
 static int set_ov_error(const char *function, int error)
 {
-#define HANDLE_ERROR_CASE(X) case X: Mix_SetError("%s: %s", function, #X); break;
+#define HANDLE_ERROR_CASE(X) case X: SDL_SetError("%s: %s", function, #X); break;
     switch (error) {
     HANDLE_ERROR_CASE(OV_FALSE)
     HANDLE_ERROR_CASE(OV_EOF)
@@ -162,7 +162,7 @@ static int set_ov_error(const char *function, int error)
     HANDLE_ERROR_CASE(OV_EBADLINK)
     HANDLE_ERROR_CASE(OV_ENOSEEK)
     default:
-        Mix_SetError("%s: unknown error %d\n", function, error);
+        SDL_SetError("%s: unknown error %d\n", function, error);
         break;
     }
     return -1;
@@ -202,7 +202,7 @@ static int OGG_UpdateSection(OGG_music *music)
 
     vi = vorbis.ov_info(&music->vf, -1);
     if (!vi) {
-        Mix_SetError("ov_info returned NULL");
+        SDL_SetError("ov_info returned NULL");
         return -1;
     }
 
@@ -263,7 +263,7 @@ static void *OGG_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
     callbacks.tell_func = sdl_tell_func;
 
     if (vorbis.ov_open_callbacks(src, &music->vf, NULL, 0, callbacks) < 0) {
-        Mix_SetError("Not an Ogg Vorbis audio stream");
+        SDL_SetError("Not an Ogg Vorbis audio stream");
         SDL_free(music);
         return NULL;
     }

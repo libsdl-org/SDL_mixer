@@ -31,7 +31,7 @@ static void *NATIVEMIDI_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
 {
     NativeMidiSong *music = native_midi_loadsong_IO(src, closeio);
     if (!music) {
-        Mix_SetError("%s", native_midi_error());
+        SDL_SetError("%s", native_midi_error());
     }
     return music;
 }

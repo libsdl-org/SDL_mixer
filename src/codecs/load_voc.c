@@ -93,7 +93,7 @@ static int voc_check_header(SDL_IOStream *src)
     }
 
     if (SDL_memcmp(signature, "Creative Voice File\032", sizeof(signature)) != 0) {
-        Mix_SetError("Unrecognized file type (not VOC)");
+        SDL_SetError("Unrecognized file type (not VOC)");
         return 0;
     }
 
@@ -151,12 +151,12 @@ static int voc_get_block(SDL_IOStream *src, vs_t *v, SDL_AudioSpec *spec)
                 /* block, the DATA blocks rate value is invalid */
                 if (!v->has_extended) {
                     if (uc == 0) {
-                        Mix_SetError("VOC Sample rate is zero?");
+                        SDL_SetError("VOC Sample rate is zero?");
                         return 0;
                     }
 
                     if ((v->rate != VOC_BAD_RATE) && (uc != v->rate)) {
-                        Mix_SetError("VOC sample rate codes differ");
+                        SDL_SetError("VOC sample rate codes differ");
                         return 0;
                     }
 
@@ -170,7 +170,7 @@ static int voc_get_block(SDL_IOStream *src, vs_t *v, SDL_AudioSpec *spec)
                 }
 
                 if (uc != 0) {
-                    Mix_SetError("VOC decoder only interprets 8-bit data");
+                    SDL_SetError("VOC decoder only interprets 8-bit data");
                     return 0;
                 }
 
@@ -185,11 +185,11 @@ static int voc_get_block(SDL_IOStream *src, vs_t *v, SDL_AudioSpec *spec)
                 }
                 new_rate_long = SDL_Swap32LE(new_rate_long);
                 if (new_rate_long == 0) {
-                    Mix_SetError("VOC Sample rate is zero?");
+                    SDL_SetError("VOC Sample rate is zero?");
                     return 0;
                 }
                 if ((v->rate != VOC_BAD_RATE) && (new_rate_long != v->rate)) {
-                    Mix_SetError("VOC sample rate codes differ");
+                    SDL_SetError("VOC sample rate codes differ");
                     return 0;
                 }
                 v->rate = new_rate_long;
@@ -203,7 +203,7 @@ static int voc_get_block(SDL_IOStream *src, vs_t *v, SDL_AudioSpec *spec)
                     case 8:  v->size = ST_SIZE_BYTE; break;
                     case 16: v->size = ST_SIZE_WORD; break;
                     default:
-                        Mix_SetError("VOC with unknown data size");
+                        SDL_SetError("VOC with unknown data size");
                         return 0;
                 }
 
@@ -232,7 +232,7 @@ static int voc_get_block(SDL_IOStream *src, vs_t *v, SDL_AudioSpec *spec)
                     return 0;
                 }
                 if (uc == 0) {
-                    Mix_SetError("VOC silence sample rate is zero");
+                    SDL_SetError("VOC silence sample rate is zero");
                     return 0;
                 }
 
@@ -269,11 +269,11 @@ static int voc_get_block(SDL_IOStream *src, vs_t *v, SDL_AudioSpec *spec)
                 }
                 new_rate_short = SDL_Swap16LE(new_rate_short);
                 if (new_rate_short == 0) {
-                   Mix_SetError("VOC sample rate is zero");
+                   SDL_SetError("VOC sample rate is zero");
                    return 0;
                 }
                 if ((v->rate != VOC_BAD_RATE) && (new_rate_short != v->rate)) {
-                   Mix_SetError("VOC sample rate codes differ");
+                   SDL_SetError("VOC sample rate codes differ");
                    return 0;
                 }
                 v->rate = new_rate_short;
@@ -283,7 +283,7 @@ static int voc_get_block(SDL_IOStream *src, vs_t *v, SDL_AudioSpec *spec)
                 }
 
                 if (uc != 0) {
-                    Mix_SetError("VOC decoder only interprets 8-bit data");
+                    SDL_SetError("VOC decoder only interprets 8-bit data");
                     return 0;
                 }
 
@@ -420,12 +420,12 @@ SDL_AudioSpec *Mix_LoadVOC_IO (SDL_IOStream *src, SDL_bool closeio,
     }
 
     if (v.rate == VOC_BAD_RATE) {
-        Mix_SetError("VOC data had no sound!");
+        SDL_SetError("VOC data had no sound!");
         goto done;
     }
 
     if (v.size == 0) {
-        Mix_SetError("VOC data had invalid word size!");
+        SDL_SetError("VOC data had invalid word size!");
         goto done;
     }
 

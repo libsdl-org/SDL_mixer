@@ -169,7 +169,7 @@ static void do_panning_update(void)
         if (!panningok) {
             SDL_Log("Mix_SetPanning(0, %d, %d) failed!\n",
                     (int) leftvol, (int) rightvol);
-            SDL_Log("Reason: [%s].\n", Mix_GetError());
+            SDL_Log("Reason: [%s].\n", SDL_GetError());
         }
 
         if ((leftvol == 255) || (leftvol == 0)) {
@@ -206,7 +206,7 @@ static void do_distance_update(void)
         distanceok = Mix_SetDistance(0, distance);
         if (!distanceok) {
             SDL_Log("Mix_SetDistance(0, %d) failed!\n", (int) distance);
-            SDL_Log("Reason: [%s].\n", Mix_GetError());
+            SDL_Log("Reason: [%s].\n", SDL_GetError());
         }
 
         if (distance == 0) {
@@ -240,7 +240,7 @@ static void do_position_update(void)
         if (!positionok) {
             SDL_Log("Mix_SetPosition(0, %d, %d) failed!\n",
                     (int) angle, (int) distance);
-            SDL_Log("Reason: [%s].\n", Mix_GetError());
+            SDL_Log("Reason: [%s].\n", SDL_GetError());
         }
 
         if (angle == 0) {
@@ -424,7 +424,7 @@ int main(int argc, char *argv[])
 #endif
 
     /* Open the audio device */
-    if (Mix_OpenAudio(0, &spec) < 0) {
+    if (!Mix_OpenAudio(0, &spec)) {
         SDL_Log("Couldn't open audio: %s\n", SDL_GetError());
         CleanUp(2);
     } else {
@@ -469,7 +469,7 @@ int main(int argc, char *argv[])
          (reverse_stereo))
     {
         SDL_Log("Failed to set up reverse stereo effect!\n");
-        SDL_Log("Reason: [%s].\n", Mix_GetError());
+        SDL_Log("Reason: [%s].\n", SDL_GetError());
     }
 
     /* Play and then exit */

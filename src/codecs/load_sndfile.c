@@ -165,17 +165,17 @@ SDL_AudioSpec *Mix_LoadSndFile_IO (SDL_IOStream *src, SDL_bool closeio,
     sndfile = SF_sf_open_virtual(&sfvio, SFM_READ, &sfinfo, src);
 
     if (sndfile == NULL) {
-        Mix_SetError("sf_open_virtual: %s", SF_sf_strerror(sndfile));
+        SDL_SetError("sf_open_virtual: %s", SF_sf_strerror(sndfile));
         goto done;
     }
 
     if (sfinfo.frames <= 0) {
-        Mix_SetError("Invalid number of frames: %ld", (long)sfinfo.frames);
+        SDL_SetError("Invalid number of frames: %ld", (long)sfinfo.frames);
         goto done;
     }
 
     if (sfinfo.channels <= 0) {
-        Mix_SetError("Invalid number of channels: %d", sfinfo.channels);
+        SDL_SetError("Invalid number of channels: %d", sfinfo.channels);
         goto done;
     }
 
@@ -188,7 +188,7 @@ SDL_AudioSpec *Mix_LoadSndFile_IO (SDL_IOStream *src, SDL_bool closeio,
 
     if (SF_sf_readf_short(sndfile, buf, sfinfo.frames) < sfinfo.frames) {
         SDL_free(buf);
-        Mix_SetError("sf_readf_short: %s", SF_sf_strerror(sndfile));
+        SDL_SetError("sf_readf_short: %s", SF_sf_strerror(sndfile));
         goto done;
     }
 

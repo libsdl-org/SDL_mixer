@@ -150,7 +150,7 @@ static int SDLCALL fluidsynth_check_soundfont(const char *path, void *data)
         SDL_CloseIO(io);
         return 1;
     } else {
-        Mix_SetError("Failed to access the SoundFont %s", path);
+        SDL_SetError("Failed to access the SoundFont %s", path);
         return 0;
     }
 }
@@ -201,7 +201,7 @@ static FLUIDSYNTH_Music *FLUIDSYNTH_LoadMusic(void *data)
     }
 
     if (!(music->settings = fluidsynth.new_fluid_settings())) {
-        Mix_SetError("Failed to create FluidSynth settings");
+        SDL_SetError("Failed to create FluidSynth settings");
         goto fail;
     }
 
@@ -209,7 +209,7 @@ static FLUIDSYNTH_Music *FLUIDSYNTH_LoadMusic(void *data)
     fluidsynth.fluid_settings_getnum(music->settings, "synth.sample-rate", &samplerate);
 
     if (!(music->synth = fluidsynth.new_fluid_synth(music->settings))) {
-        Mix_SetError("Failed to create FluidSynth synthesizer");
+        SDL_SetError("Failed to create FluidSynth synthesizer");
         goto fail;
     }
 
@@ -218,7 +218,7 @@ static FLUIDSYNTH_Music *FLUIDSYNTH_LoadMusic(void *data)
     }
 
     if (!(music->player = fluidsynth.new_fluid_player(music->synth))) {
-        Mix_SetError("Failed to create FluidSynth player");
+        SDL_SetError("Failed to create FluidSynth player");
         goto fail;
     }
 
@@ -230,7 +230,7 @@ static FLUIDSYNTH_Music *FLUIDSYNTH_LoadMusic(void *data)
     ret = fluidsynth.fluid_player_add_mem(music->player, io_mem, io_size);
     SDL_free(io_mem);
     if (ret != FLUID_OK) {
-        Mix_SetError("FluidSynth failed to load in-memory song");
+        SDL_SetError("FluidSynth failed to load in-memory song");
         goto fail;
     }
 
@@ -311,7 +311,7 @@ static int FLUIDSYNTH_GetSome(void *context, void *data, int bytes, SDL_bool *do
     }
 
     if (music->synth_write(music->synth, 4096/*music_spec.samples*/, music->buffer, 0, 2, music->buffer, 1, 2) != FLUID_OK) {
-        Mix_SetError("Error generating FluidSynth audio");
+        SDL_SetError("Error generating FluidSynth audio");
         return -1;
     }
     if (!SDL_PutAudioStreamData(music->stream, music->buffer, music->buffer_size)) {

@@ -244,7 +244,7 @@ static void *WAV_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
         } else if (magic == FORM) {
             loaded = LoadAIFFMusic(music);
         } else {
-            Mix_SetError("Unknown WAVE format");
+            SDL_SetError("Unknown WAVE format");
         }
     }
     if (!loaded) {
@@ -455,18 +455,18 @@ static int MS_ADPCM_Init(ADPCM_DecoderState *state, const Uint8 *chunk_data, Uin
      * about supporting more than stereo anyway.
      */
     if (channels > 2) {
-        Mix_SetError("Invalid number of channels");
+        SDL_SetError("Invalid number of channels");
         return -1;
     }
 
     if (bitspersample != 4) {
-        Mix_SetError("Invalid MS ADPCM bits per sample of %u", (unsigned int)bitspersample);
+        SDL_SetError("Invalid MS ADPCM bits per sample of %u", (unsigned int)bitspersample);
         return -1;
     }
 
     /* The block size must be big enough to contain the block header. */
     if (blockalign < blockheadersize) {
-        Mix_SetError("Invalid MS ADPCM block size (nBlockAlign)");
+        SDL_SetError("Invalid MS ADPCM block size (nBlockAlign)");
         return -1;
     }
 
@@ -474,7 +474,7 @@ static int MS_ADPCM_Init(ADPCM_DecoderState *state, const Uint8 *chunk_data, Uin
      * the extended part of the header.
      */
     if (chunk_length < 22) {
-        Mix_SetError("Could not read MS ADPCM format header");
+        SDL_SetError("Could not read MS ADPCM format header");
         return -1;
     }
 
@@ -491,13 +491,13 @@ static int MS_ADPCM_Init(ADPCM_DecoderState *state, const Uint8 *chunk_data, Uin
     }
 
     if (chunk_length < 22 + coeffcount * 4) {
-        Mix_SetError("Could not read custom coefficients in MS ADPCM format header");
+        SDL_SetError("Could not read custom coefficients in MS ADPCM format header");
         return -1;
     } else if (cbExtSize < 4 + coeffcount * 4) {
-        Mix_SetError("Invalid MS ADPCM format header (too small)");
+        SDL_SetError("Invalid MS ADPCM format header (too small)");
         return -1;
     } else if (coeffcount < 7) {
-        Mix_SetError("Missing required coefficients in MS ADPCM format header");
+        SDL_SetError("Missing required coefficients in MS ADPCM format header");
         return -1;
     }
 
@@ -516,7 +516,7 @@ static int MS_ADPCM_Init(ADPCM_DecoderState *state, const Uint8 *chunk_data, Uin
             c -= 0x10000;
         }
         if (i < 14 && c != presetcoeffs[i]) {
-            Mix_SetError("Wrong preset coefficients in MS ADPCM format header");
+            SDL_SetError("Wrong preset coefficients in MS ADPCM format header");
             return -1;
         }
         coeffdata->coeff[i] = (Sint16)c;
@@ -545,7 +545,7 @@ static int MS_ADPCM_Init(ADPCM_DecoderState *state, const Uint8 *chunk_data, Uin
      * A truncated block header with just one sample is not supported.
      */
     if (samplesperblock == 1 || blockdatasamples < (size_t)(samplesperblock - 2)) {
-        Mix_SetError("Invalid number of samples per MS ADPCM block (wSamplesPerBlock)");
+        SDL_SetError("Invalid number of samples per MS ADPCM block (wSamplesPerBlock)");
         return -1;
     }
 
@@ -623,7 +623,7 @@ static int MS_ADPCM_DecodeBlockHeader(ADPCM_DecoderState *state)
     MS_ADPCM_CoeffData *ddata = (MS_ADPCM_CoeffData *)state->ddata;
 
     if (state->block.size < state->blockheadersize) {
-        Mix_SetError("Invalid ADPCM header");
+        SDL_SetError("Invalid ADPCM header");
         return -1;
     }
 
@@ -633,7 +633,7 @@ static int MS_ADPCM_DecodeBlockHeader(ADPCM_DecoderState *state)
         /* Load the coefficient pair into the channel state. */
         coeffindex = state->block.data[o];
         if (coeffindex > ddata->coeffcount) {
-            Mix_SetError("Invalid MS ADPCM coefficient index in block header");
+            SDL_SetError("Invalid MS ADPCM coefficient index in block header");
             return -1;
         }
         cstate[c].coeff1 = ddata->coeff[coeffindex * 2];
@@ -736,10 +736,10 @@ static int IMA_ADPCM_Init(ADPCM_DecoderState *state, const Uint8 *chunk_data, Ui
 
     /* IMA ADPCM can also have 3-bit samples, but it's not supported by SDL at this time. */
     if (bitspersample == 3) {
-        Mix_SetError("3-bit IMA ADPCM currently not supported");
+        SDL_SetError("3-bit IMA ADPCM currently not supported");
         return -1;
     } else if (bitspersample != 4) {
-        Mix_SetError("Invalid IMA ADPCM bits per sample of %u", (unsigned int)bitspersample);
+        SDL_SetError("Invalid IMA ADPCM bits per sample of %u", (unsigned int)bitspersample);
         return -1;
     }
 
@@ -747,7 +747,7 @@ static int IMA_ADPCM_Init(ADPCM_DecoderState *state, const Uint8 *chunk_data, Ui
      * hold a block header.
      */
     if (blockalign < blockheadersize || blockalign % 4) {
-        Mix_SetError("Invalid IMA ADPCM block size (nBlockAlign)");
+        SDL_SetError("Invalid IMA ADPCM block size (nBlockAlign)");
         return -1;
     }
 
@@ -781,7 +781,7 @@ static int IMA_ADPCM_Init(ADPCM_DecoderState *state, const Uint8 *chunk_data, Ui
      * not enforced here as there are no compatibility issues.
      */
     if (blockdatasamples < (size_t)(samplesperblock - 1)) {
-        Mix_SetError("Invalid number of samples per IMA ADPCM block (wSamplesPerBlock)");
+        SDL_SetError("Invalid number of samples per IMA ADPCM block (wSamplesPerBlock)");
         return -1;
     }
 
@@ -889,7 +889,7 @@ static int IMA_ADPCM_DecodeBlockHeader(ADPCM_DecoderState *state)
     Uint8 *cstate = (Uint8 *)state->cstate;
 
     if (state->block.size < state->blockheadersize) {
-        Mix_SetError("Invalid ADPCM header");
+        SDL_SetError("Invalid ADPCM header");
         return -1;
     }
 
@@ -1363,7 +1363,7 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
     Uint8 *chunk;
 
     if (chunk_length < sizeof(fmt.format)) {
-        Mix_SetError("Wave format chunk too small");
+        SDL_SetError("Wave format chunk too small");
         return SDL_FALSE;
     }
 
@@ -1373,7 +1373,7 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
     }
 
     if (SDL_ReadIO(wave->src, chunk, chunk_length) != chunk_length) {
-        Mix_SetError("Couldn't read %" SDL_PRIu32 " bytes from WAV file", chunk_length);
+        SDL_SetError("Couldn't read %" SDL_PRIu32 " bytes from WAV file", chunk_length);
         SDL_free(chunk);
         return SDL_FALSE;
     }
@@ -1385,7 +1385,7 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
 
     if (wave->encoding == EXTENSIBLE_CODE) {
         if (size < sizeof(fmt)) {
-            Mix_SetError("Wave format chunk too small");
+            SDL_SetError("Wave format chunk too small");
             SDL_free(chunk);
             return SDL_FALSE;
         }
@@ -1420,7 +1420,7 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
             break;
         default:
             /* but NOT this */
-            Mix_SetError("Unknown WAVE data format");
+            SDL_SetError("Unknown WAVE data format");
             SDL_free(chunk);
             return SDL_FALSE;
     }
@@ -1477,7 +1477,7 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
             break;
         default:
             unknown_bits:
-            Mix_SetError("Unknown PCM format with %d bits", bits);
+            SDL_SetError("Unknown PCM format with %d bits", bits);
             return SDL_FALSE;
     }
     spec->channels = (Uint8) SDL_Swap16LE(fmt.format.channels);
@@ -1530,7 +1530,7 @@ static SDL_bool ParseSMPL(WAV_Music *wave, Uint32 chunk_length)
         return SDL_FALSE;
     }
     if (SDL_ReadIO(wave->src, data, chunk_length) != chunk_length) {
-        Mix_SetError("Couldn't read %" SDL_PRIu32 " bytes from WAV file", chunk_length);
+        SDL_SetError("Couldn't read %" SDL_PRIu32 " bytes from WAV file", chunk_length);
         SDL_free(data);
         return SDL_FALSE;
     }
@@ -1580,7 +1580,7 @@ static SDL_bool ParseLIST(WAV_Music *wave, Uint32 chunk_length)
     }
 
     if (SDL_ReadIO(wave->src, data, chunk_length) != chunk_length) {
-        Mix_SetError("Couldn't read %" SDL_PRIu32 " bytes from WAV file", chunk_length);
+        SDL_SetError("Couldn't read %" SDL_PRIu32 " bytes from WAV file", chunk_length);
         SDL_free(data);
         return SDL_FALSE;
     }
@@ -1623,7 +1623,7 @@ static SDL_bool ParseID3(WAV_Music *wave, Uint32 chunk_length)
     }
 
     if (SDL_ReadIO(wave->src, data, chunk_length) != chunk_length) {
-        Mix_SetError("Couldn't read %" SDL_PRIu32 " bytes from WAV file", chunk_length);
+        SDL_SetError("Couldn't read %" SDL_PRIu32 " bytes from WAV file", chunk_length);
         loaded = SDL_FALSE;
     }
 
@@ -1709,12 +1709,12 @@ static SDL_bool LoadWAVMusic(WAV_Music *wave)
     }
 
     if (!found_FMT) {
-        Mix_SetError("Bad WAV file (no FMT chunk)");
+        SDL_SetError("Bad WAV file (no FMT chunk)");
         return SDL_FALSE;
     }
 
     if (!found_DATA) {
-        Mix_SetError("Bad WAV file (no DATA chunk)");
+        SDL_SetError("Bad WAV file (no DATA chunk)");
         return SDL_FALSE;
     }
 
@@ -1784,7 +1784,7 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
         return SDL_FALSE;
     }
     if (AIFFmagic != AIFF && AIFFmagic != AIFC) {
-        Mix_SetError("Unrecognized file type (not AIFF or AIFC)");
+        SDL_SetError("Unrecognized file type (not AIFF or AIFC)");
         return SDL_FALSE;
     }
     if (AIFFmagic == AIFC) {
@@ -1879,17 +1879,17 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
     } while (next_chunk < file_length && SDL_SeekIO(src, next_chunk, SDL_IO_SEEK_SET) >= 0);
 
     if (!found_SSND) {
-        Mix_SetError("Bad AIFF/AIFF-C file (no SSND chunk)");
+        SDL_SetError("Bad AIFF/AIFF-C file (no SSND chunk)");
         return SDL_FALSE;
     }
 
     if (!found_COMM) {
-        Mix_SetError("Bad AIFF/AIFF-C file (no COMM chunk)");
+        SDL_SetError("Bad AIFF/AIFF-C file (no COMM chunk)");
         return SDL_FALSE;
     }
 
     if (is_AIFC && !found_FVER) {
-        Mix_SetError("Bad AIFF-C file (no FVER chunk)");
+        SDL_SetError("Bad AIFF-C file (no FVER chunk)");
         return SDL_FALSE;
     }
 
@@ -1974,7 +1974,7 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
         break;
     default:
     unsupported_format:
-        Mix_SetError("Unknown samplesize in data format");
+        SDL_SetError("Unknown samplesize in data format");
         return SDL_FALSE;
     }
     spec->channels = (Uint8) channels;

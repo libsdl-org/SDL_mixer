@@ -73,7 +73,7 @@ static xmp_loader libxmp;
 #else
 #define FUNCTION_LOADER(FUNC, SIG) \
     libxmp.FUNC = FUNC; \
-    if (libxmp.FUNC == NULL) { Mix_SetError("Missing xmp.framework"); return -1; }
+    if (libxmp.FUNC == NULL) { SDL_SetError("Missing xmp.framework"); return -1; }
 #endif
 
 #ifdef __APPLE__
@@ -179,7 +179,7 @@ static void libxmp_set_error(int e)
         msg = "Unknown error";
         break;
     }
-    Mix_SetError("XMP: %s", msg);
+    SDL_SetError("XMP: %s", msg);
 }
 
 static unsigned long xmp_fread(void *dst, unsigned long len, unsigned long nmemb, void *src)
@@ -224,7 +224,7 @@ void *XMP_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
 
     music->ctx = libxmp.xmp_create_context();
     if (!music->ctx) {
-        Mix_OutOfMemory();
+        SDL_OutOfMemory();
         goto e0;
     }
 

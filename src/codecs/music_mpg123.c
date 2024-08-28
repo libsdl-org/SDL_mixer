@@ -79,7 +79,7 @@ static mpg123_loader mpg123;
 #else
 #define FUNCTION_LOADER(FUNC, SIG) \
     mpg123.FUNC = FUNC; \
-    if (mpg123.FUNC == NULL) { Mix_SetError("Missing mpg123.framework"); return -1; }
+    if (mpg123.FUNC == NULL) { SDL_SetError("Missing mpg123.framework"); return -1; }
 #endif
 
 #ifdef __APPLE__
@@ -225,7 +225,7 @@ static int MPG123_Open(const SDL_AudioSpec *spec)
 {
     (void)spec;
     if (mpg123.mpg123_init() != MPG123_OK) {
-        Mix_SetError("mpg123_init() failed");
+        SDL_SetError("mpg123_init() failed");
         return -1;
     }
     return 0;
@@ -253,7 +253,7 @@ static void *MPG123_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
     meta_tags_init(&music->tags);
     if (mp3_read_tags(&music->tags, &music->mp3file, SDL_TRUE) < 0) {
         SDL_free(music);
-        Mix_SetError("music_mpg123: corrupt mp3 file (bad tags.)");
+        SDL_SetError("music_mpg123: corrupt mp3 file (bad tags.)");
         return NULL;
     }
 
@@ -268,7 +268,7 @@ static void *MPG123_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
     music->handle = mpg123.mpg123_new(0, &result);
     if (result != MPG123_OK) {
         MPG123_Delete(music);
-        Mix_SetError("mpg123_new failed");
+        SDL_SetError("mpg123_new failed");
         return NULL;
     }
 
@@ -277,14 +277,14 @@ static void *MPG123_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
         IO_read, IO_seek, IO_cleanup
     );
     if (result != MPG123_OK) {
-        Mix_SetError("mpg123_replace_reader_handle: %s", mpg_err(music->handle, result));
+        SDL_SetError("mpg123_replace_reader_handle: %s", mpg_err(music->handle, result));
         MPG123_Delete(music);
         return NULL;
     }
 
     result = mpg123.mpg123_format_none(music->handle);
     if (result != MPG123_OK) {
-        Mix_SetError("mpg123_format_none: %s", mpg_err(music->handle, result));
+        SDL_SetError("mpg123_format_none: %s", mpg_err(music->handle, result));
         MPG123_Delete(music);
         return NULL;
     }
@@ -303,14 +303,14 @@ static void *MPG123_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
 
     result = mpg123.mpg123_open_handle(music->handle, &music->mp3file);
     if (result != MPG123_OK) {
-        Mix_SetError("mpg123_open_handle: %s", mpg_err(music->handle, result));
+        SDL_SetError("mpg123_open_handle: %s", mpg_err(music->handle, result));
         MPG123_Delete(music);
         return NULL;
     }
 
     result = mpg123.mpg123_getformat(music->handle, &rate, &channels, &encoding);
     if (result != MPG123_OK) {
-        Mix_SetError("mpg123_getformat: %s", mpg_err(music->handle, result));
+        SDL_SetError("mpg123_getformat: %s", mpg_err(music->handle, result));
         MPG123_Delete(music);
         return NULL;
     }
@@ -398,7 +398,7 @@ static int MPG123_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     case MPG123_NEW_FORMAT:
         result = mpg123.mpg123_getformat(music->handle, &rate, &channels, &encoding);
         if (result != MPG123_OK) {
-            Mix_SetError("mpg123_getformat: %s", mpg_err(music->handle, result));
+            SDL_SetError("mpg123_getformat: %s", mpg_err(music->handle, result));
             return -1;
         }
 #ifdef DEBUG_MPG123
@@ -445,7 +445,7 @@ static int MPG123_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         }
         break;
     default:
-        Mix_SetError("mpg123_read: %s", mpg_err(music->handle, result));
+        SDL_SetError("mpg123_read: %s", mpg_err(music->handle, result));
         return -1;
     }
     return 0;
@@ -462,7 +462,7 @@ static int MPG123_Seek(void *context, double secs)
     off_t offset = (off_t)(music->sample_rate * secs);
 
     if ((offset = mpg123.mpg123_seek(music->handle, offset, SEEK_SET)) < 0) {
-        Mix_SetError("mpg123_seek: %s", mpg_err(music->handle, (int)-offset));
+        SDL_SetError("mpg123_seek: %s", mpg_err(music->handle, (int)-offset));
         return -1;
     }
     return 0;
@@ -476,7 +476,7 @@ static double MPG123_Tell(void *context)
         return 0.0;
     }
     if ((offset = mpg123.mpg123_tell(music->handle)) < 0) {
-        Mix_SetError("mpg123_tell: %s", mpg_err(music->handle, (int)-offset));
+        SDL_SetError("mpg123_tell: %s", mpg_err(music->handle, (int)-offset));
         return -1.0;
     }
     return (double)offset / music->sample_rate;

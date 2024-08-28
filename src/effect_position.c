@@ -1351,7 +1351,7 @@ static Mix_EffectFunc_t get_position_effect_func(SDL_AudioFormat format, int cha
                 f = _Eff_position_u8_c6;
                 break;
             default:
-                Mix_SetError("Unsupported audio channels");
+                SDL_SetError("Unsupported audio channels");
                 break;
             }
             break;
@@ -1370,7 +1370,7 @@ static Mix_EffectFunc_t get_position_effect_func(SDL_AudioFormat format, int cha
                 f = _Eff_position_s8_c6;
                 break;
             default:
-                Mix_SetError("Unsupported audio channels");
+                SDL_SetError("Unsupported audio channels");
                 break;
             }
             break;
@@ -1388,7 +1388,7 @@ static Mix_EffectFunc_t get_position_effect_func(SDL_AudioFormat format, int cha
                 f = _Eff_position_s16lsb_c6;
                 break;
             default:
-                Mix_SetError("Unsupported audio channels");
+                SDL_SetError("Unsupported audio channels");
                 break;
             }
             break;
@@ -1406,7 +1406,7 @@ static Mix_EffectFunc_t get_position_effect_func(SDL_AudioFormat format, int cha
                 f = _Eff_position_s16msb_c6;
                 break;
             default:
-                Mix_SetError("Unsupported audio channels");
+                SDL_SetError("Unsupported audio channels");
                 break;
             }
             break;
@@ -1424,7 +1424,7 @@ static Mix_EffectFunc_t get_position_effect_func(SDL_AudioFormat format, int cha
                 f = _Eff_position_s32msb_c6;
                 break;
             default:
-                Mix_SetError("Unsupported audio channels");
+                SDL_SetError("Unsupported audio channels");
                 break;
             }
             break;
@@ -1442,7 +1442,7 @@ static Mix_EffectFunc_t get_position_effect_func(SDL_AudioFormat format, int cha
                 f = _Eff_position_s32lsb_c6;
                 break;
             default:
-                Mix_SetError("Unsupported audio channels");
+                SDL_SetError("Unsupported audio channels");
                 break;
             }
             break;
@@ -1460,13 +1460,13 @@ static Mix_EffectFunc_t get_position_effect_func(SDL_AudioFormat format, int cha
                 f = _Eff_position_f32sys_c6;
                 break;
             default:
-                Mix_SetError("Unsupported audio channels");
+                SDL_SetError("Unsupported audio channels");
                 break;
             }
             break;
 
         default:
-            Mix_SetError("Unsupported audio format");
+            SDL_SetError("Unsupported audio format");
             break;
     }
 
@@ -1607,9 +1607,7 @@ static void set_amplitudes(int channels, int angle, int room_angle)
     speaker_amplitude[5] = 255;
 }
 
-int Mix_SetPosition(int channel, Sint16 angle, Uint8 distance);
-
-int Mix_SetPanning(int channel, Uint8 left, Uint8 right)
+SDL_bool Mix_SetPanning(int channel, Uint8 left, Uint8 right)
 {
     Mix_EffectFunc_t f = NULL;
     int channels;
@@ -1620,7 +1618,7 @@ int Mix_SetPanning(int channel, Uint8 left, Uint8 right)
     Mix_QuerySpec(NULL, &format, &channels);
 
     if (channels != 2 && channels != 4 && channels != 6)    /* it's a no-op; we call that successful. */
-        return 1;
+        return SDL_TRUE;
 
     if (channels > 2) {
         /* left = right = 255 => angle = 0, to unregister effect as when channels = 2 */
@@ -1637,16 +1635,16 @@ int Mix_SetPanning(int channel, Uint8 left, Uint8 right)
 
     f = get_position_effect_func(format, channels);
     if (f == NULL)
-        return 0;
+        return SDL_FALSE;
 
     Mix_LockAudio();
     args = get_position_arg(channel);
     if (!args) {
         Mix_UnlockAudio();
-        return 0;
+        return SDL_FALSE;
     }
 
-        /* it's a no-op; unregister the effect, if it's registered. */
+    /* it's a no-op; unregister the effect, if it's registered. */
     if ((args->distance_u8 == 255) && (left == 255) && (right == 255)) {
         if (args->in_use) {
             retval = _Mix_UnregisterEffect_locked(channel, f);
@@ -1654,7 +1652,7 @@ int Mix_SetPanning(int channel, Uint8 left, Uint8 right)
             return retval;
         } else {
             Mix_UnlockAudio();
-            return 1;
+            return SDL_TRUE;
         }
     }
 
@@ -1666,31 +1664,31 @@ int Mix_SetPanning(int channel, Uint8 left, Uint8 right)
 
     if (!args->in_use) {
         args->in_use = 1;
-        retval=_Mix_RegisterEffect_locked(channel, f, _Eff_PositionDone, (void*)args);
+        retval = _Mix_RegisterEffect_locked(channel, f, _Eff_PositionDone, (void*)args);
     }
 
     Mix_UnlockAudio();
     return retval;
 }
 
-int Mix_SetDistance(int channel, Uint8 distance)
+SDL_bool Mix_SetDistance(int channel, Uint8 distance)
 {
     Mix_EffectFunc_t f = NULL;
     SDL_AudioFormat format;
     position_args *args = NULL;
     int channels;
-    int retval = 1;
+    SDL_bool retval = SDL_TRUE;
 
     Mix_QuerySpec(NULL, &format, &channels);
     f = get_position_effect_func(format, channels);
     if (f == NULL)
-        return 0;
+        return SDL_FALSE;
 
     Mix_LockAudio();
     args = get_position_arg(channel);
     if (!args) {
         Mix_UnlockAudio();
-        return 0;
+        return SDL_FALSE;
     }
 
     distance = 255 - distance;  /* flip it to our scale. */
@@ -1703,7 +1701,7 @@ int Mix_SetDistance(int channel, Uint8 distance)
             return retval;
         } else {
             Mix_UnlockAudio();
-            return 1;
+            return SDL_TRUE;
         }
     }
 
@@ -1718,19 +1716,19 @@ int Mix_SetDistance(int channel, Uint8 distance)
     return retval;
 }
 
-int Mix_SetPosition(int channel, Sint16 angle, Uint8 distance)
+SDL_bool Mix_SetPosition(int channel, Sint16 angle, Uint8 distance)
 {
     Mix_EffectFunc_t f = NULL;
     SDL_AudioFormat format;
     int channels;
     position_args *args = NULL;
     Sint16 room_angle = 0;
-    int retval = 1;
+    SDL_bool retval = SDL_TRUE;
 
     Mix_QuerySpec(NULL, &format, &channels);
     f = get_position_effect_func(format, channels);
     if (f == NULL)
-        return 0;
+        return SDL_FALSE;
 
     /* make angle between 0 and 359. */
     angle %= 360;
@@ -1740,7 +1738,7 @@ int Mix_SetPosition(int channel, Sint16 angle, Uint8 distance)
     args = get_position_arg(channel);
     if (!args) {
         Mix_UnlockAudio();
-        return 0;
+        return SDL_FALSE;
     }
 
     /* it's a no-op; unregister the effect, if it's registered. */
@@ -1751,7 +1749,7 @@ int Mix_SetPosition(int channel, Sint16 angle, Uint8 distance)
             return retval;
         } else {
             Mix_UnlockAudio();
-            return 1;
+            return SDL_TRUE;
         }
     }
 

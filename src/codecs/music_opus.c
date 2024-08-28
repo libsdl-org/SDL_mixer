@@ -57,7 +57,7 @@ static opus_loader opus;
 #else
 #define FUNCTION_LOADER(FUNC, SIG) \
     opus.FUNC = FUNC; \
-    if (opus.FUNC == NULL) { Mix_SetError("Missing opus.framework"); return -1; }
+    if (opus.FUNC == NULL) { SDL_SetError("Missing opus.framework"); return -1; }
 #endif
 
 #ifdef __APPLE__
@@ -124,7 +124,7 @@ typedef struct {
 
 static int set_op_error(const char *function, int error)
 {
-#define HANDLE_ERROR_CASE(X) case X: Mix_SetError("%s: %s", function, #X); break;
+#define HANDLE_ERROR_CASE(X) case X: SDL_SetError("%s: %s", function, #X); break;
     switch (error) {
     HANDLE_ERROR_CASE(OP_FALSE)
     HANDLE_ERROR_CASE(OP_EOF)
@@ -142,7 +142,7 @@ static int set_op_error(const char *function, int error)
     HANDLE_ERROR_CASE(OP_ENOSEEK)
     HANDLE_ERROR_CASE(OP_EBADTIMESTAMP)
     default:
-        Mix_SetError("%s: unknown error %d\n", function, error);
+        SDL_SetError("%s: unknown error %d\n", function, error);
         break;
     }
     return -1;
@@ -173,7 +173,7 @@ static int OPUS_UpdateSection(OPUS_music *music)
 
     op_info = opus.op_head(music->of, -1);
     if (!op_info) {
-        Mix_SetError("op_head returned NULL");
+        SDL_SetError("op_head returned NULL");
         return -1;
     }
 
@@ -235,14 +235,14 @@ static void *OPUS_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
     music->of = opus.op_open_callbacks(src, &callbacks, NULL, 0, &err);
     if (music->of == NULL) {
     /*  set_op_error("op_open_callbacks", err);*/
-        Mix_SetError("Not an Opus audio stream");
+        SDL_SetError("Not an Opus audio stream");
         SDL_free(music);
         return NULL;
     }
 
     if (!opus.op_seekable(music->of)) {
         OPUS_Delete(music);
-        Mix_SetError("Opus stream not seekable");
+        SDL_SetError("Opus stream not seekable");
         return NULL;
     }
 

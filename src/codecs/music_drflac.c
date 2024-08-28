@@ -179,7 +179,7 @@ static void *DRFLAC_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
     music->dec = drflac_open_with_metadata(DRFLAC_ReadCB, DRFLAC_SeekCB, DRFLAC_MetaCB, music, NULL);
     if (!music->dec) {
         SDL_free(music);
-        Mix_SetError("music_drflac: corrupt flac file (bad stream).");
+        SDL_SetError("music_drflac: corrupt flac file (bad stream).");
         return NULL;
     }
 
@@ -262,7 +262,7 @@ static int DRFLAC_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 
     if (music->loop_flag) {
         if (!drflac_seek_to_pcm_frame(music->dec, music->loop_start)) {
-            Mix_SetError("drflac_seek_to_pcm_frame() failed");
+            SDL_SetError("drflac_seek_to_pcm_frame() failed");
             return -1;
         } else {
             int play_count = -1;

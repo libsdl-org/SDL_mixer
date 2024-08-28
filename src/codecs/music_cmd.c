@@ -58,7 +58,7 @@ static void *MusicCMD_CreateFromFile(const char *file)
     MusicCMD *music;
 
     if (!music_cmd) {
-        Mix_SetError("You must call Mix_SetMusicCMD() first");
+        SDL_SetError("You must call Mix_SetMusicCMD() first");
         return NULL;
     }
 
@@ -167,7 +167,7 @@ static int MusicCMD_Play(void *context, int play_count)
     switch(music->pid) {
     /* Failed fork() system call */
     case -1:
-        Mix_SetError("fork() failed");
+        SDL_SetError("fork() failed");
         return -1;
 
     /* Child process - executes here */

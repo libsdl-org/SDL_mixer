@@ -35,7 +35,6 @@ SDL3_mixer_0.0.0 {
     Mix_GetNumMusicDecoders;
     Mix_GetNumTracks;
     Mix_GetSoundFonts;
-    Mix_GetSynchroValue;
     Mix_GetTimidityCfg;
     Mix_GroupAvailable;
     Mix_GroupChannel;
@@ -89,7 +88,6 @@ SDL3_mixer_0.0.0 {
     Mix_SetPostMix;
     Mix_SetReverseStereo;
     Mix_SetSoundFonts;
-    Mix_SetSynchroValue;
     Mix_SetTimidityCfg;
     Mix_StartTrack;
     Mix_UnregisterAllEffects;

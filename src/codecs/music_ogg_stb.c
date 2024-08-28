@@ -88,7 +88,7 @@ typedef struct {
 
 static int set_ov_error(const char *function, int error)
 {
-#define HANDLE_ERROR_CASE(X) case X: Mix_SetError("%s: %s", function, #X); break;
+#define HANDLE_ERROR_CASE(X) case X: SDL_SetError("%s: %s", function, #X); break;
     switch (error) {
     HANDLE_ERROR_CASE(VORBIS_need_more_data)
     HANDLE_ERROR_CASE(VORBIS_invalid_api_mixing)
@@ -111,7 +111,7 @@ static int set_ov_error(const char *function, int error)
     HANDLE_ERROR_CASE(VORBIS_seek_failed)
     HANDLE_ERROR_CASE(VORBIS_ogg_skeleton_not_supported)
     default:
-        Mix_SetError("%s: unknown error %d\n", function, error);
+        SDL_SetError("%s: unknown error %d\n", function, error);
         break;
     }
     return -1;
@@ -195,7 +195,7 @@ static void *OGG_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
 
     music->vi = stb_vorbis_get_info(music->vf);
     if ((int)music->vi.sample_rate <= 0) {
-        Mix_SetError("Invalid sample rate value");
+        SDL_SetError("Invalid sample rate value");
         OGG_Delete(music);
         return NULL;
     }
@@ -204,7 +204,7 @@ static void *OGG_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
 
     music->full_length = stb_vorbis_stream_length_in_samples(music->vf);
     if (music->full_length <= 0) {
-        Mix_SetError("No samples in ogg/vorbis stream.");
+        SDL_SetError("No samples in ogg/vorbis stream.");
         OGG_Delete(music);
         return NULL;
     }

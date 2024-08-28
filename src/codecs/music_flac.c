@@ -89,7 +89,7 @@ static flac_loader flac;
 #else
 #define FUNCTION_LOADER(FUNC, SIG) \
     flac.FUNC = FUNC; \
-    if (flac.FUNC == NULL) { Mix_SetError("Missing FLAC.framework"); return -1; }
+    if (flac.FUNC == NULL) { SDL_SetError("Missing FLAC.framework"); return -1; }
 #endif
 
 #ifdef __APPLE__
@@ -321,7 +321,7 @@ static FLAC__StreamDecoderWriteStatus flac_write_music_cb(
         shift_amount = 8;
         break;
     default:
-        Mix_SetError("FLAC decoder doesn't support %d bits_per_sample", music->bits_per_sample);
+        SDL_SetError("FLAC decoder doesn't support %d bits_per_sample", music->bits_per_sample);
         return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
     }
 
@@ -334,7 +334,7 @@ static FLAC__StreamDecoderWriteStatus flac_write_music_cb(
 
     data = SDL_stack_alloc(Sint16, (frame->header.blocksize * channels));
     if (!data) {
-        Mix_SetError("Couldn't allocate %d bytes stack memory", (int)(frame->header.blocksize * channels * sizeof(*data)));
+        SDL_SetError("Couldn't allocate %d bytes stack memory", (int)(frame->header.blocksize * channels * sizeof(*data)));
         return FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
     }
     if (music->channels == 3) {
@@ -495,19 +495,19 @@ static void flac_error_music_cb(
     /* print an SDL error based on the error status */
     switch (status) {
     case FLAC__STREAM_DECODER_ERROR_STATUS_LOST_SYNC:
-        Mix_SetError("Error processing the FLAC file [LOST_SYNC].");
+        SDL_SetError("Error processing the FLAC file [LOST_SYNC].");
         break;
     case FLAC__STREAM_DECODER_ERROR_STATUS_BAD_HEADER:
-        Mix_SetError("Error processing the FLAC file [BAD_HEADER].");
+        SDL_SetError("Error processing the FLAC file [BAD_HEADER].");
         break;
     case FLAC__STREAM_DECODER_ERROR_STATUS_FRAME_CRC_MISMATCH:
-        Mix_SetError("Error processing the FLAC file [CRC_MISMATCH].");
+        SDL_SetError("Error processing the FLAC file [CRC_MISMATCH].");
         break;
     case FLAC__STREAM_DECODER_ERROR_STATUS_UNPARSEABLE_STREAM:
-        Mix_SetError("Error processing the FLAC file [UNPARSEABLE].");
+        SDL_SetError("Error processing the FLAC file [UNPARSEABLE].");
         break;
     default:
-        Mix_SetError("Error processing the FLAC file [UNKNOWN].");
+        SDL_SetError("Error processing the FLAC file [UNKNOWN].");
         break;
     }
 }
@@ -522,7 +522,7 @@ static void *FLAC_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
     int is_ogg_flac;
     Uint8 magic[4];
     if (SDL_ReadIO(src, magic, 4) != 4) {
-        Mix_SetError("Couldn't read first 4 bytes of audio data");
+        SDL_SetError("Couldn't read first 4 bytes of audio data");
         return NULL;
     }
     SDL_SeekIO(src, -4, SDL_IO_SEEK_CUR);
@@ -565,13 +565,13 @@ static void *FLAC_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
             if (flac.FLAC__stream_decoder_process_until_end_of_metadata(music->flac_decoder)) {
                 was_error = 0;
             } else {
-                Mix_SetError("FLAC__stream_decoder_process_until_end_of_metadata() failed");
+                SDL_SetError("FLAC__stream_decoder_process_until_end_of_metadata() failed");
             }
         } else {
-            Mix_SetError("FLAC__stream_decoder_init_stream() failed");
+            SDL_SetError("FLAC__stream_decoder_init_stream() failed");
         }
     } else {
-        Mix_SetError("FLAC__stream_decoder_new() failed");
+        SDL_SetError("FLAC__stream_decoder_new() failed");
     }
 
     if (was_error) {
@@ -654,7 +654,7 @@ static int FLAC_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     }
 
     if (!flac.FLAC__stream_decoder_process_single(music->flac_decoder)) {
-        Mix_SetError("FLAC__stream_decoder_process_single() failed");
+        SDL_SetError("FLAC__stream_decoder_process_single() failed");
         return -1;
     }
 
@@ -663,7 +663,7 @@ static int FLAC_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         if (flac.FLAC__stream_decoder_seek_absolute(music->flac_decoder, (FLAC__uint64)music->loop_start) ==
                 FLAC__STREAM_DECODER_SEEK_ERROR) {
             flac.FLAC__stream_decoder_flush(music->flac_decoder);
-            Mix_SetError("FLAC__stream_decoder_seek_absolute() failed");
+            SDL_SetError("FLAC__stream_decoder_seek_absolute() failed");
             return -1;
         } else {
             int play_count = -1;
@@ -713,7 +713,7 @@ static int FLAC_Seek(void *context, double position)
             flac.FLAC__stream_decoder_flush(music->flac_decoder);
         }
 
-        Mix_SetError("Seeking of FLAC stream failed: libFLAC seek failed.");
+        SDL_SetError("Seeking of FLAC stream failed: libFLAC seek failed.");
         return -1;
     }
     return 0;

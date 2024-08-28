@@ -82,7 +82,7 @@ static void *MINIMP3_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
     meta_tags_init(&music->tags);
     if (mp3_read_tags(&music->tags, &music->file, SDL_FALSE) < 0) {
         SDL_free(music);
-        Mix_SetError("music_minimp3: corrupt mp3 file (bad tags).");
+        SDL_SetError("music_minimp3: corrupt mp3 file (bad tags).");
         return NULL;
     }
 
@@ -96,7 +96,7 @@ static void *MINIMP3_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
     if (mp3dec_ex_open_cb(&music->dec, &music->io, MP3D_SEEK_TO_SAMPLE) != 0) {
         mp3dec_ex_close(&music->dec);
         SDL_free(music);
-        Mix_SetError("music_minimp3: corrupt mp3 file (bad stream).");
+        SDL_SetError("music_minimp3: corrupt mp3 file (bad stream).");
         return NULL;
     }
 
