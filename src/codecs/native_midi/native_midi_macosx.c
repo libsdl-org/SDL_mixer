@@ -129,7 +129,7 @@ typedef struct {
     CFURLRef default_url;
 } macosx_load_soundfont_ctx;
 
-static int SDLCALL
+static SDL_bool SDLCALL
 macosx_load_soundfont(const char *path, void *data)
 {
     CFURLRef url;

@@ -141,25 +141,25 @@ typedef struct {
 
 static void FLUIDSYNTH_Delete(void *context);
 
-static int SDLCALL fluidsynth_check_soundfont(const char *path, void *data)
+static SDL_bool SDLCALL fluidsynth_check_soundfont(const char *path, void *data)
 {
     SDL_IOStream *io = SDL_IOFromFile(path, "rb");
 
     (void)data;
     if (io) {
         SDL_CloseIO(io);
-        return 1;
+        return SDL_TRUE;
     } else {
         SDL_SetError("Failed to access the SoundFont %s", path);
-        return 0;
+        return SDL_FALSE;
     }
 }
 
-static int SDLCALL fluidsynth_load_soundfont(const char *path, void *data)
+static SDL_bool SDLCALL fluidsynth_load_soundfont(const char *path, void *data)
 {
     /* If this fails, it's too late to try Timidity so pray that at least one works. */
     fluidsynth.fluid_synth_sfload((fluid_synth_t*) data, path, 1);
-    return 1;
+    return SDL_TRUE;
 }
 
 static int FLUIDSYNTH_Open(const SDL_AudioSpec *spec)
