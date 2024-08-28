@@ -277,7 +277,8 @@ typedef struct Mix_Music Mix_Music;
  *
  * \param devid the device name to open, or 0 for a reasonable default.
  * \param spec the audio format you'd like SDL_mixer to work in.
- * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError() for more information.
+ * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError()
+ *          for more information.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  *
@@ -1177,7 +1178,8 @@ typedef void (SDLCALL *Mix_EffectDone_t)(int chan, void *udata);
  *          mixed.
  * \param d effect done callback.
  * \param arg argument.
- * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError() for more information.
+ * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError()
+ *          for more information.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
@@ -1201,7 +1203,8 @@ extern SDL_DECLSPEC SDL_bool SDLCALL Mix_RegisterEffect(int chan, Mix_EffectFunc
  *
  * \param channel the channel to unregister an effect on, or MIX_CHANNEL_POST.
  * \param f effect the callback stop calling in future mixing iterations.
- * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError() for more information.
+ * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError()
+ *          for more information.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
@@ -1226,7 +1229,8 @@ extern SDL_DECLSPEC SDL_bool SDLCALL Mix_UnregisterEffect(int channel, Mix_Effec
  *
  * \param channel the channel to unregister all effects on, or
  *                MIX_CHANNEL_POST.
- * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError() for more information.
+ * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError()
+ *          for more information.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
@@ -1284,7 +1288,8 @@ extern SDL_DECLSPEC SDL_bool SDLCALL Mix_UnregisterAllEffects(int channel);
  *             volume.
  * \param right Volume of stereo right channel, 0 is silence, 255 is full
  *              volume.
- * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError() for more information.
+ * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError()
+ *          for more information.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  *
@@ -1336,7 +1341,8 @@ extern SDL_DECLSPEC SDL_bool SDLCALL Mix_SetPanning(int channel, Uint8 left, Uin
  * \param channel The mixer channel to position, or MIX_CHANNEL_POST.
  * \param angle angle, in degrees. North is 0, and goes clockwise.
  * \param distance distance; 0 is the listener, 255 is maxiumum distance away.
- * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError() for more information.
+ * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError()
+ *          for more information.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
@@ -1372,7 +1378,8 @@ extern SDL_DECLSPEC SDL_bool SDLCALL Mix_SetPosition(int channel, Sint16 angle, 
  *
  * \param channel The mixer channel to attenuate, or MIX_CHANNEL_POST.
  * \param distance distance; 0 is the listener, 255 is maxiumum distance away.
- * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError() for more information.
+ * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError()
+ *          for more information.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
@@ -1403,9 +1410,9 @@ extern SDL_DECLSPEC SDL_bool SDLCALL Mix_SetDistance(int channel, Uint8 distance
  *
  * \param channel The mixer channel to reverse, or MIX_CHANNEL_POST.
  * \param flip non-zero to reverse stereo, zero to disable this effect.
- * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError() for more information.  Note that an audio device
- *          in mono mode is a no-op, but this call will return successful in
- *          that case.
+ * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError()
+ *          for more information. Note that an audio device in mono mode is a
+ *          no-op, but this call will return successful in that case.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
@@ -1459,7 +1466,8 @@ extern SDL_DECLSPEC int SDLCALL Mix_ReserveChannels(int num);
  *
  * \param which the channel to set the tag on.
  * \param tag an arbitrary value to assign a channel.
- * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError() for more information.
+ * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError()
+ *          for more information.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
@@ -1485,7 +1493,8 @@ extern SDL_DECLSPEC SDL_bool SDLCALL Mix_GroupChannel(int which, int tag);
  * \param from the first channel to set the tag on.
  * \param to the last channel to set the tag on, inclusive.
  * \param tag an arbitrary value to assign a channel.
- * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError() for more information.
+ * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError()
+ *          for more information.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
@@ -1638,7 +1647,8 @@ extern SDL_DECLSPEC int SDLCALL Mix_PlayChannelTimed(int channel, Mix_Chunk *chu
  * \param music the new music object to schedule for mixing.
  * \param loops the number of loops to play the music for (0 means "play once
  *              and stop").
- * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError() for more information.
+ * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError()
+ *          for more information.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
@@ -1665,7 +1675,8 @@ extern SDL_DECLSPEC SDL_bool SDLCALL Mix_PlayMusic(Mix_Music *music, int loops);
  * \param loops the number of times the chunk should loop, -1 to loop (not
  *              actually) infinitely.
  * \param ms the number of milliseconds to spend fading in.
- * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError() for more information.
+ * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError()
+ *          for more information.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
@@ -1704,7 +1715,8 @@ extern SDL_DECLSPEC SDL_bool SDLCALL Mix_FadeInMusic(Mix_Music *music, int loops
  * \param ms the number of milliseconds to spend fading in.
  * \param position the start position within the music, in seconds, where
  *                 playback should start.
- * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError() for more information.
+ * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError()
+ *          for more information.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
@@ -2067,8 +2079,8 @@ extern SDL_DECLSPEC int SDLCALL Mix_FadeOutGroup(int tag, int ms);
  * mixer to manage later, and returns immediately.
  *
  * \param ms number of milliseconds to fade before halting the channel.
- * \returns SDL_TRUE if music was scheduled to fade, SDL_FALSE otherwise. If no
- *          music is currently playing, this returns SDL_FALSE.
+ * \returns SDL_TRUE if music was scheduled to fade, SDL_FALSE otherwise. If
+ *          no music is currently playing, this returns SDL_FALSE.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
@@ -2272,7 +2284,8 @@ extern SDL_DECLSPEC SDL_bool SDLCALL Mix_PausedMusic(void);
  * This only applies to MOD music formats.
  *
  * \param order order.
- * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError() for more information.
+ * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError()
+ *          for more information.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
@@ -2285,7 +2298,8 @@ extern SDL_DECLSPEC SDL_bool SDLCALL Mix_ModMusicJumpToOrder(int order);
  *
  * \param music the music object.
  * \param track the track number to play. 0 is the first track.
- * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError() for more information.
+ * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError()
+ *          for more information.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
@@ -2313,7 +2327,8 @@ extern SDL_DECLSPEC int SDLCALL Mix_GetNumTracks(Mix_Music *music);
  * number) and for WAV, OGG, FLAC, MP3, and MODPLUG music at the moment.
  *
  * \param position the new position, in seconds (as a double).
- * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError() for more information.
+ * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError()
+ *          for more information.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
@@ -2444,7 +2459,8 @@ extern SDL_DECLSPEC SDL_bool SDLCALL Mix_PlayingMusic(void);
  * good reason.
  *
  * \param command command.
- * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError() for more information.
+ * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError()
+ *          for more information.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
@@ -2466,7 +2482,8 @@ extern SDL_DECLSPEC SDL_bool SDLCALL Mix_SetMusicCMD(const char *command);
  *
  * \param paths Paths on the filesystem where SoundFonts are available,
  *              separated by semicolons.
- * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError() for more information.
+ * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError()
+ *          for more information.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
@@ -2519,7 +2536,8 @@ typedef SDL_bool (SDLCALL *Mix_EachSoundFontCallback)(const char*, void*);
  *
  * \param function the callback function to call once per path.
  * \param data a pointer to pass to the callback for its own personal use.
- * \returns SDL_TRUE if callback ever returned SDL_TRUE, SDL_FALSE on error or if the callback never returned SDL_TRUE.
+ * \returns SDL_TRUE if callback ever returned SDL_TRUE, SDL_FALSE on error or
+ *          if the callback never returned SDL_TRUE.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  *
@@ -2536,7 +2554,8 @@ extern SDL_DECLSPEC SDL_bool SDLCALL Mix_EachSoundFont(Mix_EachSoundFontCallback
  * play MIDI files.
  *
  * \param path path to a Timidity config file.
- * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError() for more information.
+ * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError()
+ *          for more information.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
