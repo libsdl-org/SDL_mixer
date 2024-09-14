@@ -205,7 +205,7 @@ int main(int argc, char *argv[])
     Mix_VolumeMusic(audio_volume);
 
     /* Set the external music player, if any */
-    Mix_SetMusicCMD(SDL_getenv("MUSIC_CMD"));
+    Mix_SetMusicCMD(SDL_GetEnvironmentVariable(SDL_GetEnvironment(), "MUSIC_CMD"));
 
     while (argv[i]) {
         next_track = 0;

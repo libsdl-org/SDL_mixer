@@ -59,7 +59,7 @@ static int TIMIDITY_Open(const SDL_AudioSpec *spec)
 
     (void) spec;
 
-    cfg = SDL_getenv("TIMIDITY_CFG");
+    cfg = SDL_GetEnvironmentVariable(SDL_GetEnvironment(), "TIMIDITY_CFG");
     if(!cfg) cfg = Mix_GetTimidityCfg();
     if (cfg) {
         return Timidity_Init(cfg); /* env or user override: no other tries */
