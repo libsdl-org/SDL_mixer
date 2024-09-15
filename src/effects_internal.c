@@ -37,7 +37,7 @@ int _Mix_effects_max_speed = 0;
 
 void _Mix_InitEffects(void)
 {
-    _Mix_effects_max_speed = (SDL_GetEnvironmentVariable(SDL_GetEnvironment(), MIX_EFFECTSMAXSPEED) != NULL);
+    _Mix_effects_max_speed = (SDL_getenv(MIX_EFFECTSMAXSPEED) != NULL);
 }
 
 void _Mix_DeinitEffects(void)

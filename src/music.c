@@ -1495,7 +1495,7 @@ SDL_bool Mix_SetSoundFonts(const char *paths)
 
 const char* Mix_GetSoundFonts(void)
 {
-    const char *env_paths = SDL_GetEnvironmentVariable(SDL_GetEnvironment(), "SDL_SOUNDFONTS");
+    const char *env_paths = SDL_getenv("SDL_SOUNDFONTS");
     SDL_bool force_env_paths = SDL_GetHintBoolean("SDL_FORCE_SOUNDFONTS", SDL_FALSE);
     if (force_env_paths && (!env_paths || !*env_paths)) {
         force_env_paths = SDL_FALSE;
