@@ -360,7 +360,7 @@ mix_channels(void *udata, SDL_AudioStream *astream, int len, int total)
     /* Mix the music (must be done before the channels are added) */
     mix_music(music_data, stream, len);
 
-    master_vol = SDL_AtomicGet(&master_volume);
+    master_vol = SDL_GetAtomicInt(&master_volume);
 
     /* Mix any playing channels... */
     sdl_ticks = SDL_GetTicks();
@@ -1775,14 +1775,14 @@ void Mix_UnlockAudio(void)
 
 int Mix_MasterVolume(int volume)
 {
-    int prev_volume = SDL_AtomicGet(&master_volume);
+    int prev_volume = SDL_GetAtomicInt(&master_volume);
     if (volume < 0) {
         return prev_volume;
     }
     if (volume > MIX_MAX_VOLUME) {
         volume = MIX_MAX_VOLUME;
     }
-    SDL_AtomicSet(&master_volume, volume);
+    SDL_SetAtomicInt(&master_volume, volume);
     return prev_volume;
 }
 
