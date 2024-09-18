@@ -25,6 +25,8 @@
 #include "native_midi_common.h"
 
 struct _NativeMidiSong {
+    Uint16 division;
+    MIDIEvent *event_list;
 };
 
 static NativeMidiSong *currentsong;
@@ -36,11 +38,24 @@ int native_midi_detect(void)
 
 NativeMidiSong *native_midi_loadsong_RW(SDL_RWops *src, int freesrc)
 {
-    return NULL;
+    NativeMidiSong *result = SDL_malloc(sizeof(NativeMidiSong));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    result->event_list = CreateMIDIEventList(src, &result->division);
+    if (result->event_list == NULL) {
+        SDL_free(result);
+        return NULL;
+    }
+
+    return result;
 }
 
 void native_midi_freesong(NativeMidiSong *song)
 {
+    FreeMIDIEventList(song->event_list);
+    SDL_free(song);
 }
 
 void native_midi_start(NativeMidiSong *song, int loops)
