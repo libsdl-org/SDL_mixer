@@ -631,7 +631,7 @@ static void SDLCALL _Eff_position_s16lsb(int chan, void *stream, int len, void *
 {
     /* 16 signed bits (lsb) * 2 channels. */
     Sint16 *ptr = (Sint16 *) stream;
-    const SDL_bool opp = ((position_args *)udata)->room_angle == 180 ? SDL_TRUE : SDL_FALSE;
+    const bool opp = ((position_args *)udata)->room_angle == 180 ? true : false;
     const float dist_f = ((position_args *)udata)->distance_f;
     const float left_f = ((position_args *)udata)->left_f;
     const float right_f = ((position_args *)udata)->right_f;
@@ -899,7 +899,7 @@ static void SDLCALL _Eff_position_s32lsb(int chan, void *stream, int len, void *
 {
     /* 32 signed bits (lsb) * 2 channels. */
     Sint32 *ptr = (Sint32 *) stream;
-    const SDL_bool opp = ((position_args *)udata)->room_angle == 180 ? SDL_TRUE : SDL_FALSE;
+    const bool opp = ((position_args *)udata)->room_angle == 180 ? true : false;
     const float dist_f = ((position_args *)udata)->distance_f;
     const float left_f = ((position_args *)udata)->left_f;
     const float right_f = ((position_args *)udata)->right_f;
@@ -1607,7 +1607,7 @@ static void set_amplitudes(int channels, int angle, int room_angle)
     speaker_amplitude[5] = 255;
 }
 
-SDL_bool Mix_SetPanning(int channel, Uint8 left, Uint8 right)
+bool Mix_SetPanning(int channel, Uint8 left, Uint8 right)
 {
     Mix_EffectFunc_t f = NULL;
     int channels;
@@ -1618,7 +1618,7 @@ SDL_bool Mix_SetPanning(int channel, Uint8 left, Uint8 right)
     Mix_QuerySpec(NULL, &format, &channels);
 
     if (channels != 2 && channels != 4 && channels != 6)    /* it's a no-op; we call that successful. */
-        return SDL_TRUE;
+        return true;
 
     if (channels > 2) {
         /* left = right = 255 => angle = 0, to unregister effect as when channels = 2 */
@@ -1635,13 +1635,13 @@ SDL_bool Mix_SetPanning(int channel, Uint8 left, Uint8 right)
 
     f = get_position_effect_func(format, channels);
     if (f == NULL)
-        return SDL_FALSE;
+        return false;
 
     Mix_LockAudio();
     args = get_position_arg(channel);
     if (!args) {
         Mix_UnlockAudio();
-        return SDL_FALSE;
+        return false;
     }
 
     /* it's a no-op; unregister the effect, if it's registered. */
@@ -1652,7 +1652,7 @@ SDL_bool Mix_SetPanning(int channel, Uint8 left, Uint8 right)
             return retval;
         } else {
             Mix_UnlockAudio();
-            return SDL_TRUE;
+            return true;
         }
     }
 
@@ -1671,24 +1671,24 @@ SDL_bool Mix_SetPanning(int channel, Uint8 left, Uint8 right)
     return retval;
 }
 
-SDL_bool Mix_SetDistance(int channel, Uint8 distance)
+bool Mix_SetDistance(int channel, Uint8 distance)
 {
     Mix_EffectFunc_t f = NULL;
     SDL_AudioFormat format;
     position_args *args = NULL;
     int channels;
-    SDL_bool retval = SDL_TRUE;
+    bool retval = true;
 
     Mix_QuerySpec(NULL, &format, &channels);
     f = get_position_effect_func(format, channels);
     if (f == NULL)
-        return SDL_FALSE;
+        return false;
 
     Mix_LockAudio();
     args = get_position_arg(channel);
     if (!args) {
         Mix_UnlockAudio();
-        return SDL_FALSE;
+        return false;
     }
 
     distance = 255 - distance;  /* flip it to our scale. */
@@ -1701,7 +1701,7 @@ SDL_bool Mix_SetDistance(int channel, Uint8 distance)
             return retval;
         } else {
             Mix_UnlockAudio();
-            return SDL_TRUE;
+            return true;
         }
     }
 
@@ -1716,19 +1716,19 @@ SDL_bool Mix_SetDistance(int channel, Uint8 distance)
     return retval;
 }
 
-SDL_bool Mix_SetPosition(int channel, Sint16 angle, Uint8 distance)
+bool Mix_SetPosition(int channel, Sint16 angle, Uint8 distance)
 {
     Mix_EffectFunc_t f = NULL;
     SDL_AudioFormat format;
     int channels;
     position_args *args = NULL;
     Sint16 room_angle = 0;
-    SDL_bool retval = SDL_TRUE;
+    bool retval = true;
 
     Mix_QuerySpec(NULL, &format, &channels);
     f = get_position_effect_func(format, channels);
     if (f == NULL)
-        return SDL_FALSE;
+        return false;
 
     /* make angle between 0 and 359. */
     angle %= 360;
@@ -1738,7 +1738,7 @@ SDL_bool Mix_SetPosition(int channel, Sint16 angle, Uint8 distance)
     args = get_position_arg(channel);
     if (!args) {
         Mix_UnlockAudio();
-        return SDL_FALSE;
+        return false;
     }
 
     /* it's a no-op; unregister the effect, if it's registered. */
@@ -1749,7 +1749,7 @@ SDL_bool Mix_SetPosition(int channel, Sint16 angle, Uint8 distance)
             return retval;
         } else {
             Mix_UnlockAudio();
-            return SDL_TRUE;
+            return true;
         }
     }
 

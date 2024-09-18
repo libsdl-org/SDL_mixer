@@ -27,7 +27,7 @@
 #include "native_midi/native_midi.h"
 
 
-static void *NATIVEMIDI_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
+static void *NATIVEMIDI_CreateFromIO(SDL_IOStream *src, bool closeio)
 {
     NativeMidiSong *music = native_midi_loadsong_IO(src, closeio);
     if (!music) {
@@ -53,10 +53,10 @@ static void NATIVEMIDI_SetVolume(void *context, int volume)
     native_midi_setvolume(volume);
 }
 
-static SDL_bool NATIVEMIDI_IsPlaying(void *context)
+static bool NATIVEMIDI_IsPlaying(void *context)
 {
     (void)context;
-    return native_midi_active() ? SDL_TRUE : SDL_FALSE;
+    return native_midi_active() ? true : false;
 }
 
 static void NATIVEMIDI_Pause(void *context)
@@ -88,8 +88,8 @@ Mix_MusicInterface Mix_MusicInterface_NATIVEMIDI =
     "NATIVEMIDI",
     MIX_MUSIC_NATIVEMIDI,
     MUS_MID,
-    SDL_FALSE,
-    SDL_FALSE,
+    false,
+    false,
 
     NULL,   /* Load */
     NULL,   /* Open */

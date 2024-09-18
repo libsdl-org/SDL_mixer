@@ -78,8 +78,8 @@ typedef struct
     const char *tag;
     Mix_MusicAPI api;
     Mix_MusicType type;
-    SDL_bool loaded;
-    SDL_bool opened;
+    bool loaded;
+    bool opened;
 
     /* Load the library */
     int (*Load)(void);
@@ -90,7 +90,7 @@ typedef struct
     /* Create a music object from an SDL_IOStream stream
      * If the function returns NULL, 'src' will be freed if needed by the caller.
      */
-    void *(*CreateFromIO)(SDL_IOStream *src, SDL_bool closeio);
+    void *(*CreateFromIO)(SDL_IOStream *src, bool closeio);
 
     /* Create a music object from a file, if SDL_IOStream are not supported */
     void *(*CreateFromFile)(const char *file);
@@ -104,8 +104,8 @@ typedef struct
     /* Start playing music from the beginning with an optional loop count */
     int (*Play)(void *music, int play_count);
 
-    /* Returns SDL_TRUE if music is still playing */
-    SDL_bool (*IsPlaying)(void *music);
+    /* Returns true if music is still playing */
+    bool (*IsPlaying)(void *music);
 
     /* Get music data, returns the number of bytes left */
     int (*GetAudio)(void *music, void *data, int bytes);
@@ -163,12 +163,12 @@ typedef struct
 extern int get_num_music_interfaces(void);
 extern Mix_MusicInterface *get_music_interface(int index);
 extern Mix_MusicType detect_music_type(SDL_IOStream *src);
-extern SDL_bool load_music_type(Mix_MusicType type);
-extern SDL_bool open_music_type(Mix_MusicType type);
-extern SDL_bool has_music(Mix_MusicType type);
+extern bool load_music_type(Mix_MusicType type);
+extern bool open_music_type(Mix_MusicType type);
+extern bool has_music(Mix_MusicType type);
 extern void open_music(const SDL_AudioSpec *spec);
 extern int music_pcm_getaudio(void *context, void *data, int bytes, int volume,
-                              int (*GetSome)(void *context, void *data, int bytes, SDL_bool *done));
+                              int (*GetSome)(void *context, void *data, int bytes, bool *done));
 extern void SDLCALL music_mixer(void *udata, Uint8 *stream, int len);
 extern void pause_async_music(int pause_on);
 extern void close_music(void);

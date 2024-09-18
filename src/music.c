@@ -55,7 +55,7 @@
     "SDL_MIXER_DEBUG_MUSIC_INTERFACES"
 
 char *music_cmd = NULL;
-static SDL_bool music_active = SDL_TRUE;
+static bool music_active = true;
 static int music_volume = MIX_MAX_VOLUME;
 static Mix_Music *music_playing = NULL;
 SDL_AudioSpec music_spec;
@@ -64,7 +64,7 @@ struct Mix_Music {
     Mix_MusicInterface *interface;
     void *context;
 
-    SDL_bool playing;
+    bool playing;
     Mix_Fading fading;
     int fade_step;
     int fade_steps;
@@ -231,15 +231,15 @@ const char *Mix_GetMusicDecoder(int index)
     return music_decoders[index];
 }
 
-SDL_bool Mix_HasMusicDecoder(const char *name)
+bool Mix_HasMusicDecoder(const char *name)
 {
     int index;
     for (index = 0; index < num_decoders; ++index) {
         if (SDL_strcasecmp(name, music_decoders[index]) == 0) {
-                return SDL_TRUE;
+                return true;
         }
     }
-    return SDL_FALSE;
+    return false;
 }
 
 static void add_music_decoder(const char *decoder)
@@ -267,7 +267,7 @@ static void music_internal_initialize_volume(void);
 static void music_internal_volume(int volume);
 static int  music_internal_play(Mix_Music *music, int play_count, double position);
 static int  music_internal_position(double position);
-static SDL_bool music_internal_playing(void);
+static bool music_internal_playing(void);
 static void music_internal_halt(void);
 
 
@@ -285,14 +285,14 @@ void Mix_HookMusicFinished(void (SDLCALL *music_finished)(void))
    This is called from many music player's GetAudio callback.
  */
 int music_pcm_getaudio(void *context, void *data, int bytes, int volume,
-                       int (*GetSome)(void *context, void *data, int bytes, SDL_bool *done))
+                       int (*GetSome)(void *context, void *data, int bytes, bool *done))
 {
     Uint8 *snd = (Uint8 *)data;
     Uint8 *dst;
     int len = bytes;
     int zero_cycles = 0;
     const int MAX_ZERO_CYCLES = 10; /* just try to catch infinite loops */
-    SDL_bool done = SDL_FALSE;
+    bool done = false;
 
     if (volume == MIX_MAX_VOLUME) {
         dst = snd;
@@ -308,7 +308,7 @@ int music_pcm_getaudio(void *context, void *data, int bytes, int volume,
             ++zero_cycles;
             if (zero_cycles > MAX_ZERO_CYCLES) {
                 /* We went too many cycles with no data, we're done */
-                done = SDL_TRUE;
+                done = true;
             }
             continue;
         }
@@ -331,7 +331,7 @@ int music_pcm_getaudio(void *context, void *data, int bytes, int volume,
 /* Mixing function */
 void SDLCALL music_mixer(void *udata, Uint8 *stream, int len)
 {
-    SDL_bool done = SDL_FALSE;
+    bool done = false;
 
     (void)udata;
 
@@ -365,8 +365,8 @@ void SDLCALL music_mixer(void *udata, Uint8 *stream, int len)
             int left = music_playing->interface->GetAudio(music_playing->context, stream, len);
             if (left != 0) {
                 /* Either an error or finished playing with data left */
-                music_playing->playing = SDL_FALSE;
-                done = SDL_TRUE;
+                music_playing->playing = false;
+                done = true;
             }
             if (left > 0) {
                 stream += (len - left);
@@ -405,7 +405,7 @@ void pause_async_music(int pause_on)
 }
 
 /* Load the music interface libraries for a given music type */
-SDL_bool load_music_type(Mix_MusicType type)
+bool load_music_type(Mix_MusicType type)
 {
     int i;
     int loaded = 0;
@@ -417,38 +417,38 @@ SDL_bool load_music_type(Mix_MusicType type)
         if (!interface->loaded) {
             char hint[64];
             SDL_snprintf(hint, sizeof(hint), "SDL_MIXER_DISABLE_%s", interface->tag);
-            if (SDL_GetHintBoolean(hint, SDL_FALSE)) {
+            if (SDL_GetHintBoolean(hint, false)) {
                 continue;
             }
 
             if (interface->Load && interface->Load() < 0) {
-                if (SDL_GetHintBoolean(SDL_MIXER_HINT_DEBUG_MUSIC_INTERFACES, SDL_FALSE)) {
+                if (SDL_GetHintBoolean(SDL_MIXER_HINT_DEBUG_MUSIC_INTERFACES, false)) {
                     SDL_Log("Couldn't load %s: %s\n", interface->tag, SDL_GetError());
                 }
                 continue;
             }
-            interface->loaded = SDL_TRUE;
+            interface->loaded = true;
         }
         ++loaded;
     }
-    return (loaded > 0) ? SDL_TRUE : SDL_FALSE;
+    return (loaded > 0) ? true : false;
 }
 
 /* Open the music interfaces for a given music type */
-SDL_bool open_music_type(Mix_MusicType type)
+bool open_music_type(Mix_MusicType type)
 {
     int i;
     int opened = 0;
-    SDL_bool use_native_midi = SDL_FALSE;
+    bool use_native_midi = false;
 
     if (!music_spec.format) {
         /* Music isn't opened yet */
-        return SDL_FALSE;
+        return false;
     }
 
 #ifdef MUSIC_MID_NATIVE
-    if (type == MUS_MID && SDL_GetHintBoolean("SDL_NATIVE_MUSIC", SDL_FALSE) && native_midi_detect()) {
-        use_native_midi = SDL_TRUE;
+    if (type == MUS_MID && SDL_GetHintBoolean("SDL_NATIVE_MUSIC", false) && native_midi_detect()) {
+        use_native_midi = true;
     }
 #endif
 
@@ -467,12 +467,12 @@ SDL_bool open_music_type(Mix_MusicType type)
 
         if (!interface->opened) {
             if (interface->Open && interface->Open(&music_spec) < 0) {
-                if (SDL_GetHintBoolean(SDL_MIXER_HINT_DEBUG_MUSIC_INTERFACES, SDL_FALSE)) {
+                if (SDL_GetHintBoolean(SDL_MIXER_HINT_DEBUG_MUSIC_INTERFACES, false)) {
                     SDL_Log("Couldn't open %s: %s\n", interface->tag, SDL_GetError());
                 }
                 continue;
             }
-            interface->opened = SDL_TRUE;
+            interface->opened = true;
             add_music_decoder(interface->tag);
         }
         ++opened;
@@ -507,7 +507,7 @@ SDL_bool open_music_type(Mix_MusicType type)
         add_chunk_decoder("WAVPACK");
     }
 
-    return (opened > 0) ? SDL_TRUE : SDL_FALSE;
+    return (opened > 0) ? true : false;
 }
 
 /* Initialize the music interfaces with a certain desired audio format */
@@ -533,8 +533,8 @@ void open_music(const SDL_AudioSpec *spec)
     ms_per_step = (int) ((4096.0f * 1000.0f) / spec->freq);
 }
 
-/* Return SDL_TRUE if the music type is available */
-SDL_bool has_music(Mix_MusicType type)
+/* Return true if the music type is available */
+bool has_music(Mix_MusicType type)
 {
     int i;
     for (i = 0; i < get_num_music_interfaces(); ++i) {
@@ -543,10 +543,10 @@ SDL_bool has_music(Mix_MusicType type)
             continue;
         }
         if (interface->opened) {
-            return SDL_TRUE;
+            return true;
         }
     }
-    return SDL_FALSE;
+    return false;
 }
 
 Mix_MusicType detect_music_type(SDL_IOStream *src)
@@ -732,15 +732,15 @@ Mix_Music *Mix_LoadMUS(const char *file)
             type = MUS_GME;
         }
     }
-    return Mix_LoadMUSType_IO(src, type, SDL_TRUE);
+    return Mix_LoadMUSType_IO(src, type, true);
 }
 
-Mix_Music *Mix_LoadMUS_IO(SDL_IOStream *src, SDL_bool closeio)
+Mix_Music *Mix_LoadMUS_IO(SDL_IOStream *src, bool closeio)
 {
     return Mix_LoadMUSType_IO(src, MUS_NONE, closeio);
 }
 
-Mix_Music *Mix_LoadMUSType_IO(SDL_IOStream *src, Mix_MusicType type, SDL_bool closeio)
+Mix_Music *Mix_LoadMUSType_IO(SDL_IOStream *src, Mix_MusicType type, bool closeio)
 {
     int i;
     void *context;
@@ -784,7 +784,7 @@ Mix_Music *Mix_LoadMUSType_IO(SDL_IOStream *src, Mix_MusicType type, SDL_bool cl
                 music->interface = interface;
                 music->context = context;
 
-                if (SDL_GetHintBoolean(SDL_MIXER_HINT_DEBUG_MUSIC_INTERFACES, SDL_FALSE)) {
+                if (SDL_GetHintBoolean(SDL_MIXER_HINT_DEBUG_MUSIC_INTERFACES, false)) {
                     SDL_Log("Loaded music with %s\n", interface->tag);
                 }
                 return music;
@@ -912,7 +912,7 @@ static int music_internal_play(Mix_Music *music, int play_count, double position
         music_internal_halt();
     }
     music_playing = music;
-    music_playing->playing = SDL_TRUE;
+    music_playing->playing = true;
 
     /* Set the initial volume */
     music_internal_initialize_volume();
@@ -934,25 +934,25 @@ static int music_internal_play(Mix_Music *music, int play_count, double position
 
     /* If the setup failed, we're not playing any music anymore */
     if (retval < 0) {
-        music->playing = SDL_FALSE;
+        music->playing = false;
         music_playing = NULL;
     }
     return retval;
 }
 
-SDL_bool Mix_FadeInMusicPos(Mix_Music *music, int loops, int ms, double position)
+bool Mix_FadeInMusicPos(Mix_Music *music, int loops, int ms, double position)
 {
-    SDL_bool retval;
+    bool retval;
 
     if (ms_per_step == 0) {
         SDL_SetError("Audio device hasn't been opened");
-        return SDL_FALSE;
+        return false;
     }
 
     /* Don't play null pointers :-) */
     if (music == NULL) {
         SDL_SetError("music parameter was NULL");
-        return SDL_FALSE;
+        return false;
     }
 
     /* Setup the data */
@@ -983,19 +983,19 @@ SDL_bool Mix_FadeInMusicPos(Mix_Music *music, int loops, int ms, double position
 
     return retval;
 }
-SDL_bool Mix_FadeInMusic(Mix_Music *music, int loops, int ms)
+bool Mix_FadeInMusic(Mix_Music *music, int loops, int ms)
 {
     return Mix_FadeInMusicPos(music, loops, ms, 0.0);
 }
-SDL_bool Mix_PlayMusic(Mix_Music *music, int loops)
+bool Mix_PlayMusic(Mix_Music *music, int loops)
 {
     return Mix_FadeInMusicPos(music, loops, 0, 0.0);
 }
 
 /* Jump to a given order in mod music. */
-SDL_bool Mix_ModMusicJumpToOrder(int order)
+bool Mix_ModMusicJumpToOrder(int order)
 {
-    SDL_bool retval = SDL_FALSE;
+    bool retval = false;
 
     Mix_LockAudio();
     if (music_playing) {
@@ -1020,14 +1020,14 @@ int music_internal_position(double position)
     }
     return -1;
 }
-SDL_bool Mix_SetMusicPosition(double position)
+bool Mix_SetMusicPosition(double position)
 {
-    SDL_bool retval;
+    bool retval;
 
     Mix_LockAudio();
     if (music_playing) {
         if (music_internal_position(position) == 0) {
-            retval = SDL_TRUE;
+            retval = true;
         } else {
             retval = SDL_SetError("Position not implemented for music type");
         }
@@ -1229,7 +1229,7 @@ static void music_internal_halt(void)
         music_playing->interface->Stop(music_playing->context);
     }
 
-    music_playing->playing = SDL_FALSE;
+    music_playing->playing = false;
     music_playing->fading = MIX_NO_FADING;
     music_playing = NULL;
 }
@@ -1246,9 +1246,9 @@ void Mix_HaltMusic(void)
 }
 
 /* Progressively stop the music */
-SDL_bool Mix_FadeOutMusic(int ms)
+bool Mix_FadeOutMusic(int ms)
 {
-    SDL_bool retval = SDL_FALSE;
+    bool retval = false;
 
     if (ms_per_step == 0) {
         return SDL_SetError("Audio device hasn't been opened");
@@ -1256,7 +1256,7 @@ SDL_bool Mix_FadeOutMusic(int ms)
 
     if (ms <= 0) {  /* just halt immediately. */
         Mix_HaltMusic();
-        return SDL_TRUE;
+        return true;
     }
 
     Mix_LockAudio();
@@ -1276,7 +1276,7 @@ SDL_bool Mix_FadeOutMusic(int ms)
         }
         music_playing->fading = MIX_FADING_OUT;
         music_playing->fade_steps = fade_steps;
-        retval = SDL_TRUE;
+        retval = true;
     }
     Mix_UnlockAudio();
 
@@ -1305,7 +1305,7 @@ void Mix_PauseMusic(void)
             music_playing->interface->Pause(music_playing->context);
         }
     }
-    music_active = SDL_FALSE;
+    music_active = false;
     Mix_UnlockAudio();
 }
 
@@ -1317,7 +1317,7 @@ void Mix_ResumeMusic(void)
             music_playing->interface->Resume(music_playing->context);
         }
     }
-    music_active = SDL_TRUE;
+    music_active = true;
     Mix_UnlockAudio();
 }
 
@@ -1326,14 +1326,14 @@ void Mix_RewindMusic(void)
     Mix_SetMusicPosition(0.0);
 }
 
-SDL_bool Mix_PausedMusic(void)
+bool Mix_PausedMusic(void)
 {
     return !music_active;
 }
 
-SDL_bool Mix_StartTrack(Mix_Music *music, int track)
+bool Mix_StartTrack(Mix_Music *music, int track)
 {
-    SDL_bool result;
+    bool result;
 
     Mix_LockAudio();
     if (music && music->interface->StartTrack) {
@@ -1365,10 +1365,10 @@ int Mix_GetNumTracks(Mix_Music *music)
 }
 
 /* Check the status of the music */
-static SDL_bool music_internal_playing(void)
+static bool music_internal_playing(void)
 {
     if (!music_playing) {
-        return SDL_FALSE;
+        return false;
     }
 
     if (music_playing->interface->IsPlaying) {
@@ -1376,9 +1376,9 @@ static SDL_bool music_internal_playing(void)
     }
     return music_playing->playing;
 }
-SDL_bool Mix_PlayingMusic(void)
+bool Mix_PlayingMusic(void)
 {
-    SDL_bool playing;
+    bool playing;
 
     Mix_LockAudio();
     playing = music_internal_playing();
@@ -1388,7 +1388,7 @@ SDL_bool Mix_PlayingMusic(void)
 }
 
 /* Set the external music playback command */
-SDL_bool Mix_SetMusicCMD(const char *command)
+bool Mix_SetMusicCMD(const char *command)
 {
     Mix_HaltMusic();
     if (music_cmd) {
@@ -1399,11 +1399,11 @@ SDL_bool Mix_SetMusicCMD(const char *command)
         size_t length = SDL_strlen(command) + 1;
         music_cmd = (char *)SDL_malloc(length);
         if (music_cmd == NULL) {
-            return SDL_FALSE;
+            return false;
         }
         SDL_memcpy(music_cmd, command, length);
     }
-    return SDL_TRUE;
+    return true;
 }
 
 /* Uninitialize the music interfaces */
@@ -1422,7 +1422,7 @@ void close_music(void)
         if (interface->Close) {
             interface->Close();
         }
-        interface->opened = SDL_FALSE;
+        interface->opened = false;
     }
 
     if (soundfont_paths) {
@@ -1453,11 +1453,11 @@ void unload_music(void)
         if (interface->Unload) {
             interface->Unload();
         }
-        interface->loaded = SDL_FALSE;
+        interface->loaded = false;
     }
 }
 
-SDL_bool Mix_SetTimidityCfg(const char *path)
+bool Mix_SetTimidityCfg(const char *path)
 {
     if (timidity_cfg) {
         SDL_free(timidity_cfg);
@@ -1470,7 +1470,7 @@ SDL_bool Mix_SetTimidityCfg(const char *path)
         }
     }
 
-    return SDL_TRUE;
+    return true;
 }
 
 const char* Mix_GetTimidityCfg(void)
@@ -1478,7 +1478,7 @@ const char* Mix_GetTimidityCfg(void)
     return timidity_cfg;
 }
 
-SDL_bool Mix_SetSoundFonts(const char *paths)
+bool Mix_SetSoundFonts(const char *paths)
 {
     if (soundfont_paths) {
         SDL_free(soundfont_paths);
@@ -1490,15 +1490,15 @@ SDL_bool Mix_SetSoundFonts(const char *paths)
             return SDL_SetError("Insufficient memory to set SoundFonts");
         }
     }
-    return SDL_TRUE;
+    return true;
 }
 
 const char* Mix_GetSoundFonts(void)
 {
     const char *env_paths = SDL_getenv("SDL_SOUNDFONTS");
-    SDL_bool force_env_paths = SDL_GetHintBoolean("SDL_FORCE_SOUNDFONTS", SDL_FALSE);
+    bool force_env_paths = SDL_GetHintBoolean("SDL_FORCE_SOUNDFONTS", false);
     if (force_env_paths && (!env_paths || !*env_paths)) {
-        force_env_paths = SDL_FALSE;
+        force_env_paths = false;
     }
     if (soundfont_paths && *soundfont_paths && !force_env_paths) {
         return soundfont_paths;
@@ -1527,7 +1527,7 @@ const char* Mix_GetSoundFonts(void)
     return NULL;
 }
 
-SDL_bool Mix_EachSoundFont(Mix_EachSoundFontCallback function, void *data)
+bool Mix_EachSoundFont(Mix_EachSoundFontCallback function, void *data)
 {
     char *context, *path, *paths;
     const char* cpaths = Mix_GetSoundFonts();

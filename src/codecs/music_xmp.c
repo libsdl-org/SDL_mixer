@@ -208,7 +208,7 @@ static long xmp_ftell(void *src)
 }
 
 /* Load a libxmp stream from an SDL_IOStream object */
-void *XMP_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
+void *XMP_CreateFromIO(SDL_IOStream *src, bool closeio)
 {
     SDL_AudioSpec srcspec;
     XMP_Music *music;
@@ -240,7 +240,7 @@ void *XMP_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
         err = libxmp.xmp_load_module_from_callbacks(music->ctx, music, file_callbacks);
     } else {
         size_t size;
-        void *mem = SDL_LoadFile_IO(src, &size, SDL_FALSE);
+        void *mem = SDL_LoadFile_IO(src, &size, false);
         if (!mem) {
             goto e1;
         }
@@ -320,7 +320,7 @@ static void XMP_Stop(void *context)
 }
 
 /* Play some of a stream previously started with xmp_play() */
-static int XMP_GetSome(void *context, void *data, int bytes, SDL_bool *done)
+static int XMP_GetSome(void *context, void *data, int bytes, bool *done)
 {
     XMP_Music *music = (XMP_Music *)context;
     int filled, amount, ret;
@@ -332,7 +332,7 @@ static int XMP_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 
     if (!music->play_count) {
         /* All done */
-        *done = SDL_TRUE;
+        *done = true;
         return 0;
     }
 
@@ -433,8 +433,8 @@ Mix_MusicInterface Mix_MusicInterface_XMP =
     "XMP",
     MIX_MUSIC_LIBXMP,
     MUS_MOD,
-    SDL_FALSE,
-    SDL_FALSE,
+    false,
+    false,
 
     XMP_Load,
     NULL,   /* Open */

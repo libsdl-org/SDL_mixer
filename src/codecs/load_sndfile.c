@@ -117,10 +117,10 @@ static sf_count_t sfvio_tell(void *user_data)
     return SDL_TellIO(io);
 }
 
-SDL_AudioSpec *Mix_LoadSndFile_IO (SDL_IOStream *src, SDL_bool closeio,
+SDL_AudioSpec *Mix_LoadSndFile_IO (SDL_IOStream *src, bool closeio,
                                    SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
 {
-    SDL_bool was_error = SDL_TRUE;
+    bool was_error = true;
     SNDFILE *sndfile = NULL;
     SF_INFO sfinfo;
     SF_VIRTUAL_IO sfvio = {
@@ -200,7 +200,7 @@ SDL_AudioSpec *Mix_LoadSndFile_IO (SDL_IOStream *src, SDL_bool closeio,
     *audio_buf = (Uint8 *)buf;
     *audio_len = len;
 
-    was_error = SDL_FALSE;
+    was_error = false;
 
 done:
     if (sndfile) {
@@ -224,7 +224,7 @@ done:
 
 #else
 
-SDL_AudioSpec *Mix_LoadSndFile_IO (SDL_IOStream *src, SDL_bool closeio,
+SDL_AudioSpec *Mix_LoadSndFile_IO (SDL_IOStream *src, bool closeio,
                                    SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
 {
     (void) src;

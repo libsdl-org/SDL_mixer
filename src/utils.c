@@ -25,7 +25,7 @@
 #include <stddef.h>
 
 /* Is given tag a loop tag? */
-SDL_bool _Mix_IsLoopTag(const char *tag)
+bool _Mix_IsLoopTag(const char *tag)
 {
     char buf[5];
     SDL_strlcpy(buf, tag, 5);

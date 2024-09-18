@@ -69,7 +69,7 @@
 
 typedef struct {
     SDL_IOStream *src;
-    SDL_bool closeio;
+    bool closeio;
     int play_count;
     int volume;
     stb_vorbis *vf;
@@ -164,12 +164,12 @@ static int OGG_UpdateSection(OGG_music *music)
 }
 
 /* Load an OGG stream from an SDL_IOStream object */
-static void *OGG_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
+static void *OGG_CreateFromIO(SDL_IOStream *src, bool closeio)
 {
     OGG_music *music;
     stb_vorbis_comment vc;
     long rate;
-    SDL_bool is_loop_length = SDL_FALSE;
+    bool is_loop_length = false;
     int i, error;
 
     music = (OGG_music *)SDL_calloc(1, sizeof *music);
@@ -231,10 +231,10 @@ static void *OGG_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
                 music->loop_start = _Mix_ParseTime(value, rate);
             else if (SDL_strcasecmp(argument, "LOOPLENGTH") == 0) {
                 music->loop_len = SDL_strtoll(value, NULL, 10);
-                is_loop_length = SDL_TRUE;
+                is_loop_length = true;
             } else if (SDL_strcasecmp(argument, "LOOPEND") == 0) {
                 music->loop_end = _Mix_ParseTime(value, rate);
-                is_loop_length = SDL_FALSE;
+                is_loop_length = false;
             } else if (SDL_strcasecmp(argument, "TITLE") == 0) {
                 meta_tags_set(&music->tags, MIX_META_TITLE, value);
             } else if (SDL_strcasecmp(argument, "ARTIST") == 0) {
@@ -307,10 +307,10 @@ static void OGG_Stop(void *context)
 }
 
 /* Play some of a stream previously started with OGG_play() */
-static int OGG_GetSome(void *context, void *data, int bytes, SDL_bool *done)
+static int OGG_GetSome(void *context, void *data, int bytes, bool *done)
 {
     OGG_music *music = (OGG_music *)context;
-    SDL_bool looped = SDL_FALSE;
+    bool looped = false;
     int filled, amount, result;
     int section;
     Sint64 pcmPos;
@@ -322,7 +322,7 @@ static int OGG_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 
     if (!music->play_count) {
         /* All done */
-        *done = SDL_TRUE;
+        *done = true;
         return 0;
     }
 
@@ -354,7 +354,7 @@ static int OGG_GetSome(void *context, void *data, int bytes, SDL_bool *done)
             }
             music->play_count = play_count;
         }
-        looped = SDL_TRUE;
+        looped = true;
     }
 
     if (amount > 0) {
@@ -460,8 +460,8 @@ Mix_MusicInterface Mix_MusicInterface_OGG =
     "OGG",
     MIX_MUSIC_OGG,
     MUS_OGG,
-    SDL_FALSE,
-    SDL_FALSE,
+    false,
+    false,
 
     NULL,   /* Load */
     NULL,   /* Open */

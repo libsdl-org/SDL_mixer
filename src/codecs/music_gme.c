@@ -121,8 +121,8 @@ typedef struct
 {
     int play_count;
     Music_Emu* game_emu;
-    SDL_bool closeio;
-    SDL_bool has_track_length;
+    bool closeio;
+    bool has_track_length;
     int track_length;
     int intro_length;
     int loop_length;
@@ -156,7 +156,7 @@ static int GME_GetVolume(void *music_p)
 static int initialize_from_track_info(GME_Music *music, int track)
 {
     gme_info_t *musInfo;
-    SDL_bool has_loop_length = SDL_TRUE;
+    bool has_loop_length = true;
     const char *err;
 
     err = gme.gme_track_info(music->game_emu, &musInfo, track);
@@ -169,10 +169,10 @@ static int initialize_from_track_info(GME_Music *music, int track)
     music->intro_length = musInfo->intro_length;
     music->loop_length = musInfo->loop_length;
 
-    music->has_track_length = SDL_TRUE;
+    music->has_track_length = true;
     if (music->track_length <= 0 ) {
         music->track_length = (int)(2.5 * 60 * 1000);
-        music->has_track_length = SDL_FALSE;
+        music->has_track_length = false;
     }
 
     if (music->intro_length < 0 ) {
@@ -184,12 +184,12 @@ static int initialize_from_track_info(GME_Music *music, int track)
         } else {
             music->loop_length = (int)(2.5 * 60 * 1000);
         }
-        has_loop_length = SDL_FALSE;
+        has_loop_length = false;
     }
 
     if (!music->has_track_length && has_loop_length) {
         music->track_length = music->intro_length + music->loop_length;
-        music->has_track_length = SDL_TRUE;
+        music->has_track_length = true;
     }
 
     meta_tags_set(&music->tags, MIX_META_TITLE, musInfo->song);
@@ -201,7 +201,7 @@ static int initialize_from_track_info(GME_Music *music, int track)
     return 0;
 }
 
-static void *GME_CreateFromIO(struct SDL_IOStream *src, SDL_bool closeio)
+static void *GME_CreateFromIO(struct SDL_IOStream *src, bool closeio)
 {
     SDL_AudioSpec srcspec;
     void *mem = 0;
@@ -237,7 +237,7 @@ static void *GME_CreateFromIO(struct SDL_IOStream *src, SDL_bool closeio)
     }
 
     SDL_SeekIO(src, 0, SDL_IO_SEEK_SET);
-    mem = SDL_LoadFile_IO(src, &size, SDL_FALSE);
+    mem = SDL_LoadFile_IO(src, &size, false);
     if (mem) {
         err = gme.gme_open_data(mem, (long)size, &music->game_emu, music_spec.freq);
         SDL_free(mem);
@@ -295,7 +295,7 @@ static int GME_Play(void *music_p, int play_count)
     return 0;
 }
 
-static int GME_GetSome(void *context, void *data, int bytes, SDL_bool *done)
+static int GME_GetSome(void *context, void *data, int bytes, bool *done)
 {
     GME_Music *music = (GME_Music*)context;
     int filled;
@@ -308,7 +308,7 @@ static int GME_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 
     if (gme.gme_track_ended(music->game_emu)) {
         /* All done */
-        *done = SDL_TRUE;
+        *done = true;
         return 0;
     }
 
@@ -413,8 +413,8 @@ Mix_MusicInterface Mix_MusicInterface_GME =
     "GME",
     MIX_MUSIC_GME,
     MUS_GME,
-    SDL_FALSE,
-    SDL_FALSE,
+    false,
+    false,
 
     GME_Load,
     NULL,   /* Open */

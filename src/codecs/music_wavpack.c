@@ -180,7 +180,7 @@ static void WAVPACK_Unload(void)
 typedef struct {
     SDL_IOStream *src1; /* wavpack file    */
     SDL_IOStream *src2; /* correction file */
-    SDL_bool closeio;
+    bool closeio;
     int play_count;
     int volume;
 
@@ -290,7 +290,7 @@ static WavpackStreamReader64 sdl_reader64 = {
 
 static int WAVPACK_Seek(void *context, double time);
 static void WAVPACK_Delete(void *context);
-static void *WAVPACK_CreateFromIO_internal(SDL_IOStream *src1, SDL_IOStream *src2, SDL_bool closeio, SDL_bool *closeio2);
+static void *WAVPACK_CreateFromIO_internal(SDL_IOStream *src1, SDL_IOStream *src2, bool closeio, bool *closeio2);
 
 #ifdef MUSIC_WAVPACK_DSD
 static void *decimation_init(int num_channels, int ratio);
@@ -303,7 +303,7 @@ static void decimation_reset(void *context);
 #define DECIMATION(x) 1
 #endif
 
-static void *WAVPACK_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
+static void *WAVPACK_CreateFromIO(SDL_IOStream *src, bool closeio)
 {
     return WAVPACK_CreateFromIO_internal(src, NULL, closeio, NULL);
 }
@@ -312,7 +312,7 @@ static void *WAVPACK_CreateFromFile(const char *file)
 {
     SDL_IOStream *src1, *src2;
     WAVPACK_music *music;
-    SDL_bool closeio2 = SDL_TRUE;
+    bool closeio2 = true;
     size_t len;
     char *file2;
 
@@ -338,7 +338,7 @@ static void *WAVPACK_CreateFromFile(const char *file)
         SDL_stack_free(file2);
     }
 
-    music = WAVPACK_CreateFromIO_internal(src1, src2, SDL_TRUE, &closeio2);
+    music = WAVPACK_CreateFromIO_internal(src1, src2, true, &closeio2);
     if (!music) {
         SDL_CloseIO(src1);
         if (closeio2 && src2) {
@@ -349,7 +349,7 @@ static void *WAVPACK_CreateFromFile(const char *file)
 }
 
 /* Load a WavPack stream from an SDL_IOStream object */
-static void *WAVPACK_CreateFromIO_internal(SDL_IOStream *src1, SDL_IOStream *src2, SDL_bool closeio, SDL_bool *closeio2)
+static void *WAVPACK_CreateFromIO_internal(SDL_IOStream *src1, SDL_IOStream *src2, bool closeio, bool *closeio2)
 {
     SDL_AudioSpec srcspec;
     WAVPACK_music *music;
@@ -387,7 +387,7 @@ static void *WAVPACK_CreateFromIO_internal(SDL_IOStream *src1, SDL_IOStream *src
     music->mode = wvpk.WavpackGetMode(music->ctx);
 
     if (closeio2) {
-       *closeio2 = SDL_FALSE; /* WAVPACK_Delete() will free it */
+       *closeio2 = false; /* WAVPACK_Delete() will free it */
     }
 
     #ifdef MUSIC_WAVPACK_DSD
@@ -504,7 +504,7 @@ static void WAVPACK_Stop(void *context)
 }
 
 /* Play some of a stream previously started with WAVPACK_play() */
-static int WAVPACK_GetSome(void *context, void *data, int bytes, SDL_bool *done)
+static int WAVPACK_GetSome(void *context, void *data, int bytes, bool *done)
 {
     WAVPACK_music *music = (WAVPACK_music *)context;
     int amount;
@@ -516,7 +516,7 @@ static int WAVPACK_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 
     if (!music->play_count) {
         /* All done */
-        *done = SDL_TRUE;
+        *done = true;
         return 0;
     }
 
@@ -732,8 +732,8 @@ Mix_MusicInterface Mix_MusicInterface_WAVPACK =
     "WAVPACK",
     MIX_MUSIC_WAVPACK,
     MUS_WAVPACK,
-    SDL_FALSE,
-    SDL_FALSE,
+    false,
+    false,
 
     WAVPACK_Load,
     NULL,   /* Open */

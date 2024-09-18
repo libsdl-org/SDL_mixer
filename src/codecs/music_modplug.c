@@ -165,7 +165,7 @@ static int MODPLUG_Open(const SDL_AudioSpec *spec)
 }
 
 /* Load a modplug stream from an SDL_IOStream object */
-void *MODPLUG_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
+void *MODPLUG_CreateFromIO(SDL_IOStream *src, bool closeio)
 {
     SDL_AudioSpec srcspec;
     MODPLUG_Music *music;
@@ -196,7 +196,7 @@ void *MODPLUG_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
         return NULL;
     }
 
-    buffer = SDL_LoadFile_IO(src, &size, SDL_FALSE);
+    buffer = SDL_LoadFile_IO(src, &size, false);
     if (buffer) {
         music->file = modplug.ModPlug_Load(buffer, (int)size);
         if (!music->file) {
@@ -249,7 +249,7 @@ static void MODPLUG_Stop(void *context)
 }
 
 /* Play some of a stream previously started with modplug_play() */
-static int MODPLUG_GetSome(void *context, void *data, int bytes, SDL_bool *done)
+static int MODPLUG_GetSome(void *context, void *data, int bytes, bool *done)
 {
     MODPLUG_Music *music = (MODPLUG_Music *)context;
     int filled, amount;
@@ -261,7 +261,7 @@ static int MODPLUG_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 
     if (!music->play_count) {
         /* All done */
-        *done = SDL_TRUE;
+        *done = true;
         return 0;
     }
 
@@ -353,8 +353,8 @@ Mix_MusicInterface Mix_MusicInterface_MODPLUG =
     "MODPLUG",
     MIX_MUSIC_MODPLUG,
     MUS_MOD,
-    SDL_FALSE,
-    SDL_FALSE,
+    false,
+    false,
 
     MODPLUG_Load,
     MODPLUG_Open,

@@ -27,7 +27,7 @@
 typedef struct _NativeMidiSong NativeMidiSong;
 
 int native_midi_detect(void);
-NativeMidiSong *native_midi_loadsong_IO(SDL_IOStream *src, SDL_bool closeio);
+NativeMidiSong *native_midi_loadsong_IO(SDL_IOStream *src, bool closeio);
 void native_midi_freesong(NativeMidiSong *song);
 void native_midi_start(NativeMidiSong *song, int loops);
 void native_midi_pause(void);

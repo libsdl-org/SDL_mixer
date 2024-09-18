@@ -125,24 +125,24 @@ GetSequenceAudioUnitMatching(MusicSequence sequence, AudioUnit *aunit,
 
 typedef struct {
     AudioUnit aunit;
-    SDL_bool soundfont_set;
+    bool soundfont_set;
     CFURLRef default_url;
 } macosx_load_soundfont_ctx;
 
-static SDL_bool SDLCALL
+static bool SDLCALL
 macosx_load_soundfont(const char *path, void *data)
 {
     CFURLRef url;
     OSStatus err;
     macosx_load_soundfont_ctx *ctx = data;
     if (ctx->soundfont_set)
-        return SDL_FALSE;
+        return false;
 
     url = CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault,
                                                   (const UInt8*)path,
                                                   strlen(path), false);
     if (!url)
-        return SDL_FALSE;
+        return false;
 
     err = AudioUnitSetProperty(ctx->aunit, kMusicDeviceProperty_SoundBankURL,
                                kAudioUnitScope_Global, 0, &url, sizeof(url));
@@ -157,11 +157,11 @@ macosx_load_soundfont(const char *path, void *data)
             /* uh-oh, this might leave the audio unit in an unusable state
                (e.g. if the soundfont was an incompatible file type) */
         }
-        return SDL_FALSE;
+        return false;
     }
 
-    ctx->soundfont_set = SDL_TRUE;
-    return SDL_TRUE;
+    ctx->soundfont_set = true;
+    return true;
 }
 
 static void
@@ -169,7 +169,7 @@ SetSequenceSoundFont(MusicSequence sequence)
 {
     OSStatus err;
     macosx_load_soundfont_ctx ctx;
-    ctx.soundfont_set = SDL_FALSE;
+    ctx.soundfont_set = false;
     ctx.default_url = NULL;
 
     CFBundleRef bundle = CFBundleGetBundleWithIdentifier(
@@ -196,14 +196,14 @@ int native_midi_detect(void)
     return 1;  /* always available. */
 }
 
-NativeMidiSong *native_midi_loadsong_IO(SDL_IOStream *src, SDL_bool closeio)
+NativeMidiSong *native_midi_loadsong_IO(SDL_IOStream *src, bool closeio)
 {
     NativeMidiSong *retval = NULL;
     void *buf = NULL;
     size_t len = 0;
     CFDataRef data = NULL;
 
-    buf = SDL_LoadFile_IO(src, &len, SDL_FALSE);
+    buf = SDL_LoadFile_IO(src, &len, false);
     if (buf == NULL)
         goto fail;
 

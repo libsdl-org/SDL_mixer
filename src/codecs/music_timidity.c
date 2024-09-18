@@ -83,11 +83,11 @@ static void TIMIDITY_Close(void)
     Timidity_Exit();
 }
 
-void *TIMIDITY_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
+void *TIMIDITY_CreateFromIO(SDL_IOStream *src, bool closeio)
 {
     TIMIDITY_Music *music;
     SDL_AudioSpec spec;
-    SDL_bool need_stream = SDL_FALSE;
+    bool need_stream = false;
 
     music = (TIMIDITY_Music *)SDL_calloc(1, sizeof(*music));
     if (!music) {
@@ -98,7 +98,7 @@ void *TIMIDITY_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
 
     SDL_memcpy(&spec, &music_spec, sizeof(spec));
     if (spec.channels > 2) {
-        need_stream = SDL_TRUE;
+        need_stream = true;
         spec.channels = 2;
     }
     music->song = Timidity_LoadSong(src, &spec);
@@ -149,13 +149,13 @@ static int TIMIDITY_Play(void *context, int play_count)
     return TIMIDITY_Seek(music, 0.0);
 }
 
-static SDL_bool TIMIDITY_IsPlaying(void *context)
+static bool TIMIDITY_IsPlaying(void *context)
 {
     TIMIDITY_Music *music = (TIMIDITY_Music *)context;
     return Timidity_IsActive(music->song);
 }
 
-static int TIMIDITY_GetSome(void *context, void *data, int bytes, SDL_bool *done)
+static int TIMIDITY_GetSome(void *context, void *data, int bytes, bool *done)
 {
     TIMIDITY_Music *music = (TIMIDITY_Music *)context;
     int filled, amount, expected;
@@ -169,7 +169,7 @@ static int TIMIDITY_GetSome(void *context, void *data, int bytes, SDL_bool *done
 
     if (!music->play_count) {
         /* All done */
-        *done = SDL_TRUE;
+        *done = true;
         return 0;
     }
 
@@ -258,8 +258,8 @@ Mix_MusicInterface Mix_MusicInterface_TIMIDITY =
     "TIMIDITY",
     MIX_MUSIC_TIMIDITY,
     MUS_MID,
-    SDL_FALSE,
-    SDL_FALSE,
+    false,
+    false,
 
     NULL,   /* Load */
     TIMIDITY_Open,

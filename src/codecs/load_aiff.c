@@ -62,14 +62,14 @@ static Uint32 SANE_to_Uint32 (Uint8 *sanebuf)
 
 /* This function is based on SDL_LoadWAV_IO(). */
 
-SDL_AudioSpec *Mix_LoadAIFF_IO (SDL_IOStream *src, SDL_bool closeio,
+SDL_AudioSpec *Mix_LoadAIFF_IO (SDL_IOStream *src, bool closeio,
                                 SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
 {
     int found_SSND;
     int found_COMM;
     int found_VHDR;
     int found_BODY;
-    SDL_bool was_error = SDL_TRUE;
+    bool was_error = true;
     Sint64 start = 0;
 
     Uint32 chunk_type;
@@ -261,7 +261,7 @@ SDL_AudioSpec *Mix_LoadAIFF_IO (SDL_IOStream *src, SDL_bool closeio,
     /* Don't return a buffer that isn't a multiple of samplesize */
     *audio_len &= ~((samplesize / 8) - 1);
 
-    was_error = SDL_FALSE;
+    was_error = false;
 
 done:
     if (closeio && src) {

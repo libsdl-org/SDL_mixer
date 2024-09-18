@@ -201,7 +201,7 @@ static int MusicCMD_Play(void *context, int play_count)
 }
 
 /* Return non-zero if a stream is currently playing */
-static SDL_bool MusicCMD_IsPlaying(void *context)
+static bool MusicCMD_IsPlaying(void *context)
 {
     MusicCMD *music = (MusicCMD *)context;
     int status;
@@ -209,7 +209,7 @@ static SDL_bool MusicCMD_IsPlaying(void *context)
     if (music->pid > 0) {
         waitpid(music->pid, &status, WNOHANG);
         if (kill(music->pid, 0) == 0) {
-            return SDL_TRUE;
+            return true;
         }
 
         /* We might want to loop */
@@ -219,10 +219,10 @@ static SDL_bool MusicCMD_IsPlaying(void *context)
                 play_count = (music->play_count - 1);
             }
             MusicCMD_Play(music, play_count);
-            return SDL_TRUE;
+            return true;
         }
     }
-    return SDL_FALSE;
+    return false;
 }
 
 /* Pause playback of a given music stream */
@@ -272,8 +272,8 @@ Mix_MusicInterface Mix_MusicInterface_CMD =
     "CMD",
     MIX_MUSIC_CMD,
     MUS_CMD,
-    SDL_FALSE,
-    SDL_FALSE,
+    false,
+    false,
 
     NULL,   /* Load */
     NULL,   /* Open */

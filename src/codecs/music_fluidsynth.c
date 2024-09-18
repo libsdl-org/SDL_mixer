@@ -136,30 +136,30 @@ typedef struct {
     void *buffer;
     int buffer_size;
     int volume;
-    SDL_bool is_paused;
+    bool is_paused;
 } FLUIDSYNTH_Music;
 
 static void FLUIDSYNTH_Delete(void *context);
 
-static SDL_bool SDLCALL fluidsynth_check_soundfont(const char *path, void *data)
+static bool SDLCALL fluidsynth_check_soundfont(const char *path, void *data)
 {
     SDL_IOStream *io = SDL_IOFromFile(path, "rb");
 
     (void)data;
     if (io) {
         SDL_CloseIO(io);
-        return SDL_TRUE;
+        return true;
     } else {
         SDL_SetError("Failed to access the SoundFont %s", path);
-        return SDL_FALSE;
+        return false;
     }
 }
 
-static SDL_bool SDLCALL fluidsynth_load_soundfont(const char *path, void *data)
+static bool SDLCALL fluidsynth_load_soundfont(const char *path, void *data)
 {
     /* If this fails, it's too late to try Timidity so pray that at least one works. */
     fluidsynth.fluid_synth_sfload((fluid_synth_t*) data, path, 1);
-    return SDL_TRUE;
+    return true;
 }
 
 static int FLUIDSYNTH_Open(const SDL_AudioSpec *spec)
@@ -222,7 +222,7 @@ static FLUIDSYNTH_Music *FLUIDSYNTH_LoadMusic(void *data)
         goto fail;
     }
 
-    io_mem = SDL_LoadFile_IO(src, &io_size, SDL_FALSE);
+    io_mem = SDL_LoadFile_IO(src, &io_size, false);
     if (!io_mem) {
         goto fail;
     }
@@ -248,7 +248,7 @@ fail:
     return NULL;
 }
 
-static void *FLUIDSYNTH_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
+static void *FLUIDSYNTH_CreateFromIO(SDL_IOStream *src, bool closeio)
 {
     FLUIDSYNTH_Music *music;
 
@@ -281,7 +281,7 @@ static int FLUIDSYNTH_Play(void *context, int play_count)
     fluidsynth.fluid_player_seek(music->player, 0);
 #endif
     fluidsynth.fluid_player_play(music->player);
-    music->is_paused = SDL_FALSE;
+    music->is_paused = false;
     return 0;
 }
 
@@ -289,16 +289,16 @@ static void FLUIDSYNTH_Resume(void *context)
 {
     FLUIDSYNTH_Music *music = (FLUIDSYNTH_Music *)context;
     fluidsynth.fluid_player_play(music->player);
-    music->is_paused = SDL_FALSE;
+    music->is_paused = false;
 }
 
-static SDL_bool FLUIDSYNTH_IsPlaying(void *context)
+static bool FLUIDSYNTH_IsPlaying(void *context)
 {
     FLUIDSYNTH_Music *music = (FLUIDSYNTH_Music *)context;
-    return music->is_paused || fluidsynth.fluid_player_get_status(music->player) == FLUID_PLAYER_PLAYING ? SDL_TRUE : SDL_FALSE;
+    return music->is_paused || fluidsynth.fluid_player_get_status(music->player) == FLUID_PLAYER_PLAYING ? true : false;
 }
 
-static int FLUIDSYNTH_GetSome(void *context, void *data, int bytes, SDL_bool *done)
+static int FLUIDSYNTH_GetSome(void *context, void *data, int bytes, bool *done)
 {
     FLUIDSYNTH_Music *music = (FLUIDSYNTH_Music *)context;
     int filled;
@@ -331,14 +331,14 @@ static void FLUIDSYNTH_Stop(void *context)
 #if (FLUIDSYNTH_VERSION_MAJOR >= 2)
     fluidsynth.fluid_player_seek(music->player, 0);
 #endif
-    music->is_paused = SDL_FALSE;
+    music->is_paused = false;
 }
 
 static void FLUIDSYNTH_Pause(void *context)
 {
     FLUIDSYNTH_Music *music = (FLUIDSYNTH_Music *)context;
     fluidsynth.fluid_player_stop(music->player);
-    music->is_paused = SDL_TRUE;
+    music->is_paused = true;
 }
 
 static void FLUIDSYNTH_Delete(void *context)
@@ -368,8 +368,8 @@ Mix_MusicInterface Mix_MusicInterface_FLUIDSYNTH =
     "FLUIDSYNTH",
     MIX_MUSIC_FLUIDSYNTH,
     MUS_MID,
-    SDL_FALSE,
-    SDL_FALSE,
+    false,
+    false,
 
     FLUIDSYNTH_Load,
     FLUIDSYNTH_Open,

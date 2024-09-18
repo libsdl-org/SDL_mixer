@@ -140,7 +140,7 @@ typedef struct
 {
     struct mp3file_t mp3file;
     int play_count;
-    SDL_bool closeio;
+    bool closeio;
     int volume;
 
     mpg123_handle* handle;
@@ -231,7 +231,7 @@ static int MPG123_Open(const SDL_AudioSpec *spec)
     return 0;
 }
 
-static void *MPG123_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
+static void *MPG123_CreateFromIO(SDL_IOStream *src, bool closeio)
 {
     SDL_AudioSpec srcspec;
     MPG123_Music *music;
@@ -251,7 +251,7 @@ static void *MPG123_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
         return NULL;
     }
     meta_tags_init(&music->tags);
-    if (mp3_read_tags(&music->tags, &music->mp3file, SDL_TRUE) < 0) {
+    if (mp3_read_tags(&music->tags, &music->mp3file, true) < 0) {
         SDL_free(music);
         SDL_SetError("music_mpg123: corrupt mp3 file (bad tags.)");
         return NULL;
@@ -365,7 +365,7 @@ static void MPG123_Stop(void *context)
 }
 
 /* read some mp3 stream data and convert it for output */
-static int MPG123_GetSome(void *context, void *data, int bytes, SDL_bool *done)
+static int MPG123_GetSome(void *context, void *data, int bytes, bool *done)
 {
     SDL_AudioSpec srcspec;
     MPG123_Music *music = (MPG123_Music *)context;
@@ -383,7 +383,7 @@ static int MPG123_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 
     if (!music->play_count) {
         /* All done */
-        *done = SDL_TRUE;
+        *done = true;
         return 0;
     }
 
@@ -529,8 +529,8 @@ Mix_MusicInterface Mix_MusicInterface_MPG123 =
     "MPG123",
     MIX_MUSIC_MPG123,
     MUS_MP3,
-    SDL_FALSE,
-    SDL_FALSE,
+    false,
+    false,
 
     MPG123_Load,
     MPG123_Open,

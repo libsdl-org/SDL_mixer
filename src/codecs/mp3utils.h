@@ -37,7 +37,7 @@ struct mp3file_t {
 #endif
 
 #ifdef ENABLE_ALL_MP3_TAGS
-extern int mp3_read_tags(Mix_MusicMetaTags *out_tags, struct mp3file_t *fil, SDL_bool keep_id3v2);
+extern int mp3_read_tags(Mix_MusicMetaTags *out_tags, struct mp3file_t *fil, bool keep_id3v2);
 #endif /* ENABLE_ALL_MP3_TAGS */
 
 #ifdef ENABLE_ID3V2_TAG

@@ -114,8 +114,8 @@ int main(int argc, char *argv[])
 {
     int audio_volume = MIX_MAX_VOLUME;
     int looping = 0;
-    SDL_bool interactive = SDL_FALSE;
-    SDL_bool use_io = SDL_FALSE;
+    bool interactive = false;
+    bool use_io = false;
     int i;
     const char *typ;
     const char *tag_title = NULL;
@@ -157,7 +157,7 @@ int main(int argc, char *argv[])
             looping = -1;
         } else
         if (SDL_strcmp(argv[i], "-i") == 0) {
-            interactive = SDL_TRUE;
+            interactive = true;
         } else
         if (SDL_strcmp(argv[i], "-8") == 0) {
             spec.format = SDL_AUDIO_U8;
@@ -212,7 +212,7 @@ int main(int argc, char *argv[])
 
         /* Load the requested music file */
         if (use_io) {
-            music = Mix_LoadMUS_IO(SDL_IOFromFile(argv[i], "rb"), SDL_TRUE);
+            music = Mix_LoadMUS_IO(SDL_IOFromFile(argv[i], "rb"), true);
         } else {
             music = Mix_LoadMUS(argv[i]);
         }

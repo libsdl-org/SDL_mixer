@@ -39,10 +39,10 @@
 static int audio_open = 0;
 static Mix_Chunk *g_wave = NULL;
 static SDLTest_CommonState *state;
-static SDL_bool verbose = SDL_FALSE;
-static SDL_bool test_position = SDL_FALSE;
-static SDL_bool test_distance = SDL_FALSE;
-static SDL_bool test_panning = SDL_FALSE;
+static bool verbose = false;
+static bool test_position = false;
+static bool test_distance = false;
+static bool test_panning = false;
 
 static void report_decoders(void)
 {
@@ -351,20 +351,20 @@ int main(int argc, char *argv[])
                 reverse_sample = 1;
                 consumed = 1;
             } else if (SDL_strcmp("--panning", argv[i]) == 0) {
-                test_panning = SDL_TRUE;
+                test_panning = true;
                 consumed = 1;
             } else if (SDL_strcmp("--distance", argv[i]) == 0) {
-                test_distance = SDL_TRUE;
+                test_distance = true;
                 consumed = 1;
             } else if (SDL_strcmp("--position", argv[i]) == 0) {
-                test_position = SDL_TRUE;
+                test_position = true;
                 consumed = 1;
             } else if (SDL_strcmp("--version", argv[i]) == 0) {
                 test_versions();
                 CleanUp(0);
                 consumed = 1;
             } else if (SDL_strcmp("--verbose", argv[i]) == 0) {
-                verbose = SDL_TRUE;
+                verbose = true;
                 consumed = 1;
             } else if (argv[i][0] != '-' && !filename) {
                 filename = argv[i];

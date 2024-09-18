@@ -69,7 +69,7 @@ typedef struct MS_ADPCM_ChannelState
 } MS_ADPCM_ChannelState;
 
 typedef struct {
-    SDL_bool active;
+    bool active;
     Uint32 start;
     Uint32 stop;
     Uint32 initial_play_count;
@@ -78,7 +78,7 @@ typedef struct {
 
 typedef struct {
     SDL_IOStream *src;
-    SDL_bool closeio;
+    bool closeio;
     SDL_AudioSpec spec;
     int volume;
     int play_count;
@@ -214,19 +214,19 @@ typedef struct {
 #define FL32        0x32334C46      /* "FL32" */
 
 /* Function to load the WAV/AIFF stream */
-static SDL_bool LoadWAVMusic(WAV_Music *wave);
-static SDL_bool LoadAIFFMusic(WAV_Music *wave);
+static bool LoadWAVMusic(WAV_Music *wave);
+static bool LoadAIFFMusic(WAV_Music *wave);
 
 static void WAV_Delete(void *context);
 
 static int fetch_pcm(void *context, int length);
 
 /* Load a WAV stream from the given SDL_IOStream object */
-static void *WAV_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
+static void *WAV_CreateFromIO(SDL_IOStream *src, bool closeio)
 {
     WAV_Music *music;
     Uint32 magic;
-    SDL_bool loaded = SDL_FALSE;
+    bool loaded = false;
 
     music = (WAV_Music *)SDL_calloc(1, sizeof(*music));
     if (!music) {
@@ -290,7 +290,7 @@ static int WAV_Play(void *context, int play_count)
     unsigned int i;
     for (i = 0; i < music->numloops; ++i) {
         WAVLoopPoint *loop = &music->loops[i];
-        loop->active = SDL_TRUE;
+        loop->active = true;
         loop->current_play_count = loop->initial_play_count;
     }
     music->play_count = play_count;
@@ -1169,15 +1169,15 @@ static Sint64 WAV_Position(WAV_Music *music)
 }
 
 /* Play some of a stream previously started with WAV_Play() */
-static int WAV_GetSome(void *context, void *data, int bytes, SDL_bool *done)
+static int WAV_GetSome(void *context, void *data, int bytes, bool *done)
 {
     WAV_Music *music = (WAV_Music *)context;
     Sint64 pos, stop;
     WAVLoopPoint *loop;
     Sint64 loop_start = music->start;
     Sint64 loop_stop = music->stop;
-    SDL_bool looped = SDL_FALSE;
-    SDL_bool at_end = SDL_FALSE;
+    bool looped = false;
+    bool at_end = false;
     unsigned int i;
     int filled, amount, result;
 
@@ -1188,7 +1188,7 @@ static int WAV_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 
     if (!music->play_count) {
         /* All done */
-        *done = SDL_TRUE;
+        *done = true;
         return 0;
     }
 
@@ -1222,19 +1222,19 @@ static int WAV_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         }
     } else {
         /* We might be looping, continue */
-        at_end = SDL_TRUE;
+        at_end = true;
     }
 
     if (loop && WAV_Position(music) >= stop) {
         if (loop->current_play_count == 1) {
-            loop->active = SDL_FALSE;
+            loop->active = false;
         } else {
             if (loop->current_play_count > 0) {
                 --loop->current_play_count;
             }
             if (SDL_SeekIO(music->src, loop_start, SDL_IO_SEEK_SET) < 0)
                 return -1;
-            looped = SDL_TRUE;
+            looped = true;
         }
     }
 
@@ -1354,7 +1354,7 @@ static void WAV_Delete(void *context)
     SDL_free(music);
 }
 
-static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
+static bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
 {
     SDL_AudioSpec *spec = &wave->spec;
     WaveFMTEx fmt;
@@ -1364,18 +1364,18 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
 
     if (chunk_length < sizeof(fmt.format)) {
         SDL_SetError("Wave format chunk too small");
-        return SDL_FALSE;
+        return false;
     }
 
     chunk = (Uint8 *)SDL_malloc(chunk_length);
     if (!chunk) {
-        return SDL_FALSE;
+        return false;
     }
 
     if (SDL_ReadIO(wave->src, chunk, chunk_length) != chunk_length) {
         SDL_SetError("Couldn't read %" SDL_PRIu32 " bytes from WAV file", chunk_length);
         SDL_free(chunk);
-        return SDL_FALSE;
+        return false;
     }
     size = (chunk_length >= sizeof(fmt)) ? sizeof(fmt) : sizeof(fmt.format);
     SDL_zero(fmt);
@@ -1387,7 +1387,7 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
         if (size < sizeof(fmt)) {
             SDL_SetError("Wave format chunk too small");
             SDL_free(chunk);
-            return SDL_FALSE;
+            return false;
         }
         wave->encoding = (Uint16)SDL_Swap32LE(fmt.subencoding);
     }
@@ -1408,21 +1408,21 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
             wave->decode = fetch_ms_adpcm;
             if (MS_ADPCM_Init(&wave->adpcm_state, chunk, chunk_length) < 0) {
                 SDL_free(chunk);
-                return SDL_FALSE;
+                return false;
             }
             break;
         case IMA_ADPCM_CODE:
             wave->decode = fetch_ima_adpcm;
             if (IMA_ADPCM_Init(&wave->adpcm_state, chunk, chunk_length) < 0) {
                 SDL_free(chunk);
-                return SDL_FALSE;
+                return false;
             }
             break;
         default:
             /* but NOT this */
             SDL_SetError("Unknown WAVE data format");
             SDL_free(chunk);
-            return SDL_FALSE;
+            return false;
     }
     SDL_free(chunk);
 
@@ -1478,7 +1478,7 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
         default:
             unknown_bits:
             SDL_SetError("Unknown PCM format with %d bits", bits);
-            return SDL_FALSE;
+            return false;
     }
     spec->channels = (Uint8) SDL_Swap16LE(fmt.format.channels);
     wave->samplesize = spec->channels * (bits / 8);
@@ -1487,24 +1487,24 @@ static SDL_bool ParseFMT(WAV_Music *wave, Uint32 chunk_length)
     wave->buflen *= spec->channels;
     wave->buflen *= 4096;  /* reasonable sample frame count */
 
-    return SDL_TRUE;
+    return true;
 }
 
-static SDL_bool ParseDATA(WAV_Music *wave, Uint32 chunk_length)
+static bool ParseDATA(WAV_Music *wave, Uint32 chunk_length)
 {
     wave->start = SDL_TellIO(wave->src);
     wave->stop = wave->start + chunk_length;
     if (SDL_SeekIO(wave->src, chunk_length, SDL_IO_SEEK_CUR) < 0)
-        return SDL_FALSE;
-    return SDL_TRUE;
+        return false;
+    return true;
 }
 
-static SDL_bool AddLoopPoint(WAV_Music *wave, Uint32 play_count, Uint32 start, Uint32 stop)
+static bool AddLoopPoint(WAV_Music *wave, Uint32 play_count, Uint32 start, Uint32 stop)
 {
     WAVLoopPoint *loop;
     WAVLoopPoint *loops = SDL_realloc(wave->loops, (wave->numloops + 1) * sizeof(*wave->loops));
     if (!loops) {
-        return SDL_FALSE;
+        return false;
     }
 
     loop = &loops[ wave->numloops ];
@@ -1515,24 +1515,24 @@ static SDL_bool AddLoopPoint(WAV_Music *wave, Uint32 play_count, Uint32 start, U
 
     wave->loops = loops;
     ++wave->numloops;
-    return SDL_TRUE;
+    return true;
 }
 
-static SDL_bool ParseSMPL(WAV_Music *wave, Uint32 chunk_length)
+static bool ParseSMPL(WAV_Music *wave, Uint32 chunk_length)
 {
     SamplerChunk *chunk;
     Uint8 *data;
     Uint32 i;
-    SDL_bool loaded = SDL_FALSE;
+    bool loaded = false;
 
     data = (Uint8 *)SDL_malloc(chunk_length);
     if (!data) {
-        return SDL_FALSE;
+        return false;
     }
     if (SDL_ReadIO(wave->src, data, chunk_length) != chunk_length) {
         SDL_SetError("Couldn't read %" SDL_PRIu32 " bytes from WAV file", chunk_length);
         SDL_free(data);
-        return SDL_FALSE;
+        return false;
     }
     chunk = (SamplerChunk *)data;
 
@@ -1544,7 +1544,7 @@ static SDL_bool ParseSMPL(WAV_Music *wave, Uint32 chunk_length)
         }
     }
 
-    loaded = SDL_TRUE;
+    loaded = true;
     SDL_free(data);
     return loaded;
 }
@@ -1570,19 +1570,19 @@ static void read_meta_field(Mix_MusicMetaTags *tags, Mix_MusicMetaTag tag_type, 
     SDL_free(field);
 }
 
-static SDL_bool ParseLIST(WAV_Music *wave, Uint32 chunk_length)
+static bool ParseLIST(WAV_Music *wave, Uint32 chunk_length)
 {
     Uint8 *data;
 
     data = (Uint8 *)SDL_malloc(chunk_length);
     if (!data) {
-        return SDL_FALSE;
+        return false;
     }
 
     if (SDL_ReadIO(wave->src, data, chunk_length) != chunk_length) {
         SDL_SetError("Couldn't read %" SDL_PRIu32 " bytes from WAV file", chunk_length);
         SDL_free(data);
-        return SDL_FALSE;
+        return false;
     }
 
     if (SDL_strncmp((char *)data, "INFO", 4) == 0) {
@@ -1608,23 +1608,23 @@ static SDL_bool ParseLIST(WAV_Music *wave, Uint32 chunk_length)
     /* done: */
     SDL_free(data);
 
-    return SDL_TRUE;
+    return true;
 }
 
-static SDL_bool ParseID3(WAV_Music *wave, Uint32 chunk_length)
+static bool ParseID3(WAV_Music *wave, Uint32 chunk_length)
 {
-    SDL_bool loaded = SDL_TRUE;
+    bool loaded = true;
 
     Uint8 *data;
     data = (Uint8 *)SDL_malloc(chunk_length);
 
     if (!data) {
-        return SDL_FALSE;
+        return false;
     }
 
     if (SDL_ReadIO(wave->src, data, chunk_length) != chunk_length) {
         SDL_SetError("Couldn't read %" SDL_PRIu32 " bytes from WAV file", chunk_length);
-        loaded = SDL_FALSE;
+        loaded = false;
     }
 
     if (loaded) {
@@ -1637,13 +1637,13 @@ static SDL_bool ParseID3(WAV_Music *wave, Uint32 chunk_length)
     return loaded;
 }
 
-static SDL_bool LoadWAVMusic(WAV_Music *wave)
+static bool LoadWAVMusic(WAV_Music *wave)
 {
     SDL_IOStream *src = wave->src;
     Uint32 chunk_type;
     Uint32 chunk_length;
-    SDL_bool found_FMT = SDL_FALSE;
-    SDL_bool found_DATA = SDL_FALSE;
+    bool found_FMT = false;
+    bool found_DATA = false;
     /* WAV magic header */
     Uint32 wavelen;
     Uint32 WAVEmagic;
@@ -1653,7 +1653,7 @@ static SDL_bool LoadWAVMusic(WAV_Music *wave)
     /* Check the magic header */
     if (!SDL_ReadU32LE(src, &wavelen) ||
         !SDL_ReadU32LE(src, &WAVEmagic)) {
-        return SDL_FALSE;
+        return false;
     }
 
     (void)wavelen;   /* unused */
@@ -1666,7 +1666,7 @@ static SDL_bool LoadWAVMusic(WAV_Music *wave)
             if (SDL_GetIOStatus(src) == SDL_IO_STATUS_EOF) {
                 break;
             }
-            return SDL_FALSE;
+            return false;
         }
 
         if (chunk_length == 0)
@@ -1674,51 +1674,51 @@ static SDL_bool LoadWAVMusic(WAV_Music *wave)
 
         switch (chunk_type) {
         case FMT:
-            found_FMT = SDL_TRUE;
+            found_FMT = true;
             if (!ParseFMT(wave, chunk_length))
-                return SDL_FALSE;
+                return false;
             break;
         case DATA:
-            found_DATA = SDL_TRUE;
+            found_DATA = true;
             if (!ParseDATA(wave, chunk_length))
-                return SDL_FALSE;
+                return false;
             break;
         case SMPL:
             if (!ParseSMPL(wave, chunk_length))
-                return SDL_FALSE;
+                return false;
             break;
         case LIST:
             if (!ParseLIST(wave, chunk_length))
-                return SDL_FALSE;
+                return false;
             break;
         case ID3_:
             if (!ParseID3(wave, chunk_length))
-                return SDL_FALSE;
+                return false;
             break;
         default:
             if (SDL_SeekIO(src, chunk_length, SDL_IO_SEEK_CUR) < 0)
-                return SDL_FALSE;
+                return false;
             break;
         }
 
         /* RIFF chunks have a 2-byte alignment. Skip padding byte. */
         if (chunk_length & 1) {
             if (SDL_SeekIO(src, 1, SDL_IO_SEEK_CUR) < 0)
-                return SDL_FALSE;
+                return false;
         }
     }
 
     if (!found_FMT) {
         SDL_SetError("Bad WAV file (no FMT chunk)");
-        return SDL_FALSE;
+        return false;
     }
 
     if (!found_DATA) {
         SDL_SetError("Bad WAV file (no DATA chunk)");
-        return SDL_FALSE;
+        return false;
     }
 
-    return SDL_TRUE;
+    return true;
 }
 
 /* I couldn't get SANE_to_double() to work, so I stole this from libsndfile.
@@ -1747,14 +1747,14 @@ static Uint32 SANE_to_Uint32 (Uint8 *sanebuf)
             (sanebuf[5] >> 1)) >> (29 - sanebuf[1]));
 }
 
-static SDL_bool LoadAIFFMusic(WAV_Music *wave)
+static bool LoadAIFFMusic(WAV_Music *wave)
 {
     SDL_IOStream *src = wave->src;
     SDL_AudioSpec *spec = &wave->spec;
-    SDL_bool found_SSND = SDL_FALSE;
-    SDL_bool found_COMM = SDL_FALSE;
-    SDL_bool found_FVER = SDL_FALSE;
-    SDL_bool is_AIFC = SDL_FALSE;
+    bool found_SSND = false;
+    bool found_COMM = false;
+    bool found_FVER = false;
+    bool is_AIFC = false;
 
     Uint32 chunk_type;
     Uint32 chunk_length;
@@ -1781,14 +1781,14 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
     /* Check the magic header */
     if (!SDL_ReadU32BE(src, &chunk_length) ||
         !SDL_ReadU32LE(src, &AIFFmagic)) {
-        return SDL_FALSE;
+        return false;
     }
     if (AIFFmagic != AIFF && AIFFmagic != AIFC) {
         SDL_SetError("Unrecognized file type (not AIFF or AIFC)");
-        return SDL_FALSE;
+        return false;
     }
     if (AIFFmagic == AIFC) {
-        is_AIFC = SDL_TRUE;
+        is_AIFC = true;
     }
 
     /* From what I understand of the specification, chunks may appear in
@@ -1800,7 +1800,7 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
     do {
         if (!SDL_ReadU32LE(src, &chunk_type) ||
             !SDL_ReadU32BE(src, &chunk_length)) {
-            return SDL_FALSE;
+            return false;
         }
         next_chunk = SDL_TellIO(src) + chunk_length;
 
@@ -1810,26 +1810,26 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
 
         switch (chunk_type) {
         case SSND:
-            found_SSND = SDL_TRUE;
+            found_SSND = true;
             if (!SDL_ReadU32BE(src, &offset) ||
                 !SDL_ReadU32BE(src, &blocksize)) {
-                return SDL_FALSE;
+                return false;
             }
             wave->start = SDL_TellIO(src) + offset;
             (void)blocksize; /* unused */
             break;
 
         case FVER:
-            found_FVER = SDL_TRUE;
+            found_FVER = true;
             if (!SDL_ReadU32BE(src, &AIFCVersion1)) {
-                return SDL_FALSE;
+                return false;
             }
             (void)AIFCVersion1; /* unused */
             break;
 
         case AIFF_ID3_:
             if (!ParseID3(wave, chunk_length))
-                return SDL_FALSE;
+                return false;
             break;
 
         case MARK:
@@ -1843,7 +1843,7 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
             chunk_buffer = (char*)SDL_calloc(1, chunk_length + 1);
             if (SDL_ReadIO(src, chunk_buffer, chunk_length) != chunk_length) {
                 SDL_free(chunk_buffer);
-                return SDL_FALSE;
+                return false;
             }
             meta_tags_set(&wave->tags,
                           chunk_type == NAME ? MIX_META_TITLE :
@@ -1854,19 +1854,19 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
             break;
 
         case COMM:
-            found_COMM = SDL_TRUE;
+            found_COMM = true;
 
             /* Read the audio data format chunk */
             if (!SDL_ReadU16BE(src, &channels) ||
                 !SDL_ReadU32BE(src, &numsamples) ||
                 !SDL_ReadU16BE(src, &samplesize) ||
                 SDL_ReadIO(src, sane_freq, sizeof(sane_freq)) != sizeof(sane_freq)) {
-                return SDL_FALSE;
+                return false;
             }
             frequency = SANE_to_Uint32(sane_freq);
             if (is_AIFC) {
                 if (!SDL_ReadU32LE(src, &compressionType)) {
-                    return SDL_FALSE;
+                    return false;
                 }
                 /* here must be a "compressionName" which is a padded string */
             }
@@ -1880,17 +1880,17 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
 
     if (!found_SSND) {
         SDL_SetError("Bad AIFF/AIFF-C file (no SSND chunk)");
-        return SDL_FALSE;
+        return false;
     }
 
     if (!found_COMM) {
         SDL_SetError("Bad AIFF/AIFF-C file (no COMM chunk)");
-        return SDL_FALSE;
+        return false;
     }
 
     if (is_AIFC && !found_FVER) {
         SDL_SetError("Bad AIFF-C file (no FVER chunk)");
-        return SDL_FALSE;
+        return false;
     }
 
     wave->samplesize = channels * (samplesize / 8);
@@ -1975,11 +1975,11 @@ static SDL_bool LoadAIFFMusic(WAV_Music *wave)
     default:
     unsupported_format:
         SDL_SetError("Unknown samplesize in data format");
-        return SDL_FALSE;
+        return false;
     }
     spec->channels = (Uint8) channels;
 
-    return SDL_TRUE;
+    return true;
 }
 
 Mix_MusicInterface Mix_MusicInterface_WAV =
@@ -1987,8 +1987,8 @@ Mix_MusicInterface Mix_MusicInterface_WAV =
     "WAVE",
     MIX_MUSIC_WAVE,
     MUS_WAV,
-    SDL_FALSE,
-    SDL_FALSE,
+    false,
+    false,
 
     NULL,   /* Load */
     NULL,   /* Open */

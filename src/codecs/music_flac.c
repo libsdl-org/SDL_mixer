@@ -170,12 +170,12 @@ typedef struct {
     unsigned channels;
     unsigned bits_per_sample;
     SDL_IOStream *src;
-    SDL_bool closeio;
+    bool closeio;
     SDL_AudioStream *stream;
     int loop;
     FLAC__int64 pcm_pos;
     FLAC__int64 full_length;
-    SDL_bool loop_flag;
+    bool loop_flag;
     FLAC__int64 loop_start;
     FLAC__int64 loop_end;
     FLAC__int64 loop_len;
@@ -379,7 +379,7 @@ static FLAC__StreamDecoderWriteStatus flac_write_music_cb(
     if (music->loop && (music->play_count != 1) &&
         (music->pcm_pos >= music->loop_end)) {
         amount -= (music->pcm_pos - music->loop_end) * channels * (int)sizeof(*data);
-        music->loop_flag = SDL_TRUE;
+        music->loop_flag = true;
     }
 
     SDL_PutAudioStreamData(music->stream, data, amount);
@@ -398,7 +398,7 @@ static void flac_metadata_music_cb(
     int channels;
     unsigned rate;
     char *param, *argument, *value;
-    SDL_bool is_loop_length = SDL_FALSE;
+    bool is_loop_length = false;
 
     (void)decoder;
 
@@ -453,10 +453,10 @@ static void flac_metadata_music_cb(
                 music->loop_start = _Mix_ParseTime(value, rate);
             else if (SDL_strcasecmp(argument, "LOOPLENGTH") == 0) {
                 music->loop_len = SDL_strtoll(value, NULL, 10);
-                is_loop_length = SDL_TRUE;
+                is_loop_length = true;
             } else if (SDL_strcasecmp(argument, "LOOPEND") == 0) {
                 music->loop_end = _Mix_ParseTime(value, rate);
-                is_loop_length = SDL_FALSE;
+                is_loop_length = false;
             } else if (SDL_strcasecmp(argument, "TITLE") == 0) {
                 meta_tags_set(&music->tags, MIX_META_TITLE, value);
             } else if (SDL_strcasecmp(argument, "ARTIST") == 0) {
@@ -513,7 +513,7 @@ static void flac_error_music_cb(
 }
 
 /* Load an FLAC stream from an SDL_IOStream object */
-static void *FLAC_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
+static void *FLAC_CreateFromIO(SDL_IOStream *src, bool closeio)
 {
     FLAC_Music *music;
     int init_stage = 0;
@@ -637,7 +637,7 @@ static void FLAC_Stop(void *context)
 }
 
 /* Read some FLAC stream data and convert it for output */
-static int FLAC_GetSome(void *context, void *data, int bytes, SDL_bool *done)
+static int FLAC_GetSome(void *context, void *data, int bytes, bool *done)
 {
     FLAC_Music *music = (FLAC_Music *)context;
     int filled;
@@ -649,7 +649,7 @@ static int FLAC_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 
     if (!music->play_count) {
         /* All done */
-        *done = SDL_TRUE;
+        *done = true;
         return 0;
     }
 
@@ -671,7 +671,7 @@ static int FLAC_GetSome(void *context, void *data, int bytes, SDL_bool *done)
                 play_count = (music->play_count - 1);
             }
             music->play_count = play_count;
-            music->loop_flag = SDL_FALSE;
+            music->loop_flag = false;
         }
     }
 
@@ -784,8 +784,8 @@ Mix_MusicInterface Mix_MusicInterface_FLAC =
     "FLAC",
     MIX_MUSIC_FLAC,
     MUS_FLAC,
-    SDL_FALSE,
-    SDL_FALSE,
+    false,
+    false,
 
     FLAC_Load,
     NULL,   /* Open */

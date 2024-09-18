@@ -375,10 +375,10 @@ static Uint32 voc_read(SDL_IOStream *src, vs_t *v, Uint8 *buf, SDL_AudioSpec *sp
 
 
 /* don't call this directly; use Mix_LoadWAV_IO() for now. */
-SDL_AudioSpec *Mix_LoadVOC_IO (SDL_IOStream *src, SDL_bool closeio,
+SDL_AudioSpec *Mix_LoadVOC_IO (SDL_IOStream *src, bool closeio,
                                SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len)
 {
-    SDL_bool was_error = SDL_TRUE;
+    bool was_error = true;
     vs_t v;
     int samplesize;
     Uint8 *fillptr;
@@ -461,7 +461,7 @@ SDL_AudioSpec *Mix_LoadVOC_IO (SDL_IOStream *src, SDL_bool closeio,
     samplesize = ((spec->format & 0xFF)/8)*spec->channels;
     *audio_len &= (Uint32) ~(samplesize-1);
 
-    was_error = SDL_FALSE;
+    was_error = false;
 
 done:
     if (closeio && src) {

@@ -31,7 +31,7 @@
 #include <SDL3_mixer/SDL_mixer.h>
 
 /* Don't call this directly; use Mix_LoadWAV_IO() for now. */
-SDL_AudioSpec *Mix_LoadSndFile_IO (SDL_IOStream *src, SDL_bool closeio,
+SDL_AudioSpec *Mix_LoadSndFile_IO (SDL_IOStream *src, bool closeio,
 				   SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len);
 
 void SNDFILE_uninit (void);

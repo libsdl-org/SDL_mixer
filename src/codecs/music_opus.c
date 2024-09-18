@@ -104,7 +104,7 @@ static void OPUS_Unload(void)
 
 typedef struct {
     SDL_IOStream *src;
-    SDL_bool closeio;
+    bool closeio;
     int play_count;
     int volume;
     OggOpusFile *of;
@@ -210,13 +210,13 @@ static int OPUS_UpdateSection(OPUS_music *music)
 }
 
 /* Load an Opus stream from an SDL_IOStream object */
-static void *OPUS_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
+static void *OPUS_CreateFromIO(SDL_IOStream *src, bool closeio)
 {
     OPUS_music *music;
     OpusFileCallbacks callbacks;
     const OpusTags* tags;
     int err = 0, ci;
-    SDL_bool is_loop_length = SDL_FALSE;
+    bool is_loop_length = false;
     ogg_int64_t full_length;
 
     music = (OPUS_music *)SDL_calloc(1, sizeof *music);
@@ -273,10 +273,10 @@ static void *OPUS_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
                 music->loop_start = _Mix_ParseTime(value, 48000);
             else if (SDL_strcasecmp(argument, "LOOPLENGTH") == 0) {
                 music->loop_len = SDL_strtoll(value, NULL, 10);
-                is_loop_length = SDL_TRUE;
+                is_loop_length = true;
             } else if (SDL_strcasecmp(argument, "LOOPEND") == 0) {
                 music->loop_end = _Mix_ParseTime(value, 48000);
-                is_loop_length = SDL_FALSE;
+                is_loop_length = false;
             } else if (SDL_strcasecmp(argument, "TITLE") == 0) {
                 meta_tags_set(&music->tags, MIX_META_TITLE, value);
             } else if (SDL_strcasecmp(argument, "ARTIST") == 0) {
@@ -350,12 +350,12 @@ static void OPUS_Stop(void *context)
 }
 
 /* Play some of a stream previously started with OPUS_Play() */
-static int OPUS_GetSome(void *context, void *data, int bytes, SDL_bool *done)
+static int OPUS_GetSome(void *context, void *data, int bytes, bool *done)
 {
     OPUS_music *music = (OPUS_music *)context;
     int filled, samples, section;
     int result;
-    SDL_bool looped = SDL_FALSE;
+    bool looped = false;
     ogg_int64_t pcmPos;
 
     filled = SDL_GetAudioStreamData(music->stream, data, bytes);
@@ -365,7 +365,7 @@ static int OPUS_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 
     if (!music->play_count) {
         /* All done */
-        *done = SDL_TRUE;
+        *done = true;
         return 0;
     }
 
@@ -395,7 +395,7 @@ static int OPUS_GetSome(void *context, void *data, int bytes, SDL_bool *done)
             }
             music->play_count = play_count;
         }
-        looped = SDL_TRUE;
+        looped = true;
     }
 
     if (samples > 0) {
@@ -500,8 +500,8 @@ Mix_MusicInterface Mix_MusicInterface_Opus =
     "OPUS",
     MIX_MUSIC_OPUS,
     MUS_OPUS,
-    SDL_FALSE,
-    SDL_FALSE,
+    false,
+    false,
 
     OPUS_Load,
     NULL,   /* Open */

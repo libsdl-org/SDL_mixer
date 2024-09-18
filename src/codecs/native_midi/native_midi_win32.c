@@ -213,7 +213,7 @@ int native_midi_detect(void)
   return 1;
 }
 
-NativeMidiSong *native_midi_loadsong_IO(SDL_IOStream *src, SDL_bool closeio)
+NativeMidiSong *native_midi_loadsong_IO(SDL_IOStream *src, bool closeio)
 {
     NativeMidiSong *newsong;
     MIDIEvent       *evntlist = NULL;

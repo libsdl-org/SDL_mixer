@@ -51,7 +51,7 @@ typedef struct {
     struct mp3file_t file;
     drflac *dec;
     int play_count;
-    SDL_bool closeio;
+    bool closeio;
     int volume;
     int status;
     int sample_rate;
@@ -60,7 +60,7 @@ typedef struct {
     drflac_int16 *buffer;
     int buffer_size;
     int loop;
-    SDL_bool loop_flag;
+    bool loop_flag;
     Sint64 loop_start;
     Sint64 loop_end;
     Sint64 loop_len;
@@ -94,7 +94,7 @@ static void DRFLAC_MetaCB(void *context, drflac_metadata *metadata)
     } else if (metadata->type == DRFLAC_METADATA_BLOCK_TYPE_VORBIS_COMMENT) {
         drflac_uint32 i;
         char *param, *argument, *value;
-        SDL_bool is_loop_length = SDL_FALSE;
+        bool is_loop_length = false;
         const char *pRunningData = (const char *)metadata->data.vorbis_comment.pComments;
 
         for (i = 0; i < metadata->data.vorbis_comment.commentCount; ++i) {
@@ -123,10 +123,10 @@ static void DRFLAC_MetaCB(void *context, drflac_metadata *metadata)
                     music->loop_start = _Mix_ParseTime(value, music->sample_rate);
                 else if (SDL_strcasecmp(argument, "LOOPLENGTH") == 0) {
                     music->loop_len = SDL_strtoll(value, NULL, 10);
-                    is_loop_length = SDL_TRUE;
+                    is_loop_length = true;
                 } else if (SDL_strcasecmp(argument, "LOOPEND") == 0) {
                     music->loop_end = _Mix_ParseTime(value, music->sample_rate);
-                    is_loop_length = SDL_FALSE;
+                    is_loop_length = false;
                 } else if (SDL_strcasecmp(argument, "TITLE") == 0) {
                     meta_tags_set(&music->tags, MIX_META_TITLE, value);
                 } else if (SDL_strcasecmp(argument, "ARTIST") == 0) {
@@ -158,7 +158,7 @@ static void DRFLAC_MetaCB(void *context, drflac_metadata *metadata)
 
 static int DRFLAC_Seek(void *context, double position);
 
-static void *DRFLAC_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
+static void *DRFLAC_CreateFromIO(SDL_IOStream *src, bool closeio)
 {
     DRFLAC_Music *music;
     SDL_AudioSpec srcspec;
@@ -241,7 +241,7 @@ static void DRFLAC_Stop(void *context)
     SDL_ClearAudioStream(music->stream);
 }
 
-static int DRFLAC_GetSome(void *context, void *data, int bytes, SDL_bool *done)
+static int DRFLAC_GetSome(void *context, void *data, int bytes, bool *done)
 {
     DRFLAC_Music *music = (DRFLAC_Music *)context;
     int filled;
@@ -256,7 +256,7 @@ static int DRFLAC_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 
     if (!music->play_count) {
         /* All done */
-        *done = SDL_TRUE;
+        *done = true;
         return 0;
     }
 
@@ -270,7 +270,7 @@ static int DRFLAC_GetSome(void *context, void *data, int bytes, SDL_bool *done)
                 play_count = (music->play_count - 1);
             }
             music->play_count = play_count;
-            music->loop_flag = SDL_FALSE;
+            music->loop_flag = false;
         }
     }
 
@@ -279,7 +279,7 @@ static int DRFLAC_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         if (music->loop && (music->play_count != 1) &&
             ((Sint64)music->dec->currentPCMFrame >= music->loop_end)) {
             amount -= (music->dec->currentPCMFrame - music->loop_end);
-            music->loop_flag = SDL_TRUE;
+            music->loop_flag = true;
         }
         if (!SDL_PutAudioStreamData(music->stream, music->buffer, (int)amount * sizeof(drflac_int16) * music->channels)) {
             return -1;
@@ -386,8 +386,8 @@ Mix_MusicInterface Mix_MusicInterface_DRFLAC =
     "DRFLAC",
     MIX_MUSIC_DRFLAC,
     MUS_FLAC,
-    SDL_FALSE,
-    SDL_FALSE,
+    false,
+    false,
 
     NULL,   /* Load */
     NULL,   /* Open */

@@ -63,7 +63,7 @@ static int MiniMP3_SeekCB(uint64_t position, void *context)
 
 static int MINIMP3_Seek(void *context, double position);
 
-static void *MINIMP3_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
+static void *MINIMP3_CreateFromIO(SDL_IOStream *src, bool closeio)
 {
     MiniMP3_Music *music;
     SDL_AudioSpec file_spec;
@@ -80,7 +80,7 @@ static void *MINIMP3_CreateFromIO(SDL_IOStream *src, SDL_bool closeio)
     }
 
     meta_tags_init(&music->tags);
-    if (mp3_read_tags(&music->tags, &music->file, SDL_FALSE) < 0) {
+    if (mp3_read_tags(&music->tags, &music->file, false) < 0) {
         SDL_free(music);
         SDL_SetError("music_minimp3: corrupt mp3 file (bad tags).");
         return NULL;
@@ -151,7 +151,7 @@ static void MINIMP3_Stop(void *context)
     SDL_ClearAudioStream(music->stream);
 }
 
-static int MINIMP3_GetSome(void *context, void *data, int bytes, SDL_bool *done)
+static int MINIMP3_GetSome(void *context, void *data, int bytes, bool *done)
 {
     MiniMP3_Music *music = (MiniMP3_Music *)context;
     int filled, amount;
@@ -165,7 +165,7 @@ static int MINIMP3_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 
     if (!music->play_count) {
         /* All done */
-        *done = SDL_TRUE;
+        *done = true;
         return 0;
     }
 
@@ -251,8 +251,8 @@ Mix_MusicInterface Mix_MusicInterface_MINIMP3 =
     "MINIMP3",
     MIX_MUSIC_MINIMP3,
     MUS_MP3,
-    SDL_FALSE,
-    SDL_FALSE,
+    false,
+    false,
 
     NULL,   /* Load */
     NULL,   /* Open */

@@ -37,9 +37,9 @@ void _Mix_InitEffects(void);
 void _Mix_DeinitEffects(void);
 void _Eff_PositionDeinit(void);
 
-SDL_bool _Mix_RegisterEffect_locked(int channel, Mix_EffectFunc_t f, Mix_EffectDone_t d, void *arg);
-SDL_bool _Mix_UnregisterEffect_locked(int channel, Mix_EffectFunc_t f);
-SDL_bool _Mix_UnregisterAllEffects_locked(int channel);
+bool _Mix_RegisterEffect_locked(int channel, Mix_EffectFunc_t f, Mix_EffectDone_t d, void *arg);
+bool _Mix_UnregisterEffect_locked(int channel, Mix_EffectFunc_t f);
+bool _Mix_UnregisterAllEffects_locked(int channel);
 
 #endif /* _INCLUDE_EFFECTS_INTERNAL_H_ */
 
