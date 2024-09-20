@@ -127,15 +127,94 @@ void native_midi_freesong(NativeMidiSong *song)
     SDL_free(song);
 }
 
+static int map_event_type(int ev_type)
+{
+    switch (ev_type) {
+    case MIDI_STATUS_NOTE_OFF:
+        return SND_SEQ_EVENT_NOTEOFF;
+    case MIDI_STATUS_NOTE_ON:
+        return SND_SEQ_EVENT_NOTEON;
+    case MIDI_STATUS_AFTERTOUCH:
+        return SND_SEQ_EVENT_KEYPRESS;
+    case MIDI_STATUS_CONTROLLER:
+        return SND_SEQ_EVENT_CONTROLLER;
+    case MIDI_STATUS_PROG_CHANGE:
+        return SND_SEQ_EVENT_PGMCHANGE;
+    case MIDI_STATUS_PRESSURE:
+        return SND_SEQ_EVENT_CHANPRESS;
+    case MIDI_STATUS_PITCH_WHEEL:
+        return SND_SEQ_EVENT_PITCHBEND;
+    case MIDI_STATUS_SYSEX:
+        return SND_SEQ_EVENT_SYSEX;
+    default:
+        return SND_SEQ_EVENT_NONE;
+    }
+}
+
+static void convert_event(snd_seq_event_t *alsa_ev, MIDIEvent *ev)
+{
+    switch ((ev->status & 0xf0) >> 4) {
+    case MIDI_STATUS_NOTE_OFF:
+    case MIDI_STATUS_NOTE_ON:
+    case MIDI_STATUS_AFTERTOUCH:
+        snd_seq_ev_set_fixed(alsa_ev);
+        alsa_ev->data.note.channel = ev->status & 0x0f;
+        alsa_ev->data.note.note = ev->data[0];
+        alsa_ev->data.note.velocity = ev->data[1];
+        break;
+
+    case MIDI_STATUS_CONTROLLER:
+        snd_seq_ev_set_fixed(alsa_ev);
+        alsa_ev->data.control.channel = ev->status & 0x0f;
+        alsa_ev->data.control.param = ev->data[0];
+        alsa_ev->data.control.value = ev->data[1];
+        break;
+
+    case MIDI_STATUS_PROG_CHANGE:
+    case MIDI_STATUS_PRESSURE:
+        snd_seq_ev_set_fixed(alsa_ev);
+        alsa_ev->data.control.channel = ev->status & 0x0f;
+        alsa_ev->data.control.value = ev->data[0];
+        break;
+
+    case MIDI_STATUS_PITCH_WHEEL:
+        snd_seq_ev_set_fixed(alsa_ev);
+        alsa_ev->data.control.channel = ev->status & 0x0f;
+        alsa_ev->data.control.value =
+            ((ev->data[0]) | ((ev->data[1]) << 7)) - 0x2000;
+        break;
+
+    case MIDI_STATUS_SYSEX:
+        snd_seq_ev_set_variable(alsa_ev, ev->extraLen, ev->extraData);
+        break;
+
+    default:
+        break;
+    }
+}
+
 static int playback_thread(void *data)
 {
     NativeMidiSong *song = data;
+    MIDIEvent *ev = NULL;
+    snd_seq_event_t alsa_ev;
 
     snd_seq_start_queue(output, output_queue, NULL);
 
     while (state == PLAYING) {
-        // TODO
-        break;
+        if (ev == NULL) {
+            ev = song->event_list;
+            if (ev == NULL) {
+                break;
+            }
+        }
+
+        snd_seq_ev_clear(&alsa_ev);
+        alsa_ev.type = map_event_type((ev->status & 0xf0) >> 4);
+        snd_seq_ev_set_source(&alsa_ev, local_port);
+        snd_seq_ev_set_subs(&alsa_ev);
+        snd_seq_ev_schedule_tick(&alsa_ev, output_queue, 0, ev->time);
+        convert_event(&alsa_ev, ev);
     }
 
     state = STOPPED;
