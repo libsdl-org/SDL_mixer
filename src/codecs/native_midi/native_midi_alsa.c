@@ -193,12 +193,28 @@ static void convert_event(snd_seq_event_t *alsa_ev, MIDIEvent *ev)
     }
 }
 
+static void set_queue_tempo(Uint16 division)
+{
+    int err;
+
+    // TODO: SMPTE
+    snd_seq_queue_tempo_t *queue_tempo;
+    snd_seq_queue_tempo_alloca(&queue_tempo);
+    snd_seq_queue_tempo_set_tempo(queue_tempo, 500000);
+    snd_seq_queue_tempo_set_ppq(queue_tempo, division);
+    err = snd_seq_set_queue_tempo(output, output_queue, queue_tempo);
+    if (err < 0) {
+        SDL_Log("Failed to set tempo: err=%d", err);
+    }
+}
+
 static int playback_thread(void *data)
 {
     NativeMidiSong *song = data;
     MIDIEvent *ev = NULL;
     snd_seq_event_t alsa_ev;
 
+    set_queue_tempo(song->division);
     snd_seq_start_queue(output, output_queue, NULL);
 
     while (state == PLAYING) {
@@ -215,6 +231,14 @@ static int playback_thread(void *data)
         snd_seq_ev_set_subs(&alsa_ev);
         snd_seq_ev_schedule_tick(&alsa_ev, output_queue, 0, ev->time);
         convert_event(&alsa_ev, ev);
+        ev = ev->next;
+
+        snd_seq_event_output(output, &alsa_ev);
+
+        // TODO: Looping
+        if (ev == NULL) {
+            break;
+        }
     }
 
     state = STOPPED;
