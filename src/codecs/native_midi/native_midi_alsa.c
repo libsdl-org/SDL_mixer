@@ -26,6 +26,12 @@
 #include "native_midi.h"
 #include "native_midi_common.h"
 
+static const snd_seq_addr_t default_ports[] = {
+    {65, 0},
+    {17, 0},
+    {128, 0},   // Usual port for timidity
+};
+
 struct _NativeMidiSong {
     Uint16 division;
     MIDIEvent *event_list;
@@ -33,8 +39,34 @@ struct _NativeMidiSong {
 
 static enum { STOPPED, PLAYING, SHUTDOWN } state = STOPPED;
 static SDL_Thread *native_midi_thread;
+static snd_seq_addr_t connected_addr;
 static snd_seq_t *output;
+static int local_port;
 static int output_queue;
+
+static SDL_bool try_connect(void)
+{
+    int i;
+
+    local_port = snd_seq_create_simple_port(output, "SDL_mixer",
+        SND_SEQ_PORT_CAP_WRITE|SND_SEQ_PORT_CAP_SUBS_WRITE,
+        SND_SEQ_PORT_TYPE_MIDI_GENERIC);
+    if (local_port < 0) {
+        return SDL_FALSE;
+    }
+
+    for (i = 0; i < sizeof(default_ports) / sizeof(*default_ports); ++i) {
+        if (snd_seq_connect_to(output, local_port, default_ports[i].client,
+                               default_ports[i].port) == 0) {
+            connected_addr = default_ports[i];
+            return SDL_TRUE;
+        }
+    }
+
+    SDL_Log("native_midi_detect: Failed to find an output sequencer device.");
+
+    return SDL_FALSE;
+}
 
 int native_midi_detect(void)
 {
@@ -54,12 +86,21 @@ int native_midi_detect(void)
     snd_seq_set_client_name(output, "SDL_mixer");
     snd_seq_set_output_buffer_size(output, 512);
 
+    if (!try_connect()) {
+        snd_seq_close(output);
+        output = NULL;
+        return 0;
+    }
+
     output_queue = snd_seq_alloc_queue(output);
     if (output_queue < 0) {
         snd_seq_close(output);
         output = NULL;
         return 0;
     }
+
+    SDL_Log("native_midi_detect: Opened ALSA sequencer port %d:%d",
+            connected_addr.client, connected_addr.port);
 
     return 1;
 }
