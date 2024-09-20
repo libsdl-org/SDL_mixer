@@ -43,6 +43,7 @@ static snd_seq_addr_t connected_addr;
 static snd_seq_t *output;
 static int local_port;
 static int output_queue;
+static int plays_remaining;   // -1 means "loop forever"
 
 static SDL_bool try_connect(void)
 {
@@ -213,12 +214,21 @@ static int playback_thread(void *data)
     NativeMidiSong *song = data;
     MIDIEvent *ev = NULL;
     snd_seq_event_t alsa_ev;
+    int last_event_time = 0, time_offset = 0;
 
+    snd_seq_drop_output(output);
     set_queue_tempo(song->division);
     snd_seq_start_queue(output, output_queue, NULL);
 
     while (state == PLAYING) {
         if (ev == NULL) {
+            // Loop until plays_remaining is zero, then we stop.
+            if (plays_remaining == 0) {
+                break;
+            } else if (plays_remaining > 0) {
+                --plays_remaining;
+            }
+            time_offset = last_event_time + 100;
             ev = song->event_list;
             if (ev == NULL) {
                 break;
@@ -229,19 +239,19 @@ static int playback_thread(void *data)
         alsa_ev.type = map_event_type((ev->status & 0xf0) >> 4);
         snd_seq_ev_set_source(&alsa_ev, local_port);
         snd_seq_ev_set_subs(&alsa_ev);
-        snd_seq_ev_schedule_tick(&alsa_ev, output_queue, 0, ev->time);
+
+        snd_seq_ev_schedule_tick(&alsa_ev, output_queue, 0,
+                                 time_offset + ev->time);
+        last_event_time = time_offset + ev->time;
+
         convert_event(&alsa_ev, ev);
         ev = ev->next;
 
         snd_seq_event_output(output, &alsa_ev);
-
-        // TODO: Looping
-        if (ev == NULL) {
-            break;
-        }
     }
 
     state = STOPPED;
+    snd_seq_drain_output(output);
     return 0;
 }
 
@@ -249,6 +259,7 @@ void native_midi_start(NativeMidiSong *song, int loops)
 {
     native_midi_stop();
     state = PLAYING;
+    plays_remaining = loops < 0 ? -1 : loops + 1;
     native_midi_thread = SDL_CreateThread(
         playback_thread, "native midi playback", song);
 }
