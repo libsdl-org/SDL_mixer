@@ -209,6 +209,34 @@ static void set_queue_tempo(Uint16 division)
     }
 }
 
+static void send_reset(void)
+{
+    static snd_seq_event_t alsa_ev;
+    int i;
+
+    snd_seq_ev_clear(&alsa_ev);
+    snd_seq_ev_set_source(&alsa_ev, local_port);
+    snd_seq_ev_set_subs(&alsa_ev);
+    snd_seq_ev_schedule_tick(&alsa_ev, output_queue, 0, 0);
+
+    // We send an ALSA reset event, but first send the standard MIDI control
+    // events to stop all notes on all channels, just in case.
+    for (i = 0; i < 16; i++) {
+        alsa_ev.type = SND_SEQ_EVENT_CONTROLLER;
+        snd_seq_ev_set_fixed(&alsa_ev);
+        alsa_ev.data.control.channel = i;
+        alsa_ev.data.control.param = MIDI_CTL_ALL_NOTES_OFF;
+        alsa_ev.data.control.value = 0;
+        snd_seq_event_output(output, &alsa_ev);
+
+        alsa_ev.data.control.param = MIDI_CTL_RESET_CONTROLLERS;
+        snd_seq_event_output(output, &alsa_ev);
+    }
+
+    alsa_ev.type = SND_SEQ_EVENT_RESET;
+    snd_seq_event_output(output, &alsa_ev);
+}
+
 static int playback_thread(void *data)
 {
     NativeMidiSong *song = data;
@@ -219,6 +247,7 @@ static int playback_thread(void *data)
     snd_seq_drop_output(output);
     set_queue_tempo(song->division);
     snd_seq_start_queue(output, output_queue, NULL);
+    send_reset();
 
     while (state == PLAYING) {
         if (ev == NULL) {
@@ -284,6 +313,8 @@ void native_midi_stop(void)
     SDL_WaitThread(native_midi_thread, NULL);
 
     snd_seq_drop_output(output);
+    send_reset();
+    snd_seq_drain_output(output);
     snd_seq_stop_queue(output, output_queue, NULL);
 }
 
