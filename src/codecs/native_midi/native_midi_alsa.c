@@ -44,6 +44,7 @@ static snd_seq_t *output;
 static int local_port;
 static int output_queue;
 static int plays_remaining;   // -1 means "loop forever"
+static int poll_abort_pipe[2];
 
 static SDL_bool try_connect(void)
 {
@@ -78,14 +79,14 @@ int native_midi_detect(void)
     }
 
     // TODO: Allow output port to be specified explicitly
-    err = snd_seq_open(&output, "default", SND_SEQ_OPEN_OUTPUT, 0);
+    err = snd_seq_open(&output, "default", SND_SEQ_OPEN_OUTPUT,
+                       SND_SEQ_NONBLOCK);
     if (err < 0) {
         SDL_Log("native_midi_detect: Failed to open sequencer device: %s",
                 snd_strerror(err));
         return 0;
     }
     snd_seq_set_client_name(output, "SDL_mixer");
-    snd_seq_set_output_buffer_size(output, 512);
 
     if (!try_connect()) {
         snd_seq_close(output);
@@ -237,6 +238,23 @@ static void send_reset(void)
     snd_seq_event_output(output, &alsa_ev);
 }
 
+static void poll_output(void)
+{
+    struct pollfd fds[2];
+
+    // Block until more events can (potentially) be written to the
+    // ALSA output stream.
+    snd_seq_poll_descriptors(output, &fds[0], 1, POLLOUT);
+
+    // We also block on one of the file descriptors from the abort pipe;
+    // this allows native_midi_stop() below to trigger poll() to return
+    // and the playback thread to terminate.
+    fds[1].fd = poll_abort_pipe[0];
+    fds[1].events = POLLHUP|POLLERR;
+
+    poll(fds, 2, -1);
+}
+
 static int playback_thread(void *data)
 {
     NativeMidiSong *song = data;
@@ -276,17 +294,32 @@ static int playback_thread(void *data)
         convert_event(&alsa_ev, ev);
         ev = ev->next;
 
-        snd_seq_event_output(output, &alsa_ev);
+        // We use nonblocking mode, so we may not be able to write the
+        // event to the buffer yet. If so, we poll until we can.
+        while (state == PLAYING) {
+            snd_seq_drain_output(output);
+            if (snd_seq_event_output_buffer(output, &alsa_ev) != -EAGAIN) {
+                break;
+            }
+            poll_output();
+        }
     }
 
     state = STOPPED;
     snd_seq_drain_output(output);
+    close(poll_abort_pipe[0]);
+    close(poll_abort_pipe[1]);
+
     return 0;
 }
 
 void native_midi_start(NativeMidiSong *song, int loops)
 {
     native_midi_stop();
+    if (pipe(poll_abort_pipe) != 0) {
+        SDL_Log("Failed to create poll abort pipe: %s", strerror(errno));
+        return;
+    }
     state = PLAYING;
     plays_remaining = loops < 0 ? -1 : loops + 1;
     native_midi_thread = SDL_CreateThread(
@@ -309,7 +342,13 @@ void native_midi_stop(void)
         return;
     }
 
+    // We trigger shutdown of the native MIDI thread by closing the file
+    // descriptors for the abort pipe. This causes the poll_output()
+    // function above to return instead of blocking on output, and the
+    // playback thread to terminate.
     state = SHUTDOWN;
+    close(poll_abort_pipe[0]);
+    close(poll_abort_pipe[1]);
     SDL_WaitThread(native_midi_thread, NULL);
 
     snd_seq_drop_output(output);
