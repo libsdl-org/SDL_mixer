@@ -27,7 +27,6 @@
 
 typedef enum
 {
-    MIX_MUSIC_CMD,
     MIX_MUSIC_WAVE,
     MIX_MUSIC_MODPLUG,
     MIX_MUSIC_FLUIDSYNTH,
@@ -174,7 +173,6 @@ extern void pause_async_music(int pause_on);
 extern void close_music(void);
 extern void unload_music(void);
 
-extern char *music_cmd;
 extern SDL_AudioSpec music_spec;
 
 #endif /* MUSIC_H_ */

@@ -68,8 +68,6 @@
 		AAE405FB1F9607C300EDAF53 /* music_timidity.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE405D71F9607C200EDAF53 /* music_timidity.c */; };
 		AAE405FD1F9607C300EDAF53 /* music_ogg.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE405D91F9607C200EDAF53 /* music_ogg.c */; };
 		AAE405FE1F9607C300EDAF53 /* music_nativemidi.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE405DA1F9607C200EDAF53 /* music_nativemidi.h */; };
-		AAE405FF1F9607C300EDAF53 /* music_cmd.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE405DB1F9607C200EDAF53 /* music_cmd.h */; };
-		AAE406021F9607C300EDAF53 /* music_cmd.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE405DE1F9607C300EDAF53 /* music_cmd.c */; };
 		AAE406031F9607C300EDAF53 /* music_mpg123.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE405DF1F9607C300EDAF53 /* music_mpg123.c */; };
 		AAE406041F9607C300EDAF53 /* effect_stereoreverse.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE405E01F9607C300EDAF53 /* effect_stereoreverse.c */; };
 		AAE406051F9607C300EDAF53 /* effects_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE405E11F9607C300EDAF53 /* effects_internal.h */; };
@@ -202,8 +200,6 @@
 		AAE405D71F9607C200EDAF53 /* music_timidity.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_timidity.c; sourceTree = "<group>"; };
 		AAE405D91F9607C200EDAF53 /* music_ogg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_ogg.c; sourceTree = "<group>"; };
 		AAE405DA1F9607C200EDAF53 /* music_nativemidi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_nativemidi.h; sourceTree = "<group>"; };
-		AAE405DB1F9607C200EDAF53 /* music_cmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_cmd.h; sourceTree = "<group>"; };
-		AAE405DE1F9607C300EDAF53 /* music_cmd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_cmd.c; sourceTree = "<group>"; };
 		AAE405DF1F9607C300EDAF53 /* music_mpg123.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_mpg123.c; sourceTree = "<group>"; };
 		AAE405E01F9607C300EDAF53 /* effect_stereoreverse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = effect_stereoreverse.c; sourceTree = "<group>"; };
 		AAE405E11F9607C300EDAF53 /* effects_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = effects_internal.h; sourceTree = "<group>"; };
@@ -321,8 +317,6 @@
 				AAE405C31F9607C000EDAF53 /* load_voc.h */,
 				639197EF239FE66700F1D8F8 /* mp3utils.c */,
 				639197F0239FE66700F1D8F8 /* mp3utils.h */,
-				AAE405DE1F9607C300EDAF53 /* music_cmd.c */,
-				AAE405DB1F9607C200EDAF53 /* music_cmd.h */,
 				F37A8D492838A23400C38E95 /* music_drflac.c */,
 				F37A8D412838A23400C38E95 /* music_drflac.h */,
 				AAE405D41F9607C100EDAF53 /* music_flac.c */,
@@ -481,7 +475,6 @@
 				F30240632881DF95002F32D6 /* music_xmp.h in Headers */,
 				AAE405E41F9607C300EDAF53 /* mixer.h in Headers */,
 				F3F8795829B30FDA0007FDA1 /* load_sndfile.h in Headers */,
-				AAE405FF1F9607C300EDAF53 /* music_cmd.h in Headers */,
 				F3F8795229B30FDA0007FDA1 /* music_gme.h in Headers */,
 				AAE405EB1F9607C300EDAF53 /* music_flac.h in Headers */,
 				AAE406051F9607C300EDAF53 /* effects_internal.h in Headers */,
@@ -701,7 +694,6 @@
 				AAE405F41F9607C300EDAF53 /* effect_position.c in Sources */,
 				AAE405F81F9607C300EDAF53 /* music_flac.c in Sources */,
 				AAE405F21F9607C300EDAF53 /* effects_internal.c in Sources */,
-				AAE406021F9607C300EDAF53 /* music_cmd.c in Sources */,
 				F3F8795029B30FDA0007FDA1 /* load_sndfile.c in Sources */,
 				AAE405FB1F9607C300EDAF53 /* music_timidity.c in Sources */,
 				F37A8DB52838AD1300C38E95 /* music_ogg_stb.c in Sources */,

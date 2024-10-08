@@ -26,7 +26,6 @@
 #include "mixer.h"
 #include "music.h"
 
-#include "music_cmd.h"
 #include "music_wav.h"
 #include "music_modplug.h"
 #include "music_xmp.h"
@@ -54,7 +53,6 @@
 #define SDL_MIXER_HINT_DEBUG_MUSIC_INTERFACES \
     "SDL_MIXER_DEBUG_MUSIC_INTERFACES"
 
-char *music_cmd = NULL;
 static bool music_active = true;
 static int music_volume = MIX_MAX_VOLUME;
 static Mix_Music *music_playing = NULL;
@@ -160,9 +158,6 @@ static SDL_INLINE const char *get_last_dirsep (const char *p) {
 /* Interfaces for the various music interfaces, ordered by priority */
 static Mix_MusicInterface *s_music_interfaces[] =
 {
-#ifdef MUSIC_CMD
-    &Mix_MusicInterface_CMD,
-#endif
 #ifdef MUSIC_WAV
     &Mix_MusicInterface_WAV,
 #endif
@@ -520,7 +515,6 @@ void open_music(const SDL_AudioSpec *spec)
 #endif
 
     /* Load the music interfaces that don't have explicit initialization */
-    load_music_type(MUS_CMD);
     load_music_type(MUS_WAV);
 
     /* Open all the interfaces that are loaded */
@@ -1385,25 +1379,6 @@ bool Mix_PlayingMusic(void)
     Mix_UnlockAudio();
 
     return playing;
-}
-
-/* Set the external music playback command */
-bool Mix_SetMusicCMD(const char *command)
-{
-    Mix_HaltMusic();
-    if (music_cmd) {
-        SDL_free(music_cmd);
-        music_cmd = NULL;
-    }
-    if (command) {
-        size_t length = SDL_strlen(command) + 1;
-        music_cmd = (char *)SDL_malloc(length);
-        if (music_cmd == NULL) {
-            return false;
-        }
-        SDL_memcpy(music_cmd, command, length);
-    }
-    return true;
 }
 
 /* Uninitialize the music interfaces */

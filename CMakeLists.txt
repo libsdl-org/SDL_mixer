@@ -102,13 +102,6 @@ endif()
 option(SDLMIXER_SAMPLES "Build the SDL3_mixer sample program(s)" ${SDLMIXER_SAMPLES_DEFAULT})
 cmake_dependent_option(SDLMIXER_SAMPLES_INSTALL "Install the SDL3_mixer sample program(s)" OFF "SDLMIXER_SAMPLES;SDLMIXER_INSTALL" OFF)
 
-if(UNIX AND NOT APPLE)
-    set(sdl3mixer_cmd_default ON)
-else()
-    set(sdl3mixer_cmd_default OFF)
-endif()
-option(SDLMIXER_CMD "Support an external music player" ${sdl3mixer_cmd_default})
-
 option(SDLMIXER_SNDFILE "Support loading sounds via libsndfile" OFF)
 option(SDLMIXER_SNDFILE_SHARED "Dynamically load libsndfile" "${SDLMIXER_DEPS_SHARED}")
 
@@ -236,7 +229,6 @@ add_library(${sdl3_mixer_target_name}
     src/codecs/load_voc.c
     src/codecs/load_sndfile.c
     src/codecs/mp3utils.c
-    src/codecs/music_cmd.c
     src/codecs/music_drflac.c
     src/codecs/music_flac.c
     src/codecs/music_fluidsynth.c
@@ -342,30 +334,6 @@ set(INSTALL_EXTRA_TARGETS)
 set(PC_LIBS)
 set(PC_REQUIRES)
 set(SDLMIXER_BACKENDS)
-
-list(APPEND SDLMIXER_BACKENDS CMD)
-set(SDLMIXER_CMD_ENABLED FALSE)
-if(SDLMIXER_CMD)
-    target_compile_definitions(${sdl3_mixer_target_name} PRIVATE MUSIC_CMD)
-    set(fork_found OFF)
-    if(NOT fork_found)
-        check_symbol_exists(fork unistd.h HAVE_FORK)
-        if(HAVE_FORK)
-            set(SDLMIXER_CMD_ENABLED TRUE)
-            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE HAVE_FORK)
-        endif()
-    endif()
-    if(NOT fork_found)
-        check_symbol_exists(vfork unistd.h HAVE_VFORK)
-        if(HAVE_VFORK)
-            set(SDLMIXER_CMD_ENABLED TRUE)
-            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE HAVE_VFORK)
-        endif()
-    endif()
-    if(NOT SDLMIXER_CMD_ENABLED)
-        message(${fatal_error} "Neither fork() nor vfork() or available on this platform. Reconfigure with -DSDLMIXER_CMD=OFF.")
-    endif()
-endif()
 
 list(APPEND SDLMIXER_BACKENDS SNDFILE)
 set(SDLMIXER_SNDFILE_ENABLED FALSE)

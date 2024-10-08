@@ -204,9 +204,6 @@ int main(int argc, char *argv[])
     /* Set the music volume */
     Mix_VolumeMusic(audio_volume);
 
-    /* Set the external music player, if any */
-    Mix_SetMusicCMD(SDL_getenv("MUSIC_CMD"));
-
     while (argv[i]) {
         next_track = 0;
 
@@ -222,9 +219,6 @@ int main(int argc, char *argv[])
         }
 
         switch (Mix_GetMusicType(music)) {
-        case MUS_CMD:
-            typ = "CMD";
-            break;
         case MUS_WAV:
             typ = "WAV";
             break;

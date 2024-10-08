@@ -14,8 +14,6 @@ set(SDL3_mixer_FOUND                TRUE)
 
 set(SDLMIXER_VENDORED              TRUE)
 
-set(SDLMIXER_CMD                   FALSE)
-
 set(SDLMIXER_FLAC_LIBFLAC          FALSE)
 set(SDLMIXER_FLAC_DRFLAC           TRUE)
 

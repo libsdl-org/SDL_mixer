@@ -687,8 +687,7 @@ static SDL_AudioSpec *Mix_LoadMusic_IO(SDL_IOStream *src, bool closeio, SDL_Audi
         }
 
         /* These music interfaces are not safe to use while music is playing */
-        if (interface->api == MIX_MUSIC_CMD ||
-             interface->api == MIX_MUSIC_NATIVEMIDI) {
+        if (interface->api == MIX_MUSIC_NATIVEMIDI) {
             continue;
         }
 
@@ -1381,7 +1380,6 @@ void Mix_CloseAudio(void)
             }
             Mix_UnregisterAllEffects(MIX_CHANNEL_POST);
             close_music();
-            Mix_SetMusicCMD(NULL);
             Mix_HaltChannel(-1);
             _Mix_DeinitEffects();
             SDL_DestroyAudioStream(audio_stream);

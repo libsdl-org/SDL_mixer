@@ -12,8 +12,6 @@ set(SDL3_mixer_FOUND                ON)
 
 set(SDLMIXER_VENDORED              @SDLMIXER_VENDORED@)
 
-set(SDLMIXER_CMD                   @SDLMIXER_CMD_ENABLED@)
-
 set(SDLMIXER_SNDFILE               @SDLMIXER_SNDFILE_ENABLED@)
 
 set(SDLMIXER_FLAC                  @SDLMIXER_FLAC_ENABLED@)

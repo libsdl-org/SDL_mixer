@@ -212,7 +212,6 @@ typedef enum Mix_Fading {
  */
 typedef enum Mix_MusicType {
     MUS_NONE,
-    MUS_CMD,
     MUS_WAV,
     MUS_MOD,
     MUS_MID,
@@ -2439,30 +2438,6 @@ extern SDL_DECLSPEC int SDLCALL Mix_Playing(int channel);
  * \since This function is available since SDL_mixer 3.0.0.
  */
 extern SDL_DECLSPEC bool SDLCALL Mix_PlayingMusic(void);
-
-/**
- * Run an external command as the music stream.
- *
- * This halts any currently-playing music, and next time the music stream is
- * played, SDL_mixer will spawn a process using the command line specified in
- * `command`. This command is not subject to shell expansion, and beyond some
- * basic splitting up of arguments, is passed to execvp() on most platforms,
- * not system().
- *
- * The command is responsible for generating sound; it is NOT mixed by
- * SDL_mixer! SDL_mixer will kill the child process if asked to halt the
- * music, but otherwise does not have any control over what the process does.
- *
- * You are strongly encouraged not to use this function without an extremely
- * good reason.
- *
- * \param command command.
- * \returns true on success or false on failure; call SDL_GetError() for more
- *          information.
- *
- * \since This function is available since SDL_mixer 3.0.0.
- */
-extern SDL_DECLSPEC bool SDLCALL Mix_SetMusicCMD(const char *command);
 
 /**
  * Set SoundFonts paths to use by supported MIDI backends.

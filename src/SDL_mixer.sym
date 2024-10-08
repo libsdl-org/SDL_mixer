@@ -81,7 +81,6 @@ SDL3_mixer_0.0.0 {
     Mix_ResumeMusic;
     Mix_RewindMusic;
     Mix_SetDistance;
-    Mix_SetMusicCMD;
     Mix_SetMusicPosition;
     Mix_SetPanning;
     Mix_SetPosition;
