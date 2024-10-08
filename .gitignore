@@ -24,3 +24,4 @@ xcuserdata
 *.xcworkspace
 .vs
 .vscode
+Xcode/build.xcconfig
