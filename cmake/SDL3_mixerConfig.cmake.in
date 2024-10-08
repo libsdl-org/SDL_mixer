@@ -47,10 +47,13 @@ set(SDLMIXER_WAVPACK               @SDLMIXER_WAVPACK_ENABLED@)
 
 set(SDLMIXER_SDL3_REQUIRED_VERSION @SDL_REQUIRED_VERSION@)
 
+set(SDL3_mixer_SDL3_mixer-shared_FOUND FALSE)
 if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/SDL3_mixer-shared-targets.cmake")
     include("${CMAKE_CURRENT_LIST_DIR}/SDL3_mixer-shared-targets.cmake")
+    set(SDL3_mixer_SDL3_mixer-shared_FOUND TRUE)
 endif()
 
+set(SDL3_mixer_SDL3_mixer-static FALSE)
 if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/SDL3_mixer-static-targets.cmake")
 
     if(SDLMIXER_VENDORED)
@@ -129,6 +132,7 @@ if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/SDL3_mixer-static-targets.cmake")
     endif()
 
     include("${CMAKE_CURRENT_LIST_DIR}/SDL3_mixer-static-targets.cmake")
+    set(SDL3_mixer_SDL3_mixer-static TRUE)
 endif()
 
 function(_sdl_create_target_alias_compat NEW_TARGET TARGET)
@@ -145,7 +149,10 @@ endfunction()
 if(NOT TARGET SDL3_mixer::SDL3_mixer)
     if(TARGET SDL3_mixer::SDL3_mixer-shared)
         _sdl_create_target_alias_compat(SDL3_mixer::SDL3_mixer SDL3_mixer::SDL3_mixer-shared)
-    else()
+    elseif(TARGET SDL3_mixer::SDL3_mixer-static)
         _sdl_create_target_alias_compat(SDL3_mixer::SDL3_mixer SDL3_mixer::SDL3_mixer-static)
     endif()
 endif()
+
+@PACKAGE_INIT@
+check_required_components(SDL3_mixer)
