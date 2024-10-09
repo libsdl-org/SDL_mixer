@@ -206,7 +206,7 @@ struct _NativeMidiSong {
 
 char lasterr[1024];
 
-int native_midi_detect(void)
+bool native_midi_detect(void)
 {
   status_t res = synth.EnableInput(true, false);
   return res == B_OK;
@@ -281,9 +281,9 @@ void native_midi_stop(void)
   currentSong = NULL;
 }
 
-int native_midi_active(void)
+bool native_midi_active(void)
 {
-  if (currentSong == NULL) return 0;
+  if (currentSong == NULL) return false;
   return currentSong->store->IsPlaying();
 }
 

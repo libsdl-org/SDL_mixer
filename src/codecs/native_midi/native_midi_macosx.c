@@ -191,9 +191,9 @@ SetSequenceSoundFont(MusicSequence sequence)
     return;
 }
 
-int native_midi_detect(void)
+bool native_midi_detect(void)
 {
-    return 1;  /* always available. */
+    return true;  /* always available. */
 }
 
 NativeMidiSong *native_midi_loadsong_IO(SDL_IOStream *src, bool closeio)
@@ -319,22 +319,22 @@ void native_midi_stop(void)
     }
 }
 
-int native_midi_active(void)
+bool native_midi_active(void)
 {
     MusicTimeStamp currentTime = 0;
     if (currentsong == NULL)
-        return 0;
+        return false;
 
     MusicPlayerGetTime(currentsong->player, &currentTime);
     if ((currentTime < currentsong->endTime) ||
         (currentTime >= kMusicTimeStamp_EndOfTrack)) {
-        return 1;
+        return true;
     } else if (currentsong->loops) {
         --currentsong->loops;
         MusicPlayerSetTime(currentsong->player, 0);
-        return 1;
+        return true;
     }
-    return 0;
+    return false;
 }
 
 void native_midi_setvolume(int volume)

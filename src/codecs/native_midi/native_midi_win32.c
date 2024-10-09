@@ -32,8 +32,8 @@
 #include "native_midi_common.h"
 
 struct _NativeMidiSong {
-  int MusicLoaded;
-  int MusicPlaying;
+  bool MusicLoaded;
+  bool MusicPlaying;
   int Loops;
   int CurrentHdr;
   MIDIHDR MidiStreamHdr[2];
@@ -159,7 +159,7 @@ static void MIDItoStream(NativeMidiSong *song, MIDIEvent *evntlist)
     }
   }
   song->NewPos=0;
-  song->MusicLoaded=1;
+  song->MusicLoaded = true;
 }
 
 void CALLBACK MidiProc( HMIDIIN hMidi, UINT uMsg, DWORD_PTR dwInstance,
@@ -188,12 +188,12 @@ void CALLBACK MidiProc( HMIDIIN hMidi, UINT uMsg, DWORD_PTR dwInstance,
           song->NewPos=0;
           BlockOut(song);
         } else {
-          song->MusicPlaying=0;
+          song->MusicPlaying = false;
         }
       }
       break;
     case MOM_CLOSE:
-      song->MusicPlaying=0;
+      song->MusicPlaying = false;
       break;
     default:
       break;
@@ -201,16 +201,16 @@ void CALLBACK MidiProc( HMIDIIN hMidi, UINT uMsg, DWORD_PTR dwInstance,
     SDL_UnlockMutex(song->mutex);
 }
 
-int native_midi_detect(void)
+bool native_midi_detect(void)
 {
   MMRESULT merr;
   HMIDISTRM MidiStream;
 
   merr=midiStreamOpen(&MidiStream,&MidiDevice,(DWORD)1,(DWORD_PTR)MidiProc,(DWORD_PTR)0,CALLBACK_FUNCTION);
-  if (merr!=MMSYSERR_NOERROR)
-    return 0;
+  if (merr != MMSYSERR_NOERROR)
+    return false;
   midiStreamClose(MidiStream);
-  return 1;
+  return true;
 }
 
 NativeMidiSong *native_midi_loadsong_IO(SDL_IOStream *src, bool closeio)
@@ -272,7 +272,7 @@ void native_midi_start(NativeMidiSong *song, int loops)
     /* midiStreamStop(hMidiStream); */
     currentsong=song;
     currentsong->NewPos=0;
-    currentsong->MusicPlaying=1;
+    currentsong->MusicPlaying = true;
     currentsong->Loops=loops;
     mptd.cbStruct=sizeof(MIDIPROPTIMEDIV);
     mptd.dwTimeDiv=currentsong->ppqn;
@@ -311,12 +311,12 @@ void native_midi_stop(void)
   SDL_UnlockMutex(song->mutex);
 }
 
-int native_midi_active(void)
+bool native_midi_active(void)
 {
   if (!hMidiStream)
-    return 0;
+    return false;
   if (!currentsong)
-    return 0;
+    return false;
   return currentsong->MusicPlaying;
 }
 

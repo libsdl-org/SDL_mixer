@@ -56,7 +56,7 @@ static void NATIVEMIDI_SetVolume(void *context, int volume)
 static bool NATIVEMIDI_IsPlaying(void *context)
 {
     (void)context;
-    return native_midi_active() ? true : false;
+    return native_midi_active();
 }
 
 static void NATIVEMIDI_Pause(void *context)
