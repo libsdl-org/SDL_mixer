@@ -355,4 +355,55 @@ const char *native_midi_error(void)
     return "";  /* !!! FIXME */
 }
 
+#else
+
+#include "native_midi.h"
+
+bool native_midi_detect(void)
+{
+    return false;
+}
+
+NativeMidiSong *native_midi_loadsong_IO(SDL_IOStream *src, bool closeio)
+{
+    if (closeio) {
+        SDL_CloseIO(src);
+    }
+    SDL_Unsupported();
+    return NULL;
+}
+
+void native_midi_freesong(NativeMidiSong *song)
+{
+}
+
+void native_midi_start(NativeMidiSong *song, int loops)
+{
+}
+
+void native_midi_pause(void)
+{
+}
+
+void native_midi_resume(void)
+{
+}
+
+void native_midi_stop(void)
+{
+}
+
+bool native_midi_active(void)
+{
+}
+
+void native_midi_setvolume(int volume)
+{
+}
+
+const char *native_midi_error(void)
+{
+    return "";
+}
+
 #endif /* Mac OS X native MIDI support */
