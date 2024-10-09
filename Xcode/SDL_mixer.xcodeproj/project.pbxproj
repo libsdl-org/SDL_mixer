@@ -25,10 +25,12 @@
 				F3E1F79B2A78A27700AC76D3 /* ShellScript */,
 			);
 			dependencies = (
-				F3E1F79A2A78A27200AC76D3 /* PBXTargetDependency */,
-				F3E1F7962A78A24E00AC76D3 /* PBXTargetDependency */,
-				F3E1F7982A78A25400AC76D3 /* PBXTargetDependency */,
-				F3E1F7942A78A24A00AC76D3 /* PBXTargetDependency */,
+				F3F7BE3A2CB725E900C984AF /* PBXTargetDependency */,
+				F3F7BE382CB725E300C984AF /* PBXTargetDependency */,
+				F3F7BE362CB725DF00C984AF /* PBXTargetDependency */,
+				F3F7BE342CB725DA00C984AF /* PBXTargetDependency */,
+				F3F7BE322CB725CF00C984AF /* PBXTargetDependency */,
+				F3F7BE302CB725CB00C984AF /* PBXTargetDependency */,
 			);
 			name = SDL3_mixer.dmg;
 			productName = "Create DMG";
@@ -122,34 +124,6 @@
 			remoteGlobalIDString = F3F70EDA281F61B4005AA27D;
 			remoteInfo = ogg;
 		};
-		F3E1F7932A78A24A00AC76D3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3E29D022882107B0006D108 /* xmp.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = F3B38D4F296F8E1F005DA6D3;
-			remoteInfo = xmp.xcframework;
-		};
-		F3E1F7952A78A24E00AC76D3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3B38D97296F97BB005DA6D3 /* ogg.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = F3B38D8F296F9773005DA6D3;
-			remoteInfo = ogg.xcframework;
-		};
-		F3E1F7972A78A25400AC76D3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3968B90281F817E00661875 /* opus.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = F3B38D49296F8DDD005DA6D3;
-			remoteInfo = opus.xcframework;
-		};
-		F3E1F7992A78A27200AC76D3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = F3B38D54296F8E79005DA6D3;
-			remoteInfo = SDL_mixer.xcframework;
-		};
 		F3E1F8C72A794D3400AC76D3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F3E1F8C12A794D3400AC76D3 /* SDL.xcodeproj */;
@@ -163,6 +137,48 @@
 			proxyType = 2;
 			remoteGlobalIDString = F3968D85281FBB1900661875;
 			remoteInfo = xmp;
+		};
+		F3F7BE2F2CB725CB00C984AF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3E29D022882107B0006D108 /* xmp.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F3B38D4F296F8E1F005DA6D3;
+			remoteInfo = xmp.xcframework;
+		};
+		F3F7BE312CB725CF00C984AF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F307A25D2B542F110012534B /* wavpack.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F3B38D49296F8DDD005DA6D3;
+			remoteInfo = wavpack.xcframework;
+		};
+		F3F7BE332CB725DA00C984AF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3968B90281F817E00661875 /* opus.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F3B38D49296F8DDD005DA6D3;
+			remoteInfo = opus.xcframework;
+		};
+		F3F7BE352CB725DF00C984AF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3B38D97296F97BB005DA6D3 /* ogg.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F3B38D8F296F9773005DA6D3;
+			remoteInfo = ogg.xcframework;
+		};
+		F3F7BE372CB725E300C984AF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F307A2732B5431700012534B /* gme.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F3B38D8F296F9773005DA6D3;
+			remoteInfo = gme.xcframework;
+		};
+		F3F7BE392CB725E900C984AF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F3B38D54296F8E79005DA6D3;
+			remoteInfo = SDL3_mixer.xcframework;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -719,25 +735,35 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		F3E1F7942A78A24A00AC76D3 /* PBXTargetDependency */ = {
+		F3F7BE302CB725CB00C984AF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = xmp.xcframework;
-			targetProxy = F3E1F7932A78A24A00AC76D3 /* PBXContainerItemProxy */;
+			targetProxy = F3F7BE2F2CB725CB00C984AF /* PBXContainerItemProxy */;
 		};
-		F3E1F7962A78A24E00AC76D3 /* PBXTargetDependency */ = {
+		F3F7BE322CB725CF00C984AF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = ogg.xcframework;
-			targetProxy = F3E1F7952A78A24E00AC76D3 /* PBXContainerItemProxy */;
+			name = wavpack.xcframework;
+			targetProxy = F3F7BE312CB725CF00C984AF /* PBXContainerItemProxy */;
 		};
-		F3E1F7982A78A25400AC76D3 /* PBXTargetDependency */ = {
+		F3F7BE342CB725DA00C984AF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = opus.xcframework;
-			targetProxy = F3E1F7972A78A25400AC76D3 /* PBXContainerItemProxy */;
+			targetProxy = F3F7BE332CB725DA00C984AF /* PBXContainerItemProxy */;
 		};
-		F3E1F79A2A78A27200AC76D3 /* PBXTargetDependency */ = {
+		F3F7BE362CB725DF00C984AF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ogg.xcframework;
+			targetProxy = F3F7BE352CB725DF00C984AF /* PBXContainerItemProxy */;
+		};
+		F3F7BE382CB725E300C984AF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = gme.xcframework;
+			targetProxy = F3F7BE372CB725E300C984AF /* PBXContainerItemProxy */;
+		};
+		F3F7BE3A2CB725E900C984AF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F3B38D54296F8E79005DA6D3 /* SDL3_mixer.xcframework */;
-			targetProxy = F3E1F7992A78A27200AC76D3 /* PBXContainerItemProxy */;
+			targetProxy = F3F7BE392CB725E900C984AF /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
