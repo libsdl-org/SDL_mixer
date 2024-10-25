@@ -19,7 +19,9 @@ project(SDL3_mixer
 
 include("${SDL3_mixer_SOURCE_DIR}/cmake/GetGitRevisionDescription.cmake")
 include("${SDL3_mixer_SOURCE_DIR}/cmake/PrivateSdlFunctions.cmake")
+include("${SDL3_mixer_SOURCE_DIR}/cmake/sdlcpu.cmake")
 include("${SDL3_mixer_SOURCE_DIR}/cmake/sdlmanpages.cmake")
+include("${SDL3_mixer_SOURCE_DIR}/cmake/sdlplatform.cmake")
 sdl_calculate_derived_version_variables(${MAJOR_VERSION} ${MINOR_VERSION} ${MICRO_VERSION})
 
 message(STATUS "Configuring ${PROJECT_NAME} ${PROJECT_VERSION}")
@@ -86,6 +88,7 @@ option(CMAKE_POSITION_INDEPENDENT_CODE "Build static libraries with -fPIC" ${PLA
 cmake_dependent_option(BUILD_SHARED_LIBS "Build the library as a shared library" ON PLATFORM_SUPPORTS_SHARED OFF)
 
 cmake_dependent_option(SDLMIXER_INSTALL "Enable SDL3mixer install target" ${SDLMIXER_ROOTPROJECT} "${sdl3mixer_install_enableable}" OFF)
+cmake_dependent_option(SDLMIXER_INSTALL_CPACK "Create binary SDL3_mixer archive using CPack" ${SDLMIXER_ROOTPROJECT} "SDLMIXER_INSTALL" OFF)
 cmake_dependent_option(SDLMIXER_INSTALL_MAN "Install man pages for SDL3_mixer" OFF "SDLMIXER_INSTALL" OFF)
 cmake_dependent_option(SDLMIXER_DEPS_SHARED "Load dependencies dynamically" ON PLATFORM_SUPPORTS_SHARED OFF)
 option(SDLMIXER_VENDORED "Use vendored third-party libraries" ${vendored_default})
@@ -222,6 +225,9 @@ endif()
 if(NOT TARGET SDL3::Headers OR NOT TARGET ${sdl3_target_name})
     find_package(SDL3 ${SDL_REQUIRED_VERSION} REQUIRED COMPONENTS ${sdl_required_components})
 endif()
+
+SDL_DetectTargetCPUArchitectures(SDL_CPU_NAMES)
+SDL_DetectCMakePlatform()
 
 set(BUILD_SHARED_LIBS ${SDLMIXER_BUILD_SHARED_LIBS})
 add_library(${sdl3_mixer_target_name}
@@ -1167,6 +1173,20 @@ if(SDLMIXER_INSTALL)
         DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/licenses/${PROJECT_NAME}"
         COMPONENT library
     )
+
+    if(SDLMIXER_INSTALL_CPACK)
+      if(MSVC)
+        set(CPACK_GENERATOR "ZIP")
+      else()
+        set(CPACK_GENERATOR "TGZ")
+      endif()
+      configure_file(cmake/CPackProjectConfig.cmake.in CPackProjectConfig.cmake @ONLY)
+      set(CPACK_PROJECT_CONFIG_FILE "${PROJECT_BINARY_DIR}/CPackProjectConfig.cmake")
+      # CPACK_SOURCE_PACKAGE_FILE_NAME must end with "-src" (so we can block creating a source archive)
+      set(CPACK_SOURCE_PACKAGE_FILE_NAME "SDL${PROJECT_VERSION_MAJOR}-${PROJECT_VERSION}-src")
+      set(CPACK_PACKAGE_DIRECTORY "${CMAKE_BINARY_DIR}/dist")
+      include(CPack)
+    endif()
 
     if(SDLMIXER_INSTALL_MAN)
         sdl_get_git_revision_hash(SDLMIXER_REVISION)

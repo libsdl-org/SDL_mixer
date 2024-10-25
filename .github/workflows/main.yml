@@ -15,12 +15,12 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { name: Windows (MSVC),       os: windows-2019, shell: sh,   cmake: '-DPerl_ROOT=C:/Strawberry/perl/bin/ -DSDLMIXER_VENDORED=ON -GNinja', msvc: 1, shared: 1, static: 0 }
-        - { name: Windows (mingw64),    os: windows-latest, shell: 'msys2 {0}', msystem: mingw64, msys-env: mingw-w64-x86_64, shared: 1, static: 0,
+        - { name: Windows (MSVC),       os: windows-2019, shell: sh,   cmake: '-DPerl_ROOT=C:/Strawberry/perl/bin/ -DSDLMIXER_VENDORED=ON -GNinja', msvc: 1, shared: 1, static: 0, artifact: 'SDL3_mixer-VC-x64' }
+        - { name: Windows (mingw64),    os: windows-latest, shell: 'msys2 {0}', msystem: mingw64, msys-env: mingw-w64-x86_64, shared: 1, static: 0, artifact: 'SDL3_mixer-mingw64',
             cmake: '-DSDLMIXER_VENDORED=OFF -G "Ninja Multi-Config"' }
-        - { name: Linux,                os: ubuntu-20.04,   shell: sh, cmake: '-DSDLMIXER_VENDORED=ON -GNinja', shared: 1, static: 0 }
-        - { name: 'Linux (static)',     os: ubuntu-20.04,   shell: sh, cmake: '-DSDLMIXER_VENDORED=ON -DBUILD_SHARED_LIBS=OFF -GNinja', shared: 0, static: 1 }
-        - { name: Macos,                os: macos-latest,   shell: sh, cmake: '-DSDLMIXER_VENDORED=ON -GNinja', shared: 1, static: 0 }
+        - { name: Linux,                os: ubuntu-20.04,   shell: sh, cmake: '-DSDLMIXER_VENDORED=ON -GNinja', shared: 1, static: 0, artifact: 'SDL3_mixer-linux-x64' }
+        - { name: 'Linux (static)',     os: ubuntu-20.04,   shell: sh, cmake: '-DSDLMIXER_VENDORED=ON -DBUILD_SHARED_LIBS=OFF -GNinja', shared: 0, static: 1, artifact: 'SDL3_mixer-static-linux-x64' }
+        - { name: Macos,                os: macos-latest,   shell: sh, cmake: '-DSDLMIXER_VENDORED=ON -GNinja', shared: 1, static: 0, artifact: 'SDL3_mixer-macos' }
 
 
     steps:
@@ -129,6 +129,7 @@ jobs:
           "$@" \
           ${{ matrix.platform.cmake }}
     - name: Build (CMake)
+      id: build
       run: |
         cmake --build build/ --config Release --parallel --verbose
     - name: Install (CMake)
@@ -138,6 +139,10 @@ jobs:
         cmake --install build/ --config Release
         echo "SDL3_mixer_ROOT=$(pwd)/prefix_cmake" >> $GITHUB_ENV
         ( cd prefix_cmake; find . ) | LC_ALL=C sort -u
+    - name: Package (CPack)
+      if: ${{ always() && steps.build.outcome == 'success' }}
+      run: |
+        cmake --build build/ --target package
 
     - name: Verify CMake configuration files
       run: |
@@ -146,3 +151,10 @@ jobs:
           -DTEST_SHARED=${{ matrix.platform.shared }} \
           -DTEST_STATIC=${{ matrix.platform.static }}
         cmake --build cmake_config_build --verbose --config Release
+
+    - uses: actions/upload-artifact@v4
+      if: ${{ always() && steps.build.outcome == 'success' }}
+      with:
+        if-no-files-found: error
+        name: ${{ matrix.platform.artifact }}
+        path: build/dist/SDL3_mixer*

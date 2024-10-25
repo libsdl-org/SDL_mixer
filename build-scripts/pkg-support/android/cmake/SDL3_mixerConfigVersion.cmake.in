@@ -1,5 +1,5 @@
-# SDL_image CMake version configuration file:
-# This file is meant to be placed in a lib/cmake/SDL3_image subfolder of a reconstructed Android SDL3_image SDK
+# SDL3_mixer CMake version configuration file:
+# This file is meant to be placed in a lib/cmake/SDL3_mixer subfolder of a reconstructed Android SDL3_mixer SDK
 
 set(PACKAGE_VERSION "@<@PROJECT_VERSION@>@")
 
