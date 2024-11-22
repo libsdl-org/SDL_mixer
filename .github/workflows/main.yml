@@ -64,7 +64,6 @@ jobs:
         brew install \
           libtool \
           ninja \
-          pkg-config \
           flac \
           fluidsynth \
           game-music-emu \
