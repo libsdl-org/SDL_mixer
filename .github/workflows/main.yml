@@ -55,7 +55,6 @@ jobs:
           autoconf \
           automake \
           libtool \
-          pkg-config \
           flac \
           fluidsynth \
           game-music-emu \
