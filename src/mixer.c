@@ -517,9 +517,6 @@ bool Mix_OpenAudio(SDL_AudioDeviceID devid, const SDL_AudioSpec *spec)
         return false;
     }
 
-    SDL_BindAudioStream(audio_device, audio_stream);
-    SDL_SetAudioStreamGetCallback(audio_stream, mix_channels, NULL);
-
 #if 0
     PrintFormat("Audio device", &mixer);
 #endif
@@ -551,6 +548,9 @@ bool Mix_OpenAudio(SDL_AudioDeviceID devid, const SDL_AudioSpec *spec)
 
     /* Initialize the music players */
     open_music(&mixer);
+
+    SDL_BindAudioStream(audio_device, audio_stream);
+    SDL_SetAudioStreamGetCallback(audio_stream, mix_channels, NULL);
 
     audio_opened = 1;
     return true;
