@@ -19,10 +19,12 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
+/* WIKI CATEGORY: SDLMixer */
+
 /**
- *  \file SDL_mixer.h
+ * # CategorySDLMixer
  *
- *  Header file for SDL_mixer library
+ * Header file for SDL_mixer library
  *
  * A simple library to play and mix sounds and musics
  */
