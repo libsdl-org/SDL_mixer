@@ -228,6 +228,7 @@ add_library(SDL2_mixer
     src/codecs/music_wav.c
     src/codecs/music_wavpack.c
     src/codecs/music_xmp.c
+    src/codecs/music_ym.c
     src/effect_position.c
     src/effect_stereoreverse.c
     src/effects_internal.c
@@ -818,6 +819,15 @@ if(SDL2MIXER_MIDI_TIMIDITY)
         src/codecs/timidity/tables.c
         src/codecs/timidity/timidity.c
     )
+endif()
+
+if(SDL2MIXER_YM)
+    target_compile_definitions(SDL2_mixer PRIVATE MUSIC_YM)
+    target_compile_definitions(SDL2_mixer PRIVATE YM_SAMPLE_LENGTH_SEC=0.1)
+    include(external/StSound/CMake/Utils.cmake)
+    add_subdirectory(external/StSound/StSoundLibrary EXCLUDE_FROM_ALL)
+    target_link_libraries(SDL2_mixer PRIVATE StSoundLibrary)
+    target_include_directories(SDL2_mixer PRIVATE external/StSound/StSoundLibrary)
 endif()
 
 if(SDL2MIXER_WAVE)

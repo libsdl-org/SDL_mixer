@@ -42,7 +42,8 @@ typedef enum
     MIX_MUSIC_LIBXMP,
     MIX_MUSIC_WAVPACK,
     MIX_MUSIC_GME,
-    MIX_MUSIC_LAST
+    MIX_MUSIC_LAST,
+    MIX_MUSIC_YM
 } Mix_MusicAPI;
 
 

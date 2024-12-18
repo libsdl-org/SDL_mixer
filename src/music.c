@@ -41,6 +41,7 @@
 #include "music_flac.h"
 #include "music_wavpack.h"
 #include "music_gme.h"
+#include "music_ym.h"
 #include "native_midi/native_midi.h"
 
 #include "utils.h"
@@ -204,6 +205,9 @@ static Mix_MusicInterface *s_music_interfaces[] =
 #endif
 #ifdef MUSIC_GME
     &Mix_MusicInterface_GME,
+#endif
+#ifdef MUSIC_YM
+    &Mix_MusicInterface_YM
 #endif
 };
 
@@ -628,6 +632,12 @@ Mix_MusicType detect_music_type(SDL_RWops *src)
     if (SDL_memcmp(magic, "\x1f\x8b", 2) == 0)
         return MUS_GME;
 
+	if (SDL_memcmp(magic, "YM", 2) == 0)
+		return MUS_YM;
+	if (SDL_memcmp(magic + 2, "-lh5-", 5) == 0)
+		return MUS_YM;
+	
+	
     /* Assume MOD format.
      *
      * Apparently there is no way to check if the file is really a MOD,
@@ -727,6 +737,8 @@ Mix_Music *Mix_LoadMUS(const char *file)
                     SDL_strcasecmp(ext, "SPC") == 0 ||
                     SDL_strcasecmp(ext, "VGM") == 0) {
             type = MUS_GME;
+        }   else if (SDL_strcasecmp(ext, "YM") == 0) {
+            type = MUS_YM;
         }
     }
     return Mix_LoadMUSType_RW(src, type, SDL_TRUE);

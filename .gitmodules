@@ -37,3 +37,6 @@
 [submodule "external/libgme"]
 	path = external/libgme
 	url = https://github.com/libsdl-org/game-music-emu.git
+[submodule "external/StSound"]
+	path = external/StSound
+	url = https://github.com/arnaud-carre/StSound.git
