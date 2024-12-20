@@ -1,0 +1,22 @@
+//
+//  sources.xcconfig
+//  wavpack
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+ARM_SOURCES = */*_armv7*
+X86_SOURCES = */*_x86*
+X64_SOURCES = */*_x64*
+
+EXCLUDED_SOURCE_FILE_NAMES = $(ARM_SOURCES) $(X86_SOURCES) $(X64_SOURCES)
+INCLUDED_SOURCE_FILE_NAMES =
+INCLUDED_SOURCE_FILE_NAMES[arch=armv7] = $(ARM_SOURCES)
+INCLUDED_SOURCE_FILE_NAMES[arch=i386] = $(X86_SOURCES)
+INCLUDED_SOURCE_FILE_NAMES[arch=x86_64] = $(X64_SOURCES)
+
+CONFIG_PREPROCESSOR_DEFINITIONS = $(inherited)
+CONFIG_PREPROCESSOR_DEFINITIONS[arch=armv7] = $(inherited) OPT_ASM_ARM32
+CONFIG_PREPROCESSOR_DEFINITIONS[arch=i386] = $(inherited) OPT_ASM_X86
+CONFIG_PREPROCESSOR_DEFINITIONS[arch=x86_64] = $(inherited) OPT_ASM_X64

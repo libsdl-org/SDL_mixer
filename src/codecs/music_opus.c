@@ -1,6 +1,6 @@
 /*
   SDL_mixer:  An audio mixer library based on the SDL library
-  Copyright (C) 1997-2023 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -60,6 +60,10 @@ static opus_loader opus;
     if (opus.FUNC == NULL) { Mix_SetError("Missing opus.framework"); return -1; }
 #endif
 
+#ifdef __APPLE__
+    /* Need to turn off optimizations so weak framework load check works */
+    __attribute__ ((optnone))
+#endif
 static int OPUS_Load(void)
 {
     if (opus.loaded == 0) {
@@ -168,8 +172,7 @@ static int OPUS_UpdateSection(OPUS_music *music)
 
     op_info = opus.op_head(music->of, -1);
     if (!op_info) {
-        Mix_SetError("op_head returned NULL");
-        return -1;
+        return Mix_SetError("op_head returned NULL");
     }
 
     if (music->op_info && op_info->channel_count == music->op_info->channel_count) {
@@ -228,7 +231,7 @@ static void *OPUS_CreateFromRW(SDL_RWops *src, int freesrc)
     music->of = opus.op_open_callbacks(src, &callbacks, NULL, 0, &err);
     if (music->of == NULL) {
     /*  set_op_error("op_open_callbacks", err);*/
-        SDL_SetError("Not an Opus audio stream");
+        Mix_SetError("Not an Opus audio stream");
         SDL_free(music);
         return NULL;
     }
@@ -365,8 +368,7 @@ static int OPUS_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     section = music->section;
     samples = opus.op_read(music->of, (opus_int16 *)music->buffer, music->buffer_size / (int)sizeof(opus_int16), &section);
     if (samples < 0) {
-        set_op_error("op_read", samples);
-        return -1;
+        return set_op_error("op_read", samples);
     }
 
     if (section != music->section) {
@@ -381,8 +383,7 @@ static int OPUS_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         samples -= (int)((pcmPos - music->loop_end) * music->op_info->channel_count) * (int)sizeof(Sint16);
         result = opus.op_pcm_seek(music->of, music->loop_start);
         if (result < 0) {
-            set_op_error("ov_pcm_seek", result);
-            return -1;
+            return set_op_error("ov_pcm_seek", result);
         } else {
             int play_count = -1;
             if (music->play_count > 0) {

@@ -13,7 +13,7 @@
 #include "options.h"
 #include "common.h"
 
-#if defined(__WIN32__) || defined(__OS2__)
+#if defined(_WIN32) || defined(__OS2__)
 #define CHAR_DIRSEP '\\'
 #define is_dirsep(c) ((c) == '/' || (c) == '\\')
 #define is_abspath(p) ((p)[0] == '/' || (p)[0] == '\\' || ((p)[0] && (p)[1] == ':'))

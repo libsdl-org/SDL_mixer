@@ -4,14 +4,14 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 # See docs/release_checklist.md
 set(MAJOR_VERSION 2)
-set(MINOR_VERSION 7)
+set(MINOR_VERSION 8)
 set(MICRO_VERSION 0)
 set(SDL_REQUIRED_VERSION 2.0.9)
 
 include(PrivateSdlFunctions)
 sdl_calculate_derived_version_variables()
 
-if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
+if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
     message(FATAL_ERROR "Prevented in-tree built. Please create a build directory outside of the SDL_mixer source code and call cmake from there")
 endif()
 
@@ -32,6 +32,10 @@ set(SDL2MIXER_SAMPLES_DEFAULT ${SDL2MIXER_ROOTPROJECT})
 if(ANDROID)
     set(SDL2MIXER_SAMPLES_DEFAULT OFF)
 endif()
+
+# option() honors normal variables.
+cmake_policy(SET CMP0077 NEW)
+set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 
 if(POLICY CMP0112)
     # Target file component generator expressions do not add target dependencies.
@@ -99,7 +103,7 @@ option(SDL2MIXER_CMD "Support an external music player" ${sdl2mixer_cmd_default}
 
 option(SDL2MIXER_FLAC "Enable FLAC music" ON)
 
-cmake_dependent_option(SDL2MIXER_FLAC_LIBFLAC "Enable FLAC music using libFLAC" ON SDL2MIXER_FLAC OFF)
+cmake_dependent_option(SDL2MIXER_FLAC_LIBFLAC "Enable FLAC music using libFLAC" OFF SDL2MIXER_FLAC OFF)
 cmake_dependent_option(SDL2MIXER_FLAC_LIBFLAC_SHARED "Dynamically load LIBFLAC" "${SDL2MIXER_DEPS_SHARED}" SDL2MIXER_FLAC_LIBFLAC OFF)
 
 cmake_dependent_option(SDL2MIXER_FLAC_DRFLAC "Enable FLAC music using drflac" ON SDL2MIXER_FLAC OFF)
@@ -117,18 +121,18 @@ cmake_dependent_option(SDL2MIXER_MOD_XMP_LITE "Use libxmp-lite instead of libxmp
 cmake_dependent_option(SDL2MIXER_MOD_XMP_SHARED "Dynamically load libxmp(-lite)" "${SDL2MIXER_DEPS_SHARED}" SDL2MIXER_MOD_XMP OFF)
 
 if(SDL2MIXER_MOD AND NOT (SDL2MIXER_MOD_MODPLUG OR SDL2MIXER_MOD_XMP))
-    message(FATAL_EROR "MOD support was enabled (SDL2MIXER_MOD) but neither mpdplug (SDL2MIXER_MOD_MODPLUG) or xmp (SDL2MIXER_MOD_XMP) was enabled.")
+    message(FATAL_ERROR "MOD support was enabled (SDL2MIXER_MOD) but neither modplug (SDL2MIXER_MOD_MODPLUG) or xmp (SDL2MIXER_MOD_XMP) was enabled.")
 endif()
 
 option(SDL2MIXER_MP3 "Enable MP3 music" ON)
 
-cmake_dependent_option(SDL2MIXER_MP3_DRMP3 "Support loading MP3 music via dr_mp3" ON SDL2MIXER_MP3 OFF)
+cmake_dependent_option(SDL2MIXER_MP3_MINIMP3 "Support loading MP3 music via minimp3" ON SDL2MIXER_MP3 OFF)
 
 cmake_dependent_option(SDL2MIXER_MP3_MPG123 "Support loading MP3 music via MPG123" OFF SDL2MIXER_MP3 OFF)
 cmake_dependent_option(SDL2MIXER_MP3_MPG123_SHARED "Dynamically load mpg123" "${SDL2MIXER_DEPS_SHARED}" SDL2MIXER_MP3_MPG123 OFF)
 
-if(SDL2MIXER_MP3 AND NOT (SDL2MIXER_MP3_DRMP3 OR SDL2MIXER_MP3_MPG123))
-    message(FATAL_ERROR "MP3 support was enabled (SDL2MIXER_MP3) but neither drmp3 (SDL2MIXER_MP3_DRMP3) or mpg123 (SDL2MIXER_MP3_MPG123) were enabled.")
+if(SDL2MIXER_MP3 AND NOT (SDL2MIXER_MP3_MINIMP3 OR SDL2MIXER_MP3_MPG123))
+    message(FATAL_ERROR "MP3 support was enabled (SDL2MIXER_MP3) but neither minimp3 (SDL2MIXER_MP3_MINIMP3) or mpg123 (SDL2MIXER_MP3_MPG123) were enabled.")
 endif()
 
 option(SDL2MIXER_MIDI "Enable MIDI music" ON)
@@ -177,6 +181,7 @@ cmake_dependent_option(SDL2MIXER_VORBIS_VORBISFILE_SHARED "Dynamically load vorb
 option(SDL2MIXER_WAVE "Enable streaming WAVE music" ON)
 
 option(SDL2MIXER_WAVPACK "Enable WavPack music" ON)
+cmake_dependent_option(SDL2MIXER_WAVPACK_DSD "Enable WavPack DSD music support" OFF SDL2MIXER_WAVPACK OFF)
 cmake_dependent_option(SDL2MIXER_WAVPACK_SHARED "Dynamically load WavPack library" "${SDL2MIXER_DEPS_SHARED}" SDL2MIXER_WAVPACK OFF)
 
 if(SDL2MIXER_VORBIS_TREMOR OR SDL2MIXER_VORBIS_VORBISFILE OR SDL2MIXER_FLAC_LIBFLAC OR SDL2MIXER_OPUS)
@@ -214,10 +219,10 @@ add_library(SDL2_mixer
     src/codecs/mp3utils.c
     src/codecs/music_cmd.c
     src/codecs/music_drflac.c
-    src/codecs/music_drmp3.c
     src/codecs/music_flac.c
     src/codecs/music_fluidsynth.c
     src/codecs/music_gme.c
+    src/codecs/music_minimp3.c
     src/codecs/music_modplug.c
     src/codecs/music_mpg123.c
     src/codecs/music_nativemidi.c
@@ -265,18 +270,14 @@ set_target_properties(SDL2_mixer PROPERTIES
 if(NOT ANDROID)
     set_target_properties(SDL2_mixer PROPERTIES
         DEBUG_POSTFIX "${SDL2MIXER_DEBUG_POSTFIX}"
+        SOVERSION "${LT_MAJOR}"
+        VERSION "${LT_VERSION}"
     )
     if(APPLE)
-        # the SOVERSION property corresponds to the compatibility version and VERSION corresponds to the current version
-        # https://cmake.org/cmake/help/latest/prop_tgt/SOVERSION.html#mach-o-versions
+        cmake_minimum_required(VERSION 3.17)
         set_target_properties(SDL2_mixer PROPERTIES
-            SOVERSION "${DYLIB_COMPATIBILITY_VERSION}"
-            VERSION "${DYLIB_CURRENT_VERSION}"
-        )
-    else()
-        set_target_properties(SDL2_mixer PROPERTIES
-            SOVERSION "${LT_MAJOR}"
-            VERSION "${LT_VERSION}"
+            MACHO_COMPATIBILITY_VERSION "${DYLIB_COMPATIBILITY_VERSION}"
+            MACHO_CURRENT_VERSION "${DYLIB_CURRENT_VERSION}"
         )
     endif()
 endif()
@@ -291,6 +292,7 @@ if(SDL2MIXER_BUILD_SHARED_LIBS)
     if(WIN32 OR OS2)
         set_target_properties(SDL2_mixer PROPERTIES
             PREFIX ""
+            DLL_NAME_WITH_SOVERSION FALSE
         )
     endif()
     if(OS2)
@@ -357,8 +359,8 @@ if(SDL2MIXER_OGG)
     if(SDL2MIXER_VENDORED)
         message(STATUS "Using vendored libogg")
         set(BUILD_SHARED_LIBS ${SDL2MIXER_OGG_SHARED})
-        set(INSTALL_CMAKE_PACKAGE_MODULE FALSE CACHE BOOL "Don't install cmake module for libogg")
-        set(BUILD_TESTING OFF CACHE BOOL "Build tests")
+        set(INSTALL_CMAKE_PACKAGE_MODULE FALSE)
+        set(BUILD_TESTING OFF)
         sdl_check_project_in_subfolder(external/ogg ogg SDL2MIXER_VENDORED)
         add_subdirectory(external/ogg EXCLUDE_FROM_ALL)
         if(SDL2MIXER_OGG_install)
@@ -376,13 +378,13 @@ if(SDL2MIXER_OPUS)
         endif()
         message(STATUS "Using vendored opus")
         set(BUILD_SHARED_LIBS ${SDL2MIXER_OPUS_SHARED})
-        set(BUILD_PROGRAMS OFF CACHE BOOL "Build programs")
+        set(BUILD_PROGRAMS OFF)
         sdl_check_project_in_subfolder(external/opus opus SDL2MIXER_VENDORED)
         add_subdirectory(external/opus EXCLUDE_FROM_ALL)
 
-        set(OP_DISABLE_DOCS TRUE CACHE BOOL "Disable opusfile documentation")
-        set(OP_DISABLE_EXAMPLES TRUE CACHE BOOL "Disable opusfile examples")
-        set(OP_DISABLE_HTTP TRUE CACHE BOOL "Disable opusfile HTTP SUPPORT")
+        set(OP_DISABLE_DOCS TRUE)
+        set(OP_DISABLE_EXAMPLES TRUE)
+        set(OP_DISABLE_HTTP TRUE)
         message(STATUS "Using vendored opusfile")
         set(BUILD_SHARED_LIBS ${SDL2MIXER_OPUS_SHARED})
         sdl_check_project_in_subfolder(external/opusfile opusfile SDL2MIXER_VENDORED)
@@ -540,17 +542,17 @@ if(SDL2MIXER_FLAC_LIBFLAC)
             message(FATAL_ERROR "ogg target not present")
         endif()
         set(BUILD_SHARED_LIBS "${SDL2MIXER_FLAC_LIBFLAC_SHARED}")
-        set(INSTALL_CMAKE_CONFIG_MODULE OFF CACHE BOOL "Disable libflac installation")
-        set(WITH_OGG OFF CACHE BOOL "Disable finding ogg using `find_package` (we have vendored it)")
-        set(BUILD_CXXLIBS OFF CACHE BOOL "Build FLAC++")
-        set(BUILD_EXAMPLES OFF CACHE BOOL "Build FLAC examples")
-        set(BUILD_PROGRAMS OFF CACHE BOOL "Build programs")
-        set(BUILD_TESTING OFF CACHE BOOL "Build tests")
-        set(INSTALL_MANPAGES OFF CACHE BOOL "Install FLAC manpages")
+        set(INSTALL_CMAKE_CONFIG_MODULE OFF)
+        set(WITH_OGG OFF)
+        set(BUILD_CXXLIBS OFF)
+        set(BUILD_EXAMPLES OFF)
+        set(BUILD_PROGRAMS OFF)
+        set(BUILD_TESTING OFF)
+        set(INSTALL_MANPAGES OFF)
         message(STATUS "Using vendored libflac")
         sdl_check_project_in_subfolder(external/flac libflac SDL2MIXER_VENDORED)
         add_subdirectory(external/flac EXCLUDE_FROM_ALL)
-        if(SDL2MIXER_FLAC_LIBFLAC_SHARED)
+        if(SDL2MIXER_FLAC_LIBFLAC_SHARED OR NOT SDL2MIXER_BUILD_SHARED_LIBS)
             list(APPEND INSTALL_EXTRA_TARGETS FLAC)
         endif()
         if(NOT SDL2MIXER_FLAC_LIBFLAC_SHARED)
@@ -588,9 +590,9 @@ if(SDL2MIXER_GME)
     target_compile_definitions(SDL2_mixer PRIVATE MUSIC_GME)
     if(SDL2MIXER_VENDORED)
         set(BUILD_SHARED_LIBS "${SDL2MIXER_GME_SHARED}")
-        set(ENABLE_UBSAN OFF CACHE BOOL "UB sanitizer")
-        set(BUILD_FRAMEWORK OFF CACHE BOOL "macos framework")
-        set(GME_ZLIB OFF CACHE BOOL "GME supports compressed formats")
+        set(ENABLE_UBSAN OFF)
+        set(BUILD_FRAMEWORK OFF)
+        option(GME_ZLIB "Enable GME to support compressed sound formats" OFF)
         message(STATUS "Using vendored libgme")
         sdl_check_project_in_subfolder(external/libgme libgme SDL2MIXER_VENDORED)
         add_subdirectory(external/libgme EXCLUDE_FROM_ALL)
@@ -659,6 +661,8 @@ if(SDL2MIXER_MOD_XMP)
     if(SDL2MIXER_VENDORED)
         message(STATUS "Using vendored libxmp")
         sdl_check_project_in_subfolder(external/libxmp libxmp SDL2MIXER_VENDORED)
+        set(LIBXMP_DISABLE_DEPACKERS ON)
+        set(LIBXMP_DISABLE_PROWIZARD ON)
         if(SDL2MIXER_MOD_XMP_SHARED)
             set(BUILD_STATIC OFF)
             set(BUILD_SHARED ON)
@@ -683,12 +687,18 @@ if(SDL2MIXER_MOD_XMP)
             set(tgt_xmp libxmp-lite::libxmp-lite)
             set(xmp_name libxmp-lite)
             if(NOT SDL2MIXER_MOD_XMP_SHARED)
-                list(APPEND PC_REQUIRES libxmplite)
+                list(APPEND PC_REQUIRES libxmp-lite)
             endif()
         else()
             message(STATUS "Using system libxmp")
             find_package(libxmp REQUIRED)
-            set(tgt_xmp libxmp::libxmp)
+            if(TARGET libxmp::xmp_shared)
+                set(tgt_xmp libxmp::xmp_shared)
+            elseif(TARGET libxmp::xmp_static)
+                set(tgt_xmp libxmp::xmp_static)
+            else()
+                set(tgt_xmp libxmp::libxmp)
+            endif()
             set(xmp_name libxmp)
             if(NOT SDL2MIXER_MOD_XMP_SHARED)
                 list(APPEND PC_REQUIRES libxmp)
@@ -712,8 +722,8 @@ if(SDL2MIXER_MOD_XMP)
     endif()
 endif()
 
-if(SDL2MIXER_MP3_DRMP3)
-    target_compile_definitions(SDL2_mixer PRIVATE MUSIC_MP3_DRMP3)
+if(SDL2MIXER_MP3_MINIMP3)
+    target_compile_definitions(SDL2_mixer PRIVATE MUSIC_MP3_MINIMP3)
 endif()
 
 if(SDL2MIXER_MP3_MPG123)
@@ -721,8 +731,8 @@ if(SDL2MIXER_MP3_MPG123)
     if(SDL2MIXER_VENDORED)
         message(STATUS "Using vendored mpg123")
         sdl_check_project_in_subfolder(external/mpg123/ports/cmake mpg123 SDL2MIXER_VENDORED)
-        set(BUILD_LIBOUT123 FALSE CACHE BOOL "Don't configure libout123")
-        set(BUILD_PROGRAMS OFF CACHE BOOL "Build programs")
+        set(BUILD_LIBOUT123 FALSE)
+        set(BUILD_PROGRAMS OFF)
         set(BUILD_SHARED_LIBS "${SDL2MIXER_MP3_MPG123_SHARED}")
         add_subdirectory(external/mpg123/ports/cmake EXCLUDE_FROM_ALL)
         if(NOT TARGET MPG123::libmpg123)
@@ -837,12 +847,12 @@ endif()
 if(SDL2MIXER_WAVPACK)
     target_compile_definitions(SDL2_mixer PRIVATE MUSIC_WAVPACK)
     if(SDL2MIXER_VENDORED)
-        message(STATUS "Using vendored WevPack")
+        message(STATUS "Using vendored WavPack")
         sdl_check_project_in_subfolder(external/wavpack WavPack SDL2MIXER_VENDORED)
-        set(WAVPACK_BUILD_PROGRAMS FALSE CACHE BOOL "Don't build WavPack programs")
-        set(WAVPACK_BUILD_COOLEDIT_PLUGIN OFF CACHE BOOL "Don't build WavPack CoolEdit plugin")
-        set(WAVPACK_BUILD_WINAMP_PLUGIN OFF CACHE BOOL "Don't build WavPack WinAMP plugin")
-        set(WAVPACK_BUILD_DOCS OFF CACHE BOOL "Don't build WavPack documentation")
+        set(WAVPACK_BUILD_PROGRAMS FALSE)
+        set(WAVPACK_BUILD_COOLEDIT_PLUGIN OFF)
+        set(WAVPACK_BUILD_WINAMP_PLUGIN OFF)
+        set(WAVPACK_BUILD_DOCS OFF)
         set(BUILD_SHARED_LIBS "${SDL2MIXER_WAVPACK_SHARED}")
         add_subdirectory(external/wavpack EXCLUDE_FROM_ALL)
         if(SDL2MIXER_WAVPACK_SHARED OR NOT SDL2MIXER_BUILD_SHARED_LIBS)
@@ -858,6 +868,9 @@ if(SDL2MIXER_WAVPACK)
         if(NOT SDL2MIXER_WAVPACK_SHARED)
             list(APPEND PC_REQUIRES wavpack)
         endif()
+    endif()
+    if(SDL2MIXER_WAVPACK_DSD)
+        target_compile_definitions(SDL2_mixer PRIVATE MUSIC_WAVPACK_DSD)
     endif()
     if(SDL2MIXER_WAVPACK_SHARED)
         target_include_directories(SDL2_mixer PRIVATE
@@ -893,10 +906,8 @@ if(SDL2MIXER_INSTALL)
     if(INSTALL_EXTRA_TARGETS)
         install(TARGETS ${INSTALL_EXTRA_TARGETS}
             EXPORT SDL2MixerTargets
-            ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT devel
             LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT library
             RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}" COMPONENT library
-            PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}" COMPONENT devel
         )
     endif()
 

@@ -1,6 +1,6 @@
 /*
   SDL_mixer:  An audio mixer library based on the SDL library
-  Copyright (C) 1997-2023 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -34,7 +34,7 @@ typedef enum
     MIX_MUSIC_TIMIDITY,
     MIX_MUSIC_NATIVEMIDI,
     MIX_MUSIC_OGG,
-    MIX_MUSIC_DRMP3,
+    MIX_MUSIC_MINIMP3,
     MIX_MUSIC_MPG123,
     MIX_MUSIC_DRFLAC,
     MIX_MUSIC_FLAC,

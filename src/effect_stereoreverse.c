@@ -1,6 +1,6 @@
 /*
   SDL_mixer:  An audio mixer library based on the SDL library
-  Copyright (C) 1997-2023 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -58,7 +58,7 @@ static void SDLCALL _Eff_reversestereo32(int chan, void *stream, int len, void *
     (void)chan;
     (void)udata;
 
-    for (i = 0; i < len; i += 2 * sizeof (Uint32), ptr += 2) {
+    for (i = 0; i < len; i += 2 * sizeof(Uint32), ptr += 2) {
         tmp = ptr[0];
         ptr[0] = ptr[1];
         ptr[1] = tmp;
@@ -74,7 +74,7 @@ static void SDLCALL _Eff_reversestereo16(int chan, void *stream, int len, void *
     (void)chan;
     (void)udata;
 
-    for (i = 0; i < len; i += sizeof (Uint32), ptr++) {
+    for (i = 0; i < len; i += sizeof(Uint32), ptr++) {
         *ptr = (((*ptr) & 0xFFFF0000) >> 16) | (((*ptr) & 0x0000FFFF) << 16);
     }
 }
@@ -95,7 +95,7 @@ static void SDLCALL _Eff_reversestereo8(int chan, void *stream, int len, void *u
         len -= 2;
     }
 
-    for (i = 0; i < len; i += sizeof (Uint32), ptr++) {
+    for (i = 0; i < len; i += sizeof(Uint32), ptr++) {
         *ptr = (((*ptr) & 0x0000FF00) >> 8) | (((*ptr) & 0x000000FF) << 8) |
                (((*ptr) & 0xFF000000) >> 8) | (((*ptr) & 0x00FF0000) << 8);
     }
@@ -123,14 +123,16 @@ int Mix_SetReverseStereo(int channel, int flip)
             break;
         default:
             Mix_SetError("Unsupported audio format");
-            return(0);
+            return 0;
         }
-        if (!flip) return Mix_UnregisterEffect(channel, f);
-        return(Mix_RegisterEffect(channel, f, NULL, NULL));
+        if (!flip) {
+            return Mix_UnregisterEffect(channel, f);
+        }
+        return Mix_RegisterEffect(channel, f, NULL, NULL);
     }
 
     Mix_SetError("Trying to reverse stereo on a non-stereo stream");
-    return(0);
+    return 0;
 }
 
 /* end of effect_stereoreverse.c ... */

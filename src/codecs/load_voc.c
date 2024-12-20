@@ -1,6 +1,6 @@
 /*
   SDL_mixer:  An audio mixer library based on the SDL library
-  Copyright (C) 1997-2023 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -88,24 +88,27 @@ static int voc_check_header(SDL_RWops *src)
 
     SDL_RWseek(src, 0, RW_SEEK_SET);
 
-    if (SDL_RWread(src, signature, sizeof (signature), 1) != 1)
-        return(0);
-
-    if (SDL_memcmp(signature, "Creative Voice File\032", sizeof (signature)) != 0) {
-        SDL_SetError("Unrecognized file type (not VOC)");
-        return(0);
+    if (SDL_RWread(src, signature, sizeof(signature), 1) != 1) {
+        return 0;
     }
 
-        /* get the offset where the first datablock is located */
-    if (SDL_RWread(src, &datablockofs, sizeof (Uint16), 1) != 1)
-        return(0);
+    if (SDL_memcmp(signature, "Creative Voice File\032", sizeof(signature)) != 0) {
+        Mix_SetError("Unrecognized file type (not VOC)");
+        return 0;
+    }
+
+    /* get the offset where the first datablock is located */
+    if (SDL_RWread(src, &datablockofs, sizeof(Uint16), 1) != 1) {
+        return 0;
+    }
 
     datablockofs = SDL_SwapLE16(datablockofs);
 
-    if (SDL_RWseek(src, datablockofs, RW_SEEK_SET) != datablockofs)
-        return(0);
+    if (SDL_RWseek(src, datablockofs, RW_SEEK_SET) != datablockofs) {
+        return 0;
+    }
 
-    return(1);  /* success! */
+    return 1;  /* success! */
 } /* voc_check_header */
 
 
@@ -122,39 +125,38 @@ static int voc_get_block(SDL_RWops *src, vs_t *v, SDL_AudioSpec *spec)
     unsigned int i;
 
     v->silent = 0;
-    while (v->rest == 0)
-    {
-        if (SDL_RWread(src, &block, sizeof (block), 1) != 1)
+    while (v->rest == 0) {
+        if (SDL_RWread(src, &block, sizeof(block), 1) != 1) {
             return 1;  /* assume that's the end of the file. */
+        }
 
-        if (block == VOC_TERM)
+        if (block == VOC_TERM) {
             return 1;
+        }
 
-        if (SDL_RWread(src, bits24, sizeof (bits24), 1) != 1)
+        if (SDL_RWread(src, bits24, sizeof(bits24), 1) != 1) {
             return 1;  /* assume that's the end of the file. */
+        }
 
         /* Size is an 24-bit value. Ugh. */
         sblen = (Uint32)((bits24[0]) | (bits24[1] << 8) | (bits24[2] << 16));
 
-        switch(block)
-        {
+        switch(block) {
             case VOC_DATA:
-                if (SDL_RWread(src, &uc, sizeof (uc), 1) != 1)
+                if (SDL_RWread(src, &uc, sizeof(uc), 1) != 1) {
                     return 0;
+                }
 
                 /* When DATA block preceeded by an EXTENDED     */
                 /* block, the DATA blocks rate value is invalid */
-                if (!v->has_extended)
-                {
-                    if (uc == 0)
-                    {
-                        SDL_SetError("VOC Sample rate is zero?");
+                if (!v->has_extended) {
+                    if (uc == 0) {
+                        Mix_SetError("VOC Sample rate is zero?");
                         return 0;
                     }
 
-                    if ((v->rate != VOC_BAD_RATE) && (uc != v->rate))
-                    {
-                        SDL_SetError("VOC sample rate codes differ");
+                    if ((v->rate != VOC_BAD_RATE) && (uc != v->rate)) {
+                        Mix_SetError("VOC sample rate codes differ");
                         return 0;
                     }
 
@@ -163,12 +165,12 @@ static int voc_get_block(SDL_RWops *src, vs_t *v, SDL_AudioSpec *spec)
                     v->channels = 1;
                 }
 
-                if (SDL_RWread(src, &uc, sizeof (uc), 1) != 1)
+                if (SDL_RWread(src, &uc, sizeof(uc), 1) != 1) {
                     return 0;
+                }
 
-                if (uc != 0)
-                {
-                    SDL_SetError("VOC decoder only interprets 8-bit data");
+                if (uc != 0) {
+                    Mix_SetError("VOC decoder only interprets 8-bit data");
                     return 0;
                 }
 
@@ -178,39 +180,40 @@ static int voc_get_block(SDL_RWops *src, vs_t *v, SDL_AudioSpec *spec)
                 return 1;
 
             case VOC_DATA_16:
-                if (SDL_RWread(src, &new_rate_long, sizeof (new_rate_long), 1) != 1)
-                    return 0;
-                new_rate_long = SDL_SwapLE32(new_rate_long);
-                if (new_rate_long == 0)
-                {
-                    SDL_SetError("VOC Sample rate is zero?");
+                if (SDL_RWread(src, &new_rate_long, sizeof(new_rate_long), 1) != 1) {
                     return 0;
                 }
-                if ((v->rate != VOC_BAD_RATE) && (new_rate_long != v->rate))
-                {
-                    SDL_SetError("VOC sample rate codes differ");
+                new_rate_long = SDL_SwapLE32(new_rate_long);
+                if (new_rate_long == 0) {
+                    Mix_SetError("VOC Sample rate is zero?");
+                    return 0;
+                }
+                if ((v->rate != VOC_BAD_RATE) && (new_rate_long != v->rate)) {
+                    Mix_SetError("VOC sample rate codes differ");
                     return 0;
                 }
                 v->rate = new_rate_long;
                 spec->freq = (int)new_rate_long;
 
-                if (SDL_RWread(src, &uc, sizeof (uc), 1) != 1)
+                if (SDL_RWread(src, &uc, sizeof(uc), 1) != 1) {
                     return 0;
+                }
 
-                switch (uc)
-                {
+                switch (uc) {
                     case 8:  v->size = ST_SIZE_BYTE; break;
                     case 16: v->size = ST_SIZE_WORD; break;
                     default:
-                        SDL_SetError("VOC with unknown data size");
+                        Mix_SetError("VOC with unknown data size");
                         return 0;
                 }
 
-                if (SDL_RWread(src, &v->channels, sizeof (Uint8), 1) != 1)
+                if (SDL_RWread(src, &v->channels, sizeof(Uint8), 1) != 1) {
                     return 0;
+                }
 
-                if (SDL_RWread(src, trash, sizeof (Uint8), 6) != 6)
+                if (SDL_RWread(src, trash, sizeof(Uint8), 6) != 6) {
                     return 0;
+                }
 
                 v->rest = sblen - 12;
                 return 1;
@@ -220,15 +223,16 @@ static int voc_get_block(SDL_RWops *src, vs_t *v, SDL_AudioSpec *spec)
                 return 1;
 
             case VOC_SILENCE:
-                if (SDL_RWread(src, &period, sizeof (period), 1) != 1)
+                if (SDL_RWread(src, &period, sizeof(period), 1) != 1) {
                     return 0;
+                }
                 period = SDL_SwapLE16(period);
 
-                if (SDL_RWread(src, &uc, sizeof (uc), 1) != 1)
+                if (SDL_RWread(src, &uc, sizeof(uc), 1) != 1) {
                     return 0;
-                if (uc == 0)
-                {
-                    SDL_SetError("VOC silence sample rate is zero");
+                }
+                if (uc == 0) {
+                    Mix_SetError("VOC silence sample rate is zero");
                     return 0;
                 }
 
@@ -247,10 +251,10 @@ static int voc_get_block(SDL_RWops *src, vs_t *v, SDL_AudioSpec *spec)
 
             case VOC_LOOP:
             case VOC_LOOPEND:
-                for(i = 0; i < sblen; i++)   /* skip repeat loops. */
-                {
-                    if (SDL_RWread(src, trash, sizeof (Uint8), 1) != 1)
+                for (i = 0; i < sblen; i++) { /* skip repeat loops. */
+                    if (SDL_RWread(src, trash, sizeof(Uint8), 1) != 1) {
                         return 0;
+                    }
                 }
                 break;
 
@@ -260,60 +264,61 @@ static int voc_get_block(SDL_RWops *src, vs_t *v, SDL_AudioSpec *spec)
                 /* value from the extended block and not the     */
                 /* data block.                     */
                 v->has_extended = 1;
-                if (SDL_RWread(src, &new_rate_short, sizeof (new_rate_short), 1) != 1)
+                if (SDL_RWread(src, &new_rate_short, sizeof(new_rate_short), 1) != 1) {
                     return 0;
+                }
                 new_rate_short = SDL_SwapLE16(new_rate_short);
-                if (new_rate_short == 0)
-                {
-                   SDL_SetError("VOC sample rate is zero");
+                if (new_rate_short == 0) {
+                   Mix_SetError("VOC sample rate is zero");
                    return 0;
                 }
-                if ((v->rate != VOC_BAD_RATE) && (new_rate_short != v->rate))
-                {
-                   SDL_SetError("VOC sample rate codes differ");
+                if ((v->rate != VOC_BAD_RATE) && (new_rate_short != v->rate)) {
+                   Mix_SetError("VOC sample rate codes differ");
                    return 0;
                 }
                 v->rate = new_rate_short;
 
-                if (SDL_RWread(src, &uc, sizeof (uc), 1) != 1)
-                    return 0;
-
-                if (uc != 0)
-                {
-                    SDL_SetError("VOC decoder only interprets 8-bit data");
+                if (SDL_RWread(src, &uc, sizeof(uc), 1) != 1) {
                     return 0;
                 }
 
-                if (SDL_RWread(src, &uc, sizeof (uc), 1) != 1)
+                if (uc != 0) {
+                    Mix_SetError("VOC decoder only interprets 8-bit data");
                     return 0;
+                }
 
-                if (uc)
-                    spec->channels = 2;  /* Stereo */
+                if (SDL_RWread(src, &uc, sizeof(uc), 1) != 1) {
+                    return 0;
+                }
+
+                if (uc) /* Stereo */
+                     spec->channels = 2;
                 /* VOC_EXTENDED may be read before spec->channels inited: */
                 else spec->channels = 1;
                 /* Needed number of channels before finishing
                    compute for rate */
-                spec->freq = (256000000L/(65536L - v->rate))/spec->channels;
+                spec->freq = (256000000L / (65536L - v->rate)) / spec->channels;
                 /* An extended block must be followed by a data */
                 /* block to be valid so loop back to top so it  */
                 /* can be grabed.                */
                 continue;
 
             case VOC_MARKER:
-                if (SDL_RWread(src, trash, sizeof (Uint8), 2) != 2)
+                if (SDL_RWread(src, trash, sizeof(Uint8), 2) != 2) {
                     return 0;
-
+                }
                 /* fallthrough */
 
             default:  /* text block or other krapola. */
-                for(i = 0; i < sblen; i++)
-                {
-                    if (SDL_RWread(src, trash, sizeof (Uint8), 1) != 1)
+                for (i = 0; i < sblen; i++) {
+                    if (SDL_RWread(src, trash, sizeof(Uint8), 1) != 1) {
                         return 0;
+                    }
                 }
 
-                if (block == VOC_TEXT)
+                if (block == VOC_TEXT) {
                     continue;    /* get next block */
+                }
         }
     }
 
@@ -326,36 +331,33 @@ static Uint32 voc_read(SDL_RWops *src, vs_t *v, Uint8 *buf, SDL_AudioSpec *spec)
     Uint32 done = 0;
     Uint8 silence = 0x80;
 
-    if (v->rest == 0)
-    {
-        if (!voc_get_block(src, v, spec))
+    if (v->rest == 0) {
+        if (!voc_get_block(src, v, spec)) {
             return 0;
+        }
     }
 
-    if (v->rest == 0)
+    if (v->rest == 0) {
         return 0;
+    }
 
-    if (v->silent)
-    {
-        if (v->size == ST_SIZE_WORD)
+    if (v->silent) {
+        if (v->size == ST_SIZE_WORD) {
             silence = 0x00;
+        }
 
         /* Fill in silence */
         SDL_memset(buf, silence, v->rest);
         done = v->rest;
         v->rest = 0;
     }
-
-    else
-    {
+    else {
         done = (Uint32)SDL_RWread(src, buf, 1, v->rest);
         v->rest -= done;
-        if (v->size == ST_SIZE_WORD)
-        {
+        if (v->size == ST_SIZE_WORD) {
             #if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
             Uint16 *samples = (Uint16 *)buf;
-            for (; v->rest > 0; v->rest -= 2)
-            {
+            for (; v->rest > 0; v->rest -= 2) {
                 *samples = SDL_SwapLE16(*samples);
                 samples++;
             }
@@ -378,53 +380,57 @@ SDL_AudioSpec *Mix_LoadVOC_RW (SDL_RWops *src, int freesrc,
     Uint8 *fillptr;
     void *ptr;
 
-    if ((!src) || (!audio_buf) || (!audio_len))   /* sanity checks. */
+    if (!src || !audio_buf || !audio_len) { /* sanity checks. */
         goto done;
+    }
 
-    if (!voc_check_header(src))
+    if (!voc_check_header(src)) {
         goto done;
+    }
 
-    SDL_memset(&v, 0, sizeof (vs_t));
+    SDL_memset(&v, 0, sizeof(vs_t));
     v.rate = VOC_BAD_RATE;
     v.rest = 0;
     v.has_extended = 0;
     *audio_buf = NULL;
     *audio_len = 0;
-    SDL_memset(spec, '\0', sizeof (SDL_AudioSpec));
+    SDL_memset(spec, '\0', sizeof(SDL_AudioSpec));
 
-    if (!voc_get_block(src, &v, spec))
+    if (!voc_get_block(src, &v, spec)) {
         goto done;
+    }
 
     if (v.rate == VOC_BAD_RATE) {
-        SDL_SetError("VOC data had no sound!");
+        Mix_SetError("VOC data had no sound!");
         goto done;
     }
 
     if (v.size == 0) {
-        SDL_SetError("VOC data had invalid word size!");
+        Mix_SetError("VOC data had invalid word size!");
         goto done;
     }
 
     spec->format = ((v.size == ST_SIZE_WORD) ? AUDIO_S16 : AUDIO_U8);
-    if (spec->channels == 0)
+    if (spec->channels == 0) {
         spec->channels = v.channels;
+    }
 
     *audio_len = v.rest;
     *audio_buf = (v.rest == 0) ? NULL : SDL_malloc(v.rest);
-    if (*audio_buf == NULL)
+    if (*audio_buf == NULL) {
         goto done;
+    }
 
     fillptr = *audio_buf;
 
-    while (voc_read(src, &v, fillptr, spec))
-    {
-        if (!voc_get_block(src, &v, spec))
+    while (voc_read(src, &v, fillptr, spec)) {
+        if (!voc_get_block(src, &v, spec)) {
             goto done;
+        }
 
         *audio_len += v.rest;
         ptr = SDL_realloc(*audio_buf, *audio_len);
-        if (ptr == NULL)
-        {
+        if (ptr == NULL) {
             SDL_free(*audio_buf);
             *audio_buf = NULL;
             *audio_len = 0;
@@ -447,12 +453,11 @@ done:
     if (freesrc && src) {
         SDL_RWclose(src);
     }
-
     if (was_error) {
         spec = NULL;
     }
+    return spec;
 
-    return(spec);
 } /* Mix_LoadVOC_RW */
 
 /* end of load_voc.c ... */

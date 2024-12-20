@@ -1,6 +1,6 @@
 /*
   SDL_mixer:  An audio mixer library based on the SDL library
-  Copyright (C) 1997-2023 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -344,7 +344,7 @@ static int fetch_float64be(void *context, int length)
     if (length % music->samplesize != 0) {
         length -= length % music->samplesize;
     }
-    for (i = 0, o = 0; i <= length; i += 8, o += 4) {
+    for (i = 0, o = 0; i < length; i += 8, o += 4) {
         union
         {
             float f;
@@ -367,7 +367,7 @@ static int fetch_float64le(void *context, int length)
     if (length % music->samplesize != 0) {
         length -= length % music->samplesize;
     }
-    for (i = 0, o = 0; i <= length; i += 8, o += 4) {
+    for (i = 0, o = 0; i < length; i += 8, o += 4) {
         union
         {
             float f;
@@ -958,6 +958,12 @@ static SDL_bool LoadWAVMusic(WAV_Music *wave)
             if (SDL_RWseek(src, chunk_length, RW_SEEK_CUR) < 0)
                 return SDL_FALSE;
             break;
+        }
+
+        /* RIFF chunks have a 2-byte alignment. Skip padding byte. */
+        if (chunk_length & 1) {
+            if (SDL_RWseek(src, 1, RW_SEEK_CUR) < 0)
+                return SDL_FALSE;
         }
     }
 

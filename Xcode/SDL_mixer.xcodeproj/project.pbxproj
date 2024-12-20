@@ -11,6 +11,14 @@
 		0448E8AF108B937A00C9D3EA /* native_midi_macosx.c in Sources */ = {isa = PBXBuildFile; fileRef = 0448E8AD108B937A00C9D3EA /* native_midi_macosx.c */; };
 		630FBD8320D52105009867AB /* music_opus.c in Sources */ = {isa = PBXBuildFile; fileRef = 630FBD8220D52105009867AB /* music_opus.c */; };
 		630FBD8520D5211F009867AB /* music_opus.h in Headers */ = {isa = PBXBuildFile; fileRef = 630FBD8420D5211F009867AB /* music_opus.h */; };
+		635731CD2AD5B658000AC38E /* music_wavpack.c in Sources */ = {isa = PBXBuildFile; fileRef = 635731CB2AD5B658000AC38E /* music_wavpack.c */; };
+		635731CE2AD5B658000AC38E /* music_wavpack.h in Headers */ = {isa = PBXBuildFile; fileRef = 635731CC2AD5B658000AC38E /* music_wavpack.h */; };
+		635731CF2AD5B658000AC38E /* music_wavpack.c in Sources */ = {isa = PBXBuildFile; fileRef = 635731CB2AD5B658000AC38E /* music_wavpack.c */; };
+		635731D02AD5B658000AC38E /* music_wavpack.h in Headers */ = {isa = PBXBuildFile; fileRef = 635731CC2AD5B658000AC38E /* music_wavpack.h */; };
+		635731D32AD5B66A000AC38E /* music_gme.c in Sources */ = {isa = PBXBuildFile; fileRef = 635731D12AD5B66A000AC38E /* music_gme.c */; };
+		635731D42AD5B66A000AC38E /* music_gme.h in Headers */ = {isa = PBXBuildFile; fileRef = 635731D22AD5B66A000AC38E /* music_gme.h */; };
+		635731D52AD5B66A000AC38E /* music_gme.c in Sources */ = {isa = PBXBuildFile; fileRef = 635731D12AD5B66A000AC38E /* music_gme.c */; };
+		635731D62AD5B66A000AC38E /* music_gme.h in Headers */ = {isa = PBXBuildFile; fileRef = 635731D22AD5B66A000AC38E /* music_gme.h */; };
 		639008C82385A822009019FA /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 639008C62385A822009019FA /* utils.c */; };
 		639008C92385A822009019FA /* utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 639008C72385A822009019FA /* utils.h */; };
 		639197F1239FE66700F1D8F8 /* mp3utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 639197EF239FE66700F1D8F8 /* mp3utils.c */; };
@@ -50,11 +58,11 @@
 		F30240642881DF95002F32D6 /* music_xmp.h in Headers */ = {isa = PBXBuildFile; fileRef = F302405F2881DF94002F32D6 /* music_xmp.h */; };
 		F30240652881DF95002F32D6 /* music_xmp.c in Sources */ = {isa = PBXBuildFile; fileRef = F30240622881DF95002F32D6 /* music_xmp.c */; };
 		F30240662881DF95002F32D6 /* music_xmp.c in Sources */ = {isa = PBXBuildFile; fileRef = F30240622881DF95002F32D6 /* music_xmp.c */; };
+		F307A4E52B546F710012534B /* music_minimp3.c in Sources */ = {isa = PBXBuildFile; fileRef = F307A4E32B546F710012534B /* music_minimp3.c */; };
+		F307A4E62B546F710012534B /* music_minimp3.c in Sources */ = {isa = PBXBuildFile; fileRef = F307A4E32B546F710012534B /* music_minimp3.c */; };
+		F307A4E72B546F710012534B /* music_minimp3.h in Headers */ = {isa = PBXBuildFile; fileRef = F307A4E42B546F710012534B /* music_minimp3.h */; };
+		F307A4E82B546F710012534B /* music_minimp3.h in Headers */ = {isa = PBXBuildFile; fileRef = F307A4E42B546F710012534B /* music_minimp3.h */; };
 		F3249B39285C448100DB9B5C /* CMake in Resources */ = {isa = PBXBuildFile; fileRef = F3249B36285C448100DB9B5C /* CMake */; };
-		F37A8D2D2838924900C38E95 /* music_drmp3.h in Headers */ = {isa = PBXBuildFile; fileRef = F37A8D2B2838924900C38E95 /* music_drmp3.h */; };
-		F37A8D2E2838924900C38E95 /* music_drmp3.h in Headers */ = {isa = PBXBuildFile; fileRef = F37A8D2B2838924900C38E95 /* music_drmp3.h */; };
-		F37A8D2F2838924900C38E95 /* music_drmp3.c in Sources */ = {isa = PBXBuildFile; fileRef = F37A8D2C2838924900C38E95 /* music_drmp3.c */; };
-		F37A8D302838924900C38E95 /* music_drmp3.c in Sources */ = {isa = PBXBuildFile; fileRef = F37A8D2C2838924900C38E95 /* music_drmp3.c */; };
 		F37A8D4A2838A23400C38E95 /* music_drflac.h in Headers */ = {isa = PBXBuildFile; fileRef = F37A8D412838A23400C38E95 /* music_drflac.h */; };
 		F37A8D4B2838A23400C38E95 /* music_drflac.h in Headers */ = {isa = PBXBuildFile; fileRef = F37A8D412838A23400C38E95 /* music_drflac.h */; };
 		F37A8D502838A23400C38E95 /* music_drflac.c in Sources */ = {isa = PBXBuildFile; fileRef = F37A8D492838A23400C38E95 /* music_drflac.c */; };
@@ -113,6 +121,20 @@
 			remoteGlobalIDString = BE1FA8B407AF96B2004B6283;
 			remoteInfo = Framework;
 		};
+		F307A4732B544C0F0012534B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F307A46E2B544C0F0012534B /* gme.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F3F70EDA281F61B4005AA27D;
+			remoteInfo = gme;
+		};
+		F307A47A2B544C1A0012534B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F307A4752B544C1A0012534B /* wavpack.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F3968A21281F704800661875;
+			remoteInfo = wavpack;
+		};
 		F3968B96281F817E00661875 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F3968B90281F817E00661875 /* opus.xcodeproj */;
@@ -122,7 +144,7 @@
 		};
 		F3E29D062882107B0006D108 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = F3E29D022882107B0006D108 /* xmp-lite.xcodeproj */;
+			containerPortal = F3E29D022882107B0006D108 /* xmp.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = F3968D85281FBB1900661875;
 			remoteInfo = xmp;
@@ -134,6 +156,10 @@
 		1014BAEA010A4B677F000001 /* SDL_mixer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SDL_mixer.h; sourceTree = "<group>"; };
 		630FBD8220D52105009867AB /* music_opus.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_opus.c; sourceTree = "<group>"; };
 		630FBD8420D5211F009867AB /* music_opus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_opus.h; sourceTree = "<group>"; };
+		635731CB2AD5B658000AC38E /* music_wavpack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_wavpack.c; sourceTree = "<group>"; };
+		635731CC2AD5B658000AC38E /* music_wavpack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_wavpack.h; sourceTree = "<group>"; };
+		635731D12AD5B66A000AC38E /* music_gme.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_gme.c; sourceTree = "<group>"; };
+		635731D22AD5B66A000AC38E /* music_gme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_gme.h; sourceTree = "<group>"; };
 		639008C62385A822009019FA /* utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = utils.c; sourceTree = "<group>"; };
 		639008C72385A822009019FA /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
 		639197EF239FE66700F1D8F8 /* mp3utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mp3utils.c; sourceTree = "<group>"; };
@@ -174,9 +200,11 @@
 		BE1FA95807AF96B3004B6283 /* Create DMG */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Create DMG"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F302405F2881DF94002F32D6 /* music_xmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_xmp.h; sourceTree = "<group>"; };
 		F30240622881DF95002F32D6 /* music_xmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_xmp.c; sourceTree = "<group>"; };
+		F307A46E2B544C0F0012534B /* gme.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = gme.xcodeproj; path = gme/gme.xcodeproj; sourceTree = "<group>"; };
+		F307A4752B544C1A0012534B /* wavpack.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = wavpack.xcodeproj; path = wavpack/wavpack.xcodeproj; sourceTree = "<group>"; };
+		F307A4E32B546F710012534B /* music_minimp3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_minimp3.c; sourceTree = "<group>"; };
+		F307A4E42B546F710012534B /* music_minimp3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_minimp3.h; sourceTree = "<group>"; };
 		F3249B36285C448100DB9B5C /* CMake */ = {isa = PBXFileReference; lastKnownFileType = folder; path = CMake; sourceTree = "<group>"; };
-		F37A8D2B2838924900C38E95 /* music_drmp3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_drmp3.h; sourceTree = "<group>"; };
-		F37A8D2C2838924900C38E95 /* music_drmp3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_drmp3.c; sourceTree = "<group>"; };
 		F37A8D412838A23400C38E95 /* music_drflac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_drflac.h; sourceTree = "<group>"; };
 		F37A8D492838A23400C38E95 /* music_drflac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_drflac.c; sourceTree = "<group>"; };
 		F37A8DB42838AD1200C38E95 /* music_ogg_stb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_ogg_stb.c; sourceTree = "<group>"; };
@@ -186,7 +214,7 @@
 		F3D87C0A281DFAD4005DA540 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		F3D87C0C281DFADB005DA540 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		F3D87C0E281DFB02005DA540 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = macOS/SDL2.framework; sourceTree = "<group>"; };
-		F3E29D022882107B0006D108 /* xmp-lite.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "xmp-lite.xcodeproj"; path = "xmp-lite/xmp-lite.xcodeproj"; sourceTree = "<group>"; };
+		F3E29D022882107B0006D108 /* xmp.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = xmp.xcodeproj; path = xmp/xmp.xcodeproj; sourceTree = "<group>"; };
 		F51BFB0101F724BE01D3D55B /* native_midi.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = native_midi.h; sourceTree = "<group>"; };
 		F59C710300D5CB5801000001 /* ReadMe.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = ReadMe.txt; sourceTree = "<group>"; };
 		F59C710400D5CB5801000001 /* Welcome.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Welcome.txt; sourceTree = "<group>"; };
@@ -239,8 +267,10 @@
 			isa = PBXGroup;
 			children = (
 				F3968D71281FB5E100661875 /* config.xcconfig */,
+				F307A46E2B544C0F0012534B /* gme.xcodeproj */,
 				F3968B90281F817E00661875 /* opus.xcodeproj */,
-				F3E29D022882107B0006D108 /* xmp-lite.xcodeproj */,
+				F307A4752B544C1A0012534B /* wavpack.xcodeproj */,
+				F3E29D022882107B0006D108 /* xmp.xcodeproj */,
 				F59C70FC00D5CB5801000001 /* pkg-support */,
 				0153844A006D81B07F000001 /* Public Headers */,
 				08FB77ACFE841707C02AAC07 /* Library Source */,
@@ -281,12 +311,14 @@
 				AAE405DB1F9607C200EDAF53 /* music_cmd.h */,
 				F37A8D492838A23400C38E95 /* music_drflac.c */,
 				F37A8D412838A23400C38E95 /* music_drflac.h */,
-				F37A8D2C2838924900C38E95 /* music_drmp3.c */,
-				F37A8D2B2838924900C38E95 /* music_drmp3.h */,
 				AAE405D41F9607C100EDAF53 /* music_flac.c */,
 				AAE405C71F9607C000EDAF53 /* music_flac.h */,
 				AAE405C61F9607C000EDAF53 /* music_fluidsynth.c */,
 				AAE405BF1F9607BF00EDAF53 /* music_fluidsynth.h */,
+				635731D12AD5B66A000AC38E /* music_gme.c */,
+				635731D22AD5B66A000AC38E /* music_gme.h */,
+				F307A4E32B546F710012534B /* music_minimp3.c */,
+				F307A4E42B546F710012534B /* music_minimp3.h */,
 				AAE405C41F9607C000EDAF53 /* music_modplug.c */,
 				AAE405C51F9607C000EDAF53 /* music_modplug.h */,
 				AAE405DF1F9607C300EDAF53 /* music_mpg123.c */,
@@ -302,6 +334,8 @@
 				AAE405D61F9607C100EDAF53 /* music_timidity.h */,
 				AAE405C91F9607C000EDAF53 /* music_wav.c */,
 				AAE405C81F9607C000EDAF53 /* music_wav.h */,
+				635731CB2AD5B658000AC38E /* music_wavpack.c */,
+				635731CC2AD5B658000AC38E /* music_wavpack.h */,
 				F30240622881DF95002F32D6 /* music_xmp.c */,
 				F302405F2881DF94002F32D6 /* music_xmp.h */,
 			);
@@ -338,6 +372,22 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		F307A46F2B544C0F0012534B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F307A4742B544C0F0012534B /* gme.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F307A4762B544C1A0012534B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F307A47B2B544C1A0012534B /* wavpack.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		F3968B91281F817E00661875 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -349,7 +399,7 @@
 		F3E29D032882107B0006D108 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F3E29D072882107B0006D108 /* xmp_lite.framework */,
+				F3E29D072882107B0006D108 /* xmp.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -392,9 +442,9 @@
 			files = (
 				AAE405E31F9607C300EDAF53 /* music_fluidsynth.h in Headers */,
 				AAE405F61F9607C300EDAF53 /* load_aiff.h in Headers */,
+				F307A4E72B546F710012534B /* music_minimp3.h in Headers */,
 				AAE405E71F9607C300EDAF53 /* load_voc.h in Headers */,
 				AAE405EC1F9607C300EDAF53 /* music_wav.h in Headers */,
-				F37A8D2D2838924900C38E95 /* music_drmp3.h in Headers */,
 				AAE405E91F9607C300EDAF53 /* music_modplug.h in Headers */,
 				AAE405FE1F9607C300EDAF53 /* music_nativemidi.h in Headers */,
 				F37A8D4A2838A23400C38E95 /* music_drflac.h in Headers */,
@@ -412,6 +462,8 @@
 				630FBD8520D5211F009867AB /* music_opus.h in Headers */,
 				639008C92385A822009019FA /* utils.h in Headers */,
 				639197F2239FE66700F1D8F8 /* mp3utils.h in Headers */,
+				635731CE2AD5B658000AC38E /* music_wavpack.h in Headers */,
+				635731D42AD5B66A000AC38E /* music_gme.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -432,14 +484,16 @@
 				F3823338273195CF00F7F527 /* utils.h in Headers */,
 				F38233562731961C00F7F527 /* music_timidity.h in Headers */,
 				F38233542731961800F7F527 /* music_ogg.h in Headers */,
+				F307A4E82B546F710012534B /* music_minimp3.h in Headers */,
 				F382335C2731962B00F7F527 /* load_voc.h in Headers */,
 				F382335D2731962D00F7F527 /* music_opus.h in Headers */,
 				F3823342273195E900F7F527 /* mp3utils.h in Headers */,
 				F38233602731963800F7F527 /* native_midi.h in Headers */,
 				F38233502731960F00F7F527 /* music_mpg123.h in Headers */,
 				F3823344273195EE00F7F527 /* music_cmd.h in Headers */,
-				F37A8D2E2838924900C38E95 /* music_drmp3.h in Headers */,
 				F38233582731962100F7F527 /* music_wav.h in Headers */,
+				635731D02AD5B658000AC38E /* music_wavpack.h in Headers */,
+				635731D62AD5B66A000AC38E /* music_gme.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -525,12 +579,20 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = F307A46F2B544C0F0012534B /* Products */;
+					ProjectRef = F307A46E2B544C0F0012534B /* gme.xcodeproj */;
+				},
+				{
 					ProductGroup = F3968B91281F817E00661875 /* Products */;
 					ProjectRef = F3968B90281F817E00661875 /* opus.xcodeproj */;
 				},
 				{
+					ProductGroup = F307A4762B544C1A0012534B /* Products */;
+					ProjectRef = F307A4752B544C1A0012534B /* wavpack.xcodeproj */;
+				},
+				{
 					ProductGroup = F3E29D032882107B0006D108 /* Products */;
-					ProjectRef = F3E29D022882107B0006D108 /* xmp-lite.xcodeproj */;
+					ProjectRef = F3E29D022882107B0006D108 /* xmp.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -543,6 +605,20 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		F307A4742B544C0F0012534B /* gme.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = gme.framework;
+			remoteRef = F307A4732B544C0F0012534B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F307A47B2B544C1A0012534B /* wavpack.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = wavpack.framework;
+			remoteRef = F307A47A2B544C1A0012534B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		F3968B97281F817E00661875 /* opus.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -550,10 +626,10 @@
 			remoteRef = F3968B96281F817E00661875 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F3E29D072882107B0006D108 /* xmp_lite.framework */ = {
+		F3E29D072882107B0006D108 /* xmp.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = xmp_lite.framework;
+			path = xmp.framework;
 			remoteRef = F3E29D062882107B0006D108 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -609,7 +685,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "PRODUCT_NAME=SDL2_mixer\nOPTIONAL_FRAMEWORKS=\"ogg opus xmp_lite\"\n\n# Sign framework\nif [ \"$SDL_CODESIGN_IDENTITY\" != \"\" ]; then\n    codesign --force --deep --sign \"$SDL_CODESIGN_IDENTITY\" --preserve-metadata\\=identifier,entitlements,flags --generate-entitlement-der $TARGET_BUILD_DIR/$PRODUCT_NAME.framework/Versions/A || exit $?\nfi\n\n# clean up the framework, remove headers, extra files\nmkdir -p build/dmg-tmp\ncp -a $TARGET_BUILD_DIR/$PRODUCT_NAME.framework build/dmg-tmp/\ncp pkg-support/resources/ReadMe.txt build/dmg-tmp\nfor i in $OPTIONAL_FRAMEWORKS; do\n    if [ -d $TARGET_BUILD_DIR/$i.framework ]; then\n        if [ \"$SDL_CODESIGN_IDENTITY\" != \"\" ]; then\n            codesign --force --deep --sign \"$SDL_CODESIGN_IDENTITY\"  --preserve-metadata\\=identifier,entitlements,flags --generate-entitlement-der $TARGET_BUILD_DIR/$i.framework/Versions/A\n        fi\n        mkdir -p build/dmg-tmp/optional\n        cp -a $TARGET_BUILD_DIR/$i.framework build/dmg-tmp/optional/\n    fi\ndone\n\n# remove the .DS_Store files if any (we may want to provide one in the future for fancy .dmgs)\nrm -rf build/dmg-tmp/.DS_Store\n\n# create the dmg\nhdiutil create -ov -fs HFS+ -volname $PRODUCT_NAME -srcfolder build/dmg-tmp build/$PRODUCT_NAME.dmg\n\n# clean up\nrm -rf build/dmg-tmp\n";
+			shellScript = "PRODUCT_NAME=SDL2_mixer\nOPTIONAL_FRAMEWORKS=\"gme ogg opus wavpack xmp\"\n\n# Sign framework\nif [ \"$SDL_CODESIGN_IDENTITY\" != \"\" ]; then\n    codesign --force --deep --sign \"$SDL_CODESIGN_IDENTITY\" --preserve-metadata\\=identifier,entitlements,flags --generate-entitlement-der $TARGET_BUILD_DIR/$PRODUCT_NAME.framework/Versions/A || exit $?\nfi\n\n# clean up the framework, remove headers, extra files\nmkdir -p build/dmg-tmp\ncp -a $TARGET_BUILD_DIR/$PRODUCT_NAME.framework build/dmg-tmp/\ncp pkg-support/resources/ReadMe.txt build/dmg-tmp\nfor i in $OPTIONAL_FRAMEWORKS; do\n    if [ -d $TARGET_BUILD_DIR/$i.framework ]; then\n        if [ \"$SDL_CODESIGN_IDENTITY\" != \"\" ]; then\n            codesign --force --deep --sign \"$SDL_CODESIGN_IDENTITY\"  --preserve-metadata\\=identifier,entitlements,flags --generate-entitlement-der $TARGET_BUILD_DIR/$i.framework/Versions/A\n        fi\n        mkdir -p build/dmg-tmp/optional\n        cp -a $TARGET_BUILD_DIR/$i.framework build/dmg-tmp/optional/\n    fi\ndone\n\n# remove the .DS_Store files if any (we may want to provide one in the future for fancy .dmgs)\nrm -rf build/dmg-tmp/.DS_Store\n\n# create the dmg\nhdiutil create -ov -fs HFS+ -volname $PRODUCT_NAME -srcfolder build/dmg-tmp build/$PRODUCT_NAME.dmg\n\n# clean up\nrm -rf build/dmg-tmp\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -619,7 +695,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				AAE405E21F9607C300EDAF53 /* load_aiff.c in Sources */,
-				F37A8D2F2838924900C38E95 /* music_drmp3.c in Sources */,
 				AAE405F01F9607C300EDAF53 /* load_voc.c in Sources */,
 				AAE405EA1F9607C300EDAF53 /* music_fluidsynth.c in Sources */,
 				AAE405FD1F9607C300EDAF53 /* music_ogg.c in Sources */,
@@ -638,10 +713,13 @@
 				F30240652881DF95002F32D6 /* music_xmp.c in Sources */,
 				AAE405E81F9607C300EDAF53 /* music_modplug.c in Sources */,
 				AAE405E51F9607C300EDAF53 /* mixer.c in Sources */,
+				F307A4E52B546F710012534B /* music_minimp3.c in Sources */,
 				0448E8AE108B937A00C9D3EA /* native_midi_macosx.c in Sources */,
 				630FBD8320D52105009867AB /* music_opus.c in Sources */,
 				639008C82385A822009019FA /* utils.c in Sources */,
 				639197F1239FE66700F1D8F8 /* mp3utils.c in Sources */,
+				635731CD2AD5B658000AC38E /* music_wavpack.c in Sources */,
+				635731D32AD5B66A000AC38E /* music_gme.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -650,7 +728,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F38233552731961A00F7F527 /* music_timidity.c in Sources */,
-				F37A8D302838924900C38E95 /* music_drmp3.c in Sources */,
 				F382334F2731960C00F7F527 /* music_mpg123.c in Sources */,
 				F382333B273195D800F7F527 /* effects_internal.c in Sources */,
 				0448E8AF108B937A00C9D3EA /* native_midi_macosx.c in Sources */,
@@ -669,10 +746,13 @@
 				F30240662881DF95002F32D6 /* music_xmp.c in Sources */,
 				F3823345273195F000F7F527 /* music_flac.c in Sources */,
 				F38233572731961F00F7F527 /* music_wav.c in Sources */,
+				F307A4E62B546F710012534B /* music_minimp3.c in Sources */,
 				F38233512731961100F7F527 /* music_nativemidi.c in Sources */,
 				F38233532731961600F7F527 /* music_ogg.c in Sources */,
 				F3823337273195CC00F7F527 /* utils.c in Sources */,
 				F3823339273195D200F7F527 /* effect_position.c in Sources */,
+				635731CF2AD5B658000AC38E /* music_wavpack.c in Sources */,
+				635731D52AD5B66A000AC38E /* music_gme.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -764,15 +844,15 @@
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				DEPLOYMENT_POSTPROCESSING = YES;
-				DYLIB_COMPATIBILITY_VERSION = 701.0.0;
-				DYLIB_CURRENT_VERSION = 701.0.0;
+				DYLIB_COMPATIBILITY_VERSION = 801.0.0;
+				DYLIB_CURRENT_VERSION = 801.0.0;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/$(PLATFORM)\"";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					MUSIC_FLAC_DRFLAC,
-					MUSIC_MP3_DRMP3,
+					MUSIC_MP3_MINIMP3,
 					MUSIC_OGG,
 					OGG_USE_STB,
 					MUSIC_WAV,
@@ -813,8 +893,8 @@
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				DYLIB_COMPATIBILITY_VERSION = 701.0.0;
-				DYLIB_CURRENT_VERSION = 701.0.0;
+				DYLIB_COMPATIBILITY_VERSION = 801.0.0;
+				DYLIB_CURRENT_VERSION = 801.0.0;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/$(PLATFORM)\"";
@@ -822,7 +902,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					MUSIC_FLAC_DRFLAC,
-					MUSIC_MP3_DRMP3,
+					MUSIC_MP3_MINIMP3,
 					MUSIC_OGG,
 					OGG_USE_STB,
 					MUSIC_WAV,

@@ -22,7 +22,7 @@
 
 /* everything below is currently one very big bad hack ;) Proff */
 
-#if __WIN32__
+#ifdef __WIN32__
 #define WIN32_LEAN_AND_MEAN
 
 #include <windows.h>

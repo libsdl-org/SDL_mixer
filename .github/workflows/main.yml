@@ -55,8 +55,6 @@ jobs:
           autoconf \
           automake \
           libtool \
-          ninja \
-          pkg-config \
           flac \
           fluidsynth \
           game-music-emu \
@@ -83,10 +81,9 @@ jobs:
           libvorbis-dev \
           libxmp-dev \
           libwavpack-dev \
-          ninja-build \
           pkg-config \
           ${NULL+}
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: recursive
 
@@ -103,10 +100,8 @@ jobs:
         echo "${{ github.workspace }}" >> $Env:GITHUB_PATH
         echo "::endgroup::"
     - name: Setup Ninja for MSVC
-      if: "matrix.platform.msvc"
-      uses: ashutoshvarma/setup-ninja@master
-      with:
-        version: 1.10.2
+      if: ${{ !contains(matrix.platform.shell, 'msys2') }}
+      uses: aseprite/get-ninja@main
     - uses: ilammy/msvc-dev-cmd@v1
       if: "matrix.platform.msvc"
       with:
@@ -117,11 +112,6 @@ jobs:
       if: "runner.os == 'Linux' && matrix.platform.cmake"
       run: ./test-versioning.sh
 
-    - name: Setup (CMake)
-      if: ${{ matrix.platform.cmake && !matrix.platform.msystem && !matrix.platform.msvc }}
-      uses: jwlawson/actions-setup-cmake@v1.13.1
-      with:
-        cmake-version: '3.16'
     - name: Configure (CMake)
       if: "matrix.platform.cmake"
       run: |

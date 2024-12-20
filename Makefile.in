@@ -61,6 +61,7 @@ SRC_DIST =			\
 	cmake			\
 	configure		\
 	configure.ac		\
+	external/Get-GitModules.ps1	\
 	external/download.sh	\
 	include/SDL_mixer.h	\
 	mingw			\

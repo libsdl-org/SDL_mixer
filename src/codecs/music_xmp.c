@@ -1,6 +1,6 @@
 /*
   SDL_mixer:  An audio mixer library based on the SDL library
-  Copyright (C) 1997-2023 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -73,9 +73,13 @@ static xmp_loader libxmp;
 #else
 #define FUNCTION_LOADER(FUNC, SIG) \
     libxmp.FUNC = FUNC; \
-    if (libxmp.FUNC == NULL) { Mix_SetError("Missing xmp_lite.framework"); return -1; }
+    if (libxmp.FUNC == NULL) { Mix_SetError("Missing xmp.framework"); return -1; }
 #endif
 
+#ifdef __APPLE__
+    /* Need to turn off optimizations so weak framework load check works */
+    __attribute__ ((optnone))
+#endif
 static int XMP_Load(void)
 {
     if (libxmp.loaded == 0) {
@@ -129,6 +133,8 @@ static void XMP_Unload(void)
 
 typedef struct
 {
+    SDL_RWops *src;
+    Sint64 src_offset;
     int volume;
     int play_count;
     struct xmp_module_info mi;
@@ -176,14 +182,26 @@ static void libxmp_set_error(int e)
     Mix_SetError("XMP: %s", msg);
 }
 
-static unsigned long xmp_fread(void *dst, unsigned long len, unsigned long nmemb, void *src) {
-    return (unsigned long)SDL_RWread((SDL_RWops*)src, dst, len, nmemb);
+static unsigned long xmp_fread(void *dst, unsigned long len, unsigned long nmemb, void *src)
+{
+    XMP_Music *music = (XMP_Music *)src;
+    return (unsigned long)SDL_RWread(music->src, dst, len, nmemb);
 }
-static int xmp_fseek(void *src, long offset, int whence) {
-    return (SDL_RWseek((SDL_RWops*)src, offset, whence) < 0)? -1 : 0;
+
+static int xmp_fseek(void *src, long offset, int whence)
+{
+    XMP_Music *music = (XMP_Music *)src;
+    Sint64 offset64 = (Sint64)offset;
+    if (whence == RW_SEEK_SET) {
+        offset64 += music->src_offset;
+    }
+    return (SDL_RWseek(music->src, offset64, whence) < 0) ? -1 : 0;
 }
-static long xmp_ftell(void *src) {
-    return (long)SDL_RWtell((SDL_RWops*)src);
+
+static long xmp_ftell(void *src)
+{
+    XMP_Music *music = (XMP_Music *)src;
+    return (long)(SDL_RWtell(music->src) - music->src_offset);
 }
 
 /* Load a libxmp stream from an SDL_RWops object */
@@ -215,7 +233,9 @@ void *XMP_CreateFromRW(SDL_RWops *src, int freesrc)
     }
 
     if (libxmp.xmp_load_module_from_callbacks) {
-        err = libxmp.xmp_load_module_from_callbacks(music->ctx, src, file_callbacks);
+        music->src = src;
+        music->src_offset = SDL_RWtell(src);
+        err = libxmp.xmp_load_module_from_callbacks(music->ctx, music, file_callbacks);
     } else {
         size_t size;
         void *mem = SDL_LoadFile_RW(src, &size, SDL_FALSE);

@@ -6,7 +6,7 @@
 
 LIBNAME = SDL2mix
 MAJOR_VERSION = 2
-MINOR_VERSION = 7
+MINOR_VERSION = 8
 MICRO_VERSION = 0
 VERSION = $(MAJOR_VERSION).$(MINOR_VERSION).$(MICRO_VERSION)
 
@@ -33,10 +33,12 @@ USE_DRFLAC=no
 USE_OPUS=yes
 # mp3 music support (using mpg123)
 USE_MPG123=yes
-# mp3 music support (using dr_mp3)
-USE_DRMP3=no
+# mp3 music support (using minimp3)
+USE_MINIMP3=no
 # wavpack music support
 USE_WAVPACK=yes
+# wavpack DSD music support
+USE_WAVPACK_DSD= no
 # midi music support (using timidity)
 USE_TIMIDITY=yes
 # midi music support (using fluidsynth)
@@ -58,7 +60,7 @@ SRCS = utils.c effect_position.c effects_internal.c effect_stereoreverse.c mixer
 SRCS+= load_aiff.c load_voc.c music_wav.c &
        music_ogg.c music_ogg_stb.c music_opus.c &
        music_flac.c music_drflac.c music_wavpack.c &
-       mp3utils.c music_mpg123.c music_drmp3.c &
+       mp3utils.c music_mpg123.c music_minimp3.c &
        music_xmp.c music_modplug.c music_gme.c &
        music_fluidsynth.c music_timidity.c
 # timidity sources:
@@ -124,6 +126,9 @@ CFLAGS+= -DMUSIC_FLAC_DRFLAC
 
 !ifeq USE_WAVPACK yes
 CFLAGS+= -DMUSIC_WAVPACK
+!ifeq USE_WAVPACK_DSD yes
+CFLAGS+= -DMUSIC_WAVPACK_DSD
+!endif
 LIBS+= wavpack.lib
 !endif
 
@@ -137,8 +142,8 @@ NEED_LIBOGG=yes
 CFLAGS+= -DMUSIC_MP3_MPG123
 LIBS+= mpg123.lib
 !endif
-!ifeq USE_DRMP3 yes
-CFLAGS+= -DMUSIC_MP3_DRMP3
+!ifeq USE_MINIMP3 yes
+CFLAGS+= -DMUSIC_MP3_MINIMP3
 !endif
 
 !ifeq USE_XMP yes
@@ -193,6 +198,9 @@ $(LNKFILE):
 
 .c.obj:
   wcc386 $(CFLAGS) -fo=$^@ $<
+
+music_minimp3.obj: music_minimp3.c
+  wcc386 $(CFLAGS) -za99 -fo=$^@ $<
 
 playmus.obj: playmus.c
   wcc386 $(CFLAGS_BASE) -fo=$^@ $<

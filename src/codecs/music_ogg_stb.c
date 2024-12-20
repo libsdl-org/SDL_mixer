@@ -1,6 +1,6 @@
 /*
   SDL_mixer:  An audio mixer library based on the SDL library
-  Copyright (C) 1997-2023 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -36,7 +36,7 @@
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 #define STB_VORBIS_BIG_ENDIAN 1
 #endif
-#define STBV_CDECL SDLCALL /* for SDL_qsort */
+#define STBV_CDECL SDLCALL /* for SDL_qsort() */
 
 #ifdef assert
 #undef assert
@@ -198,6 +198,14 @@ static void *OGG_CreateFromRW(SDL_RWops *src, int freesrc)
     }
 
     rate = music->vi.sample_rate;
+
+    music->full_length = stb_vorbis_stream_length_in_samples(music->vf);
+    if (music->full_length <= 0) {
+        Mix_SetError("No samples in ogg/vorbis stream.");
+        OGG_Delete(music);
+        return NULL;
+    }
+
     vc = stb_vorbis_get_comment(music->vf);
     if (vc.comment_list != NULL) {
         for (i = 0; i < vc.comment_list_length; i++) {
@@ -250,7 +258,6 @@ static void *OGG_CreateFromRW(SDL_RWops *src, int freesrc)
         }
     }
 
-    music->full_length = stb_vorbis_stream_length_in_samples(music->vf);
     if ((music->loop_end > 0) && (music->loop_end <= music->full_length) &&
         (music->loop_start < music->loop_end)) {
         music->loop = 1;
@@ -336,8 +343,7 @@ static int OGG_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         amount -= (int)((pcmPos - music->loop_end) * music->vi.channels) * (int)sizeof(float);
         result = stb_vorbis_seek(music->vf, (Uint32)music->loop_start);
         if (!result) {
-            set_ov_error("stb_vorbis_seek", stb_vorbis_get_error(music->vf));
-            return -1;
+            return set_ov_error("stb_vorbis_seek", stb_vorbis_get_error(music->vf));
         } else {
             int play_count = -1;
             if (music->play_count > 0) {
@@ -382,8 +388,7 @@ static int OGG_Seek(void *context, double time)
 
     result = stb_vorbis_seek(music->vf, (unsigned int)(time * music->vi.sample_rate));
     if (!result) {
-        set_ov_error("stb_vorbis_seek", stb_vorbis_get_error(music->vf));
-        return -1;
+        return set_ov_error("stb_vorbis_seek", stb_vorbis_get_error(music->vf));
     }
     return 0;
 }
@@ -401,7 +406,7 @@ static double OGG_Duration(void *context)
     return (double)music->full_length / music->vi.sample_rate;
 }
 
-static double   OGG_LoopStart(void *music_p)
+static double OGG_LoopStart(void *music_p)
 {
     OGG_music *music = (OGG_music *)music_p;
     if (music->loop > 0) {
@@ -410,7 +415,7 @@ static double   OGG_LoopStart(void *music_p)
     return -1.0;
 }
 
-static double   OGG_LoopEnd(void *music_p)
+static double OGG_LoopEnd(void *music_p)
 {
     OGG_music *music = (OGG_music *)music_p;
     if (music->loop > 0) {
@@ -419,7 +424,7 @@ static double   OGG_LoopEnd(void *music_p)
     return -1.0;
 }
 
-static double   OGG_LoopLength(void *music_p)
+static double OGG_LoopLength(void *music_p)
 {
     OGG_music *music = (OGG_music *)music_p;
     if (music->loop > 0) {

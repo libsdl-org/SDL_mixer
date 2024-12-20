@@ -1,6 +1,6 @@
 /*
   SDL_mixer:  An audio mixer library based on the SDL library
-  Copyright (C) 1997-2023 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -66,7 +66,6 @@ typedef struct {
     uint32_t libversion;
     uint32_t (*WavpackGetLibraryVersion)(void);
     char *(*WavpackGetErrorMessage)(WavpackContext*);
-    WavpackContext *(*WavpackOpenFileInput)(const char *infilename, char *error, int flags, int norm_offset);
     WavpackContext *(*WavpackOpenFileInputEx)(WavpackStreamReader *reader, void *wv_id, void *wvc_id, char *error, int flags, int norm_offset);
     WavpackContext *(*WavpackCloseFile)(WavpackContext*);
     int (*WavpackGetMode)(WavpackContext*);
@@ -94,9 +93,13 @@ static wavpack_loader wvpk;
 #else
 #define FUNCTION_LOADER(FUNC, SIG) \
     wvpk.FUNC = FUNC; \
-    if (wvpk.FUNC == NULL) { Mix_SetError("Missing WavPack.framework"); return -1; }
+    if (wvpk.FUNC == NULL) { Mix_SetError("Missing wavpack.framework"); return -1; }
 #endif
 
+#ifdef __APPLE__
+    /* Need to turn off optimizations so weak framework load check works */
+    __attribute__ ((optnone))
+#endif
 static int WAVPACK_Load(void)
 {
     if (wvpk.loaded == 0) {
@@ -108,7 +111,6 @@ static int WAVPACK_Load(void)
 #endif
         FUNCTION_LOADER(WavpackGetLibraryVersion, uint32_t (*)(void));
         FUNCTION_LOADER(WavpackGetErrorMessage, char *(*)(WavpackContext*));
-        FUNCTION_LOADER(WavpackOpenFileInput, WavpackContext *(*)(const char*, char*, int, int));
         FUNCTION_LOADER(WavpackOpenFileInputEx, WavpackContext *(*)(WavpackStreamReader*, void*, void*, char*, int, int));
         FUNCTION_LOADER(WavpackCloseFile, WavpackContext *(*)(WavpackContext*));
         FUNCTION_LOADER(WavpackGetMode, int (*)(WavpackContext*));
@@ -185,8 +187,11 @@ typedef struct {
     WavpackContext *ctx;
     int64_t numsamples;
     uint32_t samplerate;
-    int bps, channels, mode, decimation;
+    int bps, channels, mode;
+    #ifdef MUSIC_WAVPACK_DSD
+    int decimation;
     void *decimation_ctx;
+    #endif
 
     SDL_AudioStream *stream;
     void *buffer;
@@ -287,9 +292,16 @@ static int WAVPACK_Seek(void *context, double time);
 static void WAVPACK_Delete(void *context);
 static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, int freesrc, int *freesrc2);
 
+#ifdef MUSIC_WAVPACK_DSD
 static void *decimation_init(int num_channels, int ratio);
 static int decimation_run(void *context, int32_t *samples, int num_samples);
 static void decimation_reset(void *context);
+#define FLAGS_DSD OPEN_DSD_AS_PCM
+#define DECIMATION(x) (x)->decimation
+#else
+#define FLAGS_DSD 0
+#define DECIMATION(x) 1
+#endif
 
 static void *WAVPACK_CreateFromRW(SDL_RWops *src, int freesrc)
 {
@@ -355,7 +367,7 @@ static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, int
     music->volume = MIX_MAX_VOLUME;
 
     music->ctx = (wvpk.WavpackOpenFileInputEx64 != NULL) ?
-                  wvpk.WavpackOpenFileInputEx64(&sdl_reader64, src1, src2, err, OPEN_NORMALIZE|OPEN_TAGS|OPEN_DSD_AS_PCM, 0) :
+                  wvpk.WavpackOpenFileInputEx64(&sdl_reader64, src1, src2, err, OPEN_NORMALIZE|OPEN_TAGS|FLAGS_DSD, 0) :
                   wvpk.WavpackOpenFileInputEx(&sdl_reader32, src1, src2, err, OPEN_NORMALIZE|OPEN_TAGS, 0);
     if (!music->ctx) {
         Mix_SetError("%s", err);
@@ -373,12 +385,13 @@ static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, int
     music->bps = wvpk.WavpackGetBytesPerSample(music->ctx) << 3;
     music->channels = wvpk.WavpackGetNumChannels(music->ctx);
     music->mode = wvpk.WavpackGetMode(music->ctx);
-    music->decimation = 1;
 
     if (freesrc2) {
        *freesrc2 = 0; /* WAVPACK_Delete() will free it. */
     }
 
+    #ifdef MUSIC_WAVPACK_DSD
+    music->decimation = 1;
     /* for very high sample rates (including DSD, which will normally be 352,800 Hz)
      * decimate 4x here before sending on */
     if (music->samplerate >= 256000) {
@@ -390,6 +403,7 @@ static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, int
             return NULL;
         }
     }
+    #endif
 
     #if WAVPACK_DBG
     SDL_Log("WavPack loader:\n numsamples: %" SDL_PRIs64 "\n samplerate: %d\n bitspersample: %d\n channels: %d\n mode: 0x%x\n lossy: %d\n duration: %f\n",
@@ -409,7 +423,7 @@ static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, int
         format = (music->mode & MODE_FLOAT) ? AUDIO_F32SYS : AUDIO_S32SYS;
         break;
     }
-    music->stream = SDL_NewAudioStream(format, (Uint8)music->channels, (int)music->samplerate / music->decimation,
+    music->stream = SDL_NewAudioStream(format, (Uint8)music->channels, (int)music->samplerate / DECIMATION(music),
                                        music_spec.format, music_spec.channels, music_spec.freq);
     if (!music->stream) {
         WAVPACK_Delete(music);
@@ -417,7 +431,7 @@ static void *WAVPACK_CreateFromRW_internal(SDL_RWops *src1, SDL_RWops *src2, int
     }
 
     music->frames = music_spec.samples;
-    music->buffer = SDL_malloc(music->frames * music->channels * sizeof(int32_t) * music->decimation);
+    music->buffer = SDL_malloc(music->frames * music->channels * sizeof(int32_t) * DECIMATION(music));
     if (!music->buffer) {
         SDL_OutOfMemory();
         WAVPACK_Delete(music);
@@ -504,11 +518,12 @@ static int WAVPACK_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         return 0;
     }
 
-    amount = (int) wvpk.WavpackUnpackSamples(music->ctx, music->buffer, music->frames * music->decimation);
-
+    amount = (int) wvpk.WavpackUnpackSamples(music->ctx, music->buffer, music->frames * DECIMATION(music));
+    #ifdef MUSIC_WAVPACK_DSD
     if (amount && music->decimation_ctx) {
         amount = decimation_run(music->decimation_ctx, music->buffer, amount);
     }
+    #endif
 
     if (amount) {
         int32_t *src = (int32_t *)music->buffer;
@@ -569,13 +584,15 @@ static int WAVPACK_Seek(void *context, double time)
     int64_t sample = (int64_t)(time * music->samplerate);
     int success = (wvpk.WavpackSeekSample64 != NULL) ?
                    wvpk.WavpackSeekSample64(music->ctx, sample) :
-                   wvpk.WavpackSeekSample(music->ctx, sample);
+                   wvpk.WavpackSeekSample(music->ctx, (uint32_t)sample);
     if (!success) {
         return Mix_SetError("%s", wvpk.WavpackGetErrorMessage(music->ctx));
     }
+    #ifdef MUSIC_WAVPACK_DSD
     if (music->decimation_ctx) {
         decimation_reset(music->decimation_ctx);
     }
+    #endif
     return 0;
 }
 
@@ -605,7 +622,9 @@ static void WAVPACK_Delete(void *context)
         SDL_FreeAudioStream(music->stream);
     }
     SDL_free(music->buffer);
+    #ifdef MUSIC_WAVPACK_DSD
     SDL_free(music->decimation_ctx);
+    #endif
     if (music->src2) {
         SDL_RWclose(music->src2);
     }
@@ -615,6 +634,7 @@ static void WAVPACK_Delete(void *context)
     SDL_free(music);
 }
 
+#ifdef MUSIC_WAVPACK_DSD
 /* Decimation code for playing DSD (which comes from the library already decimated 8x) */
 /* Code provided by David Bryant. */
 /* sinc low-pass filter, cutoff = fs/12, 80 terms */
@@ -702,6 +722,7 @@ static void decimation_reset(void *context)
         sp[i].ratio = ratio;
     }
 }
+#endif /* MUSIC_WAVPACK_DSD */
 
 Mix_MusicInterface Mix_MusicInterface_WAVPACK =
 {

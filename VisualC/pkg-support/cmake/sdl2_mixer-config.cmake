@@ -7,7 +7,7 @@ set_package_properties(SDL2_mixer PROPERTIES
     DESCRIPTION "SDL_mixer is a sample multi-channel audio mixer library"
 )
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.0...3.5)
 
 set(SDL2_mixer_FOUND                TRUE)
 
@@ -26,7 +26,7 @@ set(SDL2MIXER_MOD_XMP               FALSE)
 set(SDL2MIXER_MOD_XMP_LITE          FALSE)
 
 set(SDL2MIXER_MP3                   TRUE)
-set(SDL2MIXER_MP3_DRMP3             TRUE)
+set(SDL2MIXER_MP3_MINIMP3           TRUE)
 set(SDL2MIXER_MP3_MPG123            FALSE)
 
 set(SDL2MIXER_MIDI                  TRUE)

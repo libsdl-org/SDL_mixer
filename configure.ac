@@ -3,7 +3,7 @@ dnl Process this file with autoconf to produce a configure script.
 dnl Set various version strings - taken gratefully from the GTk sources
 # See release_checklist.md
 m4_define([MAJOR_VERSION_MACRO], [2])
-m4_define([MINOR_VERSION_MACRO], [7])
+m4_define([MINOR_VERSION_MACRO], [8])
 m4_define([MICRO_VERSION_MACRO], [0])
 
 AC_INIT([SDL2_mixer],
@@ -266,12 +266,13 @@ find_lib()
     gcc_bin_path=[`$CC -print-search-dirs 2>/dev/null | $FGREP programs: | sed 's/[^=]*=\(.*\)/\1/' | sed 's/:/ /g'`]
     gcc_lib_path=[`$CC -print-search-dirs 2>/dev/null | $FGREP libraries: | sed 's/[^=]*=\(.*\)/\1/' | sed 's/:/ /g'`]
     env_lib_path=[`echo $LIBS $LDFLAGS $* | sed 's/-L[ ]*//g'`]
+    env_bin_path=`echo $env_lib_path | sed 's,/lib,/bin,'`
     if test "$cross_compiling" = yes; then
         host_lib_path=""
     else
         host_lib_path="$ac_default_prefix/$base_libdir $ac_default_prefix/$base_bindir /usr/$base_libdir /usr/local/$base_libdir"
     fi
-    for path in $env_lib_path $gcc_bin_path $gcc_lib_path $host_lib_path; do
+    for path in $env_bin_path $env_lib_path $gcc_bin_path $gcc_lib_path $host_lib_path; do
         lib=[`ls -- $path/$1 2>/dev/null | sed 's,.*/,,' | $SORT -V -r | $AWK 'BEGIN{FS="."}{ print NF, $0 }' | $SORT -n -s | sed 's,[0-9]* ,,' | head -1`]
         if test x$lib != x; then
             echo $lib
@@ -286,6 +287,8 @@ AM_PATH_SDL2($SDL_VERSION,
             :,
             AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])
 )
+CFLAGS="$CFLAGS $SDL_CFLAGS"
+LIBS="$LIBS $SDL_LIBS"
 EXTRA_CFLAGS="$EXTRA_CFLAGS $SDL_CFLAGS"
 
 dnl For use in static assertions
@@ -360,7 +363,10 @@ if test x$enable_music_mod = xyes -a x$enable_music_mod_modplug = xyes; then
         have_libmodplug=yes
         case "$host" in
             *-*-darwin*)
-                modplug_lib=[`find_lib libmodplug.dylib`]
+                modplug_lib=[`find_lib "libmodplug.[0-9]*.dylib"`]
+                if test x$modplug_lib = x; then
+                    modplug_lib=[`find_lib libmodplug.dylib`]
+                fi
                 ;;
             *-*-cygwin* | *-*-mingw*)
                 modplug_lib=[`find_lib "libmodplug*.dll"`]
@@ -419,7 +425,10 @@ if test x$enable_music_mod = xyes -a x$enable_music_mod_xmp = xyes; then
         have_libxmp=yes
         case "$host" in
             *-*-darwin*)
-                xmp_lib=[`find_lib lib$xmplib.dylib`]
+                xmp_lib=[`find_lib "lib$xmplib.[0-9]*.dylib"`]
+                if test x$xmp_lib = x; then
+                    xmp_lib=[`find_lib lib$xmplib.dylib`]
+                fi
                 ;;
             *-*-cygwin* | *-*-mingw*)
                 xmp_lib=[`find_lib "lib$xmplib*.dll"`]
@@ -530,7 +539,10 @@ if test x$enable_music_midi = xyes; then
             have_fluidsynth=yes
             case "$host" in
                 *-*-darwin*)
-                    fluidsynth_lib=[`find_lib libfluidsynth.dylib`]
+                    fluidsynth_lib=[`find_lib "libfluidsynth.[0-9]*.dylib"`]
+                    if test x$fluidsynth_lib = x; then
+                        fluidsynth_lib=[`find_lib libfluidsynth.dylib`]
+                    fi
                     ;;
                 *-*-cygwin* | *-*-mingw*)
                     fluidsynth_lib=[`find_lib "fluidsynth*.dll"`]
@@ -573,8 +585,8 @@ fi
 
 SDL2MIXER_GME=0
 AC_ARG_ENABLE([music-gme],
-[AS_HELP_STRING([--enable-music-gme], [enable Game Music Emu support [default=no]])],
-              [], [enable_music_gme=no])
+[AS_HELP_STRING([--enable-music-gme], [enable Game Music Emu support [default=yes]])],
+              [], [enable_music_gme=yes])
 AC_ARG_ENABLE([music-gme-shared],
 [AS_HELP_STRING([--enable-music-gme-shared], [dynamically load libgme library [default=yes]])],
               [], [enable_music_gme_shared=yes])
@@ -591,7 +603,10 @@ if test x$enable_music_gme = xyes; then
         have_gme=yes
         case "$host" in
             *-*-darwin*)
-                gme_lib=[`find_lib libgme.dylib`]
+                gme_lib=[`find_lib "libgme.[0-9]*.dylib"`]
+                if test x$gme_lib = x; then
+                    gme_lib=[`find_lib libgme.dylib`]
+                fi
                 ;;
             *-*-cygwin* | *-*-mingw*)
                 gme_lib=[`find_lib "libgme*.dll"`]
@@ -614,7 +629,7 @@ if test x$enable_music_gme = xyes; then
         fi
         SDL2MIXER_GME=1
     else
-        AC_MSG_WARN([*** Unable to find GME library (https://bitbucket.org/mpyne/game-music-emu)])
+        AC_MSG_WARN([*** Unable to find GME library (https://github.com/libgme/game-music-emu)])
         AC_MSG_WARN([Game Music Emu support disabled.])
     fi
 fi
@@ -656,7 +671,10 @@ if test x$enable_music_ogg = xyes -a x$enable_music_ogg_vorbis = xyes; then
         have_vorbis=yes
         case "$host" in
             *-*-darwin*)
-                ogg_lib=[`find_lib libvorbisfile.dylib`]
+                ogg_lib=[`find_lib "libvorbisfile.[0-9]*.dylib"`]
+                if test x$ogg_lib = x; then
+                    ogg_lib=[`find_lib libvorbisfile.dylib`]
+                fi
                 ;;
             *-*-cygwin* | *-*-mingw*)
                 ogg_lib=[`find_lib "libvorbisfile*.dll"`]
@@ -709,7 +727,10 @@ if test x$enable_music_ogg = xyes -a x$enable_music_ogg_tremor = xyes; then
         have_tremor=yes
         case "$host" in
             *-*-darwin*)
-                ogg_lib=[`find_lib libvorbisidec.dylib`]
+                ogg_lib=[`find_lib "libvorbisidec.[0-9]*.dylib"`]
+                if test x$ogg_lib = x; then
+                    ogg_lib=[`find_lib libvorbisidec.dylib`]
+                fi
                 ;;
             *-*-cygwin* | *-*-mingw*)
                 ogg_lib=[`find_lib "vorbisidec*.dll"`]
@@ -799,7 +820,10 @@ if test x$enable_music_flac = xyes -a x$enable_music_flac_libflac = xyes; then
         have_libflac=yes
         case "$host" in
             *-*-darwin*)
-                flac_lib=[`find_lib libFLAC.dylib`]
+                flac_lib=[`find_lib "libFLAC.[0-9]*.dylib"`]
+                if test x$flac_lib = x; then
+                    flac_lib=[`find_lib libFLAC.dylib`]
+                fi
                 ;;
             *-*-cygwin* | *-*-mingw*)
                 flac_lib=[`find_lib "libFLAC*.dll"`]
@@ -838,14 +862,14 @@ AC_ARG_ENABLE(music-mp3,
 [AS_HELP_STRING([--enable-music-mp3], [enable MP3 music [default=yes]])],
               [], enable_music_mp3=yes)
 
-SDL2MIXER_MP3_DRMP3=0
-AC_ARG_ENABLE(music-mp3-drmp3,
-[AS_HELP_STRING([--enable-music-mp3-drmp3], [enable MP3 music via dr_mp3 [default=yes]])],
-              [], [enable_music_mp3_drmp3=yes])
-if test x$enable_music_mp3 = xyes -a x$enable_music_mp3_drmp3 = xyes; then
-    have_drmp3=yes
-    EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MP3_DRMP3"
-    SDL2MIXER_MP3_DRMP3=1
+SDL2MIXER_MP3_MINIMP3=0
+AC_ARG_ENABLE(music-mp3-minimp3,
+[AS_HELP_STRING([--enable-music-mp3-minimp3], [enable MP3 music via minimp3 [default=yes]])],
+              [], [enable_music_mp3_minimp3=yes])
+if test x$enable_music_mp3 = xyes -a x$enable_music_mp3_minimp3 = xyes; then
+    have_minimp3=yes
+    EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_MP3_MINIMP3"
+    SDL2MIXER_MP3_MINIMP3=1
 fi
 
 SDL2MIXER_MP3_MPG123=0
@@ -868,7 +892,10 @@ if test x$enable_music_mp3 = xyes -a x$enable_music_mp3_mpg123 = xyes; then
         have_libmpg123=yes
         case "$host" in
             *-*-darwin*)
-                mpg123_lib=[`find_lib libmpg123.dylib`]
+                mpg123_lib=[`find_lib "libmpg123.[0-9]*.dylib"`]
+                if test x$mpg123_lib = x; then
+                    mpg123_lib=[`find_lib libmpg123.dylib`]
+                fi
                 ;;
             *-*-cygwin* | *-*-mingw*)
                 mpg123_lib=[`find_lib "libmpg123*.dll"`]
@@ -895,7 +922,7 @@ if test x$enable_music_mp3 = xyes -a x$enable_music_mp3_mpg123 = xyes; then
     fi
 fi
 
-if test x$enable_music_mp3 = xyes -a x$have_drmp3 != xyes -a x$have_libmpg123 != xyes; then
+if test x$enable_music_mp3 = xyes -a x$have_minimp3 != xyes -a x$have_libmpg123 != xyes; then
     AC_MSG_WARN([MP3 support disabled])
 fi
 
@@ -922,7 +949,10 @@ if test x$enable_music_opus = xyes; then
         have_opusfile=yes
         case "$host" in
             *-*-darwin*)
-                opusfile_lib=[`find_lib libopusfile.dylib`]
+                opusfile_lib=[`find_lib "libopusfile.[0-9]*.dylib"`]
+                if test x$opusfile_lib = x; then
+                    opusfile_lib=[`find_lib libopusfile.dylib`]
+                fi
                 ;;
             *-*-cygwin* | *-*-mingw*)
                 opusfile_lib=[`find_lib "libopusfile*.dll"`]
@@ -960,6 +990,9 @@ AC_ARG_ENABLE([music-wavpack],
 AC_ARG_ENABLE([music-wavpack-shared],
 [AS_HELP_STRING([--enable-music-wavpack-shared], [dynamically load WavPack library [default=yes]])],
               [], [enable_music_wavpack_shared=yes])
+AC_ARG_ENABLE([music-wavpack-dsd],
+[AS_HELP_STRING([--enable-music-wavpack-dsd], [enable WavPack DSD music support [default=no]])],
+                [], [enable_music_wavpack_dsd=no])
 if test x$enable_music_wavpack = xyes; then
     LIBS_SAVED="$LIBS"
     PKG_CHECK_MODULES([WAVPACK], [wavpack >= 4.0], [dnl
@@ -983,10 +1016,16 @@ if test x$enable_music_wavpack = xyes; then
         have_wavpack=yes
         case "$host" in
             *-*-darwin*)
-                wavpack_lib=[`find_lib libwavpack.dylib`]
+                wavpack_lib=[`find_lib "libwavpack.[0-9]*.dylib"`]
+                if test x$wavpack_lib = x; then
+                    wavpack_lib=[`find_lib libwavpack.dylib`]
+                fi
                 ;;
             *-*-cygwin* | *-*-mingw*)
                 wavpack_lib=[`find_lib "libwavpack*.dll"`]
+                if test x$wavpack_lib = x; then
+                   wavpack_lib=[`find_lib wavpackdll.dll`]
+                fi
                 ;;
             *)
                 wavpack_lib=[`find_lib "libwavpack[0-9]*.so.*"`]
@@ -996,6 +1035,9 @@ if test x$enable_music_wavpack = xyes; then
                 ;;
         esac
         EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_WAVPACK $WAVPACK_CFLAGS"
+        if test x$enable_music_wavpack_dsd = xyes; then
+            EXTRA_CFLAGS="$EXTRA_CFLAGS -DMUSIC_WAVPACK_DSD"
+        fi
         if test x$have_wavpack_hdr2 = xyes; then
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DHAVE_WAVPACK_H"
         fi
@@ -1096,7 +1138,7 @@ AC_SUBST(SDL2MIXER_GME)
 AC_SUBST(SDL2MIXER_MOD_MODPLUG)
 AC_SUBST(SDL2MIXER_MOD_XMP)
 AC_SUBST(SDL2MIXER_MOD_XMP_LITE)
-AC_SUBST(SDL2MIXER_MP3_DRMP3)
+AC_SUBST(SDL2MIXER_MP3_MINIMP3)
 AC_SUBST(SDL2MIXER_MP3_MPG123)
 AC_SUBST(SDL2MIXER_MIDI_FLUIDSYNTH)
 AC_SUBST(SDL2MIXER_MIDI_NATIVE)

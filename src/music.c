@@ -1,6 +1,6 @@
 /*
   SDL_mixer:  An audio mixer library based on the SDL library
-  Copyright (C) 1997-2023 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -35,7 +35,7 @@
 #include "music_timidity.h"
 #include "music_ogg.h"
 #include "music_opus.h"
-#include "music_drmp3.h"
+#include "music_minimp3.h"
 #include "music_mpg123.h"
 #include "music_drflac.h"
 #include "music_flac.h"
@@ -61,7 +61,7 @@ static int music_volume = MIX_MAX_VOLUME;
 static Mix_Music * volatile music_playing = NULL;
 SDL_AudioSpec music_spec;
 
-struct _Mix_Music {
+struct Mix_Music {
     Mix_MusicInterface *interface;
     void *context;
 
@@ -143,7 +143,7 @@ const char *meta_tags_get(Mix_MusicMetaTags *tags, Mix_MusicMetaTag type)
 }
 
 /* for music->filename */
-#if defined(__WIN32__)||defined(__OS2__)
+#if defined(_WIN32) || defined(__OS2__)
 static SDL_INLINE const char *get_last_dirsep (const char *p) {
     const char *p1 = SDL_strrchr(p, '/');
     const char *p2 = SDL_strrchr(p, '\\');
@@ -182,8 +182,8 @@ static Mix_MusicInterface *s_music_interfaces[] =
 #ifdef MUSIC_OPUS
     &Mix_MusicInterface_Opus,
 #endif
-#ifdef MUSIC_MP3_DRMP3
-    &Mix_MusicInterface_DRMP3,
+#ifdef MUSIC_MP3_MINIMP3
+    &Mix_MusicInterface_MINIMP3,
 #endif
 #ifdef MUSIC_MP3_MPG123
     &Mix_MusicInterface_MPG123,
@@ -223,7 +223,7 @@ Mix_MusicInterface *get_music_interface(int index)
 
 int Mix_GetNumMusicDecoders(void)
 {
-    return(num_decoders);
+    return num_decoders;
 }
 
 const char *Mix_GetMusicDecoder(int index)
@@ -231,7 +231,7 @@ const char *Mix_GetMusicDecoder(int index)
     if ((index < 0) || (index >= num_decoders)) {
         return NULL;
     }
-    return(music_decoders[index]);
+    return music_decoders[index];
 }
 
 SDL_bool Mix_HasMusicDecoder(const char *name)
@@ -257,7 +257,7 @@ static void add_music_decoder(const char *decoder)
         }
     }
 
-    ptr = SDL_realloc((void *)music_decoders, ((size_t)num_decoders + 1) * sizeof (const char *));
+    ptr = SDL_realloc((void *)music_decoders, ((size_t)num_decoders + 1) * sizeof(const char *));
     if (ptr == NULL) {
         return;  /* oh well, go on without it. */
     }
@@ -577,6 +577,9 @@ Mix_MusicType detect_music_type(SDL_RWops *src)
         if (SDL_memcmp(magic, "OpusHead", 8) == 0) {
             return MUS_OPUS;
         }
+        if (magic[0] == 0x7F && SDL_memcmp(magic + 1, "FLAC", 4) == 0) {
+            return MUS_FLAC;
+        }
         return MUS_OGG;
     }
 
@@ -856,7 +859,7 @@ Mix_MusicType Mix_GetMusicType(const Mix_Music *music)
         }
         Mix_UnlockAudio();
     }
-    return(type);
+    return type;
 }
 
 static const char * get_music_tag_internal(const Mix_Music *music, Mix_MusicMetaTag tag_type)
@@ -947,7 +950,7 @@ static int music_internal_play(Mix_Music *music, int play_count, double position
         music->playing = SDL_FALSE;
         music_playing = NULL;
     }
-    return(retval);
+    return retval;
 }
 
 int Mix_FadeInMusicPos(Mix_Music *music, int loops, int ms, double position)
@@ -955,14 +958,12 @@ int Mix_FadeInMusicPos(Mix_Music *music, int loops, int ms, double position)
     int retval;
 
     if (ms_per_step == 0) {
-        Mix_SetError("Audio device hasn't been opened");
-        return(-1);
+        return Mix_SetError("Audio device hasn't been opened");
     }
 
     /* Don't play null pointers :-) */
     if (music == NULL) {
-        Mix_SetError("music parameter was NULL");
-        return(-1);
+        return Mix_SetError("music parameter was NULL");
     }
 
     /* Setup the data */
@@ -991,7 +992,7 @@ int Mix_FadeInMusicPos(Mix_Music *music, int loops, int ms, double position)
     music_active = (retval == 0);
     Mix_UnlockAudio();
 
-    return(retval);
+    return retval;
 }
 int Mix_FadeInMusic(Mix_Music *music, int loops, int ms)
 {
@@ -1046,7 +1047,7 @@ int Mix_SetMusicPosition(double position)
     }
     Mix_UnlockAudio();
 
-    return(retval);
+    return retval;
 }
 
 /* Set the playing music position */
@@ -1072,7 +1073,7 @@ double Mix_GetMusicPosition(Mix_Music *music)
     }
     Mix_UnlockAudio();
 
-    return(retval);
+    return retval;
 }
 
 static double music_internal_duration(Mix_Music *music)
@@ -1099,7 +1100,7 @@ double Mix_MusicDuration(Mix_Music *music)
     }
     Mix_UnlockAudio();
 
-    return(retval);
+    return retval;
 }
 
 /* Get Loop start position */
@@ -1125,7 +1126,7 @@ double Mix_GetMusicLoopStartTime(Mix_Music *music)
     }
     Mix_UnlockAudio();
 
-    return(retval);
+    return retval;
 }
 
 /* Get Loop end position */
@@ -1151,7 +1152,7 @@ double Mix_GetMusicLoopEndTime(Mix_Music *music)
     }
     Mix_UnlockAudio();
 
-    return(retval);
+    return retval;
 }
 
 /* Get Loop end position */
@@ -1177,7 +1178,7 @@ double Mix_GetMusicLoopLengthTime(Mix_Music *music)
     }
     Mix_UnlockAudio();
 
-    return(retval);
+    return retval;
 }
 
 /* Set the music's initial volume */
@@ -1214,7 +1215,7 @@ int Mix_VolumeMusic(int volume)
         music_internal_volume(music_volume);
     }
     Mix_UnlockAudio();
-    return(prev_volume);
+    return prev_volume;
 }
 
 int Mix_GetMusicVolume(Mix_Music *music)
@@ -1254,7 +1255,7 @@ int Mix_HaltMusic(void)
     }
     Mix_UnlockAudio();
 
-    return(0);
+    return 0;
 }
 
 /* Progressively stop the music */
@@ -1293,7 +1294,7 @@ int Mix_FadeOutMusic(int ms)
     }
     Mix_UnlockAudio();
 
-    return(retval);
+    return retval;
 }
 
 Mix_Fading Mix_FadingMusic(void)
@@ -1306,7 +1307,7 @@ Mix_Fading Mix_FadingMusic(void)
     }
     Mix_UnlockAudio();
 
-    return(fading);
+    return fading;
 }
 
 /* Pause/Resume the music stream */
@@ -1555,7 +1556,7 @@ const char* Mix_GetSoundFonts(void)
     return NULL;
 }
 
-int Mix_EachSoundFont(int (SDLCALL *function)(const char*, void*), void *data)
+int Mix_EachSoundFont(Mix_EachSoundFontCallback function, void *data)
 {
     char *context, *path, *paths;
     const char* cpaths = Mix_GetSoundFonts();

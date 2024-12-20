@@ -1,6 +1,6 @@
 /*
   SDL_mixer:  An audio mixer library based on the SDL library
-  Copyright (C) 1997-2023 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -1155,6 +1155,7 @@ int read_id3v2_from_mem(Mix_MusicMetaTags *out_tags, Uint8 *data, size_t length)
         fil.src = src;
         fil.start = 0;
         fil.length = (Sint64)length;
+        fil.pos = 0;
 
         if (!is_id3v2(data, length)) {
             SDL_RWclose(src);

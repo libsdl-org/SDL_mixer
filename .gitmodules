@@ -29,7 +29,7 @@
 [submodule "libxmp"]
 	path = external/libxmp
 	url = https://github.com/libsdl-org/libxmp.git
-	branch = 4.6.0-SDL
+	branch = 4.6.x-SDL
 [submodule "external/wavpack"]
 	path = external/wavpack
 	url = https://github.com/libsdl-org/wavpack.git
@@ -37,6 +37,8 @@
 [submodule "external/libgme"]
 	path = external/libgme
 	url = https://github.com/libsdl-org/game-music-emu.git
+  branch = v0.6.3-SDL
 [submodule "external/StSound"]
 	path = external/StSound
 	url = https://github.com/arnaud-carre/StSound.git
+  branch = main

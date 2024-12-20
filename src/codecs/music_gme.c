@@ -1,6 +1,6 @@
 /*
   SDL_mixer:  An audio mixer library based on the SDL library
-  Copyright (C) 1997-2023 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -38,11 +38,7 @@ typedef struct {
     void (*gme_set_tempo)(Music_Emu*, double tempo);
     int (*gme_voice_count)(Music_Emu const*);
     void (*gme_mute_voice)(Music_Emu*, int index, int mute);
-#if GME_VERSION >= 0x000700
-    void (*gme_set_fade)(Music_Emu*, int start_msec, int fade_msec);
-#else
     void (*gme_set_fade)(Music_Emu*, int start_msec);
-#endif
     void (*gme_set_autoload_playback_limit)(Music_Emu*, int do_autoload_limit);
     gme_err_t (*gme_track_info)(Music_Emu const*, gme_info_t** out, int track);
     void (*gme_free_info)(gme_info_t*);
@@ -61,9 +57,13 @@ static gme_loader gme;
 #else
 #define FUNCTION_LOADER(FUNC, SIG) \
     gme.FUNC = FUNC; \
-    if (gme.FUNC == NULL) { Mix_SetError("Missing GME.framework"); return -1; }
+    if (gme.FUNC == NULL) { Mix_SetError("Missing gme.framework"); return -1; }
 #endif
 
+#ifdef __APPLE__
+    /* Need to turn off optimizations so weak framework load check works */
+    __attribute__ ((optnone))
+#endif
 static int GME_Load(void)
 {
     if (gme.loaded == 0) {
@@ -80,11 +80,7 @@ static int GME_Load(void)
         FUNCTION_LOADER(gme_set_tempo, void (*)(Music_Emu*,double))
         FUNCTION_LOADER(gme_voice_count, int (*)(Music_Emu const*))
         FUNCTION_LOADER(gme_mute_voice, void (*)(Music_Emu*,int,int))
-#if GME_VERSION >= 0x000700
-        FUNCTION_LOADER(gme_set_fade, void (*)(Music_Emu*,int,int))
-#else
         FUNCTION_LOADER(gme_set_fade, void (*)(Music_Emu*,int))
-#endif
         FUNCTION_LOADER(gme_track_info, gme_err_t (*)(Music_Emu const*, gme_info_t**, int))
         FUNCTION_LOADER(gme_free_info, void (*)(gme_info_t*))
         FUNCTION_LOADER(gme_seek, gme_err_t (*)(Music_Emu*,int))
@@ -165,8 +161,7 @@ static int initialize_from_track_info(GME_Music *music, int track)
 
     err = gme.gme_track_info(music->game_emu, &musInfo, track);
     if (err != 0) {
-        Mix_SetError("GME: %s", err);
-        return -1;
+        return Mix_SetError("GME: %s", err);
     }
 
     music->track_length = musInfo->length;
@@ -240,7 +235,7 @@ static void *GME_CreateFromRW(struct SDL_RWops *src, int freesrc)
     SDL_RWseek(src, 0, RW_SEEK_SET);
     mem = SDL_LoadFile_RW(src, &size, SDL_FALSE);
     if (mem) {
-        err = gme.gme_open_data(mem, size, &music->game_emu, music_spec.freq);
+        err = gme.gme_open_data(mem, (long)size, &music->game_emu, music_spec.freq);
         SDL_free(mem);
         if (err != 0) {
             GME_Delete(music);
@@ -270,7 +265,7 @@ static void *GME_CreateFromRW(struct SDL_RWops *src, int freesrc)
     music->volume = MIX_MAX_VOLUME;
 
     meta_tags_init(&music->tags);
-    if (initialize_from_track_info(music, 0) == -1) {
+    if (initialize_from_track_info(music, 0) < 0) {
         GME_Delete(music);
         return NULL;
     }
@@ -288,11 +283,10 @@ static int GME_Play(void *music_p, int play_count)
         SDL_AudioStreamClear(music->stream);
         music->play_count = play_count;
         fade_start = play_count > 0 ? music->intro_length + (music->loop_length * play_count) : -1;
-#if GME_VERSION >= 0x000700
-        gme.gme_set_fade(music->game_emu, fade_start, 8000);
-#else
+        /* libgme >= 0.6.4 has gme_set_fade_msecs(),
+         * but gme_set_fade() sets msecs to 8000 by
+         * default and we are OK with that.  */
         gme.gme_set_fade(music->game_emu, fade_start);
-#endif
         gme.gme_seek(music->game_emu, 0);
     }
     return 0;
@@ -315,13 +309,13 @@ static int GME_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         return 0;
     }
 
-    err = gme.gme_play(music->game_emu, (music->buffer_size / 2), (short*)music->buffer);
+    err = gme.gme_play(music->game_emu, (int)(music->buffer_size / 2), (short*)music->buffer);
     if (err != NULL) {
         Mix_SetError("GME: %s", err);
         return 0;
     }
 
-    if (SDL_AudioStreamPut(music->stream, music->buffer, music->buffer_size) < 0) {
+    if (SDL_AudioStreamPut(music->stream, music->buffer, (int)music->buffer_size) < 0) {
         return -1;
     }
     return 0;
@@ -401,17 +395,12 @@ static int GME_StartTrack(void *music_p, int track)
 
     err = gme.gme_start_track(music->game_emu, track);
     if (err != 0) {
-        Mix_SetError("GME: %s", err);
-        return -1;
+        return Mix_SetError("GME: %s", err);
     }
 
     GME_Play(music, music->play_count);
 
-    if (initialize_from_track_info(music, track) == -1) {
-        return -1;
-    }
-
-    return 0;
+    return initialize_from_track_info(music, track);
 }
 
 
