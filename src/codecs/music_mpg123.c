@@ -141,7 +141,7 @@ typedef struct
     struct mp3file_t mp3file;
     int play_count;
     bool closeio;
-    int volume;
+    float volume;
 
     mpg123_handle* handle;
     SDL_AudioStream *stream;
@@ -244,7 +244,7 @@ static void *MPG123_CreateFromIO(SDL_IOStream *src, bool closeio)
     if (!music) {
         return NULL;
     }
-    music->volume = MIX_MAX_VOLUME;
+    music->volume = 1.0f;
 
     if (MP3_IOinit(&music->mp3file, src) < 0) {
         SDL_free(music);
@@ -339,13 +339,13 @@ static void *MPG123_CreateFromIO(SDL_IOStream *src, bool closeio)
     return music;
 }
 
-static void MPG123_SetVolume(void *context, int volume)
+static void MPG123_SetVolume(void *context, float volume)
 {
     MPG123_Music *music = (MPG123_Music *)context;
     music->volume = volume;
 }
 
-static int MPG123_GetVolume(void *context)
+static float MPG123_GetVolume(void *context)
 {
     MPG123_Music *music = (MPG123_Music *)context;
     return music->volume;

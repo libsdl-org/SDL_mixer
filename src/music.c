@@ -54,7 +54,7 @@
     "SDL_MIXER_DEBUG_MUSIC_INTERFACES"
 
 static bool music_active = true;
-static int music_volume = MIX_MAX_VOLUME;
+static float music_volume = 1.0f;
 static Mix_Music *music_playing = NULL;
 SDL_AudioSpec music_spec;
 
@@ -259,7 +259,7 @@ static void add_music_decoder(const char *decoder)
 
 /* Local low-level functions prototypes */
 static void music_internal_initialize_volume(void);
-static void music_internal_volume(int volume);
+static void music_internal_volume(float volume);
 static int  music_internal_play(Mix_Music *music, int play_count, double position);
 static int  music_internal_position(double position);
 static bool music_internal_playing(void);
@@ -279,7 +279,7 @@ void Mix_HookMusicFinished(void (SDLCALL *music_finished)(void))
 /* Convenience function to fill audio and mix at the specified volume
    This is called from many music player's GetAudio callback.
  */
-int music_pcm_getaudio(void *context, void *data, int bytes, int volume,
+int music_pcm_getaudio(void *context, void *data, int bytes, float volume,
                        int (*GetSome)(void *context, void *data, int bytes, bool *done))
 {
     Uint8 *snd = (Uint8 *)data;
@@ -289,7 +289,7 @@ int music_pcm_getaudio(void *context, void *data, int bytes, int volume,
     const int MAX_ZERO_CYCLES = 10; /* just try to catch infinite loops */
     bool done = false;
 
-    if (volume == MIX_MAX_VOLUME) {
+    if (volume == 1.0f) {
         dst = snd;
     } else {
         dst = SDL_stack_alloc(Uint8, (size_t)bytes);
@@ -309,15 +309,15 @@ int music_pcm_getaudio(void *context, void *data, int bytes, int volume,
         }
         zero_cycles = 0;
 
-        if (volume == MIX_MAX_VOLUME) {
+        if (volume == 1.0f) {
             dst += consumed;
         } else {
-            SDL_MixAudio(snd, dst, music_spec.format, (Uint32)consumed, volume/(float)MIX_MAX_VOLUME);
+            SDL_MixAudio(snd, dst, music_spec.format, (Uint32)consumed, volume);
             snd += consumed;
         }
         len -= consumed;
     }
-    if (volume != MIX_MAX_VOLUME) {
+    if (volume != 1.0f) {
         SDL_stack_free(dst);
     }
     return len;
@@ -334,7 +334,7 @@ void SDLCALL music_mixer(void *udata, Uint8 *stream, int len)
         /* Handle fading */
         if (music_playing->fading != MIX_NO_FADING) {
             if (music_playing->fade_step++ < music_playing->fade_steps) {
-                int volume;
+                float volume;
                 int fade_step = music_playing->fade_step;
                 int fade_steps = music_playing->fade_steps;
 
@@ -521,7 +521,7 @@ void open_music(const SDL_AudioSpec *spec)
     music_spec = *spec;
     open_music_type(MUS_NONE);
 
-    Mix_VolumeMusic(MIX_MAX_VOLUME);
+    Mix_VolumeMusic(1.0f);
 
     /* Calculate the number of ms for each callback */
     ms_per_step = (int) ((4096.0f * 1000.0f) / spec->freq);
@@ -1168,29 +1168,29 @@ double Mix_GetMusicLoopLengthTime(Mix_Music *music)
 static void music_internal_initialize_volume(void)
 {
     if (music_playing->fading == MIX_FADING_IN) {
-        music_internal_volume(0);
+        music_internal_volume(0.0f);
     } else {
         music_internal_volume(music_volume);
     }
 }
 
 /* Set the music volume */
-static void music_internal_volume(int volume)
+static void music_internal_volume(float volume)
 {
     if (music_playing->interface->SetVolume) {
         music_playing->interface->SetVolume(music_playing->context, volume);
     }
 }
-int Mix_VolumeMusic(int volume)
+float Mix_VolumeMusic(float volume)
 {
-    int prev_volume;
+    float prev_volume;
 
     prev_volume = music_volume;
     if (volume < 0) {
         return prev_volume;
     }
-    if (volume > MIX_MAX_VOLUME) {
-        volume = MIX_MAX_VOLUME;
+    if (volume > 1.0f) {
+        volume = 1.0f;
     }
     music_volume = volume;
     Mix_LockAudio();
@@ -1201,9 +1201,9 @@ int Mix_VolumeMusic(int volume)
     return prev_volume;
 }
 
-int Mix_GetMusicVolume(Mix_Music *music)
+float Mix_GetMusicVolume(Mix_Music *music)
 {
-    int prev_volume;
+    float prev_volume;
 
     if (music && music->interface->GetVolume)
         prev_volume = music->interface->GetVolume(music->context);

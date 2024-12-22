@@ -782,9 +782,11 @@ int Timidity_PlaySome(MidiSong *song, void *stream, Sint32 len)
   return samples * bytes_per_sample;
 }
 
-void Timidity_SetVolume(MidiSong *song, int volume)
+void Timidity_SetVolume(MidiSong *song, float fvolume)
 {
   int i;
+  int volume = (int)(fvolume / 128); // How should this be handled?
+
   if (volume > MAX_AMPLIFICATION)
     song->amplification = MAX_AMPLIFICATION;
   else

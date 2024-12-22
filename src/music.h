@@ -95,10 +95,10 @@ typedef struct
     void *(*CreateFromFile)(const char *file);
 
     /* Set the volume */
-    void (*SetVolume)(void *music, int volume);
+    void (*SetVolume)(void *music, float volume);
 
     /* Get the volume */
-    int (*GetVolume)(void *music);
+    float (*GetVolume)(void *music);
 
     /* Start playing music from the beginning with an optional loop count */
     int (*Play)(void *music, int play_count);
@@ -166,7 +166,7 @@ extern bool load_music_type(Mix_MusicType type);
 extern bool open_music_type(Mix_MusicType type);
 extern bool has_music(Mix_MusicType type);
 extern void open_music(const SDL_AudioSpec *spec);
-extern int music_pcm_getaudio(void *context, void *data, int bytes, int volume,
+extern int music_pcm_getaudio(void *context, void *data, int bytes, float volume,
                               int (*GetSome)(void *context, void *data, int bytes, bool *done));
 extern void SDLCALL music_mixer(void *udata, Uint8 *stream, int len);
 extern void pause_async_music(int pause_on);

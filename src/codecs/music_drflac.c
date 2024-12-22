@@ -52,7 +52,7 @@ typedef struct {
     drflac *dec;
     int play_count;
     bool closeio;
-    int volume;
+    float volume;
     int status;
     int sample_rate;
     int channels;
@@ -167,7 +167,7 @@ static void *DRFLAC_CreateFromIO(SDL_IOStream *src, bool closeio)
     if (!music) {
         return NULL;
     }
-    music->volume = MIX_MAX_VOLUME;
+    music->volume = 1.0f;
 
     if (MP3_IOinit(&music->file, src) < 0) {
         SDL_free(music);
@@ -215,13 +215,13 @@ static void *DRFLAC_CreateFromIO(SDL_IOStream *src, bool closeio)
     return music;
 }
 
-static void DRFLAC_SetVolume(void *context, int volume)
+static void DRFLAC_SetVolume(void *context, float volume)
 {
     DRFLAC_Music *music = (DRFLAC_Music *)context;
     music->volume = volume;
 }
 
-static int DRFLAC_GetVolume(void *context)
+static float DRFLAC_GetVolume(void *context)
 {
     DRFLAC_Music *music = (DRFLAC_Music *)context;
     return music->volume;

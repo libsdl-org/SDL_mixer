@@ -126,7 +126,7 @@ typedef struct
     int track_length;
     int intro_length;
     int loop_length;
-    int volume;
+    float volume;
     double tempo;
     double gain;
     SDL_AudioStream *stream;
@@ -138,19 +138,17 @@ typedef struct
 static void GME_Delete(void *context);
 
 /* Set the volume for a GME stream */
-static void GME_SetVolume(void *music_p, int volume)
+static void GME_SetVolume(void *music_p, float volume)
 {
     GME_Music *music = (GME_Music*)music_p;
-    double v = SDL_floor(((double)volume * music->gain) + 0.5);
-    music->volume = (int)v;
+    music->volume = volume;
 }
 
 /* Get the volume for a GME stream */
-static int GME_GetVolume(void *music_p)
+static float GME_GetVolume(void *music_p)
 {
     GME_Music *music = (GME_Music*)music_p;
-    double v = SDL_floor(((double)(music->volume) / music->gain) + 0.5);
-    return (int)v;
+    return music->volume;
 }
 
 static int initialize_from_track_info(GME_Music *music, int track)
@@ -265,7 +263,7 @@ static void *GME_CreateFromIO(struct SDL_IOStream *src, bool closeio)
 
     gme.gme_set_tempo(music->game_emu, music->tempo);
 
-    music->volume = MIX_MAX_VOLUME;
+    music->volume = 1.0f;
 
     meta_tags_init(&music->tags);
     if (initialize_from_track_info(music, 0) < 0) {
@@ -328,7 +326,7 @@ static int GME_GetSome(void *context, void *data, int bytes, bool *done)
 static int GME_PlayAudio(void *music_p, void *data, int bytes)
 {
     GME_Music *music = (GME_Music*)music_p;
-    return music_pcm_getaudio(music_p, data, bytes, music->volume, GME_GetSome);
+    return music_pcm_getaudio(music_p, data, bytes, (float)SDL_floor(music->volume * music->gain + 0.5), GME_GetSome);
 }
 
 /* Close the given Game Music Emulators stream */

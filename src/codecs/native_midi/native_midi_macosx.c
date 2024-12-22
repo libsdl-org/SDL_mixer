@@ -47,7 +47,7 @@ struct _NativeMidiSong
 };
 
 static NativeMidiSong *currentsong = NULL;
-static int latched_volume = MIX_MAX_VOLUME;
+static float latched_volume = 1.0f;
 
 static OSStatus
 GetSequenceLength(MusicSequence sequence, MusicTimeStamp *_sequenceLength)
@@ -278,7 +278,7 @@ void native_midi_freesong(NativeMidiSong *song)
 
 void native_midi_start(NativeMidiSong *song, int loops)
 {
-    int vol;
+    float vol;
 
     if (song == NULL)
         return;
@@ -337,16 +337,15 @@ bool native_midi_active(void)
     return false;
 }
 
-void native_midi_setvolume(int volume)
+void native_midi_setvolume(float volume)
 {
     if (latched_volume == volume)
         return;
 
     latched_volume = volume;
     if ((currentsong) && (currentsong->audiounit)) {
-        const float floatvol = ((float) volume) / ((float) MIX_MAX_VOLUME);
         AudioUnitSetParameter(currentsong->audiounit, kHALOutputParam_Volume,
-                              kAudioUnitScope_Global, 0, floatvol, 0);
+                              kAudioUnitScope_Global, 0, volume, 0);
     }
 }
 

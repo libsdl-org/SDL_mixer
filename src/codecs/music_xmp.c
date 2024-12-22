@@ -135,7 +135,7 @@ typedef struct
 {
     SDL_IOStream *src;
     Sint64 src_offset;
-    int volume;
+    float volume;
     int play_count;
     struct xmp_module_info mi;
     struct xmp_frame_info fi;
@@ -259,7 +259,7 @@ void *XMP_CreateFromIO(SDL_IOStream *src, bool closeio)
         goto e2;
     }
 
-    music->volume = MIX_MAX_VOLUME;
+    music->volume = 1.0f;
     SDL_zero(srcspec);
     srcspec.format = SDL_AUDIO_S16;
     srcspec.channels = 2;
@@ -291,14 +291,14 @@ e0: SDL_free(music->buffer); SDL_free(music);
 }
 
 /* Set the volume for a libxmp stream */
-static void XMP_SetVolume(void *context, int volume)
+static void XMP_SetVolume(void *context, float volume)
 {
     XMP_Music *music = (XMP_Music *)context;
     music->volume = volume;
 }
 
 /* Get the volume for a libxmp stream */
-static int XMP_GetVolume(void *context)
+static float XMP_GetVolume(void *context)
 {
     XMP_Music *music = (XMP_Music *)context;
     return music->volume;

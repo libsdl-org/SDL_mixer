@@ -163,7 +163,7 @@ static void FLAC_Unload(void)
 
 
 typedef struct {
-    int volume;
+    float volume;
     int play_count;
     FLAC__StreamDecoder *flac_decoder;
     unsigned sample_rate;
@@ -533,7 +533,7 @@ static void *FLAC_CreateFromIO(SDL_IOStream *src, bool closeio)
         return NULL;
     }
     music->src = src;
-    music->volume = MIX_MAX_VOLUME;
+    music->volume = 1.0f;
 
     music->flac_decoder = flac.FLAC__stream_decoder_new();
     if (music->flac_decoder) {
@@ -609,14 +609,14 @@ static const char* FLAC_GetMetaTag(void *context, Mix_MusicMetaTag tag_type)
 
 
 /* Set the volume for an FLAC stream */
-static void FLAC_SetVolume(void *context, int volume)
+static void FLAC_SetVolume(void *context, float volume)
 {
     FLAC_Music *music = (FLAC_Music *)context;
     music->volume = volume;
 }
 
 /* Get the volume for an FLAC stream */
-static int FLAC_GetVolume(void *context)
+static float FLAC_GetVolume(void *context)
 {
     FLAC_Music *music = (FLAC_Music *)context;
     return music->volume;

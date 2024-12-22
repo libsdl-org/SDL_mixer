@@ -80,7 +80,7 @@ typedef struct {
     SDL_IOStream *src;
     bool closeio;
     SDL_AudioSpec spec;
-    int volume;
+    float volume;
     int play_count;
     Sint64 start;
     Sint64 stop;
@@ -233,7 +233,7 @@ static void *WAV_CreateFromIO(SDL_IOStream *src, bool closeio)
         return NULL;
     }
     music->src = src;
-    music->volume = MIX_MAX_VOLUME;
+    music->volume = 1.0f;
     /* Default decoder is PCM */
     music->decode = fetch_pcm;
     music->encoding = PCM_CODE;
@@ -271,13 +271,13 @@ static void *WAV_CreateFromIO(SDL_IOStream *src, bool closeio)
     return music;
 }
 
-static void WAV_SetVolume(void *context, int volume)
+static void WAV_SetVolume(void *context, float volume)
 {
     WAV_Music *music = (WAV_Music *)context;
     music->volume = volume;
 }
 
-static int WAV_GetVolume(void *context)
+static float WAV_GetVolume(void *context)
 {
     WAV_Music *music = (WAV_Music *)context;
     return music->volume;

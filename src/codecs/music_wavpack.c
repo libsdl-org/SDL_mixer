@@ -182,7 +182,7 @@ typedef struct {
     SDL_IOStream *src2; /* correction file */
     bool closeio;
     int play_count;
-    int volume;
+    float volume;
 
     WavpackContext *ctx;
     int64_t numsamples;
@@ -364,7 +364,7 @@ static void *WAVPACK_CreateFromIO_internal(SDL_IOStream *src1, SDL_IOStream *src
     }
     music->src1 = src1;
     music->src2 = src2;
-    music->volume = MIX_MAX_VOLUME;
+    music->volume = 1.0f;
 
     music->ctx = (wvpk.WavpackOpenFileInputEx64 != NULL) ?
                   wvpk.WavpackOpenFileInputEx64(&sdl_reader64, src1, src2, err, OPEN_NORMALIZE|OPEN_TAGS|FLAGS_DSD, 0) :
@@ -477,13 +477,13 @@ static const char* WAVPACK_GetMetaTag(void *context, Mix_MusicMetaTag tag_type)
     return meta_tags_get(&music->tags, tag_type);
 }
 
-static void WAVPACK_SetVolume(void *context, int volume)
+static void WAVPACK_SetVolume(void *context, float volume)
 {
     WAVPACK_music *music = (WAVPACK_music *)context;
     music->volume = volume;
 }
 
-static int WAVPACK_GetVolume(void *context)
+static float WAVPACK_GetVolume(void *context)
 {
     WAVPACK_music *music = (WAVPACK_music *)context;
     return music->volume;

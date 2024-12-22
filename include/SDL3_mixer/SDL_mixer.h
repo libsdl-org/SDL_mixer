@@ -188,7 +188,6 @@ extern SDL_DECLSPEC void SDLCALL Mix_Quit(void);
 #define MIX_DEFAULT_FREQUENCY   44100
 #define MIX_DEFAULT_FORMAT      SDL_AUDIO_S16
 #define MIX_DEFAULT_CHANNELS    2
-#define MIX_MAX_VOLUME          128 /* Volume of a chunk */
 
 /**
  * The internal format for an audio chunk
@@ -197,7 +196,7 @@ typedef struct Mix_Chunk {
     int allocated;
     Uint8 *abuf;
     Uint32 alen;
-    Uint8 volume;       /* Per-sample volume, 0-128 */
+    float volume;       /* Per-sample volume */
 } Mix_Chunk;
 
 /**
@@ -1808,9 +1807,8 @@ extern SDL_DECLSPEC int SDLCALL Mix_FadeInChannelTimed(int channel, Mix_Chunk *c
 /**
  * Set the volume for a specific channel.
  *
- * The volume must be between 0 (silence) and MIX_MAX_VOLUME (full volume).
- * Note that MIX_MAX_VOLUME is 128. Values greater than MIX_MAX_VOLUME are
- * clamped to MIX_MAX_VOLUME.
+ * The volume must be between 0 (silence) and 1 (full volume).
+ * Values greater than 1 are clamped to 1.
  *
  * Specifying a negative volume will not change the current volume; as such,
  * this can be used to query the current volume without making changes, as
@@ -1820,18 +1818,18 @@ extern SDL_DECLSPEC int SDLCALL Mix_FadeInChannelTimed(int channel, Mix_Chunk *c
  * channels, and returns _the average_ of all channels' volumes prior to this
  * call.
  *
- * The default volume for a channel is MIX_MAX_VOLUME (no attenuation).
+ * The default volume for a channel is 1 (no attenuation).
  *
  * \param channel the channel on set/query the volume on, or -1 for all
  *                channels.
- * \param volume the new volume, between 0 and MIX_MAX_VOLUME, or -1 to query.
+ * \param volume the new volume, between 0 and 1, or -1 to query.
  * \returns the previous volume. If the specified volume is -1, this returns
  *          the current volume. If `channel` is -1, this returns the average
  *          of all channels.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
-extern SDL_DECLSPEC int SDLCALL Mix_Volume(int channel, int volume);
+extern SDL_DECLSPEC float SDLCALL Mix_Volume(int channel, float volume);
 
 /**
  * Set the volume for a specific chunk.
@@ -1842,55 +1840,53 @@ extern SDL_DECLSPEC int SDLCALL Mix_Volume(int channel, int volume);
  * volume for all instances of a sound in addition to specific instances of
  * that sound.
  *
- * The volume must be between 0 (silence) and MIX_MAX_VOLUME (full volume).
- * Note that MIX_MAX_VOLUME is 128. Values greater than MIX_MAX_VOLUME are
- * clamped to MIX_MAX_VOLUME.
+ * The volume must be between 0 (silence) and 1 (full volume).
+ * Values greater than 1 are clamped to 1.
  *
  * Specifying a negative volume will not change the current volume; as such,
  * this can be used to query the current volume without making changes, as
  * this function returns the previous (in this case, still-current) value.
  *
- * The default volume for a chunk is MIX_MAX_VOLUME (no attenuation).
+ * The default volume for a chunk is 1 (no attenuation).
  *
  * \param chunk the chunk whose volume to adjust.
- * \param volume the new volume, between 0 and MIX_MAX_VOLUME, or -1 to query.
+ * \param volume the new volume, between 0 and 1, or -1 to query.
  * \returns the previous volume. If the specified volume is -1, this returns
  *          the current volume. If `chunk` is NULL, this returns -1.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
-extern SDL_DECLSPEC int SDLCALL Mix_VolumeChunk(Mix_Chunk *chunk, int volume);
+extern SDL_DECLSPEC float SDLCALL Mix_VolumeChunk(Mix_Chunk *chunk, float volume);
 
 /**
  * Set the volume for the music channel.
  *
- * The volume must be between 0 (silence) and MIX_MAX_VOLUME (full volume).
- * Note that MIX_MAX_VOLUME is 128. Values greater than MIX_MAX_VOLUME are
- * clamped to MIX_MAX_VOLUME.
+ * The volume must be between 0 (silence) and 1 (full volume).
+ * Values greater than 1 are clamped to 1.
  *
  * Specifying a negative volume will not change the current volume; as such,
  * this can be used to query the current volume without making changes, as
  * this function returns the previous (in this case, still-current) value.
  *
- * The default volume for music is MIX_MAX_VOLUME (no attenuation).
+ * The default volume for music is 1 (no attenuation).
  *
- * \param volume the new volume, between 0 and MIX_MAX_VOLUME, or -1 to query.
+ * \param volume the new volume, between 0 and 1, or -1 to query.
  * \returns the previous volume. If the specified volume is -1, this returns
  *          the current volume.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
-extern SDL_DECLSPEC int SDLCALL Mix_VolumeMusic(int volume);
+extern SDL_DECLSPEC float SDLCALL Mix_VolumeMusic(float volume);
 
 /**
  * Query the current volume value for a music object.
  *
  * \param music the music object to query.
- * \returns the music's current volume, between 0 and MIX_MAX_VOLUME (128).
+ * \returns the music's current volume, between 0 and 1.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
-extern SDL_DECLSPEC int SDLCALL Mix_GetMusicVolume(Mix_Music *music);
+extern SDL_DECLSPEC float SDLCALL Mix_GetMusicVolume(Mix_Music *music);
 
 /**
  * Set the master volume for all channels.
@@ -1899,9 +1895,8 @@ extern SDL_DECLSPEC int SDLCALL Mix_GetMusicVolume(Mix_Music *music);
  * volume, and considers all three when mixing audio. This function sets the
  * master volume, which is applied to all playing channels when mixing.
  *
- * The volume must be between 0 (silence) and MIX_MAX_VOLUME (full volume).
- * Note that MIX_MAX_VOLUME is 128. Values greater than MIX_MAX_VOLUME are
- * clamped to MIX_MAX_VOLUME.
+ * The volume must be between 0 (silence) and 1 (full volume).
+ * Values greater than 1 are clamped to 1.
  *
  * Specifying a negative volume will not change the current volume; as such,
  * this can be used to query the current volume without making changes, as
@@ -1910,13 +1905,13 @@ extern SDL_DECLSPEC int SDLCALL Mix_GetMusicVolume(Mix_Music *music);
  * Note that the master volume does not affect any playing music; it is only
  * applied when mixing chunks. Use Mix_VolumeMusic() for that.\
  *
- * \param volume the new volume, between 0 and MIX_MAX_VOLUME, or -1 to query.
+ * \param volume the new volume, between 0 and 1, or -1 to query.
  * \returns the previous volume. If the specified volume is -1, this returns
  *          the current volume.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
-extern SDL_DECLSPEC int SDLCALL Mix_MasterVolume(int volume);
+extern SDL_DECLSPEC float SDLCALL Mix_MasterVolume(float volume);
 
 /**
  * Halt playing of a particular channel.

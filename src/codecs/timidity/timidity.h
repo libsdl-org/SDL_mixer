@@ -149,7 +149,7 @@ typedef struct {
 
 extern int Timidity_Init(const char *config_file);
 extern int Timidity_Init_NoConfig(void);
-extern void Timidity_SetVolume(MidiSong *song, int volume);
+extern void Timidity_SetVolume(MidiSong *song, float fvolume);
 extern int Timidity_PlaySome(MidiSong *song, void *stream, Sint32 len);
 extern MidiSong *Timidity_LoadSong(SDL_IOStream *io, SDL_AudioSpec *audio);
 extern void Timidity_Start(MidiSong *song);
