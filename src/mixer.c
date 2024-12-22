@@ -75,14 +75,14 @@ static struct _Mix_Channel {
     int playing;
     Uint64 paused;
     Uint8 *samples;
-    int volume;
+    float volume;
     int looping;
     int tag;
     Uint64 expire;
     Uint64 start_time;
     Mix_Fading fading;
-    int fade_volume;
-    int fade_volume_reset;
+    float fade_volume;
+    float fade_volume_reset;
     Uint64 fade_length;
     Uint64 ticks_fade;
     effect_info *effects;
@@ -109,7 +109,8 @@ static void *music_data = NULL;
 static const char **chunk_decoders = NULL;
 static int num_decoders = 0;
 
-static SDL_AtomicInt master_volume = { MIX_MAX_VOLUME };
+static SDL_SpinLock master_volume_lock = 0;
+static float master_volume = 1;
 
 int Mix_GetNumChunkDecoders(void)
 {
@@ -336,7 +337,8 @@ mix_channels(void *udata, SDL_AudioStream *astream, int len, int total)
 {
     Uint8 *stream;
     Uint8 *mix_input;
-    int i, mixable, master_vol;
+    int i, mixable;
+    float master_vol;
     Uint64 sdl_ticks;
 
     (void)udata;
@@ -360,7 +362,9 @@ mix_channels(void *udata, SDL_AudioStream *astream, int len, int total)
     /* Mix the music (must be done before the channels are added) */
     mix_music(music_data, stream, len);
 
-    master_vol = SDL_GetAtomicInt(&master_volume);
+    SDL_LockSpinlock(&master_volume_lock);
+    master_vol = master_volume;
+    SDL_UnlockSpinlock(&master_volume_lock);
 
     /* Mix any playing channels... */
     sdl_ticks = SDL_GetTicks();
@@ -386,17 +390,16 @@ mix_channels(void *udata, SDL_AudioStream *astream, int len, int total)
                     mix_channel[i].fading = MIX_NO_FADING;
                 } else {
                     if (mix_channel[i].fading == MIX_FADING_OUT) {
-                        int volume = (int)((mix_channel[i].fade_volume * (mix_channel[i].fade_length - ticks)) / mix_channel[i].fade_length);
+                        float volume = (mix_channel[i].fade_volume * (mix_channel[i].fade_length - ticks)) / mix_channel[i].fade_length;
                         Mix_Volume(i, volume);
                     } else {
-                        int volume = (int)((mix_channel[i].fade_volume * ticks) / mix_channel[i].fade_length);
+                        float volume = (mix_channel[i].fade_volume * ticks) / mix_channel[i].fade_length;
                         Mix_Volume(i, volume);
                     }
                 }
             }
             if (mix_channel[i].playing > 0) {
-                int volume = (master_vol * (mix_channel[i].volume * mix_channel[i].chunk->volume)) / (MIX_MAX_VOLUME * MIX_MAX_VOLUME);
-                float fvolume = (float)volume / (float)MIX_MAX_VOLUME;
+                float volume = master_vol * (mix_channel[i].volume * mix_channel[i].chunk->volume);
                 int index = 0;
                 int remaining = len;
                 while (mix_channel[i].playing > 0 && index < len) {
@@ -407,7 +410,7 @@ mix_channels(void *udata, SDL_AudioStream *astream, int len, int total)
                     }
 
                     mix_input = Mix_DoEffects(i, mix_channel[i].samples, mixable);
-                    SDL_MixAudio(stream+index, mix_input, mixer.format, mixable, fvolume);
+                    SDL_MixAudio(stream+index, mix_input, mixer.format, mixable, volume);
                     if (mix_input != mix_channel[i].samples)
                         SDL_free(mix_input);
 
@@ -422,8 +425,7 @@ mix_channels(void *udata, SDL_AudioStream *astream, int len, int total)
                         _Mix_channel_done_playing(i);
 
                         /* Update the volume after the application callback */
-                        volume = (master_vol * (mix_channel[i].volume * mix_channel[i].chunk->volume)) / (MIX_MAX_VOLUME * MIX_MAX_VOLUME);
-                        fvolume = (float)volume / (float)MIX_MAX_VOLUME;
+                        volume = master_vol * (mix_channel[i].volume * mix_channel[i].chunk->volume);
                     }
                 }
 
@@ -437,7 +439,7 @@ mix_channels(void *udata, SDL_AudioStream *astream, int len, int total)
                     }
 
                     mix_input = Mix_DoEffects(i, mix_channel[i].chunk->abuf, remaining);
-                    SDL_MixAudio(stream+index, mix_input, mixer.format, remaining, fvolume);
+                    SDL_MixAudio(stream+index, mix_input, mixer.format, remaining, volume);
                     if (mix_input != mix_channel[i].chunk->abuf)
                         SDL_free(mix_input);
 
@@ -529,16 +531,16 @@ bool Mix_OpenAudio(SDL_AudioDeviceID devid, const SDL_AudioSpec *spec)
         mix_channel[i].chunk = NULL;
         mix_channel[i].playing = 0;
         mix_channel[i].looping = 0;
-        mix_channel[i].volume = MIX_MAX_VOLUME;
-        mix_channel[i].fade_volume = MIX_MAX_VOLUME;
-        mix_channel[i].fade_volume_reset = MIX_MAX_VOLUME;
+        mix_channel[i].volume = 1.0f;
+        mix_channel[i].fade_volume = 1.0f;
+        mix_channel[i].fade_volume_reset = 1.0f;
         mix_channel[i].fading = MIX_NO_FADING;
         mix_channel[i].tag = -1;
         mix_channel[i].expire = 0;
         mix_channel[i].effects = NULL;
         mix_channel[i].paused = 0;
     }
-    Mix_VolumeMusic(MIX_MAX_VOLUME);
+    Mix_VolumeMusic(1.0f);
 
     _Mix_InitEffects();
 
@@ -608,9 +610,9 @@ int Mix_AllocateChannels(int numchans)
                 mix_channel[i].chunk = NULL;
                 mix_channel[i].playing = 0;
                 mix_channel[i].looping = 0;
-                mix_channel[i].volume = MIX_MAX_VOLUME;
-                mix_channel[i].fade_volume = MIX_MAX_VOLUME;
-                mix_channel[i].fade_volume_reset = MIX_MAX_VOLUME;
+                mix_channel[i].volume = 1.0f;
+                mix_channel[i].fade_volume = 1.0f;
+                mix_channel[i].fade_volume_reset = 1.0f;
                 mix_channel[i].fading = MIX_NO_FADING;
                 mix_channel[i].tag = -1;
                 mix_channel[i].expire = 0;
@@ -861,7 +863,7 @@ Mix_Chunk *Mix_LoadWAV_IO(SDL_IOStream *src, bool closeio)
 #endif
 
     chunk->allocated = 1;
-    chunk->volume = MIX_MAX_VOLUME;
+    chunk->volume = 1.0f;
 
     /* Build the audio converter and create conversion buffers */
     if (wavespec.format != mixer.format ||
@@ -920,7 +922,7 @@ Mix_Chunk *Mix_QuickLoad_WAV(Uint8 *mem)
         chunk->abuf = mem;
         mem += chunk->alen;
     } while (SDL_memcmp(magic, "data", 4) != 0);
-    chunk->volume = MIX_MAX_VOLUME;
+    chunk->volume = 1.0f;
 
     return chunk;
 }
@@ -946,7 +948,7 @@ Mix_Chunk *Mix_QuickLoad_RAW(Uint8 *mem, Uint32 len)
     chunk->allocated = 0;
     chunk->alen = len;
     chunk->abuf = mem;
-    chunk->volume = MIX_MAX_VOLUME;
+    chunk->volume = 1.0f;
 
     return chunk;
 }
@@ -1184,7 +1186,7 @@ int Mix_FadeInChannelTimed(int which, Mix_Chunk *chunk, int loops, int ms, int t
             }
             mix_channel[which].fading = MIX_FADING_IN;
             mix_channel[which].fade_volume = mix_channel[which].volume;
-            mix_channel[which].volume = 0;
+            mix_channel[which].volume = 0.0f;
             mix_channel[which].fade_length = (Uint64)ms;
             mix_channel[which].start_time = mix_channel[which].ticks_fade = sdl_ticks;
             mix_channel[which].expire = (ticks > 0) ? (sdl_ticks + ticks) : 0;
@@ -1203,10 +1205,10 @@ int Mix_FadeInChannel(int channel, Mix_Chunk *chunk, int loops, int ms)
 
 
 /* Set volume of a particular channel */
-int Mix_Volume(int which, int volume)
+float Mix_Volume(int which, float volume)
 {
     int i;
-    int prev_volume = 0;
+    float prev_volume = 0.0f;
 
     if (which == -1) {
         for (i = 0; i < num_channels; ++i) {
@@ -1215,9 +1217,9 @@ int Mix_Volume(int which, int volume)
         prev_volume /= num_channels;
     } else if (which < num_channels) {
         prev_volume = mix_channel[which].volume;
-        if (volume >= 0) {
-            if (volume > MIX_MAX_VOLUME) {
-                volume = MIX_MAX_VOLUME;
+        if (volume >= 0.0f) {
+            if (volume > 1.0f) {
+                volume = 1.0f;
             }
             mix_channel[which].volume = volume;
         }
@@ -1225,17 +1227,17 @@ int Mix_Volume(int which, int volume)
     return prev_volume;
 }
 /* Set volume of a particular chunk */
-int Mix_VolumeChunk(Mix_Chunk *chunk, int volume)
+float Mix_VolumeChunk(Mix_Chunk *chunk, float volume)
 {
-    int prev_volume;
+    float prev_volume;
 
     if (chunk == NULL) {
         return -1;
     }
     prev_volume = chunk->volume;
-    if (volume >= 0) {
-        if (volume > MIX_MAX_VOLUME) {
-            volume = MIX_MAX_VOLUME;
+    if (volume >= 0.0f) {
+        if (volume > 1.0f) {
+            volume = 1.0f;
         }
         chunk->volume = volume;
     }
@@ -1771,16 +1773,20 @@ void Mix_UnlockAudio(void)
     SDL_UnlockAudioStream(audio_stream);
 }
 
-int Mix_MasterVolume(int volume)
+float Mix_MasterVolume(float volume)
 {
-    int prev_volume = SDL_GetAtomicInt(&master_volume);
-    if (volume < 0) {
+    SDL_LockSpinlock(&master_volume_lock);
+
+    float prev_volume = master_volume;
+    if (volume < 0.0f) {
+        SDL_UnlockSpinlock(&master_volume_lock);
         return prev_volume;
     }
-    if (volume > MIX_MAX_VOLUME) {
-        volume = MIX_MAX_VOLUME;
+    if (volume > 1.0f) {
+        volume = 1.0f;
     }
-    SDL_SetAtomicInt(&master_volume, volume);
+    master_volume = volume;
+    SDL_UnlockSpinlock(&master_volume_lock);
     return prev_volume;
 }
 

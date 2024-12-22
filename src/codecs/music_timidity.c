@@ -35,7 +35,7 @@ typedef struct
     SDL_AudioStream *stream;
     void *buffer;
     Sint32 buffer_size;
-    int volume;
+    float volume;
 } TIMIDITY_Music;
 
 
@@ -94,7 +94,7 @@ void *TIMIDITY_CreateFromIO(SDL_IOStream *src, bool closeio)
         return NULL;
     }
 
-    music->volume = MIX_MAX_VOLUME;
+    music->volume = 1.0f;
 
     SDL_memcpy(&spec, &music_spec, sizeof(spec));
     if (spec.channels > 2) {
@@ -128,14 +128,14 @@ void *TIMIDITY_CreateFromIO(SDL_IOStream *src, bool closeio)
     return music;
 }
 
-static void TIMIDITY_SetVolume(void *context, int volume)
+static void TIMIDITY_SetVolume(void *context, float volume)
 {
     TIMIDITY_Music *music = (TIMIDITY_Music *)context;
     music->volume = volume;
     Timidity_SetVolume(music->song, volume);
 }
 
-static int TIMIDITY_GetVolume(void *context)
+static float TIMIDITY_GetVolume(void *context)
 {
     TIMIDITY_Music *music = (TIMIDITY_Music *)context;
     return music->volume;
@@ -209,7 +209,7 @@ static int TIMIDITY_GetSome(void *context, void *data, int bytes, bool *done)
 
 static int TIMIDITY_GetAudio(void *context, void *data, int bytes)
 {
-    return music_pcm_getaudio(context, data, bytes, MIX_MAX_VOLUME, TIMIDITY_GetSome);
+    return music_pcm_getaudio(context, data, bytes, 1.0f, TIMIDITY_GetSome);
 }
 
 static int TIMIDITY_Seek(void *context, double position)

@@ -47,7 +47,7 @@ static int NATIVEMIDI_Play(void *context, int play_count)
     return 0;
 }
 
-static void NATIVEMIDI_SetVolume(void *context, int volume)
+static void NATIVEMIDI_SetVolume(void *context, float volume)
 {
     (void)context;
     native_midi_setvolume(volume);

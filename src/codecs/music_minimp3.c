@@ -35,7 +35,7 @@ typedef struct {
     int closeio;
     mp3dec_ex_t dec;
     mp3dec_io_t io;
-    int volume;
+    float volume;
     int status;
     SDL_AudioStream *stream;
     mp3d_sample_t *buffer;
@@ -72,7 +72,7 @@ static void *MINIMP3_CreateFromIO(SDL_IOStream *src, bool closeio)
     if (!music) {
         return NULL;
     }
-    music->volume = MIX_MAX_VOLUME;
+    music->volume = 1.0f;
 
     if (MP3_IOinit(&music->file, src) < 0) {
         SDL_free(music);
@@ -125,13 +125,13 @@ static void *MINIMP3_CreateFromIO(SDL_IOStream *src, bool closeio)
     return music;
 }
 
-static void MINIMP3_SetVolume(void *context, int volume)
+static void MINIMP3_SetVolume(void *context, float volume)
 {
     MiniMP3_Music *music = (MiniMP3_Music *)context;
     music->volume = volume;
 }
 
-static int MINIMP3_GetVolume(void *context)
+static float MINIMP3_GetVolume(void *context)
 {
     MiniMP3_Music *music = (MiniMP3_Music *)context;
     return music->volume;

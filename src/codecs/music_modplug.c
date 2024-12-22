@@ -117,7 +117,7 @@ static void MODPLUG_Unload(void)
 
 typedef struct
 {
-    int volume;
+    float volume;
     int play_count;
     ModPlugFile *file;
     SDL_AudioStream *stream;
@@ -177,7 +177,7 @@ void *MODPLUG_CreateFromIO(SDL_IOStream *src, bool closeio)
         return NULL;
     }
 
-    music->volume = MIX_MAX_VOLUME;
+    music->volume = 1.0f;
 
     SDL_zero(srcspec);
     srcspec.format = (settings.mBits == 8) ? SDL_AUDIO_U8 : SDL_AUDIO_S16;
@@ -220,15 +220,15 @@ void *MODPLUG_CreateFromIO(SDL_IOStream *src, bool closeio)
 }
 
 /* Set the volume for a modplug stream */
-static void MODPLUG_SetVolume(void *context, int volume)
+static void MODPLUG_SetVolume(void *context, float volume)
 {
     MODPLUG_Music *music = (MODPLUG_Music *)context;
     music->volume = volume;
-    modplug.ModPlug_SetMasterVolume(music->file, (unsigned int)volume * 2); /* 0-512, reduced to 0-256 to prevent clipping */
+    modplug.ModPlug_SetMasterVolume(music->file, volume * 256); /* 0-512, reduced to 0-256 to prevent clipping */
 }
 
 /* Get the volume for a modplug stream */
-static int MODPLUG_GetVolume(void *context)
+static float MODPLUG_GetVolume(void *context)
 {
     MODPLUG_Music *music = (MODPLUG_Music *)context;
     return music->volume;
@@ -289,7 +289,7 @@ static int MODPLUG_GetSome(void *context, void *data, int bytes, bool *done)
 
 static int MODPLUG_GetAudio(void *context, void *data, int bytes)
 {
-    return music_pcm_getaudio(context, data, bytes, MIX_MAX_VOLUME, MODPLUG_GetSome);
+    return music_pcm_getaudio(context, data, bytes, 1.0f, MODPLUG_GetSome);
 }
 
 /* Jump to a given order */

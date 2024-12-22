@@ -106,7 +106,7 @@ typedef struct {
     SDL_IOStream *src;
     bool closeio;
     int play_count;
-    int volume;
+    float volume;
     OggOpusFile *of;
     const OpusHead *op_info;
     int section;
@@ -224,7 +224,7 @@ static void *OPUS_CreateFromIO(SDL_IOStream *src, bool closeio)
         return NULL;
     }
     music->src = src;
-    music->volume = MIX_MAX_VOLUME;
+    music->volume = 1.0f;
     music->section = -1;
 
     SDL_zero(callbacks);
@@ -321,14 +321,14 @@ static const char* OPUS_GetMetaTag(void *context, Mix_MusicMetaTag tag_type)
 }
 
 /* Set the volume for an Opus stream */
-static void OPUS_SetVolume(void *context, int volume)
+static void OPUS_SetVolume(void *context, float volume)
 {
     OPUS_music *music = (OPUS_music *)context;
     music->volume = volume;
 }
 
 /* Get the volume for an Opus stream */
-static int OPUS_GetVolume(void *context)
+static float OPUS_GetVolume(void *context)
 {
     OPUS_music *music = (OPUS_music *)context;
     return music->volume;

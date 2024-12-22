@@ -91,7 +91,7 @@ static void Menu(void)
             Mix_HaltMusic();
             break;
         case 'v': case 'V':
-            Mix_VolumeMusic(SDL_atoi(buf+1));
+            Mix_VolumeMusic((float)SDL_atof(buf+1));
             break;
         }
     }
@@ -112,7 +112,7 @@ static void IntHandler(int sig)
 
 int main(int argc, char *argv[])
 {
-    int audio_volume = MIX_MAX_VOLUME;
+    float audio_volume = 1.0f;
     int looping = 0;
     bool interactive = false;
     bool use_io = false;
@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
         } else
         if ((SDL_strcmp(argv[i], "-v") == 0) && argv[i+1]) {
             ++i;
-            audio_volume = SDL_atoi(argv[i]);
+            audio_volume = (float)SDL_atof(argv[i]);
         } else
         if (SDL_strcmp(argv[i], "-l") == 0) {
             looping = -1;
