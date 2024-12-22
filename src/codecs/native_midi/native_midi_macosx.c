@@ -396,7 +396,7 @@ bool native_midi_active(void)
 {
 }
 
-void native_midi_setvolume(int volume)
+void native_midi_setvolume(float volume)
 {
 }
 
