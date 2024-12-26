@@ -264,7 +264,7 @@ typedef struct Mix_Music Mix_Music;
  * with the `devid` parameter. If you specify 0, SDL_mixer will choose the
  * best default it can on your behalf (which, in many cases, is exactly what
  * you want anyhow). This is equivalent to specifying
- * `SDL_AUDIO_DEVICE_DEFAULT_OUTPUT`, but is less wordy. SDL_mixer does not
+ * `SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK`, but is less wordy. SDL_mixer does not
  * offer a mechanism to determine device IDs to open, but you can use
  * SDL_GetAudioOutputDevices() to get a list of available devices. If you do
  * this, be sure to call `SDL_Init(SDL_INIT_AUDIO)` first to initialize SDL's
