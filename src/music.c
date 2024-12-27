@@ -740,7 +740,7 @@ Mix_Music *Mix_LoadMUS(const char *file)
                     SDL_strcasecmp(ext, "SPC") == 0 ||
                     SDL_strcasecmp(ext, "VGM") == 0) {
             type = MUS_GME;
-        }   else if (SDL_strcasecmp(ext, "YM") == 0) {
+        } else if (SDL_strcasecmp(ext, "YM") == 0) {
             type = MUS_YM;
         }
     }
