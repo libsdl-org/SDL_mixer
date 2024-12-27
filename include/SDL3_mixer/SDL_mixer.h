@@ -1033,10 +1033,6 @@ typedef void (SDLCALL *Mix_MusicFinishedCallback)(void);
  * restart the one that just stopped). If the music finished normally, this
  * can be used to loop the music without a gap in the audio playback.
  *
- * Do not call SDL_LockAudio() from this callback; you will either be inside
- * the audio callback, or SDL_mixer will explicitly lock the audio before
- * calling your callback.
- *
  * A NULL pointer will disable the callback.
  *
  * \param music_finished the callback function to become the new notification
@@ -1069,10 +1065,6 @@ typedef void (SDLCALL *Mix_ChannelFinishedCallback)(int channel);
  * The callback has a single parameter, `channel`, which says what mixer
  * channel has just stopped.
  *
- * Do not call SDL_LockAudio() from this callback; you will either be inside
- * the audio callback, or SDL_mixer will explicitly lock the audio before
- * calling your callback.
- *
  * A NULL pointer will disable the callback.
  *
  * \param channel_finished the callback function to become the new
@@ -1101,8 +1093,6 @@ extern SDL_DECLSPEC void SDLCALL Mix_ChannelFinished(Mix_ChannelFinishedCallback
  * like to the buffer, though, and it will continue in its changed state down
  * the mixing pipeline, through any other effect functions, then finally to be
  * mixed with the rest of the channels and music for the final output stream.
- *
- * DO NOT EVER call SDL_LockAudio() from your callback function!
  */
 typedef void (SDLCALL *Mix_EffectFunc_t)(int chan, void *stream, int len, void *udata);
 
@@ -1113,8 +1103,6 @@ typedef void (SDLCALL *Mix_EffectFunc_t)(int chan, void *stream, int len, void *
  * This gets called if the buffer plays out normally, or if you call
  * Mix_HaltChannel(), implicitly stop a channel via Mix_AllocateChannels(), or
  * unregister a callback while it's still playing.
- *
- * DO NOT EVER call SDL_LockAudio() from your callback function!
  */
 typedef void (SDLCALL *Mix_EffectDone_t)(int chan, void *udata);
 
@@ -1164,9 +1152,6 @@ typedef void (SDLCALL *Mix_EffectDone_t)(int chan, void *udata);
  * After all these effects have finished processing, the callback registered
  * through Mix_SetPostMix() runs, and then the stream goes to the audio
  * device.
- *
- * DO NOT EVER call SDL_LockAudio() from your callback function! You are
- * already running in the audio thread and the lock is already held!
  *
  * Note that unlike most SDL and SDL_mixer functions, this function returns
  * zero if there's an error, not on success. We apologize for the API design
