@@ -312,7 +312,7 @@ extern SDL_DECLSPEC void SDLCALL Mix_PauseAudio(int pause_on);
  * \param format On return, will be filled with the audio device's format.
  * \param channels On return, will be filled with the audio device's channel
  *                 count.
- * \returns true if the audio device has been opened, true otherwise.
+ * \returns true if the audio device has been opened, false otherwise.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  *
@@ -1908,7 +1908,7 @@ extern SDL_DECLSPEC int SDLCALL Mix_GetMusicVolume(Mix_Music *music);
  * this function returns the previous (in this case, still-current) value.
  *
  * Note that the master volume does not affect any playing music; it is only
- * applied when mixing chunks. Use Mix_VolumeMusic() for that.\
+ * applied when mixing chunks. Use Mix_VolumeMusic() for that.
  *
  * \param volume the new volume, between 0 and MIX_MAX_VOLUME, or -1 to query.
  * \returns the previous volume. If the specified volume is -1, this returns
@@ -2473,7 +2473,7 @@ extern SDL_DECLSPEC bool SDLCALL Mix_SetSoundFonts(const char *paths);
  * - If the boolean _SDL hint_ `"SDL_FORCE_SOUNDFONTS"` is set, AND the
  *   `"SDL_SOUNDFONTS"` _environment variable_ is also set, this function will
  *   return that environment variable regardless of whether
- *   Mix_SetSoundFounts() was ever called.
+ *   Mix_SetSoundFonts() was ever called.
  * - Otherwise, if Mix_SetSoundFonts() was successfully called with a non-NULL
  *   path, this function will return the string passed to that function.
  * - Otherwise, if the `"SDL_SOUNDFONTS"` variable is set, this function will
