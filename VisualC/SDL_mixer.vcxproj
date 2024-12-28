@@ -117,7 +117,7 @@
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir)..\include;$(ProjectDir)..\src;$(ProjectDir)..\src\codecs;$(ProjectDir)..\src\codecs\timidity;$(ProjectDir)..\src\codecs\native_midi;$(ProjectDir)external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DLL_EXPORT;_DEBUG;WIN32;_WINDOWS;MUSIC_WAV;MUSIC_WAVPACK;MUSIC_FLAC_DRFLAC;MUSIC_MOD_XMP;XMP_DYNAMIC="libxmp.dll";MUSIC_MP3_MINIMP3;MUSIC_OGG;OGG_USE_STB;OGG_DYNAMIC="libvorbisfile-3.dll";MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";WAVPACK_DYNAMIC="libwavpack-1.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE;MUSIC_GME;GME_DYNAMIC="libgme.dll";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
@@ -145,7 +145,7 @@
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir)..\include;$(ProjectDir)..\src;$(ProjectDir)..\src\codecs;$(ProjectDir)..\src\codecs\timidity;$(ProjectDir)..\src\codecs\native_midi;$(ProjectDir)external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DLL_EXPORT;_DEBUG;WIN32;_WINDOWS;MUSIC_WAV;MUSIC_WAVPACK;MUSIC_FLAC_DRFLAC;MUSIC_MOD_XMP;XMP_DYNAMIC="libxmp.dll";MUSIC_MP3_MINIMP3;MUSIC_OGG;OGG_USE_STB;OGG_DYNAMIC="libvorbisfile-3.dll";MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";WAVPACK_DYNAMIC="libwavpack-1.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE;MUSIC_GME;GME_DYNAMIC="libgme.dll";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
     </ClCompile>
@@ -171,7 +171,7 @@
     <ClCompile>
       <AdditionalIncludeDirectories>$(ProjectDir)..\include;$(ProjectDir)..\src;$(ProjectDir)..\src\codecs;$(ProjectDir)..\src\codecs\timidity;$(ProjectDir)..\src\codecs\native_midi;$(ProjectDir)external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DLL_EXPORT;NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;MUSIC_WAVPACK;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MOD_XMP;XMP_DYNAMIC="libxmp.dll";MUSIC_MP3_MINIMP3;MUSIC_OGG;OGG_USE_STB;OGG_DYNAMIC="libvorbisfile-3.dll";MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";WAVPACK_DYNAMIC="libwavpack-1.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE;MUSIC_GME;GME_DYNAMIC="libgme.dll";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
     </ClCompile>
@@ -198,7 +198,7 @@
     <ClCompile>
       <AdditionalIncludeDirectories>$(ProjectDir)..\include;$(ProjectDir)..\src;$(ProjectDir)..\src\codecs;$(ProjectDir)..\src\codecs\timidity;$(ProjectDir)..\src\codecs\native_midi;$(ProjectDir)external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DLL_EXPORT;NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;MUSIC_WAVPACK;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MOD_XMP;XMP_DYNAMIC="libxmp.dll";MUSIC_MP3_MINIMP3;MUSIC_OGG;OGG_USE_STB;OGG_DYNAMIC="libvorbisfile-3.dll";MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";WAVPACK_DYNAMIC="libwavpack-1.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE;MUSIC_GME;GME_DYNAMIC="libgme.dll";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
     </ClCompile>
     <ResourceCompile>
