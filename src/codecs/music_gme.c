@@ -326,7 +326,7 @@ static int GME_GetSome(void *context, void *data, int bytes, bool *done)
 static int GME_PlayAudio(void *music_p, void *data, int bytes)
 {
     GME_Music *music = (GME_Music*)music_p;
-    return music_pcm_getaudio(music_p, data, bytes, (float)SDL_floor(music->volume * music->gain + 0.5), GME_GetSome);
+    return music_pcm_getaudio(music_p, data, bytes, (float)(music->volume * music->gain), GME_GetSome);
 }
 
 /* Close the given Game Music Emulators stream */
