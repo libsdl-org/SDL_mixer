@@ -1318,10 +1318,6 @@ extern SDL_DECLSPEC bool SDLCALL Mix_SetPanning(int channel, Uint8 left, Uint8 r
  *
  * This is a convenience wrapper over Mix_SetDistance() and Mix_SetPanning().
  *
- * Note that unlike most SDL and SDL_mixer functions, this function returns
- * zero if there's an error, not on success. We apologize for the API design
- * inconsistency here.
- *
  * \param channel The mixer channel to position, or MIX_CHANNEL_POST.
  * \param angle angle, in degrees. North is 0, and goes clockwise.
  * \param distance distance; 0 is the listener, 255 is maxiumum distance away.
