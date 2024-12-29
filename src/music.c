@@ -929,14 +929,12 @@ bool Mix_FadeInMusicPos(Mix_Music *music, int loops, int ms, double position)
     bool retval;
 
     if (ms_per_step == 0) {
-        SDL_SetError("Audio device hasn't been opened");
-        return false;
+        return SDL_SetError("Audio device hasn't been opened");
     }
 
     /* Don't play null pointers :-) */
     if (music == NULL) {
-        SDL_SetError("music parameter was NULL");
-        return false;
+        return SDL_SetError("music parameter was NULL");
     }
 
     /* Setup the data */
@@ -1522,5 +1520,3 @@ bool Mix_EachSoundFont(Mix_EachSoundFontCallback function, void *data)
     SDL_free(paths);
     return (soundfonts_found > 0);
 }
-
-/* vi: set ts=4 sw=4 expandtab: */

@@ -112,8 +112,3 @@ void *_Eff_build_volume_table_s8(void)
 
     return _Eff_volume_table;
 }
-
-
-/* end of effects.c ... */
-
-/* vi: set ts=4 sw=4 expandtab: */

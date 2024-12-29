@@ -1613,7 +1613,7 @@ bool Mix_SetPanning(int channel, Uint8 left, Uint8 right)
     int channels;
     SDL_AudioFormat format;
     position_args *args = NULL;
-    int retval = 1;
+    bool retval = true;
 
     Mix_QuerySpec(NULL, &format, &channels);
 
@@ -1794,7 +1794,3 @@ bool Mix_SetPosition(int channel, Sint16 angle, Uint8 distance)
     Mix_UnlockAudio();
     return retval;
 }
-
-/* end of effects_position.c ... */
-
-/* vi: set ts=4 sw=4 expandtab: */

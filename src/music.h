@@ -176,5 +176,3 @@ extern void unload_music(void);
 extern SDL_AudioSpec music_spec;
 
 #endif /* MUSIC_H_ */
-
-/* vi: set ts=4 sw=4 expandtab: */

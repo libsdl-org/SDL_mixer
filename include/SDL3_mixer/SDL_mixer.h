@@ -1153,10 +1153,6 @@ typedef void (SDLCALL *Mix_EffectDone_t)(int chan, void *udata);
  * through Mix_SetPostMix() runs, and then the stream goes to the audio
  * device.
  *
- * Note that unlike most SDL and SDL_mixer functions, this function returns
- * zero if there's an error, not on success. We apologize for the API design
- * inconsistency here.
- *
  * \param chan the channel to register an effect to, or MIX_CHANNEL_POST.
  * \param f effect the callback to run when more of this channel is to be
  *          mixed.
@@ -1181,10 +1177,6 @@ extern SDL_DECLSPEC bool SDLCALL Mix_RegisterEffect(int chan, Mix_EffectFunc_t f
  * unregistered through this function by specifying MIX_CHANNEL_POST for a
  * channel.
  *
- * Note that unlike most SDL and SDL_mixer functions, this function returns
- * zero if there's an error, not on success. We apologize for the API design
- * inconsistency here.
- *
  * \param channel the channel to unregister an effect on, or MIX_CHANNEL_POST.
  * \param f effect the callback stop calling in future mixing iterations.
  * \returns true on success or false on failure; call SDL_GetError() for more
@@ -1206,10 +1198,6 @@ extern SDL_DECLSPEC bool SDLCALL Mix_UnregisterEffect(int channel, Mix_EffectFun
  * implicitly unregistered as they are for channels, but they may be
  * explicitly unregistered through this function by specifying
  * MIX_CHANNEL_POST for a channel.
- *
- * Note that unlike most SDL and SDL_mixer functions, this function returns
- * zero if there's an error, not on success. We apologize for the API design
- * inconsistency here.
  *
  * \param channel the channel to unregister all effects on, or
  *                MIX_CHANNEL_POST.
@@ -1262,10 +1250,6 @@ extern SDL_DECLSPEC bool SDLCALL Mix_UnregisterAllEffects(int channel);
  * Note that an audio device in mono mode is a no-op, but this call will
  * return successful in that case. Error messages can be retrieved from
  * Mix_GetError().
- *
- * Note that unlike most SDL and SDL_mixer functions, this function returns
- * zero if there's an error, not on success. We apologize for the API design
- * inconsistency here.
  *
  * \param channel The mixer channel to pan or MIX_CHANNEL_POST.
  * \param left Volume of stereo left channel, 0 is silence, 255 is full
@@ -1352,10 +1336,6 @@ extern SDL_DECLSPEC bool SDLCALL Mix_SetPosition(int channel, Sint16 angle, Uint
  *
  * This uses the Mix_RegisterEffect() API internally.
  *
- * Note that unlike most SDL and SDL_mixer functions, this function returns
- * zero if there's an error, not on success. We apologize for the API design
- * inconsistency here.
- *
  * \param channel The mixer channel to attenuate, or MIX_CHANNEL_POST.
  * \param distance distance; 0 is the listener, 255 is maxiumum distance away.
  * \returns true on success or false on failure; call SDL_GetError() for more
@@ -1383,10 +1363,6 @@ extern SDL_DECLSPEC bool SDLCALL Mix_SetDistance(int channel, Uint8 distance);
  * If you specify MIX_CHANNEL_POST for `channel`, then this effect is used on
  * the final mixed stream before sending it on to the audio device (a
  * posteffect).
- *
- * Note that unlike most SDL and SDL_mixer functions, this function returns
- * zero if there's an error, not on success. We apologize for the API design
- * inconsistency here.
  *
  * \param channel The mixer channel to reverse, or MIX_CHANNEL_POST.
  * \param flip non-zero to reverse stereo, zero to disable this effect.
@@ -2432,10 +2408,6 @@ extern SDL_DECLSPEC bool SDLCALL Mix_PlayingMusic(void);
  *
  * Passing a NULL path will remove any previously-specified paths.
  *
- * Note that unlike most SDL and SDL_mixer functions, this function returns
- * zero if there's an error, not on success. We apologize for the API design
- * inconsistency here.
- *
  * \param paths Paths on the filesystem where SoundFonts are available,
  *              separated by semicolons.
  * \returns true on success or false on failure; call SDL_GetError() for more
@@ -2592,7 +2564,6 @@ extern SDL_DECLSPEC void SDLCALL Mix_CloseAudio(void);
 #ifdef __cplusplus
 }
 #endif
-
 #include <SDL3/SDL_close_code.h>
 
 #endif /* SDL_MIXER_H_ */

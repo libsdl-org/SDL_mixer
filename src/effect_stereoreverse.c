@@ -122,8 +122,7 @@ bool Mix_SetReverseStereo(int channel, int flip)
             f = _Eff_reversestereo32;
             break;
         default:
-            SDL_SetError("Unsupported audio format");
-            return false;
+            return SDL_SetError("Unsupported audio format");
         }
         if (!flip) {
             return Mix_UnregisterEffect(channel, f);
@@ -133,7 +132,3 @@ bool Mix_SetReverseStereo(int channel, int flip)
 
     return SDL_SetError("Trying to reverse stereo on a non-stereo stream");
 }
-
-/* end of effect_stereoreverse.c ... */
-
-/* vi: set ts=4 sw=4 expandtab: */

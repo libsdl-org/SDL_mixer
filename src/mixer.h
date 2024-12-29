@@ -28,5 +28,3 @@ extern void Mix_UnlockAudio(void);
 extern void add_chunk_decoder(const char *decoder);
 
 #endif /* MIXER_H_ */
-
-/* vi: set ts=4 sw=4 expandtab: */

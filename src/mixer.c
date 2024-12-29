@@ -1687,8 +1687,7 @@ bool _Mix_RegisterEffect_locked(int channel, Mix_EffectFunc_t f, Mix_EffectDone_
         e = &posteffects;
     } else {
         if ((channel < 0) || (channel >= num_channels)) {
-            SDL_SetError("Invalid channel number");
-            return 0;
+            return SDL_SetError("Invalid channel number");
         }
         e = &mix_channel[channel].effects;
     }
@@ -1716,8 +1715,7 @@ bool _Mix_UnregisterEffect_locked(int channel, Mix_EffectFunc_t f)
         e = &posteffects;
     } else {
         if ((channel < 0) || (channel >= num_channels)) {
-            SDL_SetError("Invalid channel number");
-            return 0;
+            return SDL_SetError("Invalid channel number");
         }
         e = &mix_channel[channel].effects;
     }
@@ -1743,8 +1741,7 @@ bool _Mix_UnregisterAllEffects_locked(int channel)
         e = &posteffects;
     } else {
         if ((channel < 0) || (channel >= num_channels)) {
-            SDL_SetError("Invalid channel number");
-            return 0;
+            return SDL_SetError("Invalid channel number");
         }
         e = &mix_channel[channel].effects;
     }
@@ -1783,7 +1780,3 @@ int Mix_MasterVolume(int volume)
     SDL_SetAtomicInt(&master_volume, volume);
     return prev_volume;
 }
-
-/* end of mixer.c ... */
-
-/* vi: set ts=4 sw=4 expandtab: */

@@ -42,5 +42,3 @@ bool _Mix_UnregisterEffect_locked(int channel, Mix_EffectFunc_t f);
 bool _Mix_UnregisterAllEffects_locked(int channel);
 
 #endif /* _INCLUDE_EFFECTS_INTERNAL_H_ */
-
-/* vi: set ts=4 sw=4 expandtab: */
