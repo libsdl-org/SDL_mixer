@@ -302,6 +302,9 @@ if(WIN32 AND BUILD_SHARED_LIBS)
     target_sources(${sdl3_mixer_target_name} PRIVATE
         src/version.rc
     )
+    if(MINGW)
+        target_link_options(${sdl3_mixer_target_name} PRIVATE -static-libgcc)
+    endif()
 endif()
 set_target_properties(${sdl3_mixer_target_name} PROPERTIES
     OUTPUT_NAME "SDL3_mixer"
