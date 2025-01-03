@@ -260,7 +260,8 @@ typedef enum Mix_MusicType {
     MUS_MODPLUG_UNUSED,
     MUS_OPUS,
     MUS_WAVPACK,
-    MUS_GME
+    MUS_GME,
+	MUS_YM
 } Mix_MusicType;
 
 /**
