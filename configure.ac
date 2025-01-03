@@ -100,6 +100,11 @@ case "$host" in
             BASE_LDFLAGS="-mno-cygwin"
         fi
         ;;
+    *-*-mingw*)
+        #Eliminate libgcc*.dll dependency
+        BASE_CFLAGS="-static-libgcc"
+        BASE_LDFLAGS="-Wc,-static-libgcc"
+        ;;
     *-*-os2*)
         # disable static builds on os/2
         enable_static=no
