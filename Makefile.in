@@ -116,6 +116,18 @@ install-hdrs:
 	$(SHELL) $(auxdir)/mkinstalldirs $(libdir)/cmake/SDL2_mixer/
 	$(INSTALL) -m 644 sdl2_mixer-config.cmake $(libdir)/cmake/SDL2_mixer
 	$(INSTALL) -m 644 sdl2_mixer-config-version.cmake $(libdir)/cmake/SDL2_mixer
+	$(INSTALL) -m 644 $(srcdir)/cmake/PkgConfigHelper.cmake $(libdir)/cmake/SDL2_mixer
+	$(INSTALL) -m 644 $(srcdir)/cmake/FindFLAC.cmake $(libdir)/cmake/SDL2_mixer
+	$(INSTALL) -m 644 $(srcdir)/cmake/FindFluidSynth.cmake $(libdir)/cmake/SDL2_mixer
+	$(INSTALL) -m 644 $(srcdir)/cmake/Findgme.cmake $(libdir)/cmake/SDL2_mixer
+	$(INSTALL) -m 644 $(srcdir)/cmake/Findlibxmp.cmake $(libdir)/cmake/SDL2_mixer
+	$(INSTALL) -m 644 $(srcdir)/cmake/Findlibxmp-lite.cmake $(libdir)/cmake/SDL2_mixer
+	$(INSTALL) -m 644 $(srcdir)/cmake/Findmodplug.cmake $(libdir)/cmake/SDL2_mixer
+	$(INSTALL) -m 644 $(srcdir)/cmake/Findmpg123.cmake $(libdir)/cmake/SDL2_mixer
+	$(INSTALL) -m 644 $(srcdir)/cmake/FindOpusFile.cmake $(libdir)/cmake/SDL2_mixer
+	$(INSTALL) -m 644 $(srcdir)/cmake/Findtremor.cmake $(libdir)/cmake/SDL2_mixer
+	$(INSTALL) -m 644 $(srcdir)/cmake/FindVorbis.cmake $(libdir)/cmake/SDL2_mixer
+	$(INSTALL) -m 644 $(srcdir)/cmake/Findwavpack.cmake $(libdir)/cmake/SDL2_mixer
 install-lib: $(objects)/$(TARGET)
 	$(SHELL) $(auxdir)/mkinstalldirs $(libdir)
 	$(LIBTOOL) --mode=install $(INSTALL) $(objects)/$(TARGET) $(libdir)/$(TARGET)
@@ -135,6 +147,18 @@ uninstall-hdrs:
 	-rmdir $(libdir)/pkgconfig
 	rm -f $(libdir)/cmake/SDL2_mixer/sdl2_mixer-config.cmake
 	rm -f $(libdir)/cmake/SDL2_mixer/sdl2_mixer-config-version.cmake
+	rm -f $(libdir)/cmake/SDL2_mixer/PkgConfigHelper.cmake
+	rm -f $(libdir)/cmake/SDL2_mixer/FindFLAC.cmake
+	rm -f $(libdir)/cmake/SDL2_mixer/FindFluidSynth.cmake
+	rm -f $(libdir)/cmake/SDL2_mixer/Findgme.cmake
+	rm -f $(libdir)/cmake/SDL2_mixer/Findlibxmp.cmake
+	rm -f $(libdir)/cmake/SDL2_mixer/Findlibxmp-lite
+	rm -f $(libdir)/cmake/SDL2_mixer/Findmodplug.cmake
+	rm -f $(libdir)/cmake/SDL2_mixer/Findmpg123.cmake
+	rm -f $(libdir)/cmake/SDL2_mixer/FindOpusFile.cmake
+	rm -f $(libdir)/cmake/SDL2_mixer/Findtremor.cmake
+	rm -f $(libdir)/cmake/SDL2_mixer/FindVorbis.cmake
+	rm -f $(libdir)/cmake/SDL2_mixer/Findwavpack.cmake
 	-rmdir $(libdir)/cmake/SDL2_mixer
 	-rmdir $(libdir)/cmake
 uninstall-lib:

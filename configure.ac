@@ -124,6 +124,7 @@ EXTRA_CFLAGS="$INCLUDE $BASE_CFLAGS"
 BUILD_LDFLAGS="$LDFLAGS"
 EXTRA_LDFLAGS="$BASE_LDFLAGS"
 MIXER_LIBS=
+CMAKE_LIBS=
 ## These are common directories to find software packages
 #for path in /usr/freeware /usr/pkg /usr/local; do
 #    if test -d $path/include; then
@@ -306,7 +307,10 @@ dnl check for GCC visibility attributes
 CheckVisibilityHidden
 
 dnl Check for math library
-AC_CHECK_LIB(m, pow, [LIBM="-lm"])
+AC_CHECK_LIB(m, pow, [
+    MIXER_LIBS="$MIXER_LIBS -lm"
+    CMAKE_LIBS="$CMAKE_LIBS;m"
+])
 
 AC_CHECK_HEADERS([signal.h], [EXTRA_CFLAGS="$EXTRA_CFLAGS -DHAVE_SIGNAL_H"])
 AC_CHECK_FUNCS(setbuf, [EXTRA_CFLAGS="$EXTRA_CFLAGS -DHAVE_SETBUF"])
@@ -389,6 +393,7 @@ if test x$enable_music_mod = xyes -a x$enable_music_mod_modplug = xyes; then
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DMODPLUG_DYNAMIC=\\\"$modplug_lib\\\""
         else
             MIXER_LIBS="$MIXER_LIBS $MODPLUG_LIBS"
+            CMAKE_LIBS="$CMAKE_LIBS;modplug::modplug"
             if test x$have_libmodplug_pc = xyes; then
                 PC_REQUIRES="$PC_REQUIRES libmodplug"
             else
@@ -451,6 +456,11 @@ if test x$enable_music_mod = xyes -a x$enable_music_mod_xmp = xyes; then
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DXMP_DYNAMIC=\\\"$xmp_lib\\\""
         else
             MIXER_LIBS="$MIXER_LIBS $XMP_LIBS"
+            if test x$enable_music_mod_xmp_lite = xyes; then
+                CMAKE_LIBS="$CMAKE_LIBS;libxmp-lite::libxmp-lite"
+            else
+                CMAKE_LIBS="$CMAKE_LIBS;libxmp::libxmp"
+            fi
             if test x$have_libxmp_pc = xyes; then
                 PC_REQUIRES="$PC_REQUIRES lib$xmplib"
             else
@@ -501,16 +511,19 @@ if test x$enable_music_midi = xyes; then
             *-*-cygwin* | *-*-mingw*)
                 use_music_midi_native=yes
                 MIXER_LIBS="$MIXER_LIBS -lwinmm"
+                CMAKE_LIBS="$CMAKE_LIBS;winmm"
                 PC_LIBS="$PC_LIBS -lwinmm"
                 ;;
             *-*-darwin*)
                 use_music_midi_native=yes
                 MIXER_LIBS="$MIXER_LIBS -Wl,-framework,AudioToolbox -Wl,-framework,AudioUnit -Wl,-framework,CoreServices"
+                CMAKE_LIBS="$CMAKE_LIBS;-Wl,-framework,AudioToolbox;-Wl,-framework,AudioUnit;-Wl,-framework,CoreServices"
                 PC_LIBS="$PC_LIBS -Wl,-framework,AudioToolbox -Wl,-framework,AudioUnit -Wl,-framework,CoreServices"
                 ;;
             *-*-haiku*)
                 use_music_midi_native=yes_cpp
                 MIXER_LIBS="$MIXER_LIBS -lmidi"
+                CMAKE_LIBS="$CMAKE_LIBS;midi"
                 PC_LIBS="$PC_LIBS -lmidi"
                 ;;
         esac
@@ -568,6 +581,7 @@ if test x$enable_music_midi = xyes; then
                 EXTRA_CFLAGS="$EXTRA_CFLAGS -DFLUIDSYNTH_DYNAMIC=\\\"$fluidsynth_lib\\\""
             else
                 MIXER_LIBS="$MIXER_LIBS $FLUIDSYNTH_LIBS"
+                CMAKE_LIBS="$CMAKE_LIBS;FluidSynth::libfluidsynth"
                 if test x$have_fluidsynth_pc = xyes; then
                     PC_REQUIRES="$PC_REQUIRES fluidsynth"
                 else
@@ -697,6 +711,7 @@ if test x$enable_music_ogg = xyes -a x$enable_music_ogg_vorbis = xyes; then
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_DYNAMIC=\\\"$ogg_lib\\\""
         else
             MIXER_LIBS="$MIXER_LIBS $VORBIS_LIBS"
+            CMAKE_LIBS="$CMAKE_LIBS;Vorbis::vorbisfile"
             if test x$have_ogg_pc = xyes; then
                 PC_REQUIRES="$PC_REQUIRES vorbisfile"
             else
@@ -756,6 +771,7 @@ if test x$enable_music_ogg = xyes -a x$enable_music_ogg_tremor = xyes; then
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_DYNAMIC=\\\"$ogg_lib\\\""
         else
             MIXER_LIBS="$MIXER_LIBS $TREMOR_LIBS"
+            CMAKE_LIBS="$CMAKE_LIBS;tremor::tremor"
             if test x$have_tremor_pc = xyes; then
                 PC_REQUIRES="$PC_REQUIRES vorbisidec"
             else
@@ -846,6 +862,7 @@ if test x$enable_music_flac = xyes -a x$enable_music_flac_libflac = xyes; then
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DFLAC_DYNAMIC=\\\"$flac_lib\\\""
         else
             MIXER_LIBS="$MIXER_LIBS $FLAC_LIBS"
+            CMAKE_LIBS="$CMAKE_LIBS;FLAC::FLAC"
             if test x$have_flac_pc = xyes; then
                 PC_REQUIRES="$PC_REQUIRES flac"
             else
@@ -915,6 +932,7 @@ if test x$enable_music_mp3 = xyes -a x$enable_music_mp3_mpg123 = xyes; then
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DMPG123_DYNAMIC=\\\"$mpg123_lib\\\""
         else
             MIXER_LIBS="$MIXER_LIBS $MPG123_LIBS"
+            CMAKE_LIBS="$CMAKE_LIBS;MPG123::libmpg123"
             if test x$have_mpg123_pc = xyes; then
                 PC_REQUIRES="$PC_REQUIRES libmpg123"
             else
@@ -975,6 +993,7 @@ if test x$enable_music_opus = xyes; then
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DOPUS_DYNAMIC=\\\"$opusfile_lib\\\""
         else
             MIXER_LIBS="$MIXER_LIBS $OPUSFILE_LIBS"
+            CMAKE_LIBS="$CMAKE_LIBS;OpusFile::opusfile"
             if test x$have_opusfile_pc = xyes; then
                 PC_REQUIRES="$PC_REQUIRES opusfile"
             else
@@ -1051,6 +1070,7 @@ if test x$enable_music_wavpack = xyes; then
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DWAVPACK_DYNAMIC=\\\"$wavpack_lib\\\""
         else
             MIXER_LIBS="$MIXER_LIBS $WAVPACK_LIBS"
+            CMAKE_LIBS="$CMAKE_LIBS;WavPack::WavPack"
             if test x$have_wavpack_pc = xyes; then
                 PC_REQUIRES="$PC_REQUIRES wavpack"
             else
@@ -1066,8 +1086,6 @@ fi
 
 dnl check for LD --no-undefined option
 CheckNoUndef
-
-MIXER_LIBS="$MIXER_LIBS $LIBM"
 
 OBJECTS=`echo $SOURCES`
 DEPENDS=`echo $SOURCES`
@@ -1129,6 +1147,7 @@ AC_SUBST(EXTRA_CFLAGS)
 AC_SUBST(BUILD_LDFLAGS)
 AC_SUBST(EXTRA_LDFLAGS)
 AC_SUBST(MIXER_LIBS)
+AC_SUBST(CMAKE_LIBS)
 AC_SUBST(EXE)
 AC_SUBST(SDL_VERSION)
 AC_SUBST(SDL_CFLAGS)
