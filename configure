@@ -822,6 +822,7 @@ PC_LIBS
 PC_REQUIRES
 SDL_VERSION
 EXE
+CMAKE_LIBS
 MIXER_LIBS
 EXTRA_LDFLAGS
 BUILD_LDFLAGS
@@ -4965,13 +4966,13 @@ then :
 else $as_nop
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:4968: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:4969: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4971: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:4972: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4974: output\"" >&5)
+  (eval echo "\"\$as_me:4975: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -6230,7 +6231,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 6233 "configure"' > conftest.$ac_ext
+  echo '#line 6234 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -7903,11 +7904,11 @@ else $as_nop
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7906: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7907: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7910: \$? = $ac_status" >&5
+   echo "$as_me:7911: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8253,11 +8254,11 @@ else $as_nop
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8256: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8257: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:8260: \$? = $ac_status" >&5
+   echo "$as_me:8261: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8360,11 +8361,11 @@ else $as_nop
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8363: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8364: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8367: \$? = $ac_status" >&5
+   echo "$as_me:8368: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -8416,11 +8417,11 @@ else $as_nop
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8419: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8420: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8423: \$? = $ac_status" >&5
+   echo "$as_me:8424: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -10859,7 +10860,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10862 "configure"
+#line 10863 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -10956,7 +10957,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10959 "configure"
+#line 10960 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -12266,11 +12267,11 @@ if test x$ac_prog_cxx_stdcxx = xno
 then :
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $CXX option to enable C++11 features" >&5
 printf %s "checking for $CXX option to enable C++11 features... " >&6; }
-if test ${ac_cv_prog_cxx_11+y}
+if test ${ac_cv_prog_cxx_cxx11+y}
 then :
   printf %s "(cached) " >&6
 else $as_nop
-  ac_cv_prog_cxx_11=no
+  ac_cv_prog_cxx_cxx11=no
 ac_save_CXX=$CXX
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
@@ -12312,11 +12313,11 @@ if test x$ac_prog_cxx_stdcxx = xno
 then :
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $CXX option to enable C++98 features" >&5
 printf %s "checking for $CXX option to enable C++98 features... " >&6; }
-if test ${ac_cv_prog_cxx_98+y}
+if test ${ac_cv_prog_cxx_cxx98+y}
 then :
   printf %s "(cached) " >&6
 else $as_nop
-  ac_cv_prog_cxx_98=no
+  ac_cv_prog_cxx_cxx98=no
 ac_save_CXX=$CXX
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
@@ -12636,11 +12637,11 @@ if test x$ac_prog_cxx_stdcxx = xno
 then :
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $CXX option to enable C++11 features" >&5
 printf %s "checking for $CXX option to enable C++11 features... " >&6; }
-if test ${ac_cv_prog_cxx_11+y}
+if test ${ac_cv_prog_cxx_cxx11+y}
 then :
   printf %s "(cached) " >&6
 else $as_nop
-  ac_cv_prog_cxx_11=no
+  ac_cv_prog_cxx_cxx11=no
 ac_save_CXX=$CXX
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
@@ -12682,11 +12683,11 @@ if test x$ac_prog_cxx_stdcxx = xno
 then :
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $CXX option to enable C++98 features" >&5
 printf %s "checking for $CXX option to enable C++98 features... " >&6; }
-if test ${ac_cv_prog_cxx_98+y}
+if test ${ac_cv_prog_cxx_cxx98+y}
 then :
   printf %s "(cached) " >&6
 else $as_nop
-  ac_cv_prog_cxx_98=no
+  ac_cv_prog_cxx_cxx98=no
 ac_save_CXX=$CXX
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
@@ -14655,11 +14656,11 @@ else $as_nop
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14658: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14659: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:14662: \$? = $ac_status" >&5
+   echo "$as_me:14663: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -14756,11 +14757,11 @@ else $as_nop
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14759: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14760: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:14763: \$? = $ac_status" >&5
+   echo "$as_me:14764: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -14809,11 +14810,11 @@ else $as_nop
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14812: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14813: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:14816: \$? = $ac_status" >&5
+   echo "$as_me:14817: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -16401,6 +16402,7 @@ EXTRA_CFLAGS="$INCLUDE $BASE_CFLAGS"
 BUILD_LDFLAGS="$LDFLAGS"
 EXTRA_LDFLAGS="$BASE_LDFLAGS"
 MIXER_LIBS=
+CMAKE_LIBS=
 ## These are common directories to find software packages
 #for path in /usr/freeware /usr/pkg /usr/local; do
 #    if test -d $path/include; then
@@ -17010,7 +17012,10 @@ fi
 printf "%s\n" "$ac_cv_lib_m_pow" >&6; }
 if test "x$ac_cv_lib_m_pow" = xyes
 then :
-  LIBM="-lm"
+
+    MIXER_LIBS="$MIXER_LIBS -lm"
+    CMAKE_LIBS="$CMAKE_LIBS;m"
+
 fi
 
 
@@ -17308,6 +17313,7 @@ fi
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DMODPLUG_DYNAMIC=\\\"$modplug_lib\\\""
         else
             MIXER_LIBS="$MIXER_LIBS $MODPLUG_LIBS"
+            CMAKE_LIBS="$CMAKE_LIBS;modplug::modplug"
             if test x$have_libmodplug_pc = xyes; then
                 PC_REQUIRES="$PC_REQUIRES libmodplug"
             else
@@ -17544,6 +17550,11 @@ fi
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DXMP_DYNAMIC=\\\"$xmp_lib\\\""
         else
             MIXER_LIBS="$MIXER_LIBS $XMP_LIBS"
+            if test x$enable_music_mod_xmp_lite = xyes; then
+                CMAKE_LIBS="$CMAKE_LIBS;libxmp-lite::libxmp-lite"
+            else
+                CMAKE_LIBS="$CMAKE_LIBS;libxmp::libxmp"
+            fi
             if test x$have_libxmp_pc = xyes; then
                 PC_REQUIRES="$PC_REQUIRES lib$xmplib"
             else
@@ -17616,16 +17627,19 @@ fi
             *-*-cygwin* | *-*-mingw*)
                 use_music_midi_native=yes
                 MIXER_LIBS="$MIXER_LIBS -lwinmm"
+                CMAKE_LIBS="$CMAKE_LIBS;winmm"
                 PC_LIBS="$PC_LIBS -lwinmm"
                 ;;
             *-*-darwin*)
                 use_music_midi_native=yes
                 MIXER_LIBS="$MIXER_LIBS -Wl,-framework,AudioToolbox -Wl,-framework,AudioUnit -Wl,-framework,CoreServices"
+                CMAKE_LIBS="$CMAKE_LIBS;-Wl,-framework,AudioToolbox;-Wl,-framework,AudioUnit;-Wl,-framework,CoreServices"
                 PC_LIBS="$PC_LIBS -Wl,-framework,AudioToolbox -Wl,-framework,AudioUnit -Wl,-framework,CoreServices"
                 ;;
             *-*-haiku*)
                 use_music_midi_native=yes_cpp
                 MIXER_LIBS="$MIXER_LIBS -lmidi"
+                CMAKE_LIBS="$CMAKE_LIBS;midi"
                 PC_LIBS="$PC_LIBS -lmidi"
                 ;;
         esac
@@ -17851,6 +17865,7 @@ fi
                 EXTRA_CFLAGS="$EXTRA_CFLAGS -DFLUIDSYNTH_DYNAMIC=\\\"$fluidsynth_lib\\\""
             else
                 MIXER_LIBS="$MIXER_LIBS $FLUIDSYNTH_LIBS"
+                CMAKE_LIBS="$CMAKE_LIBS;FluidSynth::libfluidsynth"
                 if test x$have_fluidsynth_pc = xyes; then
                     PC_REQUIRES="$PC_REQUIRES fluidsynth"
                 else
@@ -18331,6 +18346,7 @@ fi
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_DYNAMIC=\\\"$ogg_lib\\\""
         else
             MIXER_LIBS="$MIXER_LIBS $VORBIS_LIBS"
+            CMAKE_LIBS="$CMAKE_LIBS;Vorbis::vorbisfile"
             if test x$have_ogg_pc = xyes; then
                 PC_REQUIRES="$PC_REQUIRES vorbisfile"
             else
@@ -18559,6 +18575,7 @@ fi
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DOGG_DYNAMIC=\\\"$ogg_lib\\\""
         else
             MIXER_LIBS="$MIXER_LIBS $TREMOR_LIBS"
+            CMAKE_LIBS="$CMAKE_LIBS;tremor::tremor"
             if test x$have_tremor_pc = xyes; then
                 PC_REQUIRES="$PC_REQUIRES vorbisidec"
             else
@@ -18848,6 +18865,7 @@ printf "%s\n" "$have_flac_ver" >&6; }
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DFLAC_DYNAMIC=\\\"$flac_lib\\\""
         else
             MIXER_LIBS="$MIXER_LIBS $FLAC_LIBS"
+            CMAKE_LIBS="$CMAKE_LIBS;FLAC::FLAC"
             if test x$have_flac_pc = xyes; then
                 PC_REQUIRES="$PC_REQUIRES flac"
             else
@@ -19097,6 +19115,7 @@ fi
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DMPG123_DYNAMIC=\\\"$mpg123_lib\\\""
         else
             MIXER_LIBS="$MIXER_LIBS $MPG123_LIBS"
+            CMAKE_LIBS="$CMAKE_LIBS;MPG123::libmpg123"
             if test x$have_mpg123_pc = xyes; then
                 PC_REQUIRES="$PC_REQUIRES libmpg123"
             else
@@ -19327,6 +19346,7 @@ fi
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DOPUS_DYNAMIC=\\\"$opusfile_lib\\\""
         else
             MIXER_LIBS="$MIXER_LIBS $OPUSFILE_LIBS"
+            CMAKE_LIBS="$CMAKE_LIBS;OpusFile::opusfile"
             if test x$have_opusfile_pc = xyes; then
                 PC_REQUIRES="$PC_REQUIRES opusfile"
             else
@@ -19594,6 +19614,7 @@ fi
             EXTRA_CFLAGS="$EXTRA_CFLAGS -DWAVPACK_DYNAMIC=\\\"$wavpack_lib\\\""
         else
             MIXER_LIBS="$MIXER_LIBS $WAVPACK_LIBS"
+            CMAKE_LIBS="$CMAKE_LIBS;WavPack::WavPack"
             if test x$have_wavpack_pc = xyes; then
                 PC_REQUIRES="$PC_REQUIRES wavpack"
             else
@@ -19610,8 +19631,6 @@ printf "%s\n" "$as_me: WARNING: WavPack support disabled" >&2;}
 fi
 
 CheckNoUndef
-
-MIXER_LIBS="$MIXER_LIBS $LIBM"
 
 OBJECTS=`echo $SOURCES`
 DEPENDS=`echo $SOURCES`
@@ -19749,6 +19768,7 @@ case "$_lcl_notation" in
 esac
   eval $_lcl_result_var='$_lcl_result_tmp'
 done
+
 
 
 
