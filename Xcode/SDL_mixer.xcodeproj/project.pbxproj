@@ -79,6 +79,7 @@
 		F307A52F2B5473760012534B /* music_minimp3.c in Sources */ = {isa = PBXBuildFile; fileRef = F307A52D2B5473760012534B /* music_minimp3.c */; };
 		F307A5302B5473760012534B /* music_minimp3.h in Headers */ = {isa = PBXBuildFile; fileRef = F307A52E2B5473760012534B /* music_minimp3.h */; };
 		F3249B39285C448100DB9B5C /* CMake in Resources */ = {isa = PBXBuildFile; fileRef = F3249B36285C448100DB9B5C /* CMake */; };
+		F341229B2D406B5B00D6C2B7 /* SDL3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F341229A2D406B5B00D6C2B7 /* SDL3.framework */; };
 		F37A8D4A2838A23400C38E95 /* music_drflac.h in Headers */ = {isa = PBXBuildFile; fileRef = F37A8D412838A23400C38E95 /* music_drflac.h */; };
 		F37A8D502838A23400C38E95 /* music_drflac.c in Sources */ = {isa = PBXBuildFile; fileRef = F37A8D492838A23400C38E95 /* music_drflac.c */; };
 		F37A8DB52838AD1300C38E95 /* music_ogg_stb.c in Sources */ = {isa = PBXBuildFile; fileRef = F37A8DB42838AD1200C38E95 /* music_ogg_stb.c */; };
@@ -86,7 +87,6 @@
 		F3D87C09281DFABD005DA540 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87C08281DFABD005DA540 /* AudioToolbox.framework */; };
 		F3D87C0B281DFAD4005DA540 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87C0A281DFAD4005DA540 /* AudioUnit.framework */; platformFilters = (macos, ); };
 		F3D87C0D281DFADB005DA540 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87C0C281DFADB005DA540 /* CoreServices.framework */; };
-		F3E1F8C92A794D4900AC76D3 /* SDL3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3E1F8C82A794D3400AC76D3 /* SDL3.framework */; };
 		F3F8794E29B30FDA0007FDA1 /* music_wavpack.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8794529B30FDA0007FDA1 /* music_wavpack.c */; };
 		F3F8795029B30FDA0007FDA1 /* load_sndfile.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8794929B30FDA0007FDA1 /* load_sndfile.c */; };
 		F3F8795229B30FDA0007FDA1 /* music_gme.h in Headers */ = {isa = PBXBuildFile; fileRef = F3F8794A29B30FDA0007FDA1 /* music_gme.h */; };
@@ -123,13 +123,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = F3F70EDA281F61B4005AA27D;
 			remoteInfo = ogg;
-		};
-		F3E1F8C72A794D3400AC76D3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3E1F8C12A794D3400AC76D3 /* SDL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = BECDF66C0761BA81005FE872;
-			remoteInfo = SDL3;
 		};
 		F3E29D062882107B0006D108 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -228,6 +221,7 @@
 		F307A52D2B5473760012534B /* music_minimp3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_minimp3.c; sourceTree = "<group>"; };
 		F307A52E2B5473760012534B /* music_minimp3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_minimp3.h; sourceTree = "<group>"; };
 		F3249B36285C448100DB9B5C /* CMake */ = {isa = PBXFileReference; lastKnownFileType = folder; path = CMake; sourceTree = "<group>"; };
+		F341229A2D406B5B00D6C2B7 /* SDL3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL3.framework; sourceTree = "<group>"; };
 		F37A8D412838A23400C38E95 /* music_drflac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_drflac.h; sourceTree = "<group>"; };
 		F37A8D492838A23400C38E95 /* music_drflac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_drflac.c; sourceTree = "<group>"; };
 		F37A8DB42838AD1200C38E95 /* music_ogg_stb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_ogg_stb.c; sourceTree = "<group>"; };
@@ -237,8 +231,6 @@
 		F3D87C08281DFABD005DA540 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		F3D87C0A281DFAD4005DA540 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		F3D87C0C281DFADB005DA540 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
-		F3D87C0E281DFB02005DA540 /* SDL3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL3.framework; path = macOS/SDL3.framework; sourceTree = "<group>"; };
-		F3E1F8C12A794D3400AC76D3 /* SDL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SDL.xcodeproj; path = ../external/SDL/Xcode/SDL/SDL.xcodeproj; sourceTree = "<group>"; };
 		F3E29D022882107B0006D108 /* xmp.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = xmp.xcodeproj; path = xmp/xmp.xcodeproj; sourceTree = "<group>"; };
 		F3F8794529B30FDA0007FDA1 /* music_wavpack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_wavpack.c; sourceTree = "<group>"; };
 		F3F8794929B30FDA0007FDA1 /* load_sndfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = load_sndfile.c; sourceTree = "<group>"; };
@@ -257,7 +249,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F3E1F8C92A794D4900AC76D3 /* SDL3.framework in Frameworks */,
+				F341229B2D406B5B00D6C2B7 /* SDL3.framework in Frameworks */,
 				F3D87C09281DFABD005DA540 /* AudioToolbox.framework in Frameworks */,
 				F3D87C0B281DFAD4005DA540 /* AudioUnit.framework in Frameworks */,
 				F3D87C0D281DFADB005DA540 /* CoreServices.framework in Frameworks */,
@@ -289,7 +281,6 @@
 			isa = PBXGroup;
 			children = (
 				F3968D71281FB5E100661875 /* config.xcconfig */,
-				F3E1F8C12A794D3400AC76D3 /* SDL.xcodeproj */,
 				F307A2732B5431700012534B /* gme.xcodeproj */,
 				F3B38D97296F97BB005DA6D3 /* ogg.xcodeproj */,
 				F3968B90281F817E00661875 /* opus.xcodeproj */,
@@ -388,10 +379,10 @@
 		BE1FA8AC07AF95D4004B6283 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F341229A2D406B5B00D6C2B7 /* SDL3.framework */,
 				F3D87C0C281DFADB005DA540 /* CoreServices.framework */,
 				F3D87C0A281DFAD4005DA540 /* AudioUnit.framework */,
 				F3D87C08281DFABD005DA540 /* AudioToolbox.framework */,
-				F3D87C0E281DFB02005DA540 /* SDL3.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -424,14 +415,6 @@
 			isa = PBXGroup;
 			children = (
 				F3B38D9F296F97BB005DA6D3 /* ogg.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		F3E1F8C22A794D3400AC76D3 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				F3E1F8C82A794D3400AC76D3 /* SDL3.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -572,10 +555,6 @@
 					ProjectRef = F3968B90281F817E00661875 /* opus.xcodeproj */;
 				},
 				{
-					ProductGroup = F3E1F8C22A794D3400AC76D3 /* Products */;
-					ProjectRef = F3E1F8C12A794D3400AC76D3 /* SDL.xcodeproj */;
-				},
-				{
 					ProductGroup = F307A25E2B542F110012534B /* Products */;
 					ProjectRef = F307A25D2B542F110012534B /* wavpack.xcodeproj */;
 				},
@@ -620,13 +599,6 @@
 			fileType = wrapper.framework;
 			path = ogg.framework;
 			remoteRef = F3B38D9E296F97BB005DA6D3 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F3E1F8C82A794D3400AC76D3 /* SDL3.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SDL3.framework;
-			remoteRef = F3E1F8C72A794D3400AC76D3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		F3E29D072882107B0006D108 /* xmp.framework */ = {
@@ -771,6 +743,10 @@
 		00B7E48C097EC6B300826121 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				OTHER_LDFLAGS = "$(CONFIG_FRAMEWORK_LDFLAGS)";
 			};
 			name = Release;
@@ -778,6 +754,10 @@
 		00B7E48D097EC6B300826121 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				OTHER_LDFLAGS = "$(CONFIG_FRAMEWORK_LDFLAGS)";
 			};
 			name = Debug;

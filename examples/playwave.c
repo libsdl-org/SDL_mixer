@@ -21,7 +21,6 @@
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
-#include <SDL3/SDL_test.h>
 #include <SDL3_mixer/SDL_mixer.h>
 
 #include <stdlib.h>
@@ -38,7 +37,6 @@
 
 static int audio_open = 0;
 static Mix_Chunk *g_wave = NULL;
-static SDLTest_CommonState *state;
 static bool verbose = false;
 static bool test_position = false;
 static bool test_distance = false;
@@ -103,7 +101,7 @@ static void do_panning_update(void)
     static Sint8 leftincr = -1;
     static Sint8 rightincr = 1;
     static int panningok = 1;
-    static Uint32 next_panning_update = 0;
+    static Uint64 next_panning_update = 0;
 
     if (panningok && (SDL_GetTicks() >= next_panning_update)) {
         panningok = Mix_SetPanning(0, leftvol, rightvol);
@@ -138,7 +136,7 @@ static void do_distance_update(void)
     static Uint8 distance = 1;
     static Sint8 distincr = 1;
     static int distanceok = 1;
-    static Uint32 next_distance_update = 0;
+    static Uint64 next_distance_update = 0;
 
     if ((distanceok) && (SDL_GetTicks() >= next_distance_update)) {
         distanceok = Mix_SetDistance(0, distance);
@@ -168,7 +166,7 @@ static void do_position_update(void)
     static Sint16 angle = 0;
     static Sint8 angleincr = 1;
     static int positionok = 1;
-    static Uint32 next_position_update = 0;
+    static Uint64 next_position_update = 0;
 
     if (positionok && (SDL_GetTicks() >= next_position_update)) {
         positionok = Mix_SetPosition(0, angle, (Uint8)distance);
@@ -215,7 +213,6 @@ static void CleanUp(int exitcode)
         audio_open = 0;
     }
     SDL_Quit();
-    SDLTest_CommonDestroyState(state);
 
     exit(exitcode);
 }
@@ -301,12 +298,6 @@ int main(int argc, char *argv[])
     int reverse_sample = 0;
     const char *filename = NULL;
 
-    /* Initialize test framework */
-    state = SDLTest_CommonCreateState(argv, 0);
-    if (!state) {
-        return 1;
-    }
-
     /* Enable standard application logging */
     SDL_SetLogPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO);
 
@@ -322,60 +313,54 @@ int main(int argc, char *argv[])
 
     /* Parse commandline */
     for (i = 1; i < argc;) {
-        int consumed;
+        int consumed = 0;
 
-        consumed = SDLTest_CommonArg(state, i);
-        if (!consumed) {
-            if (SDL_strcmp("-r", argv[i]) == 0) {
-                spec.freq = SDL_atoi(argv[i + 1]);
-                consumed = 2;
-            } else if (SDL_strcmp("-m", argv[i]) == 0) {
-                spec.channels = 1;
-                consumed = 1;
-            } else if (SDL_strcmp("-c", argv[i]) == 0) {
-                spec.channels = SDL_atoi(argv[i + 1]);
-                consumed = 2;
-            } else if (SDL_strcmp("-l", argv[i]) == 0) {
-                loops = -1;
-                consumed = 1;
-            } else if (SDL_strcmp("-8", argv[i]) == 0) {
-                spec.format = SDL_AUDIO_U8;
-                consumed = 1;
-            } else if (SDL_strcmp("-f32", argv[i]) == 0) {
-                spec.format = SDL_AUDIO_F32;
-                consumed = 1;
-            } else if (SDL_strcmp("-f", argv[i]) == 0) {
-                reverse_stereo = 1;
-                consumed = 1;
-            } else if (SDL_strcmp("-F", argv[i]) == 0) {
-                reverse_sample = 1;
-                consumed = 1;
-            } else if (SDL_strcmp("--panning", argv[i]) == 0) {
-                test_panning = true;
-                consumed = 1;
-            } else if (SDL_strcmp("--distance", argv[i]) == 0) {
-                test_distance = true;
-                consumed = 1;
-            } else if (SDL_strcmp("--position", argv[i]) == 0) {
-                test_position = true;
-                consumed = 1;
-            } else if (SDL_strcmp("--version", argv[i]) == 0) {
-                test_versions();
-                CleanUp(0);
-                consumed = 1;
-            } else if (SDL_strcmp("--verbose", argv[i]) == 0) {
-                verbose = true;
-                consumed = 1;
-            } else if (argv[i][0] != '-' && !filename) {
-                filename = argv[i];
-                consumed = 1;
-            }
+        if (SDL_strcmp("-r", argv[i]) == 0) {
+            spec.freq = SDL_atoi(argv[i + 1]);
+            consumed = 2;
+        } else if (SDL_strcmp("-m", argv[i]) == 0) {
+            spec.channels = 1;
+            consumed = 1;
+        } else if (SDL_strcmp("-c", argv[i]) == 0) {
+            spec.channels = SDL_atoi(argv[i + 1]);
+            consumed = 2;
+        } else if (SDL_strcmp("-l", argv[i]) == 0) {
+            loops = -1;
+            consumed = 1;
+        } else if (SDL_strcmp("-8", argv[i]) == 0) {
+            spec.format = SDL_AUDIO_U8;
+            consumed = 1;
+        } else if (SDL_strcmp("-f32", argv[i]) == 0) {
+            spec.format = SDL_AUDIO_F32;
+            consumed = 1;
+        } else if (SDL_strcmp("-f", argv[i]) == 0) {
+            reverse_stereo = 1;
+            consumed = 1;
+        } else if (SDL_strcmp("-F", argv[i]) == 0) {
+            reverse_sample = 1;
+            consumed = 1;
+        } else if (SDL_strcmp("--panning", argv[i]) == 0) {
+            test_panning = true;
+            consumed = 1;
+        } else if (SDL_strcmp("--distance", argv[i]) == 0) {
+            test_distance = true;
+            consumed = 1;
+        } else if (SDL_strcmp("--position", argv[i]) == 0) {
+            test_position = true;
+            consumed = 1;
+        } else if (SDL_strcmp("--version", argv[i]) == 0) {
+            test_versions();
+            CleanUp(0);
+            consumed = 1;
+        } else if (SDL_strcmp("--verbose", argv[i]) == 0) {
+            verbose = true;
+            consumed = 1;
+        } else if (argv[i][0] != '-' && !filename) {
+            filename = argv[i];
+            consumed = 1;
         }
         if (consumed <= 0) {
-            static const char *options[] = { "[-r rate]", "[-m]", "[-c channels]", "[-l]", "[-8]",
-                                             "[-f32]", "[-f]", "[-F]", "[--distance]", "[--panning]",
-                                             "[--position]", "[--version]", "<wavefile>", NULL };
-            SDLTest_CommonLogUsage(state, argv[0], options);
+            SDL_Log("Usage: %s [-r rate] [-m] [-c channels] [-l] [-8] [-f32] [-f] [-F] [--distance] [--panning] [--position] [--version] <wavefile>", argv[0]);
             return 1;
         }
 
