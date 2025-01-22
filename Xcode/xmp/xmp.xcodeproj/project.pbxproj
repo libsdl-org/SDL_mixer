@@ -15,7 +15,7 @@
 			);
 			dependencies = (
 			);
-			name = "xmp.xcframework";
+			name = xmp.xcframework;
 			productName = xcFramework;
 		};
 /* End PBXAggregateTarget section */
@@ -104,6 +104,8 @@
 		F33AA3312881F70D00F836D8 /* it_load.c in Sources */ = {isa = PBXBuildFile; fileRef = F33AA32D2881F70D00F836D8 /* it_load.c */; };
 		F33AA3322881F70D00F836D8 /* xm_load.c in Sources */ = {isa = PBXBuildFile; fileRef = F33AA32E2881F70D00F836D8 /* xm_load.c */; };
 		F33AA3342881F70D00F836D8 /* s3m_load.c in Sources */ = {isa = PBXBuildFile; fileRef = F33AA3302881F70D00F836D8 /* s3m_load.c */; };
+		F341229F2D406C2000D6C2B7 /* rng.c in Sources */ = {isa = PBXBuildFile; fileRef = F341229E2D406C2000D6C2B7 /* rng.c */; };
+		F34122A12D406C6500D6C2B7 /* flow.c in Sources */ = {isa = PBXBuildFile; fileRef = F34122A02D406C6500D6C2B7 /* flow.c */; };
 		F3E29CE62881FB380006D108 /* README in Resources */ = {isa = PBXBuildFile; fileRef = F3E29CE52881FB370006D108 /* README */; };
 		F3E29CE82881FB610006D108 /* format.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E29CE72881FB610006D108 /* format.c */; };
 		F3E29CEA2881FB840006D108 /* mod_load.c in Sources */ = {isa = PBXBuildFile; fileRef = F3E29CE92881FB840006D108 /* mod_load.c */; };
@@ -197,6 +199,8 @@
 		F33AA32D2881F70D00F836D8 /* it_load.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = it_load.c; path = ../../external/libxmp/src/loaders/it_load.c; sourceTree = "<group>"; };
 		F33AA32E2881F70D00F836D8 /* xm_load.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xm_load.c; path = ../../external/libxmp/src/loaders/xm_load.c; sourceTree = "<group>"; };
 		F33AA3302881F70D00F836D8 /* s3m_load.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = s3m_load.c; path = ../../external/libxmp/src/loaders/s3m_load.c; sourceTree = "<group>"; };
+		F341229E2D406C2000D6C2B7 /* rng.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = rng.c; path = /Users/valve/projects/SDL_mixer/external/libxmp/src/rng.c; sourceTree = "<absolute>"; };
+		F34122A02D406C6500D6C2B7 /* flow.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = flow.c; path = /Users/valve/projects/SDL_mixer/external/libxmp/src/flow.c; sourceTree = "<absolute>"; };
 		F3968D85281FBB1900661875 /* xmp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = xmp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3E29CE52881FB370006D108 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README; path = ../../external/libxmp/README; sourceTree = "<group>"; };
 		F3E29CE72881FB610006D108 /* format.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = format.c; path = ../../external/libxmp/src/format.c; sourceTree = "<group>"; };
@@ -311,30 +315,32 @@
 				F3023FBD2881DB7C002F32D6 /* control.c */,
 				F3023FC82881DB7C002F32D6 /* dataio.c */,
 				F3023FB42881DB7C002F32D6 /* effects.c */,
+				631064382A98AF290082F715 /* extras.c */,
+				6310643A2A98AF6F0082F715 /* far_extras.c */,
 				F3E29D6E288237030006D108 /* filetype.c */,
 				F3023FBC2881DB7C002F32D6 /* filter.c */,
+				F34122A02D406C6500D6C2B7 /* flow.c */,
 				F3E29CE72881FB610006D108 /* format.c */,
 				F3023FC22881DB7C002F32D6 /* hio.c */,
+				6310643B2A98AF6F0082F715 /* hmn_extras.c */,
 				F3023FBB2881DB7C002F32D6 /* lfo.c */,
-				F3023FCC2881DB7C002F32D6 /* load_helpers.c */,
 				F3023FCA2881DB7C002F32D6 /* load.c */,
+				F3023FCC2881DB7C002F32D6 /* load_helpers.c */,
+				6310643C2A98AF6F0082F715 /* md5.c */,
+				6310643D2A98AF6F0082F715 /* med_extras.c */,
 				F3023FC62881DB7C002F32D6 /* memio.c */,
+				6310643E2A98AF6F0082F715 /* miniz_tinfl.c */,
 				F3023FB72881DB7C002F32D6 /* misc.c */,
 				F3023FC52881DB7C002F32D6 /* mix_all.c */,
+				6310643F2A98AF6F0082F715 /* mix_paula.c */,
 				F3023FC92881DB7C002F32D6 /* mixer.c */,
 				F3023FBE2881DB7C002F32D6 /* period.c */,
 				F3023FC72881DB7C002F32D6 /* player.c */,
 				F3023FC42881DB7C002F32D6 /* read_event.c */,
+				F341229E2D406C2000D6C2B7 /* rng.c */,
 				F3023FB92881DB7C002F32D6 /* scan.c */,
 				F3023FB62881DB7C002F32D6 /* smix.c */,
 				F3023FBA2881DB7C002F32D6 /* virtual.c */,
-				631064382A98AF290082F715 /* extras.c */,
-				6310643A2A98AF6F0082F715 /* far_extras.c */,
-				6310643B2A98AF6F0082F715 /* hmn_extras.c */,
-				6310643C2A98AF6F0082F715 /* md5.c */,
-				6310643D2A98AF6F0082F715 /* med_extras.c */,
-				6310643F2A98AF6F0082F715 /* mix_paula.c */,
-				6310643E2A98AF6F0082F715 /* miniz_tinfl.c */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -493,7 +499,9 @@
 				631064422A98AF6F0082F715 /* md5.c in Sources */,
 				631064432A98AF6F0082F715 /* med_extras.c in Sources */,
 				631064442A98AF6F0082F715 /* miniz_tinfl.c in Sources */,
+				F341229F2D406C2000D6C2B7 /* rng.c in Sources */,
 				631064452A98AF6F0082F715 /* mix_paula.c in Sources */,
+				F34122A12D406C6500D6C2B7 /* flow.c in Sources */,
 				631064622A98AFEE0082F715 /* gal4_load.c in Sources */,
 				631064632A98AFEE0082F715 /* gal5_load.c in Sources */,
 				631064642A98AFEE0082F715 /* gdm_load.c in Sources */,
