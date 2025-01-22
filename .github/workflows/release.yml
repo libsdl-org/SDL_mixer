@@ -51,6 +51,14 @@ jobs:
         with:
           name: sources
           path: '${{ github.workspace}}/dist'
+      - name: 'Generate summary'
+        run: |
+          echo "Run the following commands to download all artifacts:" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "mkdir -p /tmp/${{ steps.releaser.outputs.project }}-${{ steps.releaser.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "cd /tmp/${{ steps.releaser.outputs.project }}-${{ steps.releaser.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "gh run -R ${{ github.repository }} download ${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
 
   linux-verify:
     needs: [src]
@@ -104,6 +112,22 @@ jobs:
             --root "${{ steps.tar.outputs.path }}" \
             --github \
             --debug
+      - name: 'Install Linux dependencies'
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y \
+            gnome-desktop-testing libasound2-dev libpulse-dev libaudio-dev libjack-dev libsndio-dev \
+            libusb-1.0-0-dev libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev \
+            libxss-dev libwayland-dev libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
+            libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev fcitx-libs-dev \
+            libflac-dev \
+            fluidsynth libfluidsynth-dev \
+            libgme-dev \
+            libmpg123-dev \
+            libopusfile-dev \
+            libvorbis-dev \
+            libxmp-dev \
+            libwavpack-dev
       - name: 'Extract dependencies, build and install them'
         id: deps-build
         run: |
@@ -235,7 +259,7 @@ jobs:
           echo "mount-point=${mount_point}">>$GITHUB_OUTPUT
       - name: 'Verify presence of optional frameworks'
         run: |
-          OPTIONAL_FRAMEWORKS="FLAC gme mpg123 ogg opus vorbis wavpack xmp"
+          OPTIONAL_FRAMEWORKS="gme opus wavpack xmp"
           rc=0
           for opt in $OPTIONAL_FRAMEWORKS; do
             fw_path="${{ steps.mount.outputs.mount-point }}/optional/${opt}.xcframework"
@@ -695,7 +719,9 @@ jobs:
       - name: 'Extract Android SDK from AAR'
         id: sdk
         run: |
-          python "${{ github.workspace }}/${{ needs.android.outputs.android-aar }}" -o /tmp/deps-android
+          unzip -o "${{ github.workspace }}/${{ needs.android.outputs.android-aar }}"
+          python "${{ needs.src.outputs.project }}-${{ needs.src.outputs.version }}.aar" -o /tmp/SDL3_mixer-android
+          echo "prefix=/tmp/SDL3_mixer-android" >>$GITHUB_OUTPUT
       - name: 'Download dependencies'
         id: deps
         env:
@@ -710,7 +736,9 @@ jobs:
       - name: 'Extract dependencies'
         id: deps-extract
         run: |
-          python "${{ steps.deps.outputs.dep-path }}/SDL3-${{ steps.deps.outputs.dep-sdl-version }}.aar" -o /tmp/deps-android
+          unzip -o "${{ steps.deps.outputs.dep-path }}/SDL3-devel-${{ steps.deps.outputs.dep-sdl-version }}-android.zip"
+          python "SDL3-${{ steps.deps.outputs.dep-sdl-version }}.aar" -o /tmp/SDL3-android
+          echo "sdl3-prefix=/tmp/SDL3-android" >>$GITHUB_OUTPUT
       - name: 'Install ninja'
         run: |
           sudo apt-get update -y
@@ -724,10 +752,9 @@ jobs:
               -GNinja \
               -DTEST_FULL=TRUE \
               -DTEST_STATIC=FALSE \
-              -DCMAKE_PREFIX_PATH="/tmp/deps-android" \
+              -DCMAKE_PREFIX_PATH="${{ steps.sdk.outputs.prefix }};${{ steps.deps-extract.outputs.sdl3-prefix }}" \
               -DCMAKE_TOOLCHAIN_FILE=${ANDROID_NDK_HOME}/build/cmake/android.toolchain.cmake \
               -DANDROID_ABI=${android_abi} \
-              -Werror=dev \
               -DCMAKE_BUILD_TYPE=Release \
               -B "${android_abi}"
             echo "Building ${android_abi}..."

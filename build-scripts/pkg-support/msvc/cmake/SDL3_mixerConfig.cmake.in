@@ -7,7 +7,7 @@ set_package_properties(SDL3_mixer PROPERTIES
     DESCRIPTION "SDL_mixer is a sample multi-channel audio mixer library"
 )
 
-cmake_minimum_required(VERSION 3.0...3.5)
+cmake_minimum_required(VERSION 3.0...3.28)
 
 # Copied from `configure_package_config_file`
 macro(check_required_components _NAME)

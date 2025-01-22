@@ -1,7 +1,7 @@
 # SDL CMake configuration file:
 # This file is meant to be placed in lib/cmake/SDL3_mixer subfolder of a reconstructed Android SDL3_mixer SDK
 
-cmake_minimum_required(VERSION 3.0...3.5)
+cmake_minimum_required(VERSION 3.0...3.28)
 
 include(FeatureSummary)
 set_package_properties(SDL3_mixer PROPERTIES
@@ -75,27 +75,28 @@ else()
     return()
 endif()
 
-get_filename_component(_sdl3_prefix "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
-get_filename_component(_sdl3_prefix "${_sdl3_prefix}/.." ABSOLUTE)
-get_filename_component(_sdl3_prefix "${_sdl3_prefix}/.." ABSOLUTE)
-set_and_check(_sdl3_prefix          "${_sdl3_prefix}")
-set_and_check(_sdl3_include_dirs    "${_sdl3_prefix}/include")
+get_filename_component(_sdl3mixer_prefix "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
+get_filename_component(_sdl3mixer_prefix "${_sdl3mixer_prefix}/.." ABSOLUTE)
+get_filename_component(_sdl3mixer_prefix "${_sdl3mixer_prefix}/.." ABSOLUTE)
+set_and_check(_sdl3mixer_prefix          "${_sdl3mixer_prefix}")
+set_and_check(_sdl3mixer_include_dirs    "${_sdl3mixer_prefix}/include")
 
-set_and_check(_sdl3_lib             "${_sdl3_prefix}/lib/${_sdl_arch_subdir}/libSDL3_mixer.so")
+set_and_check(_sdl3mixer_lib             "${_sdl3mixer_prefix}/lib/${_sdl_arch_subdir}/libSDL3_mixer.so")
 
 unset(_sdl_arch_subdir)
-unset(_sdl3_prefix)
+unset(_sdl3mixer_prefix)
 
 # All targets are created, even when some might not be requested though COMPONENTS.
 # This is done for compatibility with CMake generated SDL3_mixer-target.cmake files.
 
 set(SDL3_mixer_SDL3_mixer-shared_FOUND FALSE)
-if(EXISTS "${_sdl3_lib}")
+if(EXISTS "${_sdl3mixer_lib}")
     if(NOT TARGET SDL3_mixer::SDL3_mixer-shared)
         add_library(SDL3_mixer::SDL3_mixer-shared SHARED IMPORTED)
         set_target_properties(SDL3_mixer::SDL3_mixer-shared
             PROPERTIES
-                IMPORTED_LOCATION "${_sdl3_lib}"
+                IMPORTED_LOCATION "${_sdl3mixer_lib}"
+                INTERFACE_INCLUDE_DIRECTORIES "${_sdl3mixer_include_dirs}"
                 COMPATIBLE_INTERFACE_BOOL "SDL3_SHARED"
                 INTERFACE_SDL3_SHARED "ON"
                 COMPATIBLE_INTERFACE_STRING "SDL_VERSION"
@@ -104,7 +105,8 @@ if(EXISTS "${_sdl3_lib}")
     endif()
     set(SDL3_mixer_SDL3_mixer-shared_FOUND TRUE)
 endif()
-unset(_sdl3_lib)
+unset(_sdl3mixer_include_dirs)
+unset(_sdl3mixer_lib)
 
 set(SDL3_mixer_SDL3_mixer-static_FOUND FALSE)
 

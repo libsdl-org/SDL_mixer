@@ -199,8 +199,8 @@
 		F33AA32D2881F70D00F836D8 /* it_load.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = it_load.c; path = ../../external/libxmp/src/loaders/it_load.c; sourceTree = "<group>"; };
 		F33AA32E2881F70D00F836D8 /* xm_load.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xm_load.c; path = ../../external/libxmp/src/loaders/xm_load.c; sourceTree = "<group>"; };
 		F33AA3302881F70D00F836D8 /* s3m_load.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = s3m_load.c; path = ../../external/libxmp/src/loaders/s3m_load.c; sourceTree = "<group>"; };
-		F341229E2D406C2000D6C2B7 /* rng.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = rng.c; path = /Users/valve/projects/SDL_mixer/external/libxmp/src/rng.c; sourceTree = "<absolute>"; };
-		F34122A02D406C6500D6C2B7 /* flow.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = flow.c; path = /Users/valve/projects/SDL_mixer/external/libxmp/src/flow.c; sourceTree = "<absolute>"; };
+		F341229E2D406C2000D6C2B7 /* rng.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = rng.c; path = ../../external/libxmp/src/rng.c; sourceTree = "<absolute>"; };
+		F34122A02D406C6500D6C2B7 /* flow.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = flow.c; path = ../../external/libxmp/src/flow.c; sourceTree = "<absolute>"; };
 		F3968D85281FBB1900661875 /* xmp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = xmp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3E29CE52881FB370006D108 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README; path = ../../external/libxmp/README; sourceTree = "<group>"; };
 		F3E29CE72881FB610006D108 /* format.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = format.c; path = ../../external/libxmp/src/format.c; sourceTree = "<group>"; };

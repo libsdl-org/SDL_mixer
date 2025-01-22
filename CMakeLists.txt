@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.16...3.28)
 
 if(NOT DEFINED CMAKE_BUILD_TYPE)
   set(cmake_build_type_undefined 1)
@@ -321,7 +321,7 @@ if(NOT ANDROID)
         VERSION "${SO_VERSION}"
     )
     if(APPLE)
-        cmake_minimum_required(VERSION 3.17)
+        cmake_minimum_required(VERSION 3.17...3.28)
         set_target_properties(${sdl3_mixer_target_name} PROPERTIES
             MACHO_COMPATIBILITY_VERSION "${DYLIB_COMPAT_VERSION}"
             MACHO_CURRENT_VERSION "${DYLIB_CURRENT_VERSION}"
@@ -702,7 +702,9 @@ if(SDLMIXER_GME)
         sdl_check_project_in_subfolder(external/libgme libgme SDLMIXER_VENDORED)
         enable_language(CXX)
         add_subdirectory(external/libgme EXCLUDE_FROM_ALL)
-        add_library(gme::gme ALIAS gme)
+        if(NOT TARGET gme::gme)
+            add_library(gme::gme ALIAS gme)
+        endif()
         if(SDLMIXER_GME_SHARED OR NOT SDLMIXER_BUILD_SHARED_LIBS)
             list(APPEND INSTALL_EXTRA_TARGETS gme)
         endif()
