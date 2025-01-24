@@ -71,7 +71,7 @@ typedef struct {
     SDL_IOStream *src;
     bool closeio;
     int play_count;
-    int volume;
+    float volume;
     stb_vorbis *vf;
     stb_vorbis_info vi;
     int section;
@@ -177,7 +177,7 @@ static void *OGG_CreateFromIO(SDL_IOStream *src, bool closeio)
         return NULL;
     }
     music->src = src;
-    music->volume = MIX_MAX_VOLUME;
+    music->volume = 1.0f;
     music->section = -1;
 
     music->vf = stb_vorbis_open_io(src, 0, &error, NULL);
@@ -279,14 +279,14 @@ static const char* OGG_GetMetaTag(void *context, Mix_MusicMetaTag tag_type)
 }
 
 /* Set the volume for an OGG stream */
-static void OGG_SetVolume(void *context, int volume)
+static void OGG_SetVolume(void *context, float volume)
 {
     OGG_music *music = (OGG_music *)context;
     music->volume = volume;
 }
 
 /* Get the volume for an OGG stream */
-static int OGG_GetVolume(void *context)
+static float OGG_GetVolume(void *context)
 {
     OGG_music *music = (OGG_music *)context;
     return music->volume;

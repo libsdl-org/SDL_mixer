@@ -212,11 +212,11 @@ bool native_midi_detect(void)
   return res == B_OK;
 }
 
-void native_midi_setvolume(int volume)
+void native_midi_setvolume(float volume)
 {
-  if (volume < 0) volume = 0;
-  if (volume > 128) volume = 128;
-  synth.SetVolume(volume / 128.0);
+  if (volume < 0.0f) volume = 0.0f;
+  if (volume > 1.0f) volume = 1.0f;
+  synth.SetVolume(volume);
 }
 
 NativeMidiSong *native_midi_loadsong_IO(SDL_IOStream *src, bool closeio)

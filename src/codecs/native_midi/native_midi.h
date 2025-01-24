@@ -34,7 +34,7 @@ void native_midi_pause(void);
 void native_midi_resume(void);
 void native_midi_stop(void);
 bool native_midi_active(void);
-void native_midi_setvolume(int volume);
+void native_midi_setvolume(float volume);
 const char *native_midi_error(void);
 
 #endif /* NATIVE_MIDI_H_ */
