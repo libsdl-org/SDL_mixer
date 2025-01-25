@@ -72,7 +72,7 @@ if(NOT TARGET SDL3_mixer::SDL3_mixer-shared)
     set_target_properties(SDL3_mixer::SDL3_mixer-shared
         PROPERTIES
             FRAMEWORK "TRUE"
-            IMPORTED_LOCATION "${_sdl3_mixer_framework_path}"
+            IMPORTED_LOCATION "${_sdl3_mixer_framework_path}/SDL3_mixer"
             COMPATIBLE_INTERFACE_BOOL "SDL3_SHARED"
             INTERFACE_SDL3_SHARED "ON"
             COMPATIBLE_INTERFACE_STRING "SDL_VERSION"
