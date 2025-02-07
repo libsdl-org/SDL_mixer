@@ -193,8 +193,8 @@
 		F3E29CEC2881FC900006D108 /* sample.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sample.c; path = ../../external/libxmp/src/loaders/sample.c; sourceTree = "<group>"; };
 		F3E29CED2881FC900006D108 /* itsex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = itsex.c; path = ../../external/libxmp/src/loaders/itsex.c; sourceTree = "<group>"; };
 		F3E29D6E288237030006D108 /* filetype.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = filetype.c; path = ../../external/libxmp/src/filetype.c; sourceTree = "<group>"; };
-		F3EFA5AE2D56A3ED00BCF22F /* rng.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = rng.c; path = /Users/valve/projects/SDL_mixer/external/libxmp/src/rng.c; sourceTree = "<absolute>"; };
-		F3EFA5B02D56A44300BCF22F /* flow.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = flow.c; path = /Users/valve/projects/SDL_mixer/external/libxmp/src/flow.c; sourceTree = "<absolute>"; };
+		F3EFA5AE2D56A3ED00BCF22F /* rng.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = rng.c; path = ../../external/libxmp/src/rng.c; sourceTree = "<group>"; };
+		F3EFA5B02D56A44300BCF22F /* flow.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = flow.c; path = ../../external/libxmp/src/flow.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
