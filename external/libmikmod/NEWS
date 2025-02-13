@@ -1,7 +1,7 @@
 Summary of changes between libmikmod 3.1.21 and libmikmod 3.1.22:
 ========================================================================
 
-libmikmod v3.1.22 was released on ???? ??, ????.
+libmikmod v3.1.22 was released on Dec. 31, 2024.
 
 - Fix high cpu usage in ALSA output driver (reported by David Lindsay.)
 - Add WinMM driver (drv_win) command line options for buffer size and

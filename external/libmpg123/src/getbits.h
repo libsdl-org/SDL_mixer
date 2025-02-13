@@ -47,7 +47,7 @@ fprintf(stderr,"g%d",number_of_bits);
   /* Safety catch until we got the nasty code fully figured out. */
   /* No, that catch stays here, even if we think we got it figured out! */
   if( (long)(fr->wordpointer-fr->bsbuf)*8
-      + fr->bitindex+number_of_bits > (long)fr->framesize*8 )
+      + fr->bitindex+number_of_bits > (long)fr->hdr.framesize*8 )
     return 0;
 /*  This is actually slow: if(!number_of_bits)
     return 0; */

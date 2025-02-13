@@ -8,7 +8,7 @@
 #AM_LDFLAGS = 
 AM_CPPFLAGS = -I$(top_srcdir)/src
 
-EXTRA_DIST = 
+EXTRA_DIST = asm_nasm Makefile.emx Makefile.os2 Makefile.vs6 Makefile.w32 OS2_MSVC
 
 LIBS = @LIBMPG123_LIBS@
 
@@ -67,6 +67,7 @@ libmpg123_la_SOURCES = \
 	mpg123lib_intern.h \
 	abi_align.h \
 	mangle.h \
+	aarch64_defs.h \
 	getcpuflags.h \
 	index.h \
 	index.c

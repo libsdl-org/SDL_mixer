@@ -504,6 +504,7 @@ static void frame_fixed_reset(mpg123_handle *fr)
 {
 	frame_icy_reset(fr);
 	open_bad(fr);
+	memset(&(fr->hdr), 0, sizeof(fr->hdr));
 	fr->to_decode = FALSE;
 	fr->to_ignore = FALSE;
 	fr->metaflags = 0;
@@ -517,15 +518,12 @@ static void frame_fixed_reset(mpg123_handle *fr)
 	fr->clip = 0;
 	fr->oldhead = 0;
 	fr->firsthead = 0;
-	fr->lay = 0;
 	fr->vbr = MPG123_CBR;
 	fr->abr_rate = 0;
 	fr->track_frames = 0;
 	fr->track_samples = -1;
-	fr->framesize=0; 
 	fr->mean_frames = 0;
 	fr->mean_framesize = 0;
-	fr->freesize = 0;
 	fr->lastscale = -1;
 	fr->rva.level[0] = -1;
 	fr->rva.level[1] = -1;
@@ -560,8 +558,7 @@ static void frame_fixed_reset(mpg123_handle *fr)
 	fr->icy.next = 0;
 #endif
 	fr->halfphase = 0; /* here or indeed only on first-time init? */
-	fr->error_protection = 0;
-	fr->freeformat_framesize = -1;
+	fr->hdr.freeformat_framesize = -1;
 }
 
 static void frame_free_buffers(mpg123_handle *fr)
@@ -619,7 +616,7 @@ int attribute_align_arg mpg123_framedata(mpg123_handle *mh, unsigned long *heade
 
 	if(header    != NULL) *header    = mh->oldhead;
 	if(bodydata  != NULL) *bodydata  = mh->bsbuf;
-	if(bodybytes != NULL) *bodybytes = mh->framesize;
+	if(bodybytes != NULL) *bodybytes = mh->hdr.framesize;
 
 	return MPG123_OK;
 }
@@ -866,9 +863,9 @@ static off_t ignoreframe(mpg123_handle *fr)
 {
 	off_t preshift = fr->p.preframes;
 	/* Layer 3 _really_ needs at least one frame before. */
-	if(fr->lay==3 && preshift < 1) preshift = 1;
+	if(fr->hdr.lay==3 && preshift < 1) preshift = 1;
 	/* Layer 1 & 2 reall do not need more than 2. */
-	if(fr->lay!=3 && preshift > 2) preshift = 2;
+	if(fr->hdr.lay!=3 && preshift > 2) preshift = 2;
 
 	return fr->firstframe - preshift;
 }
@@ -913,7 +910,7 @@ void frame_set_frameseek(mpg123_handle *fr, off_t fe)
 void frame_skip(mpg123_handle *fr)
 {
 #ifndef NO_LAYER3
-	if(fr->lay == 3) set_pointer(fr, 512);
+	if(fr->hdr.lay == 3) set_pointer(fr, 512);
 #endif
 }
 

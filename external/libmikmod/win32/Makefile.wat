@@ -53,10 +53,13 @@ DLLFLAGS=-bd
 .SUFFIXES:
 .SUFFIXES: .obj .c
 
-DLLNAME=mikmod.dll
-EXPNAME=mikmod.exp
-LIBNAME=mikmod.lib
-LIBSTATIC=mikmod_static.lib
+DLLNAME=libmikmod.dll
+EXPNAME=libmikmod.exp
+MAPNAME=libmikmod.map
+LIBNAME=libmikmod.lib
+LNKFILE=libmikmod.lnk
+LIBSTATIC=mikmod-static.lib
+LBCFILE=libmikmod.lbc
 
 !ifeq target static
 CPPFLAGS+= -DMIKMOD_STATIC=1
@@ -83,18 +86,36 @@ OBJ=drv_win.obj drv_ds.obj &
 all: $(BLD_TARGET)
 
 # rely on symbol name, not ordinal: -irn switch of wlib is default, but -inn is not.
-$(DLLNAME): $(OBJ)
-	wlink NAM $@ OP q SYSTEM nt_dll INITINSTANCE TERMINSTANCE LIBR {$(LIBS)} FIL {$(OBJ)} OPTION IMPF=$(EXPNAME)
+$(DLLNAME): $(OBJ) $(LNKFILE)
+	wlink @$(LNKFILE)
 	wlib -q -b -n -c -pa -s -t -zld -ii -io -inn $(LIBNAME) +$(DLLNAME)
 
-$(LIBSTATIC): $(OBJ)
-	wlib -q -b -n -c -pa -s -t -zld -ii -io $@ $(OBJ)
+$(LIBSTATIC): $(OBJ) $(LBCFILE)
+	wlib -q -b -n -c -pa -s -t -zld -ii -io $@ @$(LBCFILE)
 
 .c: ../drivers;../loaders;../mmio;../playercode;../posix;
 .c.obj:
 	$(COMPILE) -fo=$^@ $<
 
 distclean: clean .symbolic
+	rm -f $(MAPNAME) $(LNKFILE) $(LBCFILE) 
 	rm -f $(DLLNAME) $(EXPNAME) $(LIBNAME) $(LIBSTATIC)
 clean: .symbolic
 	rm -f *.obj
+
+$(LNKFILE):
+	@echo Creating linker file: $@
+	@%create $@
+	@%append $@ SYSTEM nt_dll INITINSTANCE TERMINSTANCE
+	@%append $@ NAME $(DLLNAME)
+	@for %i in ($(OBJ)) do @%append $@ FILE %i
+	@for %i in ($(LIBS)) do @%append $@ LIB %i
+	@%append $@ OPTION QUIET
+	@%append $@ OPTION IMPF=$(EXPNAME)
+	@%append $@ OPTION MAP=$(MAPNAME)
+	@%append $@ OPTION SHOWDEAD
+
+$(LBCFILE):
+	@echo Creating wlib commands file: $@
+	@%create $@
+	@for %i in ($(OBJ)) do @%append $@ +%i

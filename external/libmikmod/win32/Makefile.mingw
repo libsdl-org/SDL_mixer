@@ -21,20 +21,20 @@ CPPFLAGS=-DMIKMOD_BUILD
 LDLIBS=
 
 # support for WinMM sound output:
-#LDLIBS+=-lwinmm
-#CPPFLAGS+=-DDRV_WIN
+LDLIBS+=-lwinmm
+CPPFLAGS+=-DDRV_WIN
 
 # support for Direct Sound output:
-#LDLIBS+=-ldsound
-#CPPFLAGS+=-DDRV_DS
+LDLIBS+=-ldsound
+CPPFLAGS+=-DDRV_DS
 
 # disable the high quality mixer (build only with the standart mixer)
 #CPPFLAGS+=-DNO_HQMIXER
 
 # support for wav file output:
-#CPPFLAGS+=-DDRV_WAV
+CPPFLAGS+=-DDRV_WAV
 # support for output raw data to a file:
-#CPPFLAGS+=-DDRV_RAW
+CPPFLAGS+=-DDRV_RAW
 
 # support for output to stdout:
 #CPPFLAGS+=-DDRV_STDOUT

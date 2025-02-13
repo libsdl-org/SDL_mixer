@@ -114,6 +114,7 @@ libmikmod_driver_pipe=yes
 libmikmod_dynload=yes
 libmikmod_dynload_underscores=no
 libmikmod_dynload_used=no
+libmikmod_dynload_style=none
 libmikmod_debug=no
 libmikmod_threads=yes
 
@@ -415,21 +416,20 @@ fi
 
 if test $libmikmod_dynload = yes
 then
-	libmikmod_dynload=no
 	libmikmod_dllib=
 	# SunOS-style shared libraries
 	AC_CHECK_HEADERS([dlfcn.h])
 	if test $ac_cv_header_dlfcn_h = yes
 	then
-		AC_CHECK_LIB([c],[dlopen],[libmikmod_dynload=sun],
-		             [AC_CHECK_LIB([dl],[dlopen],[libmikmod_dynload=sun
+		AC_CHECK_LIB([c],[dlopen],[libmikmod_dynload_style=sun],
+		             [AC_CHECK_LIB([dl],[dlopen],[libmikmod_dynload_style=sun
 		                                      libmikmod_dllib="-ldl"],[libmikmod_dynload=no])])
 	else
 		# HP-UX-style shared libraries
 		AC_CHECK_HEADERS([dl.h])
 		if test $ac_cv_header_dl_h = yes
 		then
-			AC_CHECK_LIB([dld],[shl_load],[libmikmod_dynload=hp
+			AC_CHECK_LIB([dld],[shl_load],[libmikmod_dynload_style=hp
 			                           libmikmod_dllib="-ldld"
 			                           CFLAGS="${CFLAGS} -DMIKMOD_DLAPI_HP=1 -I${srcdir}/dlapi"],
 			                          [libmikmod_dynload=no])
@@ -437,7 +437,7 @@ then
 	fi
 fi
 
-if test $libmikmod_dynload = sun
+if test $libmikmod_dynload_style = sun
 then
 	AC_CACHE_CHECK([wherever dynamically loaded symbols need underscores],[libmikmod_cv_dynload_underscores],
 		libmikmod_oldlibs=$LIBS
@@ -729,10 +729,9 @@ then
 	# dependencies to libmikmod's dependency list.
 	# However, no need to keep libraries we won't require (libossaudio on BSD
 	# systems, libaudiofile, libasound on Linux)
-	if test $libmikmod_dynload != no
+	if test $libmikmod_dynload = yes
 	then
 		ESD_LIBS="`echo $ESD_LIBS|sed -e 's/-lesd//'|sed -e 's/-lasound//'|sed -e 's/-laudiofile//'|sed -e 's/-lossaudio//'`"
-	else
 		libmikmod_dynload_used=yes
 	fi
 	LIBRARY_LIB="$ESD_LIBS $LIBRARY_LIB"
@@ -969,9 +968,9 @@ chmod +x libmikmod-config
 # Print configuration.
 # ====================
 
-if test $libmikmod_dynload != no
+if test $libmikmod_dynload_used = yes
 then
-	libmikmod_dynload="yes, ${libmikmod_dynload} style"
+	libmikmod_dynload_used="yes, ${libmikmod_dynload_style} style"
 fi
 
 echo "
@@ -981,7 +980,7 @@ Library configuration:
   Compiler: $CC
   Compiler flags: $CFLAGS
   Debug version: $libmikmod_debug
-  Dynamically loaded drivers whenever possible: $libmikmod_dynload
+  Dynamically loading drivers when possible: $libmikmod_dynload_used
   Drivers to be compiled: $libmikmod_driverlist
   HQ Mixer: $libmikmod_hqmixer
   Install path: $prefix/lib, $prefix/include

@@ -5,9 +5,8 @@
 
 INCLUDES=-I../os2 -I../include
 CC=gcc
-AR=ar #emxomfar
+AR=emxomfar
 ARFLAGS=cr
-RANLIB=ranlib
 IMPLIB=emximp
 
 CFLAGS=-O2 -Wall -funroll-loops -ffast-math -fno-strength-reduce -Zomf -Zmt
@@ -78,7 +77,6 @@ $(DLLNAME): $(OBJ) $(DEFNAME)
 $(LIBSTATIC): CPPFLAGS+=-DMIKMOD_STATIC
 $(LIBSTATIC): $(OBJ)
 	$(AR) $(ARFLAGS) $(LIBSTATIC) $(OBJ)
-	$(RANLIB) $(LIBSTATIC)
 
 HEADER_DEPS=../include/mikmod.h ../include/mikmod_internals.h ../include/mikmod_ctype.h
 drv_dart.o: ../drivers/drv_dart.c $(HEADER_DEPS)

@@ -1022,10 +1022,10 @@ int attribute_align_arg mpg123_info(mpg123_handle *mh, struct mpg123_frameinfo *
 	b = init_track(mh);
 	if(b < 0) return b;
 
-	mi->version = mh->mpeg25 ? MPG123_2_5 : (mh->lsf ? MPG123_2_0 : MPG123_1_0);
-	mi->layer = mh->lay;
+	mi->version = mh->hdr.mpeg25 ? MPG123_2_5 : (mh->hdr.lsf ? MPG123_2_0 : MPG123_1_0);
+	mi->layer = mh->hdr.lay;
 	mi->rate = frame_freq(mh);
-	switch(mh->mode)
+	switch(mh->hdr.mode)
 	{
 		case 0: mi->mode = MPG123_M_STEREO; break;
 		case 1: mi->mode = MPG123_M_JOINT;  break;
@@ -1033,14 +1033,14 @@ int attribute_align_arg mpg123_info(mpg123_handle *mh, struct mpg123_frameinfo *
 		case 3: mi->mode = MPG123_M_MONO;   break;
 		default: error("That mode cannot be!");
 	}
-	mi->mode_ext = mh->mode_ext;
-	mi->framesize = mh->framesize+4; /* Include header. */
+	mi->mode_ext = mh->hdr.mode_ext;
+	mi->framesize = mh->hdr.framesize+4; /* Include header. */
 	mi->flags = 0;
-	if(mh->error_protection) mi->flags |= MPG123_CRC;
-	if(mh->copyright)        mi->flags |= MPG123_COPYRIGHT;
-	if(mh->extension)        mi->flags |= MPG123_PRIVATE;
-	if(mh->original)         mi->flags |= MPG123_ORIGINAL;
-	mi->emphasis = mh->emphasis;
+	if(mh->hdr.error_protection) mi->flags |= MPG123_CRC;
+	if(mh->hdr.copyright)        mi->flags |= MPG123_COPYRIGHT;
+	if(mh->hdr.extension)        mi->flags |= MPG123_PRIVATE;
+	if(mh->hdr.original)         mi->flags |= MPG123_ORIGINAL;
+	mi->emphasis = mh->hdr.emphasis;
 	mi->bitrate  = frame_bitrate(mh);
 	mi->abr_rate = mh->abr_rate;
 	mi->vbr = mh->vbr;

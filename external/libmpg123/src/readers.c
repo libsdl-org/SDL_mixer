@@ -28,8 +28,13 @@
 
 static int default_init(mpg123_handle *fr);
 static off_t get_fileinfo(mpg123_handle *);
+#ifdef _WIN32
+static ssize_t posix_read(int fd, void *buf, size_t count){ return _read(fd, buf, count); }
+static off_t   posix_lseek(int fd, off_t offset, int whence){ return _lseek(fd, offset, whence); }
+#else
 static ssize_t posix_read(int fd, void *buf, size_t count){ return read(fd, buf, count); }
 static off_t   posix_lseek(int fd, off_t offset, int whence){ return lseek(fd, offset, whence); }
+#endif
 #ifndef NO_ICY
 static off_t     nix_lseek(int fd, off_t offset, int whence){ return -1; }
 #endif

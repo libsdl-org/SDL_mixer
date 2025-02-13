@@ -27,11 +27,13 @@ that should not be a problem nowadays.
 
 -- Instructions for Microsoft Compiler
 
-Use one of the project files to build a dll and an import library: MSVC6
-for the old Visual C 6, or VS2005 for Visual Studio 2005 and newer.
-To make your library ready to use, copy the file 'mikmod.h' to your
-compiler include directory, and 'mikmod.lib` to your compiler libraries
-directory. You also have to put 'libmikmod.dll' somewhere in your PATH.
+Use 'VisualStudio' project files to build a dll and its import library:
+the project files are compatible with Visual Studio 2010 and newer.
+(If you really need, the 'VS8' (for MSVC 2005/2008) and 'MSVC6' project
+files are still there, too.) To make the library ready to use, copy the
+file 'mikmod.h' to your compiler include directory, and 'mikmod.lib` to
+your compiler libraries directory. You also have to put 'libmikmod.dll'
+somewhere in your PATH.
 
 HTML documentation of the library, for programmers, is located in the
 doc directory.

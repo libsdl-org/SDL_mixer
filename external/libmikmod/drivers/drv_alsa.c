@@ -294,7 +294,7 @@ static int ALSA_Init_internal(void)
 		goto END;
 	}
 
-	if (rate != md_mixfreq) {
+	if (rate != md_mixfreq && rate > 65535) { /* md_mixfreq is an uint16_t */
 		_mm_errno = MMERR_ALSA_SETRATE;
 		goto END;
 	}
@@ -324,6 +324,7 @@ static int ALSA_Init_internal(void)
 	}
 
 	/* sound device is ready to work */
+	md_mixfreq = rate;
 	if (!VC_Init()) {
 		enabled = 1;
 		return 0;

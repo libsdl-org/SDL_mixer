@@ -16,8 +16,8 @@
 
 BITS 32
 
-%ifdef __OS2__
-; declare segments with proper attributes for OS/2 builds
+%ifdef OBJ_FORMAT_obj
+; declare segments with proper attributes
 SEGMENT .data CLASS=DATA ALIGN=16 USE32 FLAT
 SEGMENT .text CLASS=CODE ALIGN=16 USE32 FLAT
 %endif

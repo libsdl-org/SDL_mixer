@@ -240,6 +240,10 @@ static int OSS_Init_internal(void)
 		_mm_errno=MMERR_OSS_SETSPEED;
 		return 1;
 	}
+	if(play_rate>65535) { /* md_mixfreq is an uint16_t */
+		_mm_errno=MMERR_OSS_SETSPEED;
+		return 1;
+	}
 	md_mixfreq=play_rate;
 
 #if SOUND_VERSION >= 301

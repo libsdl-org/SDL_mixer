@@ -8,6 +8,11 @@
 
 1.22.x-sezero (backports)
 ---
+- Prevent premature application of header info into decoding structure,
+  at worst having triggered out-of-bounds writes of decoded PCM data
+  (bug 322, again).
+- Add sections to assembly to support PAC/BTI code for aarch64
+  (-mbranch-protection variants)
 - more safeguarding against attempts to decode if decoder
   setup failed and user ignored the returned error code (bug 322)
 - Fix Android NDK x86 builds with GLOBAL_VAR_PTR use in assembly
