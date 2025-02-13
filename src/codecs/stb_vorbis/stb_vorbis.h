@@ -5518,7 +5518,7 @@ static int fixup_current_playback_loc(stb_vorbis *f, int n)
 
    f->current_playback_loc += n;
    lgs = stb_vorbis_stream_length_in_samples(f);
-   if (f->current_playback_loc > lgs && lgs > 0 && lgs != SAMPLE_unknown) {
+   if (f->current_playback_loc > (int)lgs && lgs > 0 && lgs != SAMPLE_unknown) {
        int r = n - (f->current_playback_loc - (int)lgs);
        f->current_playback_loc = lgs;
        return r;
