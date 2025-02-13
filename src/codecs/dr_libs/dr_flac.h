@@ -1,6 +1,6 @@
 /*
 FLAC audio decoder. Choice of public domain or MIT-0. See license statements at the end of this file.
-dr_flac - v0.12.42 - 2023-11-02
+dr_flac - v0.12.43 - 2024-12-17
 
 David Reid - mackron@gmail.com
 
@@ -179,7 +179,7 @@ reports metadata to the application through the use of a callback, and every met
 
 The main opening APIs (`drflac_open()`, etc.) will fail if the header is not present. The presents a problem in certain scenarios such as broadcast style
 streams or internet radio where the header may not be present because the user has started playback mid-stream. To handle this, use the relaxed APIs:
-    
+
     `drflac_open_relaxed()`
     `drflac_open_with_metadata_relaxed()`
 
@@ -235,7 +235,7 @@ extern "C" {
 
 #define DRFLAC_VERSION_MAJOR     0
 #define DRFLAC_VERSION_MINOR     12
-#define DRFLAC_VERSION_REVISION  42
+#define DRFLAC_VERSION_REVISION  43
 #define DRFLAC_VERSION_STRING    DRFLAC_XSTRINGIFY(DRFLAC_VERSION_MAJOR) "." DRFLAC_XSTRINGIFY(DRFLAC_VERSION_MINOR) "." DRFLAC_XSTRINGIFY(DRFLAC_VERSION_REVISION)
 
 #include <stddef.h> /* For size_t. */
@@ -348,11 +348,11 @@ but also more memory. In my testing there is diminishing returns after about 4KB
 #define DRFLAC_64BIT
 #endif
 
-#if defined(__x86_64__) || defined(_M_X64)
+#if defined(__x86_64__) || (defined(_M_X64) && !defined(_M_ARM64EC))
     #define DRFLAC_X64
 #elif defined(__i386) || defined(_M_IX86)
     #define DRFLAC_X86
-#elif defined(__arm__) || defined(_M_ARM) || defined(__arm64) || defined(__arm64__) || defined(__aarch64__) || defined(_M_ARM64)
+#elif defined(__arm__) || defined(_M_ARM) || defined(__arm64) || defined(__arm64__) || defined(__aarch64__) || defined(_M_ARM64) || defined(_M_ARM64EC)
     #define DRFLAC_ARM
 #endif
 /* End Architecture Detection */
@@ -5393,6 +5393,12 @@ static drflac_bool32 drflac__read_subframe_header(drflac_bs* bs, drflac_subframe
         return DRFLAC_FALSE;
     }
 
+    /*
+    Default to 0 for the LPC order. It's important that we always set this to 0 for non LPC
+    and FIXED subframes because we'll be using it in a generic validation check later.
+    */
+    pSubframe->lpcOrder = 0;
+
     type = (header & 0x7E) >> 1;
     if (type == 0) {
         pSubframe->subframeType = DRFLAC_SUBFRAME_CONSTANT;
@@ -5464,6 +5470,18 @@ static drflac_bool32 drflac__decode_subframe(drflac_bs* bs, drflac_frame* frame,
     subframeBitsPerSample -= pSubframe->wastedBitsPerSample;
 
     pSubframe->pSamplesS32 = pDecodedSamplesOut;
+
+    /*
+    pDecodedSamplesOut will be pointing to a buffer that was allocated with enough memory to store
+    maxBlockSizeInPCMFrames samples (as specified in the FLAC header). We need to guard against an
+    overflow here. At a higher level we are checking maxBlockSizeInPCMFrames from the header, but
+    here we need to do an additional check to ensure this frame's block size fully encompasses any
+    warmup samples which is determined by the LPC order. For non LPC and FIXED subframes, the LPC
+    order will be have been set to 0 in drflac__read_subframe_header().
+    */
+    if (frame->header.blockSizeInPCMFrames < pSubframe->lpcOrder) {
+        return DRFLAC_FALSE;
+    }
 
     switch (pSubframe->subframeType)
     {
@@ -6702,10 +6720,10 @@ static drflac_bool32 drflac__read_and_decode_metadata(drflac_read_proc onRead, d
 
                             /* Skip to the index point count */
                             pRunningData += 35;
-                            
+
                             indexCount = pRunningData[0];
                             pRunningData += 1;
-                            
+
                             bufferSize += indexCount * sizeof(drflac_cuesheet_track_index);
 
                             /* Quick validation check. */
@@ -12077,6 +12095,10 @@ DRFLAC_API drflac_bool32 drflac_next_cuesheet_track(drflac_cuesheet_track_iterat
 /*
 REVISION HISTORY
 ================
+v0.12.43 - 2024-12-17
+  - Fix a possible buffer overflow during decoding.
+  - Improve detection of ARM64EC
+
 v0.12.42 - 2023-11-02
   - Fix build for ARMv6-M.
   - Fix a compilation warning with GCC.
