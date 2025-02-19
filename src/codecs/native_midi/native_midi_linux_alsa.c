@@ -572,7 +572,7 @@ static int native_midi_player_thread(void *d)
     bool playback_finished = false;
     NativeMidiSong *song = d;
     MIDIEvent *event = song->evtlist;
-
+    int i;
     int queue = ALSA_snd_seq_alloc_named_queue(song->seq, "SDL_Mixer Playback");
     snd_seq_start_queue(song->seq, queue, NULL);
 
@@ -756,7 +756,7 @@ static int native_midi_player_thread(void *d)
     /* Stop all audio */
     /* Some of these are bound to work */
     snd_seq_ev_set_direct(&evt);
-    for (int i = 0; i < MIDI_CHANNELS; i++) {
+    for (i = 0; i < MIDI_CHANNELS; i++) {
         snd_seq_ev_set_controller(&evt, i, MIDI_CTL_SUSTAIN, 0);
         ALSA_snd_seq_event_output_direct(song->seq, &evt);
         snd_seq_ev_set_controller(&evt, i, MIDI_CTL_ALL_NOTES_OFF, 0);
