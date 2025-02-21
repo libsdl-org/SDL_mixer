@@ -308,6 +308,7 @@ extern stb_vorbis * stb_vorbis_open_file_section(FILE *f, int close_handle_on_cl
 #ifdef STB_VORBIS_SDL
 extern stb_vorbis * stb_vorbis_open_io_section(SDL_IOStream *io, int close_on_free, int *error, const stb_vorbis_alloc *alloc, unsigned int length);
 extern stb_vorbis * stb_vorbis_open_io(SDL_IOStream *io, int close_on_free, int *error, const stb_vorbis_alloc *alloc);
+#define IO_BUFFER_SIZE 2048
 #endif
 
 extern int stb_vorbis_seek_frame(stb_vorbis *f, unsigned int sample_number);
@@ -836,6 +837,10 @@ struct stb_vorbis
 #ifdef STB_VORBIS_SDL
    SDL_IOStream *io;
    uint32 io_start;
+   uint32 io_virtual_pos;
+   uint32 io_buffer_pos;
+   uint32 io_buffer_fill;
+   uint8 io_buffer[IO_BUFFER_SIZE];
    int close_on_free;
 #endif
 
@@ -1400,9 +1405,13 @@ static int STBV_CDECL point_compare(const void *p, const void *q)
 static uint8 get8(vorb *z)
 {
    #ifdef STB_VORBIS_SDL
-   uint8 c;
-   if (SDL_ReadIO(z->io, &c, 1) != 1) { z->eof = TRUE; return 0; }
-   return c;
+   if (z->io_buffer_pos >= z->io_buffer_fill) {
+      z->io_buffer_fill = SDL_ReadIO(z->io, z->io_buffer, IO_BUFFER_SIZE);
+      z->io_buffer_pos = 0;
+      if (z->io_buffer_fill == 0) { z->eof = TRUE; return 0; }
+   }
+   z->io_virtual_pos++;
+   return z->io_buffer[z->io_buffer_pos++];
 
    #else
    if (USE_MEMORY(z)) {
@@ -1433,9 +1442,28 @@ static uint32 get32(vorb *f)
 static int getn(vorb *z, uint8 *data, int n)
 {
    #ifdef STB_VORBIS_SDL
-   if (SDL_ReadIO(z->io, data, n) == (size_t)n) return 1;
-   z->eof = 1;
-   return 0;
+   while (n > 0) {
+      int chunk;
+
+      if (z->io_buffer_pos >= z->io_buffer_fill) {
+         z->io_buffer_fill = SDL_ReadIO(z->io, z->io_buffer, IO_BUFFER_SIZE);
+         z->io_buffer_pos = 0;
+         if (z->io_buffer_fill == 0) {
+            z->eof = 1;
+            return 0;
+         }
+      }
+
+      chunk = z->io_buffer_fill - z->io_buffer_pos;
+      if (chunk > n) chunk = n;
+
+      memcpy(data, z->io_buffer + z->io_buffer_pos, chunk);
+      z->io_buffer_pos += chunk;
+      z->io_virtual_pos += chunk;
+      data += chunk;
+      n -= chunk;
+   }
+   return 1;
 
    #else
    if (USE_MEMORY(z)) {
@@ -1456,11 +1484,12 @@ static int getn(vorb *z, uint8 *data, int n)
    #endif
 }
 
+static int set_file_offset(stb_vorbis *f, unsigned int loc);
+
 static void skip(vorb *z, int n)
 {
    #ifdef STB_VORBIS_SDL
-   SDL_SeekIO(z->io, n, SDL_IO_SEEK_CUR);
-
+   set_file_offset(z, z->io_virtual_pos + n);
    #else
    if (USE_MEMORY(z)) {
       z->stream += n;
@@ -1485,17 +1514,31 @@ static int set_file_offset(stb_vorbis *f, unsigned int loc)
    f->eof = 0;
 
    #ifdef STB_VORBIS_SDL
-   if (loc + f->io_start < loc || loc >= 0x80000000) {
-      loc = 0x7fffffff;
-      f->eof = 1;
-   } else {
-      loc += f->io_start;
+ { unsigned int io_pos;
+   uint32 buffer_start = f->io_virtual_pos - f->io_buffer_pos;
+   uint32 buffer_end = buffer_start + f->io_buffer_fill;
+   f->io_virtual_pos = loc;
+
+   // Move within buffer if possible
+   if (loc >= buffer_start && loc < buffer_end)
+   {
+      f->io_buffer_pos = loc - buffer_start;
+      return 1;
    }
-   if (SDL_SeekIO(f->io, loc, SDL_IO_SEEK_SET) != -1)
+
+   io_pos = loc + f->io_start;
+   if (io_pos < loc || loc >= 0x80000000) {
+      io_pos = 0x7fffffff;
+      f->eof = 1;
+   }
+
+   f->io_buffer_pos = f->io_buffer_fill = 0;  // Invalidate buffer
+   if (SDL_SeekIO(f->io, io_pos, SDL_IO_SEEK_SET) != -1)
       return 1;
    f->eof = 1;
    SDL_SeekIO(f->io, f->io_start, SDL_IO_SEEK_END);
    return 0;
+ }
 
    #else
    if (USE_MEMORY(f)) {
@@ -4440,6 +4483,10 @@ static void vorbis_init(stb_vorbis *p, const stb_vorbis_alloc *z)
    #ifdef STB_VORBIS_SDL
    p->close_on_free = FALSE;
    p->io = NULL;
+   p->io_start = 0;
+   p->io_virtual_pos = 0;
+   p->io_buffer_pos = 0;
+   p->io_buffer_fill = 0;
    #endif
    #ifndef STB_VORBIS_NO_STDIO
    p->close_on_free = FALSE;
@@ -4711,7 +4758,7 @@ unsigned int stb_vorbis_get_file_offset(stb_vorbis *f)
    if (f->push_mode) return 0;
    #endif
    #ifdef STB_VORBIS_SDL
-   return (unsigned int) (SDL_TellIO(f->io) - f->io_start);
+   return f->io_virtual_pos;
    #else
    if (USE_MEMORY(f)) return (unsigned int) (f->stream - f->stream_start);
    #endif
