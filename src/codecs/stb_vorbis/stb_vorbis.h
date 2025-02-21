@@ -620,8 +620,10 @@ enum STBVorbisError
 #include <limits.h>
 
 #ifndef STB_FORCEINLINE
-    #if defined(_MSC_VER)
+    #if defined(_MSC_VER) && (_MSC_VER >= 1200)
         #define STB_FORCEINLINE __forceinline
+    #elif defined(_MSC_VER)
+        #define STB_FORCEINLINE static __inline
     #elif (defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 2))) || defined(__clang__)
         #define STB_FORCEINLINE static __inline __attribute__((always_inline))
     #else
