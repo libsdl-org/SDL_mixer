@@ -320,15 +320,16 @@ bool native_midi_active(void)
   return currentsong->MusicPlaying;
 }
 
-void native_midi_setvolume(int volume)
+void native_midi_setvolume(float volume)
 {
   int calcVolume;
-  if (volume > 128)
-    volume = 128;
-  if (volume < 0)
-    volume = 0;
-  calcVolume = (65535 * volume / 128);
+  if (volume > 1.0f)
+    volume = 1.0f;
+  if (volume < 0.0f)
+    volume = 0.0f;
+  calcVolume = (int)(65535 * volume);
 
+  midiOutSetVolume((HMIDIOUT)hMidiStream, MAKELONG(calcVolume , calcVolume));
   midiOutSetVolume((HMIDIOUT)hMidiStream, MAKELONG(calcVolume , calcVolume));
 }
 
