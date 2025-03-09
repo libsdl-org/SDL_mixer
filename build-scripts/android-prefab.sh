@@ -73,7 +73,6 @@ build_cmake_projects() {
                 -DWITH_ASM=OFF \
                 -DSDLMIXER_FLAC_LIBFLAC=ON \
                 -DSDLMIXER_MOD=ON \
-                -DSDLMIXER_MOD_MODPLUG=OFF \
                 -DSDLMIXER_MOD_XMP=ON \
                 -DSDLMIXER_MP3=ON \
                 -DSDLMIXER_MP3_MPG123=ON \

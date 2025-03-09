@@ -21,7 +21,6 @@ set(SDLMIXER_FLAC_DRFLAC           @SDLMIXER_FLAC_DRFLAC_ENABLED@)
 set(SDLMIXER_GME                   @SDLMIXER_GME_ENABLED@)
 
 set(SDLMIXER_MOD                   @SDLMIXER_MOD_ENABLED@)
-set(SDLMIXER_MOD_MODPLUG           @SDLMIXER_MOD_MODPLUG_ENABLED@)
 set(SDLMIXER_MOD_XMP               @SDLMIXER_MOD_XMP_ENABLED@)
 set(SDLMIXER_MOD_XMP_LITE          @SDLMIXER_MOD_XMP_ENABLED@)
 
@@ -81,10 +80,6 @@ if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/SDL3_mixer-static-targets.cmake")
 
         if(SDLMIXER_FLAC_LIBFLAC AND NOT TARGET FLAC::FLAC)
             find_dependency(FLAC)
-        endif()
-
-        if(SDLMIXER_MOD_MODPLUG AND NOT TARGET modplug::modplug)
-            find_dependency(modplug)
         endif()
 
         if(SDLMIXER_MOD_XMP AND NOT TARGET libxmp::libxmp)
