@@ -226,7 +226,6 @@
     <ClInclude Include="..\src\codecs\music_fluidsynth.h" />
     <ClInclude Include="..\src\codecs\music_gme.h" />
     <ClInclude Include="..\src\codecs\music_minimp3.h" />
-    <ClInclude Include="..\src\codecs\music_modplug.h" />
     <ClInclude Include="..\src\codecs\music_mpg123.h" />
     <ClInclude Include="..\src\codecs\music_nativemidi.h" />
     <ClInclude Include="..\src\codecs\music_ogg.h" />
@@ -450,7 +449,6 @@
     <ClCompile Include="..\src\codecs\music_fluidsynth.c" />
     <ClCompile Include="..\src\codecs\music_gme.c" />
     <ClCompile Include="..\src\codecs\music_minimp3.c" />
-    <ClCompile Include="..\src\codecs\music_modplug.c" />
     <ClCompile Include="..\src\codecs\music_mpg123.c" />
     <ClCompile Include="..\src\codecs\music_nativemidi.c" />
     <ClCompile Include="..\src\codecs\music_ogg.c" />

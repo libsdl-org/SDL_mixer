@@ -138,15 +138,12 @@ option(SDLMIXER_GME_SHARED "Dynamically load libgme" "${SDLMIXER_DEPS_SHARED}")
 
 option(SDLMIXER_MOD "Support loading MOD music" ON)
 
-cmake_dependent_option(SDLMIXER_MOD_MODPLUG "Support loading MOD music via modplug" OFF SDLMIXER_MOD OFF)
-cmake_dependent_option(SDLMIXER_MOD_MODPLUG_SHARED "Dynamically load modplug" "${SDLMIXER_DEPS_SHARED}" SDLMIXER_MOD_MODPLUG OFF)
-
 cmake_dependent_option(SDLMIXER_MOD_XMP "Support loading MOD music via libxmp" ON SDLMIXER_MOD OFF)
 cmake_dependent_option(SDLMIXER_MOD_XMP_LITE "Use libxmp-lite instead of libxmp" OFF "SDLMIXER_MOD_XMP;NOT SDLMIXER_VENDORED" OFF)
 cmake_dependent_option(SDLMIXER_MOD_XMP_SHARED "Dynamically load libxmp(-lite)" "${SDLMIXER_DEPS_SHARED}" SDLMIXER_MOD_XMP OFF)
 
-if(SDLMIXER_MOD AND NOT (SDLMIXER_MOD_MODPLUG OR SDLMIXER_MOD_XMP))
-    message(FATAL_ERROR "MOD support was enabled (SDLMIXER_MOD) but neither modplug (SDLMIXER_MOD_MODPLUG) or xmp (SDLMIXER_MOD_XMP) was enabled.")
+if(SDLMIXER_MOD AND NOT SDLMIXER_MOD_XMP)
+    message(FATAL_ERROR "MOD support was enabled (SDLMIXER_MOD) but xmp (SDLMIXER_MOD_XMP) was enabled.")
 endif()
 
 option(SDLMIXER_MP3 "Enable MP3 music" ON)
@@ -258,7 +255,6 @@ add_library(${sdl3_mixer_target_name}
     src/codecs/music_fluidsynth.c
     src/codecs/music_gme.c
     src/codecs/music_minimp3.c
-    src/codecs/music_modplug.c
     src/codecs/music_mpg123.c
     src/codecs/music_nativemidi.c
     src/codecs/music_ogg.c
@@ -743,44 +739,6 @@ if(SDLMIXER_GME)
     endif()
 endif()
 
-list(APPEND SDLMIXER_BACKENDS MOD_MODPLUG)
-set(SDLMIXER_MOD_MODPLUG_ENABLED FALSE)
-if(SDLMIXER_MOD_MODPLUG)
-    if(SDLMIXER_VENDORED)
-        message(STATUS "Using vendored libmodplug")
-        message(${fatal_error} "libmodplug is not vendored.")
-    else()
-        find_package(modplug ${required})
-        if(modplug_FOUND)
-            set(SDLMIXER_MOD_MODPLUG_ENABLED TRUE)
-            message(STATUS "Using system libmodplug")
-            if(NOT SDLMIXER_MOD_MODPLUG_SHARED)
-                list(APPEND PC_REQUIRES libmodplug)
-            endif()
-        else()
-            message(${fatal_error} "libmodplug NOT found")
-        endif()
-    endif()
-    if(SDLMIXER_MOD_MODPLUG_ENABLED)
-        target_compile_definitions(${sdl3_mixer_target_name} PRIVATE MUSIC_MOD_MODPLUG)
-        if(SDLMIXER_MOD_MODPLUG_SHARED)
-            target_include_directories(${sdl3_mixer_target_name} PRIVATE
-                $<TARGET_PROPERTY:modplug::modplug,INCLUDE_DIRECTORIES>
-                $<TARGET_PROPERTY:modplug::modplug,INTERFACE_INCLUDE_DIRECTORIES>
-                $<TARGET_PROPERTY:modplug::modplug,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
-            )
-            target_get_dynamic_library(dynamic_modplug modplug::modplug)
-            message(STATUS "Dynamic modplug: ${dynamic_modplug}")
-            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "MODPLUG_DYNAMIC=\"${dynamic_modplug}\"")
-            if(SDLMIXER_VENDORED)
-                add_dependencies(${sdl3_mixer_target_name} modplug::modplug)
-            endif()
-        else()
-            target_link_libraries(${sdl3_mixer_target_name} PRIVATE modplug::modplug)
-        endif()
-    endif()
-endif()
-
 list(APPEND SDLMIXER_BACKENDS MOD_XMP)
 set(SDLMIXER_MOD_XMP_ENABLED FALSE)
 if(SDLMIXER_MOD_XMP)
@@ -863,7 +821,7 @@ if(SDLMIXER_MOD_XMP)
 endif()
 
 set(SDLMIXER_MOD_ENABLED FALSE)
-if(SDLMIXER_MOD_MODPLUG_ENABLED OR SDLMIXER_MOD_XMP_ENABLED OR SDLMIXER_MOD_XMP_ENABLED)
+if(SDLMIXER_MOD_XMP_ENABLED)
     set(SDLMIXER_MOD_ENABLED TRUE)
 endif()
 
@@ -1164,7 +1122,6 @@ if(SDLMIXER_INSTALL)
                 cmake/Findgme.cmake
                 cmake/Findlibxmp.cmake
                 cmake/Findlibxmp-lite.cmake
-                cmake/Findmodplug.cmake
                 cmake/FindOgg.cmake
                 cmake/FindOpus.cmake
                 cmake/FindOpusFile.cmake

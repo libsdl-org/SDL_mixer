@@ -51,8 +51,6 @@
 		AAE405E51F9607C300EDAF53 /* mixer.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE405C11F9607C000EDAF53 /* mixer.c */; };
 		AAE405E61F9607C300EDAF53 /* music.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE405C21F9607C000EDAF53 /* music.h */; };
 		AAE405E71F9607C300EDAF53 /* load_voc.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE405C31F9607C000EDAF53 /* load_voc.h */; };
-		AAE405E81F9607C300EDAF53 /* music_modplug.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE405C41F9607C000EDAF53 /* music_modplug.c */; };
-		AAE405E91F9607C300EDAF53 /* music_modplug.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE405C51F9607C000EDAF53 /* music_modplug.h */; };
 		AAE405EA1F9607C300EDAF53 /* music_fluidsynth.c in Sources */ = {isa = PBXBuildFile; fileRef = AAE405C61F9607C000EDAF53 /* music_fluidsynth.c */; };
 		AAE405EB1F9607C300EDAF53 /* music_flac.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE405C71F9607C000EDAF53 /* music_flac.h */; };
 		AAE405EC1F9607C300EDAF53 /* music_wav.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE405C81F9607C000EDAF53 /* music_wav.h */; };
@@ -190,8 +188,6 @@
 		AAE405C11F9607C000EDAF53 /* mixer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mixer.c; sourceTree = "<group>"; };
 		AAE405C21F9607C000EDAF53 /* music.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music.h; sourceTree = "<group>"; };
 		AAE405C31F9607C000EDAF53 /* load_voc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = load_voc.h; sourceTree = "<group>"; };
-		AAE405C41F9607C000EDAF53 /* music_modplug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_modplug.c; sourceTree = "<group>"; };
-		AAE405C51F9607C000EDAF53 /* music_modplug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_modplug.h; sourceTree = "<group>"; };
 		AAE405C61F9607C000EDAF53 /* music_fluidsynth.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_fluidsynth.c; sourceTree = "<group>"; };
 		AAE405C71F9607C000EDAF53 /* music_flac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_flac.h; sourceTree = "<group>"; };
 		AAE405C81F9607C000EDAF53 /* music_wav.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_wav.h; sourceTree = "<group>"; };
@@ -334,8 +330,6 @@
 				F3F8794A29B30FDA0007FDA1 /* music_gme.h */,
 				F307A52D2B5473760012534B /* music_minimp3.c */,
 				F307A52E2B5473760012534B /* music_minimp3.h */,
-				AAE405C41F9607C000EDAF53 /* music_modplug.c */,
-				AAE405C51F9607C000EDAF53 /* music_modplug.h */,
 				AAE405DF1F9607C300EDAF53 /* music_mpg123.c */,
 				AAE405D31F9607C100EDAF53 /* music_mpg123.h */,
 				AAE405D51F9607C100EDAF53 /* music_nativemidi.c */,
@@ -468,7 +462,6 @@
 				F307A5302B5473760012534B /* music_minimp3.h in Headers */,
 				AAE405E71F9607C300EDAF53 /* load_voc.h in Headers */,
 				AAE405EC1F9607C300EDAF53 /* music_wav.h in Headers */,
-				AAE405E91F9607C300EDAF53 /* music_modplug.h in Headers */,
 				AAE405FE1F9607C300EDAF53 /* music_nativemidi.h in Headers */,
 				F37A8D4A2838A23400C38E95 /* music_drflac.h in Headers */,
 				F30240632881DF95002F32D6 /* music_xmp.h in Headers */,
@@ -695,7 +688,6 @@
 				AAE405ED1F9607C300EDAF53 /* music_wav.c in Sources */,
 				F30240652881DF95002F32D6 /* music_xmp.c in Sources */,
 				F307A52F2B5473760012534B /* music_minimp3.c in Sources */,
-				AAE405E81F9607C300EDAF53 /* music_modplug.c in Sources */,
 				AAE405E51F9607C300EDAF53 /* mixer.c in Sources */,
 				0448E8AE108B937A00C9D3EA /* native_midi_macosx.c in Sources */,
 				630FBD8320D52105009867AB /* music_opus.c in Sources */,
