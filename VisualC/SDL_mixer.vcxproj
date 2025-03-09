@@ -222,6 +222,7 @@
     <ClInclude Include="..\src\codecs\load_voc.h" />
     <ClInclude Include="..\src\codecs\mp3utils.h" />
     <ClInclude Include="..\src\codecs\music_drflac.h" />
+    <ClInclude Include="..\src\codecs\music_drmp3.h" />
     <ClInclude Include="..\src\codecs\music_flac.h" />
     <ClInclude Include="..\src\codecs\music_fluidsynth.h" />
     <ClInclude Include="..\src\codecs\music_gme.h" />
@@ -445,6 +446,7 @@
     <ClCompile Include="..\src\codecs\load_voc.c" />
     <ClCompile Include="..\src\codecs\mp3utils.c" />
     <ClCompile Include="..\src\codecs\music_drflac.c" />
+    <ClCompile Include="..\src\codecs\music_drmp3.c" />
     <ClCompile Include="..\src\codecs\music_flac.c" />
     <ClCompile Include="..\src\codecs\music_fluidsynth.c" />
     <ClCompile Include="..\src\codecs\music_gme.c" />
