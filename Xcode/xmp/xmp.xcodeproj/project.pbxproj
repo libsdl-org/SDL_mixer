@@ -375,7 +375,7 @@
 			dependencies = (
 			);
 			name = xmp;
-			productName = libmodplug;
+			productName = libxmp;
 			productReference = F3968D85281FBB1900661875 /* xmp.framework */;
 			productType = "com.apple.product-type.framework";
 		};
