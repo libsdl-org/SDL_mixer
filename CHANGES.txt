@@ -1,2 +1,3 @@
 3.0.0:
  * Updated for SDL 3.0
+ * Volume APIs now operate on floats, rather than integers between 0 and 128
