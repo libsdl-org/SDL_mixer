@@ -43,9 +43,6 @@
     <ClInclude Include="..\src\codecs\music_minimp3.h">
       <Filter>Sources</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\codecs\music_modplug.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\codecs\music_mpg123.h">
       <Filter>Sources</Filter>
     </ClInclude>
@@ -177,9 +174,6 @@
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\src\codecs\music_minimp3.c">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\codecs\music_modplug.c">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\src\codecs\music_mpg123.c">
