@@ -78,6 +78,8 @@
 		F307A5302B5473760012534B /* music_minimp3.h in Headers */ = {isa = PBXBuildFile; fileRef = F307A52E2B5473760012534B /* music_minimp3.h */; };
 		F3249B39285C448100DB9B5C /* CMake in Resources */ = {isa = PBXBuildFile; fileRef = F3249B36285C448100DB9B5C /* CMake */; };
 		F3412A412D4C950E00D6C2B7 /* SDL3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3412A402D4C950E00D6C2B7 /* SDL3.framework */; };
+		F37A8D2D2838924900C38E95 /* music_drmp3.h in Headers */ = {isa = PBXBuildFile; fileRef = F37A8D2B2838924900C38E95 /* music_drmp3.h */; };
+		F37A8D2F2838924900C38E95 /* music_drmp3.c in Sources */ = {isa = PBXBuildFile; fileRef = F37A8D2C2838924900C38E95 /* music_drmp3.c */; };
 		F37A8D4A2838A23400C38E95 /* music_drflac.h in Headers */ = {isa = PBXBuildFile; fileRef = F37A8D412838A23400C38E95 /* music_drflac.h */; };
 		F37A8D502838A23400C38E95 /* music_drflac.c in Sources */ = {isa = PBXBuildFile; fileRef = F37A8D492838A23400C38E95 /* music_drflac.c */; };
 		F37A8DB52838AD1300C38E95 /* music_ogg_stb.c in Sources */ = {isa = PBXBuildFile; fileRef = F37A8DB42838AD1200C38E95 /* music_ogg_stb.c */; };
@@ -218,6 +220,8 @@
 		F307A52E2B5473760012534B /* music_minimp3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_minimp3.h; sourceTree = "<group>"; };
 		F3249B36285C448100DB9B5C /* CMake */ = {isa = PBXFileReference; lastKnownFileType = folder; path = CMake; sourceTree = "<group>"; };
 		F3412A402D4C950E00D6C2B7 /* SDL3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL3.framework; path = macOS/SDL3.framework; sourceTree = "<group>"; };
+		F37A8D2B2838924900C38E95 /* music_drmp3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_drmp3.h; sourceTree = "<group>"; };
+		F37A8D2C2838924900C38E95 /* music_drmp3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_drmp3.c; sourceTree = "<group>"; };
 		F37A8D412838A23400C38E95 /* music_drflac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_drflac.h; sourceTree = "<group>"; };
 		F37A8D492838A23400C38E95 /* music_drflac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_drflac.c; sourceTree = "<group>"; };
 		F37A8DB42838AD1200C38E95 /* music_ogg_stb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_ogg_stb.c; sourceTree = "<group>"; };
@@ -322,6 +326,8 @@
 				639197F0239FE66700F1D8F8 /* mp3utils.h */,
 				F37A8D492838A23400C38E95 /* music_drflac.c */,
 				F37A8D412838A23400C38E95 /* music_drflac.h */,
+				F37A8D2C2838924900C38E95 /* music_drmp3.c */,
+				F37A8D2B2838924900C38E95 /* music_drmp3.h */,
 				AAE405D41F9607C100EDAF53 /* music_flac.c */,
 				AAE405C71F9607C000EDAF53 /* music_flac.h */,
 				AAE405C61F9607C000EDAF53 /* music_fluidsynth.c */,
@@ -459,6 +465,7 @@
 			files = (
 				AAE405E31F9607C300EDAF53 /* music_fluidsynth.h in Headers */,
 				AAE405F61F9607C300EDAF53 /* load_aiff.h in Headers */,
+				F37A8D2D2838924900C38E95 /* music_drmp3.h in Headers */,
 				F307A5302B5473760012534B /* music_minimp3.h in Headers */,
 				AAE405E71F9607C300EDAF53 /* load_voc.h in Headers */,
 				AAE405EC1F9607C300EDAF53 /* music_wav.h in Headers */,
@@ -669,6 +676,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AAE405E21F9607C300EDAF53 /* load_aiff.c in Sources */,
+				F37A8D2F2838924900C38E95 /* music_drmp3.c in Sources */,
 				AAE405F01F9607C300EDAF53 /* load_voc.c in Sources */,
 				AAE405EA1F9607C300EDAF53 /* music_fluidsynth.c in Sources */,
 				AAE405FD1F9607C300EDAF53 /* music_ogg.c in Sources */,
