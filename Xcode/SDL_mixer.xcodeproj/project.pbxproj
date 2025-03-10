@@ -74,8 +74,6 @@
 		BE1FA8CD07AF96B2004B6283 /* SDL_mixer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1014BAEA010A4B677F000001 /* SDL_mixer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F30240632881DF95002F32D6 /* music_xmp.h in Headers */ = {isa = PBXBuildFile; fileRef = F302405F2881DF94002F32D6 /* music_xmp.h */; };
 		F30240652881DF95002F32D6 /* music_xmp.c in Sources */ = {isa = PBXBuildFile; fileRef = F30240622881DF95002F32D6 /* music_xmp.c */; };
-		F307A52F2B5473760012534B /* music_minimp3.c in Sources */ = {isa = PBXBuildFile; fileRef = F307A52D2B5473760012534B /* music_minimp3.c */; };
-		F307A5302B5473760012534B /* music_minimp3.h in Headers */ = {isa = PBXBuildFile; fileRef = F307A52E2B5473760012534B /* music_minimp3.h */; };
 		F3249B39285C448100DB9B5C /* CMake in Resources */ = {isa = PBXBuildFile; fileRef = F3249B36285C448100DB9B5C /* CMake */; };
 		F3412A412D4C950E00D6C2B7 /* SDL3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3412A402D4C950E00D6C2B7 /* SDL3.framework */; };
 		F37A8D2D2838924900C38E95 /* music_drmp3.h in Headers */ = {isa = PBXBuildFile; fileRef = F37A8D2B2838924900C38E95 /* music_drmp3.h */; };
@@ -216,8 +214,6 @@
 		F30240622881DF95002F32D6 /* music_xmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_xmp.c; sourceTree = "<group>"; };
 		F307A25D2B542F110012534B /* wavpack.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = wavpack.xcodeproj; path = wavpack/wavpack.xcodeproj; sourceTree = "<group>"; };
 		F307A2732B5431700012534B /* gme.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = gme.xcodeproj; path = gme/gme.xcodeproj; sourceTree = "<group>"; };
-		F307A52D2B5473760012534B /* music_minimp3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_minimp3.c; sourceTree = "<group>"; };
-		F307A52E2B5473760012534B /* music_minimp3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_minimp3.h; sourceTree = "<group>"; };
 		F3249B36285C448100DB9B5C /* CMake */ = {isa = PBXFileReference; lastKnownFileType = folder; path = CMake; sourceTree = "<group>"; };
 		F3412A402D4C950E00D6C2B7 /* SDL3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL3.framework; path = macOS/SDL3.framework; sourceTree = "<group>"; };
 		F37A8D2B2838924900C38E95 /* music_drmp3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = music_drmp3.h; sourceTree = "<group>"; };
@@ -334,8 +330,6 @@
 				AAE405BF1F9607BF00EDAF53 /* music_fluidsynth.h */,
 				F3F8794C29B30FDA0007FDA1 /* music_gme.c */,
 				F3F8794A29B30FDA0007FDA1 /* music_gme.h */,
-				F307A52D2B5473760012534B /* music_minimp3.c */,
-				F307A52E2B5473760012534B /* music_minimp3.h */,
 				AAE405DF1F9607C300EDAF53 /* music_mpg123.c */,
 				AAE405D31F9607C100EDAF53 /* music_mpg123.h */,
 				AAE405D51F9607C100EDAF53 /* music_nativemidi.c */,
@@ -466,7 +460,6 @@
 				AAE405E31F9607C300EDAF53 /* music_fluidsynth.h in Headers */,
 				AAE405F61F9607C300EDAF53 /* load_aiff.h in Headers */,
 				F37A8D2D2838924900C38E95 /* music_drmp3.h in Headers */,
-				F307A5302B5473760012534B /* music_minimp3.h in Headers */,
 				AAE405E71F9607C300EDAF53 /* load_voc.h in Headers */,
 				AAE405EC1F9607C300EDAF53 /* music_wav.h in Headers */,
 				AAE405FE1F9607C300EDAF53 /* music_nativemidi.h in Headers */,
@@ -695,7 +688,6 @@
 				AAE406041F9607C300EDAF53 /* effect_stereoreverse.c in Sources */,
 				AAE405ED1F9607C300EDAF53 /* music_wav.c in Sources */,
 				F30240652881DF95002F32D6 /* music_xmp.c in Sources */,
-				F307A52F2B5473760012534B /* music_minimp3.c in Sources */,
 				AAE405E51F9607C300EDAF53 /* mixer.c in Sources */,
 				0448E8AE108B937A00C9D3EA /* native_midi_macosx.c in Sources */,
 				630FBD8320D52105009867AB /* music_opus.c in Sources */,
@@ -780,7 +772,7 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					MUSIC_FLAC_DRFLAC,
-					MUSIC_MP3_MINIMP3,
+					MUSIC_MP3_DRMP3,
 					MUSIC_OGG,
 					OGG_USE_STB,
 					MUSIC_WAV,
@@ -830,7 +822,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					MUSIC_FLAC_DRFLAC,
-					MUSIC_MP3_MINIMP3,
+					MUSIC_MP3_DRMP3,
 					MUSIC_OGG,
 					OGG_USE_STB,
 					MUSIC_WAV,

@@ -35,8 +35,7 @@ set(SDLMIXER_MOD_XMP               TRUE)
 set(SDLMIXER_MOD_XMP_LITE          TRUE)
 
 set(SDLMIXER_MP3                   TRUE)
-set(SDLMIXER_MP3_MINIMP3           TRUE)
-set(SDLMIXER_MP3_DRMP3             FALSE)
+set(SDLMIXER_MP3_DRMP3             TRUE)
 set(SDLMIXER_MP3_MPG123            FALSE)
 
 set(SDLMIXER_MIDI                  TRUE)
