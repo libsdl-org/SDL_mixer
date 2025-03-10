@@ -223,7 +223,6 @@ int main(int argc, char *argv[])
             typ = "WAV";
             break;
         case MUS_MOD:
-        case MUS_MODPLUG_UNUSED:
             typ = "MOD";
             break;
         case MUS_FLAC:
@@ -236,7 +235,6 @@ int main(int argc, char *argv[])
             typ = "OGG Vorbis";
             break;
         case MUS_MP3:
-        case MUS_MP3_MAD_UNUSED:
             typ = "MP3";
             break;
         case MUS_OPUS:
