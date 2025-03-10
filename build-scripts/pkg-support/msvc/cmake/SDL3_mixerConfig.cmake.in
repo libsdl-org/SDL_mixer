@@ -30,7 +30,6 @@ set(SDLMIXER_FLAC_DRFLAC           TRUE)
 set(SDLMIXER_GME                   FALSE)
 
 set(SDLMIXER_MOD                   TRUE)
-set(SDLMIXER_MOD_MODPLUG           TRUE)
 set(SDLMIXER_MOD_XMP               FALSE)
 set(SDLMIXER_MOD_XMP_LITE          FALSE)
 
