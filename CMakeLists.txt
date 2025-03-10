@@ -148,14 +148,13 @@ endif()
 
 option(SDLMIXER_MP3 "Enable MP3 music" ON)
 
-cmake_dependent_option(SDLMIXER_MP3_MINIMP3 "Support loading MP3 music via minimp3" ON SDLMIXER_MP3 OFF)
-cmake_dependent_option(SDLMIXER_MP3_DRMP3 "Support loading MP3 music via dr_mp3" OFF SDLMIXER_MP3 OFF)
+cmake_dependent_option(SDLMIXER_MP3_DRMP3 "Support loading MP3 music via dr_mp3" ON SDLMIXER_MP3 OFF)
 
 cmake_dependent_option(SDLMIXER_MP3_MPG123 "Support loading MP3 music via MPG123" OFF SDLMIXER_MP3 OFF)
 cmake_dependent_option(SDLMIXER_MP3_MPG123_SHARED "Dynamically load mpg123" "${SDLMIXER_DEPS_SHARED}" SDLMIXER_MP3_MPG123 OFF)
 
-if(SDLMIXER_MP3 AND NOT (SDLMIXER_MP3_MINIMP3 OR SDLMIXER_MP3_DRMP3 OR SDLMIXER_MP3_MPG123))
-    message(FATAL_ERROR "MP3 support was enabled (SDLMIXER_MP3) but neither drmp3 (SDLMIXER_MP3_DRMP3), minimp3 (SDLMIXER_MP3_MINIMP3) or mpg123 (SDLMIXER_MP3_MPG123) were enabled.")
+if(SDLMIXER_MP3 AND NOT (SDLMIXER_MP3_DRMP3 OR SDLMIXER_MP3_MPG123))
+    message(FATAL_ERROR "MP3 support was enabled (SDLMIXER_MP3) but neither drmp3 (SDLMIXER_MP3_DRMP3) or mpg123 (SDLMIXER_MP3_MPG123) were enabled.")
 endif()
 
 option(SDLMIXER_MIDI "Enable MIDI music" ON)
@@ -256,7 +255,6 @@ add_library(${sdl3_mixer_target_name}
     src/codecs/music_flac.c
     src/codecs/music_fluidsynth.c
     src/codecs/music_gme.c
-    src/codecs/music_minimp3.c
     src/codecs/music_mpg123.c
     src/codecs/music_nativemidi.c
     src/codecs/music_ogg.c
@@ -827,13 +825,6 @@ if(SDLMIXER_MOD_XMP_ENABLED)
     set(SDLMIXER_MOD_ENABLED TRUE)
 endif()
 
-list(APPEND SDLMIXER_BACKENDS MP3_MINIMP3)
-set(SDLMIXER_MP3_MINIMP3_ENABLED FALSE)
-if(SDLMIXER_MP3_MINIMP3)
-    set(SDLMIXER_MP3_MINIMP3_ENABLED TRUE)
-    target_compile_definitions(${sdl3_mixer_target_name} PRIVATE MUSIC_MP3_MINIMP3)
-endif()
-
 list(APPEND SDLMIXER_BACKENDS MP3_DRMP3)
 set(SDLMIXER_MP3_DRMP3_ENABLED FALSE)
 if(SDLMIXER_MP3_DRMP3)
@@ -894,7 +885,7 @@ if(SDLMIXER_MP3_MPG123)
 endif()
 
 set(SDLMIXER_MP3_ENABLED FALSE)
-if(SDLMIXER_MP3_MINIMP3_ENABLED OR SDLMIXER_MP3_MPG123_ENABLED)
+if(SDLMIXER_MP3_DRMP3_ENABLED OR SDLMIXER_MP3_MPG123_ENABLED)
     set(SDLMIXER_MP3_ENABLED TRUE)
 endif()
 
