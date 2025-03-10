@@ -219,9 +219,7 @@ typedef enum Mix_MusicType {
     MUS_MID,
     MUS_OGG,
     MUS_MP3,
-    MUS_MP3_MAD_UNUSED,
     MUS_FLAC,
-    MUS_MODPLUG_UNUSED,
     MUS_OPUS,
     MUS_WAVPACK,
     MUS_GME
