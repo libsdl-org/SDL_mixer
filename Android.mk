@@ -19,8 +19,8 @@ SUPPORT_OGG ?= false
 OGG_LIBRARY_PATH := external/ogg
 VORBIS_LIBRARY_PATH := external/tremor
 
-# Enable this if you want to support loading MP3 music via MINIMP3
-SUPPORT_MP3_MINIMP3 ?= true
+# Enable this if you want to support loading MP3 music via dr_mp3
+SUPPORT_MP3_DRMP3 ?= true
 
 # Enable this if you want to support loading MP3 music via MPG123
 SUPPORT_MP3_MPG123 ?= false
@@ -129,8 +129,8 @@ ifeq ($(SUPPORT_OGG),true)
     LOCAL_STATIC_LIBRARIES += ogg vorbisidec
 endif
 
-ifeq ($(SUPPORT_MP3_MINIMP3),true)
-    LOCAL_CFLAGS += -DMUSIC_MP3_MINIMP3
+ifeq ($(SUPPORT_MP3_DRMP3),true)
+    LOCAL_CFLAGS += -DMUSIC_MP3_DRMP3
 endif
 
 # This needs to be a shared library to comply with the LGPL license
@@ -180,4 +180,3 @@ LOCAL_LDLIBS :=
 LOCAL_EXPORT_LDLIBS :=
 
 include $(BUILD_STATIC_LIBRARY)
-

@@ -31,6 +31,9 @@
     <ClInclude Include="..\src\codecs\music_drflac.h">
       <Filter>Sources</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\codecs\music_drmp3.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\codecs\music_flac.h">
       <Filter>Sources</Filter>
     </ClInclude>
@@ -38,9 +41,6 @@
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="..\src\codecs\music_gme.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\codecs\music_minimp3.h">
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="..\src\codecs\music_mpg123.h">
@@ -164,6 +164,9 @@
     <ClCompile Include="..\src\codecs\music_drflac.c">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\codecs\music_drmp3.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\codecs\music_flac.c">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -171,9 +174,6 @@
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\src\codecs\music_gme.c">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\codecs\music_minimp3.c">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\src\codecs\music_mpg123.c">
