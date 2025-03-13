@@ -21,8 +21,8 @@ set(SDL2MIXER_FLAC_DRFLAC           TRUE)
 set(SDL2MIXER_GME                   FALSE)
 
 set(SDL2MIXER_MOD                   TRUE)
-set(SDL2MIXER_MOD_MODPLUG           TRUE)
-set(SDL2MIXER_MOD_XMP               FALSE)
+set(SDL2MIXER_MOD_MODPLUG           FALSE)
+set(SDL2MIXER_MOD_XMP               TRUE)
 set(SDL2MIXER_MOD_XMP_LITE          FALSE)
 
 set(SDL2MIXER_MP3                   TRUE)
