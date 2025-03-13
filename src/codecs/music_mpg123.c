@@ -30,6 +30,7 @@
 #include "mp3utils.h"
 
 #include <stdio.h>      /* For SEEK_SET */
+#define MPG123_NO_LARGENAME /* disable the _FILE_OFFSET_BITS suffixes. */
 #ifdef MPG123_HEADER
 #include MPG123_HEADER
 #else
