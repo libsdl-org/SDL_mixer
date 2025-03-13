@@ -30,7 +30,7 @@ set(SDLMIXER_FLAC_DRFLAC           TRUE)
 set(SDLMIXER_GME                   FALSE)
 
 set(SDLMIXER_MOD                   TRUE)
-set(SDLMIXER_MOD_XMP               FALSE)
+set(SDLMIXER_MOD_XMP               TRUE)
 set(SDLMIXER_MOD_XMP_LITE          FALSE)
 
 set(SDLMIXER_MP3                   TRUE)
