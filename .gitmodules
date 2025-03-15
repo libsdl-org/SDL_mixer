@@ -37,4 +37,8 @@
 [submodule "external/libgme"]
 	path = external/libgme
 	url = https://github.com/libsdl-org/game-music-emu.git
-	branch = v0.6.3-SDL
+  branch = v0.6.3-SDL
+[submodule "external/StSound"]
+	path = external/StSound
+	url = https://github.com/arnaud-carre/StSound.git
+  branch = main
