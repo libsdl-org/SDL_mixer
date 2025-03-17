@@ -42,6 +42,8 @@
 #include <string.h>
 #include <sys/stat.h>
 
+#include <assert.h>
+
 //#define SDL_NATIVE_MIDI_ALSA_DYNAMIC "libasound.so.2"
 
 static int load_alsa_syms(void);
@@ -438,7 +440,7 @@ static NativeMidiSong *currentsong = NULL;
 NativeMidiSong *native_midi_loadsong_IO(SDL_IOStream *src, bool closeio)
 {
     NativeMidiSong *song;
-    MIDIEvent *end;
+    MIDIEvent *event;
     int sv[2];
 
     if (!(song = SDL_calloc(1, sizeof(NativeMidiSong)))) {
@@ -455,7 +457,7 @@ NativeMidiSong *native_midi_loadsong_IO(SDL_IOStream *src, bool closeio)
     song->mainsock = sv[0];
     song->threadsock = sv[1];
 
-    end = song->evtlist = CreateMIDIEventList(src, &song->ppqn);
+    event = song->evtlist = CreateMIDIEventList(src, &song->ppqn);
 
     if (!song->evtlist) {
         close_sockpair(song);
@@ -463,6 +465,37 @@ NativeMidiSong *native_midi_loadsong_IO(SDL_IOStream *src, bool closeio)
         MIDI_SET_ERROR("Failed to create MIDIEventList");
         return NULL;
     }
+
+    /* Since ALSA requires the starting F0 for SysEx, but MIDIEvent.extraData doesn't contain it, we must preprocess the list */
+    /* In addition, since we're going through the list, store the last event's time for looping purposes */
+    do {
+        /* Is this a SysEx? */
+        if (event->status == MIDI_CMD_COMMON_SYSEX && event->extraLen) {
+            /* Sanity check in case something changes in the future */
+            /* This is safe to do since we can't have an F0 manufacturer ID */
+            assert(event->extraData[0] != MIDI_CMD_COMMON_SYSEX);
+
+            /* Resize by + 1 */
+            Uint8 *newData = SDL_realloc(event->extraData, event->extraLen + 1);
+            if (newData == NULL) {
+                close_sockpair(song);
+                /* Original allocation is still valid on failure */
+                FreeMIDIEventList(song->evtlist);
+                SDL_free(song);
+                MIDI_SET_ERROR("Failed to preprocess MIDIEventList SysEx");
+                return NULL;
+            }
+
+            /* Prepend the F0 */
+            event->extraData = newData;
+            SDL_memmove(event->extraData + 1, event->extraData, event->extraLen);
+            event->extraData[0] = MIDI_CMD_COMMON_SYSEX;
+            event->extraLen++;
+        }
+
+        /* Store the end time */
+        song->endtime = event->time;
+    } while ((event = event->next));
 
     if (!(song->seq = open_seq(&song->srcport))) {
         FreeMIDIEventList(song->evtlist);
@@ -478,11 +511,6 @@ NativeMidiSong *native_midi_loadsong_IO(SDL_IOStream *src, bool closeio)
 
     SDL_SetAtomicInt(&song->playerstate, NATIVE_MIDI_STOPPED);
 
-    /* Find the last event to get its time */
-    while (end->next)
-        end = end->next;
-
-    song->endtime = end->time;
 
     /* Since there's no reliable volume control solution it's better to leave the music playing instead of having hanging notes */
     song->allow_pause = SDL_GetHintBoolean("SDL_NATIVE_MUSIC_ALLOW_PAUSE", false);
@@ -692,6 +720,7 @@ static int native_midi_player_thread(void *d)
         const unsigned char channel = event->status & 0x0F;
 
         snd_seq_ev_set_dest(&evt, song->dstaddr.client, song->dstaddr.port);
+        snd_seq_ev_set_fixed(&evt);
         snd_seq_ev_schedule_tick(&evt, queue, 0, event->time);
 
         bool unhandled = false;
@@ -733,6 +762,9 @@ static int native_midi_player_thread(void *d)
                     snd_seq_ev_set_queue_tempo(&evt, queue, t);
                     break;
                 }
+            } else if (event->status == MIDI_CMD_COMMON_SYSEX) {
+                snd_seq_ev_set_sysex(&evt, event->extraLen, event->extraData);
+                break;
             }
 
             unhandled = true;
