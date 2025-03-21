@@ -72,6 +72,10 @@
 		F307A2DC2B54329C0012534B /* Spc_Dsp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F307A2AD2B54329C0012534B /* Spc_Dsp.cpp */; };
 		F307A2DD2B54329C0012534B /* gme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F307A2AE2B54329C0012534B /* gme.cpp */; };
 		F307A2DF2B5434FF0012534B /* Vgm_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F307A2DE2B5434FF0012534B /* Vgm_Emu.cpp */; };
+		6314974C2D8D4A3600EEC879 /* Nes_Fds_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6314974B2D8D4A3600EEC879 /* Nes_Fds_Apu.cpp */; };
+		6314974E2D8D4A9200EEC879 /* Nes_Vrc7_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6314974D2D8D4A9200EEC879 /* Nes_Vrc7_Apu.cpp */; };
+		631497502D8D4AEA00EEC879 /* emu2413.c in Sources */ = {isa = PBXBuildFile; fileRef = 6314974F2D8D4AEA00EEC879 /* emu2413.c */; };
+		631497522D8D4B0500EEC879 /* panning.c in Sources */ = {isa = PBXBuildFile; fileRef = 631497512D8D4B0500EEC879 /* panning.c */; };
 		F307A2E12B54358D0012534B /* gme.h in Headers */ = {isa = PBXBuildFile; fileRef = F307A2E02B54358D0012534B /* gme.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
@@ -127,6 +131,10 @@
 		F307A2AD2B54329C0012534B /* Spc_Dsp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Spc_Dsp.cpp; path = ../../external/libgme/gme/Spc_Dsp.cpp; sourceTree = "<group>"; };
 		F307A2AE2B54329C0012534B /* gme.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = gme.cpp; path = ../../external/libgme/gme/gme.cpp; sourceTree = "<group>"; };
 		F307A2DE2B5434FF0012534B /* Vgm_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Vgm_Emu.cpp; path = ../../external/libgme/gme/Vgm_Emu.cpp; sourceTree = "<group>"; };
+		6314974B2D8D4A3600EEC879 /* Nes_Fds_Apu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Nes_Fds_Apu.cpp; path = ../../external/libgme/gme/Nes_Fds_Apu.cpp; sourceTree = "<group>"; };
+		6314974D2D8D4A9200EEC879 /* Nes_Vrc7_Apu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Nes_Vrc7_Apu.cpp; path = ../../external/libgme/gme/Nes_Vrc7_Apu.cpp; sourceTree = "<group>"; };
+		6314974F2D8D4AEA00EEC879 /* emu2413.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = emu2413.c; path = ../../external/libgme/gme/ext/emu2413.c; sourceTree = "<group>"; };
+		631497512D8D4B0500EEC879 /* panning.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = panning.c; path = ../../external/libgme/gme/ext/panning.c; sourceTree = "<group>"; };
 		F307A2E02B54358D0012534B /* gme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gme.h; path = ../../external/libgme/gme/gme.h; sourceTree = "<group>"; };
 		F3F70EDA281F61B4005AA27D /* gme.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = gme.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -178,6 +186,8 @@
 				F307A2932B54329C0012534B /* Gbs_Emu.cpp */,
 				F307A2982B54329C0012534B /* Gme_File.cpp */,
 				F307A2AE2B54329C0012534B /* gme.cpp */,
+				6314974F2D8D4AEA00EEC879 /* emu2413.c */,
+				631497512D8D4B0500EEC879 /* panning.c */,
 				F307A2A82B54329C0012534B /* Gym_Emu.cpp */,
 				F307A2A02B54329C0012534B /* Hes_Apu.cpp */,
 				F307A29C2B54329C0012534B /* Hes_Cpu.cpp */,
@@ -194,6 +204,8 @@
 				F307A2852B54329C0012534B /* Nes_Namco_Apu.cpp */,
 				F307A29E2B54329C0012534B /* Nes_Oscs.cpp */,
 				F307A2812B54329C0012534B /* Nes_Vrc6_Apu.cpp */,
+				6314974B2D8D4A3600EEC879 /* Nes_Fds_Apu.cpp */,
+				6314974D2D8D4A9200EEC879 /* Nes_Vrc7_Apu.cpp */,
 				F307A29F2B54329C0012534B /* Nsf_Emu.cpp */,
 				F307A2992B54329C0012534B /* Nsfe_Emu.cpp */,
 				F307A2902B54329C0012534B /* Sap_Apu.cpp */,
@@ -388,6 +400,10 @@
 				F307A2BF2B54329C0012534B /* Sap_Apu.cpp in Sources */,
 				F307A2DC2B54329C0012534B /* Spc_Dsp.cpp in Sources */,
 				F307A2C82B54329C0012534B /* Nsfe_Emu.cpp in Sources */,
+				6314974C2D8D4A3600EEC879 /* Nes_Fds_Apu.cpp in Sources */,
+				6314974E2D8D4A9200EEC879 /* Nes_Vrc7_Apu.cpp in Sources */,
+				631497502D8D4AEA00EEC879 /* emu2413.c in Sources */,
+				631497522D8D4B0500EEC879 /* panning.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
