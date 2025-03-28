@@ -326,6 +326,10 @@ static void *WAVPACK_CreateFromFile(const char *file)
     file2 = SDL_stack_alloc(char, len + 2);
     if (!file2) src2 = NULL;
     else {
+        /* this assumes 'file' is a good boy and has 'wv' as an extension.
+         * official wavpack command line tools do the same thing so I'm not
+         * doing anything extra. besides, the wavpack library validates the
+         * correction file, therefore, no harm done.  */
         SDL_memcpy(file2, file, len);
         file2[len] =  'c';
         file2[len + 1] = '\0';
