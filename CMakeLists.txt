@@ -143,7 +143,7 @@ cmake_dependent_option(SDLMIXER_MOD_XMP_LITE "Use libxmp-lite instead of libxmp"
 cmake_dependent_option(SDLMIXER_MOD_XMP_SHARED "Dynamically load libxmp(-lite)" "${SDLMIXER_DEPS_SHARED}" SDLMIXER_MOD_XMP OFF)
 
 if(SDLMIXER_MOD AND NOT SDLMIXER_MOD_XMP)
-    message(FATAL_ERROR "MOD support was enabled (SDLMIXER_MOD) but xmp (SDLMIXER_MOD_XMP) was enabled.")
+    message(FATAL_ERROR "MOD support was enabled (SDLMIXER_MOD) but xmp (SDLMIXER_MOD_XMP) was disabled.")
 endif()
 
 option(SDLMIXER_MP3 "Enable MP3 music" ON)
