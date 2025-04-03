@@ -1052,7 +1052,7 @@ extern SDL_DECLSPEC void SDLCALL Mix_HookMusicFinished(Mix_MusicFinishedCallback
  */
 extern SDL_DECLSPEC void * SDLCALL Mix_GetMusicHookData(void);
 
-typedef void (SDLCALL *Mix_ChannelFinishedCallback)(int channel);
+typedef void (SDLCALL *Mix_ChannelFinishedCallback)(void *userdata, int channel);
 
 /**
  * Set a callback that runs when a channel has finished playing.
@@ -1065,12 +1065,13 @@ typedef void (SDLCALL *Mix_ChannelFinishedCallback)(int channel);
  *
  * A NULL pointer will disable the callback.
  *
+ * \param userdata the user data to pass to the callback.
  * \param channel_finished the callback function to become the new
  *                         notification mechanism.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  */
-extern SDL_DECLSPEC void SDLCALL Mix_ChannelFinished(Mix_ChannelFinishedCallback channel_finished);
+extern SDL_DECLSPEC void SDLCALL Mix_ChannelFinished(void *userdata, Mix_ChannelFinishedCallback channel_finished);
 
 /**
  * Magic number for effects to operate on the postmix instead of a channel.

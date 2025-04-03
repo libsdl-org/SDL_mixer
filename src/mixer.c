@@ -100,6 +100,7 @@ static void *mix_postmix_data = NULL;
 
 /* rcg07062001 callback to alert when channels are done playing. */
 static Mix_ChannelFinishedCallback channel_done_callback = NULL;
+static void *channel_done_callback_userdata = NULL;
 
 /* Support for user defined music functions */
 static Mix_MixCallback mix_music = music_mixer;
@@ -291,7 +292,7 @@ static bool _Mix_remove_all_effects(int channel, effect_info **e);
 static void _Mix_channel_done_playing(int channel)
 {
     if (channel_done_callback) {
-        channel_done_callback(channel);
+        channel_done_callback(channel_done_callback_userdata, channel);
     }
 
     /*
@@ -1023,10 +1024,11 @@ void *Mix_GetMusicHookData(void)
     return music_data;
 }
 
-void Mix_ChannelFinished(Mix_ChannelFinishedCallback channel_finished)
+void Mix_ChannelFinished(void *userdata, Mix_ChannelFinishedCallback channel_finished)
 {
     Mix_LockAudio();
     channel_done_callback = channel_finished;
+    channel_done_callback_userdata = userdata;
     Mix_UnlockAudio();
 }
 
