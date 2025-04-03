@@ -77,7 +77,7 @@ static void test_versions(void)
 }
 
 static int channel_is_done = 0;
-static void SDLCALL channel_complete_callback (int chan)
+static void SDLCALL channel_complete_callback (void *userdata, int chan)
 {
     if (verbose) {
         Mix_Chunk *done_chunk = Mix_GetChunk(chan);
@@ -86,6 +86,8 @@ static void SDLCALL channel_complete_callback (int chan)
         SDL_Log(" Which %s correct.\n", (g_wave == done_chunk) ? "is" : "is NOT");
     }
     channel_is_done = 1;
+
+    (void) userdata; /* rcg06192001 unused */
 }
 
 /* rcg06192001 abstract this out for testing purposes. */
@@ -415,7 +417,7 @@ int main(int argc, char *argv[])
         flip_sample(g_wave);
     }
 
-    Mix_ChannelFinished(channel_complete_callback);
+    Mix_ChannelFinished(NULL, channel_complete_callback);
 
     if ((!Mix_SetReverseStereo(MIX_CHANNEL_POST, reverse_stereo)) &&
          (reverse_stereo))
