@@ -665,7 +665,7 @@ static bool parse_ape(Mix_MusicMetaTags *out_tags, struct mp3file_t *src, Sint64
 {
     Uint8 buffer[APE_BUFFER_SIZE + 1];
     Uint32 v, i, tag_size, tag_items_count, tag_item_size;
-    Uint32 zero8[2] = {0, 0};
+    Uint32 zero8[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
     Sint64 file_size, cur_tag;
     size_t read_size;
 
