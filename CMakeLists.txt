@@ -1229,7 +1229,7 @@ if(SDLMIXER_SAMPLES)
 
         if(SDLMIXER_SAMPLES_INSTALL)
             install(TARGETS ${prog}
-                RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+                RUNTIME DESTINATION "${CMAKE_INSTALL_LIBEXECDIR}/installed-tests/SDL3_mixer"
             )
         endif()
     endforeach()
