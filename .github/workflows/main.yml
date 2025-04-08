@@ -19,12 +19,11 @@ jobs:
         - { name: Windows (mingw32+autotools),  os: windows-latest, shell: 'msys2 {0}', msystem: mingw32, msys-env: mingw-w64-i686, shared: 1, static: 1 }
         - { name: Windows (mingw64+CMake),      os: windows-latest, shell: 'msys2 {0}', msystem: mingw64, msys-env: mingw-w64-x86_64, shared: 1, static: 0,
             cmake: '-DSDL2MIXER_VENDORED=OFF -G "Ninja Multi-Config"' }
-        - { name: Linux (autotools),            os: ubuntu-20.04,   shell: sh, shared: 1, static: 1}
-        - { name: Linux (CMake),                os: ubuntu-20.04,   shell: sh, cmake: '-DSDL2MIXER_VENDORED=ON -GNinja', shared: 1, static: 0 }
-        - { name: 'Linux (CMake, static)',      os: ubuntu-20.04,   shell: sh, cmake: '-DSDL2MIXER_VENDORED=ON -DBUILD_SHARED_LIBS=OFF -GNinja', shared: 0, static: 1 }
-        - { name: Macos (autotools),            os: macos-latest,   shell: sh, shared: 1, static: 1 }
-        - { name: Macos (CMake),                os: macos-latest,   shell: sh, cmake: '-DSDL2MIXER_VENDORED=ON -GNinja', shared: 1, static: 0 }
-
+        - { name: Linux (autotools),            os: ubuntu-latest, shell: sh, shared: 1, static: 1}
+        - { name: Linux (CMake),                os: ubuntu-latest, shell: sh, cmake: '-DSDL2MIXER_VENDORED=ON -GNinja', shared: 1, static: 0 }
+        - { name: 'Linux (CMake, static)',      os: ubuntu-latest, shell: sh, cmake: '-DSDL2MIXER_VENDORED=ON -DBUILD_SHARED_LIBS=OFF -GNinja', shared: 0, static: 1 }
+        - { name: Macos (autotools),            os: macos-latest,  shell: sh, shared: 1, static: 1 }
+        - { name: Macos (CMake),                os: macos-latest,  shell: sh, cmake: '-DSDL2MIXER_VENDORED=ON -GNinja', shared: 1, static: 0 }
 
     steps:
     - name: Set up MSYS2
