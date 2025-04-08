@@ -18,9 +18,9 @@ jobs:
         - { name: Windows (MSVC),       os: windows-2019, shell: sh,   cmake: '-DPerl_ROOT=C:/Strawberry/perl/bin/ -DSDLMIXER_VENDORED=ON -GNinja', msvc: 1, shared: 1, static: 0, artifact: 'SDL3_mixer-VC-x64' }
         - { name: Windows (mingw64),    os: windows-latest, shell: 'msys2 {0}', msystem: mingw64, msys-env: mingw-w64-x86_64, shared: 1, static: 0, artifact: 'SDL3_mixer-mingw64',
             cmake: '-DSDLMIXER_VENDORED=OFF -G "Ninja Multi-Config"' }
-        - { name: Linux,                os: ubuntu-20.04,   shell: sh, cmake: '-DSDLMIXER_VENDORED=ON -GNinja', shared: 1, static: 0, artifact: 'SDL3_mixer-linux-x64' }
-        - { name: 'Linux (static)',     os: ubuntu-20.04,   shell: sh, cmake: '-DSDLMIXER_VENDORED=ON -DBUILD_SHARED_LIBS=OFF -GNinja', shared: 0, static: 1, artifact: 'SDL3_mixer-static-linux-x64' }
-        - { name: Macos,                os: macos-latest,   shell: sh, cmake: '-DSDLMIXER_VENDORED=ON -GNinja', shared: 1, static: 0, artifact: 'SDL3_mixer-macos' }
+        - { name: Linux,                os: ubuntu-latest, shell: sh, cmake: '-DSDLMIXER_VENDORED=ON -GNinja', shared: 1, static: 0, artifact: 'SDL3_mixer-linux-x64' }
+        - { name: 'Linux (static)',     os: ubuntu-latest, shell: sh, cmake: '-DSDLMIXER_VENDORED=ON -DBUILD_SHARED_LIBS=OFF -GNinja', shared: 0, static: 1, artifact: 'SDL3_mixer-static-linux-x64' }
+        - { name: Macos,                os: macos-latest,  shell: sh, cmake: '-DSDLMIXER_VENDORED=ON -GNinja', shared: 1, static: 0, artifact: 'SDL3_mixer-macos' }
 
 
     steps:
