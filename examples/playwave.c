@@ -27,7 +27,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifdef unix
+#if defined(__unix__) || defined(__APPLE__)
 #include <unistd.h>
 #endif
 
