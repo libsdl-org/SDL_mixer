@@ -36,7 +36,6 @@
 #include "native_midi.h"
 #include "native_midi_common.h"
 
-#include <alsa/asoundef.h>
 #include <alsa/asoundlib.h>
 
 #include <errno.h>
