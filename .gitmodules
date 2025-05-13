@@ -26,10 +26,10 @@
 	path = external/mpg123
 	url = https://github.com/libsdl-org/mpg123.git
 	branch = v1.31.3-SDL
-[submodule "libxmp"]
+[submodule "external/libxmp"]
 	path = external/libxmp
 	url = https://github.com/libsdl-org/libxmp.git
-	branch = 4.6.2-SDL
+	branch = 4.6.3-SDL
 [submodule "external/wavpack"]
 	path = external/wavpack
 	url = https://github.com/libsdl-org/wavpack.git
