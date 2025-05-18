@@ -21,9 +21,6 @@
 
 #ifdef MP3_MUSIC
 
-#ifndef MPG123_NO_LARGENAME
-#define MPG123_NO_LARGENAME /* disable the _FILE_OFFSET_BITS suffixes. */
-#endif
 #include <mpg123.h>
 
 typedef struct {
