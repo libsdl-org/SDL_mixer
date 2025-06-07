@@ -29,6 +29,10 @@
 #include "music_mpg123.h"
 #include "mp3utils.h"
 
+/* Not defining MPG123_PORTABLE_API here, because mpg123 v1.32.x,
+ * i.e. MPG123_API_VERSION 48, doesn't have mpg123_open_handle64()
+ */
+/* #define MPG123_PORTABLE_API */
 #include <stdio.h>      /* For SEEK_SET */
 #ifdef MPG123_HEADER
 #include MPG123_HEADER
@@ -54,7 +58,7 @@ typedef struct {
     int (*mpg123_getformat)( mpg123_handle *mh, long *rate, int *channels, int *encoding );
     int (*mpg123_init)(void);
     mpg123_handle *(*mpg123_new)(const char* decoder, int *error);
-    int (*mpg123_open_handle)(mpg123_handle *mh, void *iohandle);
+    const char* (*mpg123_strerror)(mpg123_handle *mh);
     const char* (*mpg123_plain_strerror)(int errcode);
     void (*mpg123_rates)(const long **list, size_t *number);
 #if (MPG123_API_VERSION >= 45) /* api (but not abi) change as of mpg123-1.26.0 */
@@ -62,11 +66,19 @@ typedef struct {
 #else
     int (*mpg123_read)(mpg123_handle *mh, unsigned char *outmemory, size_t outmemsize, size_t *done );
 #endif
+#if (MPG123_API_VERSION >= 49)
+    int (*mpg123_open_handle64)(mpg123_handle *mh, void *iohandle);
+    int (*mpg123_reader64)(mpg123_handle *mh, int (*r_read)(void*, void*, size_t, size_t*), int64_t (*r_lseek)(void*, int64_t, int), void (*cleanup)(void*));
+    int64_t (*mpg123_seek64)(mpg123_handle *mh, int64_t sampleoff, int whence);
+    int64_t (*mpg123_tell64)(mpg123_handle *mh);
+    int64_t (*mpg123_length64)(mpg123_handle *mh);
+#else
+    int (*mpg123_open_handle)(mpg123_handle *mh, void *iohandle);
     int (*mpg123_replace_reader_handle)( mpg123_handle *mh, MIX_SSIZE_T (*r_read) (void *, void *, size_t), off_t (*r_lseek)(void *, off_t, int), void (*cleanup)(void*) );
     off_t (*mpg123_seek)( mpg123_handle *mh, off_t sampleoff, int whence );
     off_t (*mpg123_tell)( mpg123_handle *mh);
     off_t (*mpg123_length)(mpg123_handle *mh);
-    const char* (*mpg123_strerror)(mpg123_handle *mh);
+#endif
 } mpg123_loader;
 
 static mpg123_loader mpg123;
@@ -102,7 +114,7 @@ static int MPG123_Load(void)
         FUNCTION_LOADER(mpg123_getformat, int (*)( mpg123_handle *mh, long *rate, int *channels, int *encoding ))
         FUNCTION_LOADER(mpg123_init, int (*)(void))
         FUNCTION_LOADER(mpg123_new, mpg123_handle *(*)(const char* decoder, int *error))
-        FUNCTION_LOADER(mpg123_open_handle, int (*)(mpg123_handle *mh, void *iohandle))
+        FUNCTION_LOADER(mpg123_strerror, const char* (*)(mpg123_handle *mh))
         FUNCTION_LOADER(mpg123_plain_strerror, const char* (*)(int errcode))
         FUNCTION_LOADER(mpg123_rates, void (*)(const long **list, size_t *number))
 #if (MPG123_API_VERSION >= 45) /* api (but not abi) change as of mpg123-1.26.0 */
@@ -110,11 +122,19 @@ static int MPG123_Load(void)
 #else
         FUNCTION_LOADER(mpg123_read, int (*)(mpg123_handle *mh, unsigned char *outmemory, size_t outmemsize, size_t *done ))
 #endif
+#if (MPG123_API_VERSION >= 49)
+        FUNCTION_LOADER(mpg123_open_handle64, int (*)(mpg123_handle *mh, void *iohandle))
+        FUNCTION_LOADER(mpg123_reader64, int (*)(mpg123_handle *mh, int (*r_read)(void*, void*, size_t, size_t*), int64_t (*r_lseek)(void*, int64_t, int), void (*cleanup)(void*)))
+        FUNCTION_LOADER(mpg123_seek64, int64_t (*)(mpg123_handle *mh, int64_t sampleoff, int whence))
+        FUNCTION_LOADER(mpg123_tell64, int64_t (*)(mpg123_handle *mh))
+        FUNCTION_LOADER(mpg123_length64, int64_t (*)(mpg123_handle *mh))
+#else
+        FUNCTION_LOADER(mpg123_open_handle, int (*)(mpg123_handle *mh, void *iohandle))
         FUNCTION_LOADER(mpg123_replace_reader_handle, int (*)( mpg123_handle *mh, MIX_SSIZE_T (*r_read) (void *, void *, size_t), off_t (*r_lseek)(void *, off_t, int), void (*cleanup)(void*) ))
         FUNCTION_LOADER(mpg123_seek, off_t (*)( mpg123_handle *mh, off_t sampleoff, int whence ))
         FUNCTION_LOADER(mpg123_tell, off_t (*)( mpg123_handle *mh))
         FUNCTION_LOADER(mpg123_length, off_t (*)(mpg123_handle *mh))
-        FUNCTION_LOADER(mpg123_strerror, const char* (*)(mpg123_handle *mh))
+#endif
     }
     ++mpg123.loaded;
 
@@ -147,7 +167,7 @@ typedef struct
     unsigned char *buffer;
     size_t buffer_size;
     long sample_rate;
-    off_t total_length;
+    Sint64 total_length;
     Mix_MusicMetaTags tags;
 } MPG123_Music;
 
@@ -200,6 +220,18 @@ static char const* mpg_err(mpg123_handle* mpg, int result)
 }
 
 /* we're gonna override mpg123's I/O with these wrappers for RWops */
+#if (MPG123_API_VERSION >= 49)
+static int rwops_read(void* p, void* dst, size_t n, size_t *b)
+{
+    *b = MP3_RWread((struct mp3file_t *)p, dst, 1, n);
+    return 0;
+}
+
+static int64_t rwops_seek(void* p, int64_t offset, int whence)
+{
+    return MP3_RWseek((struct mp3file_t *)p, offset, whence);
+}
+#else
 static MIX_SSIZE_T rwops_read(void* p, void* dst, size_t n)
 {
     return (MIX_SSIZE_T)MP3_RWread((struct mp3file_t *)p, dst, 1, n);
@@ -209,6 +241,7 @@ static off_t rwops_seek(void* p, off_t offset, int whence)
 {
     return (off_t)MP3_RWseek((struct mp3file_t *)p, (Sint64)offset, whence);
 }
+#endif
 
 static void rwops_cleanup(void* p)
 {
@@ -268,10 +301,17 @@ static void *MPG123_CreateFromRW(SDL_RWops *src, int freesrc)
         return NULL;
     }
 
+#if (MPG123_API_VERSION >= 49)
+    result = mpg123.mpg123_reader64(
+        music->handle,
+        rwops_read, rwops_seek, rwops_cleanup
+    );
+#else
     result = mpg123.mpg123_replace_reader_handle(
         music->handle,
         rwops_read, rwops_seek, rwops_cleanup
     );
+#endif
     if (result != MPG123_OK) {
         Mix_SetError("mpg123_replace_reader_handle: %s", mpg_err(music->handle, result));
         MPG123_Delete(music);
@@ -298,7 +338,11 @@ static void *MPG123_CreateFromRW(SDL_RWops *src, int freesrc)
         mpg123.mpg123_format(music->handle, rates[i], channels, formats);
     }
 
+#if (MPG123_API_VERSION >= 49)
+    result = mpg123.mpg123_open_handle64(music->handle, &music->mp3file);
+#else
     result = mpg123.mpg123_open_handle(music->handle, &music->mp3file);
+#endif
     if (result != MPG123_OK) {
         Mix_SetError("mpg123_open_handle: %s", mpg_err(music->handle, result));
         MPG123_Delete(music);
@@ -327,7 +371,11 @@ static void *MPG123_CreateFromRW(SDL_RWops *src, int freesrc)
         return NULL;
     }
 
+#if (MPG123_API_VERSION >= 49)
+    music->total_length = mpg123.mpg123_length64(music->handle);
+#else
     music->total_length = mpg123.mpg123_length(music->handle);
+#endif
 
     music->freesrc = freesrc;
     return music;
@@ -447,9 +495,15 @@ static int MPG123_GetAudio(void *context, void *data, int bytes)
 static int MPG123_Seek(void *context, double secs)
 {
     MPG123_Music *music = (MPG123_Music *)context;
+#if (MPG123_API_VERSION >= 49)
+    int64_t offset = (int64_t)(music->sample_rate * secs);
+    offset = mpg123.mpg123_seek64(music->handle, offset, SEEK_SET);
+#else
     off_t offset = (off_t)(music->sample_rate * secs);
+    offset = mpg123.mpg123_seek(music->handle, offset, SEEK_SET);
+#endif
 
-    if ((offset = mpg123.mpg123_seek(music->handle, offset, SEEK_SET)) < 0) {
+    if (offset < 0) {
         return Mix_SetError("mpg123_seek: %s", mpg_err(music->handle, (int)-offset));
     }
     return 0;
@@ -458,11 +512,16 @@ static int MPG123_Seek(void *context, double secs)
 static double MPG123_Tell(void *context)
 {
     MPG123_Music *music = (MPG123_Music *)context;
-    off_t offset = 0;
+    Sint64 offset;
     if (!music->sample_rate) {
         return 0.0;
     }
-    if ((offset = mpg123.mpg123_tell(music->handle)) < 0) {
+#if (MPG123_API_VERSION >= 49)
+    offset = mpg123.mpg123_tell64(music->handle);
+#else
+    offset = mpg123.mpg123_tell(music->handle);
+#endif
+    if (offset < 0) {
         return Mix_SetError("mpg123_tell: %s", mpg_err(music->handle, (int)-offset));
     }
     return (double)offset / music->sample_rate;
