@@ -31,7 +31,7 @@ SUPPORT_WAVPACK ?= true
 WAVPACK_LIBRARY_PATH := external/wavpack
 
 # Enable this if you want to support loading music via libgme
-SUPPORT_GME ?= true
+SUPPORT_GME ?= false
 GME_LIBRARY_PATH := external/libgme
 
 # Enable this if you want to support loading MOD music via XMP-lite
@@ -91,7 +91,6 @@ LOCAL_C_INCLUDES :=                                     \
     $(LOCAL_PATH)/include                               \
     $(LOCAL_PATH)/src/                                  \
     $(LOCAL_PATH)/src/codecs                            \
-
 
 LOCAL_SRC_FILES :=                                      \
     $(subst $(LOCAL_PATH)/,,                            \
