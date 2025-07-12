@@ -99,12 +99,9 @@ jobs:
       if: ${{ runner.os == 'Linux' }}
       run: ./build-scripts/test-versioning.sh
 
-    - name: Set up yasm for mpg123
+    - name: Set up yasm for mpg123 (MSVC only)
+      uses: ./.github/actions/setup-yasm
       if: ${{ matrix.platform.msvc }}
-      shell: pwsh
-      run: |
-        .github/fetch_yasm.ps1
-        echo "${{ github.workspace }}" >> $Env:GITHUB_PATH
 
     - name: Configure (CMake)
       run: |

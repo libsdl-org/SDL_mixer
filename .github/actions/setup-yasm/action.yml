@@ -1,0 +1,60 @@
+# The pre-built yasm binaries are built with an older MSVCRT,
+# which is no longer installed on current Windows images.
+
+name: 'Setup yasm'
+description: 'Build yasm and add it to the PATH environment variable'
+runs:
+  using: 'composite'
+  steps:
+    - name: 'Calculate variables'
+      id: calc
+      shell: sh
+      run: |
+        echo "cache-key=yasm-${{ runner.os }}-${{ runner.arch }}" >> ${GITHUB_OUTPUT}
+    - name: 'Restore yasm'
+      id: restore-yasm
+      uses: actions/cache/restore@v4
+      with:
+        path: |
+          ${{ github.workspace }}/yasm
+        key: ${{ steps.calc.outputs.cache-key }}
+    - name: 'Verify cached yasm'
+      if: ${{ steps.restore-yasm.outputs.cache-hit }}
+      shell: pwsh
+      run: |
+        ${{ github.workspace }}\yasm\bin\yasm --help
+    - name: 'Download yasm sources'
+      if: ${{ !steps.restore-yasm.outputs.cache-hit }}
+      uses: actions/checkout@v4
+      with:
+        repository: yasm/yasm
+        path: yasm-src
+    - name: 'Configure, build and install yasm'
+      if: ${{ !steps.restore-yasm.outputs.cache-hit }}
+      shell: pwsh
+      run: |
+        cmake -S yasm-src -B yasm-build -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/yasm -DCMAKE_INSTALL_LIBDIR=bin -DCMAKE_INSTALL_BINDIR=bin -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON -DCMAKE_POLICY_DEFAULT_CMP0091=NEW -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded
+        cmake --build yasm-build --parallel
+        cmake --install yasm-build
+    - name: 'Verify built yasm'
+      if: ${{ !steps.restore-yasm.outputs.cache-hit }}
+      shell: sh
+      run: |
+        set -e
+        if [ ! -f "yasm/bin/yasm.exe" -a -f "yasm/bin/vsyasm.exe" ]; then
+          cp "yasm/bin/vsyasm.exe" "yasm/bin/yasm.exe"
+        fi
+        yasm/bin/yasm --help
+    - name: 'Cache yasm'
+      if: ${{ !steps.restore-yasm.outputs.cache-hit }}
+      uses: actions/cache/save@v4
+      with:
+        path: |
+          ${{ github.workspace }}/yasm
+        key: ${{ steps.calc.outputs.cache-key }}
+        enableCrossOsArchive: true
+    - name: 'Set output variables'
+      id: final
+      shell: pwsh
+      run: |
+        echo "${{ github.workspace }}/yasm/bin" >> $env:GITHUB_PATH
