@@ -47,9 +47,6 @@ jobs:
           ${{ matrix.platform.msys-env }}-ninja
           ${{ matrix.platform.msys-env }}-perl
           ${{ matrix.platform.msys-env }}-pkg-config
-    - name: Set up Ninja
-      uses: aseprite/get-ninja@main
-      if: ${{ !contains(matrix.platform.shell, 'msys2') }}
     - name: Set up SDL
       id: sdl
       uses: libsdl-org/setup-sdl@main
@@ -63,7 +60,6 @@ jobs:
       run: |
         brew install \
           libtool \
-          ninja \
           flac \
           fluidsynth \
           game-music-emu \
@@ -94,6 +90,9 @@ jobs:
     - uses: actions/checkout@v4
       with:
         submodules: recursive
+    - name: Set up ninja
+      uses: ./.github/actions/setup-ninja
+      if: ${{ matrix.platform.shell == 'msys2 {0}' }}
 
     - name: Check that versioning is consistent
       # We only need to run this once: arbitrarily use the Linux build
