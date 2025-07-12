@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { name: Windows (MSVC+CMake),         os: windows-2019, shell: sh,   cmake: '-DSDL2MIXER_VENDORED=ON -GNinja', msvc: 1, shared: 1, static: 0 }
+        - { name: Windows (MSVC+CMake),         os: windows-latest, shell: sh,   cmake: '-DSDL2MIXER_VENDORED=ON -GNinja', msvc: 1, shared: 1, static: 0 }
         - { name: Windows (mingw32+autotools),  os: windows-latest, shell: 'msys2 {0}', msystem: mingw32, msys-env: mingw-w64-i686, shared: 1, static: 1 }
         - { name: Windows (mingw64+CMake),      os: windows-latest, shell: 'msys2 {0}', msystem: mingw64, msys-env: mingw-w64-x86_64, shared: 1, static: 0,
             cmake: '-DSDL2MIXER_VENDORED=OFF -G "Ninja Multi-Config"' }
@@ -94,13 +94,9 @@ jobs:
         .github/fetch_sdl_vc.ps1
         echo "SDL2_DIR=$Env:GITHUB_WORKSPACE/SDL2-devel-VC" >> $Env:GITHUB_ENV
         echo "::endgroup::"
-        echo "::group::Downloading yasm"
-        .github/fetch_yasm.ps1
-        echo "${{ github.workspace }}" >> $Env:GITHUB_PATH
-        echo "::endgroup::"
-    - name: Setup Ninja for MSVC
+    - name: Set up ninja
+      uses: ./.github/actions/setup-ninja
       if: ${{ !contains(matrix.platform.shell, 'msys2') }}
-      uses: aseprite/get-ninja@main
     - uses: ilammy/msvc-dev-cmd@v1
       if: "matrix.platform.msvc"
       with:
@@ -110,6 +106,10 @@ jobs:
       # We only need to run this once: arbitrarily use the Linux/CMake build
       if: "runner.os == 'Linux' && matrix.platform.cmake"
       run: ./build-scripts/test-versioning.sh
+
+    - name: Set up yasm for mpg123 (MSVC only)
+      uses: ./.github/actions/setup-yasm
+      if: ${{ matrix.platform.msvc }}
 
     - name: Configure (CMake)
       if: "matrix.platform.cmake"
