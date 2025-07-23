@@ -77,11 +77,31 @@ static size_t DRFLAC_ReadCB(void *context, void *buf, size_t size)
 static drflac_bool32 DRFLAC_SeekCB(void *context, int offset, drflac_seek_origin origin)
 {
     DRFLAC_Music *music = (DRFLAC_Music *)context;
-    int whence = (origin == drflac_seek_origin_start) ? SDL_IO_SEEK_SET : SDL_IO_SEEK_CUR;
+    int whence;
+    switch (origin) {
+    case DRFLAC_SEEK_SET:
+        whence = SDL_IO_SEEK_SET;
+        break;
+    case DRFLAC_SEEK_CUR:
+        whence = SDL_IO_SEEK_CUR;
+        break;
+    case DRFLAC_SEEK_END:
+        whence = SDL_IO_SEEK_END;
+        break;
+    default:
+        return DRFLAC_FALSE;
+    }
     if (MP3_IOseek(&music->file, offset, whence) < 0) {
         return DRFLAC_FALSE;
     }
     return DRFLAC_TRUE;
+}
+
+static drflac_bool32 DRFLAC_TellCB(void *context, drflac_int64 *pos)
+{
+    DRFLAC_Music *music = (DRFLAC_Music *)context;
+    *pos = MP3_IOtell(&music->file);
+    return (*pos < 0) ? DRFLAC_FALSE : DRFLAC_TRUE;
 }
 
 static void DRFLAC_MetaCB(void *context, drflac_metadata *metadata)
@@ -176,7 +196,7 @@ static void *DRFLAC_CreateFromIO(SDL_IOStream *src, bool closeio)
 
     meta_tags_init(&music->tags);
 
-    music->dec = drflac_open_with_metadata(DRFLAC_ReadCB, DRFLAC_SeekCB, DRFLAC_MetaCB, music, NULL);
+    music->dec = drflac_open_with_metadata(DRFLAC_ReadCB, DRFLAC_SeekCB, DRFLAC_TellCB, DRFLAC_MetaCB, music, NULL);
     if (!music->dec) {
         SDL_free(music);
         SDL_SetError("music_drflac: corrupt flac file (bad stream).");
