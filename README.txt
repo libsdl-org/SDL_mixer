@@ -1,5 +1,8 @@
 
-SDL_mixer 3.0
+# SDL_mixer 3.0
+
+(Please note that this README has not yet been updated for the
+SDL3_mixer rewrite.)
 
 The latest version of this library is available from GitHub:
 https://github.com/libsdl-org/SDL_mixer/releases

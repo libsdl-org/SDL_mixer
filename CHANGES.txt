@@ -1,4 +1,0 @@
-3.0.0:
- * Removed support for libmodplug as a MOD music backend.
- * Go back to using dr_mp3 as the default backend for MP3 music
- * Updated for SDL 3.0
