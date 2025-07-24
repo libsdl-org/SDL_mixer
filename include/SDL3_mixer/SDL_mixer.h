@@ -202,7 +202,7 @@ typedef struct MIX_Group MIX_Group;
 #define MIX_MAJOR_VERSION   3
 
 /**
- * The current minor version of the SDL headers.
+ * The current minor version of the SDL_mixer headers.
  *
  * If this were SDL_mixer version 3.2.1, this value would be 2.
  *
@@ -211,7 +211,7 @@ typedef struct MIX_Group MIX_Group;
 #define MIX_MINOR_VERSION   0
 
 /**
- * The current micro (or patchlevel) version of the SDL headers.
+ * The current micro (or patchlevel) version of the SDL_mixer headers.
  *
  * If this were SDL_mixer version 3.2.1, this value would be 1.
  *
