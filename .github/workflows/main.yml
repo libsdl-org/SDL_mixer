@@ -108,13 +108,12 @@ jobs:
         set -- \
           -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
           -DCMAKE_BUILD_TYPE=Release \
-          -DSDLMIXER_FLAC=ON \
           -DSDLMIXER_FLAC_LIBFLAC=ON \
           -DSDLMIXER_GME=ON \
           -DSDLMIXER_MOD_XMP=ON \
           -DSDLMIXER_MP3_MPG123=ON \
           -DSDLMIXER_OPUS=ON \
-          -DSDLMIXER_VORBIS=VORBISFILE \
+          -SDLMIXER_VORBIS_VORBISFILE=ON \
           -DSDLMIXER_STRICT=ON \
           -DSDLMIXER_WERROR=ON \
           -DSDLMIXER_INSTALL_MAN=ON \
