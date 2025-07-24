@@ -246,9 +246,9 @@ static bool SDLCALL VORBIS_decode(void *track_userdata, SDL_AudioStream *stream)
     int bitstream = tdata->current_bitstream;
 
 #ifdef VORBIS_USE_TREMOR
-    const size_t framesize = adata->framesize;
+    const size_t framesize = tdata->adata->framesize;
     Uint8 samples[256];
-    const int amount = (int)vorbis.ov_read(&tdata->vf, samples, sizeof (samples), &bitstream);
+    int amount = (int)vorbis.ov_read(&tdata->vf, (char *) samples, sizeof (samples), &bitstream);
     if (amount < 0) {
         return SetOggVorbisError("ov_read", amount);
     }

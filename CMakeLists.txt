@@ -156,14 +156,14 @@ cmake_dependent_option(SDLMIXER_OPUS_SHARED "Dynamically load libopus" "${SDLMIX
 
 option(SDLMIXER_VORBIS_STB "Enable Ogg Vorbis audio via stb_vorbis" ON)
 option(SDLMIXER_VORBIS_VORBISFILE "Enable Ogg Vorbis audio via libvorbisfile" ON)
-option(SDLMIXER_VORBIS_TREMOR "Enable Ogg Vorbis audio via libtremor" OFF)
+option(SDLMIXER_VORBIS_TREMOR "Enable Ogg Vorbis audio via libvorbisidec ('tremor')" OFF)
 
 if (SDLMIXER_VORBIS_VORBISFILE AND SDLMIXER_VORBIS_TREMOR)
     message(FATAL_ERROR "Both SDLMIXER_VORBIS_VORBISFILE and SDLMIXER_VORBIS_TREMOR are both enabled, but only one can be used")
 endif()
 
 cmake_dependent_option(SDLMIXER_VORBIS_VORBISFILE_SHARED "Dynamically load vorbisfile library" "${SDLMIXER_DEPS_SHARED}" SDLMIXER_VORBIS_VORBISFILE OFF)
-cmake_dependent_option(SDLMIXER_VORBIS_TREMOR_SHARED "Dynamically load tremor library" "${SDLMIXER_DEPS_SHARED}" SDLMIXER_VORBIS_TREMOR OFF)
+cmake_dependent_option(SDLMIXER_VORBIS_TREMOR_SHARED "Dynamically load vorbisidec ('tremor') library" "${SDLMIXER_DEPS_SHARED}" SDLMIXER_VORBIS_TREMOR OFF)
 
 option(SDLMIXER_WAVPACK "Enable WavPack audio" ON)
 cmake_dependent_option(SDLMIXER_WAVPACK_DSD "Enable WavPack DSD audio support" OFF SDLMIXER_WAVPACK OFF)
@@ -325,7 +325,7 @@ set(PC_REQUIRES)
 set(SDLMIXER_BACKENDS)
 
 if(SDLMIXER_OGG)
-    # libogg is a requirement of libflac, libtremor and libvorbisfile, so only need this library when vendoring
+    # libogg is a requirement of libflac, libvorbisidec and libvorbisfile, so only need this library when vendoring
     if(SDLMIXER_VENDORED)
         message(STATUS "Using vendored libogg")
         set(BUILD_SHARED_LIBS ${SDLMIXER_OGG_SHARED})
@@ -454,7 +454,7 @@ if(SDLMIXER_VORBIS_TREMOR)
         find_package(tremor ${required})
         if(tremor_FOUND)
             if(NOT SDLMIXER_VORBIS_TREMOR_SHARED)
-                list(APPEND PC_REQUIRES tremor)
+                list(APPEND PC_REQUIRES vorbisidec)
             endif()
             set(SDLMIXER_VORBIS_TREMOR_ENABLED TRUE)
         else()
