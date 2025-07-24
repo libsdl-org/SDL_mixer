@@ -654,9 +654,9 @@ static void QuitDecoders(void)
     num_available_decoders = 0;
 }
 
-int MIX_GetVersion(void)
+int MIX_Version(void)
 {
-    return MIX_VERSION;
+    return SDL_MIXER_VERSION;
 }
 
 bool MIX_Init(void)

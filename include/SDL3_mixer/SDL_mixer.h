@@ -199,7 +199,7 @@ typedef struct MIX_Group MIX_Group;
  *
  * \since This macro is available since SDL_mixer 3.0.0.
  */
-#define MIX_MAJOR_VERSION   3
+#define SDL_MIXER_MAJOR_VERSION   3
 
 /**
  * The current minor version of the SDL_mixer headers.
@@ -208,7 +208,7 @@ typedef struct MIX_Group MIX_Group;
  *
  * \since This macro is available since SDL_mixer 3.0.0.
  */
-#define MIX_MINOR_VERSION   0
+#define SDL_MIXER_MINOR_VERSION   0
 
 /**
  * The current micro (or patchlevel) version of the SDL_mixer headers.
@@ -217,23 +217,23 @@ typedef struct MIX_Group MIX_Group;
  *
  * \since This macro is available since SDL_mixer 3.0.0.
  */
-#define MIX_MICRO_VERSION   0
+#define SDL_MIXER_MICRO_VERSION   0
 
 /**
- * This is the version number macro for the current SDL_mixer version.
+ * This is the current version number macro of the SDL_mixer headers.
  *
  * \since This macro is available since SDL_mixer 3.0.0.
  *
- * \sa MIX_GetVersion
+ * \sa MIX_Version
  */
-#define MIX_VERSION SDL_VERSIONNUM(MIX_MAJOR_VERSION, MIX_MINOR_VERSION, MIX_MICRO_VERSION)
+#define SDL_MIXER_VERSION SDL_VERSIONNUM(SDL_MIXER_MAJOR_VERSION, SDL_MIXER_MINOR_VERSION, SDL_MIXER_MICRO_VERSION)
 
 /**
  * Get the version of SDL_mixer that is linked against your program.
  *
  * If you are linking to SDL_mixer dynamically, then it is possible that the
  * current version will be different than the version you compiled against.
- * This function returns the current version, while MIX_VERSION is the version
+ * This function returns the current version, while SDL_MIXER_VERSION is the version
  * you compiled with.
  *
  * This function may be called safely at any time, even before MIX_Init().
@@ -242,9 +242,9 @@ typedef struct MIX_Group MIX_Group;
  *
  * \since This function is available since SDL_mixer 3.0.0.
  *
- * \sa MIX_VERSION
+ * \sa SDL_MIXER_VERSION
  */
-extern SDL_DECLSPEC int SDLCALL MIX_GetVersion(void);
+extern SDL_DECLSPEC int SDLCALL MIX_Version(void);
 
 /**
  * Initialize the SDL_mixer library.

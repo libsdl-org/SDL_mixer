@@ -62,6 +62,12 @@ In SDL2_mixer, all functions started with `Mix_` and macros started with
 `MIX_`. In SDL3_mixer, everything starts with `MIX_`.
 
 
+## Versioning
+
+Versions are now bits packed into a single int instead of a struct, using
+SDL3's usual magic for unpacking these.
+
+
 ## Initialization
 
 Previously you had to tell SDL_mixer what file formats you expected to use
@@ -281,12 +287,13 @@ Some of these are listed as "no equivalent in SDL3_mixer" but could possibly
 be added if there is a need. If you're stuck, please file an issue and we
 can discuss it!
 
-- SDL_MIXER_MAJOR_VERSION => MIX_MAJOR_VERSION
-- SDL_MIXER_MINOR_VERSION => MIX_MINOR_VERSION
-- SDL_MIXER_MICRO_VERSION => MIX_MICRO_VERSION
-- SDL_MIXER_VERSION => MIX_VERSION
-- SDL_MIXER_VERSION_ATLEAST => `(MIX_VERSION >= SDL_VERSIONNUM(X, Y, Z))`
-- Mix_Version => MIX_GetVersion
+- MIX_MAJOR_VERSION => SDL_MIXER_MAJOR_VERSION
+- MIX_MINOR_VERSION => SDL_MIXER_MAJOR_VERSION
+- MIX_PATCHLEVEL => SDL_MIXER_MICRO_VERSION
+- MIX_VERSION => SDL_MIXER_VERSION
+- MIX_Linked_Version => MIX_Version
+- Mix_Version => MIX_Version
+- SDL_MIXER_COMPILEDVERSION => SDL_MIXER_VERSION
 - MIX_InitFlags => not needed in SDL3_mixer.
 - Mix_Init => MIX_Init (no initflags needed)
 - Mix_Quit => MIX_Quit
