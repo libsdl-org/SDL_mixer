@@ -6,9 +6,9 @@ SDL_mixer 3.0 (aka "SDL3_mixer") is a dramatically different library than
 previous versions. The API has been completely redesigned. There is no
 compatibility layer. If you want to use it, you have to migrate to it.
 
-SDL3_mixer requires SDL3. Internally, it relies on many features that are
-new to SDL3, so if your project is on SDL 1.2 or SDL2, you'll have to move
-your project to SDL3 at the same time.
+SDL3_mixer requires SDL3. It relies on many features that are new to SDL3,
+both internally and in the public API, so if your project is on SDL 1.2 or
+SDL2, you'll have to move your project to SDL3 at the same time.
 
 That being said, we think SDL3_mixer and SDL3 are both great pieces of
 software--significant improvements over their previous versions--and we
