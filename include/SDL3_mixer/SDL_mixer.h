@@ -482,9 +482,11 @@ extern SDL_DECLSPEC Mix_Music * SDLCALL Mix_LoadMUS(const char *file);
  * fly. Also, crucially, there are as many channels for chunks as the app can
  * allocate, but SDL_mixer only offers a single "music" channel.
  *
- * If `closeio` is true, the IOStream will be closed before returning, whether
- * this function succeeds or not. SDL_mixer reads everything it needs from the
- * IOStream during this call in any case.
+ * If `closeio` is true, the SDL_IOStream will be closed when SDL_mixer is
+ * done with it, which will be before this function call returns if there is
+ * an error, or perhaps much later if the music is streaming for some time.
+ * The app should not attempt to use the stream again, as it may become
+ * invalid without warning.
  *
  * As a convenience, there is a function to read files from disk without
  * having to deal with SDL_IOStream: `Mix_LoadMUS("filename.mp3")` will manage
@@ -542,9 +544,11 @@ extern SDL_DECLSPEC Mix_Music * SDLCALL Mix_LoadMUS_IO(SDL_IOStream *src, bool c
  * - `MUS_OPUS` (Opus files)
  * - `MUS_WAVPACK` (WavPack files)
  *
- * If `closeio` is true, the IOStream will be closed before returning, whether
- * this function succeeds or not. SDL_mixer reads everything it needs from the
- * IOStream during this call in any case.
+ * If `closeio` is true, the SDL_IOStream will be closed when SDL_mixer is
+ * done with it, which will be before this function call returns if there is
+ * an error, or perhaps much later if the music is streaming for some time.
+ * The app should not attempt to use the stream again, as it may become
+ * invalid without warning.
  *
  * As a convenience, there is a function to read files from disk without
  * having to deal with SDL_IOStream: `Mix_LoadMUS("filename.mp3")` will manage
