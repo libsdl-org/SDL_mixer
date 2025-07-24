@@ -1519,7 +1519,7 @@ static bool SDLCALL WAV_seek(void *track_userdata, Uint64 frame)
 
     // Deal with loop iterations, offset by the modulus of total frames in the loop; frame_start should have already
     //  dealt with iterations, so this shouldn't matter how many iterations there are or if it's an infinite loop.
-    frame += current_iteration_frames;
+    frame = current_iteration_frames;
 
     if (IsADPCM(adata->encoding)) {
         const Sint64 dest_offset = ((Sint64)(frame / adata->adpcm_info.samplesperblock)) * adata->adpcm_info.blocksize;  // the start of the correct ADPCM block within this seekblock.
