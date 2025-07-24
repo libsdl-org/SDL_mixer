@@ -15,9 +15,9 @@
   },
   "source": {
     "checks": [
-      "src/mixer.c",
+      "src/SDL_mixer.c",
       "include/SDL3_mixer/SDL_mixer.h",
-      "examples/playmus.c"
+      "test/testmixer.c"
     ]
   },
   "dmg": {
@@ -48,7 +48,9 @@
         "-DSDLMIXER_MIDI=ON",
         "-DSDLMIXER_MIDI_NATIVE=ON",
         "-DSDLMIXER_OPUS=OFF",
-        "-DSDLMIXER_VORBIS=STB",
+        "-DSDLMIXER_VORBIS_STB=ON",
+        "-DSDLMIXER_VORBIS_TREMOR=OFF",
+        "-DSDLMIXER_VORBIS_VORBISFILE=OFF",
         "-DSDLMIXER_WAVE=ON",
         "-DSDLMIXER_WAVPACK=OFF",
         "-DSDLMIXER_RELOCATABLE=ON",
@@ -146,7 +148,9 @@
         "-DSDLMIXER_MIDI=ON",
         "-DSDLMIXER_MIDI_NATIVE=ON",
         "-DSDLMIXER_OPUS=ON",
-        "-DSDLMIXER_VORBIS=STB",
+        "-DSDLMIXER_VORBIS_STB=ON",
+        "-DSDLMIXER_VORBIS_TREMOR=OFF",
+        "-DSDLMIXER_VORBIS_VORBISFILE=OFF",
         "-DSDLMIXER_WAVE=ON",
         "-DSDLMIXER_WAVPACK=ON",
         "-DSDLMIXER_RELOCATABLE=ON",
@@ -226,6 +230,7 @@
         "-DSDLMIXER_SNDFILE=ON",
         "-DSDLMIXER_FLAC=ON",
         "-DSDLMIXER_FLAC_DRFLAC=ON",
+        "-DSDLMIXER_FLAC_LIBFLAC=OFF",
         "-DSDLMIXER_GME=OFF",
         "-DSDLMIXER_MOD=OFF",
         "-DSDLMIXER_MOD_XMP=OFF",
@@ -235,7 +240,9 @@
         "-DSDLMIXER_MIDI=ON",
         "-DSDLMIXER_MIDI_NATIVE=ON",
         "-DSDLMIXER_OPUS=OFF",
-        "-DSDLMIXER_VORBIS=STB",
+        "-DSDLMIXER_VORBIS_STB=ON",
+        "-DSDLMIXER_VORBIS_TREMOR=OFF",
+        "-DSDLMIXER_VORBIS_VORBISFILE=OFF",
         "-DSDLMIXER_WAVE=ON",
         "-DSDLMIXER_WAVPACK=OFF",
         "-DSDLMIXER_SAMPLES=OFF",
