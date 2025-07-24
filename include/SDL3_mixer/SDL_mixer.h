@@ -2404,7 +2404,8 @@ extern SDL_DECLSPEC bool SDLCALL Mix_PlayingMusic(void);
  * Set SoundFonts paths to use by supported MIDI backends.
  *
  * You may specify multiple paths in a single string by separating them with
- * semicolons; they will be searched in the order listed.
+ * semicolons; they will be searched in the _reverse_ order listed (last one
+ * listed will be the first one searched).
  *
  * This function replaces any previously-specified paths.
  *
