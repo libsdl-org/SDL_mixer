@@ -10,9 +10,9 @@ cd `dirname $0`/..
 export LC_CTYPE=C
 
 header=include/SDL3_mixer/SDL_mixer.h
-ref_major=$(sed -ne 's/^#define MIX_MAJOR_VERSION  *//p' $header)
-ref_minor=$(sed -ne 's/^#define MIX_MINOR_VERSION  *//p' $header)
-ref_micro=$(sed -ne 's/^#define MIX_MICRO_VERSION  *//p' $header)
+ref_major=$(sed -ne 's/^#define SDL_MIXER_MAJOR_VERSION  *//p' $header)
+ref_minor=$(sed -ne 's/^#define SDL_MIXER_MINOR_VERSION  *//p' $header)
+ref_micro=$(sed -ne 's/^#define SDL_MIXER_MICRO_VERSION  *//p' $header)
 ref_version="${ref_major}.${ref_minor}.${ref_micro}"
 
 tests=0
