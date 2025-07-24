@@ -651,6 +651,10 @@ static float L3_ldexp_q2(float y, int exp_q2)
     return y;
 }
 
+#if (defined(__GNUC__) && (__GNUC__ >= 14)) && !defined(__clang__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wstringop-overflow"
+#endif
 static void L3_decode_scalefactors(const uint8_t *hdr, uint8_t *ist_pos, bs_t *bs, const L3_gr_info_t *gr, float *scf, int ch)
 {
     static const uint8_t g_scf_partitions[3][28] = {
@@ -712,6 +716,9 @@ static void L3_decode_scalefactors(const uint8_t *hdr, uint8_t *ist_pos, bs_t *b
         scf[i] = L3_ldexp_q2(gain, iscf[i] << scf_shift);
     }
 }
+#if (defined(__GNUC__) && (__GNUC__ >= 14)) && !defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 static const float g_pow43[129 + 16] = {
     0,-1,-2.519842f,-4.326749f,-6.349604f,-8.549880f,-10.902724f,-13.390518f,-16.000000f,-18.720754f,-21.544347f,-24.463781f,-27.473142f,-30.567351f,-33.741992f,-36.993181f,
