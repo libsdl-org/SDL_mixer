@@ -642,7 +642,7 @@ static bool parse_ape(SDL_PropertiesID props, SDL_IOStream *io, Sint64 ape_head_
     }
 
     for(i = 0; i < tag_items_count; i++) {
-        const Sint32 cur_tag = SDL_TellIO(io);
+        const Sint64 cur_tag = SDL_TellIO(io);
         if (cur_tag < 0) {
             break;
         }

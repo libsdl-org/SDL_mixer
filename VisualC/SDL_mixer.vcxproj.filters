@@ -4,67 +4,10 @@
     <ClInclude Include="..\include\SDL3_mixer\SDL_mixer.h">
       <Filter>Public Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\utils.h">
+    <ClInclude Include="..\src\SDL_mixer_internal.h">
       <Filter>Sources</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\effects_internal.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\mixer.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\music.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\codecs\load_aiff.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\codecs\load_sndfile.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\codecs\load_voc.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\codecs\mp3utils.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\codecs\music_drflac.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\codecs\music_drmp3.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\codecs\music_flac.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\codecs\music_fluidsynth.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\codecs\music_gme.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\codecs\music_mpg123.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\codecs\music_nativemidi.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\codecs\music_ogg.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\codecs\music_opus.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\codecs\music_timidity.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\codecs\music_wav.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\codecs\music_wavpack.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\codecs\music_xmp.h">
+    <ClInclude Include="..\src\SDL_mixer_loader.h">
       <Filter>Sources</Filter>
     </ClInclude>
   </ItemGroup>
@@ -129,114 +72,81 @@
     <CustomBuild Include="external\optional\x86\LICENSE.xmp.txt">
       <Filter>x86</Filter>
     </CustomBuild>
+    <CustomBuild Include="external\optional\x64\libxmp.dll" />
+    <CustomBuild Include="external\optional\x64\libogg-0.dll" />
+    <CustomBuild Include="external\optional\x64\libopus-0.dll" />
+    <CustomBuild Include="external\optional\x64\libopusfile-0.dll" />
+    <CustomBuild Include="external\optional\x64\libwavpack-1.dll" />
+    <CustomBuild Include="external\optional\x64\LICENSE.xmp.txt" />
+    <CustomBuild Include="external\optional\x64\LICENSE.ogg-vorbis.txt" />
+    <CustomBuild Include="external\optional\x64\LICENSE.opus.txt" />
+    <CustomBuild Include="external\optional\x64\LICENSE.opusfile.txt" />
+    <CustomBuild Include="external\optional\x64\LICENSE.wavpack.txt" />
+    <CustomBuild Include="external\optional\x64\LICENSE.gme.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\utils.c">
+    <ClCompile Include="..\src\decoder_aiff.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\effects_internal.c">
+    <ClCompile Include="..\src\decoder_au.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\effect_position.c">
+    <ClCompile Include="..\src\decoder_drflac.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\effect_stereoreverse.c">
+    <ClCompile Include="..\src\decoder_drmp3.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\mixer.c">
+    <ClCompile Include="..\src\decoder_flac.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\music.c">
+    <ClCompile Include="..\src\decoder_fluidsynth.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\codecs\load_aiff.c">
+    <ClCompile Include="..\src\decoder_gme.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\codecs\load_sndfile.c">
+    <ClCompile Include="..\src\decoder_mpg123.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\codecs\load_voc.c">
+    <ClCompile Include="..\src\decoder_opus.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\codecs\mp3utils.c">
+    <ClCompile Include="..\src\decoder_raw.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\codecs\music_drflac.c">
+    <ClCompile Include="..\src\decoder_sinewave.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\codecs\music_drmp3.c">
+    <ClCompile Include="..\src\decoder_stb_vorbis.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\codecs\music_flac.c">
+    <ClCompile Include="..\src\decoder_timidity.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\codecs\music_fluidsynth.c">
+    <ClCompile Include="..\src\decoder_voc.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\codecs\music_gme.c">
+    <ClCompile Include="..\src\decoder_vorbis.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\codecs\music_mpg123.c">
+    <ClCompile Include="..\src\decoder_wav.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\codecs\music_nativemidi.c">
+    <ClCompile Include="..\src\decoder_wavpack.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\codecs\music_ogg.c">
+    <ClCompile Include="..\src\decoder_xmp.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\codecs\music_ogg_stb.c">
+    <ClCompile Include="..\src\SDL_mixer.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\codecs\music_opus.c">
+    <ClCompile Include="..\src\SDL_mixer_metadata_tags.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\codecs\music_timidity.c">
+    <ClCompile Include="..\src\SDL_mixer_spatialization.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\codecs\music_wav.c">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\codecs\music_wavpack.c">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\codecs\music_xmp.c">
-      <Filter>Sources</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="external\optional\x64\libogg-0.dll">
-      <Filter>x64</Filter>
-    </None>
-    <None Include="external\optional\x64\libopus-0.dll">
-      <Filter>x64</Filter>
-    </None>
-    <None Include="external\optional\x64\libopusfile-0.dll">
-      <Filter>x64</Filter>
-    </None>
-    <None Include="external\optional\x64\libwavpack-1.dll">
-      <Filter>x64</Filter>
-    </None>
-    <None Include="external\optional\x64\libxmp.dll">
-      <Filter>x64</Filter>
-    </None>
-    <None Include="external\optional\x64\LICENSE.gme.txt">
-      <Filter>x64</Filter>
-    </None>
-    <None Include="external\optional\x64\LICENSE.ogg-vorbis.txt">
-      <Filter>x64</Filter>
-    </None>
-    <None Include="external\optional\x64\LICENSE.opus.txt">
-      <Filter>x64</Filter>
-    </None>
-    <None Include="external\optional\x64\LICENSE.opusfile.txt">
-      <Filter>x64</Filter>
-    </None>
-    <None Include="external\optional\x64\LICENSE.wavpack.txt">
-      <Filter>x64</Filter>
-    </None>
-    <None Include="external\optional\x64\LICENSE.xmp.txt">
-      <Filter>x64</Filter>
-    </None>
   </ItemGroup>
 </Project>

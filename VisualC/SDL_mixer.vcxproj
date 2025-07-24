@@ -213,27 +213,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\include\SDL3_mixer\SDL_mixer.h" />
-    <ClInclude Include="..\src\effects_internal.h" />
-    <ClInclude Include="..\src\mixer.h" />
-    <ClInclude Include="..\src\music.h" />
-    <ClInclude Include="..\src\utils.h" />
-    <ClInclude Include="..\src\codecs\load_aiff.h" />
-    <ClInclude Include="..\src\codecs\load_sndfile.h" />
-    <ClInclude Include="..\src\codecs\load_voc.h" />
-    <ClInclude Include="..\src\codecs\mp3utils.h" />
-    <ClInclude Include="..\src\codecs\music_drflac.h" />
-    <ClInclude Include="..\src\codecs\music_drmp3.h" />
-    <ClInclude Include="..\src\codecs\music_flac.h" />
-    <ClInclude Include="..\src\codecs\music_fluidsynth.h" />
-    <ClInclude Include="..\src\codecs\music_gme.h" />
-    <ClInclude Include="..\src\codecs\music_mpg123.h" />
-    <ClInclude Include="..\src\codecs\music_nativemidi.h" />
-    <ClInclude Include="..\src\codecs\music_ogg.h" />
-    <ClInclude Include="..\src\codecs\music_opus.h" />
-    <ClInclude Include="..\src\codecs\music_timidity.h" />
-    <ClInclude Include="..\src\codecs\music_wav.h" />
-    <ClInclude Include="..\src\codecs\music_wavpack.h" />
-    <ClInclude Include="..\src\codecs\music_xmp.h" />
+    <ClInclude Include="..\src\SDL_mixer_internal.h" />
+    <ClInclude Include="..\src\SDL_mixer_loader.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\src\version.rc">
@@ -244,14 +225,6 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="native_midi\native_midi.vcxproj">
-      <Project>{ebda67ca-4a23-4f22-bfbc-b8dbe0580d4f}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <Private>false</Private>
-      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
-      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
-    </ProjectReference>
     <ProjectReference Include="timidity\timidity.vcxproj">
       <Project>{b162b6f1-e876-4d5f-a1f6-e3a6dc2f4a2c}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
@@ -434,32 +407,6 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\effect_position.c" />
-    <ClCompile Include="..\src\effect_stereoreverse.c" />
-    <ClCompile Include="..\src\effects_internal.c" />
-    <ClCompile Include="..\src\mixer.c" />
-    <ClCompile Include="..\src\music.c" />
-    <ClCompile Include="..\src\utils.c" />
-    <ClCompile Include="..\src\codecs\load_aiff.c" />
-    <ClCompile Include="..\src\codecs\load_sndfile.c" />
-    <ClCompile Include="..\src\codecs\load_voc.c" />
-    <ClCompile Include="..\src\codecs\mp3utils.c" />
-    <ClCompile Include="..\src\codecs\music_drflac.c" />
-    <ClCompile Include="..\src\codecs\music_drmp3.c" />
-    <ClCompile Include="..\src\codecs\music_flac.c" />
-    <ClCompile Include="..\src\codecs\music_fluidsynth.c" />
-    <ClCompile Include="..\src\codecs\music_gme.c" />
-    <ClCompile Include="..\src\codecs\music_mpg123.c" />
-    <ClCompile Include="..\src\codecs\music_nativemidi.c" />
-    <ClCompile Include="..\src\codecs\music_ogg.c" />
-    <ClCompile Include="..\src\codecs\music_ogg_stb.c" />
-    <ClCompile Include="..\src\codecs\music_opus.c" />
-    <ClCompile Include="..\src\codecs\music_timidity.c" />
-    <ClCompile Include="..\src\codecs\music_wav.c" />
-    <ClCompile Include="..\src\codecs\music_wavpack.c" />
-    <ClCompile Include="..\src\codecs\music_xmp.c" />
-  </ItemGroup>
-  <ItemGroup>
     <CustomBuild Include="external\optional\x64\libgme.dll">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "%(FullPath)" $(SolutionDir)\$(Platform)\$(Configuration)\</Command>
@@ -496,6 +443,29 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\$(Platform)\$(Configuration)\%(Filename)%(Extension)</Outputs>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\decoder_aiff.c" />
+    <ClCompile Include="..\src\decoder_au.c" />
+    <ClCompile Include="..\src\decoder_drflac.c" />
+    <ClCompile Include="..\src\decoder_drmp3.c" />
+    <ClCompile Include="..\src\decoder_flac.c" />
+    <ClCompile Include="..\src\decoder_fluidsynth.c" />
+    <ClCompile Include="..\src\decoder_gme.c" />
+    <ClCompile Include="..\src\decoder_mpg123.c" />
+    <ClCompile Include="..\src\decoder_opus.c" />
+    <ClCompile Include="..\src\decoder_raw.c" />
+    <ClCompile Include="..\src\decoder_sinewave.c" />
+    <ClCompile Include="..\src\decoder_stb_vorbis.c" />
+    <ClCompile Include="..\src\decoder_timidity.c" />
+    <ClCompile Include="..\src\decoder_voc.c" />
+    <ClCompile Include="..\src\decoder_vorbis.c" />
+    <ClCompile Include="..\src\decoder_wav.c" />
+    <ClCompile Include="..\src\decoder_wavpack.c" />
+    <ClCompile Include="..\src\decoder_xmp.c" />
+    <ClCompile Include="..\src\SDL_mixer.c" />
+    <ClCompile Include="..\src\SDL_mixer_metadata_tags.c" />
+    <ClCompile Include="..\src\SDL_mixer_spatialization.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

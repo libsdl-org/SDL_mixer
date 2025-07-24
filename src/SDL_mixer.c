@@ -257,7 +257,7 @@ static void ApplyFade(MIX_Track *track, int channels, float *pcm, int frames)
 
     const int to_be_faded = (int) SDL_min(track->fade_frames, frames);
     const int total_fade_frames = (int) track->total_fade_frames;
-    int fade_frame_position = total_fade_frames - track->fade_frames;
+    int fade_frame_position = total_fade_frames - (int) track->fade_frames;
 
     // some hacks to avoid a branch on each sample frame. Might not be a good idea in practice.
     const float pctmult = (track->fade_direction < 0) ? 1.0f : -1.0f;
@@ -413,9 +413,9 @@ static void SDLCALL TrackGetCallback(void *userdata, SDL_AudioStream *stream, in
 
             int frames_read = br / (sizeof (float) * raw_channels);
             if (maxpos >= 0) {
-                const Uint64 newpos = track->position + frames_read;
+                const Sint64 newpos = (Sint64)(track->position + frames_read);
                 if (newpos >= maxpos) {  // we read past the end of the fade out or maxframes, we need to clamp.
-                    br -= ((newpos - maxpos) * raw_channels) * sizeof (float);
+                    br -= (int)(((newpos - maxpos) * raw_channels) * sizeof(float));
                     frames_read = br / (sizeof (float) * raw_channels);
                     end_of_audio = true;
                 }
@@ -1985,7 +1985,7 @@ bool MIX_PlayTrack(MIX_Track *track, SDL_PropertiesID options)
 
     track->max_frame = max_frame;
     track->loops_remaining = loops;
-    track->loop_start = loop_start;
+    track->loop_start = (int) loop_start;
     track->total_fade_frames = (fade_in > 0) ? fade_in : 0;
     track->fade_frames = track->total_fade_frames;
     track->fade_direction = (fade_in > 0) ? 1 : 0;

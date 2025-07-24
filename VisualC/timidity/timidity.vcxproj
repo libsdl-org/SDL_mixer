@@ -22,27 +22,27 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\codecs\timidity\common.c" />
-    <ClCompile Include="..\..\src\codecs\timidity\instrum.c" />
-    <ClCompile Include="..\..\src\codecs\timidity\mix.c" />
-    <ClCompile Include="..\..\src\codecs\timidity\output.c" />
-    <ClCompile Include="..\..\src\codecs\timidity\playmidi.c" />
-    <ClCompile Include="..\..\src\codecs\timidity\readmidi.c" />
-    <ClCompile Include="..\..\src\codecs\timidity\resample.c" />
-    <ClCompile Include="..\..\src\codecs\timidity\tables.c" />
-    <ClCompile Include="..\..\src\codecs\timidity\timidity.c" />
+    <ClCompile Include="..\..\src\timidity\common.c" />
+    <ClCompile Include="..\..\src\timidity\instrum.c" />
+    <ClCompile Include="..\..\src\timidity\mix.c" />
+    <ClCompile Include="..\..\src\timidity\output.c" />
+    <ClCompile Include="..\..\src\timidity\playmidi.c" />
+    <ClCompile Include="..\..\src\timidity\readmidi.c" />
+    <ClCompile Include="..\..\src\timidity\resample.c" />
+    <ClCompile Include="..\..\src\timidity\tables.c" />
+    <ClCompile Include="..\..\src\timidity\timidity.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\codecs\timidity\common.h" />
-    <ClInclude Include="..\..\src\codecs\timidity\instrum.h" />
-    <ClInclude Include="..\..\src\codecs\timidity\mix.h" />
-    <ClInclude Include="..\..\src\codecs\timidity\options.h" />
-    <ClInclude Include="..\..\src\codecs\timidity\output.h" />
-    <ClInclude Include="..\..\src\codecs\timidity\playmidi.h" />
-    <ClInclude Include="..\..\src\codecs\timidity\readmidi.h" />
-    <ClInclude Include="..\..\src\codecs\timidity\resample.h" />
-    <ClInclude Include="..\..\src\codecs\timidity\tables.h" />
-    <ClInclude Include="..\..\src\codecs\timidity\timidity.h" />
+    <ClInclude Include="..\..\src\timidity\common.h" />
+    <ClInclude Include="..\..\src\timidity\instrum.h" />
+    <ClInclude Include="..\..\src\timidity\mix.h" />
+    <ClInclude Include="..\..\src\timidity\options.h" />
+    <ClInclude Include="..\..\src\timidity\output.h" />
+    <ClInclude Include="..\..\src\timidity\playmidi.h" />
+    <ClInclude Include="..\..\src\timidity\readmidi.h" />
+    <ClInclude Include="..\..\src\timidity\resample.h" />
+    <ClInclude Include="..\..\src\timidity\tables.h" />
+    <ClInclude Include="..\..\src\timidity\timidity.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>timidity</ProjectName>
