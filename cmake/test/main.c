@@ -8,10 +8,10 @@ int main(int argc, char *argv[])
         SDL_Log("SDL_Init: could not initialize SDL: %s\n", SDL_GetError());
         return 1;
     }
-    if (Mix_Init(0) == 0) {
-        SDL_Log("Mix_Init: no sound/music loaders supported (%s)\n", SDL_GetError());
+    if (MIX_Init() == 0) {
+        SDL_Log("MIX_Init: no sound/music loaders supported (%s)\n", SDL_GetError());
     }
-    Mix_Quit();
+    MIX_Quit();
     SDL_Quit();
     return 0;
 }
