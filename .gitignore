@@ -25,3 +25,5 @@ xcuserdata
 .vs
 .vscode
 Xcode/build.xcconfig
+cmake-build
+buildbot
