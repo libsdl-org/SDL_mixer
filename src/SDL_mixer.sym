@@ -2,7 +2,7 @@ SDL3_mixer_0.0.0 {
   global:
     MIX_Init;
     MIX_Quit;
-    MIX_GetVersion;
+    MIX_Version;
     MIX_CreateMixer;
     MIX_CreateMixerDevice;
     MIX_DestroyMixer;
