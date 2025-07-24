@@ -405,7 +405,7 @@ static bool SDLCALL VOC_init_audio(SDL_IOStream *io, SDL_AudioSpec *spec, SDL_Pr
     return true;
 }
 
-bool SDLCALL VOC_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_AudioSpec *spec, SDL_PropertiesID props, void **userdata)
+static bool SDLCALL VOC_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_AudioSpec *spec, SDL_PropertiesID props, void **userdata)
 {
     VOC_TrackData *tdata = (VOC_TrackData *) SDL_calloc(1, sizeof (*tdata));
     if (!tdata) {
@@ -422,7 +422,7 @@ bool SDLCALL VOC_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_Au
     return true;
 }
 
-bool SDLCALL VOC_decode(void *userdata, SDL_AudioStream *stream)
+static bool SDLCALL VOC_decode(void *userdata, SDL_AudioStream *stream)
 {
     VOC_TrackData *tdata = (VOC_TrackData *) userdata;
 
@@ -500,7 +500,7 @@ bool SDLCALL VOC_decode(void *userdata, SDL_AudioStream *stream)
     return true;
 }
 
-bool SDLCALL VOC_seek(void *userdata, Uint64 frame)
+static bool SDLCALL VOC_seek(void *userdata, Uint64 frame)
 {
     VOC_TrackData *tdata = (VOC_TrackData *) userdata;
     VOC_TrackData cpy;
@@ -565,13 +565,13 @@ bool SDLCALL VOC_seek(void *userdata, Uint64 frame)
     return false;
 }
 
-void SDLCALL VOC_quit_track(void *userdata)
+static void SDLCALL VOC_quit_track(void *userdata)
 {
     VOC_TrackData *tdata = (VOC_TrackData *) userdata;
     SDL_free(tdata);
 }
 
-void SDLCALL VOC_quit_audio(void *audio_userdata)
+static void SDLCALL VOC_quit_audio(void *audio_userdata)
 {
     VOC_AudioData *tdata = (VOC_AudioData *) audio_userdata;
     SDL_free(tdata->blocks);

@@ -317,7 +317,7 @@ failed:
     return false;
 }
 
-bool SDLCALL MPG123_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_AudioSpec *spec, SDL_PropertiesID props, void **track_userdata)
+static bool SDLCALL MPG123_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_AudioSpec *spec, SDL_PropertiesID props, void **track_userdata)
 {
     SDL_assert(audio_userdata == NULL);  // no state.
 
@@ -379,7 +379,7 @@ bool SDLCALL MPG123_init_track(void *audio_userdata, SDL_IOStream *io, const SDL
     return true;
 }
 
-bool SDLCALL MPG123_decode(void *track_userdata, SDL_AudioStream *stream)
+static bool SDLCALL MPG123_decode(void *track_userdata, SDL_AudioStream *stream)
 {
     mpg123_handle *handle = (mpg123_handle *) track_userdata;
     SDL_AudioSpec spec;
@@ -420,7 +420,7 @@ bool SDLCALL MPG123_decode(void *track_userdata, SDL_AudioStream *stream)
     return (result == MPG123_OK);
 }
 
-bool SDLCALL MPG123_seek(void *track_userdata, Uint64 frame)
+static bool SDLCALL MPG123_seek(void *track_userdata, Uint64 frame)
 {
     mpg123_handle *handle = (mpg123_handle *) track_userdata;
     #if (MPG123_API_VERSION >= 49)
@@ -431,14 +431,14 @@ bool SDLCALL MPG123_seek(void *track_userdata, Uint64 frame)
     return (rc < 0) ? SDL_SetError("mpg123_seek:%s", mpg_err(handle, rc)) : true;
 }
 
-void SDLCALL MPG123_quit_track(void *track_userdata)
+static void SDLCALL MPG123_quit_track(void *track_userdata)
 {
     mpg123_handle *handle = (mpg123_handle *) track_userdata;
     mpg123.mpg123_close(handle);
     mpg123.mpg123_delete(handle);
 }
 
-void SDLCALL MPG123_quit_audio(void *audio_userdata)
+static void SDLCALL MPG123_quit_audio(void *audio_userdata)
 {
     SDL_assert(audio_userdata == NULL);  // no state.
 }

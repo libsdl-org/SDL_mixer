@@ -185,7 +185,7 @@ static bool SDLCALL STBVORBIS_init_audio(SDL_IOStream *io, SDL_AudioSpec *spec, 
     return true;
 }
 
-bool SDLCALL STBVORBIS_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_AudioSpec *spec, SDL_PropertiesID props, void **track_userdata)
+static bool SDLCALL STBVORBIS_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_AudioSpec *spec, SDL_PropertiesID props, void **track_userdata)
 {
     STBVORBIS_TrackData *tdata = (STBVORBIS_TrackData *) SDL_calloc(1, sizeof (*tdata));
     if (!tdata) {
@@ -207,10 +207,9 @@ bool SDLCALL STBVORBIS_init_track(void *audio_userdata, SDL_IOStream *io, const 
     return true;
 }
 
-// !!! FIXME: why aren't these marked static?
-bool SDLCALL STBVORBIS_seek(void *track_userdata, Uint64 frame);
+static bool SDLCALL STBVORBIS_seek(void *track_userdata, Uint64 frame);
 
-bool SDLCALL STBVORBIS_decode(void *track_userdata, SDL_AudioStream *stream)
+static bool SDLCALL STBVORBIS_decode(void *track_userdata, SDL_AudioStream *stream)
 {
     STBVORBIS_TrackData *tdata = (STBVORBIS_TrackData *) track_userdata;
 
@@ -296,7 +295,7 @@ bool SDLCALL STBVORBIS_decode(void *track_userdata, SDL_AudioStream *stream)
     return true;  // had more data to decode.
 }
 
-bool SDLCALL STBVORBIS_seek(void *track_userdata, Uint64 frame)
+static bool SDLCALL STBVORBIS_seek(void *track_userdata, Uint64 frame)
 {
     STBVORBIS_TrackData *tdata = (STBVORBIS_TrackData *) track_userdata;
     const MIX_OggLoop *loop = &tdata->adata->loop;
@@ -330,14 +329,14 @@ bool SDLCALL STBVORBIS_seek(void *track_userdata, Uint64 frame)
     return true;
 }
 
-void SDLCALL STBVORBIS_quit_track(void *track_userdata)
+static void SDLCALL STBVORBIS_quit_track(void *track_userdata)
 {
     STBVORBIS_TrackData *tdata = (STBVORBIS_TrackData *) track_userdata;
     stb_vorbis_close(tdata->vorbis);
     SDL_free(tdata);
 }
 
-void SDLCALL STBVORBIS_quit_audio(void *audio_userdata)
+static void SDLCALL STBVORBIS_quit_audio(void *audio_userdata)
 {
     SDL_free(audio_userdata);
 }

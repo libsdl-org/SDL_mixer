@@ -211,7 +211,7 @@ static bool SDLCALL VORBIS_init_audio(SDL_IOStream *io, SDL_AudioSpec *spec, SDL
     return true;
 }
 
-bool SDLCALL VORBIS_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_AudioSpec *spec, SDL_PropertiesID props, void **track_userdata)
+static bool SDLCALL VORBIS_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_AudioSpec *spec, SDL_PropertiesID props, void **track_userdata)
 {
     VORBIS_TrackData *tdata = (VORBIS_TrackData *) SDL_calloc(1, sizeof (*tdata));
     if (!tdata) {
@@ -238,9 +238,9 @@ bool SDLCALL VORBIS_init_track(void *audio_userdata, SDL_IOStream *io, const SDL
     return true;
 }
 
-bool SDLCALL VORBIS_seek(void *track_userdata, Uint64 frame);
+static bool SDLCALL VORBIS_seek(void *track_userdata, Uint64 frame);
 
-bool SDLCALL VORBIS_decode(void *track_userdata, SDL_AudioStream *stream)
+static bool SDLCALL VORBIS_decode(void *track_userdata, SDL_AudioStream *stream)
 {
     VORBIS_TrackData *tdata = (VORBIS_TrackData *) track_userdata;
     int bitstream = tdata->current_bitstream;
@@ -332,7 +332,7 @@ bool SDLCALL VORBIS_decode(void *track_userdata, SDL_AudioStream *stream)
     return true;  // had more data to decode.
 }
 
-bool SDLCALL VORBIS_seek(void *track_userdata, Uint64 frame)
+static bool SDLCALL VORBIS_seek(void *track_userdata, Uint64 frame)
 {
     VORBIS_TrackData *tdata = (VORBIS_TrackData *) track_userdata;
     const MIX_OggLoop *loop = &tdata->adata->loop;
@@ -366,14 +366,14 @@ bool SDLCALL VORBIS_seek(void *track_userdata, Uint64 frame)
     return true;
 }
 
-void SDLCALL VORBIS_quit_track(void *track_userdata)
+static void SDLCALL VORBIS_quit_track(void *track_userdata)
 {
     VORBIS_TrackData *tdata = (VORBIS_TrackData *) track_userdata;
     vorbis.ov_clear(&tdata->vf);
     SDL_free(tdata);
 }
 
-void SDLCALL VORBIS_quit_audio(void *audio_userdata)
+static void SDLCALL VORBIS_quit_audio(void *audio_userdata)
 {
     SDL_free(audio_userdata);
 }

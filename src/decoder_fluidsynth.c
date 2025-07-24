@@ -212,7 +212,7 @@ static fluid_long_long_t SoundFontTell(void *handle)
 }
 
 
-bool SDLCALL FLUIDSYNTH_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_AudioSpec *spec, SDL_PropertiesID props, void **track_userdata)
+static bool SDLCALL FLUIDSYNTH_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_AudioSpec *spec, SDL_PropertiesID props, void **track_userdata)
 {
     FLUIDSYNTH_TrackData *tdata = (FLUIDSYNTH_TrackData *) SDL_calloc(1, sizeof (*tdata));
     if (!tdata) {
@@ -315,7 +315,7 @@ failed:
     return false;
 }
 
-bool SDLCALL FLUIDSYNTH_decode(void *track_userdata, SDL_AudioStream *stream)
+static bool SDLCALL FLUIDSYNTH_decode(void *track_userdata, SDL_AudioStream *stream)
 {
     FLUIDSYNTH_TrackData *tdata = (FLUIDSYNTH_TrackData *) track_userdata;
 
@@ -332,7 +332,7 @@ bool SDLCALL FLUIDSYNTH_decode(void *track_userdata, SDL_AudioStream *stream)
     return true;
 }
 
-bool SDLCALL FLUIDSYNTH_seek(void *track_userdata, Uint64 frame)
+static bool SDLCALL FLUIDSYNTH_seek(void *track_userdata, Uint64 frame)
 {
 #if (FLUIDSYNTH_VERSION_MAJOR < 2)
     return SDL_Unsupported();
@@ -345,7 +345,7 @@ bool SDLCALL FLUIDSYNTH_seek(void *track_userdata, Uint64 frame)
 #endif
 }
 
-void SDLCALL FLUIDSYNTH_quit_track(void *track_userdata)
+static void SDLCALL FLUIDSYNTH_quit_track(void *track_userdata)
 {
     FLUIDSYNTH_TrackData *tdata = (FLUIDSYNTH_TrackData *) track_userdata;
     fluidsynth.fluid_player_stop(tdata->player);
@@ -355,7 +355,7 @@ void SDLCALL FLUIDSYNTH_quit_track(void *track_userdata)
     SDL_free(tdata);
 }
 
-void SDLCALL FLUIDSYNTH_quit_audio(void *audio_userdata)
+static void SDLCALL FLUIDSYNTH_quit_audio(void *audio_userdata)
 {
     FLUIDSYNTH_AudioData *adata = (FLUIDSYNTH_AudioData *) audio_userdata;
     SDL_free((void *) adata->sfdata);

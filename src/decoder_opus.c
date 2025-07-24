@@ -189,7 +189,7 @@ static bool SDLCALL OPUS_init_audio(SDL_IOStream *io, SDL_AudioSpec *spec, SDL_P
     return true;
 }
 
-bool SDLCALL OPUS_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_AudioSpec *spec, SDL_PropertiesID props, void **track_userdata)
+static bool SDLCALL OPUS_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_AudioSpec *spec, SDL_PropertiesID props, void **track_userdata)
 {
     OPUS_TrackData *tdata = (OPUS_TrackData *) SDL_calloc(1, sizeof (*tdata));
     if (!tdata) {
@@ -216,9 +216,9 @@ bool SDLCALL OPUS_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_A
     return true;
 }
 
-bool SDLCALL OPUS_seek(void *track_userdata, Uint64 frame);
+static bool SDLCALL OPUS_seek(void *track_userdata, Uint64 frame);
 
-bool SDLCALL OPUS_decode(void *track_userdata, SDL_AudioStream *stream)
+static bool SDLCALL OPUS_decode(void *track_userdata, SDL_AudioStream *stream)
 {
     OPUS_TrackData *tdata = (OPUS_TrackData *) track_userdata;
     int bitstream = tdata->current_bitstream;
@@ -296,7 +296,7 @@ bool SDLCALL OPUS_decode(void *track_userdata, SDL_AudioStream *stream)
     return true;  // had more data to decode.
 }
 
-bool SDLCALL OPUS_seek(void *track_userdata, Uint64 frame)
+static bool SDLCALL OPUS_seek(void *track_userdata, Uint64 frame)
 {
     OPUS_TrackData *tdata = (OPUS_TrackData *) track_userdata;
     const MIX_OggLoop *loop = &tdata->adata->loop;
@@ -330,14 +330,14 @@ bool SDLCALL OPUS_seek(void *track_userdata, Uint64 frame)
     return true;
 }
 
-void SDLCALL OPUS_quit_track(void *track_userdata)
+static void SDLCALL OPUS_quit_track(void *track_userdata)
 {
     OPUS_TrackData *tdata = (OPUS_TrackData *) track_userdata;
     opus.op_free(tdata->of);
     SDL_free(tdata);
 }
 
-void SDLCALL OPUS_quit_audio(void *audio_userdata)
+static void SDLCALL OPUS_quit_audio(void *audio_userdata)
 {
     OPUS_AudioData *adata = (OPUS_AudioData *) audio_userdata;
     SDL_free(adata);

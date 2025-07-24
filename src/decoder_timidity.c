@@ -99,7 +99,7 @@ static bool SDLCALL TIMIDITY_init_audio(SDL_IOStream *io, SDL_AudioSpec *spec, S
     return true;
 }
 
-bool SDLCALL TIMIDITY_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_AudioSpec *spec, SDL_PropertiesID props, void **track_userdata)
+static bool SDLCALL TIMIDITY_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_AudioSpec *spec, SDL_PropertiesID props, void **track_userdata)
 {
     SDL_assert(audio_userdata == NULL);  // no state.
     TIMIDITY_TrackData *tdata = (TIMIDITY_TrackData *) SDL_calloc(1, sizeof (*tdata));
@@ -122,7 +122,7 @@ bool SDLCALL TIMIDITY_init_track(void *audio_userdata, SDL_IOStream *io, const S
     return true;
 }
 
-bool SDLCALL TIMIDITY_decode(void *track_userdata, SDL_AudioStream *stream)
+static bool SDLCALL TIMIDITY_decode(void *track_userdata, SDL_AudioStream *stream)
 {
     TIMIDITY_TrackData *tdata = (TIMIDITY_TrackData *) track_userdata;
     //Sint32 samples[256];  // !!! FIXME: there's a hardcoded thing about buffer_size in our copy of timidity that needs to be fixed; it's hardcoded at the moment, so we use tdata->samples.
@@ -135,7 +135,7 @@ bool SDLCALL TIMIDITY_decode(void *track_userdata, SDL_AudioStream *stream)
     return true;
 }
 
-bool SDLCALL TIMIDITY_seek(void *track_userdata, Uint64 frame)
+static bool SDLCALL TIMIDITY_seek(void *track_userdata, Uint64 frame)
 {
     TIMIDITY_TrackData *tdata = (TIMIDITY_TrackData *) track_userdata;
     const Uint32 ticks = (Uint32) MIX_FramesToMS(tdata->freq, frame);
@@ -143,7 +143,7 @@ bool SDLCALL TIMIDITY_seek(void *track_userdata, Uint64 frame)
     return true;
 }
 
-void SDLCALL TIMIDITY_quit_track(void *track_userdata)
+static void SDLCALL TIMIDITY_quit_track(void *track_userdata)
 {
     TIMIDITY_TrackData *tdata = (TIMIDITY_TrackData *) track_userdata;
     Timidity_Stop(tdata->song);
@@ -151,7 +151,7 @@ void SDLCALL TIMIDITY_quit_track(void *track_userdata)
     SDL_free(tdata);
 }
 
-void SDLCALL TIMIDITY_quit_audio(void *audio_userdata)
+static void SDLCALL TIMIDITY_quit_audio(void *audio_userdata)
 {
     SDL_assert(audio_userdata == NULL);  // no state.
 }

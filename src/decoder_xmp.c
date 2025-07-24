@@ -194,7 +194,7 @@ static bool SDLCALL XMP_init_audio(SDL_IOStream *io, SDL_AudioSpec *spec, SDL_Pr
     return true;
 }
 
-bool SDLCALL XMP_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_AudioSpec *spec, SDL_PropertiesID props, void **track_userdata)
+static bool SDLCALL XMP_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_AudioSpec *spec, SDL_PropertiesID props, void **track_userdata)
 {
     SDL_assert(audio_userdata == NULL);  // no state.
 
@@ -233,7 +233,7 @@ bool SDLCALL XMP_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_Au
     return true;
 }
 
-bool SDLCALL XMP_decode(void *track_userdata, SDL_AudioStream *stream)
+static bool SDLCALL XMP_decode(void *track_userdata, SDL_AudioStream *stream)
 {
     XMP_TrackData *tdata = (XMP_TrackData *) track_userdata;
 
@@ -253,14 +253,14 @@ bool SDLCALL XMP_decode(void *track_userdata, SDL_AudioStream *stream)
     return true;  // had more data to decode.
 }
 
-bool SDLCALL XMP_seek(void *track_userdata, Uint64 frame)
+static bool SDLCALL XMP_seek(void *track_userdata, Uint64 frame)
 {
     XMP_TrackData *tdata = (XMP_TrackData *) track_userdata;
     const int err = libxmp.xmp_seek_time(tdata->ctx, (int) MIX_FramesToMS(tdata->freq, frame));
     return err ? SetLibXmpError("xmp_seek_time", err) : true;
 }
 
-void SDLCALL XMP_quit_track(void *track_userdata)
+static void SDLCALL XMP_quit_track(void *track_userdata)
 {
     XMP_TrackData *tdata = (XMP_TrackData *) track_userdata;
     libxmp.xmp_stop_module(tdata->ctx);
@@ -270,7 +270,7 @@ void SDLCALL XMP_quit_track(void *track_userdata)
     SDL_free(tdata);
 }
 
-void SDLCALL XMP_quit_audio(void *audio_userdata)
+static void SDLCALL XMP_quit_audio(void *audio_userdata)
 {
     SDL_assert(audio_userdata == NULL);   // no state.
 }

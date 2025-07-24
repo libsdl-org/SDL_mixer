@@ -64,7 +64,7 @@ static bool SDLCALL RAW_init_audio(SDL_IOStream *io, SDL_AudioSpec *spec, SDL_Pr
     return true;
 }
 
-bool SDLCALL RAW_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_AudioSpec *spec, SDL_PropertiesID props, void **track_userdata)
+static bool SDLCALL RAW_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_AudioSpec *spec, SDL_PropertiesID props, void **track_userdata)
 {
     SDL_assert(audio_userdata == NULL);  // no state.
     RAW_TrackData *tdata = (RAW_TrackData *) SDL_calloc(1, sizeof (*tdata));
@@ -81,7 +81,7 @@ bool SDLCALL RAW_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_Au
     return true;
 }
 
-bool SDLCALL RAW_decode(void *track_userdata, SDL_AudioStream *stream)
+static bool SDLCALL RAW_decode(void *track_userdata, SDL_AudioStream *stream)
 {
     RAW_TrackData *tdata = (RAW_TrackData *) track_userdata;
     Uint8 buffer[256];
@@ -109,7 +109,7 @@ bool SDLCALL RAW_decode(void *track_userdata, SDL_AudioStream *stream)
     return true;
 }
 
-bool SDLCALL RAW_seek(void *track_userdata, Uint64 frame)
+static bool SDLCALL RAW_seek(void *track_userdata, Uint64 frame)
 {
     RAW_TrackData *tdata = (RAW_TrackData *) track_userdata;
     const Sint64 offset = (Sint64) (frame * tdata->framesize);
@@ -120,12 +120,12 @@ bool SDLCALL RAW_seek(void *track_userdata, Uint64 frame)
     return true;
 }
 
-void SDLCALL RAW_quit_track(void *track_userdata)
+static void SDLCALL RAW_quit_track(void *track_userdata)
 {
     SDL_free(track_userdata);
 }
 
-void SDLCALL RAW_quit_audio(void *audio_userdata)
+static void SDLCALL RAW_quit_audio(void *audio_userdata)
 {
     SDL_assert(audio_userdata == NULL);  // no state.
 }

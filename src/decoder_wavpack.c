@@ -475,7 +475,7 @@ failed:
     return false;
 }
 
-bool SDLCALL WAVPACK_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_AudioSpec *spec, SDL_PropertiesID props, void **track_userdata)
+static bool SDLCALL WAVPACK_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_AudioSpec *spec, SDL_PropertiesID props, void **track_userdata)
 {
     WAVPACK_TrackData *tdata = (WAVPACK_TrackData *) SDL_calloc(1, sizeof (*tdata));
     if (!tdata) {
@@ -526,7 +526,7 @@ failed:
     return false;
 }
 
-bool SDLCALL WAVPACK_decode(void *track_userdata, SDL_AudioStream *stream)
+static bool SDLCALL WAVPACK_decode(void *track_userdata, SDL_AudioStream *stream)
 {
     WAVPACK_TrackData *tdata = (WAVPACK_TrackData *) track_userdata;
     const WAVPACK_AudioData *adata = tdata->adata;
@@ -574,7 +574,7 @@ bool SDLCALL WAVPACK_decode(void *track_userdata, SDL_AudioStream *stream)
     return true;
 }
 
-bool SDLCALL WAVPACK_seek(void *track_userdata, Uint64 frame)
+static bool SDLCALL WAVPACK_seek(void *track_userdata, Uint64 frame)
 {
     WAVPACK_TrackData *tdata = (WAVPACK_TrackData *) track_userdata;
     const int success =
@@ -596,7 +596,7 @@ bool SDLCALL WAVPACK_seek(void *track_userdata, Uint64 frame)
     return true;
 }
 
-void SDLCALL WAVPACK_quit_track(void *track_userdata)
+static void SDLCALL WAVPACK_quit_track(void *track_userdata)
 {
     WAVPACK_TrackData *tdata = (WAVPACK_TrackData *) track_userdata;
 
@@ -610,7 +610,7 @@ void SDLCALL WAVPACK_quit_track(void *track_userdata)
     SDL_free(tdata);
 }
 
-void SDLCALL WAVPACK_quit_audio(void *audio_userdata)
+static void SDLCALL WAVPACK_quit_audio(void *audio_userdata)
 {
     WAVPACK_AudioData *adata = (WAVPACK_AudioData *) audio_userdata;
     SDL_free((void *) adata->wvcdata);

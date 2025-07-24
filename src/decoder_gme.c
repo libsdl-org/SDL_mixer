@@ -129,7 +129,7 @@ static bool SDLCALL GME_init_audio(SDL_IOStream *io, SDL_AudioSpec *spec, SDL_Pr
     return true;
 }
 
-bool SDLCALL GME_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_AudioSpec *spec, SDL_PropertiesID props, void **track_userdata)
+static bool SDLCALL GME_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_AudioSpec *spec, SDL_PropertiesID props, void **track_userdata)
 {
     SDL_assert(audio_userdata == NULL);  // no state.
 
@@ -167,7 +167,7 @@ bool SDLCALL GME_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_Au
     return true;
 }
 
-bool SDLCALL GME_decode(void *track_userdata, SDL_AudioStream *stream)
+static bool SDLCALL GME_decode(void *track_userdata, SDL_AudioStream *stream)
 {
     Music_Emu *emu = (Music_Emu *) track_userdata;
     if (gme.gme_track_ended(emu)) {
@@ -185,20 +185,20 @@ bool SDLCALL GME_decode(void *track_userdata, SDL_AudioStream *stream)
     return true;  // had more data to decode.
 }
 
-bool SDLCALL GME_seek(void *track_userdata, Uint64 frame)
+static bool SDLCALL GME_seek(void *track_userdata, Uint64 frame)
 {
     Music_Emu *emu = (Music_Emu *) track_userdata;
     gme_err_t err = gme.gme_seek_samples(emu, (int) frame);
     return err ? SDL_SetError("gme_seek_samples failed: %s", err) : true;
 }
 
-void SDLCALL GME_quit_track(void *track_userdata)
+static void SDLCALL GME_quit_track(void *track_userdata)
 {
     Music_Emu *emu = (Music_Emu *) track_userdata;
     gme.gme_delete(emu);
 }
 
-void SDLCALL GME_quit_audio(void *audio_userdata)
+static void SDLCALL GME_quit_audio(void *audio_userdata)
 {
     SDL_assert(audio_userdata == NULL);  // no state.
 }

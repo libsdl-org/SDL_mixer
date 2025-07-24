@@ -126,7 +126,7 @@ static FLAC__StreamDecoderWriteStatus FLAC_IoWriteNoOp(const FLAC__StreamDecoder
     return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;  // we don't need this data at this moment.
 }
 
-bool SDLCALL FLAC_seek(void *track_userdata, Uint64 frame);
+static bool SDLCALL FLAC_seek(void *track_userdata, Uint64 frame);
 
 static FLAC__StreamDecoderWriteStatus FLAC_IoWrite(const FLAC__StreamDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 *const buffer[], void *userdata)
 {
@@ -382,7 +382,7 @@ static bool SDLCALL FLAC_init_audio(SDL_IOStream *io, SDL_AudioSpec *spec, SDL_P
     return true;
 }
 
-bool SDLCALL FLAC_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_AudioSpec *spec, SDL_PropertiesID props, void **track_userdata)
+static bool SDLCALL FLAC_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_AudioSpec *spec, SDL_PropertiesID props, void **track_userdata)
 {
     FLAC_TrackData *tdata = (FLAC_TrackData *) SDL_calloc(1, sizeof (*tdata));
     if (!tdata) {
@@ -426,7 +426,7 @@ bool SDLCALL FLAC_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_A
     return true;
 }
 
-bool SDLCALL FLAC_decode(void *track_userdata, SDL_AudioStream *stream)
+static bool SDLCALL FLAC_decode(void *track_userdata, SDL_AudioStream *stream)
 {
     FLAC_TrackData *tdata = (FLAC_TrackData *) track_userdata;
     tdata->stream = stream;
@@ -440,7 +440,7 @@ bool SDLCALL FLAC_decode(void *track_userdata, SDL_AudioStream *stream)
     return true;
 }
 
-bool SDLCALL FLAC_seek(void *track_userdata, Uint64 frame)
+static bool SDLCALL FLAC_seek(void *track_userdata, Uint64 frame)
 {
     FLAC_TrackData *tdata = (FLAC_TrackData *) track_userdata;
     const MIX_OggLoop *loop = &tdata->adata->loop;
@@ -475,7 +475,7 @@ bool SDLCALL FLAC_seek(void *track_userdata, Uint64 frame)
     return true;
 }
 
-void SDLCALL FLAC_quit_track(void *track_userdata)
+static void SDLCALL FLAC_quit_track(void *track_userdata)
 {
     FLAC_TrackData *tdata = (FLAC_TrackData *) track_userdata;
     tdata->stream = NULL;
@@ -485,7 +485,7 @@ void SDLCALL FLAC_quit_track(void *track_userdata)
     SDL_free(tdata);
 }
 
-void SDLCALL FLAC_quit_audio(void *audio_userdata)
+static void SDLCALL FLAC_quit_audio(void *audio_userdata)
 {
     FLAC_AudioData *adata = (FLAC_AudioData *) audio_userdata;
     SDL_free(adata);
