@@ -229,6 +229,16 @@ typedef struct MIX_Group MIX_Group;
 #define SDL_MIXER_VERSION SDL_VERSIONNUM(SDL_MIXER_MAJOR_VERSION, SDL_MIXER_MINOR_VERSION, SDL_MIXER_MICRO_VERSION)
 
 /**
+ * This macro will evaluate to true if compiled with SDL_mixer at least X.Y.Z.
+ *
+ * \since This macro is available since SDL_mixer 3.0.0.
+ */
+#define SDL_MIXER_VERSION_ATLEAST(X, Y, Z) \
+    ((SDL_MIXER_MAJOR_VERSION >= X) && \
+     (SDL_MIXER_MAJOR_VERSION > X || SDL_MIXER_MINOR_VERSION >= Y) && \
+     (SDL_MIXER_MAJOR_VERSION > X || SDL_MIXER_MINOR_VERSION > Y || SDL_MIXER_MICRO_VERSION >= Z))
+
+/**
  * Get the version of SDL_mixer that is linked against your program.
  *
  * If you are linking to SDL_mixer dynamically, then it is possible that the
