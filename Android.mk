@@ -34,13 +34,13 @@ WAVPACK_LIBRARY_PATH := external/wavpack
 SUPPORT_GME ?= false
 GME_LIBRARY_PATH := external/libgme
 
-# Enable this if you want to support loading MOD music via XMP-lite
+# Enable this if you want to support loading MOD music via libxmp
 SUPPORT_MOD_XMP ?= false
 XMP_LIBRARY_PATH := external/libxmp
 
 # Enable this if you want to support TiMidity
 SUPPORT_MID_TIMIDITY ?= false
-TIMIDITY_LIBRARY_PATH := src/codecs/timidity
+TIMIDITY_LIBRARY_PATH := src/timidity
 
 
 # Build the library
@@ -86,15 +86,11 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := SDL3_mixer
 
-LOCAL_C_INCLUDES :=                                     \
-    $(LOCAL_PATH)/include                               \
-    $(LOCAL_PATH)/src/                                  \
-    $(LOCAL_PATH)/src/codecs                            \
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
 
 LOCAL_SRC_FILES :=                                      \
     $(subst $(LOCAL_PATH)/,,                            \
-    $(wildcard $(LOCAL_PATH)/src/*.c)                   \
-    $(wildcard $(LOCAL_PATH)/src/codecs/*.c)            \
+      $(wildcard $(LOCAL_PATH)/src/*.c)                 \
     )
 
 LOCAL_CFLAGS :=
@@ -104,60 +100,60 @@ LOCAL_STATIC_LIBRARIES :=
 LOCAL_SHARED_LIBRARIES := SDL3
 
 ifeq ($(SUPPORT_WAV),true)
-    LOCAL_CFLAGS += -DMUSIC_WAV
+    LOCAL_CFLAGS += -DDECODER_WAV
 endif
 
 ifeq ($(SUPPORT_FLAC_DRFLAC),true)
-    LOCAL_CFLAGS += -DMUSIC_FLAC_DRFLAC
+    LOCAL_CFLAGS += -DDECODER_FLAC_DRFLAC
 endif
 
 ifeq ($(SUPPORT_FLAC_LIBFLAC),true)
     LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(FLAC_LIBRARY_PATH)/include
-    LOCAL_CFLAGS += -DMUSIC_FLAC_LIBFLAC
+    LOCAL_CFLAGS += -DDECODER_FLAC_LIBFLAC
     LOCAL_STATIC_LIBRARIES += libFLAC
 endif
 
 ifeq ($(SUPPORT_OGG_STB),true)
-    LOCAL_CFLAGS += -DMUSIC_OGG -DOGG_USE_STB
+    LOCAL_CFLAGS += -DDECODER_OGGVORBIS_STB
 endif
 
 ifeq ($(SUPPORT_OGG),true)
     LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(OGG_LIBRARY_PATH)/include
     LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(VORBIS_LIBRARY_PATH)
-    LOCAL_CFLAGS += -DMUSIC_OGG -DOGG_USE_TREMOR -DOGG_HEADER="<ivorbisfile.h>"
+    LOCAL_CFLAGS += -DDECODER_OGGVORBIS_VORBISFILE -DVORBIS_USE_TREMOR -DVORBIS_HEADER="<ivorbisfile.h>"
     LOCAL_STATIC_LIBRARIES += ogg vorbisidec
 endif
 
 ifeq ($(SUPPORT_MP3_DRMP3),true)
-    LOCAL_CFLAGS += -DMUSIC_MP3_DRMP3
+    LOCAL_CFLAGS += -DDECODER_MP3_DRMP3
 endif
 
 # This needs to be a shared library to comply with the LGPL license
 ifeq ($(SUPPORT_MP3_MPG123),true)
     LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(MPG123_LIBRARY_PATH)/android
-    LOCAL_CFLAGS += -DMUSIC_MP3_MPG123
+    LOCAL_CFLAGS += -DDECODER_MP3_MPG123
     LOCAL_SHARED_LIBRARIES += mpg123
 endif
 
 ifeq ($(SUPPORT_WAVPACK),true)
-    LOCAL_CFLAGS += -DMUSIC_WAVPACK -DMUSIC_WAVPACK_DSD -DWAVPACK_HEADER=\"../external/wavpack/include/wavpack.h\"
+    LOCAL_CFLAGS += -DDECODER_WAVPACK -DDECODER_WAVPACK_DSD -DWAVPACK_HEADER=\"../external/wavpack/include/wavpack.h\"
     LOCAL_STATIC_LIBRARIES += wavpack
 endif
 
 ifeq ($(SUPPORT_GME),true)
-    LOCAL_CFLAGS += -DMUSIC_GME
+    LOCAL_CFLAGS += -DDECODER_GME
     LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(GME_LIBRARY_PATH)
     LOCAL_STATIC_LIBRARIES += libgme
 endif
 
 ifeq ($(SUPPORT_MOD_XMP),true)
-    LOCAL_CFLAGS += -DMUSIC_MOD_XMP -DLIBXMP_HEADER=\"../external/libxmp/include/xmp.h\"
+    LOCAL_CFLAGS += -DDECODER_MOD_XMP -DLIBXMP_HEADER=\"../external/libxmp/include/xmp.h\"
     LOCAL_STATIC_LIBRARIES += xmp
 endif
 
 ifeq ($(SUPPORT_MID_TIMIDITY),true)
     LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(TIMIDITY_LIBRARY_PATH)
-    LOCAL_CFLAGS += -DMUSIC_MID_TIMIDITY
+    LOCAL_CFLAGS += -DDECODER_MIDI_TIMIDITY
     LOCAL_STATIC_LIBRARIES += timidity
 endif
 
