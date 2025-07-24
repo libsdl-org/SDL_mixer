@@ -32,7 +32,7 @@ function name and a brief explanation about what to do with it.
 
 - Native MIDI has been removed. We have ripped this piece out of SDL2_mixer
   and packaged it as a separate library that can be used alongside SDL3_mixer,
-  or without SDL_mixer at all: https://github.com/icculus/SDL_native_midi
+  or without SDL_mixer at all: https://github.com/libsdl-org/SDL_native_midi
 
 - Mix_GetNumTracks(), Mix_StartTrack(), and Mix_ModMusicJumpToOrder() have
   been removed; these were decoder-specific APIs.
