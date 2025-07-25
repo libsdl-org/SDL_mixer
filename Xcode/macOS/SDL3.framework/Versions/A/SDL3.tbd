@@ -1245,7 +1245,27 @@
             "_SDL_AudioStreamDevicePaused",
             "_SDL_ClickTrayEntry",
             "_SDL_UpdateTrays",
-            "_SDL_StretchSurface"
+            "_SDL_StretchSurface",
+            "_SDL_SetRelativeMouseTransform",
+            "_SDL_RenderTexture9GridTiled",
+            "_SDL_SetDefaultTextureScaleMode",
+            "_SDL_GetDefaultTextureScaleMode",
+            "_SDL_CreateGPURenderState",
+            "_SDL_SetGPURenderStateFragmentUniforms",
+            "_SDL_SetRenderGPUState",
+            "_SDL_DestroyGPURenderState",
+            "_SDL_SetWindowProgressState",
+            "_SDL_SetWindowProgressValue",
+            "_SDL_GetWindowProgressState",
+            "_SDL_GetWindowProgressValue",
+            "_SDL_SetRenderTextureAddressMode",
+            "_SDL_GetRenderTextureAddressMode",
+            "_SDL_GetGPUDeviceProperties",
+            "_SDL_CreateGPURenderer",
+            "_SDL_PutAudioStreamPlanarData",
+            "_SDL_GetEventDescription",
+            "_SDL_PutAudioStreamDataNoCopy",
+            "_SDL_IsTraySupported"
           ]
         }
       }

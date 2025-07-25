@@ -492,7 +492,7 @@ typedef uint64_t Uint64;
  * and SDL_SECONDS_TO_NS(), and between Windows FILETIME values with
  * SDL_TimeToWindows() and SDL_TimeFromWindows().
  *
- * \since This macro is available since SDL 3.2.0.
+ * \since This datatype is available since SDL 3.2.0.
  *
  * \sa SDL_MAX_SINT64
  * \sa SDL_MIN_SINT64
@@ -1299,8 +1299,11 @@ extern "C" {
  *
  * If `size` is 0, it will be set to 1.
  *
- * If you want to allocate memory aligned to a specific alignment, consider
- * using SDL_aligned_alloc().
+ * If the allocation is successful, the returned pointer is guaranteed to be
+ * aligned to either the *fundamental alignment* (`alignof(max_align_t)` in
+ * C11 and later) or `2 * sizeof(void *)`, whichever is smaller. Use
+ * SDL_aligned_alloc() if you need to allocate memory aligned to an alignment
+ * greater than this guarantee.
  *
  * \param size the size to allocate.
  * \returns a pointer to the allocated memory, or NULL if allocation failed.
@@ -1322,6 +1325,10 @@ extern SDL_DECLSPEC SDL_MALLOC void * SDLCALL SDL_malloc(size_t size);
  * The memory returned by this function must be freed with SDL_free().
  *
  * If either of `nmemb` or `size` is 0, they will both be set to 1.
+ *
+ * If the allocation is successful, the returned pointer is guaranteed to be
+ * aligned to either the *fundamental alignment* (`alignof(max_align_t)` in
+ * C11 and later) or `2 * sizeof(void *)`, whichever is smaller.
  *
  * \param nmemb the number of elements in the array.
  * \param size the size of each element of the array.
@@ -1356,6 +1363,11 @@ extern SDL_DECLSPEC SDL_MALLOC SDL_ALLOC_SIZE2(1, 2) void * SDLCALL SDL_calloc(s
  *   and cannot be dereferenced anymore.
  * - If it returns NULL (indicating failure), then `mem` will remain valid and
  *   must still be freed with SDL_free().
+ *
+ * If the allocation is successfully resized, the returned pointer is
+ * guaranteed to be aligned to either the *fundamental alignment*
+ * (`alignof(max_align_t)` in C11 and later) or `2 * sizeof(void *)`,
+ * whichever is smaller.
  *
  * \param mem a pointer to allocated memory to reallocate, or NULL.
  * \param size the new size of the memory.
@@ -2107,7 +2119,7 @@ extern SDL_DECLSPEC int SDLCALL SDL_abs(int x);
  *
  * \param x the first value to compare.
  * \param y the second value to compare.
- * \returns the lesser of `x` and `y`.
+ * \returns the greater of `x` and `y`.
  *
  * \threadsafety It is safe to call this macro from any thread.
  *
@@ -4644,7 +4656,7 @@ extern SDL_DECLSPEC float SDLCALL SDL_atanf(float x);
  *
  * Domain: `-INF <= x <= INF`, `-INF <= y <= INF`
  *
- * Range: `-Pi/2 <= y <= Pi/2`
+ * Range: `-Pi <= y <= Pi`
  *
  * This function operates on double-precision floating point values, use
  * SDL_atan2f for single-precision floats.
@@ -4680,7 +4692,7 @@ extern SDL_DECLSPEC double SDLCALL SDL_atan2(double y, double x);
  *
  * Domain: `-INF <= x <= INF`, `-INF <= y <= INF`
  *
- * Range: `-Pi/2 <= y <= Pi/2`
+ * Range: `-Pi <= y <= Pi`
  *
  * This function operates on single-precision floating point values, use
  * SDL_atan2 for double-precision floats.
@@ -5962,8 +5974,12 @@ size_t wcslcpy(wchar_t *dst, const wchar_t *src, size_t size);
 size_t wcslcat(wchar_t *dst, const wchar_t *src, size_t size);
 #endif
 
+#ifndef _WIN32
 /* strdup is not ANSI but POSIX, and its prototype might be hidden... */
+/* not for windows: might conflict with string.h where strdup may have
+ * dllimport attribute: https://github.com/libsdl-org/SDL/issues/12948 */
 char *strdup(const char *str);
+#endif
 
 /* Starting LLVM 16, the analyser errors out if these functions do not have
    their prototype defined (clang-diagnostic-implicit-function-declaration) */

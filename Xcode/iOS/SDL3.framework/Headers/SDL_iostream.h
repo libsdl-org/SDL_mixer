@@ -286,8 +286,7 @@ extern SDL_DECLSPEC SDL_IOStream * SDLCALL SDL_IOFromFile(const char *file, cons
  * certain size, for both read and write access.
  *
  * This memory buffer is not copied by the SDL_IOStream; the pointer you
- * provide must remain valid until you close the stream. Closing the stream
- * will not free the original buffer.
+ * provide must remain valid until you close the stream.
  *
  * If you need to make sure the SDL_IOStream never writes to the memory
  * buffer, you should use SDL_IOFromConstMem() with a read-only buffer of
@@ -299,6 +298,13 @@ extern SDL_DECLSPEC SDL_IOStream * SDLCALL SDL_IOFromFile(const char *file, cons
  *   was passed to this function.
  * - `SDL_PROP_IOSTREAM_MEMORY_SIZE_NUMBER`: this will be the `size` parameter
  *   that was passed to this function.
+ *
+ * Additionally, the following properties are recognized:
+ *
+ * - `SDL_PROP_IOSTREAM_MEMORY_FREE_FUNC_POINTER`: if this property is set to
+ *   a non-NULL value it will be interpreted as a function of SDL_free_func
+ *   type and called with the passed `mem` pointer when closing the stream. By
+ *   default it is unset, i.e., the memory will not be freed.
  *
  * \param mem a pointer to a buffer to feed an SDL_IOStream stream.
  * \param size the buffer size, in bytes.
@@ -321,6 +327,7 @@ extern SDL_DECLSPEC SDL_IOStream * SDLCALL SDL_IOFromMem(void *mem, size_t size)
 
 #define SDL_PROP_IOSTREAM_MEMORY_POINTER "SDL.iostream.memory.base"
 #define SDL_PROP_IOSTREAM_MEMORY_SIZE_NUMBER  "SDL.iostream.memory.size"
+#define SDL_PROP_IOSTREAM_MEMORY_FREE_FUNC_POINTER "SDL.iostream.memory.free"
 
 /**
  * Use this function to prepare a read-only memory buffer for use with
@@ -333,8 +340,7 @@ extern SDL_DECLSPEC SDL_IOStream * SDLCALL SDL_IOFromMem(void *mem, size_t size)
  * without writing to the memory buffer.
  *
  * This memory buffer is not copied by the SDL_IOStream; the pointer you
- * provide must remain valid until you close the stream. Closing the stream
- * will not free the original buffer.
+ * provide must remain valid until you close the stream.
  *
  * If you need to write to a memory buffer, you should use SDL_IOFromMem()
  * with a writable buffer of memory instead.
@@ -345,6 +351,13 @@ extern SDL_DECLSPEC SDL_IOStream * SDLCALL SDL_IOFromMem(void *mem, size_t size)
  *   was passed to this function.
  * - `SDL_PROP_IOSTREAM_MEMORY_SIZE_NUMBER`: this will be the `size` parameter
  *   that was passed to this function.
+ *
+ * Additionally, the following properties are recognized:
+ *
+ * - `SDL_PROP_IOSTREAM_MEMORY_FREE_FUNC_POINTER`: if this property is set to
+ *   a non-NULL value it will be interpreted as a function of SDL_free_func
+ *   type and called with the passed `mem` pointer when closing the stream. By
+ *   default it is unset, i.e., the memory will not be freed.
  *
  * \param mem a pointer to a read-only buffer to feed an SDL_IOStream stream.
  * \param size the buffer size, in bytes.
@@ -823,7 +836,7 @@ extern SDL_DECLSPEC bool SDLCALL SDL_ReadS8(SDL_IOStream *src, Sint8 *value);
  *
  * \param src the stream from which to read data.
  * \param value a pointer filled in with the data read.
- * \returns true on successful write or false on failure; call SDL_GetError()
+ * \returns true on successful read or false on failure; call SDL_GetError()
  *          for more information.
  *
  * \threadsafety This function is not thread safe.
@@ -846,7 +859,7 @@ extern SDL_DECLSPEC bool SDLCALL SDL_ReadU16LE(SDL_IOStream *src, Uint16 *value)
  *
  * \param src the stream from which to read data.
  * \param value a pointer filled in with the data read.
- * \returns true on successful write or false on failure; call SDL_GetError()
+ * \returns true on successful read or false on failure; call SDL_GetError()
  *          for more information.
  *
  * \threadsafety This function is not thread safe.
@@ -869,7 +882,7 @@ extern SDL_DECLSPEC bool SDLCALL SDL_ReadS16LE(SDL_IOStream *src, Sint16 *value)
  *
  * \param src the stream from which to read data.
  * \param value a pointer filled in with the data read.
- * \returns true on successful write or false on failure; call SDL_GetError()
+ * \returns true on successful read or false on failure; call SDL_GetError()
  *          for more information.
  *
  * \threadsafety This function is not thread safe.
@@ -892,7 +905,7 @@ extern SDL_DECLSPEC bool SDLCALL SDL_ReadU16BE(SDL_IOStream *src, Uint16 *value)
  *
  * \param src the stream from which to read data.
  * \param value a pointer filled in with the data read.
- * \returns true on successful write or false on failure; call SDL_GetError()
+ * \returns true on successful read or false on failure; call SDL_GetError()
  *          for more information.
  *
  * \threadsafety This function is not thread safe.
@@ -915,7 +928,7 @@ extern SDL_DECLSPEC bool SDLCALL SDL_ReadS16BE(SDL_IOStream *src, Sint16 *value)
  *
  * \param src the stream from which to read data.
  * \param value a pointer filled in with the data read.
- * \returns true on successful write or false on failure; call SDL_GetError()
+ * \returns true on successful read or false on failure; call SDL_GetError()
  *          for more information.
  *
  * \threadsafety This function is not thread safe.
@@ -938,7 +951,7 @@ extern SDL_DECLSPEC bool SDLCALL SDL_ReadU32LE(SDL_IOStream *src, Uint32 *value)
  *
  * \param src the stream from which to read data.
  * \param value a pointer filled in with the data read.
- * \returns true on successful write or false on failure; call SDL_GetError()
+ * \returns true on successful read or false on failure; call SDL_GetError()
  *          for more information.
  *
  * \threadsafety This function is not thread safe.
@@ -961,7 +974,7 @@ extern SDL_DECLSPEC bool SDLCALL SDL_ReadS32LE(SDL_IOStream *src, Sint32 *value)
  *
  * \param src the stream from which to read data.
  * \param value a pointer filled in with the data read.
- * \returns true on successful write or false on failure; call SDL_GetError()
+ * \returns true on successful read or false on failure; call SDL_GetError()
  *          for more information.
  *
  * \threadsafety This function is not thread safe.
@@ -984,7 +997,7 @@ extern SDL_DECLSPEC bool SDLCALL SDL_ReadU32BE(SDL_IOStream *src, Uint32 *value)
  *
  * \param src the stream from which to read data.
  * \param value a pointer filled in with the data read.
- * \returns true on successful write or false on failure; call SDL_GetError()
+ * \returns true on successful read or false on failure; call SDL_GetError()
  *          for more information.
  *
  * \threadsafety This function is not thread safe.
@@ -1007,7 +1020,7 @@ extern SDL_DECLSPEC bool SDLCALL SDL_ReadS32BE(SDL_IOStream *src, Sint32 *value)
  *
  * \param src the stream from which to read data.
  * \param value a pointer filled in with the data read.
- * \returns true on successful write or false on failure; call SDL_GetError()
+ * \returns true on successful read or false on failure; call SDL_GetError()
  *          for more information.
  *
  * \threadsafety This function is not thread safe.
@@ -1030,7 +1043,7 @@ extern SDL_DECLSPEC bool SDLCALL SDL_ReadU64LE(SDL_IOStream *src, Uint64 *value)
  *
  * \param src the stream from which to read data.
  * \param value a pointer filled in with the data read.
- * \returns true on successful write or false on failure; call SDL_GetError()
+ * \returns true on successful read or false on failure; call SDL_GetError()
  *          for more information.
  *
  * \threadsafety This function is not thread safe.
@@ -1053,7 +1066,7 @@ extern SDL_DECLSPEC bool SDLCALL SDL_ReadS64LE(SDL_IOStream *src, Sint64 *value)
  *
  * \param src the stream from which to read data.
  * \param value a pointer filled in with the data read.
- * \returns true on successful write or false on failure; call SDL_GetError()
+ * \returns true on successful read or false on failure; call SDL_GetError()
  *          for more information.
  *
  * \threadsafety This function is not thread safe.
@@ -1076,7 +1089,7 @@ extern SDL_DECLSPEC bool SDLCALL SDL_ReadU64BE(SDL_IOStream *src, Uint64 *value)
  *
  * \param src the stream from which to read data.
  * \param value a pointer filled in with the data read.
- * \returns true on successful write or false on failure; call SDL_GetError()
+ * \returns true on successful read or false on failure; call SDL_GetError()
  *          for more information.
  *
  * \threadsafety This function is not thread safe.

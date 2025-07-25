@@ -185,14 +185,18 @@ extern "C" {
 #define SDL_NS_TO_US(NS)        ((NS) / SDL_NS_PER_US)
 
 /**
- * Get the number of milliseconds since SDL library initialization.
+ * Get the number of milliseconds that have elapsed since the SDL library
+ * initialization.
  *
- * \returns an unsigned 64-bit value representing the number of milliseconds
- *          since the SDL library initialized.
+ * \returns an unsigned 64‑bit integer that represents the number of
+ *          milliseconds that have elapsed since the SDL library was
+ *          initialized (typically via a call to SDL_Init).
  *
  * \threadsafety It is safe to call this function from any thread.
  *
  * \since This function is available since SDL 3.2.0.
+ *
+ * \sa SDL_GetTicksNS
  */
 extern SDL_DECLSPEC Uint64 SDLCALL SDL_GetTicks(void);
 
