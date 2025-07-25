@@ -208,7 +208,7 @@ typedef struct MIX_Group MIX_Group;
  *
  * \since This macro is available since SDL_mixer 3.0.0.
  */
-#define SDL_MIXER_MINOR_VERSION   0
+#define SDL_MIXER_MINOR_VERSION   1
 
 /**
  * The current micro (or patchlevel) version of the SDL_mixer headers.
