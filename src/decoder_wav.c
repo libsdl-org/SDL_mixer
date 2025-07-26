@@ -1381,7 +1381,7 @@ static bool SDLCALL WAV_init_track(void *audio_userdata, SDL_IOStream *io, const
         }
 
         state->output.size = state->info->samplesperblock * state->info->channels;
-        state->output.data = (Sint16 *)SDL_calloc(sizeof(Sint16), state->output.size);
+        state->output.data = (Sint16 *)SDL_calloc(state->output.size, sizeof(Sint16));
         if (!state->output.data) {
             SDL_free(state->block.data);
             SDL_free(state->cstate);
