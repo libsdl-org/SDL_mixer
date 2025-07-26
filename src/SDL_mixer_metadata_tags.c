@@ -96,9 +96,17 @@ static char *parse_id3v1_ansi_string(const Uint8 *buffer, size_t src_len)
     src_buffer[src_len] = '\0';
 
     // trim whitespace from end (some id3v1 tags pad out with space instead of nulls).
-    for (size_t i = src_len - 1; (i >= 0) && (src_buffer[i] == ' '); i--) {
-        src_buffer[i] = '\0';
-        src_len--;
+    if (src_len > 0) {
+        size_t i = src_len;
+        do {
+            --i;
+            if (src_buffer[i] == ' ') {
+                src_buffer[i] = '\0';
+                --src_len;
+            } else {
+                break;
+            }
+        } while(i > 0);
     }
 
     char *ret = SDL_iconv_string("UTF-8", "ISO-8859-1", src_buffer, src_len + 1);
