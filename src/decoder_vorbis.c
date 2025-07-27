@@ -171,12 +171,14 @@ static bool SDLCALL VORBIS_init_audio(SDL_IOStream *io, SDL_AudioSpec *spec, SDL
     // now open the stream for serious processing.
     const int rc = vorbis.ov_open_callbacks(io, &vf, NULL, 0, VORBIS_IoCallbacks);
     if (rc < 0) {
+        SDL_free(adata);
         return SetOggVorbisError("ov_open_callbacks", rc);
     }
 
     const vorbis_info *vi = vorbis.ov_info(&vf, -1);
     if (!vi) {
         vorbis.ov_clear(&vf);
+        SDL_free(adata);
         return SDL_SetError("Couldn't get Ogg Vorbis info; corrupt data?");
     }
 
