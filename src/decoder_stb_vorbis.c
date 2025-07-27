@@ -157,6 +157,7 @@ static bool SDLCALL STBVORBIS_init_audio(SDL_IOStream *io, SDL_AudioSpec *spec, 
     int error = 0;
     stb_vorbis *vorbis = stb_vorbis_open_io(io, 0, &error, NULL);
     if (!vorbis) {
+        SDL_free(adata);
         return SetStbVorbisError("stb_vorbis_open_memory", error);
     }
 

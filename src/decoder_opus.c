@@ -151,12 +151,14 @@ static bool SDLCALL OPUS_init_audio(SDL_IOStream *io, SDL_AudioSpec *spec, SDL_P
     // now open the stream for serious processing.
     of = opus.op_open_callbacks(io, &OPUS_IoCallbacks, NULL, 0, &rc);
     if (!of) {
+        SDL_free(adata);
         return set_op_error("ov_open_callbacks", rc);
     }
 
     const OpusHead *info = opus.op_head(of, -1);
     if (!info) {
         opus.op_free(of);
+        SDL_free(adata);
         return SDL_SetError("Couldn't get Opus info; corrupt data?");
     }
 
