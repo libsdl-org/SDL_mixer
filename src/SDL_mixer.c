@@ -938,8 +938,10 @@ static void *DecodeWholeFile(MIX_Audio *audio, SDL_IOStream *io, size_t *decoded
         const MIX_Decoder *decoder = audio->decoder;
         void *track_userdata = NULL;
         if (decoder->init_track(audio->decoder_userdata, io, &audio->spec, audio->props, &track_userdata)) {
-            while (decoder->decode(track_userdata, stream)) {
-                // spin.
+            if (decoder->seek(track_userdata, 0)) {
+                while (decoder->decode(track_userdata, stream)) {
+                    // spin.
+                }
             }
             decoder->quit_track(track_userdata);
 
