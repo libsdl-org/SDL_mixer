@@ -1061,6 +1061,8 @@ MIX_Audio *MIX_LoadAudioWithProperties(SDL_PropertiesID props)  // lets you spec
         decoder = audio->decoder = &MIX_Decoder_RAW;
         audio_userdata = audio->decoder_userdata = NULL;  // no audio_userdata state in the RAW decoder (so we can cheat here and not do a full init_audio().)
         audio->duration_frames = audio->precachelen / SDL_AUDIO_FRAMESIZE(audio->spec);
+        audio->clamp_offset = -1;   // we're raw data now, any existing clamp is just nonsense now.
+        audio->clamp_length = -1;
     } else if (!ondemand) {  // precache the audio data, so all decoding happens from a single buffer in RAM shared between tracks.
         if ((audio->precache = SDL_LoadFile_IO(io, &audio->precachelen, false)) == NULL) {
             goto failed;
