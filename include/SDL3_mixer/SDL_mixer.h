@@ -1229,7 +1229,7 @@ extern SDL_DECLSPEC void SDLCALL MIX_UntagTrack(MIX_Track *track, const char *ta
  *
  * \sa MIX_GetTrackPlaybackPosition
  */
-extern SDL_DECLSPEC bool SDLCALL MIX_SetTrackPlaybackPosition(MIX_Track *track, Uint64 frames);
+extern SDL_DECLSPEC bool SDLCALL MIX_SetTrackPlaybackPosition(MIX_Track *track, Sint64 frames);
 
 /**
  * Get the current input position of a playing track.
@@ -1375,7 +1375,7 @@ extern SDL_DECLSPEC Sint64 SDLCALL MIX_GetTrackRemaining(MIX_Track *track);
  *
  * \sa MIX_TrackFramesToMS
  */
-extern SDL_DECLSPEC Uint64 SDLCALL MIX_TrackMSToFrames(MIX_Track *track, Uint64 ms);
+extern SDL_DECLSPEC Sint64 SDLCALL MIX_TrackMSToFrames(MIX_Track *track, Sint64 ms);
 
 /**
  * Convert sample frames for a track's current format to milliseconds.
@@ -1404,7 +1404,7 @@ extern SDL_DECLSPEC Uint64 SDLCALL MIX_TrackMSToFrames(MIX_Track *track, Uint64 
  *
  * \sa MIX_TrackMSToFrames
  */
-extern SDL_DECLSPEC Uint64 SDLCALL MIX_TrackFramesToMS(MIX_Track *track, Uint64 frames);
+extern SDL_DECLSPEC Sint64 SDLCALL MIX_TrackFramesToMS(MIX_Track *track, Sint64 frames);
 
 /**
  * Convert milliseconds to sample frames for a MIX_Audio's format.
@@ -1422,7 +1422,7 @@ extern SDL_DECLSPEC Uint64 SDLCALL MIX_TrackFramesToMS(MIX_Track *track, Uint64 
  *
  * \sa MIX_AudioFramesToMS
  */
-extern SDL_DECLSPEC Uint64 SDLCALL MIX_AudioMSToFrames(MIX_Audio *audio, Uint64 ms);
+extern SDL_DECLSPEC Sint64 SDLCALL MIX_AudioMSToFrames(MIX_Audio *audio, Sint64 ms);
 
 /**
  * Convert sample frames for a MIX_Audio's format to milliseconds.
@@ -1443,7 +1443,7 @@ extern SDL_DECLSPEC Uint64 SDLCALL MIX_AudioMSToFrames(MIX_Audio *audio, Uint64 
  *
  * \sa MIX_AudioMSToFrames
  */
-extern SDL_DECLSPEC Uint64 SDLCALL MIX_AudioFramesToMS(MIX_Audio *audio, Uint64 frames);
+extern SDL_DECLSPEC Sint64 SDLCALL MIX_AudioFramesToMS(MIX_Audio *audio, Sint64 frames);
 
 /**
  * Convert milliseconds to sample frames at a specific sample rate.
@@ -1460,7 +1460,7 @@ extern SDL_DECLSPEC Uint64 SDLCALL MIX_AudioFramesToMS(MIX_Audio *audio, Uint64 
  *
  * \sa MIX_FramesToMS
  */
-extern SDL_DECLSPEC Uint64 SDLCALL MIX_MSToFrames(int sample_rate, Uint64 ms);
+extern SDL_DECLSPEC Sint64 SDLCALL MIX_MSToFrames(int sample_rate, Sint64 ms);
 
 /**
  * Convert sample frames, at a specific sample rate, to milliseconds.
@@ -1480,7 +1480,7 @@ extern SDL_DECLSPEC Uint64 SDLCALL MIX_MSToFrames(int sample_rate, Uint64 ms);
  *
  * \sa MIX_MSToFrames
  */
-extern SDL_DECLSPEC Uint64 SDLCALL MIX_FramesToMS(int sample_rate, Uint64 frames);
+extern SDL_DECLSPEC Sint64 SDLCALL MIX_FramesToMS(int sample_rate, Sint64 frames);
 
 
 /* operations that deal with actual mixing/playback... */
