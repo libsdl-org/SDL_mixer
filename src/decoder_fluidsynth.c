@@ -338,10 +338,13 @@ static bool SDLCALL FLUIDSYNTH_seek(void *track_userdata, Uint64 frame)
     return SDL_Unsupported();
 #else
     FLUIDSYNTH_TrackData *tdata = (FLUIDSYNTH_TrackData *) track_userdata;
-    const int ticks = (int) MIX_FramesToMS(tdata->freq, frame);
+    Sint64 ticks = MIX_FramesToMS(tdata->freq, frame);
+    if (ticks == -1) {
+        ticks = 0;
+    }
 
     // !!! FIXME: docs say this will fail if a seek was requested and then a second seek happens before we play more of the midi file, since the first seek will still be in progress.
-    return (fluidsynth.fluid_player_seek(tdata->player, ticks) == FLUID_OK);
+    return (fluidsynth.fluid_player_seek(tdata->player, (int)ticks) == FLUID_OK);
 #endif
 }
 
