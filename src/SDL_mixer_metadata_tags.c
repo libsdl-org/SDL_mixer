@@ -868,9 +868,9 @@ static Sint64 get_musicmatch_len(SDL_IOStream *io)
     // unused section: (4 bytes of 0x00)
     if (SDL_SeekIO(io, -(len + 4), SDL_IO_SEEK_END) == -1) {
         return -1;
-    } else if (SDL_ReadIO(io, buf, 4) != 4) {
+    } else if (SDL_ReadIO(io, &j, 4) != 4) {
         return -1;
-    } else if (*((Uint32 *) buf) != 0) {
+    } else if (j != 0) {
         return -1;
     }
     #endif
