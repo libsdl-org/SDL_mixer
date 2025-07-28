@@ -1946,7 +1946,11 @@ static Sint64 GetTrackOptionFramesOrTicks(MIX_Track *track, SDL_PropertiesID opt
         return SDL_GetNumberProperty(options, framesprop, defval);
     } else if (SDL_HasProperty(options, msprop)) {
         const Sint64 val = SDL_GetNumberProperty(options, msprop, defval);
-        return (val < 0) ? val : MIX_TrackMSToFrames(track, val);
+        Sint64 val_frames = MIX_TrackMSToFrames(track, val);
+        if (val_frames == -1) {
+            val_frames = 0;
+        }
+        return (val < 0) ? val : val_frames;
     }
     return defval;
 }
@@ -2114,7 +2118,11 @@ bool MIX_StopAllTracks(MIX_Mixer *mixer, Sint64 fade_out_ms)
     LockMixer(mixer);  // lock the mixer so all tracks stop at the same time.
 
     for (MIX_Track *track = mixer->all_tracks; track != NULL; track = track->next) {
-        StopTrack(track, (fade_out_ms > 0) ? MIX_TrackMSToFrames(track, fade_out_ms) : -1);
+        Sint64 fade_out_frames = MIX_TrackMSToFrames(track, fade_out_ms);
+        if (fade_out_frames == -1) {
+            fade_out_frames = 0;
+        }
+        StopTrack(track, (fade_out_ms > 0) ? fade_out_frames : -1);
     }
 
     UnlockMixer(mixer);
@@ -2137,7 +2145,11 @@ bool MIX_StopTag(MIX_Mixer *mixer, const char *tag, Sint64 fade_out_ms)
 
     const size_t total = list->num_tracks;
     for (size_t i = 0; i < total; i++) {
-        StopTrack(list->tracks[i], (fade_out_ms > 0) ? MIX_TrackMSToFrames(list->tracks[i], fade_out_ms) : -1);
+        Sint64 fade_out_frames = MIX_TrackMSToFrames(list->tracks[i], fade_out_ms);
+        if (fade_out_frames == -1) {
+            fade_out_frames = 0;
+        }
+        StopTrack(list->tracks[i], (fade_out_ms > 0) ? fade_out_frames : -1);
     }
 
     SDL_UnlockRWLock(list->rwlock);
