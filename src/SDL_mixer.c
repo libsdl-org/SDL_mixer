@@ -1869,9 +1869,11 @@ SDL_AudioStream *MIX_GetTrackAudioStream(MIX_Track *track)
 Sint64 MIX_MSToFrames(int sample_rate, Sint64 ms)
 {
     if (sample_rate <= 0) {
-        return 0;
+        SDL_InvalidParamError("sample_rate");
+        return -1;
     } else if (ms < 0) {
-        return 0;
+        SDL_InvalidParamError("ms");
+        return -1;
     }
     return (Sint64) ((((double) ms) / 1000.0) * ((double) sample_rate));
 }
@@ -1879,16 +1881,18 @@ Sint64 MIX_MSToFrames(int sample_rate, Sint64 ms)
 Sint64 MIX_FramesToMS(int sample_rate, Sint64 frames)
 {
     if (sample_rate <= 0) {
-        return 0;
+        SDL_InvalidParamError("sample_rate");
+        return -1;
     } else if (frames < 0) {
-        return 0;
+        SDL_InvalidParamError("frames");
+        return -1;
     }
     return (Sint64) ((((double) frames) / ((double) sample_rate)) * 1000.0);
 }
 
 Sint64 MIX_TrackMSToFrames(MIX_Track *track, Sint64 ms)
 {
-    Sint64 retval = 0;
+    Sint64 retval = -1;
     if (CheckTrackParam(track)) {
         LockTrack(track);
         SDL_AudioSpec spec;
@@ -1907,7 +1911,7 @@ Sint64 MIX_TrackMSToFrames(MIX_Track *track, Sint64 ms)
 
 Sint64 MIX_TrackFramesToMS(MIX_Track *track, Sint64 frames)
 {
-    Sint64 retval = 0;
+    Sint64 retval = -1;
     if (CheckTrackParam(track)) {
         LockTrack(track);
         SDL_AudioSpec spec;
@@ -1927,7 +1931,7 @@ Sint64 MIX_TrackFramesToMS(MIX_Track *track, Sint64 frames)
 Sint64 MIX_AudioMSToFrames(MIX_Audio *audio, Sint64 ms)
 {
     if (!CheckAudioParam(audio)) {
-        return 0;
+        return -1;
     }
     return MIX_MSToFrames(audio->spec.freq, ms);
 }
@@ -1935,7 +1939,7 @@ Sint64 MIX_AudioMSToFrames(MIX_Audio *audio, Sint64 ms)
 Sint64 MIX_AudioFramesToMS(MIX_Audio *audio, Sint64 frames)
 {
     if (!CheckAudioParam(audio)) {
-        return 0;
+        return -1;
     }
     return MIX_FramesToMS(audio->spec.freq, frames);
 }
