@@ -1778,6 +1778,8 @@ bool MIX_SetTrackPlaybackPosition(MIX_Track *track, Sint64 frames)
 {
     if (!CheckTrackParam(track)) {
         return false;
+    } else if (frames < 0) {
+        return SDL_InvalidParamError("frames");
     }
 
     bool retval = true;
@@ -1868,6 +1870,8 @@ Sint64 MIX_MSToFrames(int sample_rate, Sint64 ms)
 {
     if (sample_rate <= 0) {
         return 0;
+    } else if (ms < 0) {
+        return 0;
     }
     return (Sint64) ((((double) ms) / 1000.0) * ((double) sample_rate));
 }
@@ -1875,6 +1879,8 @@ Sint64 MIX_MSToFrames(int sample_rate, Sint64 ms)
 Sint64 MIX_FramesToMS(int sample_rate, Sint64 frames)
 {
     if (sample_rate <= 0) {
+        return 0;
+    } else if (frames < 0) {
         return 0;
     }
     return (Sint64) ((((double) frames) / ((double) sample_rate)) * 1000.0);
