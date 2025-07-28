@@ -1359,15 +1359,15 @@ extern SDL_DECLSPEC Sint64 SDLCALL MIX_GetTrackRemaining(MIX_Track *track);
  * mid-stream (for example, if decoding a file that is two MP3s concatenated
  * together).
  *
- * If the track has no input, this returns 0.
- *
  * On various errors (MIX_Init() was not called, the track is NULL), this
- * returns 0, but there is no mechanism to distinguish errors from tracks
- * without a valid input.
+ * returns -1.
+ * If the track has no input, this returns -1.
+ * If `ms` is < 0, this returns -1.
  *
  * \param track the track to query.
  * \param ms the milliseconds to convert to track-specific sample frames.
- * \returns Converted number of sample frames, or zero for errors/no input.
+ * \returns Converted number of sample frames, or -1 for errors/no input; call
+ *          SDL_GetError() for details.
  *
  * \threadsafety It is safe to call this function from any thread.
  *
@@ -1388,15 +1388,15 @@ extern SDL_DECLSPEC Sint64 SDLCALL MIX_TrackMSToFrames(MIX_Track *track, Sint64 
  * Sample frames are more precise than milliseconds, so out of necessity, this
  * function will approximate by rounding down to the closest full millisecond.
  *
- * If the track has no input, this returns 0.
- *
  * On various errors (MIX_Init() was not called, the track is NULL), this
- * returns 0, but there is no mechanism to distinguish errors from tracks
- * without a valid input.
+ * returns -1.
+ * If the track has no input, this returns -1.
+ * If `frames` is < 0, this returns -1.
  *
  * \param track the track to query.
  * \param frames the track-specific sample frames to convert to milliseconds.
- * \returns Converted number of milliseconds, or zero for errors/no input.
+ * \returns Converted number of milliseconds, or -1 for errors/no input; call
+ *          SDL_GetError() for details.
  *
  * \threadsafety It is safe to call this function from any thread.
  *
@@ -1412,9 +1412,12 @@ extern SDL_DECLSPEC Sint64 SDLCALL MIX_TrackFramesToMS(MIX_Track *track, Sint64 
  * This calculates time based on the audio's initial format, even if the
  * format would change mid-stream.
  *
+ * If `ms` is < 0, this returns -1.
+ *
  * \param audio the audio to query.
  * \param ms the milliseconds to convert to audio-specific sample frames.
- * \returns Converted number of sample frames, or zero for errors/no input.
+ * \returns Converted number of sample frames, or -1 for errors/no input; call
+ *          SDL_GetError() for details.
  *
  * \threadsafety It is safe to call this function from any thread.
  *
@@ -1433,9 +1436,12 @@ extern SDL_DECLSPEC Sint64 SDLCALL MIX_AudioMSToFrames(MIX_Audio *audio, Sint64 
  * Sample frames are more precise than milliseconds, so out of necessity, this
  * function will approximate by rounding down to the closest full millisecond.
  *
+ * If `frames` is < 0, this returns -1.
+ *
  * \param audio the audio to query.
  * \param frames the audio-specific sample frames to convert to milliseconds.
- * \returns Converted number of milliseconds, or zero for errors/no input.
+ * \returns Converted number of milliseconds, or -1 for errors/no input; call
+ *          SDL_GetError() for details.
  *
  * \threadsafety It is safe to call this function from any thread.
  *
@@ -1448,11 +1454,13 @@ extern SDL_DECLSPEC Sint64 SDLCALL MIX_AudioFramesToMS(MIX_Audio *audio, Sint64 
 /**
  * Convert milliseconds to sample frames at a specific sample rate.
  *
- * If `sample_rate` is <= 0, this returns 0. No error is set.
+ * If `sample_rate` is <= 0, this returns -1.
+ * If `ms` is < 0, this returns -1.
  *
  * \param sample_rate the sample rate to use for conversion.
  * \param ms the milliseconds to convert to rate-specific sample frames.
- * \returns Converted number of sample frames, or zero for errors.
+ * \returns Converted number of sample frames, or -1 for errors; call
+ *          SDL_GetError() for details.
  *
  * \threadsafety It is safe to call this function from any thread.
  *
@@ -1465,14 +1473,16 @@ extern SDL_DECLSPEC Sint64 SDLCALL MIX_MSToFrames(int sample_rate, Sint64 ms);
 /**
  * Convert sample frames, at a specific sample rate, to milliseconds.
  *
- * If `sample_rate` is <= 0, this returns 0. No error is set.
- *
  * Sample frames are more precise than milliseconds, so out of necessity, this
  * function will approximate by rounding down to the closest full millisecond.
  *
+ * If `sample_rate` is <= 0, this returns -1.
+ * If `frames` is < 0, this returns -1.
+ *
  * \param sample_rate the sample rate to use for conversion.
  * \param frames the rate-specific sample frames to convert to milliseconds.
- * \returns Converted number of milliseconds, or zero for errors.
+ * \returns Converted number of milliseconds, or -1 for errors; call
+ *          SDL_GetError() for details.
  *
  * \threadsafety It is safe to call this function from any thread.
  *
