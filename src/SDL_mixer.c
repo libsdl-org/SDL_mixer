@@ -1770,7 +1770,7 @@ void MIX_UntagTrack(MIX_Track *track, const char *tag)
     SDL_UnlockProperties(tags);
 }
 
-bool MIX_SetTrackPlaybackPosition(MIX_Track *track, Uint64 frames)
+bool MIX_SetTrackPlaybackPosition(MIX_Track *track, Sint64 frames)
 {
     if (!CheckTrackParam(track)) {
         return false;
@@ -1787,10 +1787,10 @@ bool MIX_SetTrackPlaybackPosition(MIX_Track *track, Uint64 frames)
             retval = SDL_SetError("No audio currently assigned to this track");
         }
     } else {
-        retval = track->input_audio->decoder->seek(track->decoder_userdata, frames);
+        retval = track->input_audio->decoder->seek(track->decoder_userdata, (Uint64) frames);
         if (retval) {
             SDL_ClearAudioStream(track->input_stream);   // make sure that any extra buffered input from before the seek is removed.
-            track->position = frames;
+            track->position = (Uint64) frames;
         }
     }
     UnlockTrack(track);
@@ -1860,25 +1860,25 @@ SDL_AudioStream *MIX_GetTrackAudioStream(MIX_Track *track)
     return retval;
 }
 
-Uint64 MIX_MSToFrames(int sample_rate, Uint64 ms)
+Sint64 MIX_MSToFrames(int sample_rate, Sint64 ms)
 {
     if (sample_rate <= 0) {
         return 0;
     }
-    return (Uint64) ((((double) ms) / 1000.0) * ((double) sample_rate));
+    return (Sint64) ((((double) ms) / 1000.0) * ((double) sample_rate));
 }
 
-Uint64 MIX_FramesToMS(int sample_rate, Uint64 frames)
+Sint64 MIX_FramesToMS(int sample_rate, Sint64 frames)
 {
     if (sample_rate <= 0) {
         return 0;
     }
-    return (Uint64) ((((double) frames) / ((double) sample_rate)) * 1000.0);
+    return (Sint64) ((((double) frames) / ((double) sample_rate)) * 1000.0);
 }
 
-Uint64 MIX_TrackMSToFrames(MIX_Track *track, Uint64 ms)
+Sint64 MIX_TrackMSToFrames(MIX_Track *track, Sint64 ms)
 {
-    Uint64 retval = 0;
+    Sint64 retval = 0;
     if (CheckTrackParam(track)) {
         LockTrack(track);
         SDL_AudioSpec spec;
@@ -1895,9 +1895,9 @@ Uint64 MIX_TrackMSToFrames(MIX_Track *track, Uint64 ms)
     return retval;
 }
 
-Uint64 MIX_TrackFramesToMS(MIX_Track *track, Uint64 frames)
+Sint64 MIX_TrackFramesToMS(MIX_Track *track, Sint64 frames)
 {
-    Uint64 retval = 0;
+    Sint64 retval = 0;
     if (CheckTrackParam(track)) {
         LockTrack(track);
         SDL_AudioSpec spec;
@@ -1914,7 +1914,7 @@ Uint64 MIX_TrackFramesToMS(MIX_Track *track, Uint64 frames)
     return retval;
 }
 
-Uint64 MIX_AudioMSToFrames(MIX_Audio *audio, Uint64 ms)
+Sint64 MIX_AudioMSToFrames(MIX_Audio *audio, Sint64 ms)
 {
     if (!CheckAudioParam(audio)) {
         return 0;
@@ -1922,7 +1922,7 @@ Uint64 MIX_AudioMSToFrames(MIX_Audio *audio, Uint64 ms)
     return MIX_MSToFrames(audio->spec.freq, ms);
 }
 
-Uint64 MIX_AudioFramesToMS(MIX_Audio *audio, Uint64 frames)
+Sint64 MIX_AudioFramesToMS(MIX_Audio *audio, Sint64 frames)
 {
     if (!CheckAudioParam(audio)) {
         return 0;
