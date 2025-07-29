@@ -317,12 +317,11 @@ static void SDL_TARGETING("sse") calculate_distance_attenuation_and_angle_sse(co
 #if defined(SDL_NEON_INTRINSICS)
 static float32x4_t xyzzy_neon(const float32x4_t a, const float32x4_t b)
 {
-    const float32x4_t shuf_a = { a[1], a[2], a[0], a[3] };
-    const float32x4_t shuf_b = { b[1], b[2], b[0], b[3] };
-    const float32x4_t v = vsubq_f32(vmulq_f32(a, shuf_b), vmulq_f32(b, shuf_a));
-    const float32x4_t retval = { v[1], v[2], v[0], v[3] };
-    FIXME("need a better permute");
-    return retval;
+    const float32x4_t a_yzx = vcopyq_laneq_f32(vextq_f32(a, a, 1), 2, a, 0);
+    const float32x4_t b_yzx = vcopyq_laneq_f32(vextq_f32(b, b, 1), 2, b, 0);
+    const float32x4_t c = vsubq_f32(vmulq_f32(a, b_yzx), vmulq_f32(b, a_yzx));
+    const float32x4_t r = vcopyq_laneq_f32(vextq_f32(c, c, 1), 2, c, 0);
+    return vsetq_lane_f32(0, r, 3);
 }
 
 static float dotproduct_neon(const float32x4_t a, const float32x4_t b)
@@ -330,7 +329,7 @@ static float dotproduct_neon(const float32x4_t a, const float32x4_t b)
     const float32x4_t prod = vmulq_f32(a, b);
     const float32x4_t sum1 = vaddq_f32(prod, vrev64q_f32(prod));
     const float32x4_t sum2 = vaddq_f32(sum1, vcombine_f32(vget_high_f32(sum1), vget_low_f32(sum1)));
-    return sum2[3];
+    return vgetq_lane_f32(sum2, 3);
 }
 
 static float magnitude_neon(const float32x4_t v)
