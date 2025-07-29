@@ -1067,6 +1067,8 @@ MIX_Audio *MIX_LoadAudioWithProperties(SDL_PropertiesID props)  // lets you spec
         if ((audio->precache = SDL_LoadFile_IO(io, &audio->precachelen, false)) == NULL) {
             goto failed;
         }
+        audio->clamp_offset = -1;   // precache is already clamped
+        audio->clamp_length = -1;
     }
 
     if (ioclamp) {
