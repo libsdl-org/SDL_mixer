@@ -37,6 +37,9 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     if (argc != 2) {
         SDL_Log("USAGE: %s <file_to_play>", argv[0]);
         return SDL_APP_FAILURE;
+    } else if (!SDL_Init(SDL_INIT_AUDIO)) {
+        SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
     } else if (!MIX_Init()) {
         SDL_Log("Couldn't initialize SDL_mixer: %s", SDL_GetError());
         return SDL_APP_FAILURE;
