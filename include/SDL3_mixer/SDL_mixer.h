@@ -1360,9 +1360,8 @@ extern SDL_DECLSPEC Sint64 SDLCALL MIX_GetTrackRemaining(MIX_Track *track);
  * together).
  *
  * On various errors (MIX_Init() was not called, the track is NULL), this
- * returns -1.
- * If the track has no input, this returns -1.
- * If `ms` is < 0, this returns -1.
+ * returns -1. If the track has no input, this returns -1. If `ms` is < 0,
+ * this returns -1.
  *
  * \param track the track to query.
  * \param ms the milliseconds to convert to track-specific sample frames.
@@ -1389,9 +1388,8 @@ extern SDL_DECLSPEC Sint64 SDLCALL MIX_TrackMSToFrames(MIX_Track *track, Sint64 
  * function will approximate by rounding down to the closest full millisecond.
  *
  * On various errors (MIX_Init() was not called, the track is NULL), this
- * returns -1.
- * If the track has no input, this returns -1.
- * If `frames` is < 0, this returns -1.
+ * returns -1. If the track has no input, this returns -1. If `frames` is < 0,
+ * this returns -1.
  *
  * \param track the track to query.
  * \param frames the track-specific sample frames to convert to milliseconds.
@@ -1454,8 +1452,7 @@ extern SDL_DECLSPEC Sint64 SDLCALL MIX_AudioFramesToMS(MIX_Audio *audio, Sint64 
 /**
  * Convert milliseconds to sample frames at a specific sample rate.
  *
- * If `sample_rate` is <= 0, this returns -1.
- * If `ms` is < 0, this returns -1.
+ * If `sample_rate` is <= 0, this returns -1. If `ms` is < 0, this returns -1.
  *
  * \param sample_rate the sample rate to use for conversion.
  * \param ms the milliseconds to convert to rate-specific sample frames.
@@ -1476,8 +1473,8 @@ extern SDL_DECLSPEC Sint64 SDLCALL MIX_MSToFrames(int sample_rate, Sint64 ms);
  * Sample frames are more precise than milliseconds, so out of necessity, this
  * function will approximate by rounding down to the closest full millisecond.
  *
- * If `sample_rate` is <= 0, this returns -1.
- * If `frames` is < 0, this returns -1.
+ * If `sample_rate` is <= 0, this returns -1. If `frames` is < 0, this returns
+ * -1.
  *
  * \param sample_rate the sample rate to use for conversion.
  * \param frames the rate-specific sample frames to convert to milliseconds.
