@@ -2050,7 +2050,9 @@ bool MIX_PlayTag(MIX_Mixer *mixer, const char *tag, SDL_PropertiesID options)
 
 bool MIX_PlayAudio(MIX_Mixer *mixer, MIX_Audio *audio)
 {
-    if (!CheckAudioParam(audio)) {
+    if (!CheckMixerParam(mixer)) {
+        return false;
+    } else if (!CheckAudioParam(audio)) {
         return false;
     }
 
