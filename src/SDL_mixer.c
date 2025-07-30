@@ -897,6 +897,9 @@ SDL_PropertiesID MIX_GetMixerProperties(MIX_Mixer *mixer)
 bool MIX_GetMixerFormat(MIX_Mixer *mixer, SDL_AudioSpec *spec)
 {
     if (!CheckMixerParam(mixer)) {
+        if (spec) {
+            SDL_zerop(spec);
+        }
         return false;
     } else if (!spec) {
         return SDL_InvalidParamError("spec");
