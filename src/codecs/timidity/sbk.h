@@ -78,7 +78,7 @@ typedef struct _SFInfo {
 	int nrpgens, nrigens;
 	tgenrec *presetgen, *instgen;
 
-	tsbkheader sbkh;
+	/*tsbkheader sbkh;*/
 
 	/*char *sf_name;*/
 
@@ -90,7 +90,7 @@ typedef struct _SFInfo {
  * functions
  *----------------------------------------------------------------*/
 
-void load_sbk(SDL_RWops *rw, SFInfo *sf);
+int load_sbk(SDL_RWops *rw, SFInfo *sf);
 void free_sbk(SFInfo *sf);
 
 #endif
