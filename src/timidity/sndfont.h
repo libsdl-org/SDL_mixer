@@ -10,6 +10,12 @@
 #ifndef TIMIDITY_SNDFONT_H /* sndfont.h: soundfont loader public api */
 #define TIMIDITY_SNDFONT_H
 
+#define init_soundfont    TIMI_NAMESPACE(init_soundfont)
+#define end_soundfont     TIMI_NAMESPACE(end_soundfont)
+#define load_soundfont    TIMI_NAMESPACE(load_soundfont)
+#define exclude_soundfont TIMI_NAMESPACE(exclude_soundfont)
+#define order_soundfont   TIMI_NAMESPACE(order_soundfont)
+
 void init_soundfont(MidiSong *song, const char *fname, int order);
 void end_soundfont(void);
 Instrument *load_soundfont(MidiSong *song, int order, int bank, int preset, int keynote);
