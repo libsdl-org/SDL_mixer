@@ -227,7 +227,7 @@ static bool SDLCALL OPUS_decode(void *track_userdata, SDL_AudioStream *stream)
     float samples[256];
 
     const int channels = tdata->current_channels;
-    int amount = (int)opus.op_read_float(tdata->of, samples, SDL_arraysize(samples), &bitstream);
+    int amount = opus.op_read_float(tdata->of, samples, SDL_arraysize(samples), &bitstream);
     if (amount < 0) {
         return set_op_error("op_read_float", amount);
     } else if (amount == 0) {

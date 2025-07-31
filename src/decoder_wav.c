@@ -242,7 +242,7 @@ static bool MS_ADPCM_Init(ADPCM_DecoderInfo *info, const Uint8 *chunk_data, Uint
     Uint16 samplesperblock = SDL_Swap16LE(fmt->Samples.samplesperblock);
 
     // Number of coefficient pairs. A pair has two 16-bit integers.
-    size_t coeffcount = (size_t) (chunk_data[20] | ((size_t)chunk_data[21] << 8));
+    size_t coeffcount = (size_t)chunk_data[20] | ((size_t)chunk_data[21] << 8);
 
     // bPredictor, the integer offset into the coefficients array, is only
     // 8 bits. It can only address the first 256 coefficients. Let's limit
@@ -1094,7 +1094,7 @@ static void CalcSeekBlockSeek(const WAV_AudioData *adata, Uint32 actual_frame, W
     if (IsADPCM(adata->encoding)) {
         seekblock->seek_position = (Sint64) (adata->start + ((actual_frame / adata->adpcm_info.samplesperblock) * adata->adpcm_info.blocksize));
     } else {
-        seekblock->seek_position = (Sint64) (adata->start + (actual_frame * adata->framesize));
+        seekblock->seek_position = adata->start + (actual_frame * adata->framesize);
     }
 }
 
@@ -1169,7 +1169,7 @@ static bool BuildSeekBlocks(WAV_AudioData *adata)
                     const Sint64 stop_frame_block = loop_stop_frame / frames_per_block;
                     const Sint64 offset_into_stop_block = loop_stop_frame % frames_per_block;
                     const Sint64 frames_left_in_stop_block = frames_per_block - offset_into_stop_block;
-                    const Sint64 all_blocks_in_file = ((Sint64) (adata->stop - adata->start)) / frames_per_block;
+                    const Sint64 all_blocks_in_file = (adata->stop - adata->start) / frames_per_block;
                     const Sint64 blocks_left_after_stop_block = all_blocks_in_file - stop_frame_block;
                     seekblocks->num_frames = frames_left_in_stop_block + (blocks_left_after_stop_block * frames_per_block);
                 } else {
