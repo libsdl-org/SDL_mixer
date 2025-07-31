@@ -29,6 +29,8 @@ typedef struct {
   Sint32
     loop_start, loop_end, data_length,
     sample_rate, low_freq, high_freq, root_freq;
+  Sint8
+    root_tune, fine_tune; /* for soundfont support */
   Sint32
     envelope_rate[6], envelope_offset[6];
   float
@@ -42,6 +44,8 @@ typedef struct {
     modes;
   Sint8
     panning, note_to_use;
+  Sint16
+    scale_tuning; /* for soundfont support */
 } Sample;
 
 typedef struct {
@@ -79,7 +83,11 @@ typedef struct {
 
 } Voice;
 
+#define INST_GUS        0
+#define INST_SF2        1
+
 typedef struct {
+  int type;
   int samples;
   Sample *sample;
 } Instrument;
