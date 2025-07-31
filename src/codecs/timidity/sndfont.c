@@ -146,7 +146,7 @@ void init_soundfont(MidiSong *song, const char *fname, int order)
 	sfrec.fname = SDL_strdup(fname);
 	load_sbk(sfrec.rw, &sfinfo);
 
-	for (i = 0; i < sfinfo.nrpresets; i++) {
+	for (i = 0; i < sfinfo.nrpresets - 1; i++) {
 		int bank = sfinfo.presethdr[i].bank;
 		int preset = sfinfo.presethdr[i].preset;
 		if (is_excluded(bank, preset, -1))
