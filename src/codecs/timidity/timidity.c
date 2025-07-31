@@ -14,6 +14,7 @@
 #include "options.h"
 #include "common.h"
 #include "instrum.h"
+#include "sndfont.h"
 #include "playmidi.h"
 #include "readmidi.h"
 #include "output.h"
@@ -58,6 +59,9 @@ static char *RWgets(SDL_RWops *rw, char *s, int size)
 
     return (num_read != 0) ? s : NULL;
 }
+
+static char *sf_file = NULL;
+static int sf_order = 0;
 
 static int read_config_file(const char *name, int rcf_count)
 {
@@ -197,17 +201,6 @@ static int read_config_file(const char *name, int rcf_count)
        */
       SNDDBG(("FIXME: Implement \"altassign\" in TiMidity config.\n"));
     }
-    else if (!SDL_strcmp(w[0], "soundfont") ||
-             !SDL_strcmp(w[0], "font"))
-    {
-      /* "soundfont" sf_file "remove"
-       * "soundfont" sf_file ["order=" order] ["cutoff=" cutoff]
-       *                     ["reso=" reso] ["amp=" amp]
-       * "font" "exclude" bank preset keynote
-       * "font" "order" order bank preset keynote
-       */
-      SNDDBG(("FIXME: Implmement \"%s\" in TiMidity config.\n", w[0]));
-    }
     else if (!SDL_strcmp(w[0], "progbase"))
     {
       /* The documentation for this makes absolutely no sense to me, but
@@ -306,6 +299,59 @@ static int read_config_file(const char *name, int rcf_count)
 	if (!master_tonebank[i]->tone) goto fail;
       }
       bank=master_tonebank[i];
+    }
+    else if (!SDL_strcmp(w[0], "soundfont"))
+    {
+      if (words < 2) {
+	SNDDBG(("%s: line %d: No soundfont file given\n", name, line));
+	goto fail;
+      }
+      SDL_free(sf_file);
+      sf_file=SDL_strdup(w[1]);
+      for (j = 2; j < words; j++) {
+	if (!(cp = SDL_strchr(w[j], '='))) {
+	  SNDDBG(("%s: line %d: bad patch option %s\n", name, line, w[j]));
+	  goto fail;
+	}
+	*cp++=0;
+	if (!SDL_strcmp(w[j], "order")) {
+	  k = SDL_atoi(cp);
+	  if (k < 0 || (*cp < '0' || *cp > '9')) {
+	    SNDDBG(("%s: line %d: order must be a digit", name, line));
+	    goto fail;
+	  }
+	  sf_order = k;
+	}
+      }
+    }
+    else if (!SDL_strcmp(w[0], "font"))
+    {
+      int bank, preset, keynote;
+      if (words < 2) {
+	SNDDBG(("%s: line %d: no font command\n", name, line));
+	goto fail;
+      }
+      if (!SDL_strcmp(w[1], "exclude")) {
+	if (words < 3) {
+	  SNDDBG(("%s: line %d: No bank/preset/key is given\n", name, line));
+	  goto fail;
+	}
+	bank = SDL_atoi(w[2]);
+	preset = (words >= 4)? SDL_atoi(w[3]) : -1;
+	keynote = (words >= 5)? SDL_atoi(w[4]) : -1;
+	exclude_soundfont(bank, preset, keynote);
+      } else if (!SDL_strcmp(w[1], "order")) {
+	int order;
+	if (words < 4) {
+	  SNDDBG(("%s: line %d: No order/bank is given\n", name, line));
+	  goto fail;
+	}
+	order = SDL_atoi(w[2]);
+	bank = SDL_atoi(w[3]);
+	preset = (words >= 5)? SDL_atoi(w[4]) : -1;
+	keynote = (words >= 6)? SDL_atoi(w[5]) : -1;
+	order_soundfont(bank, preset, keynote, order);
+      }
     }
     else
     {
@@ -614,6 +660,9 @@ static void do_song_load(SDL_RWops *rw, SDL_AudioSpec *audio, MidiSong **out)
   song->default_instrument = NULL;
   song->default_program = DEFAULT_PROGRAM;
 
+  if (sf_file)
+    init_soundfont(song, sf_file, sf_order);
+
   if (*def_instr_name)
     set_default_instrument(song, def_instr_name);
 
@@ -681,6 +730,10 @@ void Timidity_Exit(void)
       master_drumset[i] = NULL;
     }
   }
+
+  SDL_free(sf_file);
+  sf_file = NULL;
+  sf_order = 0;
 
   timi_free_pathlist();
 }
