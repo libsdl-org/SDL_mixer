@@ -116,6 +116,8 @@ jobs:
           -DSDLMIXER_VORBIS_VORBISFILE=ON \
           -DSDLMIXER_STRICT=ON \
           -DSDLMIXER_WERROR=ON \
+          -DSDLMIXER_TESTS=ON \
+          -DSDLMIXER_TESTS_INSTALL=ON \
           -DSDLMIXER_INSTALL_MAN=ON \
           -DCMAKE_INSTALL_PREFIX=prefix_cmake \
           ${NULL+}

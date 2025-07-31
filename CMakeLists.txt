@@ -120,6 +120,9 @@ if(SDLMIXER_STRICT)
   set(fatal_error "FATAL_ERROR")
 endif()
 
+option(SDLMIXER_TESTS "Build unit tests?" OFF)
+option(SDLMIXER_TESTS_INSTALL "Install unit tests?" OFF)
+
 option(SDLMIXER_SAMPLES "Build the SDL3_mixer sample program(s)" ${SDLMIXER_SAMPLES_DEFAULT})
 cmake_dependent_option(SDLMIXER_SAMPLES_INSTALL "Install the SDL3_mixer sample program(s)" OFF "SDLMIXER_SAMPLES;SDLMIXER_INSTALL" OFF)
 
@@ -1151,6 +1154,10 @@ if(SDLMIXER_SAMPLES)
 
     add_sdl_mixer_example_executable(playmus examples/playmus.c)
     add_sdl_mixer_example_executable(playwave examples/playwave.c)
+endif()
+
+if(SDLMIXER_TESTS)
+  add_subdirectory(test)
 endif()
 
 set(available_deps)
