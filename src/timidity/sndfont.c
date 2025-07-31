@@ -144,7 +144,15 @@ void init_soundfont(MidiSong *song, const char *fname, int order)
 		return;
 	}
 	sfrec.fname = SDL_strdup(fname);
-	load_sbk(sfrec.io, &sfinfo);
+	if (load_sbk(sfrec.io, &sfinfo) < 0) {
+		SNDDBG(("%s: bad soundfont file\n", fname));
+		SDL_CloseIO(sfrec.io);
+		sfrec.io = NULL;
+		SDL_free(sfrec.fname);
+		sfrec.fname = NULL;
+		free_sbk(&sfinfo);
+		return;
+	}
 
 	for (i = 0; i < sfinfo.nrpresets - 1; i++) {
 		int bank = sfinfo.presethdr[i].bank;

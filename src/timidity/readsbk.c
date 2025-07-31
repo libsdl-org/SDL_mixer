@@ -123,13 +123,21 @@ static void debugval(const char *tag, int v)
  * load sbk file
  *----------------------------------------------------------------*/
 
-void load_sbk(SDL_IOStream *io, SFInfo *sf)
+int load_sbk(SDL_IOStream *io, SFInfo *sf)
 {
 	tchunk chunk, subchunk;
+	Sint64 len;
 
-	READID(sf->sbkh.riff, io);
-	READDW(&sf->sbkh.size, io);
-	READID(sf->sbkh.sfbk, io);
+	len = SDL_GetIOSize(io);
+	if (len < 32) /* better?? */
+		return -1;
+
+	READCHUNK(&chunk, io);
+	if (getchunk(chunk.id) != RIFF_ID) return -1;
+	if (chunk.size != len - 8) return -1;
+
+	READID(chunk.id, io);
+	if (getchunk(chunk.id) != SFBK_ID) return -1;
 
 	sf->in_rom = 1;
 	while (SDL_GetIOStatus(io) != SDL_IO_STATUS_EOF) {
@@ -142,6 +150,8 @@ void load_sbk(SDL_IOStream *io, SFInfo *sf)
 			break;
 		}
 	}
+
+	return 0;
 }
 
 
