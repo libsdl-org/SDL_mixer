@@ -684,13 +684,23 @@ MidiSong *Timidity_LoadSong(SDL_RWops *rw, SDL_AudioSpec *audio)
 
 void Timidity_FreeSong(MidiSong *song)
 {
-  int i;
+  int i, j;
 
   if (!song) return;
 
   free_instruments(song);
 
   for (i = 0; i < 128; i++) {
+    if (!master_tonebank[i] && song->tonebank[i]) { /* might be alloc'ed by sndfont */
+      for (j = 0; j < 128; j++)
+        SDL_free(song->tonebank[i]->tone[j].name);
+      SDL_free(song->tonebank[i]->tone);
+    }
+    if (!master_drumset[i] && song->drumset[i]) {   /* might be alloc'ed by sndfont */
+      for (j = 0; j < 128; j++)
+        SDL_free(song->drumset[i]->tone[j].name);
+      SDL_free(song->drumset[i]->tone);
+    }
     SDL_free(song->tonebank[i]);
     SDL_free(song->drumset[i]);
   }
@@ -731,6 +741,7 @@ void Timidity_Exit(void)
     }
   }
 
+  end_soundfont();
   SDL_free(sf_file);
   sf_file = NULL;
   sf_order = 0;
