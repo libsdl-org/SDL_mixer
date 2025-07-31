@@ -123,14 +123,20 @@ static void debugval(const char *tag, int v)
  * load sbk file
  *----------------------------------------------------------------*/
 
-void load_sbk(SDL_RWops *rw, SFInfo *sf)
+int load_sbk(SDL_RWops *rw, SFInfo *sf)
 {
 	const Sint64 rwend = SDL_RWsize(rw);
 	tchunk chunk, subchunk;
 
-	READID(sf->sbkh.riff, rw);
-	READDW(&sf->sbkh.size, rw);
-	READID(sf->sbkh.sfbk, rw);
+	if (rwend < 32) /* better?? */
+		return -1;
+
+	READCHUNK(&chunk, rw);
+	if (getchunk(chunk.id) != RIFF_ID) return -1;
+	if (chunk.size != rwend - 8) return -1;
+
+	READID(chunk.id, rw);
+	if (getchunk(chunk.id) != SFBK_ID) return -1;
 
 	sf->in_rom = 1;
 	while (SDL_RWtell(rw) < rwend) {
@@ -143,6 +149,8 @@ void load_sbk(SDL_RWops *rw, SFInfo *sf)
 			break;
 		}
 	}
+
+	return 0;
 }
 
 
