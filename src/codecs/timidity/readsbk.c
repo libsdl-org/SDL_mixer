@@ -278,8 +278,8 @@ static void load_gen(int size, SFInfo *sf, SDL_RWops *rw, int *totalp, tgenrec *
 	size /= 4;
 	buf = NEW(tgenrec, size);
 	for (i = 0; i < size; i++) {
-		READW(&buf[i].oper, rw);
-		READW(&buf[i].amount, rw);
+		READW((Uint16 *)&buf[i].oper, rw);
+		READW((Uint16 *)&buf[i].amount, rw);
 	}
 	*totalp = size;
 	*bufp = buf;
