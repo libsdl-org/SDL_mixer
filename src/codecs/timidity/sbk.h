@@ -90,6 +90,9 @@ typedef struct _SFInfo {
  * functions
  *----------------------------------------------------------------*/
 
+#define load_sbk TIMI_NAMESPACE(load_sbk)
+#define free_sbk TIMI_NAMESPACE(free_sbk)
+
 int load_sbk(SDL_RWops *rw, SFInfo *sf);
 void free_sbk(SFInfo *sf);
 
