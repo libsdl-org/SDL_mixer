@@ -337,11 +337,9 @@ static void process_chunk(int id, int s, SFInfo *sf, SDL_IOStream *io)
 				break;
 			/*
 			case INAM_ID:
-				sf->sf_name = (char*)SDL_malloc(subchunk.size);
-				if (sf->sf_name == NULL) {
-					SNDDBG(("can't malloc\n"));
-				}
+				sf->sf_name = (char *)SDL_malloc(subchunk.size + 1);
 				SDL_ReadIO(io, sf->sf_name, subchunk.size);
+				sf->sf_name[subchunk.size] = 0;
 				break;
 			*/
 			default:
