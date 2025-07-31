@@ -417,7 +417,7 @@ static bool SDLCALL WAVPACK_init_audio(SDL_IOStream *io, SDL_AudioSpec *spec, SD
       wavpack.WavpackGetNumSamples(ctx);
     adata->bps = wavpack.WavpackGetBytesPerSample(ctx) << 3;
     adata->mode = wavpack.WavpackGetMode(ctx);
-    adata->channels = (int) wavpack.WavpackGetNumChannels(ctx);
+    adata->channels = wavpack.WavpackGetNumChannels(ctx);
     adata->samplerate = wavpack.WavpackGetSampleRate(ctx);
     adata->decimation = 1;
 

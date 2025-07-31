@@ -154,7 +154,7 @@ static bool ParseVocFile(SDL_IOStream *io, VOC_AudioData *adata, SDL_PropertiesI
                     return SDL_SetError("Unsupported VOC data format");
                 }
 
-                current_spec.freq = (int) (1000000 / (256 - rateu8));
+                current_spec.freq = 1000000 / (256 - rateu8);
                 current_spec.channels = 1;
                 current_spec.format = (codec == 0) ? SDL_AUDIO_U8 : SDL_AUDIO_S16LE;
 
