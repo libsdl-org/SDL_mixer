@@ -74,11 +74,12 @@ static void load_sample_info(int size, SFInfo *sf, SDL_IOStream *io);
 
 enum {
 	/* level 0 */
-	UNKN_ID, RIFF_ID, LIST_ID,
+	UNKN_ID, RIFF_ID, LIST_ID, SFBK_ID,
 	/* level 1 */
 	INFO_ID, SDTA_ID, PDTA_ID,
 	/* info stuff */
 	IFIL_ID, ISNG_ID, IROM_ID, INAM_ID, IVER_ID, IPRD_ID, ICOP_ID,
+	ICRD_ID, IENG_ID, ISFT_ID, ICMT_ID,
 	/* sample data stuff */
 	SNAM_ID, SMPL_ID,
 	/* preset stuff */
@@ -86,7 +87,7 @@ enum {
 	/* inst stuff */
 	INST_ID, IBAG_ID, IMOD_ID, IGEN_ID,
 	/* sample header */
-	SHDR_ID,
+	SHDR_ID
 };
 
 
@@ -174,7 +175,9 @@ static int getchunk(const char *id)
 		const char *str;
 		int id;
 	} idlist[] = {
+		{"RIFF", RIFF_ID},
 		{"LIST", LIST_ID},
+		{"sfbk", SFBK_ID},
 		{"INFO", INFO_ID},
 		{"sdta", SDTA_ID},
 		{"snam", SNAM_ID},
@@ -196,12 +199,17 @@ static int getchunk(const char *id)
 		{"INAM", INAM_ID},
 		{"IPRD", IPRD_ID},
 		{"ICOP", ICOP_ID},
+		{"ICRD", ICRD_ID},
+		{"IENG", IENG_ID},
+		{"ISFT", ISFT_ID},
+		{"ICMT", ICMT_ID},
 	};
+	static const int listsize = (int) sizeof(idlist)/sizeof(idlist[0]);
 
 	int i;
 
-	for (i = 0; i < sizeof(idlist)/sizeof(idlist[0]); i++) {
-		if (SDL_strncmp(id, idlist[i].str, 4) == 0) {
+	for (i = 0; i < listsize; i++) {
+		if (SDL_memcmp(id, idlist[i].str, 4) == 0) {
 			debugid("ok", id);
 			return idlist[i].id;
 		}
