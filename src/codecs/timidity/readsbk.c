@@ -62,7 +62,7 @@ static int READSTR(char *str, SDL_RWops *rw)
 #define SKIPW(rw)	SDL_RWseek(rw, 2, RW_SEEK_CUR);
 #define SKIPDW(rw)	SDL_RWseek(rw, 4, RW_SEEK_CUR);
 
-static int getchunk(char *id);
+static int getchunk(const char *id);
 static void process_chunk(int id, int s, SFInfo *sf, SDL_RWops *rw);
 static void load_sample_names(int size, SFInfo *sf, SDL_RWops *rw);
 static void load_preset_header(int size, SFInfo *sf, SDL_RWops *rw);
@@ -95,19 +95,19 @@ enum {
  *----------------------------------------------------------------*/
 
 #if 0
-static void debugid(char *tag, char *p)
+static void debugid(const char *tag, const char *p)
 {
 	char buf[5]; SDL_strlcpy(buf, p, 5);
 	SDL_Log("[%s:%s]", tag, buf);
 }
 
-static void debugname(char *tag, char *p)
+static void debugname(const char *tag, const char *p)
 {
 	char buf[21]; SDL_strlcpy(buf, p, 21);
 	SDL_Log("[%s:%s]", tag, buf);
 }
 
-static void debugval(char *tag, int v)
+static void debugval(const char *tag, int v)
 {
 	SDL_Log("[%s:%d]", tag, v);
 }
@@ -169,10 +169,10 @@ void free_sbk(SFInfo *sf)
  * get id value
  *----------------------------------------------------------------*/
 
-static int getchunk(char *id)
+static int getchunk(const char *id)
 {
 	static struct idstring {
-		char *str;
+		const char *str;
 		int id;
 	} idlist[] = {
 		{"LIST", LIST_ID},
