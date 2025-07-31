@@ -44,7 +44,18 @@ static int READW(Uint16 *vp, SDL_RWops *rw)
 	return 1;
 }
 
-#define READSTR(var,rw)	SDL_RWread(rw, var, 1, 20)
+static int READSTR(char *str, SDL_RWops *rw)
+{
+	int n;
+	if (SDL_RWread(rw, str, 1, 20) != 20) return -1;
+	str[19] = '\0';
+	n = (int) SDL_strlen(str);
+	while (n > 0 && str[n - 1] == ' ')
+		n--;
+	str[n] = '\0';
+	return n;
+}
+
 #define READID(var,rw)	SDL_RWread(rw, var, 1, 4)
 #define READB(var,rw)	SDL_RWread(rw, var, 1, 1)
 #define SKIPB(rw)	SDL_RWseek(rw, 1, RW_SEEK_CUR);
