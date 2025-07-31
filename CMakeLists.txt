@@ -989,6 +989,8 @@ if(SDLMIXER_MIDI_TIMIDITY)
         src/timidity/playmidi.c
         src/timidity/readmidi.c
         src/timidity/resample.c
+        src/timidity/readsbk.c
+        src/timidity/sndfont.c
         src/timidity/tables.c
         src/timidity/timidity.c
     )

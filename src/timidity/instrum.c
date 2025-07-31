@@ -18,6 +18,7 @@
 #include "options.h"
 #include "common.h"
 #include "instrum.h"
+#include "sndfont.h"
 #include "resample.h"
 #include "tables.h"
 
@@ -208,6 +209,8 @@ static void load_instrument(MidiSong *song, const char *name,
   *out=SDL_malloc(sizeof(Instrument));
   ip = *out;
   if (!ip) goto nomem;
+
+  ip->type = INST_GUS;
 
   ip->samples = tmp[198];
   ip->sample = SDL_malloc(sizeof(Sample) * ip->samples);
@@ -543,6 +546,14 @@ static int fill_bank(MidiSong *song, int dr, int b)
 	    }
 	  else
 	    {
+	      /* preload soundfont */
+	      bank->instrument[i] = load_soundfont(song, 0,
+							(dr)? 128 : b,
+							(dr)? b : i,
+							(dr)? i : -1);
+	      if (bank->instrument[i])
+		continue;
+	      /* try gus patch */
 	      load_instrument(song,
 				     bank->tone[i].name,
 				     &bank->instrument[i],
@@ -559,6 +570,13 @@ static int fill_bank(MidiSong *song, int dr, int b)
 				     bank->tone[i].strip_envelope :
 				     ((dr) ? 1 : -1),
 				     bank->tone[i].strip_tail);
+	      if (bank->instrument[i])
+		continue;
+	      /* no patch; search soundfont again. */
+	      bank->instrument[i] = load_soundfont(song, 1,
+							(dr)? 128 : b,
+							(dr)? b : i,
+							(dr)? i : -1);
 	      if (!bank->instrument[i]) {
 		SNDDBG(("Couldn't load instrument %s (%s %d, program %d)\n",
 		   bank->tone[i].name,
