@@ -277,8 +277,8 @@ static void load_gen(int size, SFInfo *sf, SDL_IOStream *io, int *totalp, tgenre
 	size /= 4;
 	buf = NEW(tgenrec, size);
 	for (i = 0; i < size; i++) {
-		READW(&buf[i].oper, io);
-		READW(&buf[i].amount, io);
+		READW((Uint16 *)&buf[i].oper, io);
+		READW((Uint16 *)&buf[i].amount, io);
 	}
 	*totalp = size;
 	*bufp = buf;
