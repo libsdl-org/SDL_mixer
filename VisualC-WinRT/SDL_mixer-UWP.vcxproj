@@ -60,6 +60,8 @@
     <ClCompile Include="..\src\codecs\timidity\playmidi.c" />
     <ClCompile Include="..\src\codecs\timidity\readmidi.c" />
     <ClCompile Include="..\src\codecs\timidity\resample.c" />
+    <ClCompile Include="..\src\codecs\timidity\readsbk.c" />
+    <ClCompile Include="..\src\codecs\timidity\sndfont.c" />
     <ClCompile Include="..\src\codecs\timidity\tables.c" />
     <ClCompile Include="..\src\codecs\timidity\timidity.c" />
   </ItemGroup>
@@ -93,6 +95,8 @@
     <ClInclude Include="..\src\codecs\timidity\playmidi.h" />
     <ClInclude Include="..\src\codecs\timidity\readmidi.h" />
     <ClInclude Include="..\src\codecs\timidity\resample.h" />
+    <ClInclude Include="..\src\codecs\timidity\sbk.h" />
+    <ClInclude Include="..\src\codecs\timidity\sflayer.h" />
     <ClInclude Include="..\src\codecs\timidity\tables.h" />
     <ClInclude Include="..\src\codecs\timidity\timidity.h" />
   </ItemGroup>

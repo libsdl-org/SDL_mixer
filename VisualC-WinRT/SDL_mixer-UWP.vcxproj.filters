@@ -22,6 +22,12 @@
     <ClCompile Include="..\src\codecs\timidity\resample.c">
       <Filter>Timidity</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\codecs\timidity\readsbk.c">
+      <Filter>Timidity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\codecs\timidity\sndfont.c">
+      <Filter>Timidity</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\codecs\timidity\tables.c">
       <Filter>Timidity</Filter>
     </ClCompile>
@@ -130,6 +136,12 @@
       <Filter>Timidity</Filter>
     </ClInclude>
     <ClInclude Include="..\src\codecs\timidity\resample.h">
+      <Filter>Timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\timidity\sbk.h">
+      <Filter>Timidity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\timidity\sflayer.h">
       <Filter>Timidity</Filter>
     </ClInclude>
     <ClInclude Include="..\src\codecs\timidity\tables.h">

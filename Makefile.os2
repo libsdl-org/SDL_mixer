@@ -65,7 +65,7 @@ SRCS+= load_aiff.c load_voc.c music_wav.c &
        music_xmp.c music_modplug.c music_gme.c &
        music_fluidsynth.c music_timidity.c
 # timidity sources:
-TIMISRCS = common.c instrum.c mix.c output.c playmidi.c readmidi.c resample.c tables.c timidity.c
+TIMISRCS = common.c readsbk.c sndfont.c instrum.c mix.c output.c playmidi.c readmidi.c resample.c tables.c timidity.c
 
 OBJS = $(SRCS:.c=.obj)
 TIMIOBJS = $(TIMISRCS:.c=.obj)

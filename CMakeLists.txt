@@ -847,6 +847,8 @@ if(SDL2MIXER_MIDI_TIMIDITY)
         src/codecs/timidity/playmidi.c
         src/codecs/timidity/readmidi.c
         src/codecs/timidity/resample.c
+        src/codecs/timidity/readsbk.c
+        src/codecs/timidity/sndfont.c
         src/codecs/timidity/tables.c
         src/codecs/timidity/timidity.c
     )
