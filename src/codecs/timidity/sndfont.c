@@ -267,9 +267,12 @@ static Instrument *load_from_file(MidiSong *song, SFInsts *rec, InstList *ip)
 		Sint16 *tmp, s;
 #endif
 		SDL_memcpy(sample, &sp->v, sizeof(Sample));
-		sample->data = (sample_t*) SDL_malloc(sp->endsample);
+		sample->data = (sample_t*) SDL_malloc(sp->endsample + 6);
 		SDL_RWseek(rec->rw, sp->startsample, RW_SEEK_SET);
 		SDL_RWread(rec->rw, sample->data, 1, sp->endsample);
+		/* initialize the 3 extra samples at the end (those +6 bytes) */
+		sample->data[sp->endsample/2] = sample->data[sp->endsample/2 + 1] =
+		sample->data[sp->endsample/2 + 2] = 0;
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 		tmp = (Sint16*)sample->data;
 		for (j = 0; j < sp->endsample/2; j++) {
