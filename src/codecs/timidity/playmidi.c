@@ -189,7 +189,6 @@ static int find_samples(MidiSong *song, MidiEvent *e, int *vlist)
 	{
 	  SNDDBG(("Strange: percussion instrument with %d samples!",
 		  ip->samples));
-	  return 0;
 	}
     }
   else
