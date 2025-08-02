@@ -578,7 +578,7 @@ extern SDL_DECLSPEC MIX_Audio * SDLCALL MIX_LoadAudio_IO(MIX_Mixer *mixer, SDL_I
  * This is equivalent to calling:
  *
  * ```c
- * SDL_LoadAudio_IO(mixer, SDL_IOFromFile(path, "rb"), predecode, true);
+ * MIX_LoadAudio_IO(mixer, SDL_IOFromFile(path, "rb"), predecode, true);
  * ```
  *
  * This function loads data from a path on the filesystem. There is also a
@@ -605,7 +605,7 @@ extern SDL_DECLSPEC MIX_Audio * SDLCALL MIX_LoadAudio(MIX_Mixer *mixer, const ch
 /**
  * Load audio for playback through a collection of properties.
  *
- * Please see SDL_LoadAudio_IO() for a description of what the various
+ * Please see MIX_LoadAudio_IO() for a description of what the various
  * LoadAudio functions do. This function uses properties to dictate how it
  * operates, and exposes functionality the other functions don't provide.
  *
