@@ -7,6 +7,9 @@ set(RESOURCE_FILES
 
 function(add_sdl_mixer_test_executable TARGET)
     add_executable(${TARGET} ${ARGN})
+    if("c_std_99" IN_LIST CMAKE_C_COMPILE_FEATURES)
+      target_compile_features(${TARGET} PRIVATE c_std_99)
+    endif()
     target_compile_definitions(${TARGET}
         PRIVATE
             $<TARGET_PROPERTY:${sdl3_mixer_target_name},COMPILE_DEFINITIONS>
