@@ -84,10 +84,12 @@ static VOC_Block *AddVocDataBlock(VOC_AudioData *adata, Sint64 iopos, const SDL_
     }
 
     VOC_Block *block = AddVocBlock(adata);
-    block->iopos = (Uint64) iopos;
-    block->loop_count = 0;
-    SDL_copyp(&block->spec, spec);
-    block->frames = frames;
+    if (block) {
+        block->iopos = (Uint64) iopos;
+        block->loop_count = 0;
+        SDL_copyp(&block->spec, spec);
+        block->frames = frames;
+    }
     return block;
 }
 
