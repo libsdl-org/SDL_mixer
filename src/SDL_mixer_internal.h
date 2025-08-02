@@ -214,7 +214,7 @@ struct MIX_Mixer
 #define MIX_PROP_DECODER_NAME_STRING "SDL_mixer.decoder.name"
 #define MIX_PROP_DECODER_FORMAT_NUMBER "SDL_mixer.decoder.format"
 #define MIX_PROP_DECODER_CHANNELS_NUMBER "SDL_mixer.decoder.channels"
-#define MIX_PROP_DECODER_FREQ_NUMBER "SDL_mixer.decoder.format"
+#define MIX_PROP_DECODER_FREQ_NUMBER "SDL_mixer.decoder.freq"
 #define MIX_PROP_DECODER_SINEWAVE_HZ_NUMBER "SDL_mixer.decoder.sinewave.hz"
 #define MIX_PROP_DECODER_SINEWAVE_AMPLITUDE_FLOAT "SDL_mixer.decoder.sinewave.amplitude"
 #define MIX_PROP_DECODER_WAVPACK_WVC_IOSTREAM_POINTER "SDL_mixer.decoder.wavpack.wvc_iostream"
