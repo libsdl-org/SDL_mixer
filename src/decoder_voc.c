@@ -288,13 +288,14 @@ static bool ParseVocFile(SDL_IOStream *io, VOC_AudioData *adata, SDL_PropertiesI
                     return SDL_SetError("VOC has a LOOPEND without a matching LOOP");
                 }
 
+                const int loopcnt = loop_start->loop_count;
                 VOC_Block *block = AddVocLoopBlock(adata, -2);
                 if (!block) {
                     return false;
                 }
 
                 if (total_frames != -1) {
-                    total_frames += loop_frames * loop_start->loop_count;
+                    total_frames += loop_frames * loopcnt;
                 }
 
                 loop_start = NULL;
