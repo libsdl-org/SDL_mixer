@@ -668,11 +668,11 @@ bool MIX_Init(void)
         }
         #endif
 
-        #if defined(SDL_NEON_INTRINSICS) && !NEED_SCALAR_FALLBACK
+        #if defined(SDL_NEON_INTRINSICS) && !SDL_MIXER_NEED_SCALAR_FALLBACK
         if (!SDL_HasNEON()) {
             return SDL_SetError("Need NEON instructions but this CPU doesn't offer it");  // :(
         }
-        #elif defined(SDL_NEON_INTRINSICS) && NEED_SCALAR_FALLBACK
+        #elif defined(SDL_NEON_INTRINSICS) && SDL_MIXER_NEED_SCALAR_FALLBACK
         MIX_HasNEON = SDL_HasNEON();
         #endif
 
