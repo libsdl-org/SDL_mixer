@@ -949,6 +949,11 @@ static bool ParseDATA(WAV_AudioData *adata, SDL_IOStream *io, Uint32 chunk_lengt
 
 static bool AddLoopPoint(WAV_AudioData *adata, Uint32 play_count, Uint32 start, Uint32 stop)
 {
+    // ignore the loop if it's bogus but carry on.
+    if (start >= stop) {
+        return true;
+    }
+
     WAVLoopPoint *loop;
     WAVLoopPoint *loops = SDL_realloc(adata->loops, (adata->numloops + 1) * sizeof(*adata->loops));
     if (!loops) {
@@ -957,16 +962,13 @@ static bool AddLoopPoint(WAV_AudioData *adata, Uint32 play_count, Uint32 start, 
 
     //SDL_Log("LOOP: count=%d start=%d stop=%d", (int) play_count, (int) start, (int) stop);
 
-    // ignore the loop if it's bogus but carry on.
-    if (start < stop) {
-        loop = &loops[adata->numloops];
-        loop->start = start;
-        loop->stop = stop;
-        loop->iterations = play_count;
+    loop = &loops[adata->numloops];
+    loop->start = start;
+    loop->stop = stop;
+    loop->iterations = play_count;
 
-        adata->loops = loops;
-        ++adata->numloops;
-    }
+    adata->loops = loops;
+    ++adata->numloops;
 
     return true;
 }
