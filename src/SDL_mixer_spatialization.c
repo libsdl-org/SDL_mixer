@@ -316,7 +316,7 @@ static void SDL_TARGETING("sse") calculate_distance_attenuation_and_angle_sse(co
 
 // FIXME: neon intrinsics "vcopyq_laneq_f32" is undeclared.
 // It is defined in <arm_neon.h>, but not activated because of __ARM_FP value.
-#if defined(SDL_PLATFORM_ANDROID) && defined(SDL_NEON_INTRINSICS)
+#if defined(SDL_PLATFORM_ANDROID) && defined(SDL_NEON_INTRINSICS) && !defined(__aarch64__)
 #undef SDL_NEON_INTRINSICS
 #endif
 
