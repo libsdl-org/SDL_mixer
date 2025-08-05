@@ -1270,7 +1270,7 @@ typedef void (SDLCALL *Mix_ChannelFinishedCallback)(int channel);
 extern DECLSPEC void SDLCALL Mix_ChannelFinished(Mix_ChannelFinishedCallback channel_finished);
 
 
-#define MIX_CHANNEL_POST  (-2)
+#define MIX_CHANNEL_POST    (-2)
 
 /**
  * This is the format of a special effect callback:
