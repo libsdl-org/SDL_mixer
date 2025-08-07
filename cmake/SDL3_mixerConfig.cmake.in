@@ -80,6 +80,12 @@ if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/SDL3_mixer-static-targets.cmake")
 
         if(SDLMIXER_FLAC_LIBFLAC AND NOT TARGET FLAC::FLAC)
             find_dependency(FLAC)
+            # Xiph's CMake script does not handle Threads::Threads correctly:
+            # https://github.com/xiph/flac/issues/820
+            get_property(flac_interface_link_libraries TARGET FLAC::FLAC PROPERTY INTERFACE_LINK_LIBRARIES)
+            if(Threads::Threads IN_LIST flac_interface_link_libraries)
+                find_package(Threads)
+            endif()
         endif()
 
         if(SDLMIXER_MOD_XMP AND NOT TARGET libxmp::libxmp)
