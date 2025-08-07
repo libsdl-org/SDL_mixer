@@ -578,6 +578,12 @@ if(SDLMIXER_FLAC_LIBFLAC)
             if(NOT SDLMIXER_FLAC_LIBFLAC_SHARED)
                 list(APPEND PC_REQUIRES flac)
             endif()
+            # Xiph's CMake script does not handle Threads::Threads correctly:
+            # https://github.com/xiph/flac/issues/820
+            get_property(flac_interface_link_libraries TARGET FLAC::FLAC PROPERTY INTERFACE_LINK_LIBRARIES)
+            if(Threads::Threads IN_LIST flac_interface_link_libraries)
+                find_package(Threads)
+            endif()
         else()
             message(${fatal_error} "libflac NOT found")
         endif()
