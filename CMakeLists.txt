@@ -241,7 +241,6 @@ add_library(SDL2_mixer
     src/utils.c
 )
 add_library(SDL2_mixer::${sdl2_mixer_export_name} ALIAS SDL2_mixer)
-sdl_add_platform_link_options(SDL2_mixer)
 target_include_directories(SDL2_mixer
     PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
@@ -1016,7 +1015,6 @@ if(SDL2MIXER_SAMPLES)
 
     foreach(prog playmus playwave)
         # FIXME: mingw should be handled by SDL2::SDL2(-static) target
-        sdl_add_platform_link_options(${prog})
         if(MINGW)
             target_link_libraries(${prog} PRIVATE mingw32)
             target_link_options(${prog} PRIVATE -mwindows)
