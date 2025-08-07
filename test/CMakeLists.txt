@@ -15,6 +15,7 @@ function(add_sdl_mixer_test_executable TARGET)
             $<TARGET_PROPERTY:${sdl3_mixer_target_name},COMPILE_DEFINITIONS>
     )
     sdl_add_warning_options(${TARGET} WARNING_AS_ERROR ${SDLMIXER_WERROR})
+    sdl_add_platform_link_options(${TARGET})
     target_link_libraries(${TARGET} PRIVATE SDL3_mixer::SDL3_mixer SDL3::SDL3)
 
     if(SDLMIXER_TESTS_INSTALL)
