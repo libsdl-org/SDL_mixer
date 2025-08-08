@@ -314,13 +314,15 @@ static void SDL_TARGETING("sse") calculate_distance_attenuation_and_angle_sse(co
 }
 #endif
 
-// FIXME: neon intrinsics "vcopyq_laneq_f32" is undeclared.
-// It is defined in <arm_neon.h>, but not activated because of __ARM_FP value.
-#if defined(SDL_PLATFORM_ANDROID) && defined(SDL_NEON_INTRINSICS) && !defined(__aarch64__)
-#undef SDL_NEON_INTRINSICS
+#if defined(SDL_NEON_INTRINSICS)
+// Some versions of arm_neon.h don't have vcopyq_laneq_f32() available
+#ifndef vcopyq_laneq_f32
+#define vcopyq_laneq_f32(a1, __b1, c1, __d1) __extension__ ({ \
+  float32x4_t __a1 = (a1); float32x4_t __c1 = (c1); \
+  float32_t __c2 = vgetq_lane_f32(__c1, __d1); \
+  vsetq_lane_f32(__c2, __a1, __b1); })
 #endif
 
-#if defined(SDL_NEON_INTRINSICS)
 static float32x4_t xyzzy_neon(const float32x4_t a, const float32x4_t b)
 {
     const float32x4_t a_yzx = vcopyq_laneq_f32(vextq_f32(a, a, 1), 2, a, 0);
