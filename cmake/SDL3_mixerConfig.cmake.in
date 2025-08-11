@@ -156,7 +156,7 @@ if(NOT TARGET SDL3_mixer::SDL3_mixer)
 endif()
 
 if(NOT SDL3_mixer_COMPONENTS AND NOT TARGET SDL3_mixer::SDL3_mixer-shared AND NOT TARGET SDL3_mixer::SDL3_mixer-static)
-    set(SDL3_image_FOUND FALSE)
+    set(SDL3_mixer_FOUND FALSE)
 endif()
 @PACKAGE_INIT@
 check_required_components(SDL3_mixer)
