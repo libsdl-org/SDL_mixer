@@ -130,7 +130,7 @@ endif
 
 # This needs to be a shared library to comply with the LGPL license
 ifeq ($(SUPPORT_MP3_MPG123),true)
-    LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(MPG123_LIBRARY_PATH)/android
+    LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(MPG123_LIBRARY_PATH)/src/include
     LOCAL_CFLAGS += -DDECODER_MP3_MPG123
     LOCAL_SHARED_LIBRARIES += mpg123
 endif

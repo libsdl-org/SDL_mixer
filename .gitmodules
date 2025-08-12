@@ -25,7 +25,7 @@
 [submodule "external/mpg123"]
 	path = external/mpg123
 	url = https://github.com/libsdl-org/mpg123.git
-	branch = v1.31.3-SDL
+	branch = v1.33.2-SDL
 [submodule "external/libxmp"]
 	path = external/libxmp
 	url = https://github.com/libsdl-org/libxmp.git
