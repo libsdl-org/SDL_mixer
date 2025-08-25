@@ -54,6 +54,7 @@ struct xmp_callbacks {
     MIX_LOADER_FUNCTION(true,void,xmp_end_player,(xmp_context)) \
     MIX_LOADER_FUNCTION(true,void,xmp_get_module_info,(xmp_context, struct xmp_module_info *)) \
     MIX_LOADER_FUNCTION(true,int,xmp_play_frame,(xmp_context)) \
+    MIX_LOADER_FUNCTION(true,int,xmp_play_buffer,(xmp_context, void *, int, int)) \
     MIX_LOADER_FUNCTION(true,int,xmp_seek_time,(xmp_context, int)) \
     MIX_LOADER_FUNCTION(true,void,xmp_get_frame_info,(xmp_context, struct xmp_frame_info *)) \
     MIX_LOADER_FUNCTION(true,void,xmp_stop_module,(xmp_context)) \
@@ -264,6 +265,7 @@ static bool SDLCALL XMP_seek(void *track_userdata, Uint64 frame)
         ms = 0;
     }
     const int err = libxmp.xmp_seek_time(tdata->ctx, (int) ms);
+    libxmp.xmp_play_buffer(tdata->ctx, NULL, 0, 0); // reset the internal state.
     return err ? SetLibXmpError("xmp_seek_time", err) : true;
 }
 
