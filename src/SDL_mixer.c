@@ -2100,7 +2100,6 @@ static void StopTrack(MIX_Track *track, Sint64 fadeOut)
             TrackStopped(track);
         } else {
             track->total_fade_frames = fadeOut;
-            track->fade_frames = track->total_fade_frames;
             track->fade_frames = fadeOut;
             track->fade_direction = -1;
         }
