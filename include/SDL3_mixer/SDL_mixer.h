@@ -567,7 +567,7 @@ extern SDL_DECLSPEC bool SDLCALL MIX_GetMixerFormat(MIX_Mixer *mixer, SDL_AudioS
  *
  * \sa MIX_DestroyAudio
  * \sa MIX_SetTrackAudio
- * \sa MIX_LoadAudio_IO
+ * \sa MIX_LoadAudio
  * \sa MIX_LoadAudioWithProperties
  */
 extern SDL_DECLSPEC MIX_Audio * SDLCALL MIX_LoadAudio_IO(MIX_Mixer *mixer, SDL_IOStream *io, bool predecode, bool closeio);
