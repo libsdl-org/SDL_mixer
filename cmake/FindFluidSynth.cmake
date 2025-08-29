@@ -25,8 +25,19 @@ set(FluidSynth_LINK_OPTIONS "${_fluidsynth_link_options}" CACHE STRING "Extra li
 
 set(FluidSynth_LINK_DIRECTORIES "${_fluidsynth_link_directories}" CACHE PATH "Extra link directories of FluidSynth")
 
+set(FLUIDSYNTH_VERSION "FLUIDSYNTH_VERSION-NOTFOUND")
+if(EXISTS "${FluidSynth_INCLUDE_PATH}/fluidsynth/version.h")
+    file(READ "${FluidSynth_INCLUDE_PATH}/fluidsynth/version.h" _fluidsynth_version_h)
+    set(_fluidsynth_version_regex "#define[ \t]+FLUIDSYNTH_VERSION[ \t]+\"([1-9]+\\.[0-9]+\\.[0-9]+)\"")
+    string(REGEX MATCH "${_fluidsynth_version_regex}" _re_fluidsynth_version "${_fluidsynth_version_h}")
+    if(_re_fluidsynth_version)
+        set(FLUIDSYNTH_VERSION "${CMAKE_MATCH_1}")
+    endif()
+endif()
+
 find_package_handle_standard_args(FluidSynth
     REQUIRED_VARS FluidSynth_LIBRARY FluidSynth_INCLUDE_PATH
+    VERSION_VAR FLUIDSYNTH_VERSION
 )
 
 if(FluidSynth_FOUND)
