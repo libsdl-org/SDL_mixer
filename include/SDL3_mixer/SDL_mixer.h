@@ -1066,7 +1066,7 @@ extern SDL_DECLSPEC bool SDLCALL MIX_SetTrackAudio(MIX_Track *track, MIX_Audio *
  *
  * A given audio stream may only be assigned to a single track at a time;
  * duplicate assignments won't return an error, but assigning a stream to
- * multiple tracks will cause each track to read from the stream arbitarily,
+ * multiple tracks will cause each track to read from the stream arbitrarily,
  * causing confusion and incorrect mixing.
  *
  * Once a track has a valid input, it can start mixing sound by calling
@@ -1113,7 +1113,7 @@ extern SDL_DECLSPEC bool SDLCALL MIX_SetTrackAudioStream(MIX_Track *track, SDL_A
  *
  * A given IOStream may only be assigned to a single track at a time;
  * duplicate assignments won't return an error, but assigning a stream to
- * multiple tracks will cause each track to read from the stream arbitarily,
+ * multiple tracks will cause each track to read from the stream arbitrarily,
  * causing confusion, incorrect mixing, or failure to decode.
  *
  * Once a track has a valid input, it can start mixing sound by calling
