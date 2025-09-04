@@ -17,3 +17,6 @@ simpleplayMEM/
 umxplay/
 	Shows how to initialize the library, load an Unreal UMX
 	music module using a custom MREADER, and play it.
+
+soundeffects/
+	An example on how to use libmikmod to play sound effects.

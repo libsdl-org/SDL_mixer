@@ -1,3 +1,11 @@
+Summary of changes between libmikmod 3.1.22 and libmikmod 3.1.23:
+========================================================================
+
+libmikmod v3.1.23 was released on Apr. 20, 2025.
+
+- Fix segmentation fault in Sample_Free (was a regression in 3.1.22)
+
+
 Summary of changes between libmikmod 3.1.21 and libmikmod 3.1.22:
 ========================================================================
 
