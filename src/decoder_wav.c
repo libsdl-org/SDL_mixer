@@ -995,7 +995,7 @@ static bool ParseSMPL(WAV_AudioData *adata, SDL_IOStream *io, Uint32 chunk_lengt
         const Uint32 LOOP_TYPE_FORWARD = 0;
         const Uint32 loop_type = SDL_Swap32LE(chunk->loops[i].type);
         if (loop_type == LOOP_TYPE_FORWARD) {
-            AddLoopPoint(adata, SDL_Swap32LE(chunk->loops[i].play_count), SDL_Swap32LE(chunk->loops[i].start), SDL_Swap32LE(chunk->loops[i].end));
+            AddLoopPoint(adata, SDL_Swap32LE(chunk->loops[i].play_count), SDL_Swap32LE(chunk->loops[i].start), SDL_Swap32LE(chunk->loops[i].end) + 1);  // +1 because the end field is inclusive.
         }
     }
 
