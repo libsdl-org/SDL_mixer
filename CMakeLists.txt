@@ -49,11 +49,6 @@ if(SDLMIXER_ROOTPROJECT)
   endif()
 endif()
 
-set(SDLMIXER_SAMPLES_DEFAULT ${SDLMIXER_ROOTPROJECT})
-if(ANDROID)
-    set(SDLMIXER_SAMPLES_DEFAULT OFF)
-endif()
-
 # option() honors normal variables.
 cmake_policy(SET CMP0077 NEW)
 set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
@@ -122,9 +117,6 @@ endif()
 
 option(SDLMIXER_TESTS "Build unit tests?" OFF)
 option(SDLMIXER_TESTS_INSTALL "Install unit tests?" OFF)
-
-option(SDLMIXER_SAMPLES "Build the SDL3_mixer sample program(s)" ${SDLMIXER_SAMPLES_DEFAULT})
-cmake_dependent_option(SDLMIXER_SAMPLES_INSTALL "Install the SDL3_mixer sample program(s)" OFF "SDLMIXER_SAMPLES;SDLMIXER_INSTALL" OFF)
 
 # These are implemented in SDL_mixer itself, not using a third-party library.
 option(SDLMIXER_AIFF "Enable AIFF audio" ON)
@@ -1121,45 +1113,6 @@ if(SDLMIXER_INSTALL)
             REVISION "${SDLMIXER_REVISION}"
         )
     endif()
-endif()
-
-set(SDLMIXER_SAMPLES False)  # !!! FIXME
-if(SDLMIXER_SAMPLES)
-    find_package(SDL3 REQUIRED COMPONENTS SDL3_test)
-
-    check_include_file("signal.h" HAVE_SIGNAL_H)
-    check_symbol_exists("setbuf" "stdio.h" HAVE_SETBUF)
-
-    function(add_sdl_mixer_example_executable TARGET)
-        if(ANDROID)
-            add_library(${TARGET} SHARED ${ARGN})
-        else()
-            add_executable(${TARGET} ${ARGN})
-        endif()
-        if("c_std_99" IN_LIST CMAKE_C_COMPILE_FEATURES)
-            target_compile_features(${TARGET} PRIVATE c_std_99)
-        endif()
-        sdl_add_warning_options(${TARGET} WARNING_AS_ERROR ${SDLMIXER_WERROR})
-        sdl_target_link_options_no_undefined(${TARGET})
-        target_link_libraries(${TARGET} PRIVATE SDL3::SDL3_test)
-        target_link_libraries(${TARGET} PRIVATE SDL3_mixer::${sdl3_mixer_target_name})
-        target_link_libraries(${TARGET} PRIVATE ${sdl3_target_name})
-        if(HAVE_SIGNAL_H)
-          target_compile_definitions(${TARGET} PRIVATE HAVE_SIGNAL_H)
-        endif()
-        if(HAVE_SETBUF)
-          target_compile_definitions(${TARGET} PRIVATE HAVE_SETBUF)
-        endif()
-
-        if(SDLMIXER_SAMPLES_INSTALL)
-            install(TARGETS ${TARGET}
-                RUNTIME DESTINATION "${CMAKE_INSTALL_LIBEXECDIR}/installed-tests/SDL3_mixer"
-            )
-        endif()
-    endfunction()
-
-    add_sdl_mixer_example_executable(playmus examples/playmus.c)
-    add_sdl_mixer_example_executable(playwave examples/playwave.c)
 endif()
 
 if(SDLMIXER_TESTS)
