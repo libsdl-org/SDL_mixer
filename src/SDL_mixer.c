@@ -2904,6 +2904,9 @@ static size_t MIX_IoClamp_read(void *userdata, void *ptr, size_t size, SDL_IOSta
     MIX_IoClamp *clamp = (MIX_IoClamp *) userdata;
     const size_t remaining = (size_t)(clamp->length - clamp->pos);
     const size_t ret = SDL_ReadIO(clamp->io, ptr, SDL_min(size, remaining));
+    if (ret < size) {
+        *status = (ret == remaining) ? SDL_IO_STATUS_EOF : SDL_GetIOStatus(clamp->io);
+    }
     clamp->pos += ret;
     return ret;
 }
