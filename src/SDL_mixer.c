@@ -1755,25 +1755,26 @@ void MIX_UntagTrack(MIX_Track *track, const char *tag)
 
     SDL_LockProperties(tags);
     if (SDL_GetBooleanProperty(tags, tag, false)) {  // if tag isn't there, nothing to do.
-        if (SDL_SetBooleanProperty(tags, tag, false)) {
-            const SDL_PropertiesID track_tags = track->mixer->track_tags;
-            SDL_assert(track_tags != 0);
-            MIX_TagList *list = (MIX_TagList *) SDL_GetPointerProperty(track_tags, tag, NULL);
-            SDL_assert(list != NULL);  // shouldn't be NULL, there's definitely a track with this tag!
+        const SDL_PropertiesID track_tags = track->mixer->track_tags;
+        SDL_assert(track_tags != 0);  // shouldn't be NULL, there's definitely a tag in use!
 
-            SDL_LockRWLockForWriting(list->rwlock);
-            for (size_t i = 0; i < list->num_tracks; i++) {
-                if (list->tracks[i] == track) {
-                    const size_t cpy = (list->num_tracks - (i+1)) * sizeof (*list->tracks);
-                    if (cpy) {
-                        SDL_memmove(&list->tracks[i], &list->tracks[i+1], cpy);
-                    }
-                    list->tracks[--list->num_tracks] = NULL;
-                    break;
+        MIX_TagList *list = (MIX_TagList *) SDL_GetPointerProperty(track_tags, tag, NULL);
+        SDL_assert(list != NULL);  // shouldn't be NULL, there's definitely a track with this tag!
+
+        SDL_LockRWLockForWriting(list->rwlock);
+        for (size_t i = 0; i < list->num_tracks; i++) {
+            if (list->tracks[i] == track) {
+                const size_t cpy = (list->num_tracks - (i+1)) * sizeof (*list->tracks);
+                if (cpy) {
+                    SDL_memmove(&list->tracks[i], &list->tracks[i+1], cpy);
                 }
+                list->tracks[--list->num_tracks] = NULL;
+                break;
             }
-            SDL_UnlockRWLock(list->rwlock);
         }
+        SDL_UnlockRWLock(list->rwlock);
+
+        SDL_SetBooleanProperty(tags, tag, false);
     }
     SDL_UnlockProperties(tags);
 }
