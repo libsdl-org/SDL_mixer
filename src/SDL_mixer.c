@@ -1387,12 +1387,38 @@ MIX_Track *MIX_CreateTrack(MIX_Mixer *mixer)
     return track;
 }
 
-static void SDLCALL UntagWholeTrack(void *userdata, SDL_PropertiesID props, const char *tag)
+// Take `track` out of `mixer`'s list of tracks tagged with `tag`.
+static void RemoveTrackFromMixerTagList(MIX_Mixer *mixer, MIX_Track *track, const char *tag)
 {
+    const SDL_PropertiesID track_tags = track->mixer->track_tags;
+    MIX_TagList *list = (MIX_TagList *) SDL_GetPointerProperty(track_tags, tag, NULL);
+    if (list) {
+        SDL_LockRWLockForWriting(list->rwlock);
+        for (size_t i = 0; i < list->num_tracks; i++) {
+            if (list->tracks[i] == track) {
+                const size_t cpy = (list->num_tracks - (i+1)) * sizeof (*list->tracks);
+                if (cpy) {
+                    SDL_memmove(&list->tracks[i], &list->tracks[i+1], cpy);
+                }
+                list->tracks[--list->num_tracks] = NULL;
+                break;
+            }
+        }
+        SDL_UnlockRWLock(list->rwlock);
+    }
+}
+
+// this is an enumerator; call it multiple times to _actually_ remove from all tag lists.
+static void SDLCALL RemoveTrackFromAllMixerTagLists(void *userdata, SDL_PropertiesID props, const char *tag)
+{
+    // this only removes the track from the mixer's tag lists, as we're
+    //  enumerating track->tags and don't want the hash to change during that.
+    // After this is done, we'll destroy the hash outright anyhow.
     MIX_Track *track = (MIX_Track *) userdata;
+    SDL_assert(track->mixer != NULL);
     SDL_assert(track->tags == props);
     if (SDL_GetBooleanProperty(props, tag, false)) {  // these still exist in track->tags once untagged, so only bother if set to true.
-        MIX_UntagTrack(track, tag);
+        RemoveTrackFromMixerTagList(track->mixer, track, tag);
     }
 }
 
@@ -1443,9 +1469,9 @@ void MIX_DestroyTrack(MIX_Track *track)
     SDL_DestroyAudioStream(track->internal_stream);
 
     UnrefAudio(track->input_audio);
-    SDL_EnumerateProperties(track->tags, UntagWholeTrack, track);
-    SDL_DestroyProperties(track->props);
+    SDL_EnumerateProperties(track->tags, RemoveTrackFromAllMixerTagLists, track);
     SDL_DestroyProperties(track->tags);
+    SDL_DestroyProperties(track->props);
     SDL_free(track->input_buffer);
     if (track->ioclamp.io) {  // if we applied an i/o clamp to the stream, close that unconditionally.
         SDL_CloseIO(track->io);   // this is the clamp, not the actual stream.
@@ -1755,25 +1781,8 @@ void MIX_UntagTrack(MIX_Track *track, const char *tag)
 
     SDL_LockProperties(tags);
     if (SDL_GetBooleanProperty(tags, tag, false)) {  // if tag isn't there, nothing to do.
-        const SDL_PropertiesID track_tags = track->mixer->track_tags;
-        SDL_assert(track_tags != 0);  // shouldn't be NULL, there's definitely a tag in use!
-
-        MIX_TagList *list = (MIX_TagList *) SDL_GetPointerProperty(track_tags, tag, NULL);
-        SDL_assert(list != NULL);  // shouldn't be NULL, there's definitely a track with this tag!
-
-        SDL_LockRWLockForWriting(list->rwlock);
-        for (size_t i = 0; i < list->num_tracks; i++) {
-            if (list->tracks[i] == track) {
-                const size_t cpy = (list->num_tracks - (i+1)) * sizeof (*list->tracks);
-                if (cpy) {
-                    SDL_memmove(&list->tracks[i], &list->tracks[i+1], cpy);
-                }
-                list->tracks[--list->num_tracks] = NULL;
-                break;
-            }
-        }
-        SDL_UnlockRWLock(list->rwlock);
-
+        SDL_assert(SDL_GetPointerProperty(track->mixer->track_tags, tag, NULL) != NULL);  // shouldn't be NULL, there's definitely a track with this tag!
+        RemoveTrackFromMixerTagList(track->mixer, track, tag);
         SDL_SetBooleanProperty(tags, tag, false);
     }
     SDL_UnlockProperties(tags);
