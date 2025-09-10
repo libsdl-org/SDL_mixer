@@ -72,6 +72,7 @@ typedef struct FLUIDSYNTH_AudioData
 {
     const Uint8 *sfdata;
     size_t sfdatalen;
+    SDL_PropertiesID fluidsynth_props;
 } FLUIDSYNTH_AudioData;
 
 typedef struct FLUIDSYNTH_TrackData
@@ -170,6 +171,19 @@ static bool SDLCALL FLUIDSYNTH_init_audio(SDL_IOStream *io, SDL_AudioSpec *spec,
     *duration_frames = -1;  // !!! FIXME: fluid_player_get_total_ticks can give us a time duration, but we don't have a player until we set up the track later.
     *audio_userdata = adata;
 
+    const SDL_PropertiesID fluidsynth_props = (SDL_PropertiesID) SDL_GetNumberProperty(props, MIX_PROP_DECODER_FLUIDSYNTH_PROPS_NUMBER, 0);
+    if (fluidsynth_props) {
+        adata->fluidsynth_props = SDL_CreateProperties();
+        if (!adata->fluidsynth_props || !SDL_CopyProperties(fluidsynth_props, adata->fluidsynth_props)) {
+            if (adata->fluidsynth_props) {
+                SDL_DestroyProperties(adata->fluidsynth_props);
+            }
+            SDL_free(sfdata);
+            SDL_free(adata);
+            return false;
+        }
+    }
+
     return true;
 }
 
@@ -211,6 +225,19 @@ static fluid_long_long_t SoundFontTell(void *handle)
     return SDL_TellIO((SDL_IOStream *) handle);
 }
 
+static void SDLCALL SetCustomFluidsynthProperties(void *userdata, SDL_PropertiesID props, const char *name)
+{
+    FLUIDSYNTH_TrackData *tdata = (FLUIDSYNTH_TrackData *) userdata;
+    switch (SDL_GetPropertyType(props, name)) {
+        case SDL_PROPERTY_TYPE_NUMBER:
+            fluidsynth.fluid_settings_setint(tdata->settings, name, (int) SDL_GetNumberProperty(props, name, 0));
+            break;
+        case SDL_PROPERTY_TYPE_FLOAT:
+            fluidsynth.fluid_settings_setnum(tdata->settings, name, (double) SDL_GetFloatProperty(props, name, 0.0f));
+            break;
+        default: break;  // oh well.
+    }
+}
 
 static bool SDLCALL FLUIDSYNTH_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_AudioSpec *spec, SDL_PropertiesID props, void **track_userdata)
 {
@@ -235,6 +262,9 @@ static bool SDLCALL FLUIDSYNTH_init_track(void *audio_userdata, SDL_IOStream *io
     fluidsynth.fluid_settings_setnum(tdata->settings, "synth.gain", 1.0);
     fluidsynth.fluid_settings_setnum(tdata->settings, "synth.sample-rate", (double) spec->freq);
     fluidsynth.fluid_settings_getnum(tdata->settings, "synth.sample-rate", &samplerate);
+
+    // let custom properties override anything we already set internally. You break it, you buy it!
+    SDL_EnumerateProperties(adata->fluidsynth_props, SetCustomFluidsynthProperties, tdata);
 
     tdata->synth = fluidsynth.new_fluid_synth(tdata->settings);
     if (!tdata->synth) {
@@ -361,6 +391,7 @@ static void SDLCALL FLUIDSYNTH_quit_track(void *track_userdata)
 static void SDLCALL FLUIDSYNTH_quit_audio(void *audio_userdata)
 {
     FLUIDSYNTH_AudioData *adata = (FLUIDSYNTH_AudioData *) audio_userdata;
+    SDL_DestroyProperties(adata->fluidsynth_props);
     SDL_free((void *) adata->sfdata);
     SDL_free(adata);
 }

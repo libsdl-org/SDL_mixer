@@ -221,6 +221,7 @@ struct MIX_Mixer
 #define MIX_PROP_DECODER_WAVPACK_WVC_PATH_STRING "SDL_mixer.decoder.wavpack.wvc_path"
 #define MIX_PROP_DECODER_FLUIDSYNTH_SOUNDFONT_IOSTREAM_POINTER "SDL_mixer.decoder.fluidsynth.soundfont_iostream"
 #define MIX_PROP_DECODER_FLUIDSYNTH_SOUNDFONT_PATH_STRING "SDL_mixer.decoder.fluidsynth.soundfont_path"
+#define MIX_PROP_DECODER_FLUIDSYNTH_PROPS_NUMBER "SDL_mixer.decoder.fluidsynth.props"
 #define MIX_PROP_AUDIO_LOAD_PATH_STRING "SDL_mixer.audio.load.path"
 #define MIX_PROP_AUDIO_LOAD_ONDEMAND_BOOLEAN "SDL_mixer.audio.load.ondemand"
 
