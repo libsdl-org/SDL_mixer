@@ -345,7 +345,7 @@ static void SDLCALL OPUS_quit_audio(void *audio_userdata)
     SDL_free(adata);
 }
 
-MIX_Decoder MIX_Decoder_OPUS = {
+const MIX_Decoder MIX_Decoder_OPUS = {
     "OPUS",
     OPUS_init,
     OPUS_init_audio,

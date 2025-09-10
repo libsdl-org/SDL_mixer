@@ -583,7 +583,7 @@ static void SDLCALL VOC_quit_audio(void *audio_userdata)
     SDL_free(tdata);
 }
 
-MIX_Decoder MIX_Decoder_VOC = {
+const MIX_Decoder MIX_Decoder_VOC = {
     "VOC",
     NULL, // init
     VOC_init_audio,

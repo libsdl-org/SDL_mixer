@@ -162,7 +162,7 @@ static void SDLCALL TIMIDITY_quit_audio(void *audio_userdata)
     SDL_assert(audio_userdata == NULL);  // no state.
 }
 
-MIX_Decoder MIX_Decoder_TIMIDITY = {
+const MIX_Decoder MIX_Decoder_TIMIDITY = {
     "TIMIDITY",
     TIMIDITY_init,
     TIMIDITY_init_audio,

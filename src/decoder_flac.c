@@ -491,7 +491,7 @@ static void SDLCALL FLAC_quit_audio(void *audio_userdata)
     SDL_free(adata);
 }
 
-MIX_Decoder MIX_Decoder_FLAC = {
+const MIX_Decoder MIX_Decoder_FLAC = {
     "FLAC",
     FLAC_init,
     FLAC_init_audio,

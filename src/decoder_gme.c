@@ -206,7 +206,7 @@ static void SDLCALL GME_quit_audio(void *audio_userdata)
     SDL_assert(audio_userdata == NULL);  // no state.
 }
 
-MIX_Decoder MIX_Decoder_GME = {
+const MIX_Decoder MIX_Decoder_GME = {
     "GME",
     GME_init,
     GME_init_audio,

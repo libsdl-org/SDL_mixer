@@ -365,7 +365,7 @@ static void SDLCALL FLUIDSYNTH_quit_audio(void *audio_userdata)
     SDL_free(adata);
 }
 
-MIX_Decoder MIX_Decoder_FLUIDSYNTH = {
+const MIX_Decoder MIX_Decoder_FLUIDSYNTH = {
     "FLUIDSYNTH",
     FLUIDSYNTH_init,
     FLUIDSYNTH_init_audio,

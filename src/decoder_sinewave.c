@@ -132,7 +132,7 @@ static void SDLCALL SINEWAVE_quit_audio(void *audio_userdata)
     SDL_free(audio_userdata);
 }
 
-MIX_Decoder MIX_Decoder_SINEWAVE = {
+const MIX_Decoder MIX_Decoder_SINEWAVE = {
     "SINEWAVE",
     NULL,  // init
     SINEWAVE_init_audio,
