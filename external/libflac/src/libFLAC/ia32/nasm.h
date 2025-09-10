@@ -32,10 +32,17 @@
 	bits 32
 
 %ifdef OBJ_FORMAT_win32
+    %ifdef __YASM_MAJOR__
+	%define FLAC__PUBLIC_NEEDS_UNDERSCORE
+	%idefine code_section section .text align=16
+	%idefine data_section section .data align=32
+	%idefine bss_section  section .bss  align=32
+    %else
 	%define FLAC__PUBLIC_NEEDS_UNDERSCORE
 	%idefine code_section section .text align=16 class=CODE use32
 	%idefine data_section section .data align=32 class=DATA use32
 	%idefine bss_section  section .bss  align=32 class=DATA use32
+    %endif
 %elifdef OBJ_FORMAT_aout
 	%define FLAC__PUBLIC_NEEDS_UNDERSCORE
 	%idefine code_section section .text
@@ -64,6 +71,7 @@
 	%idefine code_section SEGMENT .text ALIGN=16 CLASS=CODE USE32 FLAT
 	%idefine data_section SEGMENT .data ALIGN=16 CLASS=DATA USE32 FLAT
 	%idefine bss_section  SEGMENT .bss  ALIGN=16 CLASS=BSS  USE32 FLAT
+
 %else
 	%error unsupported object format! ; this directive doesn't really work here
 %endif
@@ -74,7 +82,9 @@
 	%elifdef OBJ_FORMAT_obj
 		global %1
 	%else
-		%if __NASM_MAJOR__ >= 2
+		%ifdef __YASM_MAJOR__
+			global %1:function hidden
+		%elif __NASM_MAJOR__ >= 2
 			global %1:function hidden
 		%else
 			global %1
