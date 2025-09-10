@@ -140,7 +140,7 @@ Lpic_base: \
 #endif /* PIC variants */
 
 // Apple and Android NDK seem both not to like direct global access.
-#if defined(PIC) && (defined(__APPLE__) || defined(ANDROID))
+#if defined(PIC) && (defined(__APPLE__) || defined(__ANDROID__))
 #define PIC_GLOBAL_PTR
 #endif
 
