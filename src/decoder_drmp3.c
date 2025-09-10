@@ -188,7 +188,7 @@ static void SDLCALL DRMP3_quit_audio(void *audio_userdata)
     SDL_free(adata);
 }
 
-MIX_Decoder MIX_Decoder_DRMP3 = {
+const MIX_Decoder MIX_Decoder_DRMP3 = {
     "DRMP3",
     NULL,  // init
     DRMP3_init_audio,

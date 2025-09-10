@@ -284,7 +284,7 @@ static void SDLCALL XMP_quit_audio(void *audio_userdata)
     SDL_assert(audio_userdata == NULL);   // no state.
 }
 
-MIX_Decoder MIX_Decoder_XMP = {
+const MIX_Decoder MIX_Decoder_XMP = {
     "XMP",
     XMP_init,
     XMP_init_audio,

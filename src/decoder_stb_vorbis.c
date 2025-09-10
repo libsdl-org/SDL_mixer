@@ -342,7 +342,7 @@ static void SDLCALL STBVORBIS_quit_audio(void *audio_userdata)
     SDL_free(audio_userdata);
 }
 
-MIX_Decoder MIX_Decoder_STBVORBIS = {
+const MIX_Decoder MIX_Decoder_STBVORBIS = {
     "STBVORBIS",
     STBVORBIS_init,
     STBVORBIS_init_audio,

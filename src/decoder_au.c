@@ -262,7 +262,7 @@ static void SDLCALL AU_quit_audio(void *audio_userdata)
     SDL_free(adata);
 }
 
-MIX_Decoder MIX_Decoder_AU = {
+const MIX_Decoder MIX_Decoder_AU = {
     "AU",
     NULL,  // init
     AU_init_audio,

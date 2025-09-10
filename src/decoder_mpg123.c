@@ -443,7 +443,7 @@ static void SDLCALL MPG123_quit_audio(void *audio_userdata)
     SDL_assert(audio_userdata == NULL);  // no state.
 }
 
-MIX_Decoder MIX_Decoder_MPG123 = {
+const MIX_Decoder MIX_Decoder_MPG123 = {
     "MPG123",
     MPG123_init,
     MPG123_init_audio,

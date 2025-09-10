@@ -380,7 +380,7 @@ static void SDLCALL VORBIS_quit_audio(void *audio_userdata)
     SDL_free(audio_userdata);
 }
 
-MIX_Decoder MIX_Decoder_VORBIS = {
+const MIX_Decoder MIX_Decoder_VORBIS = {
     "VORBIS",
     VORBIS_init,
     VORBIS_init_audio,

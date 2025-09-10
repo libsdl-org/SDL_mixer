@@ -574,7 +574,7 @@ static void SDLCALL AIFF_quit_audio(void *audio_userdata)
     SDL_free(adata);
 }
 
-MIX_Decoder MIX_Decoder_AIFF = {
+const MIX_Decoder MIX_Decoder_AIFF = {
     "AIFF",
     NULL,  // init
     AIFF_init_audio,

@@ -269,27 +269,28 @@ void *MIX_GetConstIOBuffer(SDL_IOStream *io, size_t *datalen);
 // Slurp in all the data from an SDL_IOStream; if it appears to be memory-based, return the pointer with no allocation or copy made.
 void *MIX_SlurpConstIO(SDL_IOStream *io, size_t *datalen, bool *copied);
 
+
 // mu-Law and a-Law lookup tables.
 extern const float MIX_alawToFloat[256];
 extern const float MIX_ulawToFloat[256];
 
 // these might not all be available, but they are all declared here as if they are.
-extern MIX_Decoder MIX_Decoder_AU;
-extern MIX_Decoder MIX_Decoder_VOC;
-extern MIX_Decoder MIX_Decoder_WAV;
-extern MIX_Decoder MIX_Decoder_AIFF;
-extern MIX_Decoder MIX_Decoder_MPG123;
-extern MIX_Decoder MIX_Decoder_DRMP3;
-extern MIX_Decoder MIX_Decoder_VORBIS;
-extern MIX_Decoder MIX_Decoder_STBVORBIS;
-extern MIX_Decoder MIX_Decoder_OPUS;
-extern MIX_Decoder MIX_Decoder_FLAC;
-extern MIX_Decoder MIX_Decoder_DRFLAC;
-extern MIX_Decoder MIX_Decoder_TIMIDITY;
-extern MIX_Decoder MIX_Decoder_FLUIDSYNTH;
-extern MIX_Decoder MIX_Decoder_WAVPACK;
-extern MIX_Decoder MIX_Decoder_GME;
-extern MIX_Decoder MIX_Decoder_XMP;
-extern MIX_Decoder MIX_Decoder_SINEWAVE;
-extern MIX_Decoder MIX_Decoder_RAW;
+extern const MIX_Decoder MIX_Decoder_AU;
+extern const MIX_Decoder MIX_Decoder_VOC;
+extern const MIX_Decoder MIX_Decoder_WAV;
+extern const MIX_Decoder MIX_Decoder_AIFF;
+extern const MIX_Decoder MIX_Decoder_MPG123;
+extern const MIX_Decoder MIX_Decoder_DRMP3;
+extern const MIX_Decoder MIX_Decoder_VORBIS;
+extern const MIX_Decoder MIX_Decoder_STBVORBIS;
+extern const MIX_Decoder MIX_Decoder_OPUS;
+extern const MIX_Decoder MIX_Decoder_FLAC;
+extern const MIX_Decoder MIX_Decoder_DRFLAC;
+extern const MIX_Decoder MIX_Decoder_TIMIDITY;
+extern const MIX_Decoder MIX_Decoder_FLUIDSYNTH;
+extern const MIX_Decoder MIX_Decoder_WAVPACK;
+extern const MIX_Decoder MIX_Decoder_GME;
+extern const MIX_Decoder MIX_Decoder_XMP;
+extern const MIX_Decoder MIX_Decoder_SINEWAVE;
+extern const MIX_Decoder MIX_Decoder_RAW;
 
