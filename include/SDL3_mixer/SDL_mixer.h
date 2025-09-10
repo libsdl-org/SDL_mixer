@@ -1139,8 +1139,61 @@ extern SDL_DECLSPEC bool SDLCALL MIX_SetTrackAudioStream(MIX_Track *track, SDL_A
  * \threadsafety It is safe to call this function from any thread.
  *
  * \since This function is available since SDL_mixer 3.0.0.
+ *
+ * \sa MIX_SetTrackRawIOStream
  */
 extern SDL_DECLSPEC bool SDLCALL MIX_SetTrackIOStream(MIX_Track *track, SDL_IOStream *io, bool closeio);
+
+/**
+ * Set a MIX_Track's input to an SDL_IOStream providing raw PCM data.
+ *
+ * This is not the recommended way to set a track's input, but this can be
+ * useful for a very specific scenario: a large file, to be played once, that
+ * must be read from disk in small chunks as needed. In most cases, however,
+ * it is preferable to create a MIX_Audio ahead of time and use
+ * MIX_SetTrackAudio() instead.
+ *
+ * Also, an MIX_SetTrackAudioStream() can _also_ provide raw PCM audio to
+ * a track, via an SDL_AudioStream, which might be preferable unless the data
+ * is already coming directly from an SDL_IOStream.
+ *
+ * The stream supplied here should provide an audio in raw PCM format.
+ *
+ * A given IOStream may only be assigned to a single track at a time;
+ * duplicate assignments won't return an error, but assigning a stream to
+ * multiple tracks will cause each track to read from the stream arbitrarily,
+ * causing confusion and incorrect mixing.
+ *
+ * Once a track has a valid input, it can start mixing sound by calling
+ * MIX_PlayTrack(), or possibly MIX_PlayTag().
+ *
+ * Calling this function with a NULL stream is legal, and removes any input
+ * from the track. If the track was currently playing, the next time the mixer
+ * runs, it'll notice this and mark the track as stopped, calling any assigned
+ * MIX_TrackStoppedCallback.
+ *
+ * It is legal to change the input of a track while it's playing, however some
+ * states, like loop points, may cease to make sense with the new audio. In
+ * such a case, one can call MIX_PlayTrack again to adjust parameters.
+ *
+ * The provided stream must remain valid until the track no longer needs it
+ * (either by changing the track's input or destroying the track).
+ *
+ * \param track the track on which to set a new audio input.
+ * \param io the new i/o stream to use as the track's input.
+ * \param spec the format of the PCM data that the SDL_IOStream will provide.
+ * \param closeio if true, close the stream when done with it.
+ * \returns true on success, false on error; call SDL_GetError() for details.
+ *
+ * \threadsafety It is safe to call this function from any thread.
+ *
+ * \since This function is available since SDL_mixer 3.0.0.
+ *
+ * \sa MIX_SetTrackAudioStream
+ * \sa MIX_SetTrackIOStream
+ */
+extern SDL_DECLSPEC bool SDLCALL MIX_SetTrackRawIOStream(MIX_Track *track, SDL_IOStream *io, const SDL_AudioSpec *spec, bool closeio);
+
 
 /**
  * Assign an arbitrary tag to a track.

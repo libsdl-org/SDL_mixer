@@ -1653,6 +1653,7 @@ bool MIX_SetTrackAudioStream(MIX_Track *track, SDL_AudioStream *stream)
 bool MIX_SetTrackIOStream(MIX_Track *track, SDL_IOStream *io, bool closeio)
 {
     if (!CheckTrackParam(track)) {
+        if (io && closeio) { SDL_CloseIO(io); }
         return false;
     } else if (!io) {
         return MIX_SetTrackAudio(track, NULL);  // just drop the current input.
@@ -1665,6 +1666,45 @@ bool MIX_SetTrackIOStream(MIX_Track *track, SDL_IOStream *io, bool closeio)
     MIX_Audio *audio = MIX_LoadAudioWithProperties(props);
     SDL_DestroyProperties(props);
     if (!audio) {
+        if (closeio) { SDL_CloseIO(io); }
+        return false;
+    }
+
+    const bool retval = MIX_SetTrackAudio_internal(track, audio, io, closeio);
+
+    // Drop our reference to `audio` after the track accepts it, so when the track is
+    //  done with it, it'll unref it, and `audio` will be cleaned up. If the track failed
+    //  to accept the audio, this will clean it up right now.
+    UnrefAudio(audio);
+
+    return retval;
+}
+
+bool MIX_SetTrackRawIOStream(MIX_Track *track, SDL_IOStream *io, const SDL_AudioSpec *spec, bool closeio)
+{
+    if (!CheckTrackParam(track)) {
+        if (io && closeio) { SDL_CloseIO(io); }
+        return false;
+    } else if (!io) {
+        return MIX_SetTrackAudio(track, NULL);  // just drop the current input.
+    } else if (!spec) {
+        if (io && closeio) { SDL_CloseIO(io); }
+        return SDL_InvalidParamError("spec");
+    }
+
+    const SDL_PropertiesID props = SDL_CreateProperties();
+    SDL_SetPointerProperty(props, MIX_PROP_AUDIO_LOAD_PREFERRED_MIXER_POINTER, track->mixer);
+    SDL_SetPointerProperty(props, MIX_PROP_AUDIO_LOAD_IOSTREAM_POINTER, io);
+    SDL_SetBooleanProperty(props, MIX_PROP_AUDIO_LOAD_ONDEMAND_BOOLEAN, true);
+    SDL_SetStringProperty(props, MIX_PROP_AUDIO_DECODER_STRING, "RAW");
+    SDL_SetNumberProperty(props, MIX_PROP_DECODER_FORMAT_NUMBER, (Sint64) spec->format);
+    SDL_SetNumberProperty(props, MIX_PROP_DECODER_CHANNELS_NUMBER, (Sint64) spec->channels);
+    SDL_SetNumberProperty(props, MIX_PROP_DECODER_FREQ_NUMBER, (Sint64) spec->freq);
+    SDL_SetBooleanProperty(props, MIX_PROP_AUDIO_LOAD_SKIP_METADATA_TAGS_BOOLEAN, true);
+    MIX_Audio *audio = MIX_LoadAudioWithProperties(props);
+    SDL_DestroyProperties(props);
+    if (!audio) {
+        if (io && closeio) { SDL_CloseIO(io); }
         return false;
     }
 

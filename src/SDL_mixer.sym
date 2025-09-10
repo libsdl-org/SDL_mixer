@@ -23,6 +23,7 @@ SDL3_mixer_0.0.0 {
     MIX_SetTrackAudio;
     MIX_SetTrackAudioStream;
     MIX_SetTrackIOStream;
+    MIX_SetTrackRawIOStream;
     MIX_TagTrack;
     MIX_UntagTrack;
     MIX_SetTrackPlaybackPosition;
