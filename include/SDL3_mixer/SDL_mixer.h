@@ -1153,9 +1153,9 @@ extern SDL_DECLSPEC bool SDLCALL MIX_SetTrackIOStream(MIX_Track *track, SDL_IOSt
  * it is preferable to create a MIX_Audio ahead of time and use
  * MIX_SetTrackAudio() instead.
  *
- * Also, an MIX_SetTrackAudioStream() can _also_ provide raw PCM audio to
- * a track, via an SDL_AudioStream, which might be preferable unless the data
- * is already coming directly from an SDL_IOStream.
+ * Also, an MIX_SetTrackAudioStream() can _also_ provide raw PCM audio to a
+ * track, via an SDL_AudioStream, which might be preferable unless the data is
+ * already coming directly from an SDL_IOStream.
  *
  * The stream supplied here should provide an audio in raw PCM format.
  *
