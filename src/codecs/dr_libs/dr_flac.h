@@ -1,6 +1,6 @@
 /*
 FLAC audio decoder. Choice of public domain or MIT-0. See license statements at the end of this file.
-dr_flac - v0.13.0 - 2025-07-23
+dr_flac - v0.13.2 - TBD
 
 David Reid - mackron@gmail.com
 
@@ -126,7 +126,7 @@ extern "C" {
 
 #define DRFLAC_VERSION_MAJOR     0
 #define DRFLAC_VERSION_MINOR     13
-#define DRFLAC_VERSION_REVISION  0
+#define DRFLAC_VERSION_REVISION  2
 #define DRFLAC_VERSION_STRING    DRFLAC_XSTRINGIFY(DRFLAC_VERSION_MAJOR) "." DRFLAC_XSTRINGIFY(DRFLAC_VERSION_MINOR) "." DRFLAC_XSTRINGIFY(DRFLAC_VERSION_REVISION)
 
 #include <stddef.h> /* For size_t. */
@@ -331,15 +331,18 @@ typedef struct
     */
     drflac_uint32 type;
 
+    /* The size in bytes of the block and the buffer pointed to by pRawData if it's non-NULL. */
+    drflac_uint32 rawDataSize;
+
+    /* The offset in the stream of the raw data. */
+    drflac_uint64 rawDataOffset;
+
     /*
     A pointer to the raw data. This points to a temporary buffer so don't hold on to it. It's best to
     not modify the contents of this buffer. Use the structures below for more meaningful and structured
     information about the metadata. It's possible for this to be null.
     */
     const void* pRawData;
-
-    /* The size in bytes of the block and the buffer pointed to by pRawData if it's non-NULL. */
-    drflac_uint32 rawDataSize;
 
     union
     {
@@ -392,6 +395,7 @@ typedef struct
             drflac_uint32 colorDepth;
             drflac_uint32 indexColorCount;
             drflac_uint32 pictureDataSize;
+            drflac_uint64 pictureDataOffset;  /* Offset from the start of the stream. */
             const drflac_uint8* pPictureData;
         } picture;
     } data;
@@ -6434,8 +6438,9 @@ static drflac_bool32 drflac__read_and_decode_metadata(drflac_read_proc onRead, d
         runningFilePos += 4;
 
         metadata.type = blockType;
-        metadata.pRawData = NULL;
         metadata.rawDataSize = 0;
+        metadata.rawDataOffset = runningFilePos;
+        metadata.pRawData = NULL;
 
         switch (blockType)
         {
@@ -6712,59 +6717,149 @@ static drflac_bool32 drflac__read_and_decode_metadata(drflac_read_proc onRead, d
                 }
 
                 if (onMeta) {
-                    void* pRawData;
-                    const char* pRunningData;
-                    const char* pRunningDataEnd;
+                    drflac_bool32 result = DRFLAC_TRUE;
+                    drflac_uint32 blockSizeRemaining = blockSize;
+                    char* pMime = NULL;
+                    char* pDescription = NULL;
+                    void* pPictureData = NULL;
 
-                    pRawData = drflac__malloc_from_callbacks(blockSize, pAllocationCallbacks);
-                    if (pRawData == NULL) {
-                        return DRFLAC_FALSE;
+                    if (blockSizeRemaining < 4 || onRead(pUserData, &metadata.data.picture.type, 4) != 4) {
+                        result = DRFLAC_FALSE;
+                        goto done_flac;
+                    }
+                    blockSizeRemaining -= 4;
+                    metadata.data.picture.type = drflac__be2host_32(metadata.data.picture.type);
+
+
+                    if (blockSizeRemaining < 4 || onRead(pUserData, &metadata.data.picture.mimeLength, 4) != 4) {
+                        result = DRFLAC_FALSE;
+                        goto done_flac;
+                    }
+                    blockSizeRemaining -= 4;
+                    metadata.data.picture.mimeLength = drflac__be2host_32(metadata.data.picture.mimeLength);
+
+                    pMime = (char*)drflac__malloc_from_callbacks(metadata.data.picture.mimeLength + 1, pAllocationCallbacks); /* +1 for null terminator. */
+                    if (pMime == NULL) {
+                        result = DRFLAC_FALSE;
+                        goto done_flac;
                     }
 
-                    if (onRead(pUserData, pRawData, blockSize) != blockSize) {
-                        drflac__free_from_callbacks(pRawData, pAllocationCallbacks);
-                        return DRFLAC_FALSE;
+                    if (blockSizeRemaining < metadata.data.picture.mimeLength || onRead(pUserData, pMime, metadata.data.picture.mimeLength) != metadata.data.picture.mimeLength) {
+                        result = DRFLAC_FALSE;
+                        goto done_flac;
+                    }
+                    blockSizeRemaining -= metadata.data.picture.mimeLength;
+                    pMime[metadata.data.picture.mimeLength] = '\0';  /* Null terminate for safety. */
+                    metadata.data.picture.mime = (const char*)pMime;
+
+
+                    if (blockSizeRemaining < 4 || onRead(pUserData, &metadata.data.picture.descriptionLength, 4) != 4) {
+                        result = DRFLAC_FALSE;
+                        goto done_flac;
+                    }
+                    blockSizeRemaining -= 4;
+                    metadata.data.picture.descriptionLength = drflac__be2host_32(metadata.data.picture.descriptionLength);
+
+                    pDescription = (char*)drflac__malloc_from_callbacks(metadata.data.picture.descriptionLength + 1, pAllocationCallbacks); /* +1 for null terminator. */
+                    if (pDescription == NULL) {
+                        result = DRFLAC_FALSE;
+                        goto done_flac;
                     }
 
-                    metadata.pRawData = pRawData;
-                    metadata.rawDataSize = blockSize;
+                    if (blockSizeRemaining < metadata.data.picture.descriptionLength || onRead(pUserData, pDescription, metadata.data.picture.descriptionLength) != metadata.data.picture.descriptionLength) {
+                        result = DRFLAC_FALSE;
+                        goto done_flac;
+                    }
+                    blockSizeRemaining -= metadata.data.picture.descriptionLength;
+                    pDescription[metadata.data.picture.descriptionLength] = '\0';  /* Null terminate for safety. */
+                    metadata.data.picture.description = (const char*)pDescription;
 
-                    pRunningData    = (const char*)pRawData;
-                    pRunningDataEnd = (const char*)pRawData + blockSize;
 
-                    metadata.data.picture.type       = drflac__be2host_32_ptr_unaligned(pRunningData); pRunningData += 4;
-                    metadata.data.picture.mimeLength = drflac__be2host_32_ptr_unaligned(pRunningData); pRunningData += 4;
+                    if (blockSizeRemaining < 4 || onRead(pUserData, &metadata.data.picture.width, 4) != 4) {
+                        result = DRFLAC_FALSE;
+                        goto done_flac;
+                    }
+                    blockSizeRemaining -= 4;
+                    metadata.data.picture.width = drflac__be2host_32(metadata.data.picture.width);
 
-                    /* Need space for the rest of the block */
-                    if ((pRunningDataEnd - pRunningData) - 24 < (drflac_int64)metadata.data.picture.mimeLength) { /* <-- Note the order of operations to avoid overflow to a valid value */
-                        drflac__free_from_callbacks(pRawData, pAllocationCallbacks);
+                    if (blockSizeRemaining < 4 || onRead(pUserData, &metadata.data.picture.height, 4) != 4) {
+                        result = DRFLAC_FALSE;
+                        goto done_flac;
+                    }
+                    blockSizeRemaining -= 4;
+                    metadata.data.picture.height = drflac__be2host_32(metadata.data.picture.height);
+
+                    if (blockSizeRemaining < 4 || onRead(pUserData, &metadata.data.picture.colorDepth, 4) != 4) {
+                        result = DRFLAC_FALSE;
+                        goto done_flac;
+                    }
+                    blockSizeRemaining -= 4;
+                    metadata.data.picture.colorDepth = drflac__be2host_32(metadata.data.picture.colorDepth);
+
+                    if (blockSizeRemaining < 4 || onRead(pUserData, &metadata.data.picture.indexColorCount, 4) != 4) {
+                        result = DRFLAC_FALSE;
+                        goto done_flac;
+                    }
+                    blockSizeRemaining -= 4;
+                    metadata.data.picture.indexColorCount = drflac__be2host_32(metadata.data.picture.indexColorCount);
+
+
+                    /* Picture data. */
+                    if (blockSizeRemaining < 4 || onRead(pUserData, &metadata.data.picture.pictureDataSize, 4) != 4) {
+                        result = DRFLAC_FALSE;
+                        goto done_flac;
+                    }
+                    blockSizeRemaining -= 4;
+                    metadata.data.picture.pictureDataSize = drflac__be2host_32(metadata.data.picture.pictureDataSize);
+
+                    if (blockSizeRemaining < metadata.data.picture.pictureDataSize) {
+                        result = DRFLAC_FALSE;
+                        goto done_flac;
+                    }
+
+                    /* For the actual image data we want to store the offset to the start of the stream. */
+                    metadata.data.picture.pictureDataOffset = runningFilePos + (blockSize - blockSizeRemaining);
+
+                    /*
+                    For the allocation of image data, we can allow memory allocation to fail, in which case we just leave
+                    the pointer as null. If it fails, we need to fall back to seeking past the image data.
+                    */
+                #ifndef DR_FLAC_NO_PICTURE_METADATA_MALLOC
+                    pPictureData = drflac__malloc_from_callbacks(metadata.data.picture.pictureDataSize, pAllocationCallbacks);
+                    if (pPictureData != NULL) {
+                        if (onRead(pUserData, pPictureData, metadata.data.picture.pictureDataSize) != metadata.data.picture.pictureDataSize) {
+                            result = DRFLAC_FALSE;
+                            goto done_flac;
+                        }
+                    } else
+                #endif
+                    {
+                        /* Allocation failed. We need to seek past the picture data. */
+                        if (!onSeek(pUserData, metadata.data.picture.pictureDataSize, DRFLAC_SEEK_CUR)) {
+                            result = DRFLAC_FALSE;
+                            goto done_flac;
+                        }
+                    }
+
+                    blockSizeRemaining -= metadata.data.picture.pictureDataSize;
+                    metadata.data.picture.pPictureData = (const drflac_uint8*)pPictureData;
+
+
+                    /* Only fire the callback if we actually have a way to read the image data. We must have either a valid offset, or a valid data pointer. */
+                    if (metadata.data.picture.pictureDataOffset != 0 || metadata.data.picture.pPictureData != NULL) {
+                        onMeta(pUserDataMD, &metadata);
+                    } else {
+                        /* Don't have a valid offset or data pointer, so just pretend we don't have a picture metadata. */
+                    }
+
+                done_flac:
+                    drflac__free_from_callbacks(pMime,        pAllocationCallbacks);
+                    drflac__free_from_callbacks(pDescription, pAllocationCallbacks);
+                    drflac__free_from_callbacks(pPictureData, pAllocationCallbacks);
+
+                    if (result != DRFLAC_TRUE) {
                         return DRFLAC_FALSE;
                     }
-                    metadata.data.picture.mime              = pRunningData;                                   pRunningData += metadata.data.picture.mimeLength;
-                    metadata.data.picture.descriptionLength = drflac__be2host_32_ptr_unaligned(pRunningData); pRunningData += 4;
-
-                    /* Need space for the rest of the block */
-                    if ((pRunningDataEnd - pRunningData) - 20 < (drflac_int64)metadata.data.picture.descriptionLength) { /* <-- Note the order of operations to avoid overflow to a valid value */
-                        drflac__free_from_callbacks(pRawData, pAllocationCallbacks);
-                        return DRFLAC_FALSE;
-                    }
-                    metadata.data.picture.description     = pRunningData;                                   pRunningData += metadata.data.picture.descriptionLength;
-                    metadata.data.picture.width           = drflac__be2host_32_ptr_unaligned(pRunningData); pRunningData += 4;
-                    metadata.data.picture.height          = drflac__be2host_32_ptr_unaligned(pRunningData); pRunningData += 4;
-                    metadata.data.picture.colorDepth      = drflac__be2host_32_ptr_unaligned(pRunningData); pRunningData += 4;
-                    metadata.data.picture.indexColorCount = drflac__be2host_32_ptr_unaligned(pRunningData); pRunningData += 4;
-                    metadata.data.picture.pictureDataSize = drflac__be2host_32_ptr_unaligned(pRunningData); pRunningData += 4;
-                    metadata.data.picture.pPictureData    = (const drflac_uint8*)pRunningData;
-
-                    /* Need space for the picture after the block */
-                    if (pRunningDataEnd - pRunningData < (drflac_int64)metadata.data.picture.pictureDataSize) { /* <-- Note the order of operations to avoid overflow to a valid value */
-                        drflac__free_from_callbacks(pRawData, pAllocationCallbacks);
-                        return DRFLAC_FALSE;
-                    }
-
-                    onMeta(pUserDataMD, &metadata);
-
-                    drflac__free_from_callbacks(pRawData, pAllocationCallbacks);
                 }
             } break;
 
@@ -6800,13 +6895,16 @@ static drflac_bool32 drflac__read_and_decode_metadata(drflac_read_proc onRead, d
                 */
                 if (onMeta) {
                     void* pRawData = drflac__malloc_from_callbacks(blockSize, pAllocationCallbacks);
-                    if (pRawData == NULL) {
-                        return DRFLAC_FALSE;
-                    }
-
-                    if (onRead(pUserData, pRawData, blockSize) != blockSize) {
-                        drflac__free_from_callbacks(pRawData, pAllocationCallbacks);
-                        return DRFLAC_FALSE;
+                    if (pRawData != NULL) {
+                        if (onRead(pUserData, pRawData, blockSize) != blockSize) {
+                            drflac__free_from_callbacks(pRawData, pAllocationCallbacks);
+                            return DRFLAC_FALSE;
+                        }
+                    } else {
+                        /* Allocation failed. We need to seek past the block. */
+                        if (!onSeek(pUserData, blockSize, DRFLAC_SEEK_CUR)) {
+                            return DRFLAC_FALSE;
+                        }
                     }
 
                     metadata.pRawData = pRawData;
@@ -8699,7 +8797,7 @@ static drflac_bool32 drflac__on_tell_stdio(void* pUserData, drflac_int64* pCurso
     DRFLAC_ASSERT(pFileStdio != NULL);
     DRFLAC_ASSERT(pCursor    != NULL);
 
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(NXDK)
     #if defined(_MSC_VER) && _MSC_VER > 1200
         result = _ftelli64(pFileStdio);
     #else
@@ -8820,8 +8918,6 @@ static drflac_bool32 drflac__on_seek_memory(void* pUserData, int offset, drflac_
     drflac_int64 newCursor;
 
     DRFLAC_ASSERT(memoryStream != NULL);
-
-    newCursor = memoryStream->currentReadPos;
 
     if (origin == DRFLAC_SEEK_SET) {
         newCursor = 0;
@@ -12077,6 +12173,13 @@ DRFLAC_API drflac_bool32 drflac_next_cuesheet_track(drflac_cuesheet_track_iterat
 /*
 REVISION HISTORY
 ================
+v0.13.2 - TBD
+  - Improve robustness of the parsing of picture metadata to improve support for memory constrained embedded devices.
+  - Fix a warning about an assigned by unused variable.
+
+v0.13.1 - 2025-09-10
+  - Fix an error with the NXDK build.
+
 v0.13.0 - 2025-07-23
   - API CHANGE: Seek origin enums have been renamed to match the naming convention used by other dr_libs libraries:
     - drflac_seek_origin_start   -> DRFLAC_SEEK_SET
