@@ -22,7 +22,7 @@ set(SDLMIXER_GME                   @SDLMIXER_GME_ENABLED@)
 
 set(SDLMIXER_MOD                   @SDLMIXER_MOD_ENABLED@)
 set(SDLMIXER_MOD_XMP               @SDLMIXER_MOD_XMP_ENABLED@)
-set(SDLMIXER_MOD_XMP_LITE          @SDLMIXER_MOD_XMP_ENABLED@)
+set(SDLMIXER_MOD_XMP_LITE          @SDLMIXER_MOD_XMP_LITE@)
 
 set(SDLMIXER_MP3                   @SDLMIXER_MP3_ENABLED@)
 set(SDLMIXER_MP3_DRMP3             @SDLMIXER_MP3_DRMP3_ENABLED@)
@@ -47,10 +47,6 @@ set(SDLMIXER_WAVPACK               @SDLMIXER_WAVPACK_ENABLED@)
 set(SDLMIXER_SDL3_REQUIRED_VERSION @SDL_REQUIRED_VERSION@)
 
 set(SDL3_mixer_SDL3_mixer-shared_FOUND FALSE)
-if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/SDL3_mixer-shared-targets.cmake")
-    include("${CMAKE_CURRENT_LIST_DIR}/SDL3_mixer-shared-targets.cmake")
-    set(SDL3_mixer_SDL3_mixer-shared_FOUND TRUE)
-endif()
 
 set(SDL3_mixer_SDL3_mixer-static FALSE)
 if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/SDL3_mixer-static-targets.cmake")

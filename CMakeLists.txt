@@ -22,7 +22,6 @@ include("${SDL3_mixer_SOURCE_DIR}/cmake/PrivateSdlFunctions.cmake")
 include("${SDL3_mixer_SOURCE_DIR}/cmake/sdlcpu.cmake")
 include("${SDL3_mixer_SOURCE_DIR}/cmake/sdlmanpages.cmake")
 include("${SDL3_mixer_SOURCE_DIR}/cmake/sdlplatform.cmake")
-sdl_calculate_derived_version_variables(${MAJOR_VERSION} ${MINOR_VERSION} ${MICRO_VERSION})
 
 message(STATUS "Configuring ${PROJECT_NAME} ${PROJECT_VERSION}")
 
@@ -102,7 +101,10 @@ if(EMSCRIPTEN OR VITA OR PSP OR PS2 OR N3DS OR RISCOS)
 endif()
 
 option(CMAKE_POSITION_INDEPENDENT_CODE "Build static libraries with -fPIC" ${PLATFORM_SUPPORTS_SHARED})
-cmake_dependent_option(BUILD_SHARED_LIBS "Build the library as a shared library" ON PLATFORM_SUPPORTS_SHARED OFF)
+
+# SDL_mixer SDL2-api-on-3 can only be built as a static library. This is not negotiable :)
+# See https://github.com/libsdl-org/SDL_mixer/issues/764
+set(BUILD_SHARED_LIBS OFF)
 
 cmake_dependent_option(SDLMIXER_INSTALL "Enable SDL3mixer install target" ${SDLMIXER_ROOTPROJECT} "${sdl3mixer_install_enableable}" OFF)
 cmake_dependent_option(SDLMIXER_INSTALL_CPACK "Create binary SDL3_mixer archive using CPack" ${SDLMIXER_ROOTPROJECT} "SDLMIXER_INSTALL" OFF)
@@ -214,38 +216,22 @@ if(SDLMIXER_VORBIS_TREMOR OR SDLMIXER_VORBIS_VORBISFILE OR SDLMIXER_FLAC_LIBFLAC
         set(SDLMIXER_OGG_install TRUE)
     else()
         set(SDLMIXER_OGG_SHARED FALSE)
-        if(NOT SDLMIXER_BUILD_SHARED_LIBS)
-            set(SDLMIXER_OGG_install TRUE)
-        endif()
+        set(SDLMIXER_OGG_install TRUE)
     endif()
 else()
     set(SDLMIXER_OGG FALSE)
 endif()
 
-# Save BUILD_SHARED_LIBS variable
-set(SDLMIXER_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
-
 set(sdl_required_components Headers)
 
-if(SDLMIXER_BUILD_SHARED_LIBS)
-    set(sdl3_mixer_target_name SDL3_mixer-shared)
-    set(sdl3_target_name SDL3::SDL3-shared)
-
-    list(APPEND sdl_required_components SDL3-shared)
-else()
-    set(sdl3_mixer_target_name SDL3_mixer-static)
-    set(sdl3_target_name SDL3::SDL3)
-endif()
-
-if(NOT TARGET SDL3::Headers OR NOT TARGET ${sdl3_target_name})
-    find_package(SDL3 ${SDL_REQUIRED_VERSION} REQUIRED COMPONENTS ${sdl_required_components})
+if(NOT TARGET SDL3::Headers OR NOT TARGET SDL3::SDL3)
+    find_package(SDL3 ${SDL_REQUIRED_VERSION} REQUIRED COMPONENTS Headers)
 endif()
 
 SDL_DetectTargetCPUArchitectures(SDL_CPU_NAMES)
 SDL_DetectCMakePlatform()
 
-set(BUILD_SHARED_LIBS ${SDLMIXER_BUILD_SHARED_LIBS})
-add_library(${sdl3_mixer_target_name}
+add_library(SDL3_mixer-static STATIC
     src/codecs/load_aiff.c
     src/codecs/load_voc.c
     src/codecs/load_sndfile.c
@@ -271,11 +257,11 @@ add_library(${sdl3_mixer_target_name}
     src/music.c
     src/utils.c
 )
-add_library(SDL3_mixer::${sdl3_mixer_target_name} ALIAS ${sdl3_mixer_target_name})
+add_library(SDL3_mixer::SDL3_mixer-static ALIAS SDL3_mixer-static)
 if(NOT TARGET SDL3_mixer::SDL3_mixer)
-    add_library(SDL3_mixer::SDL3_mixer ALIAS ${sdl3_mixer_target_name})
+    add_library(SDL3_mixer::SDL3_mixer ALIAS SDL3_mixer-static)
 endif()
-target_include_directories(${sdl3_mixer_target_name}
+target_include_directories(SDL3_mixer-static
     PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
@@ -283,75 +269,35 @@ target_include_directories(${sdl3_mixer_target_name}
         src
         src/codecs
 )
-target_compile_definitions(${sdl3_mixer_target_name} PRIVATE
+target_compile_definitions(SDL3_mixer-static PRIVATE
     BUILD_SDL
     SDL_BUILD_MAJOR_VERSION=${MAJOR_VERSION}
     SDL_BUILD_MINOR_VERSION=${MINOR_VERSION}
     SDL_BUILD_MICRO_VERSION=${MICRO_VERSION}
 )
-target_link_libraries(${sdl3_mixer_target_name} PUBLIC SDL3::Headers)
-if(SDLMIXER_BUILD_SHARED_LIBS)
-    target_link_libraries(${sdl3_mixer_target_name} PRIVATE SDL3::SDL3-shared)
-endif()
-sdl_add_warning_options(${sdl3_mixer_target_name} WARNING_AS_ERROR ${SDLMIXER_WERROR})
+target_link_libraries(SDL3_mixer-static PUBLIC SDL3::Headers)
+sdl_add_warning_options(SDL3_mixer-static WARNING_AS_ERROR ${SDLMIXER_WERROR})
 if(WIN32 AND BUILD_SHARED_LIBS)
-    target_sources(${sdl3_mixer_target_name} PRIVATE
+    target_sources(SDL3_mixer-static PRIVATE
         src/version.rc
     )
     if(MINGW)
-        target_link_options(${sdl3_mixer_target_name} PRIVATE -static-libgcc)
+        target_link_options(SDL3_mixer-static PRIVATE -static-libgcc)
     endif()
 endif()
-set_target_properties(${sdl3_mixer_target_name} PROPERTIES
+set_target_properties(SDL3_mixer-static PROPERTIES
     OUTPUT_NAME "SDL3_mixer"
     DEFINE_SYMBOL DLL_EXPORT
-    EXPORT_NAME ${sdl3_mixer_target_name}
+    EXPORT_NAME SDL3_mixer-static
     C_VISIBILITY_PRESET "hidden"
 )
 
-sdl_target_link_option_version_file(${sdl3_mixer_target_name} "${CMAKE_CURRENT_SOURCE_DIR}/src/SDL_mixer.sym")
+sdl_target_link_option_version_file(SDL3_mixer-static "${CMAKE_CURRENT_SOURCE_DIR}/src/SDL_mixer.sym")
 
-if(NOT ANDROID)
-    set_target_properties(${sdl3_mixer_target_name} PROPERTIES
-        SOVERSION "${SO_VERSION_MAJOR}"
-        VERSION "${SO_VERSION}"
+if(MSVC)
+    set_target_properties(SDL3_mixer-static PROPERTIES
+        OUTPUT_NAME "SDL3_mixer-static"
     )
-    if(APPLE)
-        cmake_minimum_required(VERSION 3.17...3.28)
-        set_target_properties(${sdl3_mixer_target_name} PROPERTIES
-            MACHO_COMPATIBILITY_VERSION "${DYLIB_COMPAT_VERSION}"
-            MACHO_CURRENT_VERSION "${DYLIB_CURRENT_VERSION}"
-        )
-    endif()
-endif()
-if(SDLMIXER_BUILD_SHARED_LIBS)
-    if(WIN32)
-        set_target_properties(${sdl3_mixer_target_name} PROPERTIES
-            PREFIX ""
-            DLL_NAME_WITH_SOVERSION FALSE
-        )
-    endif()
-else()
-    if(MSVC)
-        set_target_properties(${sdl3_mixer_target_name} PROPERTIES
-            OUTPUT_NAME "SDL3_mixer-static"
-        )
-    endif()
-endif()
-
-# Use `Compatible Interface Properties` to ensure a shared SDL3_mixer is linked to a shared SDL3 library
-if(SDLMIXER_BUILD_SHARED_LIBS)
-    set_property(TARGET ${sdl3_mixer_target_name} PROPERTY INTERFACE_SDL3_SHARED ${SDLMIXER_BUILD_SHARED_LIBS})
-    set_property(TARGET ${sdl3_mixer_target_name} APPEND PROPERTY COMPATIBLE_INTERFACE_BOOL SDL3_SHARED)
-endif()
-
-if(SDLMIXER_BUILD_SHARED_LIBS)
-    sdl_target_link_options_no_undefined(${sdl3_mixer_target_name})
-endif()
-
-if(SDLMIXER_BUILD_SHARED_LIBS)
-    # Make sure static library dependencies are built with -fPIC when building a shared SDL3_mixer
-    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
 
 set(INSTALL_EXTRA_TARGETS)
@@ -378,21 +324,21 @@ if(SDLMIXER_SNDFILE)
         endif()
     endif()
     if(SDLMIXER_SNDFILE_ENABLED)
-        target_compile_definitions(${sdl3_mixer_target_name} PRIVATE LOAD_SNDFILE)
+        target_compile_definitions(SDL3_mixer-static PRIVATE LOAD_SNDFILE)
         if(SDLMIXER_SNDFILE_SHARED)
-            target_include_directories(${sdl3_mixer_target_name} PRIVATE
+            target_include_directories(SDL3_mixer-static PRIVATE
                 $<TARGET_PROPERTY:SndFile::sndfile,INCLUDE_DIRECTORIES>
                 $<TARGET_PROPERTY:SndFile::sndfile,INTERFACE_INCLUDE_DIRECTORIES>
                 $<TARGET_PROPERTY:SndFile::sndfile,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
             )
             target_get_dynamic_library(dynamic_sndfile SndFile::sndfile)
             message(STATUS "Dynamic libsndfile: ${dynamic_sndfile}")
-            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "SNDFILE_DYNAMIC=\"${dynamic_sndfile}\"")
+            target_compile_definitions(SDL3_mixer-static PRIVATE "SNDFILE_DYNAMIC=\"${dynamic_sndfile}\"")
             if(SDLMIXER_VENDORED)
-                add_dependencies(${sdl3_mixer_target_name} SndFile::sndfile)
+                add_dependencies(SDL3_mixer-static SndFile::sndfile)
             endif()
         else()
-            target_link_libraries(${sdl3_mixer_target_name} PRIVATE SndFile::sndfile)
+            target_link_libraries(SDL3_mixer-static PRIVATE SndFile::sndfile)
         endif()
     endif()
 endif()
@@ -443,12 +389,12 @@ if(SDLMIXER_OPUS)
             COMMAND "${CMAKE_COMMAND}" -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/opus"
             COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${CMAKE_CURRENT_BINARY_DIR}/opusfile.h" "${CMAKE_CURRENT_BINARY_DIR}/opus/opusfile.h"
         )
-        target_include_directories(${sdl3_mixer_target_name} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
+        target_include_directories(SDL3_mixer-static PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 
         if(NOT TARGET OpusFile::opusfile)
             add_library(OpusFile::opusfile ALIAS opusfile)
         endif()
-        if(SDLMIXER_OPUS_SHARED OR NOT SDLMIXER_BUILD_SHARED_LIBS)
+        if(SDLMIXER_OPUS_SHARED)
             list(APPEND INSTALL_EXTRA_TARGETS opus opusfile)
         endif()
         if(NOT SDLMIXER_OPUS_SHARED)
@@ -467,21 +413,21 @@ if(SDLMIXER_OPUS)
         endif()
     endif()
     if(SDLMIXER_OPUS_ENABLED)
-        target_compile_definitions(${sdl3_mixer_target_name} PRIVATE MUSIC_OPUS)
+        target_compile_definitions(SDL3_mixer-static PRIVATE MUSIC_OPUS)
         if(SDLMIXER_OPUS_SHARED)
-            target_include_directories(${sdl3_mixer_target_name} PRIVATE
+            target_include_directories(SDL3_mixer-static PRIVATE
                 $<TARGET_PROPERTY:OpusFile::opusfile,INCLUDE_DIRECTORIES>
                 $<TARGET_PROPERTY:OpusFile::opusfile,INTERFACE_INCLUDE_DIRECTORIES>
                 $<TARGET_PROPERTY:OpusFile::opusfile,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
             )
             target_get_dynamic_library(dynamic_opusfile OpusFile::opusfile)
             message(STATUS "Dynamic opus (opusfile): ${dynamic_opusfile}")
-            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "OPUS_DYNAMIC=\"${dynamic_opusfile}\"")
+            target_compile_definitions(SDL3_mixer-static PRIVATE "OPUS_DYNAMIC=\"${dynamic_opusfile}\"")
             if(SDLMIXER_VENDORED)
-                add_dependencies(${sdl3_mixer_target_name} OpusFile::opusfile)
+                add_dependencies(SDL3_mixer-static OpusFile::opusfile)
             endif()
         else()
-            target_link_libraries(${sdl3_mixer_target_name} PRIVATE OpusFile::opusfile)
+            target_link_libraries(SDL3_mixer-static PRIVATE OpusFile::opusfile)
         endif()
     endif()
 endif()
@@ -491,8 +437,8 @@ set(SDLMIXER_VORBIS_STB_ENABLED FALSE)
 if(SDLMIXER_VORBIS_STB)
     set(SDLMIXER_VORBIS_STB_ENABLED TRUE)
     message(STATUS "Enabled ogg music: using stb_vorbis")
-    target_compile_definitions(${sdl3_mixer_target_name} PRIVATE MUSIC_OGG)
-    target_compile_definitions(${sdl3_mixer_target_name} PRIVATE OGG_USE_STB)
+    target_compile_definitions(SDL3_mixer-static PRIVATE MUSIC_OGG)
+    target_compile_definitions(SDL3_mixer-static PRIVATE OGG_USE_STB)
 endif()
 
 list(APPEND SDLMIXER_BACKENDS VORBIS_TREMOR)
@@ -517,8 +463,8 @@ if(SDLMIXER_VORBIS_TREMOR)
             COMMAND "${CMAKE_COMMAND}" -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/tremor"
             COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${CMAKE_CURRENT_BINARY_DIR}/ivorbisfile.h" "${CMAKE_CURRENT_BINARY_DIR}/tremor/ivorbisfile.h"
         )
-        target_include_directories(${sdl3_mixer_target_name} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
-        if(SDLMIXER_VORBIS_TREMOR_SHARED OR NOT SDLMIXER_BUILD_SHARED_LIBS)
+        target_include_directories(SDL3_mixer-static PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
+        if(SDLMIXER_VORBIS_TREMOR_SHARED)
             list(APPEND INSTALL_EXTRA_TARGETS vorbisidec)
         endif()
         if(NOT SDLMIXER_VORBIS_TREMOR_SHARED)
@@ -537,21 +483,21 @@ if(SDLMIXER_VORBIS_TREMOR)
         endif()
     endif()
     if(SDLMIXER_VORBIS_TREMOR_ENABLED)
-        target_compile_definitions(${sdl3_mixer_target_name} PRIVATE MUSIC_OGG OGG_USE_TREMOR)
+        target_compile_definitions(SDL3_mixer-static PRIVATE MUSIC_OGG OGG_USE_TREMOR)
         if(SDLMIXER_VORBIS_TREMOR_SHARED)
-            target_include_directories(${sdl3_mixer_target_name} PRIVATE
+            target_include_directories(SDL3_mixer-static PRIVATE
                 $<TARGET_PROPERTY:tremor::tremor,INCLUDE_DIRECTORIES>
                 $<TARGET_PROPERTY:tremor::tremor,INTERFACE_INCLUDE_DIRECTORIES>
                 $<TARGET_PROPERTY:tremor::tremor,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
             )
             target_get_dynamic_library(dynamic_tremor tremor::tremor)
             message(STATUS "Dynamic vorbis (tremor): ${dynamic_tremor}")
-            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "OGG_DYNAMIC=\"${dynamic_tremor}\"")
+            target_compile_definitions(SDL3_mixer-static PRIVATE "OGG_DYNAMIC=\"${dynamic_tremor}\"")
             if(SDLMIXER_VENDORED)
-                add_dependencies(${sdl3_mixer_target_name} tremor::tremor)
+                add_dependencies(SDL3_mixer-static tremor::tremor)
             endif()
         else()
-            target_link_libraries(${sdl3_mixer_target_name} PRIVATE tremor::tremor)
+            target_link_libraries(SDL3_mixer-static PRIVATE tremor::tremor)
         endif()
     endif()
 endif()
@@ -572,7 +518,7 @@ if(SDLMIXER_VORBIS_VORBISFILE)
         if(NOT TARGET Vorbis::vorbisfile)
             add_library(Vorbis::vorbisfile ALIAS vorbisfile)
         endif()
-        if(SDLMIXER_VORBIS_VORBISFILE_SHARED OR NOT SDLMIXER_BUILD_SHARED_LIBS)
+        if(SDLMIXER_VORBIS_VORBISFILE_SHARED)
             list(APPEND INSTALL_EXTRA_TARGETS vorbis vorbisfile)
         endif()
         if(NOT SDLMIXER_VORBIS_VORBISFILE_SHARED)
@@ -591,21 +537,21 @@ if(SDLMIXER_VORBIS_VORBISFILE)
         endif()
     endif()
     if(SDLMIXER_VORBIS_VORBISFILE_ENABLED)
-        target_compile_definitions(${sdl3_mixer_target_name} PRIVATE MUSIC_OGG)
+        target_compile_definitions(SDL3_mixer-static PRIVATE MUSIC_OGG)
         if(SDLMIXER_VORBIS_VORBISFILE_SHARED)
-            target_include_directories(${sdl3_mixer_target_name} PRIVATE
+            target_include_directories(SDL3_mixer-static PRIVATE
                 $<TARGET_PROPERTY:Vorbis::vorbisfile,INCLUDE_DIRECTORIES>
                 $<TARGET_PROPERTY:Vorbis::vorbisfile,INTERFACE_INCLUDE_DIRECTORIES>
                 $<TARGET_PROPERTY:Vorbis::vorbisfile,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
             )
             target_get_dynamic_library(dynamic_vorbisfile Vorbis::vorbisfile)
             message(STATUS "Dynamic vorbisfile: ${dynamic_vorbisfile}")
-            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "OGG_DYNAMIC=\"${dynamic_vorbisfile}\"")
+            target_compile_definitions(SDL3_mixer-static PRIVATE "OGG_DYNAMIC=\"${dynamic_vorbisfile}\"")
             if(SDLMIXER_VENDORED)
-                add_dependencies(${sdl3_mixer_target_name} Vorbis::vorbisfile)
+                add_dependencies(SDL3_mixer-static Vorbis::vorbisfile)
             endif()
         else()
-            target_link_libraries(${sdl3_mixer_target_name} PRIVATE Vorbis::vorbisfile)
+            target_link_libraries(SDL3_mixer-static PRIVATE Vorbis::vorbisfile)
         endif()
     endif()
 endif()
@@ -635,7 +581,7 @@ if(SDLMIXER_FLAC_LIBFLAC)
         message(STATUS "Using vendored libflac")
         sdl_check_project_in_subfolder(external/flac libflac SDLMIXER_VENDORED)
         add_subdirectory(external/flac external/flac-build EXCLUDE_FROM_ALL)
-        if(SDLMIXER_FLAC_LIBFLAC_SHARED OR NOT SDLMIXER_BUILD_SHARED_LIBS)
+        if(SDLMIXER_FLAC_LIBFLAC_SHARED)
             list(APPEND INSTALL_EXTRA_TARGETS FLAC)
         endif()
         if(NOT SDLMIXER_FLAC_LIBFLAC_SHARED)
@@ -660,21 +606,21 @@ if(SDLMIXER_FLAC_LIBFLAC)
         endif()
     endif()
     if(SDLMIXER_FLAC_LIBFLAC_ENABLED)
-        target_compile_definitions(${sdl3_mixer_target_name} PRIVATE MUSIC_FLAC_LIBFLAC)
+        target_compile_definitions(SDL3_mixer-static PRIVATE MUSIC_FLAC_LIBFLAC)
         if(SDLMIXER_FLAC_LIBFLAC_SHARED)
-            target_include_directories(${sdl3_mixer_target_name} PRIVATE
+            target_include_directories(SDL3_mixer-static PRIVATE
                 $<TARGET_PROPERTY:FLAC::FLAC,INCLUDE_DIRECTORIES>
                 $<TARGET_PROPERTY:FLAC::FLAC,INTERFACE_INCLUDE_DIRECTORIES>
                 $<TARGET_PROPERTY:FLAC::FLAC,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
             )
             target_get_dynamic_library(dynamic_flac FLAC::FLAC)
             message(STATUS "Dynamic libflac: ${dynamic_flac}")
-            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "FLAC_DYNAMIC=\"${dynamic_flac}\"")
+            target_compile_definitions(SDL3_mixer-static PRIVATE "FLAC_DYNAMIC=\"${dynamic_flac}\"")
             if(SDLMIXER_VENDORED)
-                add_dependencies(${sdl3_mixer_target_name} FLAC)
+                add_dependencies(SDL3_mixer-static FLAC)
             endif()
         else()
-            target_link_libraries(${sdl3_mixer_target_name} PRIVATE FLAC::FLAC)
+            target_link_libraries(SDL3_mixer-static PRIVATE FLAC::FLAC)
         endif()
     endif()
 endif()
@@ -683,7 +629,7 @@ list(APPEND SDLMIXER_BACKENDS FLAC_DRFLAC)
 set(SDLMIXER_FLAC_DRFLAC_ENABLED FALSE)
 if(SDLMIXER_FLAC_DRFLAC)
     set(SDLMIXER_FLAC_DRFLAC_ENABLED TRUE)
-    target_compile_definitions(${sdl3_mixer_target_name} PRIVATE MUSIC_FLAC_DRFLAC)
+    target_compile_definitions(SDL3_mixer-static PRIVATE MUSIC_FLAC_DRFLAC)
 endif()
 
 set(SDLMIXER_FLAC_ENABLED FALSE)
@@ -713,7 +659,7 @@ if(SDLMIXER_GME)
         sdl_check_project_in_subfolder(external/libgme libgme SDLMIXER_VENDORED)
         enable_language(CXX)
         add_subdirectory(external/libgme external/libgme-build EXCLUDE_FROM_ALL)
-        if(SDLMIXER_GME_SHARED OR NOT SDLMIXER_BUILD_SHARED_LIBS)
+        if(SDLMIXER_GME_SHARED)
             list(APPEND INSTALL_EXTRA_TARGETS ${tgt_gme})
         endif()
         if(NOT SDLMIXER_GME_SHARED)
@@ -732,21 +678,21 @@ if(SDLMIXER_GME)
         endif()
     endif()
     if(SDLMIXER_GME_ENABLED)
-        target_compile_definitions(${sdl3_mixer_target_name} PRIVATE MUSIC_GME)
+        target_compile_definitions(SDL3_mixer-static PRIVATE MUSIC_GME)
         if(SDLMIXER_GME_SHARED)
-            target_include_directories(${sdl3_mixer_target_name} PRIVATE
+            target_include_directories(SDL3_mixer-static PRIVATE
                 $<TARGET_PROPERTY:gme::gme,INCLUDE_DIRECTORIES>
                 $<TARGET_PROPERTY:gme::gme,INTERFACE_INCLUDE_DIRECTORIES>
                 $<TARGET_PROPERTY:gme::gme,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
             )
             target_get_dynamic_library(dynamic_gme gme::gme)
             message(STATUS "Dynamic libgme: ${dynamic_gme}")
-            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "GME_DYNAMIC=\"${dynamic_gme}\"")
+            target_compile_definitions(SDL3_mixer-static PRIVATE "GME_DYNAMIC=\"${dynamic_gme}\"")
             if(SDLMIXER_VENDORED)
-                add_dependencies(${sdl3_mixer_target_name} gme::gme)
+                add_dependencies(SDL3_mixer-static gme::gme)
             endif()
         else()
-            target_link_libraries(${sdl3_mixer_target_name} PRIVATE gme::gme)
+            target_link_libraries(SDL3_mixer-static PRIVATE gme::gme)
         endif()
     endif()
 endif()
@@ -771,7 +717,7 @@ if(SDLMIXER_MOD_XMP)
         endif()
         set(xmp_name libxmp)
         add_subdirectory(external/libxmp external/libxmp-build EXCLUDE_FROM_ALL)
-        if(SDLMIXER_MOD_XMP_SHARED OR NOT SDLMIXER_BUILD_SHARED_LIBS)
+        if(SDLMIXER_MOD_XMP_SHARED)
             list(APPEND INSTALL_EXTRA_TARGETS ${tgt_xmp})
         endif()
         if(NOT SDLMIXER_MOD_XMP_SHARED)
@@ -813,21 +759,21 @@ if(SDLMIXER_MOD_XMP)
         endif()
     endif()
     if(SDLMIXER_MOD_XMP_ENABLED)
-        target_compile_definitions(${sdl3_mixer_target_name} PRIVATE MUSIC_MOD_XMP)
+        target_compile_definitions(SDL3_mixer-static PRIVATE MUSIC_MOD_XMP)
         if(SDLMIXER_MOD_XMP_SHARED)
-            target_include_directories(${sdl3_mixer_target_name} PRIVATE
+            target_include_directories(SDL3_mixer-static PRIVATE
                 $<TARGET_PROPERTY:${tgt_xmp},INCLUDE_DIRECTORIES>
                 $<TARGET_PROPERTY:${tgt_xmp},INTERFACE_INCLUDE_DIRECTORIES>
                 $<TARGET_PROPERTY:${tgt_xmp},INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
             )
             target_get_dynamic_library(dynamic_xmp ${tgt_xmp})
             message(STATUS "Dynamic ${xmp_name}: ${dynamic_xmp}")
-            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "XMP_DYNAMIC=\"${dynamic_xmp}\"")
+            target_compile_definitions(SDL3_mixer-static PRIVATE "XMP_DYNAMIC=\"${dynamic_xmp}\"")
             if(SDLMIXER_VENDORED)
-                add_dependencies(${sdl3_mixer_target_name} ${tgt_xmp})
+                add_dependencies(SDL3_mixer-static ${tgt_xmp})
             endif()
         else()
-            target_link_libraries(${sdl3_mixer_target_name} PRIVATE ${tgt_xmp})
+            target_link_libraries(SDL3_mixer-static PRIVATE ${tgt_xmp})
         endif()
     endif()
 endif()
@@ -841,7 +787,7 @@ list(APPEND SDLMIXER_BACKENDS MP3_DRMP3)
 set(SDLMIXER_MP3_DRMP3_ENABLED FALSE)
 if(SDLMIXER_MP3_DRMP3)
     set(SDLMIXER_MP3_DRMP3_ENABLED TRUE)
-    target_compile_definitions(${sdl3_mixer_target_name} PRIVATE MUSIC_MP3_DRMP3)
+    target_compile_definitions(SDL3_mixer-static PRIVATE MUSIC_MP3_DRMP3)
 endif()
 
 list(APPEND SDLMIXER_BACKENDS MP3_MPG123)
@@ -858,7 +804,7 @@ if(SDLMIXER_MP3_MPG123)
         if(NOT TARGET MPG123::libmpg123)
             add_library(MPG123::libmpg123 ALIAS libmpg123)
         endif()
-        if(SDLMIXER_MP3_MPG123_SHARED OR NOT SDLMIXER_BUILD_SHARED_LIBS)
+        if(SDLMIXER_MP3_MPG123_SHARED)
             list(APPEND INSTALL_EXTRA_TARGETS libmpg123)
         endif()
         if(NOT SDLMIXER_MP3_MPG123_SHARED)
@@ -877,21 +823,21 @@ if(SDLMIXER_MP3_MPG123)
         endif()
     endif()
     if(SDLMIXER_MP3_MPG123_ENABLED)
-        target_compile_definitions(${sdl3_mixer_target_name} PRIVATE MUSIC_MP3_MPG123)
+        target_compile_definitions(SDL3_mixer-static PRIVATE MUSIC_MP3_MPG123)
         if(SDLMIXER_MP3_MPG123_SHARED)
-            target_include_directories(${sdl3_mixer_target_name} PRIVATE
+            target_include_directories(SDL3_mixer-static PRIVATE
                 $<TARGET_PROPERTY:MPG123::libmpg123,INCLUDE_DIRECTORIES>
                 $<TARGET_PROPERTY:MPG123::libmpg123,INTERFACE_INCLUDE_DIRECTORIES>
                 $<TARGET_PROPERTY:MPG123::libmpg123,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
             )
             target_get_dynamic_library(dynamic_mpg123 MPG123::libmpg123)
             message(STATUS "Dynamic mpg123}: ${dynamic_mpg123}")
-            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "MPG123_DYNAMIC=\"${dynamic_mpg123}\"")
+            target_compile_definitions(SDL3_mixer-static PRIVATE "MPG123_DYNAMIC=\"${dynamic_mpg123}\"")
             if(SDLMIXER_VENDORED)
-                add_dependencies(${sdl3_mixer_target_name} MPG123::libmpg123)
+                add_dependencies(SDL3_mixer-static MPG123::libmpg123)
             endif()
         else()
-            target_link_libraries(${sdl3_mixer_target_name} PRIVATE MPG123::libmpg123)
+            target_link_libraries(SDL3_mixer-static PRIVATE MPG123::libmpg123)
         endif()
     endif()
 endif()
@@ -921,21 +867,21 @@ if(SDLMIXER_MIDI_FLUIDSYNTH)
         endif()
     endif()
     if(SDLMIXER_MIDI_FLUIDSYNTH_ENABLED)
-        target_compile_definitions(${sdl3_mixer_target_name} PRIVATE MUSIC_MID_FLUIDSYNTH)
+        target_compile_definitions(SDL3_mixer-static PRIVATE MUSIC_MID_FLUIDSYNTH)
         if(SDLMIXER_MIDI_FLUIDSYNTH_SHARED)
-            target_include_directories(${sdl3_mixer_target_name} PRIVATE
+            target_include_directories(SDL3_mixer-static PRIVATE
                 $<TARGET_PROPERTY:FluidSynth::libfluidsynth,INCLUDE_DIRECTORIES>
                 $<TARGET_PROPERTY:FluidSynth::libfluidsynth,INTERFACE_INCLUDE_DIRECTORIES>
                 $<TARGET_PROPERTY:FluidSynth::libfluidsynth,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
             )
             target_get_dynamic_library(dynamic_fluidsynth FluidSynth::libfluidsynth)
             message(STATUS "Dynamic fluidsynth: ${dynamic_fluidsynth}")
-            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "FLUIDSYNTH_DYNAMIC=\"${dynamic_fluidsynth}\"")
+            target_compile_definitions(SDL3_mixer-static PRIVATE "FLUIDSYNTH_DYNAMIC=\"${dynamic_fluidsynth}\"")
             if(SDLMIXER_VENDORED)
-                add_dependencies(${sdl3_mixer_target_name} FluidSynth::libfluidsynth)
+                add_dependencies(SDL3_mixer-static FluidSynth::libfluidsynth)
             endif()
         else()
-            target_link_libraries(${sdl3_mixer_target_name} PRIVATE FluidSynth::libfluidsynth)
+            target_link_libraries(SDL3_mixer-static PRIVATE FluidSynth::libfluidsynth)
         endif()
     endif()
 endif()
@@ -949,24 +895,24 @@ if(SDLMIXER_MIDI_NATIVE)
     )
     if(WIN32)
         list(APPEND SDLMIXER_MIDI_NATIVE_ENABLED TRUE)
-        target_sources(${sdl3_mixer_target_name} PRIVATE src/codecs/native_midi/native_midi_win32.c ${midi_common_sources})
-        target_link_libraries(${sdl3_mixer_target_name} PRIVATE winmm)
+        target_sources(SDL3_mixer-static PRIVATE src/codecs/native_midi/native_midi_win32.c ${midi_common_sources})
+        target_link_libraries(SDL3_mixer-static PRIVATE winmm)
     elseif(APPLE)
         list(APPEND SDLMIXER_MIDI_NATIVE_ENABLED TRUE)
-        target_sources(${sdl3_mixer_target_name} PRIVATE src/codecs/native_midi/native_midi_macosx.c ${midi_common_sources})
-        target_link_libraries(${sdl3_mixer_target_name} PRIVATE -Wl,-framework,AudioToolbox -Wl,-framework,AudioUnit -Wl,-framework,CoreServices)
+        target_sources(SDL3_mixer-static PRIVATE src/codecs/native_midi/native_midi_macosx.c ${midi_common_sources})
+        target_link_libraries(SDL3_mixer-static PRIVATE -Wl,-framework,AudioToolbox -Wl,-framework,AudioUnit -Wl,-framework,CoreServices)
     elseif(HAIKU)
         list(APPEND SDLMIXER_MIDI_NATIVE_ENABLED TRUE)
         enable_language(CXX)
-        target_sources(${sdl3_mixer_target_name} PRIVATE src/codecs/native_midi/native_midi_haiku.cpp ${midi_common_sources})
-        target_link_libraries(${sdl3_mixer_target_name} PRIVATE midi)
+        target_sources(SDL3_mixer-static PRIVATE src/codecs/native_midi/native_midi_haiku.cpp ${midi_common_sources})
+        target_link_libraries(SDL3_mixer-static PRIVATE midi)
     elseif("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
         list(APPEND SDLMIXER_MIDI_NATIVE_ENABLED TRUE)
-        target_sources(${sdl3_mixer_target_name} PRIVATE src/codecs/native_midi/native_midi_linux_alsa.c ${midi_common_sources})
-        target_link_libraries(${sdl3_mixer_target_name} PRIVATE asound)
+        target_sources(SDL3_mixer-static PRIVATE src/codecs/native_midi/native_midi_linux_alsa.c ${midi_common_sources})
+        target_link_libraries(SDL3_mixer-static PRIVATE asound)
     endif()
     if(SDLMIXER_MIDI_NATIVE_ENABLED)
-        target_compile_definitions(${sdl3_mixer_target_name} PRIVATE MUSIC_MID_NATIVE)
+        target_compile_definitions(SDL3_mixer-static PRIVATE MUSIC_MID_NATIVE)
     else()
         message(${fatal_error} "native midi NOT available for current platform")
     endif()
@@ -976,8 +922,8 @@ list(APPEND SDLMIXER_BACKENDS MIDI_TIMIDITY)
 set(SDLMIXER_MIDI_TIMIDITY_ENABLED FALSE)
 if(SDLMIXER_MIDI_TIMIDITY)
     set(SDLMIXER_MIDI_TIMIDITY_ENABLED TRUE)
-    target_compile_definitions(${sdl3_mixer_target_name} PRIVATE MUSIC_MID_TIMIDITY)
-    target_sources(${sdl3_mixer_target_name} PRIVATE
+    target_compile_definitions(SDL3_mixer-static PRIVATE MUSIC_MID_TIMIDITY)
+    target_sources(SDL3_mixer-static PRIVATE
         src/codecs/timidity/common.c
         src/codecs/timidity/instrum.c
         src/codecs/timidity/mix.c
@@ -999,7 +945,7 @@ list(APPEND SDLMIXER_BACKENDS WAVE)
 set(SDLMIXER_WAVE_ENABLED FALSE)
 if(SDLMIXER_WAVE)
     set(SDLMIXER_WAVE_ENABLED TRUE)
-    target_compile_definitions(${sdl3_mixer_target_name} PRIVATE MUSIC_WAV)
+    target_compile_definitions(SDL3_mixer-static PRIVATE MUSIC_WAV)
 endif()
 
 list(APPEND SDLMIXER_BACKENDS WAVPACK)
@@ -1016,13 +962,13 @@ if(SDLMIXER_WAVPACK)
         set(WAVPACK_BUILD_DOCS OFF)
         set(BUILD_SHARED_LIBS "${SDLMIXER_WAVPACK_SHARED}")
         add_subdirectory(external/wavpack external/wavpack-build EXCLUDE_FROM_ALL)
-        if(SDLMIXER_WAVPACK_SHARED OR NOT SDLMIXER_BUILD_SHARED_LIBS)
+        if(SDLMIXER_WAVPACK_SHARED)
             list(APPEND INSTALL_EXTRA_TARGETS wavpack)
         endif()
         if(NOT SDLMIXER_WAVPACK_SHARED)
             list(APPEND PC_LIBS -l$<TARGET_FILE_BASE_NAME:WavPack::WavPack>)
         endif()
-        target_compile_definitions(${sdl3_mixer_target_name} PRIVATE HAVE_WAVPACK_H)
+        target_compile_definitions(SDL3_mixer-static PRIVATE HAVE_WAVPACK_H)
     else()
         find_package(wavpack ${required})
         if(wavpack_FOUND)
@@ -1036,34 +982,31 @@ if(SDLMIXER_WAVPACK)
         endif()
     endif()
     if(SDLMIXER_WAVPACK_ENABLED)
-        target_compile_definitions(${sdl3_mixer_target_name} PRIVATE MUSIC_WAVPACK)
+        target_compile_definitions(SDL3_mixer-static PRIVATE MUSIC_WAVPACK)
         if(SDLMIXER_WAVPACK_DSD)
-          target_compile_definitions(${sdl3_mixer_target_name} PRIVATE MUSIC_WAVPACK_DSD)
+          target_compile_definitions(SDL3_mixer-static PRIVATE MUSIC_WAVPACK_DSD)
         endif()
         if(SDLMIXER_WAVPACK_SHARED)
-            target_include_directories(${sdl3_mixer_target_name} PRIVATE
+            target_include_directories(SDL3_mixer-static PRIVATE
                 $<TARGET_PROPERTY:WavPack::WavPack,INCLUDE_DIRECTORIES>
                 $<TARGET_PROPERTY:WavPack::WavPack,INTERFACE_INCLUDE_DIRECTORIES>
                 $<TARGET_PROPERTY:WavPack::WavPack,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
             )
             target_get_dynamic_library(dynamic_wavpack WavPack::WavPack)
             message(STATUS "Dynamic WavPack: ${dynamic_wavpack}")
-            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "WAVPACK_DYNAMIC=\"${dynamic_wavpack}\"")
+            target_compile_definitions(SDL3_mixer-static PRIVATE "WAVPACK_DYNAMIC=\"${dynamic_wavpack}\"")
             if(SDLMIXER_VENDORED)
-                add_dependencies(${sdl3_mixer_target_name} WavPack::WavPack)
+                add_dependencies(SDL3_mixer-static WavPack::WavPack)
             endif()
         else()
-            target_link_libraries(${sdl3_mixer_target_name} PRIVATE WavPack::WavPack)
+            target_link_libraries(SDL3_mixer-static PRIVATE WavPack::WavPack)
         endif()
     endif()
 endif()
 
-# Restore BUILD_SHARED_LIBS
-set(BUILD_SHARED_LIBS ${SDLMIXER_BUILD_SHARED_LIBS})
-
 if(SDLMIXER_INSTALL)
     install(
-        TARGETS ${sdl3_mixer_target_name}
+        TARGETS SDL3_mixer-static
         EXPORT SDL3MixerTargets
         ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT devel
         LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT library
@@ -1079,7 +1022,7 @@ if(SDLMIXER_INSTALL)
         set(pdbdir "${CMAKE_INSTALL_LIBDIR}")
     endif()
     if(MSVC)
-        SDL_install_pdb("${sdl3_mixer_target_name}" "${pdbdir}")
+        SDL_install_pdb("SDL3_mixer-static" "${pdbdir}")
     endif()
 
     if(INSTALL_EXTRA_TARGETS)
@@ -1147,13 +1090,13 @@ if(SDLMIXER_INSTALL)
         )
     endif()
     install(EXPORT SDL3MixerTargets
-        FILE ${sdl3_mixer_target_name}-targets.cmake
+        FILE SDL3_mixer-static-targets.cmake
         NAMESPACE SDL3_mixer::
         DESTINATION "${SDLMIXER_INSTALL_CMAKEDIR}"
         COMPONENT devel
     )
 
-    export(TARGETS ${sdl3_mixer_target_name} ${INSTALL_EXTRA_TARGETS} NAMESPACE "SDL3_mixer::" FILE "${sdl3_mixer_target_name}-targets.cmake")
+    export(TARGETS SDL3_mixer-static ${INSTALL_EXTRA_TARGETS} NAMESPACE "SDL3_mixer::" FILE "SDL3_mixer-static-targets.cmake")
 
     if(SDLMIXER_RELOCATABLE)
       file(RELATIVE_PATH SDL_PATH_PREFIX_RELATIVE_TO_PKGCONFIG "${CMAKE_INSTALL_PREFIX}/${SDLMIXER_PKGCONFIG_INSTALLDIR}" "${CMAKE_INSTALL_PREFIX}")
@@ -1213,7 +1156,7 @@ if(SDLMIXER_INSTALL)
 endif()
 
 if(SDLMIXER_SAMPLES)
-    find_package(SDL3 REQUIRED COMPONENTS SDL3_test)
+    find_package(SDL3 REQUIRED COMPONENTS SDL3 SDL3_test)
 
     check_include_file("signal.h" HAVE_SIGNAL_H)
     check_symbol_exists("setbuf" "stdio.h" HAVE_SETBUF)
@@ -1227,8 +1170,8 @@ if(SDLMIXER_SAMPLES)
         sdl_add_warning_options(${TARGET} WARNING_AS_ERROR ${SDLMIXER_WERROR})
         sdl_target_link_options_no_undefined(${TARGET})
         target_link_libraries(${TARGET} PRIVATE SDL3::SDL3_test)
-        target_link_libraries(${TARGET} PRIVATE SDL3_mixer::${sdl3_mixer_target_name})
-        target_link_libraries(${TARGET} PRIVATE ${sdl3_target_name})
+        target_link_libraries(${TARGET} PRIVATE SDL3_mixer::SDL3_mixer-static)
+        target_link_libraries(${TARGET} PRIVATE SDL3::SDL3)
         if(HAVE_SIGNAL_H)
           target_compile_definitions(${TARGET} PRIVATE HAVE_SIGNAL_H)
         endif()
@@ -1267,3 +1210,16 @@ string(TOLOWER "${unavail_str}" unavail_str)
 message(STATUS "SDL3_mixer backends:")
 message(STATUS "- enabled:  ${avail_str}")
 message(STATUS "- disabled: ${unavail_str}")
+
+set(msg "SDL_mixer sdl2-api-on-3 is provided as an aid in porting SDL2 apps to SDL3 and is deprecated by definition. When you read this message, it means you still need to port to SDL3_mixer.")
+
+message(DEPRECATION "${msg}")
+message(WARNING "${msg}")
+if(COMMAND cmake_language AND NOT PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+  # Make sure the warning is also displayed at the end of configuration.
+  cmake_language(DEFER DIRECTORY "${CMAKE_SOURCE_DIR}" CALL message WARNING "${msg}")
+endif()
+
+if(TARGET SDL3_mixer-shared)
+  message(SEND_ERROR "SDL_mixer sdl2-api-on-3 can only built as a static library!!!")
+endif()
