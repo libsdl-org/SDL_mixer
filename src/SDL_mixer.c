@@ -1262,7 +1262,12 @@ MIX_Audio *MIX_CreateSineWaveAudio(MIX_Mixer *mixer, int hz, float amplitude)
     if (!props) {
         return NULL;
     }
-
+    static uint8_t dummy[4] = {0, 0, 0, 0};
+    SDL_IOStream* io = SDL_IOFromConstMem(dummy, sizeof(dummy));
+    if (!io) {
+        return NULL;
+    }
+    SDL_SetPointerProperty(props, MIX_PROP_AUDIO_LOAD_IOSTREAM_POINTER, io); // required!
     SDL_SetPointerProperty(props, MIX_PROP_AUDIO_LOAD_PREFERRED_MIXER_POINTER, mixer);
     SDL_SetStringProperty(props, MIX_PROP_AUDIO_DECODER_STRING, "SINEWAVE");
     SDL_SetNumberProperty(props, MIX_PROP_DECODER_SINEWAVE_HZ_NUMBER, hz);
