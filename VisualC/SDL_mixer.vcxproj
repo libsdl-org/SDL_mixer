@@ -115,8 +115,8 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\include;$(ProjectDir)..\src;$(ProjectDir)..\src\codecs;$(ProjectDir)..\src\codecs\timidity;$(ProjectDir)..\src\codecs\native_midi;$(ProjectDir)external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>DLL_EXPORT;_DEBUG;WIN32;_WINDOWS;MUSIC_WAV;MUSIC_WAVPACK;MUSIC_FLAC_DRFLAC;MUSIC_MOD_XMP;XMP_DYNAMIC="libxmp.dll";MUSIC_MP3_DRMP3;MUSIC_OGG;OGG_USE_STB;OGG_DYNAMIC="libvorbisfile-3.dll";MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";WAVPACK_DYNAMIC="libwavpack-1.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE;MUSIC_GME;GME_DYNAMIC="libgme.dll";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\include;$(ProjectDir)..\src;$(ProjectDir)..\external\flac\include;$(ProjectDir)..\external\libxmp\include;$(ProjectDir)..\external\ogg\include;$(ProjectDir)..\external\vorbis\include;$(ProjectDir)..\external\libgme;$(ProjectDir)\external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>DLL_EXPORT;_DEBUG;WIN32;_WINDOWS;DECODER_WAV;DECODER_AIFF;DECODER_VOC;DECODER_AU;DECODER_WAVPACK;DECODER_FLAC_DRFLAC;DECODER_MOD_XMP;XMP_DYNAMIC="libxmp.dll";DECODER_MP3_DRMP3;DECODER_OGGVORBIS_VORBISFILE;DECODER_OGGVORBIS_STB;VORBIS_DYNAMIC="libvorbisfile-3.dll";DECODER_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";WAVPACK_DYNAMIC="libwavpack-1.dll";DECODER_MIDI_TIMIDITY;DECODER_GME;GME_DYNAMIC="libgme.dll";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
@@ -143,8 +143,8 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\include;$(ProjectDir)..\src;$(ProjectDir)..\src\codecs;$(ProjectDir)..\src\codecs\timidity;$(ProjectDir)..\src\codecs\native_midi;$(ProjectDir)external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>DLL_EXPORT;_DEBUG;WIN32;_WINDOWS;MUSIC_WAV;MUSIC_WAVPACK;MUSIC_FLAC_DRFLAC;MUSIC_MOD_XMP;XMP_DYNAMIC="libxmp.dll";MUSIC_MP3_DRMP3;MUSIC_OGG;OGG_USE_STB;OGG_DYNAMIC="libvorbisfile-3.dll";MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";WAVPACK_DYNAMIC="libwavpack-1.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE;MUSIC_GME;GME_DYNAMIC="libgme.dll";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\include;$(ProjectDir)..\src;$(ProjectDir)..\external\flac\include;$(ProjectDir)..\external\libxmp\include;$(ProjectDir)..\external\ogg\include;$(ProjectDir)..\external\vorbis\include;$(ProjectDir)..\external\libgme;$(ProjectDir)\external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>DLL_EXPORT;_DEBUG;WIN32;_WINDOWS;DECODER_WAV;DECODER_AIFF;DECODER_VOC;DECODER_AU;DECODER_WAVPACK;DECODER_FLAC_DRFLAC;DECODER_MOD_XMP;XMP_DYNAMIC="libxmp.dll";DECODER_MP3_DRMP3;DECODER_OGGVORBIS_VORBISFILE;DECODER_OGGVORBIS_STB;VORBIS_DYNAMIC="libvorbisfile-3.dll";DECODER_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";WAVPACK_DYNAMIC="libwavpack-1.dll";DECODER_MIDI_TIMIDITY;DECODER_GME;GME_DYNAMIC="libgme.dll";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
@@ -169,8 +169,8 @@
       </HeaderFileName>
     </Midl>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\include;$(ProjectDir)..\src;$(ProjectDir)..\src\codecs;$(ProjectDir)..\src\codecs\timidity;$(ProjectDir)..\src\codecs\native_midi;$(ProjectDir)external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>DLL_EXPORT;NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;MUSIC_WAVPACK;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MOD_XMP;XMP_DYNAMIC="libxmp.dll";MUSIC_MP3_DRMP3;MUSIC_OGG;OGG_USE_STB;OGG_DYNAMIC="libvorbisfile-3.dll";MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";WAVPACK_DYNAMIC="libwavpack-1.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE;MUSIC_GME;GME_DYNAMIC="libgme.dll";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\include;$(ProjectDir)..\src;$(ProjectDir)..\external\flac\include;$(ProjectDir)..\external\libxmp\include;$(ProjectDir)..\external\ogg\include;$(ProjectDir)..\external\vorbis\include;$(ProjectDir)..\external\libgme;$(ProjectDir)\external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>DLL_EXPORT;NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;DECODER_WAV;DECODER_AIFF;DECODER_VOC;DECODER_AU;DECODER_WAVPACK;DECODER_FLAC_DRFLAC;DECODER_MOD_XMP;XMP_DYNAMIC="libxmp.dll";DECODER_MP3_DRMP3;DECODER_OGGVORBIS_VORBISFILE;DECODER_OGGVORBIS_STB;VORBIS_DYNAMIC="libvorbisfile-3.dll";DECODER_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";WAVPACK_DYNAMIC="libwavpack-1.dll";DECODER_MIDI_TIMIDITY;DECODER_GME;GME_DYNAMIC="libgme.dll";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
@@ -196,8 +196,8 @@
       </HeaderFileName>
     </Midl>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\include;$(ProjectDir)..\src;$(ProjectDir)..\src\codecs;$(ProjectDir)..\src\codecs\timidity;$(ProjectDir)..\src\codecs\native_midi;$(ProjectDir)external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>DLL_EXPORT;NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;MUSIC_WAVPACK;MUSIC_WAV;MUSIC_FLAC_DRFLAC;MUSIC_MOD_XMP;XMP_DYNAMIC="libxmp.dll";MUSIC_MP3_DRMP3;MUSIC_OGG;OGG_USE_STB;OGG_DYNAMIC="libvorbisfile-3.dll";MUSIC_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";WAVPACK_DYNAMIC="libwavpack-1.dll";MUSIC_MID_TIMIDITY;MUSIC_MID_NATIVE;MUSIC_GME;GME_DYNAMIC="libgme.dll";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\include;$(ProjectDir)..\src;$(ProjectDir)..\external\flac\include;$(ProjectDir)..\external\libxmp\include;$(ProjectDir)..\external\ogg\include;$(ProjectDir)..\external\vorbis\include;$(ProjectDir)..\external\libgme;$(ProjectDir)\external\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>DLL_EXPORT;NDEBUG;WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;DECODER_WAV;DECODER_AIFF;DECODER_VOC;DECODER_AU;DECODER_WAVPACK;DECODER_FLAC_DRFLAC;DECODER_MOD_XMP;XMP_DYNAMIC="libxmp.dll";DECODER_MP3_DRMP3;DECODER_OGGVORBIS_VORBISFILE;DECODER_OGGVORBIS_STB;VORBIS_DYNAMIC="libvorbisfile-3.dll";DECODER_OPUS;OPUS_DYNAMIC="libopusfile-0.dll";WAVPACK_DYNAMIC="libwavpack-1.dll";DECODER_MIDI_TIMIDITY;DECODER_GME;GME_DYNAMIC="libgme.dll";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
     </ClCompile>
