@@ -249,6 +249,8 @@ target_compile_definitions(${sdl3_mixer_target_name} PRIVATE
     SDL_BUILD_MINOR_VERSION=${MINOR_VERSION}
     SDL_BUILD_MICRO_VERSION=${MICRO_VERSION}
 )
+# Make sure SDL3's include directory comes first
+target_include_directories(${sdl3_mixer_target_name} PRIVATE $<TARGET_PROPERTY:SDL3::Headers,INTERFACE_INCLUDE_DIRECTORIES>)
 target_link_libraries(${sdl3_mixer_target_name} PUBLIC SDL3::Headers)
 if(SDLMIXER_BUILD_SHARED_LIBS)
     target_link_libraries(${sdl3_mixer_target_name} PRIVATE SDL3::SDL3-shared)
