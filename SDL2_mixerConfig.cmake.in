@@ -43,17 +43,14 @@ set(SDL2MIXER_WAVE                  @SDL2MIXER_WAVE@)
 set(SDL2MIXER_WAVPACK               @SDL2MIXER_WAVPACK@)
 
 set(SDL2MIXER_SDL2_REQUIRED_VERSION @SDL_REQUIRED_VERSION@)
-
-if(NOT SDL2MIXER_VENDORED)
-    set(_sdl_cmake_module_path "${CMAKE_MODULE_PATH}")
-    list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
-endif()
-
 if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/SDL2_mixer-shared-targets.cmake")
     include("${CMAKE_CURRENT_LIST_DIR}/SDL2_mixer-shared-targets.cmake")
 endif()
 
 if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/SDL2_mixer-static-targets.cmake")
+    set(_sdl_cmake_module_path "${CMAKE_MODULE_PATH}")
+    list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
+
     include(CMakeFindDependencyMacro)
     include(PkgConfigHelper)
 
@@ -113,9 +110,7 @@ if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/SDL2_mixer-static-targets.cmake")
         endif()
     endif()
     include("${CMAKE_CURRENT_LIST_DIR}/SDL2_mixer-static-targets.cmake")
-endif()
 
-if(NOT SDL2MIXER_VENDORED)
     set(CMAKE_MODULE_PATH "${_sdl_cmake_module_path}")
     unset(_sdl_cmake_module_path)
 endif()
