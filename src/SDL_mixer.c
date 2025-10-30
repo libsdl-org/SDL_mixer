@@ -202,8 +202,6 @@ static bool SDLCALL AudioDeviceChangeEventWatcher(void *userdata, SDL_Event *eve
         return true;  // don't care about this mixer.
     }
 
-    SDL_Log("Changing mixer output format!!");
-
     LockMixer(mixer);
 
     // adjust all our output streams to the new format.
