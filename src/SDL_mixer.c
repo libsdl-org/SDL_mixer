@@ -2730,6 +2730,7 @@ bool MIX_SetTrackGroup(MIX_Track *track, MIX_Group *group)
         if (oldgroup) {   // remove from current group, if in one.
             if (track->group_prev) {
                 track->group_prev->group_next = track->group_next;
+                track->group_prev = NULL;
             } else {
                 oldgroup->tracks = track->group_next;
             }
