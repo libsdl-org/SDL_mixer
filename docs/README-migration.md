@@ -17,7 +17,7 @@ think that once you move to them, you'll be quite happy you did.
 There are a lot of things that don't have simple replacements that can be
 changed mechanically to migrate to SDL3_mixer. The new API is in many ways
 more powerful, but also much simpler. For example, there's no equivalent of
-Mix_ModMusicJumpToOrder(), for example, because messing with the specifics
+Mix_ModMusicJumpToOrder(), because messing with the specifics
 of MOD files in the public API is both uncommon and generally pretty messy.
 
 This migration guide will attempt to walk through the important details but
