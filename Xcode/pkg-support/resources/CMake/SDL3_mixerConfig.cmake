@@ -2,7 +2,7 @@
 # This file is meant to be placed in Resources/CMake of a SDL3_mixer framework
 
 # INTERFACE_LINK_OPTIONS needs CMake 3.12
-cmake_minimum_required(VERSION 3.12...3.28)
+cmake_minimum_required(VERSION 3.12...4.0)
 
 include(FeatureSummary)
 set_package_properties(SDL3_mixer PROPERTIES
@@ -53,15 +53,29 @@ set(SDLMIXER_VORBIS_VORBISFILE     FALSE)
 set(SDLMIXER_WAVE                  TRUE)
 
 
-# Compute the installation prefix relative to this file.
-set(_sdl3_mixer_framework_path "${CMAKE_CURRENT_LIST_DIR}")                                     # > /SDL3_mixer.framework/Resources/CMake/
-get_filename_component(_sdl3_mixer_framework_path "${_sdl3_mixer_framework_path}" REALPATH)     # > /SDL3_mixer.framework/Versions/Current/Resources/CMake
-get_filename_component(_sdl3_mixer_framework_path "${_sdl3_mixer_framework_path}" REALPATH)     # > /SDL3_mixer.framework/Versions/A/Resources/CMake/
-get_filename_component(_sdl3_mixer_framework_path "${_sdl3_mixer_framework_path}" PATH)         # > /SDL3_mixer.framework/Versions/A/Resources/
-get_filename_component(_sdl3_mixer_framework_path "${_sdl3_mixer_framework_path}" PATH)         # > /SDL3_mixer.framework/Versions/A/
-get_filename_component(_sdl3_mixer_framework_path "${_sdl3_mixer_framework_path}" PATH)         # > /SDL3_mixer.framework/Versions/
-get_filename_component(_sdl3_mixer_framework_path "${_sdl3_mixer_framework_path}" PATH)         # > /SDL3_mixer.framework/
-get_filename_component(_sdl3_mixer_framework_parent_path "${_sdl3_mixer_framework_path}" PATH)  # > /
+# Compute the installation prefix relative to this file:
+# search upwards for the .framework directory
+set(_current_path "${CMAKE_CURRENT_LIST_DIR}")
+get_filename_component(_current_path "${_current_path}" REALPATH)
+set(_sdl3_mixer_framework_path "")
+
+while(NOT _sdl3_mixer_framework_path)
+    if(IS_DIRECTORY "${_current_path}" AND "${_current_path}" MATCHES "/SDL3_mixer\\.framework$")
+        set(_sdl3_mixer_framework_path "${_current_path}")
+        break()
+    endif()
+    get_filename_component(_next_current_path "${_current_path}" DIRECTORY)
+    if("${_current_path}" STREQUAL "${_next_current_path}")
+        break()
+    endif()
+    set(_current_path "${_next_current_path}")
+endwhile()
+unset(_current_path)
+unset(_next_current_path)
+
+if(NOT _sdl3_mixer_framework_path)
+    message(FATAL_ERROR "Could not find SDL3_mixer.framework root from ${CMAKE_CURRENT_LIST_DIR}")
+endif()
 
 # All targets are created, even when some might not be requested though COMPONENTS.
 # This is done for compatibility with CMake generated SDL3_mixer-target.cmake files.
@@ -83,7 +97,6 @@ set(SDL3_mixer_SDL3_mixer-shared_FOUND TRUE)
 set(SDL3_mixer_SDL3_mixer-static FALSE)
 
 unset(_sdl3_mixer_framework_path)
-unset(_sdl3_mixer_framework_parent_path)
 
 if(SDL3_mixer_SDL3_mixer-shared_FOUND)
     set(SDL3_mixer_SDL3_mixer_FOUND TRUE)

@@ -2,12 +2,12 @@
 # This file is meant to be placed in share/cmake/SDL3_mixer, next to SDL3_mixer.xcframework
 
 # INTERFACE_LINK_OPTIONS needs CMake 3.12
-cmake_minimum_required(VERSION 3.12...3.28)
+cmake_minimum_required(VERSION 3.12...4.0)
 
 include(FeatureSummary)
 set_package_properties(SDL3_mixer PROPERTIES
-        URL "https://www.libsdl.org/projects/SDL_mixer/"
-        DESCRIPTION "SDL_mixer is a sample multi-channel audio mixer library"
+    URL "https://www.libsdl.org/projects/SDL_mixer/"
+    DESCRIPTION "SDL_mixer is a sample multi-channel audio mixer library"
 )
 
 # Copied from `configure_package_config_file`
