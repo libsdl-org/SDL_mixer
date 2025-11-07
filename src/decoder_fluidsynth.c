@@ -196,12 +196,12 @@ static void *SoundFontOpen(const char *filename)
     }
     return ptr;  // (this is actually an SDL_IOStream pointer.)
 }
- 
+
 static int SoundFontRead(void *buf, fluid_long_long_t count, void *handle)
 {
     return (SDL_ReadIO((SDL_IOStream *) handle, buf, count) == count) ? FLUID_OK : FLUID_FAILED;
 }
- 
+
 static int SoundFontSeek(void *handle, fluid_long_long_t offset, int origin)
 {
     SDL_IOWhence whence;
@@ -213,13 +213,13 @@ static int SoundFontSeek(void *handle, fluid_long_long_t offset, int origin)
     }
     return (SDL_SeekIO((SDL_IOStream *) handle, offset, whence) >= 0) ? FLUID_OK : FLUID_FAILED;
 }
- 
+
 static int SoundFontClose(void *handle)
 {
     SDL_CloseIO((SDL_IOStream *) handle);
     return FLUID_OK;
 }
- 
+
 static fluid_long_long_t SoundFontTell(void *handle)
 {
     return SDL_TellIO((SDL_IOStream *) handle);
@@ -374,7 +374,14 @@ static bool SDLCALL FLUIDSYNTH_seek(void *track_userdata, Uint64 frame)
     }
 
     // !!! FIXME: docs say this will fail if a seek was requested and then a second seek happens before we play more of the midi file, since the first seek will still be in progress.
-    return (fluidsynth.fluid_player_seek(tdata->player, (int)ticks) == FLUID_OK);
+    bool result = (fluidsynth.fluid_player_seek(tdata->player, (int)ticks) == FLUID_OK);
+
+    if (result && fluidsynth.fluid_player_get_status(tdata->player) != FLUID_PLAYER_PLAYING) {
+        /* start playing if player is done */
+        result = (fluidsynth.fluid_player_play(tdata->player) == FLUID_OK);
+    }
+
+    return result;
 #endif
 }
 
