@@ -618,6 +618,7 @@
 		00B7E48D097EC6B300826121 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				EXPORTED_SYMBOLS_FILE = "$(SRCROOT)/../src/SDL_mixer.exports";
 			};
 			name = Debug;
 		};
@@ -724,6 +725,7 @@
 		F3B38D58296F8E79005DA6D3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				EXPORTED_SYMBOLS_FILE = "$(SRCROOT)/../src/SDL_mixer.exports";
 			};
 			name = Release;
 		};
