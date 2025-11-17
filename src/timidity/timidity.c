@@ -96,7 +96,7 @@ static int read_config_file(const char *name, int rcf_count)
         /* Originally the TiMidity++ extensions were prefixed like this */
     if (SDL_strcmp(w[0], "#extension") == 0)
     {
-        w[0]=SDL_strtok_r(0, " \t\240", &endp);
+        w[0]=SDL_strtok_r(NULL, " \t\240", &endp);
         if (!w[0]) continue;
     }
 
