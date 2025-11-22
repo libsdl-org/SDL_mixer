@@ -23,6 +23,8 @@
 
 #include "SDL_mixer_internal.h"
 
+SDL_COMPILE_TIME_ASSERT(SDL_version, SDL_VERSION_ATLEAST(3, 3, 3));
+
 // !!! FIXME: remove this once SDL 3.4.0 ships.
 #ifndef SDL_PROP_AUDIOSTREAM_AUTO_CLEANUP_BOOLEAN
 #define SDL_PROP_AUDIOSTREAM_AUTO_CLEANUP_BOOLEAN "SDL.audiostream.auto_cleanup"
