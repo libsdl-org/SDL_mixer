@@ -25,11 +25,6 @@
 
 SDL_COMPILE_TIME_ASSERT(SDL_version, SDL_VERSION_ATLEAST(3, 3, 3));
 
-// !!! FIXME: remove this once SDL 3.4.0 ships.
-#ifndef SDL_PROP_AUDIOSTREAM_AUTO_CLEANUP_BOOLEAN
-#define SDL_PROP_AUDIOSTREAM_AUTO_CLEANUP_BOOLEAN "SDL.audiostream.auto_cleanup"
-#endif
-
 // !!! FIXME: should RAW go first (only needs to check if it was explicitly
 // !!! FIXME: requested), and SINEWAVE last (must be requested, likely rare).
 static const MIX_Decoder *decoders[] = {
