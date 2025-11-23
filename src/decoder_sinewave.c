@@ -100,7 +100,7 @@ static bool SDLCALL SINEWAVE_decode(void *track_userdata, SDL_AudioStream *strea
     int current_sine_sample = tdata->current_sine_sample;
     float samples[256];
 
-    for (int i = 0; i < SDL_arraysize(samples); i++) {
+    for (size_t i = 0; i < SDL_arraysize(samples); i++) {
         const float phase = current_sine_sample * hz / fsample_rate;
         samples[i] = SDL_sinf(phase * 2.0f * SDL_PI_F) * amplitude;
         current_sine_sample++;

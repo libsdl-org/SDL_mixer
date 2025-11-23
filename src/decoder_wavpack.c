@@ -410,7 +410,7 @@ static bool SDLCALL WAVPACK_init_audio(SDL_IOStream *io, SDL_AudioSpec *spec, SD
 
     adata->wvcdata = wvcdata;
     adata->wvcdatalen = wvcdatalen;
-    adata->numsamples = 
+    adata->numsamples =
     #if !defined(WAVPACK4_OR_OLDER) || defined(WAVPACK_DYNAMIC)
       wavpack.WavpackGetNumSamples64 ? wavpack.WavpackGetNumSamples64(ctx) :
     #endif

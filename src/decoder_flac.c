@@ -209,7 +209,7 @@ static FLAC__StreamDecoderWriteStatus FLAC_IoWrite(const FLAC__StreamDecoder *de
 
     if (amount > 0) {
         void *channel_arrays[32];
-        SDL_assert(SDL_arraysize(channel_arrays) >= channels);
+        SDL_assert(SDL_arraysize(channel_arrays) >= (size_t)channels);
 
         // (If we padded out to 5.1 to get a front-center channel, the unnecessary channels happen
         //   to be at the end, so it'll assume those padded channels are silent.)
@@ -223,7 +223,7 @@ static FLAC__StreamDecoderWriteStatus FLAC_IoWrite(const FLAC__StreamDecoder *de
             for (int channel = 0; channel < channels; channel++) { \
                 const Sint32 *src = (const Sint32 *) buffer[channel]; \
                 typ *dst = (typ *) channel_arrays[channel]; \
-                for (int i = 0; i < amount; i++) { \
+                for (size_t i = 0; i < amount; i++) { \
                     dst[i] = (typ) (src[i] << shift); \
                 } \
             } \
