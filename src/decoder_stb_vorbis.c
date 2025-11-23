@@ -237,7 +237,7 @@ static bool SDLCALL STBVORBIS_decode(void *track_userdata, SDL_AudioStream *stre
             tdata->skip_samples -= amount;
             return true;  // throw this all away; just try again next iteration.
         }
-        SDL_assert(num_channels <= SDL_arraysize(outputs));
+        SDL_assert(num_channels <= (int)SDL_arraysize(outputs));
         for (int i = 0; i < num_channels; i++) {
             outputs[i] = pcm_channels[i] + skip;
         }

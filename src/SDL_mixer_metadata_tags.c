@@ -199,7 +199,7 @@ static Sint32 get_id3v2_len(const Uint8 *data, size_t length)
     size += ID3v2_HEADER_SIZE; // header size
     // ID3v2 header[5] is flags (bits 4-7 only, 0-3 are zero).
     // bit 4 set: footer is present (a copy of the header but
-    // with "3DI" as ident.) 
+    // with "3DI" as ident.)
     if (data[5] & 0x10) {
         size += ID3v2_HEADER_SIZE; // footer size
     }

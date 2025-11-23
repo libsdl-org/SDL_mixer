@@ -234,7 +234,7 @@ static bool SDLCALL OPUS_decode(void *track_userdata, SDL_AudioStream *stream)
         return false;  // EOF
     }
 
-    SDL_assert((amount * channels) <= SDL_arraysize(samples));
+    SDL_assert((amount * channels) <= (int)SDL_arraysize(samples));
 
     if (bitstream != tdata->current_bitstream) {
         const OpusHead *info = opus.op_head(tdata->of, -1);

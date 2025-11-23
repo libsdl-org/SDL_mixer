@@ -630,7 +630,7 @@ bool MIX_Generate(MIX_Mixer *mixer, void *buffer, int buflen)
 
 static void InitDecoders(void)
 {
-    for (int i = 0; i < SDL_arraysize(decoders); i++) {
+    for (size_t i = 0; i < SDL_arraysize(decoders); i++) {
         const MIX_Decoder *decoder = decoders[i];
         if (!decoder->init || decoder->init()) {
             available_decoders[num_available_decoders++] = decoder;
