@@ -298,7 +298,7 @@
  * // make sure this one field in a struct is aligned to 16 bytes for SIMD access.
  * typedef struct {
  *    SomeStuff stuff;
- *    float position[4] SDL_ALIGNED(16);
+ *    float SDL_ALIGNED(16) position[4];
  *    SomeOtherStuff other_stuff;
  * } MyStruct;
  *
@@ -431,7 +431,7 @@
 #endif /* SDL_INLINE not defined */
 
 #ifndef SDL_FORCE_INLINE
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && (_MSC_VER >= 1200)
 #define SDL_FORCE_INLINE __forceinline
 #elif ( (defined(__GNUC__) && (__GNUC__ >= 4)) || defined(__clang__) )
 #define SDL_FORCE_INLINE __attribute__((always_inline)) static __inline__
