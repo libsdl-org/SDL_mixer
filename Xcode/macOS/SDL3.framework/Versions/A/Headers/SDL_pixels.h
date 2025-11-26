@@ -451,7 +451,7 @@ typedef enum SDL_PackedLayout
  * expressions with side-effects here.
  *
  * \param format an SDL_PixelFormat to check.
- * \returns true if the format is 10-bit, false otherwise.
+ * \returns true if the format is a floating point, false otherwise.
  *
  * \threadsafety It is safe to call this macro from any thread.
  *
@@ -1096,7 +1096,7 @@ typedef enum SDL_Colorspace
                                  SDL_CHROMA_LOCATION_LEFT), */
 
     SDL_COLORSPACE_RGB_DEFAULT = SDL_COLORSPACE_SRGB, /**< The default colorspace for RGB surfaces if no colorspace is specified */
-    SDL_COLORSPACE_YUV_DEFAULT = SDL_COLORSPACE_JPEG  /**< The default colorspace for YUV surfaces if no colorspace is specified */
+    SDL_COLORSPACE_YUV_DEFAULT = SDL_COLORSPACE_BT601_LIMITED  /**< The default colorspace for YUV surfaces if no colorspace is specified */
 } SDL_Colorspace;
 
 /**
