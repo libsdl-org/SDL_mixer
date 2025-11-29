@@ -189,7 +189,6 @@
 		F3E29D022882107B0006D108 /* xmp.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = xmp.xcodeproj; path = xmp/xmp.xcodeproj; sourceTree = "<group>"; };
 		F59C710300D5CB5801000001 /* ReadMe.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = ReadMe.txt; sourceTree = "<group>"; };
 		F59C710400D5CB5801000001 /* Welcome.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Welcome.txt; sourceTree = "<group>"; };
-		F59C710600D5CB5801000001 /* SDL_mixer.info */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SDL_mixer.info; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -336,7 +335,6 @@
 			isa = PBXGroup;
 			children = (
 				F59C710100D5CB5801000001 /* resources */,
-				F59C710600D5CB5801000001 /* SDL_mixer.info */,
 			);
 			path = "pkg-support";
 			sourceTree = SOURCE_ROOT;
