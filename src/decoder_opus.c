@@ -25,11 +25,7 @@
 
 #include "SDL_mixer_internal.h"
 
-#ifdef OPUSFILE_HEADER
-#include OPUSFILE_HEADER
-#else
-#include <opus/opusfile.h>
-#endif
+#include <opusfile.h>
 
 #ifdef OPUS_DYNAMIC
 #define MIX_LOADER_DYNAMIC OPUS_DYNAMIC
