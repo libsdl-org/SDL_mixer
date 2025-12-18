@@ -15,7 +15,7 @@ If you have built with FluidSynth support, you'll need to set the SDL_SOUNDFONTS
 (On some Linux distributions you can install the fluid-soundfont-gm package)
 
 To play MIDI files using Timidity, you'll need to get a complete set of GUS patches from:
-http://www.libsdl.org/projects/mixer/timidity/timidity.tar.gz
+https://www.libsdl.org/projects/old/SDL_mixer/timidity/timidity.tar.gz
 and unpack them in /usr/local/lib under UNIX, and C:\ under Win32.
 
 This library is under the zlib license, see the file "LICENSE.txt" for details.
