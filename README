@@ -36,7 +36,7 @@ sound choppy, try using 8-bit audio, mono audio, or lower frequencies.
 
 To play MIDI files, you'll need to get a complete set of GUS patches
 from:
-http://www.libsdl.org/projects/mixer/timidity/timidity.tar.gz
+https://www.libsdl.org/projects/old/SDL_mixer/timidity/timidity.tar.gz
 and unpack them in /usr/local/lib under UNIX, and C:\ under Win32.
 
 This library is under the zlib license, see the file "COPYING" for details.
