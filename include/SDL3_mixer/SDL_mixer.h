@@ -1359,7 +1359,7 @@ extern SDL_DECLSPEC bool SDLCALL MIX_TrackLooping(MIX_Track *track);
  *
  * \sa MIX_TrackLooping
  */
-extern SDL_DECLSPEC bool MIX_SetTrackLoops(MIX_Track *track, int num_loops);
+extern SDL_DECLSPEC bool SDLCALL MIX_SetTrackLoops(MIX_Track *track, int num_loops);
 
 /**
  * Query the MIX_Audio assigned to a track.
