@@ -84,4 +84,5 @@ _MIX_DestroyAudioDecoder
 _MIX_GetAudioDecoderProperties
 _MIX_DecodeAudio
 _MIX_GetAudioDecoderFormat
+_MIX_SetTrackLoops
 # extra symbols go here (don't modify this line)

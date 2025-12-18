@@ -1893,6 +1893,27 @@ bool MIX_TrackLooping(MIX_Track *track)
     return retval;
 }
 
+bool MIX_SetTrackLoops(MIX_Track *track, int num_loops)
+{
+    bool retval = false;
+    if (CheckTrackParam(track)) {
+        if (num_loops < -1) {
+            num_loops = -1;  // keep this value consistent if we're looping infinitely.
+        }
+        LockTrack(track);
+        if (track->state == MIX_STATE_STOPPED) {
+            retval = SDL_SetError("Track is not playing");
+        } else if (track->fade_direction < 0) {
+            retval = SDL_SetError("Track is fading out");
+        } else {
+            track->loops_remaining = num_loops;
+            retval = true;
+        }
+        UnlockTrack(track);
+    }
+    return retval;
+}
+
 MIX_Audio *MIX_GetTrackAudio(MIX_Track *track)
 {
     MIX_Audio *retval = NULL;
