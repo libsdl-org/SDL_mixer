@@ -469,8 +469,8 @@ extern SDL_DECLSPEC void SDLCALL MIX_DestroyMixer(MIX_Mixer *mixer);
  *
  * The following read-only properties are provided by SDL_mixer:
  *
- * - `MIX_PROP_MIXER_DEVICE_NUMBER`: the SDL_AudioDeviceID that this mixer
- *   has opened for playback. This will be zero (no device) if the mixer was
+ * - `MIX_PROP_MIXER_DEVICE_NUMBER`: the SDL_AudioDeviceID that this mixer has
+ *   opened for playback. This will be zero (no device) if the mixer was
  *   created with Mix_CreateMixer() instead of Mix_CreateMixerDevice().
  *
  * \param mixer the mixer to query.
