@@ -760,6 +760,11 @@ static MIX_Mixer *CreateMixer(SDL_AudioStream *stream)
     mixer->gain = 1.0f;
     mixer->output_stream = stream;
 
+    mixer->props = SDL_CreateProperties();
+    if (!mixer->props) {
+        goto failed;
+    }
+
     mixer->track_tags = SDL_CreateProperties();
     if (!mixer->track_tags) {
         goto failed;
@@ -769,6 +774,8 @@ static MIX_Mixer *CreateMixer(SDL_AudioStream *stream)
     if (!mixer->default_group) {
         goto failed;
     }
+
+    SDL_SetNumberProperty(mixer->props, MIX_PROP_MIXER_DEVICE_NUMBER, SDL_GetAudioStreamDevice(stream));
 
     SDL_SetAudioStreamGetCallback(stream, MixerCallback, mixer);
 
