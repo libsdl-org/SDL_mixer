@@ -1205,7 +1205,7 @@ static bool BuildSeekBlocks(WAV_AudioData *adata)
 
 static bool WAV_init_audio_internal(WAV_AudioData *adata, SDL_IOStream *io, SDL_AudioSpec *spec, SDL_PropertiesID props)
 {
-    const Sint64 flen = SDL_GetIOSize(io);
+    Sint64 flen = SDL_GetIOSize(io);
     bool found_FMT = false;
     bool found_DATA = false;
 
@@ -1216,6 +1216,8 @@ static bool WAV_init_audio_internal(WAV_AudioData *adata, SDL_IOStream *io, SDL_
     } else if (((Sint64) wavelen) > flen) {
         return SDL_SetError("Corrupt WAV file (wavlength goes past EOF)");
     }
+
+    flen = wavelen;   // clamp the believed file length, in case there's something appended to the WAV file.
 
     if (WAVEmagic == RIFF) {
         // there's a 4-byte "form type" that must be WAVE, and then the first chunk follows directly after.
@@ -1245,7 +1247,7 @@ static bool WAV_init_audio_internal(WAV_AudioData *adata, SDL_IOStream *io, SDL_
 
         if (chunk_length == 0) {
             break;
-        } else if ((chunk_start_position + chunk_length) > flen) {
+        } else if (((chunk_start_position + chunk_length) - (sizeof (Uint32) * 2)) > flen) {
             return SDL_SetError("Corrupt WAV file (chunk goes past EOF)");
         }
 
@@ -1278,12 +1280,16 @@ static bool WAV_init_audio_internal(WAV_AudioData *adata, SDL_IOStream *io, SDL_
             return false;
         }
 
+        // move to start of next chunk.
+        Sint64 next_chunk = chunk_start_position + chunk_length;
         // RIFF chunks have a 2-byte alignment. Skip padding byte.
         if (chunk_length & 1) {
-            chunk_length++;
+            next_chunk++;
         }
-        // move to start of next chunk.
-        if (SDL_SeekIO(io, chunk_start_position + chunk_length, SDL_IO_SEEK_SET) < 0) {
+
+        if (next_chunk >= flen) {
+            break;  // we're done.
+        } else if (SDL_SeekIO(io, next_chunk, SDL_IO_SEEK_SET) < 0) {
             return false;
         }
     }
