@@ -1908,15 +1908,9 @@ bool MIX_SetTrackLoops(MIX_Track *track, int num_loops)
             num_loops = -1;  // keep this value consistent if we're looping infinitely.
         }
         LockTrack(track);
-        if (track->state == MIX_STATE_STOPPED) {
-            retval = SDL_SetError("Track is not playing");
-        } else if (track->fade_direction < 0) {
-            retval = SDL_SetError("Track is fading out");
-        } else {
-            track->loops_remaining = num_loops;
-            retval = true;
-        }
+        track->loops_remaining = num_loops;
         UnlockTrack(track);
+        retval = true;
     }
     return retval;
 }

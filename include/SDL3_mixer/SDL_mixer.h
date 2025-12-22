@@ -1347,10 +1347,11 @@ extern SDL_DECLSPEC bool SDLCALL MIX_TrackLooping(MIX_Track *track);
  * The new loop count replaces any previous state, even if the track has
  * already looped.
  *
- * This has no effect on a track that is fading out or stopped, and will
- * return false. Stopped tracks can specify a loop count while starting via
- * MIX_PROP_PLAY_LOOPS_NUMBER. This function alters that count in the middle
- * of playback.
+ * This has no effect on a track that is stopped, or rather, starting a
+ * stopped track later will set a new loop count, replacing this value.
+ * Stopped tracks can specify a loop count while starting via
+ * MIX_PROP_PLAY_LOOPS_NUMBER. This function is intended to alter that count
+ * in the middle of playback.
  *
  * \param track the track to configure.
  * \param num_loops new number of times to loop. Zero to disable looping, -1
