@@ -613,6 +613,8 @@ extern SDL_DECLSPEC MIX_Audio * SDLCALL MIX_LoadAudio(MIX_Mixer *mixer, const ch
  * LoadAudio functions do. This function uses properties to dictate how it
  * operates, and exposes functionality the other functions don't provide.
  *
+ * SDL_PropertiesID are discussed in [SDL's documentation](https://wiki.libsdl.org/SDL3/CategoryProperties).
+ *
  * These are the supported properties:
  *
  * - `MIX_PROP_AUDIO_LOAD_IOSTREAM_POINTER`: a pointer to an SDL_IOStream to
@@ -1619,6 +1621,8 @@ extern SDL_DECLSPEC Sint64 SDLCALL MIX_FramesToMS(int sample_rate, Sint64 frames
  * are specified with an SDL_PropertiesID. The parameters have reasonable
  * defaults, and specifying a 0 for `options` will choose defaults for
  * everything.
+ *
+ * SDL_PropertiesID are discussed in [SDL's documentation](https://wiki.libsdl.org/SDL3/CategoryProperties).
  *
  * These are the supported properties:
  *
@@ -2921,6 +2925,8 @@ typedef struct MIX_AudioDecoder MIX_AudioDecoder;
  * file-specific settings, such as where to find SoundFonts for a MIDI file,
  * etc. In most cases, the caller should pass a zero to specify no extra
  * properties.
+ *
+ * SDL_PropertiesID are discussed in [SDL's documentation](https://wiki.libsdl.org/SDL3/CategoryProperties).
  *
  * When done with the audio decoder, it can be destroyed with
  * MIX_DestroyAudioDecoder().
