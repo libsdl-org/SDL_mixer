@@ -1316,6 +1316,30 @@ extern SDL_DECLSPEC bool SDLCALL MIX_SetTrackPlaybackPosition(MIX_Track *track, 
 extern SDL_DECLSPEC Sint64 SDLCALL MIX_GetTrackPlaybackPosition(MIX_Track *track);
 
 /**
+ * Query whether a given track is fading.
+ *
+ * This specifically checks if the track is _not stopped_ (paused or playing),
+ * and it is fading in or out, and returns the number of frames remaining in
+ * the fade.
+ *
+ * If fading out, the returned value will be negative. When fading in, the
+ * returned value will be positive. If not fading, this function returns zero.
+ *
+ * On various errors (MIX_Init() was not called, the track is NULL), this
+ * returns 0, but there is no mechanism to distinguish errors from tracks that
+ * aren't fading.
+ *
+ * \param track the track to query.
+ * \returns less than 0 if the track is fading out, greater than 0 if fading
+ *          in, zero otherwise.
+ *
+ * \threadsafety It is safe to call this function from any thread.
+ *
+ * \since This function is available since SDL_mixer 3.0.0.
+ */
+extern SDL_DECLSPEC Sint64 SDLCALL MIX_GetTrackFadeFrames(MIX_Track *track);
+
+/**
  * Query whether a given track is looping.
  *
  * This specifically checks if the track is _not stopped_ (paused or playing),

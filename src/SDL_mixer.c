@@ -1889,6 +1889,19 @@ Sint64 MIX_GetTrackRemaining(MIX_Track *track)
     return retval;
 }
 
+Sint64 MIX_GetTrackFadeFrames(MIX_Track *track)
+{
+    Sint64 retval = 0;
+    if (CheckTrackParam(track)) {
+        LockTrack(track);
+        if (track->state != MIX_STATE_STOPPED) {
+            retval = track->fade_frames * track->fade_direction;
+        }
+        UnlockTrack(track);
+    }
+    return retval;
+}
+
 bool MIX_TrackLooping(MIX_Track *track)
 {
     bool retval = false;
