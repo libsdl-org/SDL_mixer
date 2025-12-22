@@ -1047,7 +1047,7 @@ MIX_Audio *MIX_LoadAudioWithProperties(SDL_PropertiesID props)  // lets you spec
     audio_userdata = audio->decoder_userdata;  // less wordy access to this pointer.  :)
 
     // Go back to start of the SDL_IOStream, since we're either precaching, predecoding, or maybe just getting ready to actually play the thing.
-    if (SDL_SeekIO(io, 0, SDL_IO_SEEK_SET) == -1) {   // note this seeks to offset 0, because we're using an IoClamp.
+    if (io && (SDL_SeekIO(io, 0, SDL_IO_SEEK_SET) == -1)) {   // note this seeks to offset 0, because we're using an IoClamp.
         goto failed;
     }
 
@@ -1269,6 +1269,7 @@ MIX_Audio *MIX_CreateSineWaveAudio(MIX_Mixer *mixer, int hz, float amplitude)
     SDL_SetStringProperty(props, MIX_PROP_AUDIO_DECODER_STRING, "SINEWAVE");
     SDL_SetNumberProperty(props, MIX_PROP_DECODER_SINEWAVE_HZ_NUMBER, hz);
     SDL_SetFloatProperty(props, MIX_PROP_DECODER_SINEWAVE_AMPLITUDE_FLOAT, amplitude);
+    SDL_SetBooleanProperty(props, MIX_PROP_AUDIO_LOAD_ONDEMAND_BOOLEAN, true);
     MIX_Audio *audio = MIX_LoadAudioWithProperties(props);
     SDL_DestroyProperties(props);
     return audio;
@@ -1600,10 +1601,15 @@ bool MIX_SetTrackAudio(MIX_Track *track, MIX_Audio *audio)
 
     SDL_IOStream *io = NULL;
     if (audio) {
-        SDL_assert(audio->precache != NULL);  // external MIX_Audios shouldn't be able to get into a state where they aren't precached.
-        io = SDL_IOFromConstMem(audio->precache, audio->precachelen);
-        if (!io) {
-            return false;
+        // external MIX_Audios shouldn't be able to get into a state where they aren't precached (except SINEWAVE,
+        // which is generated on the fly). Make this assert more generic if we add another thing like SINEWAVE later!
+        SDL_assert((audio->precache != NULL) || (audio->decoder == &MIX_Decoder_SINEWAVE));
+
+        if (audio->precache) {
+            io = SDL_IOFromConstMem(audio->precache, audio->precachelen);
+            if (!io) {
+                return false;
+            }
         }
     }
 
