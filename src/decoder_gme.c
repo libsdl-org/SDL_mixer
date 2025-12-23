@@ -25,6 +25,15 @@
 
 #include <gme/gme.h>
 
+#if defined(FLUIDSYNTH_DYNAMIC) && defined(SDL_ELF_NOTE_DLOPEN)
+SDL_ELF_NOTE_DLOPEN(
+    "gme",
+    "Support for audio of classic video game consoles using game-music-emu",
+    SDL_ELF_NOTE_DLOPEN_PRIORITY_SUGGESTED,
+    GME_DYNAMIC
+);
+#endif
+
 #ifdef GME_DYNAMIC
 #define MIX_LOADER_DYNAMIC GME_DYNAMIC
 #endif

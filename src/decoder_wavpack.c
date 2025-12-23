@@ -25,6 +25,15 @@
 
 #include "SDL_mixer_internal.h"
 
+#if defined(WAVPACK_DYNAMIC) && defined(SDL_ELF_NOTE_DLOPEN)
+SDL_ELF_NOTE_DLOPEN(
+    "wavpack",
+    "Support for WAVPACK audio using WavPack",
+    SDL_ELF_NOTE_DLOPEN_PRIORITY_SUGGESTED,
+    WAVPACK_DYNAMIC
+);
+#endif
+
 #define WAVPACK_DBG 0
 
 // This file supports WavPack music streams

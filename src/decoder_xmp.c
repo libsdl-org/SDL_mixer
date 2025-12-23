@@ -23,6 +23,15 @@
 
 #include "SDL_mixer_internal.h"
 
+#if defined(XMP_DYNAMIC) && defined(SDL_ELF_NOTE_DLOPEN)
+SDL_ELF_NOTE_DLOPEN(
+    "midi-xmp",
+    "Support for MIDI audio using libxmp",
+    SDL_ELF_NOTE_DLOPEN_PRIORITY_SUGGESTED,
+    XMP_DYNAMIC
+);
+#endif
+
 #ifdef LIBXMP_HEADER
 #include LIBXMP_HEADER
 #else

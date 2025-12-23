@@ -27,6 +27,15 @@
 
 #include <opusfile.h>
 
+#if defined(OPUS_DYNAMIC) && defined(SDL_ELF_NOTE_DLOPEN)
+SDL_ELF_NOTE_DLOPEN(
+    "opus",
+    "Support for OPUS audio using opusfile",
+    SDL_ELF_NOTE_DLOPEN_PRIORITY_SUGGESTED,
+    OPUS_DYNAMIC
+);
+#endif
+
 #ifdef OPUS_DYNAMIC
 #define MIX_LOADER_DYNAMIC OPUS_DYNAMIC
 #endif
