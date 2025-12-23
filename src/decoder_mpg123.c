@@ -23,6 +23,15 @@
 
 #include "SDL_mixer_internal.h"
 
+#if defined(MPG123_DYNAMIC) && defined(SDL_ELF_NOTE_DLOPEN)
+SDL_ELF_NOTE_DLOPEN(
+    "mp3",
+    "Support for MP3 audio using mpg123",
+    SDL_ELF_NOTE_DLOPEN_PRIORITY_SUGGESTED,
+    MPG123_DYNAMIC
+);
+#endif
+
 #define MPG123_ENUM_API /* for mpg123_param() */
 #include <stdio.h>  // SEEK_SET
 #include <mpg123.h>

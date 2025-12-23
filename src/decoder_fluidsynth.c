@@ -27,6 +27,15 @@
 
 #include <fluidsynth.h>
 
+#if defined(FLUIDSYNTH_DYNAMIC) && defined(SDL_ELF_NOTE_DLOPEN)
+SDL_ELF_NOTE_DLOPEN(
+    "midi-fluidsynth",
+    "Support for MIDI audio using FluidSynth",
+    SDL_ELF_NOTE_DLOPEN_PRIORITY_SUGGESTED,
+    FLUIDSYNTH_DYNAMIC
+);
+#endif
+
 #ifdef FLUIDSYNTH_DYNAMIC
 #define MIX_LOADER_DYNAMIC FLUIDSYNTH_DYNAMIC
 #endif

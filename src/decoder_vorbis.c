@@ -34,6 +34,15 @@
 #include <vorbis/vorbisfile.h>
 #endif
 
+#if defined(MPG123_DYNAMIC) && defined(SDL_ELF_NOTE_DLOPEN)
+SDL_ELF_NOTE_DLOPEN(
+    "vorbis",
+    "Support for VORBIS audio", // vorbisfile or tremor
+    SDL_ELF_NOTE_DLOPEN_PRIORITY_SUGGESTED,
+    VORBIS_DYNAMIC
+);
+#endif
+
 #ifdef VORBIS_DYNAMIC
 #define MIX_LOADER_DYNAMIC VORBIS_DYNAMIC
 #endif

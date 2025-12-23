@@ -25,6 +25,15 @@
 
 #include <FLAC/stream_decoder.h>
 
+#if defined(FLAC_DYNAMIC) && defined(SDL_ELF_NOTE_DLOPEN)
+SDL_ELF_NOTE_DLOPEN(
+    "flac",
+    "Support for FLAC audio using libFLAC",
+    SDL_ELF_NOTE_DLOPEN_PRIORITY_SUGGESTED,
+    FLAC_DYNAMIC
+);
+#endif
+
 #ifdef FLAC_DYNAMIC
 #define MIX_LOADER_DYNAMIC FLAC_DYNAMIC
 #endif
