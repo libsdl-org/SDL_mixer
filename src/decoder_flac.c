@@ -31,7 +31,7 @@ SDL_ELF_NOTE_DLOPEN(
     "Support for FLAC audio using libFLAC",
     SDL_ELF_NOTE_DLOPEN_PRIORITY_SUGGESTED,
     FLAC_DYNAMIC
-);
+)
 #endif
 
 #ifdef FLAC_DYNAMIC

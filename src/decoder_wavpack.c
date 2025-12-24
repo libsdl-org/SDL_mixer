@@ -31,7 +31,7 @@ SDL_ELF_NOTE_DLOPEN(
     "Support for WAVPACK audio using WavPack",
     SDL_ELF_NOTE_DLOPEN_PRIORITY_SUGGESTED,
     WAVPACK_DYNAMIC
-);
+)
 #endif
 
 #define WAVPACK_DBG 0

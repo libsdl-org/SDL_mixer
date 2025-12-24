@@ -33,7 +33,7 @@ SDL_ELF_NOTE_DLOPEN(
     "Support for OPUS audio using opusfile",
     SDL_ELF_NOTE_DLOPEN_PRIORITY_SUGGESTED,
     OPUS_DYNAMIC
-);
+)
 #endif
 
 #ifdef OPUS_DYNAMIC

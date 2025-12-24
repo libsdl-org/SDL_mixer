@@ -40,7 +40,7 @@ SDL_ELF_NOTE_DLOPEN(
     "Support for VORBIS audio", // vorbisfile or tremor
     SDL_ELF_NOTE_DLOPEN_PRIORITY_SUGGESTED,
     VORBIS_DYNAMIC
-);
+)
 #endif
 
 #ifdef VORBIS_DYNAMIC
