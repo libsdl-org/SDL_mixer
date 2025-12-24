@@ -29,7 +29,7 @@ SDL_ELF_NOTE_DLOPEN(
     "Support for MIDI audio using libxmp",
     SDL_ELF_NOTE_DLOPEN_PRIORITY_SUGGESTED,
     XMP_DYNAMIC
-);
+)
 #endif
 
 #ifdef LIBXMP_HEADER

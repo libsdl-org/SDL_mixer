@@ -29,7 +29,7 @@ SDL_ELF_NOTE_DLOPEN(
     "Support for MP3 audio using mpg123",
     SDL_ELF_NOTE_DLOPEN_PRIORITY_SUGGESTED,
     MPG123_DYNAMIC
-);
+)
 #endif
 
 #define MPG123_ENUM_API /* for mpg123_param() */

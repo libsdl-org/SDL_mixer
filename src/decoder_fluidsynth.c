@@ -33,7 +33,7 @@ SDL_ELF_NOTE_DLOPEN(
     "Support for MIDI audio using FluidSynth",
     SDL_ELF_NOTE_DLOPEN_PRIORITY_SUGGESTED,
     FLUIDSYNTH_DYNAMIC
-);
+)
 #endif
 
 #ifdef FLUIDSYNTH_DYNAMIC

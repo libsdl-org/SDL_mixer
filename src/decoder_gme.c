@@ -31,7 +31,7 @@ SDL_ELF_NOTE_DLOPEN(
     "Support for audio of classic video game consoles using game-music-emu",
     SDL_ELF_NOTE_DLOPEN_PRIORITY_SUGGESTED,
     GME_DYNAMIC
-);
+)
 #endif
 
 #ifdef GME_DYNAMIC
