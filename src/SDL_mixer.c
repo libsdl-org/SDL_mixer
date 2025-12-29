@@ -1821,19 +1821,27 @@ bool MIX_TagTrack(MIX_Track *track, const char *tag)
 
 void MIX_UntagTrack(MIX_Track *track, const char *tag)
 {
-    if (!CheckTrackTagParam(track, tag)) {
+    if (!CheckTrackParam(track)) {
         return;  // do nothing.
     }
 
     const SDL_PropertiesID tags = track->tags;
-
-    SDL_LockProperties(tags);
-    if (SDL_GetBooleanProperty(tags, tag, false)) {  // if tag isn't there, nothing to do.
-        SDL_assert(SDL_GetPointerProperty(track->mixer->track_tags, tag, NULL) != NULL);  // shouldn't be NULL, there's definitely a track with this tag!
-        RemoveTrackFromMixerTagList(track->mixer, track, tag);
-        SDL_SetBooleanProperty(tags, tag, false);
+    if (!tag) {  // untag everything on the track.
+        SDL_EnumerateProperties(tags, RemoveTrackFromAllMixerTagLists, track);
+        const SDL_PropertiesID new_tags = SDL_CreateProperties();
+        LockTrack(track);
+        track->tags = new_tags;
+        UnlockTrack(track);
+        SDL_DestroyProperties(tags);  // just nuke all the tags and start over.
+    } else {
+        SDL_LockProperties(tags);
+        if (SDL_GetBooleanProperty(tags, tag, false)) {  // if tag isn't there, nothing to do.
+            SDL_assert(SDL_GetPointerProperty(track->mixer->track_tags, tag, NULL) != NULL);  // shouldn't be NULL, there's definitely a track with this tag!
+            RemoveTrackFromMixerTagList(track->mixer, track, tag);
+            SDL_SetBooleanProperty(tags, tag, false);
+        }
+        SDL_UnlockProperties(tags);
     }
-    SDL_UnlockProperties(tags);
 }
 
 bool MIX_SetTrackPlaybackPosition(MIX_Track *track, Sint64 frames)

@@ -1244,8 +1244,10 @@ extern SDL_DECLSPEC bool SDLCALL MIX_TagTrack(MIX_Track *track, const char *tag)
  * It's legal to remove a tag that the track doesn't have; this function
  * doesn't report errors, so this simply does nothing.
  *
+ * Specifying a NULL tag will remove all tags on a track.
+ *
  * \param track the track from which to remove a tag.
- * \param tag the tag to remove.
+ * \param tag the tag to remove, or NULL to remove all current tags.
  *
  * \threadsafety It is safe to call this function from any thread.
  *
