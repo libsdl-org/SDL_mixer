@@ -86,4 +86,5 @@ _MIX_DecodeAudio
 _MIX_GetAudioDecoderFormat
 _MIX_SetTrackLoops
 _MIX_GetTrackFadeFrames
+_MIX_GetTrackTags
 # extra symbols go here (don't modify this line)

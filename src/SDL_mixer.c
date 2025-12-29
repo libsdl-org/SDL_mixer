@@ -1844,6 +1844,80 @@ void MIX_UntagTrack(MIX_Track *track, const char *tag)
     }
 }
 
+typedef struct GetTrackTagsCallbackData
+{
+    const char *struct_tags[4];  // hopefully mostly fits in here, no allocations.
+    const char **allocated_tags;
+    int count;
+    bool failed;
+} GetTrackTagsCallbackData;
+
+static void SDLCALL GetTrackTagsCallback(void *userdata, SDL_PropertiesID props, const char *tag)
+{
+    // just store the tag to the array; since we have the properties locked, we can copy it after enumeration is done.
+    GetTrackTagsCallbackData *data = (GetTrackTagsCallbackData *) userdata;
+    if (data->failed) {
+        return;  // just get out if we previously failed.
+    } else if (SDL_GetBooleanProperty(props, tag, false)) {   // if false, tag _was_ here, but has since been untagged. Skip it.
+        if (data->count < SDL_arraysize(data->struct_tags)) {
+            data->struct_tags[data->count++] = tag;
+        } else {
+            void *ptr = SDL_realloc(data->allocated_tags, sizeof (char *) * (data->count - SDL_arraysize(data->struct_tags) + 1));
+            if (!ptr) {
+                data->failed = true;
+            } else {
+                data->allocated_tags = (const char **) ptr;
+                data->allocated_tags[data->count - SDL_arraysize(data->struct_tags)] = tag;
+                data->count++;
+            }
+        }
+    }
+}
+
+char **MIX_GetTrackTags(MIX_Track *track, int *count)
+{
+    char **retval = NULL;
+    int dummycount;
+    if (!count) {
+        count = &dummycount;
+    }
+    *count = 0;
+
+    if (!CheckTrackParam(track)) {
+        return NULL;
+    }
+
+    GetTrackTagsCallbackData data;
+    SDL_zero(data);
+    SDL_LockProperties(track->tags);
+    SDL_EnumerateProperties(track->tags, GetTrackTagsCallback, &data);
+    if (!data.failed) {
+        size_t allocation = sizeof (char *);  // one extra pointer for the list's NULL terminator.
+        for (int i = 0; i < data.count; i++) {
+            const char *str = (i < SDL_arraysize(data.struct_tags)) ? data.struct_tags[i] : data.allocated_tags[i - SDL_arraysize(data.struct_tags)];
+            allocation += sizeof (char *) + SDL_strlen(str) + 1;
+        }
+        retval = (char **) SDL_malloc(allocation);
+        if (retval) {
+            char *strptr = ((char *) retval) + (sizeof (char *) * (data.count + 1));
+            for (int i = 0; i < data.count; i++) {
+                const char *str = (i < SDL_arraysize(data.struct_tags)) ? data.struct_tags[i] : data.allocated_tags[i - SDL_arraysize(data.struct_tags)];
+                const size_t slen = SDL_strlen(str) + 1;
+                SDL_memcpy(strptr, str, slen);
+                retval[i] = strptr;
+                strptr += slen;
+            }
+            retval[data.count] = NULL;
+            *count = data.count;
+        }
+        SDL_free(data.allocated_tags);
+    }
+    SDL_UnlockProperties(track->tags);
+
+    return retval;
+}
+
+
 bool MIX_SetTrackPlaybackPosition(MIX_Track *track, Sint64 frames)
 {
     if (!CheckTrackParam(track)) {

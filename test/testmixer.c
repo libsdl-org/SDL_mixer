@@ -4,6 +4,7 @@
 #include "SDL3_mixer/SDL_mixer.h"
 
 #define USE_MIX_GENERATE 0
+#define TEST_TAGS 0
 
 //static SDL_Window *window = NULL;
 //static SDL_Renderer *renderer = NULL;
@@ -87,6 +88,26 @@ static int SDLCALL CompareMetadataKeys(const void *a, const void *b)
 {
     return SDL_strcmp(*(const char **) a, *(const char **) b);
 }
+
+#if TEST_TAGS
+static void showtags(MIX_Track *track, const char *when)
+{
+    int count;
+    char **tags = MIX_GetTrackTags(track, &count);
+    if (!tags) {
+        SDL_Log("GETTRACKTAGS FAILED!  %s", SDL_GetError());
+        return;
+    }
+
+    SDL_Log("Track tags %s (%d):", when, count);
+    for (int i = 0; i < count; i++) {
+        SDL_Log(" - %s", tags[i]);
+    }
+
+    SDL_assert(tags[count] == NULL);
+    SDL_free(tags);
+}
+#endif
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
@@ -185,6 +206,23 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     }
 
     SDL_PropertiesID options;
+
+    #if TEST_TAGS
+    MIX_TagTrack(track1, "Abc");
+    MIX_TagTrack(track1, "xyZ");
+    MIX_TagTrack(track1, "1234567890");
+    MIX_TagTrack(track1, "TopSecret");
+    MIX_TagTrack(track1, "MyFavoriteTrack");
+    MIX_TagTrack(track1, "Can I put spaces and punctuation in here?");
+    MIX_TagTrack(track1, "Music");
+    MIX_TagTrack(track1, "NotImportant");
+    MIX_TagTrack(track1, "Orange");
+    showtags(track1, "at startup");
+    MIX_UntagTrack(track1, "TopSecret");
+    showtags(track1, "after removing 'TopSecret'");
+    MIX_UntagTrack(track1, NULL);
+    showtags(track1, "after removing everything");
+    #endif
 
     options = SDL_CreateProperties();
     SDL_SetNumberProperty(options, MIX_PROP_PLAY_MAX_MILLISECONDS_NUMBER, 9440);

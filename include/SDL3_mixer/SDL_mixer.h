@@ -1258,6 +1258,25 @@ extern SDL_DECLSPEC bool SDLCALL MIX_TagTrack(MIX_Track *track, const char *tag)
 extern SDL_DECLSPEC void SDLCALL MIX_UntagTrack(MIX_Track *track, const char *tag);
 
 /**
+ * Get the tags currently associated with a track.
+ *
+ * Tags are not provided in any guaranteed order.
+ *
+ * \param track the track to query.
+ * \param count a pointer filled in with the number of tags returned, can
+ *              be NULL.
+ * \returns an array of the tags, NULL-terminated, or NULL on
+ *          failure; call SDL_GetError() for more information. This is a
+ *          single allocation that should be freed with SDL_free() when it is
+ *          no longer needed.
+ *
+ * \threadsafety It is safe to call this function from any thread.
+ *
+ * \since This function is available since SDL_mixer 3.0.0.
+ */
+extern SDL_DECLSPEC char ** SDLCALL MIX_GetTrackTags(MIX_Track *track, int *count);
+
+/**
  * Seek a playing track to a new position in its input.
  *
  * (Not to be confused with MIX_SetTrack3DPosition(), which is positioning of
