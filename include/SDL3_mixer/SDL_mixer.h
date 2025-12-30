@@ -1282,11 +1282,11 @@ extern SDL_DECLSPEC char ** SDLCALL MIX_GetTrackTags(MIX_Track *track, int *coun
  *
  * \param mixer the mixer to query.
  * \param tag the tag to search.
- * \param count a pointer filled in with the number of tracks returned, can
- *              be NULL.
- * \returns an array of the tracks, NULL-terminated, or NULL on
- *          failure; call SDL_GetError() for more information. The returned
- *          pointer hould be freed with SDL_free() when it is no longer needed.
+ * \param count a pointer filled in with the number of tracks returned, can be
+ *              NULL.
+ * \returns an array of the tracks, NULL-terminated, or NULL on failure; call
+ *          SDL_GetError() for more information. The returned pointer hould be
+ *          freed with SDL_free() when it is no longer needed.
  *
  * \threadsafety It is safe to call this function from any thread.
  *
