@@ -1917,6 +1917,37 @@ char **MIX_GetTrackTags(MIX_Track *track, int *count)
     return retval;
 }
 
+MIX_Track **MIX_GetTaggedTracks(MIX_Mixer *mixer, const char *tag, int *count)
+{
+    int dummycount;
+    if (!count) {
+        count = &dummycount;
+    }
+    *count = 0;
+
+    if (!CheckMixerTagParam(mixer, tag)) {
+        return NULL;
+    }
+
+    MIX_TagList *list = (MIX_TagList *) SDL_GetPointerProperty(mixer->track_tags, tag, NULL);
+    if (!list) {  // nothing is using this tag?
+        return (MIX_Track **) SDL_calloc(1, sizeof (MIX_Track *));  // just a single NULL entry (or a NULL return if out of memory, works either way).
+    }
+
+    MIX_Track **retval = NULL;
+    SDL_LockRWLockForReading(list->rwlock);
+    const size_t total = list->num_tracks;
+    retval = (MIX_Track **) SDL_malloc(sizeof (*retval) * (total + 1));
+    if (retval) {
+        SDL_memcpy(retval, list->tracks, sizeof (*retval) * total);
+        retval[total] = NULL;
+        *count = (int) total;
+    }
+    SDL_UnlockRWLock(list->rwlock);
+
+    return retval;
+}
+
 
 bool MIX_SetTrackPlaybackPosition(MIX_Track *track, Sint64 frames)
 {

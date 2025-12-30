@@ -217,6 +217,10 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     MIX_TagTrack(track1, "Music");
     MIX_TagTrack(track1, "NotImportant");
     MIX_TagTrack(track1, "Orange");
+    int tagged_count = 77;
+    MIX_Track **tagged = MIX_GetTaggedTracks(mixer, "TopSecret", &tagged_count);
+    SDL_Log("MIX_GetTaggedTracks is %sworking", (tagged && (tagged_count == 1) && (tagged[0] == track1) && (tagged[1] == NULL)) ? "" : "NOT ");
+    SDL_free(tagged);
     showtags(track1, "at startup");
     MIX_UntagTrack(track1, "TopSecret");
     showtags(track1, "after removing 'TopSecret'");
