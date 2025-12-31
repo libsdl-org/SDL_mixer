@@ -2184,18 +2184,18 @@ bool MIX_PlayTrack(MIX_Track *track, SDL_PropertiesID options)
         loop_start = GetTrackOptionFramesOrTicks(track, options, MIX_PROP_PLAY_LOOP_START_FRAME_NUMBER, MIX_PROP_PLAY_LOOP_START_MILLISECOND_NUMBER, loop_start);
         fade_in = GetTrackOptionFramesOrTicks(track, options, MIX_PROP_PLAY_FADE_IN_FRAMES_NUMBER, MIX_PROP_PLAY_FADE_IN_MILLISECONDS_NUMBER, fade_in);
         append_silence_frames = GetTrackOptionFramesOrTicks(track, options, MIX_PROP_PLAY_APPEND_SILENCE_FRAMES_NUMBER, MIX_PROP_PLAY_APPEND_SILENCE_MILLISECONDS_NUMBER, append_silence_frames);
-    }
 
-    if (start_pos < 0) {
-        start_pos = 0;
-    }
+        if (start_pos < 0) {
+            start_pos = 0;
+        }
 
-    if (loop_start < 0) {
-        loop_start = 0;
-    }
+        if (loop_start < 0) {
+            loop_start = 0;
+        }
 
-    if (append_silence_frames < 0) {
-        append_silence_frames = 0;
+        if (append_silence_frames < 0) {
+            append_silence_frames = 0;
+        }
     }
 
     if (track->input_audio && (!track->input_audio->decoder->seek(track->decoder_userdata, start_pos))) {
