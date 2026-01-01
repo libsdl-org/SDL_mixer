@@ -967,6 +967,7 @@
             "_SDL_SetWindowAlwaysOnTop",
             "_SDL_SetWindowAspectRatio",
             "_SDL_SetWindowBordered",
+            "_SDL_SetWindowFillDocument",
             "_SDL_SetWindowFocusable",
             "_SDL_SetWindowFullscreen",
             "_SDL_SetWindowFullscreenMode",
