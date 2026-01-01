@@ -15,12 +15,6 @@ ref_minor=$(sed -ne 's/^#define SDL_MIXER_MINOR_VERSION  *//p' $header)
 ref_micro=$(sed -ne 's/^#define SDL_MIXER_MICRO_VERSION  *//p' $header)
 ref_version="${ref_major}.${ref_minor}.${ref_micro}"
 
-ref_reqsdl="$(sed -nEe ':a;N;$!ba;s/[\r\n]/ /g;s/.*SDL_COMPILE_TIME_ASSERT\(SDL_version, SDL_VERSION_ATLEAST\(([0-9]+), ([0-9]+), ([0-9]+)\)\).*/\1.\2.\3/p' src/SDL_mixer.c)"
-if [[ -z "$ref_reqsdl" ]]; then
-    echo "ERROR: SDL_VERSION_ATLEAST(...) not found in $src" >&2
-    exit 1
-fi
-
 tests=0
 failed=0
 
@@ -38,19 +32,12 @@ not_ok () {
 major=$(sed -ne 's/^set(MAJOR_VERSION \([0-9]*\))$/\1/p' CMakeLists.txt)
 minor=$(sed -ne 's/^set(MINOR_VERSION \([0-9]*\))$/\1/p' CMakeLists.txt)
 micro=$(sed -ne 's/^set(MICRO_VERSION \([0-9]*\))$/\1/p' CMakeLists.txt)
-reqsdl=$(sed -ne 's/^set(SDL_REQUIRED_VERSION \([0-9.]*\))$/\1/p' CMakeLists.txt)
 version="${major}.${minor}.${micro}"
 
 if [ "$ref_version" = "$version" ]; then
     ok "CMakeLists.txt $version"
 else
     not_ok "CMakeLists.txt $version disagrees with SDL_mixer.h $ref_version"
-fi
-
-if [ "$ref_reqsdl" = "$reqsdl" ]; then
-    ok "CMakeLists.txt $reqsdl"
-else
-    not_ok "CMakeLists.txt $reqsdl disagrees with SDL_mixer.h $ref_reqsdl"
 fi
 
 for rcfile in src/version.rc; do

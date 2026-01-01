@@ -23,8 +23,6 @@
 
 #include "SDL_mixer_internal.h"
 
-SDL_COMPILE_TIME_ASSERT(SDL_version, SDL_VERSION_ATLEAST(3, 3, 3));
-
 // !!! FIXME: should RAW go first (only needs to check if it was explicitly
 // !!! FIXME: requested), and SINEWAVE last (must be requested, likely rare).
 static const MIX_Decoder *decoders[] = {
