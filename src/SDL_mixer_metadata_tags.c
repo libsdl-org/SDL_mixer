@@ -598,7 +598,7 @@ static Uint32 ape_handle_tag(SDL_PropertiesID props, Uint8 *data, size_t valsize
         apekey[key_len] = '\0';
         char generic_key[256];
         const int rc = SDL_snprintf(generic_key, sizeof (generic_key), "SDL_mixer.metadata.ape.%s", apekey);
-        if ((rc > 0) && (rc < sizeof (generic_key))) {
+        if ((rc > 0) && (rc < (int)sizeof(generic_key))) {
             if (!SDL_HasProperty(props, generic_key)) {  // in case there are multiple ID3v1 tags appended to a file, we'll take the last one, since we parse backwards from the end of file.
                 SDL_SetStringProperty(props, generic_key, value);
             }

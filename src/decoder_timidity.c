@@ -51,7 +51,7 @@ static bool SDLCALL TIMIDITY_init(void)
         return (Timidity_Init(cfg) == 0); // env or user override: no other tries
     }
 
-    for (int i = 0; i < SDL_arraysize(timidity_cfgs); i++) {
+    for (int i = 0; i < (int)SDL_arraysize(timidity_cfgs); i++) {
         if (Timidity_Init(timidity_cfgs[i]) == 0) {
             return true;
         }
