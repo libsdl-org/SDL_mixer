@@ -176,14 +176,14 @@ static bool SDLCALL DRFLAC_init_audio(SDL_IOStream *io, SDL_AudioSpec *spec, SDL
 
     adata->framesize = SDL_AUDIO_FRAMESIZE(*spec);
 
-    if (adata->loop.end > decoder->totalPCMFrameCount) {
+    if (adata->loop.end > (Sint64)decoder->totalPCMFrameCount) {
         adata->loop.active = false;
     }
 
     if (decoder->totalPCMFrameCount == 0) {
         *duration_frames = MIX_DURATION_UNKNOWN;
     } else if (adata->loop.active) {
-        *duration_frames = (adata->loop.count < 0) ? MIX_DURATION_INFINITE : (decoder->totalPCMFrameCount * adata->loop.count);
+        *duration_frames = (adata->loop.count < 0) ? MIX_DURATION_INFINITE : ((Sint64)decoder->totalPCMFrameCount * adata->loop.count);
     } else {
         *duration_frames = decoder->totalPCMFrameCount;
     }
@@ -230,7 +230,7 @@ static bool SDLCALL DRFLAC_decode(void *track_userdata, SDL_AudioStream *stream)
 
     const MIX_OggLoop *loop = &tdata->adata->loop;
     if (tdata->current_iteration < 0) {
-        if (loop->active && ((tdata->current_iteration_frames + amount) >= loop->start)) {
+        if (loop->active && ((tdata->current_iteration_frames + (Sint64)amount) >= loop->start)) {
             tdata->current_iteration = 0;  // we've hit the start of the loop point.
             tdata->current_iteration_frames = (tdata->current_iteration_frames - loop->start);  // so adding `amount` corrects this later.
         }
@@ -240,12 +240,12 @@ static bool SDLCALL DRFLAC_decode(void *track_userdata, SDL_AudioStream *stream)
         SDL_assert(loop->active);
         SDL_assert(tdata->current_iteration_frames <= loop->len);
         const Sint64 available = loop->len - tdata->current_iteration_frames;
-        if (amount > available) {
+        if ((Sint64)amount > available) {
             amount = available;
         }
 
         SDL_assert(tdata->current_iteration_frames <= loop->len);
-        if ((tdata->current_iteration_frames + amount) >= loop->len) {  // time to loop?
+        if ((tdata->current_iteration_frames + (Sint64)amount) >= loop->len) {  // time to loop?
             bool should_loop = false;
             if (loop->count < 0) {  // negative==infinite loop
                 tdata->current_iteration = 0;
@@ -286,9 +286,9 @@ static bool SDLCALL DRFLAC_seek(void *track_userdata, Uint64 frame)
     Sint64 final_iteration_frames = 0;
 
     // frame has hit the loop point?
-    if (loop->active && (frame >= loop->start)) {
+    if (loop->active && ((Sint64)frame >= loop->start)) {
         // figure out the _actual_ frame in the vorbis file we're aiming for.
-        if ((loop->count < 0) || (frame < (loop->len * loop->count))) {  // literally in the loop right now.
+        if ((loop->count < 0) || ((Sint64)frame < (loop->len * loop->count))) {  // literally in the loop right now.
             frame -= loop->start;  // make logical frame index relative to start of loop.
             final_iteration = (loop->count < 0) ? 0 : (frame / loop->len);  // decide what iteration of the loop we're on (stays at zero for infinite loops).
             frame %= loop->len;  // drop iterations so we're an offset into the loop.

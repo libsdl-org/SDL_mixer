@@ -40,7 +40,7 @@
 typedef struct VOC_Block
 {
     int loop_count;  // 0=data or silence block, >0=loop block of X loops, -1=infinite loop block, -2=endloop block.
-    Uint64 iopos;  // byte position in i/o stream of this block's data. Might be 0 for things like loop and silence blocks.
+    Sint64 iopos;  // byte position in i/o stream of this block's data. Might be 0 for things like loop and silence blocks.
     SDL_AudioSpec spec;
     Uint64 frames;
 } VOC_Block;
@@ -85,7 +85,7 @@ static VOC_Block *AddVocDataBlock(VOC_AudioData *adata, Sint64 iopos, const SDL_
 
     VOC_Block *block = AddVocBlock(adata);
     if (block) {
-        block->iopos = (Uint64) iopos;
+        block->iopos = iopos;
         block->loop_count = 0;
         SDL_copyp(&block->spec, spec);
         block->frames = frames;
@@ -532,7 +532,7 @@ static bool SDLCALL VOC_seek(void *userdata, Uint64 frame)
                 SDL_assert(frame >= framepos);
                 tdata->frame_pos = frame - framepos;
                 if (block->iopos) {  // have to read actual file data from this block.
-                    if (SDL_SeekIO(tdata->io, block->iopos + (tdata->frame_pos * framesize), SDL_IO_SEEK_SET) < 0) {
+                    if (SDL_SeekIO(tdata->io, block->iopos + ((Sint64)tdata->frame_pos * framesize), SDL_IO_SEEK_SET) < 0) {
                         return false;  // uhoh.
                     }
                 }

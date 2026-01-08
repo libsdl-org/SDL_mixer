@@ -345,7 +345,7 @@ static void SDLCALL TrackGetCallback(void *userdata, SDL_AudioStream *stream, in
     }
 
     // do we need to grow our buffer?
-    if (additional_amount > track->input_buffer_len) {
+    if ((unsigned)additional_amount > track->input_buffer_len) {
         void *ptr = SDL_realloc(track->input_buffer, additional_amount);
         if (!ptr) {   // uhoh.
             TrackStopped(track);
@@ -541,7 +541,7 @@ static void SDLCALL MixerCallback(void *userdata, SDL_AudioStream *stream, int a
     const bool skip_group_mixing = !mixer->all_groups || !mixer->all_groups->next;
     const int alloc_multiplier = skip_group_mixing ? 2 : 3;
     const int alloc_size = additional_amount * alloc_multiplier;
-    if (alloc_size > mixer->mix_buffer_allocation) {
+    if ((unsigned)alloc_size > mixer->mix_buffer_allocation) {
         void *ptr = SDL_realloc(mixer->mix_buffer, alloc_size);
         if (!ptr) {   // uhoh.
             return;  // not much to be done, we're out of memory!
@@ -1857,7 +1857,7 @@ static void SDLCALL GetTrackTagsCallback(void *userdata, SDL_PropertiesID props,
     if (data->failed) {
         return;  // just get out if we previously failed.
     } else if (SDL_GetBooleanProperty(props, tag, false)) {   // if false, tag _was_ here, but has since been untagged. Skip it.
-        if (data->count < SDL_arraysize(data->struct_tags)) {
+        if (data->count < (int)SDL_arraysize(data->struct_tags)) {
             data->struct_tags[data->count++] = tag;
         } else {
             void *ptr = SDL_realloc(data->allocated_tags, sizeof (char *) * (data->count - SDL_arraysize(data->struct_tags) + 1));
@@ -1892,14 +1892,14 @@ char **MIX_GetTrackTags(MIX_Track *track, int *count)
     if (!data.failed) {
         size_t allocation = sizeof (char *);  // one extra pointer for the list's NULL terminator.
         for (int i = 0; i < data.count; i++) {
-            const char *str = (i < SDL_arraysize(data.struct_tags)) ? data.struct_tags[i] : data.allocated_tags[i - SDL_arraysize(data.struct_tags)];
+            const char *str = (i < (int)SDL_arraysize(data.struct_tags)) ? data.struct_tags[i] : data.allocated_tags[i - SDL_arraysize(data.struct_tags)];
             allocation += sizeof (char *) + SDL_strlen(str) + 1;
         }
         retval = (char **) SDL_malloc(allocation);
         if (retval) {
             char *strptr = ((char *) retval) + (sizeof (char *) * (data.count + 1));
             for (int i = 0; i < data.count; i++) {
-                const char *str = (i < SDL_arraysize(data.struct_tags)) ? data.struct_tags[i] : data.allocated_tags[i - SDL_arraysize(data.struct_tags)];
+                const char *str = (i < (int)SDL_arraysize(data.struct_tags)) ? data.struct_tags[i] : data.allocated_tags[i - SDL_arraysize(data.struct_tags)];
                 const size_t slen = SDL_strlen(str) + 1;
                 SDL_memcpy(strptr, str, slen);
                 retval[i] = strptr;

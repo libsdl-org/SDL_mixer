@@ -233,7 +233,7 @@ static bool SDLCALL STBVORBIS_decode(void *track_userdata, SDL_AudioStream *stre
     float *outputs[8];
     if (tdata->skip_samples) {
         const Uint32 skip = tdata->skip_samples;
-        if (skip >= amount) {
+        if (skip >= (unsigned)amount) {
             tdata->skip_samples -= amount;
             return true;  // throw this all away; just try again next iteration.
         }
@@ -304,9 +304,9 @@ static bool SDLCALL STBVORBIS_seek(void *track_userdata, Uint64 frame)
     Sint64 final_iteration_frames = 0;
 
     // frame has hit the loop point?
-    if (loop->active && (frame >= loop->start)) {
+    if (loop->active && ((Sint64)frame >= loop->start)) {
         // figure out the _actual_ frame in the vorbis file we're aiming for.
-        if ((loop->count < 0) || (frame < (loop->len * loop->count))) {  // literally in the loop right now.
+        if ((loop->count < 0) || ((Sint64)frame < (loop->len * loop->count))) {  // literally in the loop right now.
             frame -= loop->start;  // make logical frame index relative to start of loop.
             final_iteration = (loop->count < 0) ? 0 : (frame / loop->len);  // decide what iteration of the loop we're on (stays at zero for infinite loops).
             frame %= loop->len;  // drop iterations so we're an offset into the loop.
