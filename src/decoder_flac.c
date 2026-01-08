@@ -176,7 +176,7 @@ static FLAC__StreamDecoderWriteStatus FLAC_IoWrite(const FLAC__StreamDecoder *de
 
     const MIX_OggLoop *loop = &tdata->adata->loop;
     if (tdata->current_iteration < 0) {
-        if (loop->active && ((tdata->current_iteration_frames + amount) >= loop->start)) {
+        if (loop->active && ((tdata->current_iteration_frames + (Sint64)amount) >= loop->start)) {
             tdata->current_iteration = 0;  // we've hit the start of the loop point.
             tdata->current_iteration_frames = (tdata->current_iteration_frames - loop->start);  // so adding `amount` corrects this later.
         }
@@ -186,12 +186,12 @@ static FLAC__StreamDecoderWriteStatus FLAC_IoWrite(const FLAC__StreamDecoder *de
         SDL_assert(loop->active);
         SDL_assert(tdata->current_iteration_frames <= loop->len);
         const Sint64 available = loop->len - tdata->current_iteration_frames;
-        if (amount > available) {
+        if ((Sint64)amount > available) {
             amount = available;
         }
 
         SDL_assert(tdata->current_iteration_frames <= loop->len);
-        if ((tdata->current_iteration_frames + amount) >= loop->len) {  // time to loop?
+        if ((tdata->current_iteration_frames + (Sint64)amount) >= loop->len) {  // time to loop?
             bool should_loop = false;
             if (loop->count < 0) {  // negative==infinite loop
                 tdata->current_iteration = 0;
