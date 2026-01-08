@@ -1247,7 +1247,7 @@ static bool WAV_init_audio_internal(WAV_AudioData *adata, SDL_IOStream *io, SDL_
 
         if (chunk_length == 0) {
             break;
-        } else if (((chunk_start_position + chunk_length) - (sizeof (Uint32) * 2)) > flen) {
+        } else if (((chunk_start_position + (Sint64)chunk_length) - (Sint64)(sizeof(Uint32) * 2)) > flen) {
             return SDL_SetError("Corrupt WAV file (chunk goes past EOF)");
         }
 
