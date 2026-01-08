@@ -208,7 +208,15 @@ static void *SoundFontOpen(const char *filename)
 
 static int SoundFontRead(void *buf, fluid_long_long_t count, void *handle)
 {
-    return (SDL_ReadIO((SDL_IOStream *) handle, buf, count) == count) ? FLUID_OK : FLUID_FAILED;
+    #if (SDL_SIZE_MAX < SDL_MAX_SINT64)
+    if (count > (fluid_long_long_t)(SDL_MAX_UINT32)) {
+        return FLUID_FAILED;
+    }
+    #endif
+    if (count < 0) {
+        return FLUID_FAILED;
+    }
+    return (SDL_ReadIO((SDL_IOStream *) handle, buf, count) == (size_t)count) ? FLUID_OK : FLUID_FAILED;
 }
 
 static int SoundFontSeek(void *handle, fluid_long_long_t offset, int origin)
