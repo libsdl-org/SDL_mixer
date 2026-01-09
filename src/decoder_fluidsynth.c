@@ -280,6 +280,14 @@ static bool SDLCALL FLUIDSYNTH_init_track(void *audio_userdata, SDL_IOStream *io
     fluidsynth.fluid_settings_setnum(tdata->settings, "synth.sample-rate", (double) spec->freq);
     fluidsynth.fluid_settings_getnum(tdata->settings, "synth.sample-rate", &samplerate);
 
+    // these settings were recommended as good defaults in https://github.com/libsdl-org/SDL_mixer/issues/284
+    fluidsynth.fluid_settings_setnum(tdata->settings, "synth.chorus.depth", 5.0);
+    fluidsynth.fluid_settings_setnum(tdata->settings, "synth.chorus.level", 0.35);
+    fluidsynth.fluid_settings_setnum(tdata->settings, "synth.reverb.damp", 0.4);
+    fluidsynth.fluid_settings_setnum(tdata->settings, "synth.reverb.level", 0.15);
+    fluidsynth.fluid_settings_setnum(tdata->settings, "synth.reverb.width", 4);
+    fluidsynth.fluid_settings_setnum(tdata->settings, "synth.reverb.room-size", 0.6);
+
     // let custom properties override anything we already set internally. You break it, you buy it!
     SDL_EnumerateProperties(adata->fluidsynth_props, SetCustomFluidsynthProperties, tdata);
 
