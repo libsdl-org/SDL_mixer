@@ -159,6 +159,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     const char *audiofname = argv[1];
     MIX_Audio *audio = MIX_LoadAudio(mixer, audiofname, false);
+    //MIX_Audio *audio = MIX_CreateSineWaveAudio(mixer, 300, 0.25f, 5000);
     if (!audio) {
         SDL_Log("Failed to load '%s': %s", audiofname, SDL_GetError());
         return SDL_APP_FAILURE;
@@ -245,7 +246,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     }
 
     // we cheat here with PlayAudio, since the sinewave decoder produces infinite audio.
-    //MIX_PlayAudio(mixer, MIX_CreateSineWaveAudio(mixer, 300, 0.25f));
+    //MIX_PlayAudio(mixer, MIX_CreateSineWaveAudio(mixer, 300, 0.25f, -1));
 
     return SDL_APP_CONTINUE;
 }
