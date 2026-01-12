@@ -785,9 +785,9 @@ extern SDL_DECLSPEC MIX_Audio * SDLCALL MIX_LoadRawAudioNoCopy(MIX_Mixer *mixer,
  * audio) and amplitude (determines the volume of the sinewave: 1.0f is very
  * loud, 0.0f is silent).
  *
- * A number of milliseconds of audio to generate can be specified.
- * Specifying a value less than zero will generate infinite audio (when
- * assigned to a MIX_Track, the sinewave will play forever).
+ * A number of milliseconds of audio to generate can be specified. Specifying
+ * a value less than zero will generate infinite audio (when assigned to a
+ * MIX_Track, the sinewave will play forever).
  *
  * MIX_Audio objects can be shared between multiple mixers. The `mixer`
  * parameter just suggests the most likely mixer to use this audio, in case
@@ -798,7 +798,7 @@ extern SDL_DECLSPEC MIX_Audio * SDLCALL MIX_LoadRawAudioNoCopy(MIX_Mixer *mixer,
  * \param hz the sinewave's frequency in Hz.
  * \param amplitude the sinewave's amplitude from 0.0f to 1.0f.
  * \param ms the maximum number of milliseconds of audio to generate, or less
- *        than zero to generate infinite audio.
+ *           than zero to generate infinite audio.
  * \returns an audio object that can be used to make sound on a mixer, or NULL
  *          on failure; call SDL_GetError() for more information.
  *
