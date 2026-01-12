@@ -1523,7 +1523,7 @@ static bool SDLCALL WAV_seek(void *track_userdata, Uint64 frame)
     const Uint64 current_iteration = (seekblock->iterations < 0) ? 0 : (frame / seekblock->num_frames);
     const Uint64 current_iteration_frames = (frame % seekblock->num_frames);
 
-    SDL_assert((seekblock->iterations < 0) || (current_iteration < seekblock->iterations));
+    SDL_assert((seekblock->iterations < 0) || (current_iteration < (Uint64) seekblock->iterations));
 
     // Deal with loop iterations, offset by the modulus of total frames in the loop; frame_start should have already
     //  dealt with iterations, so this shouldn't matter how many iterations there are or if it's an infinite loop.
