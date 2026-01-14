@@ -105,7 +105,7 @@ static bool SDLCALL SINEWAVE_decode(void *track_userdata, SDL_AudioStream *strea
     int current_sine_sample = tdata->current_sine_sample;
     float samples[256];
     const bool infinite_sine = (adata->total_frames < 0);
-    const ptrdiff_t total_frames = infinite_sine ? SDL_arraysize(samples) : SDL_min(adata->total_frames - tdata->position, (int)SDL_arraysize(samples));
+    const ptrdiff_t total_frames = infinite_sine ? (int)SDL_arraysize(samples) : SDL_min(adata->total_frames - tdata->position, (int)SDL_arraysize(samples));
 
     if (total_frames <= 0) {
         return false;
