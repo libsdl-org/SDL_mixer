@@ -28,6 +28,7 @@
 //   - decode just needs to see if one of the buffers is complete and push it again.
 //   - clear/push a subset when seeking.
 
+#include <stddef.h>
 #include "SDL_mixer_internal.h"
 
 typedef struct SINEWAVE_AudioData
