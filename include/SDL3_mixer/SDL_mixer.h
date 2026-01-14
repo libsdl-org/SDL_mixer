@@ -1404,7 +1404,8 @@ extern SDL_DECLSPEC Sint64 SDLCALL MIX_GetTrackFadeFrames(MIX_Track *track);
  * non-looping tracks.
  *
  * \param track the track to query.
- * \returns the number of pending loops, zero if not looping, and -1 if looping infinitely.
+ * \returns the number of pending loops, zero if not looping, and -1 if
+ *          looping infinitely.
  *
  * \threadsafety It is safe to call this function from any thread.
  *
