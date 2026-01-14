@@ -399,7 +399,7 @@ extern SDL_DECLSPEC const char * SDLCALL MIX_GetAudioDecoder(int index);
  *
  * \param devid the device to open for playback, or
  *              SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK for the default.
- * \param spec the audio format request from the device. May be NULL.
+ * \param spec the audio format to request from the device. May be NULL.
  * \returns a mixer that can be used to play audio, or NULL on failure; call
  *          SDL_GetError() for more information.
  *
