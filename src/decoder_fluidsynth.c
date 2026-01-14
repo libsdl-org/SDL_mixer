@@ -90,6 +90,7 @@ typedef struct FLUIDSYNTH_TrackData
     fluid_synth_t *synth;
     fluid_settings_t *settings;
     fluid_player_t *player;
+    Uint64 current_frame;
     int freq;
 } FLUIDSYNTH_TrackData;
 
@@ -384,30 +385,45 @@ static bool SDLCALL FLUIDSYNTH_decode(void *track_userdata, SDL_AudioStream *str
     }
 
     SDL_PutAudioStreamData(stream, samples, sizeof (samples));
+    tdata->current_frame += SDL_arraysize(samples) / 2;
     return true;
 }
 
 static bool SDLCALL FLUIDSYNTH_seek(void *track_userdata, Uint64 frame)
 {
-#if (FLUIDSYNTH_VERSION_MAJOR < 2)
-    return SDL_Unsupported();
-#else
     FLUIDSYNTH_TrackData *tdata = (FLUIDSYNTH_TrackData *) track_userdata;
-    Sint64 ticks = MIX_FramesToMS(tdata->freq, frame);
-    if (ticks == -1) {
-        ticks = 0;
+
+    // This is expensive, but it's not trivial to seek to a specific frame in fluidsynth for various reasons.
+    //  (see some explanations in https://github.com/libsdl-org/SDL_mixer/issues/519)
+    if (tdata->current_frame > frame) {
+        if (fluidsynth.fluid_player_seek(tdata->player, 0) != FLUID_OK) {
+            return SDL_SetError("Couldn't rewind MIDI track");
+        }
+        tdata->current_frame = 0;
+
+        if (fluidsynth.fluid_player_get_status(tdata->player) != FLUID_PLAYER_PLAYING) {
+            if (fluidsynth.fluid_player_play(tdata->player) != FLUID_OK) {
+                return SDL_SetError("Failed to restart FluidSynth player");
+            }
+        }
     }
 
-    // !!! FIXME: docs say this will fail if a seek was requested and then a second seek happens before we play more of the midi file, since the first seek will still be in progress.
-    bool result = (fluidsynth.fluid_player_seek(tdata->player, (int)ticks) == FLUID_OK);
+    Uint64 remaining_frames = frame - tdata->current_frame;
+    while (remaining_frames > 0) {
+        if (fluidsynth.fluid_player_get_status(tdata->player) != FLUID_PLAYER_PLAYING) {
+            return SDL_SetError("Seek past end of MIDI file");
+        }
 
-    if (result && fluidsynth.fluid_player_get_status(tdata->player) != FLUID_PLAYER_PLAYING) {
-        /* start playing if player is done */
-        result = (fluidsynth.fluid_player_play(tdata->player) == FLUID_OK);
+        float samples[512];
+        const Uint64 write_frames = SDL_min((Uint64) (SDL_arraysize(samples) / 2), remaining_frames);
+        if (fluidsynth.fluid_synth_write_float(tdata->synth, (int) write_frames, samples, 0, 2, samples, 1, 2) != FLUID_OK) {
+            return SDL_SetError("Seek past end of MIDI file");  // maybe EOF...?
+        }
+        tdata->current_frame += write_frames;
+        remaining_frames -= write_frames;
     }
 
-    return result;
-#endif
+    return true;
 }
 
 static void SDLCALL FLUIDSYNTH_quit_track(void *track_userdata)
