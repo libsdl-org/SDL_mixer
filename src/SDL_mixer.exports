@@ -67,7 +67,7 @@ _MIX_SetTrackRawCallback
 _MIX_SetTrackCookedCallback
 _MIX_Generate
 _MIX_GetAudioDuration
-_MIX_TrackLooping
+_MIX_GetTrackLoops
 _MIX_GetTrackAudio
 _MIX_GetTrackAudioStream
 _MIX_GetTrackRemaining

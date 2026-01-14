@@ -68,7 +68,7 @@ SDL3_mixer_0.0.0 {
     MIX_SetTrackCookedCallback;
     MIX_Generate;
     MIX_GetAudioDuration;
-    MIX_TrackLooping;
+    MIX_GetTrackLoops;
     MIX_GetTrackAudio;
     MIX_GetTrackAudioStream;
     MIX_GetTrackRemaining;

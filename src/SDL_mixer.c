@@ -2020,12 +2020,14 @@ Sint64 MIX_GetTrackFadeFrames(MIX_Track *track)
     return retval;
 }
 
-bool MIX_TrackLooping(MIX_Track *track)
+int MIX_GetTrackLoops(MIX_Track *track)
 {
-    bool retval = false;
+    int retval = 0;
     if (CheckTrackParam(track)) {
         LockTrack(track);
-        retval = ((track->state != MIX_STATE_STOPPED) && (track->loops_remaining != 0));
+        if (track->state != MIX_STATE_STOPPED) {
+            retval = track->loops_remaining;
+        }
         UnlockTrack(track);
     }
     return retval;
