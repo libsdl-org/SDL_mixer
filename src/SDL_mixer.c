@@ -2522,7 +2522,7 @@ bool MIX_SetTrackStoppedCallback(MIX_Track *track, MIX_TrackStoppedCallback cb, 
     return true;
 }
 
-bool MIX_SetMasterGain(MIX_Mixer *mixer, float gain)
+bool MIX_SetMixerGain(MIX_Mixer *mixer, float gain)
 {
     if (!CheckMixerParam(mixer)) {
         return false;
@@ -2536,7 +2536,7 @@ bool MIX_SetMasterGain(MIX_Mixer *mixer, float gain)
     return true;
 }
 
-float MIX_GetMasterGain(MIX_Mixer *mixer)
+float MIX_GetMixerGain(MIX_Mixer *mixer)
 {
     if (!CheckMixerParam(mixer)) {
         return 1.0f;
@@ -2613,7 +2613,7 @@ bool MIX_SetTagGain(MIX_Mixer *mixer, const char *tag, float gain)
     return true;
 }
 
-bool MIX_SetMasterFrequencyRatio(MIX_Mixer *mixer, float ratio)
+bool MIX_SetMixerFrequencyRatio(MIX_Mixer *mixer, float ratio)
 {
     if (!CheckMixerParam(mixer)) {
         return false;
@@ -2625,7 +2625,7 @@ bool MIX_SetMasterFrequencyRatio(MIX_Mixer *mixer, float ratio)
     return SDL_SetAudioStreamFrequencyRatio(mixer->output_stream, ratio);
 }
 
-float MIX_GetMasterFrequencyRatio(MIX_Mixer *mixer)
+float MIX_GetMixerFrequencyRatio(MIX_Mixer *mixer)
 {
     if (!CheckMixerParam(mixer)) {
         return 0.0f;

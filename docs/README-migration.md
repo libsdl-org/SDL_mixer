@@ -243,7 +243,7 @@ Mix_VolumeChunk() and Mix_VolumeMusic() are replaced by MIX_SetTrackGain(). They
 take a float instead of an int from 0 to 128, and can be used to not only quiet
 the existing data, but also make it louder.
 
-Mix_MasterVolume() is replaced by MIX_SetMasterGain(). Same idea.
+Mix_MasterVolume() is replaced by MIX_SetMixerGain(). Same idea.
 
 
 ## Halting
@@ -363,7 +363,7 @@ can discuss it!
 - Mix_VolumeChunk => MIX_SetTrackGain; gain is not set on MIX_Audio, only on MIX_Track
 - Mix_VolumeMusic => MIX_SetTrackGain
 - Mix_GetMusicVolume => MIX_GetTrackGain
-- Mix_MasterVolume => MIX_SetMasterGain
+- Mix_MasterVolume => MIX_SetMixerGain
 - Mix_HaltChannel => MIX_StopTrack
 - Mix_HaltGroup => MIX_StopTag
 - Mix_HaltMusic => MIX_StopTrack

@@ -86,10 +86,10 @@
  *
  * This library offers several features on top of mixing sounds together: a
  * track can have its own gain, to adjust its volume, in addition to a master
- * gain applied as well. One can set the "frequency ratio" of a track, to
- * speed it up or slow it down, which also adjusts its pitch. A channel map
- * can also be applied per-track, to change what speaker a given channel of
- * audio is output to.
+ * gain applied as well. One can set the "frequency ratio" of a track or the
+ * final mixed output, to speed it up or slow it down, which also adjusts its
+ * pitch. A channel map can also be applied per-track, to change what speaker
+ * a given channel of audio is output to.
  *
  * Almost all timing in SDL_mixer is in _sample frames_. Stereo PCM audio data
  * in Sint16 format takes 4 bytes per sample frame (2 bytes per sample times 2
@@ -2157,15 +2157,15 @@ extern SDL_DECLSPEC bool SDLCALL MIX_TrackPaused(MIX_Track *track);
  *
  * \since This function is available since SDL_mixer 3.0.0.
  *
- * \sa MIX_GetMasterGain
+ * \sa MIX_GetMixerGain
  * \sa MIX_SetTrackGain
  */
-extern SDL_DECLSPEC bool SDLCALL MIX_SetMasterGain(MIX_Mixer *mixer, float gain);
+extern SDL_DECLSPEC bool SDLCALL MIX_SetMixerGain(MIX_Mixer *mixer, float gain);
 
 /**
  * Get a mixer's master gain control.
  *
- * This returns the last value set through MIX_SetMasterGain(), or 1.0f if no
+ * This returns the last value set through MIX_SetMixerGain(), or 1.0f if no
  * value has ever been explicitly set.
  *
  * \param mixer the mixer to query.
@@ -2175,10 +2175,10 @@ extern SDL_DECLSPEC bool SDLCALL MIX_SetMasterGain(MIX_Mixer *mixer, float gain)
  *
  * \since This function is available since SDL_mixer 3.0.0.
  *
- * \sa MIX_SetMasterGain
+ * \sa MIX_SetMixerGain
  * \sa MIX_GetTrackGain
  */
-extern SDL_DECLSPEC float SDLCALL MIX_GetMasterGain(MIX_Mixer *mixer);
+extern SDL_DECLSPEC float SDLCALL MIX_GetMixerGain(MIX_Mixer *mixer);
 
 /**
  * Set a track's gain control.
@@ -2204,7 +2204,7 @@ extern SDL_DECLSPEC float SDLCALL MIX_GetMasterGain(MIX_Mixer *mixer);
  * \since This function is available since SDL_mixer 3.0.0.
  *
  * \sa MIX_GetTrackGain
- * \sa MIX_SetMasterGain
+ * \sa MIX_SetMixerGain
  */
 extern SDL_DECLSPEC bool SDLCALL MIX_SetTrackGain(MIX_Track *track, float gain);
 
@@ -2222,7 +2222,7 @@ extern SDL_DECLSPEC bool SDLCALL MIX_SetTrackGain(MIX_Track *track, float gain);
  * \since This function is available since SDL_mixer 3.0.0.
  *
  * \sa MIX_SetTrackGain
- * \sa MIX_GetMasterGain
+ * \sa MIX_GetMixerGain
  */
 extern SDL_DECLSPEC float SDLCALL MIX_GetTrackGain(MIX_Track *track);
 
@@ -2258,7 +2258,7 @@ extern SDL_DECLSPEC float SDLCALL MIX_GetTrackGain(MIX_Track *track);
  *
  * \sa MIX_GetTrackGain
  * \sa MIX_SetTrackGain
- * \sa MIX_SetMasterGain
+ * \sa MIX_SetMixerGain
  * \sa MIX_TagTrack
  */
 extern SDL_DECLSPEC bool SDLCALL MIX_SetTagGain(MIX_Mixer *mixer, const char *tag, float gain);
@@ -2292,15 +2292,15 @@ extern SDL_DECLSPEC bool SDLCALL MIX_SetTagGain(MIX_Mixer *mixer, const char *ta
  *
  * \since This function is available since SDL_mixer 3.0.0.
  *
- * \sa MIX_GetMasterFrequencyRatio
+ * \sa MIX_GetMixerFrequencyRatio
  * \sa MIX_SetTrackFrequencyRatio
  */
-extern SDL_DECLSPEC bool SDLCALL MIX_SetMasterFrequencyRatio(MIX_Mixer *mixer, float ratio);
+extern SDL_DECLSPEC bool SDLCALL MIX_SetMixerFrequencyRatio(MIX_Mixer *mixer, float ratio);
 
 /**
  * Get a mixer's master frequency ratio.
  *
- * This returns the last value set through MIX_SetMasterFrequencyRatio(), or
+ * This returns the last value set through MIX_SetMixerFrequencyRatio(), or
  * 1.0f if no value has ever been explicitly set.
  *
  * \param mixer the mixer to query.
@@ -2310,10 +2310,10 @@ extern SDL_DECLSPEC bool SDLCALL MIX_SetMasterFrequencyRatio(MIX_Mixer *mixer, f
  *
  * \since This function is available since SDL_mixer 3.0.0.
  *
- * \sa MIX_SetMasterFrequencyRatio
+ * \sa MIX_SetMixerFrequencyRatio
  * \sa MIX_GetTrackFrequencyRatio
  */
-extern SDL_DECLSPEC float SDLCALL MIX_GetMasterFrequencyRatio(MIX_Mixer *mixer);
+extern SDL_DECLSPEC float SDLCALL MIX_GetMixerFrequencyRatio(MIX_Mixer *mixer);
 
 
 /**

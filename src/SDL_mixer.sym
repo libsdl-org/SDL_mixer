@@ -48,8 +48,8 @@ SDL3_mixer_0.0.0 {
     MIX_ResumeTag;
     MIX_TrackPlaying;
     MIX_TrackPaused;
-    MIX_SetMasterGain;
-    MIX_GetMasterGain;
+    MIX_SetMixerGain;
+    MIX_GetMixerGain;
     MIX_SetTrackGain;
     MIX_GetTrackGain;
     MIX_SetTagGain;
@@ -89,8 +89,8 @@ SDL3_mixer_0.0.0 {
     MIX_GetTrackFadeFrames;
     MIX_GetTrackTags;
     MIX_GetTaggedTracks;
-    MIX_SetMasterFrequencyRatio;
-    MIX_GetMasterFrequencyRatio;
+    MIX_SetMixerFrequencyRatio;
+    MIX_GetMixerFrequencyRatio;
     # extra symbols go here (don't modify this line)
   local: *;
 };

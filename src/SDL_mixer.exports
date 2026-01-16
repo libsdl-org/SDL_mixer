@@ -47,8 +47,8 @@ _MIX_ResumeAllTracks
 _MIX_ResumeTag
 _MIX_TrackPlaying
 _MIX_TrackPaused
-_MIX_SetMasterGain
-_MIX_GetMasterGain
+_MIX_SetMixerGain
+_MIX_GetMixerGain
 _MIX_SetTrackGain
 _MIX_GetTrackGain
 _MIX_SetTagGain
@@ -88,6 +88,6 @@ _MIX_SetTrackLoops
 _MIX_GetTrackFadeFrames
 _MIX_GetTrackTags
 _MIX_GetTaggedTracks
-_MIX_SetMasterFrequencyRatio
-_MIX_GetMasterFrequencyRatio
+_MIX_SetMixerFrequencyRatio
+_MIX_GetMixerFrequencyRatio
 # extra symbols go here (don't modify this line)
