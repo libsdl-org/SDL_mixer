@@ -89,6 +89,8 @@ SDL3_mixer_0.0.0 {
     MIX_GetTrackFadeFrames;
     MIX_GetTrackTags;
     MIX_GetTaggedTracks;
+    MIX_SetMasterFrequencyRatio;
+    MIX_GetMasterFrequencyRatio;
     # extra symbols go here (don't modify this line)
   local: *;
 };

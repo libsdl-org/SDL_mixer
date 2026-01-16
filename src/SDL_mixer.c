@@ -2613,12 +2613,29 @@ bool MIX_SetTagGain(MIX_Mixer *mixer, const char *tag, float gain)
     return true;
 }
 
-static bool SetTrackFrequencyRatio(MIX_Track *track, float ratio)
+bool MIX_SetMasterFrequencyRatio(MIX_Mixer *mixer, float ratio)
 {
-    // don't have to LockTrack, as SDL_SetAudioStreamFrequencyRatio will do that.
+    if (!CheckMixerParam(mixer)) {
+        return false;
+    }
+
+    ratio = SDL_clamp(ratio, 0.01f, 100.0f);   // !!! FIXME: this clamps, but should it fail instead?
+
+    // don't have to LockMixer, as SDL_SetAudioStreamFrequencyRatio will do that.
+    return SDL_SetAudioStreamFrequencyRatio(mixer->output_stream, ratio);
+}
+
+float MIX_GetMasterFrequencyRatio(MIX_Mixer *mixer)
+{
+    if (!CheckMixerParam(mixer)) {
+        return 0.0f;
+    }
+
+    // don't have to LockMixer, as SDL_GetAudioStreamFrequencyRatio will do that.
     //LockTrack(track);
-    const bool retval = SDL_SetAudioStreamFrequencyRatio(track->output_stream, ratio);
+    const float retval = SDL_GetAudioStreamFrequencyRatio(mixer->output_stream);
     //UnlockTrack(track);
+
     return retval;
 }
 
@@ -2630,7 +2647,8 @@ bool MIX_SetTrackFrequencyRatio(MIX_Track *track, float ratio)
 
     ratio = SDL_clamp(ratio, 0.01f, 100.0f);   // !!! FIXME: this clamps, but should it fail instead?
 
-    return SetTrackFrequencyRatio(track, ratio);
+    // don't have to LockTrack, as SDL_SetAudioStreamFrequencyRatio will do that.
+    return SDL_SetAudioStreamFrequencyRatio(track->output_stream, ratio);
 }
 
 float MIX_GetTrackFrequencyRatio(MIX_Track *track)

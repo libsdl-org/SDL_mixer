@@ -88,4 +88,6 @@ _MIX_SetTrackLoops
 _MIX_GetTrackFadeFrames
 _MIX_GetTrackTags
 _MIX_GetTaggedTracks
+_MIX_SetMasterFrequencyRatio
+_MIX_GetMasterFrequencyRatio
 # extra symbols go here (don't modify this line)
