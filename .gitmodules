@@ -33,7 +33,7 @@
 [submodule "external/wavpack"]
 	path = external/wavpack
 	url = https://github.com/libsdl-org/wavpack.git
-	branch = 5.8.1-SDL
+	branch = 5.9.0-SDL
 [submodule "external/libgme"]
 	path = external/libgme
 	url = https://github.com/libsdl-org/game-music-emu.git
