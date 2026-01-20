@@ -161,6 +161,7 @@ struct MIX_Track
     Sint64 total_fade_frames;  // fade in or out for this many sample frames.
     Sint64 fade_frames;  // remaining frames to fade.
     int fade_direction;  // -1: fade out  0: don't fade  1: fade in
+    float fade_start_gain;  // between 0.0f and 1.0f. Fade with this volume as the starting point (fade-in only).
     int loops_remaining;  // seek to loop_start and continue this many more times at end of input. Negative to loop forever.
     int loop_start;      // sample frame position for loops to begin, so you can play an intro once and then loop from an internal point thereafter.
     SDL_PropertiesID tags;  // lookup tags to see if they are currently applied to this track (true or false).

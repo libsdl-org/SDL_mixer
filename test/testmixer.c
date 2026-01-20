@@ -234,6 +234,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     SDL_SetNumberProperty(options, MIX_PROP_PLAY_LOOPS_NUMBER, 3);
     SDL_SetNumberProperty(options, MIX_PROP_PLAY_LOOP_START_MILLISECOND_NUMBER, 6097);
     SDL_SetNumberProperty(options, MIX_PROP_PLAY_FADE_IN_MILLISECONDS_NUMBER, 30000);
+    //SDL_SetFloatProperty(options, MIX_PROP_PLAY_FADE_IN_START_GAIN_FLOAT, 0.25f);
     SDL_SetNumberProperty(options, MIX_PROP_PLAY_APPEND_SILENCE_MILLISECONDS_NUMBER, 30000);
     MIX_PlayTrack(track1, options);
     SDL_DestroyProperties(options);

@@ -253,12 +253,15 @@ static void ApplyFade(MIX_Track *track, int channels, float *pcm, int frames)
     int fade_frame_position = total_fade_frames - (int) track->fade_frames;
 
     // some hacks to avoid a branch on each sample frame. Might not be a good idea in practice.
-    const float pctmult = (track->fade_direction < 0) ? 1.0f : -1.0f;
+    const float fade_start_gain = track->fade_start_gain;
+    const float pctmult = (1.0f - fade_start_gain) * ((track->fade_direction < 0) ? 1.0f : -1.0f);
     const float pctsub = (track->fade_direction < 0) ? 1.0f : 0.0f;
     const float ftotal_fade_frames = (float) total_fade_frames;
 
+    SDL_assert((fade_start_gain == 0.0f) || (track->fade_direction > 0));  // we only allow fade _in_ from arbitrary levels. Fade out always operates on the full signal down to zero.
+
     for (int i = 0; i < to_be_faded; i++) {
-        const float pct = (pctsub - (((float) fade_frame_position) / ftotal_fade_frames)) * pctmult;
+        const float pct = ((pctsub - (((float) fade_frame_position) / ftotal_fade_frames)) * pctmult) + fade_start_gain;
         SDL_assert(pct >= 0.0f);
         SDL_assert(pct <= 1.0f);
         fade_frame_position++;
@@ -2177,6 +2180,7 @@ bool MIX_PlayTrack(MIX_Track *track, SDL_PropertiesID options)
     Sint64 loop_start = 0;
     Sint64 fade_in = 0;
     Sint64 append_silence_frames = 0;
+    float fade_start_gain = 0.0f;
     LockTrack(track);
     if (options) {
         loops = (int) SDL_GetNumberProperty(options, MIX_PROP_PLAY_LOOPS_NUMBER, loops);
@@ -2184,6 +2188,7 @@ bool MIX_PlayTrack(MIX_Track *track, SDL_PropertiesID options)
         start_pos = GetTrackOptionFramesOrTicks(track, options, MIX_PROP_PLAY_START_FRAME_NUMBER, MIX_PROP_PLAY_START_MILLISECOND_NUMBER, start_pos);
         loop_start = GetTrackOptionFramesOrTicks(track, options, MIX_PROP_PLAY_LOOP_START_FRAME_NUMBER, MIX_PROP_PLAY_LOOP_START_MILLISECOND_NUMBER, loop_start);
         fade_in = GetTrackOptionFramesOrTicks(track, options, MIX_PROP_PLAY_FADE_IN_FRAMES_NUMBER, MIX_PROP_PLAY_FADE_IN_MILLISECONDS_NUMBER, fade_in);
+        fade_start_gain = SDL_GetFloatProperty(options, MIX_PROP_PLAY_FADE_IN_START_GAIN_FLOAT, 0.0f);
         append_silence_frames = GetTrackOptionFramesOrTicks(track, options, MIX_PROP_PLAY_APPEND_SILENCE_FRAMES_NUMBER, MIX_PROP_PLAY_APPEND_SILENCE_MILLISECONDS_NUMBER, append_silence_frames);
 
         if (start_pos < 0) {
@@ -2197,6 +2202,8 @@ bool MIX_PlayTrack(MIX_Track *track, SDL_PropertiesID options)
         if (append_silence_frames < 0) {
             append_silence_frames = 0;
         }
+
+        fade_start_gain = SDL_clamp(fade_start_gain, 0.0f, 1.0f);
     }
 
     if (track->input_audio && (!track->input_audio->decoder->seek(track->decoder_userdata, start_pos))) {
@@ -2213,6 +2220,7 @@ bool MIX_PlayTrack(MIX_Track *track, SDL_PropertiesID options)
     track->total_fade_frames = (fade_in > 0) ? fade_in : 0;
     track->fade_frames = track->total_fade_frames;
     track->fade_direction = (fade_in > 0) ? 1 : 0;
+    track->fade_start_gain = fade_start_gain;
     track->silence_frames = (append_silence_frames > 0) ? -append_silence_frames : 0;  // negative means "there is still actual audio data to play", positive means "we're done with actual data, feed silence now." Zero means no silence (left) to feed.
     track->state = MIX_STATE_PLAYING;
     track->position = start_pos;
@@ -2303,6 +2311,7 @@ static void StopTrack(MIX_Track *track, Sint64 fadeOut)
             track->total_fade_frames = fadeOut;
             track->fade_frames = fadeOut;
             track->fade_direction = -1;
+            track->fade_start_gain = 0.0f;  // only used for fade-ins.
         }
     }
     UnlockTrack(track);
