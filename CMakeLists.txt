@@ -233,6 +233,7 @@ add_library(SDL2_mixer
     src/codecs/music_wav.c
     src/codecs/music_wavpack.c
     src/codecs/music_xmp.c
+    src/codecs/remap_channels.c
     src/effect_position.c
     src/effect_stereoreverse.c
     src/effects_internal.c
