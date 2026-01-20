@@ -24,6 +24,8 @@
 
 #include "SDL_types.h"
 
-extern void remap_channels_vorbis(Sint16 *samples, int num_samples, int num_channels);
+extern void remap_channels_vorbis_s16(Sint16 *samples, int num_samples, int num_channels);
+
+extern void remap_channels_vorbis_flt(float *samples, int num_samples, int num_channels);
 
 #endif /* REMAP_CHANNELS_H_ */

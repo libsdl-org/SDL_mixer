@@ -222,8 +222,9 @@ static int OGG_UpdateSection(OGG_music *music)
         return -1;
     }
 
-    /* Note: never shrink the buffer, we just decoded data in there. */
     new_buffer_size = music_spec.samples * (int)sizeof(Sint16) * vi->channels;
+
+    /* Note: never shrink the buffer, we just decoded data in there. */
     if (new_buffer_size > music->buffer_size) {
         char *new_buffer = (char *)SDL_realloc(music->buffer, new_buffer_size);
         if (!new_buffer) {
@@ -408,7 +409,9 @@ static int OGG_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         }
     }
 
-    remap_channels_vorbis((Sint16 *)music->buffer, amount / (int)sizeof(Sint16), music->vi.channels);
+    remap_channels_vorbis_s16((Sint16 *)music->buffer,
+                              amount / (int)sizeof(Sint16),
+                              music->vi.channels);
 
     pcmPos = vorbis.ov_pcm_tell(&music->vf);
     if (music->loop && (music->play_count != 1) && (pcmPos >= music->loop_end)) {

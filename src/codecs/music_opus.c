@@ -196,8 +196,9 @@ static int OPUS_UpdateSection(OPUS_music *music)
         return -1;
     }
 
-    /* Note: never shrink the buffer, we just decoded data in there. */
     new_buffer_size = (int)music_spec.samples * (int)sizeof(opus_int16) * op_info->channel_count;
+
+    /* Note: never shrink the buffer, we just decoded data in there. */
     if (new_buffer_size > music->buffer_size) {
         char *new_buffer = (char *)SDL_realloc(music->buffer, (size_t)new_buffer_size);
         if (!new_buffer) {
@@ -387,7 +388,9 @@ static int OPUS_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     }
 
     if (music->op_info->mapping_family == 1) {
-        remap_channels_vorbis((Sint16 *)music->buffer, samples * music->op_info->channel_count, music->op_info->channel_count);
+        remap_channels_vorbis_s16((Sint16 *)music->buffer,
+                                  samples * music->op_info->channel_count,
+                                  music->op_info->channel_count);
     }
 
     pcmPos = opus.op_pcm_tell(music->of);
