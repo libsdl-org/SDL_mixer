@@ -107,7 +107,7 @@
 #include "remap_channels.h"
 
 
-static void remap_channels_vorbis_3(Sint16 *samples, int num_samples)
+static void remap_channels_vorbis_3_s16(Sint16 *samples, int num_samples)
 {
     /* Note: this isn't perfect, because we map FC to LFE */
     int i;
@@ -119,7 +119,19 @@ static void remap_channels_vorbis_3(Sint16 *samples, int num_samples)
     }
 }
 
-static void remap_channels_vorbis_5(Sint16 *samples, int num_samples)
+static void remap_channels_vorbis_3_flt(float *samples, int num_samples)
+{
+    /* Note: this isn't perfect, because we map FC to LFE */
+    int i;
+    for (i = 0; i < num_samples; i += 3) {
+        float FC = samples[i + 1];
+        float FR = samples[i + 2];
+        samples[i + 1] = FR;
+        samples[i + 2] = FC;
+    }
+}
+
+static void remap_channels_vorbis_5_s16(Sint16 *samples, int num_samples)
 {
     /* Note: this isn't perfect, because we map FC to LFE. */
     int i;
@@ -131,7 +143,19 @@ static void remap_channels_vorbis_5(Sint16 *samples, int num_samples)
     }
 }
 
-static void remap_channels_vorbis_5_1(Sint16 *samples, int num_samples)
+static void remap_channels_vorbis_5_flt(float *samples, int num_samples)
+{
+    /* Note: this isn't perfect, because we map FC to LFE. */
+    int i;
+    for (i = 0; i < num_samples; i += 5) {
+        float FC = samples[i + 1];
+        float FR = samples[i + 2];
+        samples[i + 1] = FR;
+        samples[i + 2] = FC;
+    }
+}
+
+static void remap_channels_vorbis_5_1_s16(Sint16 *samples, int num_samples)
 {
     int i;
     for (i = 0; i < num_samples; i += 6) {
@@ -148,7 +172,24 @@ static void remap_channels_vorbis_5_1(Sint16 *samples, int num_samples)
     }
 }
 
-static void remap_channels_vorbis_7(Sint16 *samples, int num_samples)
+static void remap_channels_vorbis_5_1_flt(float *samples, int num_samples)
+{
+    int i;
+    for (i = 0; i < num_samples; i += 6) {
+        float FC  = samples[i + 1];
+        float FR  = samples[i + 2];
+        float RL  = samples[i + 3];
+        float RR  = samples[i + 4];
+        float LFE = samples[i + 5];
+        samples[i + 1] = FR;
+        samples[i + 2] = FC;
+        samples[i + 3] = LFE;
+        samples[i + 4] = RL;
+        samples[i + 5] = RR;
+    }
+}
+
+static void remap_channels_vorbis_7_s16(Sint16 *samples, int num_samples)
 {
     int i = 0;
     for (i = 0; i < num_samples; i += 7) {
@@ -167,7 +208,26 @@ static void remap_channels_vorbis_7(Sint16 *samples, int num_samples)
     }
 }
 
-static void remap_channels_vorbis_7_1(Sint16 *samples, int num_samples)
+static void remap_channels_vorbis_7_flt(float *samples, int num_samples)
+{
+    int i = 0;
+    for (i = 0; i < num_samples; i += 7) {
+        float FC  = samples[i + 1];
+        float FR  = samples[i + 2];
+        float SL  = samples[i + 3];
+        float SR  = samples[i + 4];
+        float RC  = samples[i + 5];
+        float LFE = samples[i + 6];
+        samples[i + 1] = FR;
+        samples[i + 2] = FC;
+        samples[i + 3] = LFE;
+        samples[i + 4] = RC;
+        samples[i + 5] = SL;
+        samples[i + 6] = SR;
+    }
+}
+
+static void remap_channels_vorbis_7_1_s16(Sint16 *samples, int num_samples)
 {
     int i = 0;
     for (i = 0; i < num_samples; i += 8) {
@@ -188,23 +248,65 @@ static void remap_channels_vorbis_7_1(Sint16 *samples, int num_samples)
     }
 }
 
-void remap_channels_vorbis(Sint16 *samples, int num_samples, int num_channels)
+static void remap_channels_vorbis_7_1_flt(float *samples, int num_samples)
+{
+    int i = 0;
+    for (i = 0; i < num_samples; i += 8) {
+        float FC  = samples[i + 1];
+        float FR  = samples[i + 2];
+        float SL  = samples[i + 3];
+        float SR  = samples[i + 4];
+        float RL  = samples[i + 5];
+        float RR  = samples[i + 6];
+        float LFE = samples[i + 7];
+        samples[i + 1] = FR;
+        samples[i + 2] = FC;
+        samples[i + 3] = LFE;
+        samples[i + 4] = RL;
+        samples[i + 5] = RR;
+        samples[i + 6] = SL;
+        samples[i + 7] = SR;
+    }
+}
+
+void remap_channels_vorbis_s16(Sint16 *samples, int num_samples, int num_channels)
 {
     switch (num_channels) {
     case 3:
-        remap_channels_vorbis_3(samples, num_samples);
+        remap_channels_vorbis_3_s16(samples, num_samples);
         break;
     case 5:
-        remap_channels_vorbis_5(samples, num_samples);
+        remap_channels_vorbis_5_s16(samples, num_samples);
         break;
     case 6:
-        remap_channels_vorbis_5_1(samples, num_samples);
+        remap_channels_vorbis_5_1_s16(samples, num_samples);
         break;
     case 7:
-        remap_channels_vorbis_7(samples, num_samples);
+        remap_channels_vorbis_7_s16(samples, num_samples);
         break;
     case 8:
-        remap_channels_vorbis_7_1(samples, num_samples);
+        remap_channels_vorbis_7_1_s16(samples, num_samples);
+        break;
+    }
+}
+
+void remap_channels_vorbis_flt(float *samples, int num_samples, int num_channels)
+{
+    switch (num_channels) {
+    case 3:
+        remap_channels_vorbis_3_flt(samples, num_samples);
+        break;
+    case 5:
+        remap_channels_vorbis_5_flt(samples, num_samples);
+        break;
+    case 6:
+        remap_channels_vorbis_5_1_flt(samples, num_samples);
+        break;
+    case 7:
+        remap_channels_vorbis_7_flt(samples, num_samples);
+        break;
+    case 8:
+        remap_channels_vorbis_7_1_flt(samples, num_samples);
         break;
     }
 }
