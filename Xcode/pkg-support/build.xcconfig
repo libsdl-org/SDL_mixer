@@ -10,9 +10,6 @@
 GME_PREPROCESSOR_DEFINITIONS = MUSIC_GME
 GME_FRAMEWORK_LDFLAGS = -weak_framework gme
 
-// Uncomment these lines to enable native MIDI support on OSX
-MIDI_PREPROCESSOR_DEFINITIONS[sdk=macosx*] = MUSIC_MID_NATIVE
-
 // Uncomment these lines to enable MOD support
 // If you do this, you should run external/download.sh to download the decode libraries and add xmp.framework to your application bundle.
 MOD_PREPROCESSOR_DEFINITIONS = MUSIC_MOD_XMP LIBXMP_HEADER=\"../external/libxmp/include/xmp.h\"
