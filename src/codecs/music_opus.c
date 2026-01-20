@@ -26,6 +26,7 @@
 #include "SDL_loadso.h"
 
 #include "music_opus.h"
+#include "remap_channels.h"
 #include "utils.h"
 
 #ifdef OPUSFILE_HEADER
@@ -169,6 +170,7 @@ static void OPUS_Delete(void*);
 static int OPUS_UpdateSection(OPUS_music *music)
 {
     const OpusHead *op_info;
+    int new_buffer_size;
 
     op_info = opus.op_head(music->of, -1);
     if (!op_info) {
@@ -180,11 +182,6 @@ static int OPUS_UpdateSection(OPUS_music *music)
     }
     music->op_info = op_info;
 
-    if (music->buffer) {
-        SDL_free(music->buffer);
-        music->buffer = NULL;
-    }
-
     if (music->stream) {
         SDL_FreeAudioStream(music->stream);
         music->stream = NULL;
@@ -193,13 +190,24 @@ static int OPUS_UpdateSection(OPUS_music *music)
     music->stream = SDL_NewAudioStream(AUDIO_S16SYS, (Uint8)op_info->channel_count, 48000,
                                        music_spec.format, music_spec.channels, music_spec.freq);
     if (!music->stream) {
+        SDL_free(music->buffer);
+        music->buffer      = NULL;
+        music->buffer_size = 0;
         return -1;
     }
 
-    music->buffer_size = (int)music_spec.samples * (int)sizeof(opus_int16) * op_info->channel_count;
-    music->buffer = (char *)SDL_malloc((size_t)music->buffer_size);
-    if (!music->buffer) {
-        return -1;
+    /* Note: never shrink the buffer, we just decoded data in there. */
+    new_buffer_size = (int)music_spec.samples * (int)sizeof(opus_int16) * op_info->channel_count;
+    if (new_buffer_size > music->buffer_size) {
+        char *new_buffer = (char *)SDL_realloc(music->buffer, (size_t)new_buffer_size);
+        if (!new_buffer) {
+            SDL_free(music->buffer);
+            music->buffer      = NULL;
+            music->buffer_size = 0;
+            return -1;
+        }
+        music->buffer      = new_buffer;
+        music->buffer_size = new_buffer_size;
     }
     return 0;
 }
@@ -376,6 +384,10 @@ static int OPUS_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         if (OPUS_UpdateSection(music) < 0) {
             return -1;
         }
+    }
+
+    if (music->op_info->mapping_family == 1) {
+        remap_channels_vorbis((Sint16 *)music->buffer, samples * music->op_info->channel_count, music->op_info->channel_count);
     }
 
     pcmPos = opus.op_pcm_tell(music->of);

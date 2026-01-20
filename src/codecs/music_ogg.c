@@ -26,6 +26,7 @@
 #include "SDL_loadso.h"
 
 #include "music_ogg.h"
+#include "remap_channels.h"
 #include "utils.h"
 
 #define OV_EXCLUDE_STATIC_CALLBACKS
@@ -195,6 +196,7 @@ static void OGG_Delete(void *context);
 static int OGG_UpdateSection(OGG_music *music)
 {
     vorbis_info *vi;
+    int new_buffer_size;
 
     vi = vorbis.ov_info(&music->vf, -1);
     if (!vi) {
@@ -206,11 +208,6 @@ static int OGG_UpdateSection(OGG_music *music)
     }
     SDL_memcpy(&music->vi, vi, sizeof(*vi));
 
-    if (music->buffer) {
-        SDL_free(music->buffer);
-        music->buffer = NULL;
-    }
-
     if (music->stream) {
         SDL_FreeAudioStream(music->stream);
         music->stream = NULL;
@@ -219,13 +216,24 @@ static int OGG_UpdateSection(OGG_music *music)
     music->stream = SDL_NewAudioStream(AUDIO_S16SYS, (Uint8)vi->channels, (int)vi->rate,
                                        music_spec.format, music_spec.channels, music_spec.freq);
     if (!music->stream) {
+        SDL_free(music->buffer);
+        music->buffer      = NULL;
+        music->buffer_size = 0;
         return -1;
     }
 
-    music->buffer_size = music_spec.samples * (int)sizeof(Sint16) * vi->channels;
-    music->buffer = (char *)SDL_malloc((size_t)music->buffer_size);
-    if (!music->buffer) {
-        return -1;
+    /* Note: never shrink the buffer, we just decoded data in there. */
+    new_buffer_size = music_spec.samples * (int)sizeof(Sint16) * vi->channels;
+    if (new_buffer_size > music->buffer_size) {
+        char *new_buffer = (char *)SDL_realloc(music->buffer, new_buffer_size);
+        if (!new_buffer) {
+            SDL_free(music->buffer);
+            music->buffer      = NULL;
+            music->buffer_size = 0;
+            return -1;
+        }
+        music->buffer      = new_buffer;
+        music->buffer_size = new_buffer_size;
     }
     return 0;
 }
@@ -387,7 +395,7 @@ static int OGG_GetSome(void *context, void *data, int bytes, SDL_bool *done)
 #ifdef OGG_USE_TREMOR
     amount = (int)vorbis.ov_read(&music->vf, music->buffer, music->buffer_size, &section);
 #else
-    amount = (int)vorbis.ov_read(&music->vf, music->buffer, music->buffer_size, SDL_BYTEORDER == SDL_BIG_ENDIAN, 2, 1, &section);
+    amount = (int)vorbis.ov_read(&music->vf, music->buffer, music->buffer_size, SDL_BYTEORDER == SDL_BIG_ENDIAN, (int)sizeof(Sint16), 1, &section);
 #endif
     if (amount < 0) {
         return set_ov_error("ov_read", amount);
@@ -399,6 +407,8 @@ static int OGG_GetSome(void *context, void *data, int bytes, SDL_bool *done)
             return -1;
         }
     }
+
+    remap_channels_vorbis((Sint16 *)music->buffer, amount / (int)sizeof(Sint16), music->vi.channels);
 
     pcmPos = vorbis.ov_pcm_tell(&music->vf);
     if (music->loop && (music->play_count != 1) && (pcmPos >= music->loop_end)) {
