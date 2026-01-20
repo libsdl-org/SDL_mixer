@@ -1,5 +1,14 @@
 # Release checklist
 
+* Run `build-scripts/create-release.py -R libsdl-org/SDL_mixer --ref <branch>` to do
+  a dry run creating the release assets. Verify that the archives are correct.
+
+* Tag the release, e.g. `git tag release-3.8.0; git push --tags`
+
+* Run `build-scripts/create-release.py -R libsdl-org/SDL_mixer --ref <release-tag>`
+  to have GitHub Actions create release assets. This makes sure the revision
+  string baked into the archives is correct.
+
 ## New feature release
 
 * Update `CHANGES.txt`
@@ -10,7 +19,7 @@
         `SDL_MIXER_MAJOR_VERSION`, `SDL_MIXER_MINOR_VERSION`, `SDL_MIXER_MICRO_VERSION`
     * `CMakeLists.txt`:
         `MAJOR_VERSION`, `MINOR_VERSION`, `MICRO_VERSION`
-    * `version.rc`:
+    * `src/version.rc`:
         `FILEVERSION`, `PRODUCTVERSION`, `FileVersion`, `ProductVersion`
     * `VisualC/Version.rc`:
         `FILEVERSION`, `PRODUCTVERSION`, `FileVersion`, `ProductVersion`
@@ -26,9 +35,7 @@
         * set second number in `DYLIB_CURRENT_VERSION` to 0
         * set `DYLIB_COMPATIBILITY_VERSION` to the same value
 
-* Regenerate `configure`
-
-* Run `./test-versioning.sh` to verify that everything is consistent
+* Run `./build-scripts/test-versioning.sh` to verify that everything is consistent
 
 * Do the release
 
@@ -46,12 +53,10 @@
 
     * `Xcode/SDL_mixer.xcodeproj/project.pbxproj`:
         `DYLIB_CURRENT_VERSION`, `DYLIB_COMPATIBILITY_VERSION`
-        * set second number in `DYLIB_CURRENT_VERSION` to *micro*
+        * set second number in `DYLIB_CURRENT_VERSION` to *patchlevel*
         * Leave `DYLIB_COMPATIBILITY_VERSION` unchanged
 
-* Regenerate `configure`
-
-* Run test/versioning.sh to verify that everything is consistent
+* Run `./build-scripts/test-versioning.sh` to verify that everything is consistent
 
 * Do the release
 
@@ -68,7 +73,7 @@
     * Same places as listed above
     * Assume that the next feature release will contain new API/ABI
 
-* Run test/versioning.sh to verify that everything is consistent
+* Run `./build-scripts/test-versioning.sh` to verify that everything is consistent
 
 * Add a new milestone for issues
 
@@ -83,12 +88,10 @@
     * `Xcode/SDL_mixer.xcodeproj/project.pbxproj`:
         `DYLIB_CURRENT_VERSION`, `DYLIB_COMPATIBILITY_VERSION`
         * set first number in `DYLIB_CURRENT_VERSION` to
-            (100 * *minor*) + *micro* + 1
+            (100 * *minor*) + *patchlevel* + 1
         * set second number in `DYLIB_CURRENT_VERSION` to 0
         * set `DYLIB_COMPATIBILITY_VERSION` to the same value
 
-* Regenerate `configure`
-
-* Run test/versioning.sh to verify that everything is consistent
+* Run `./build-scripts/test-versioning.sh` to verify that everything is consistent
 
 * Do the release
