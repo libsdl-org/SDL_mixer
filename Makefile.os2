@@ -59,6 +59,7 @@ SRCS = utils.c effect_position.c effects_internal.c effect_stereoreverse.c mixer
 # codec sources:
 SRCS+= load_aiff.c load_voc.c music_wav.c &
        music_ogg.c music_ogg_stb.c music_opus.c &
+       remap_channels.c &
        music_flac.c music_drflac.c music_wavpack.c &
        mp3utils.c music_mpg123.c music_minimp3.c &
        music_xmp.c music_modplug.c music_gme.c &
