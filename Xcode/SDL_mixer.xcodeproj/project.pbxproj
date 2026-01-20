@@ -39,6 +39,9 @@
 
 /* Begin PBXBuildFile section */
 		BE1FA8CD07AF96B2004B6283 /* SDL_mixer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1014BAEA010A4B677F000001 /* SDL_mixer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F31BA93D2F2039F500646176 /* INSTALL.md in Resources */ = {isa = PBXBuildFile; fileRef = F31BA93B2F2039F500646176 /* INSTALL.md */; };
+		F31BA9422F203ACA00646176 /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = F31BA9402F203ACA00646176 /* LICENSE.txt */; };
+		F31BA9432F203ACA00646176 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = F31BA9412F203ACA00646176 /* README.md */; };
 		F3249B39285C448100DB9B5C /* CMake in Resources */ = {isa = PBXBuildFile; fileRef = F3249B36285C448100DB9B5C /* CMake */; };
 		F3412A412D4C950E00D6C2B7 /* SDL3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3412A402D4C950E00D6C2B7 /* SDL3.framework */; };
 		F382FB962E340BDE004C6137 /* decoder_drmp3.c in Sources */ = {isa = PBXBuildFile; fileRef = F382FB822E340BDE004C6137 /* decoder_drmp3.c */; };
@@ -155,6 +158,10 @@
 		BE1FA90607AF96B2004B6283 /* SDL3_mixer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SDL3_mixer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F307A25D2B542F110012534B /* wavpack.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = wavpack.xcodeproj; path = wavpack/wavpack.xcodeproj; sourceTree = "<group>"; };
 		F307A2732B5431700012534B /* gme.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = gme.xcodeproj; path = gme/gme.xcodeproj; sourceTree = "<group>"; };
+		F31BA93B2F2039F500646176 /* INSTALL.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = INSTALL.md; sourceTree = "<group>"; };
+		F31BA93F2F203AAF00646176 /* INSTALL.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = INSTALL.md; sourceTree = "<group>"; };
+		F31BA9402F203ACA00646176 /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = LICENSE.txt; path = ../../../LICENSE.txt; sourceTree = "<group>"; };
+		F31BA9412F203ACA00646176 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../../../README.md; sourceTree = "<group>"; };
 		F3249B36285C448100DB9B5C /* CMake */ = {isa = PBXFileReference; lastKnownFileType = folder; path = CMake; sourceTree = "<group>"; };
 		F3412A402D4C950E00D6C2B7 /* SDL3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL3.framework; path = macOS/SDL3.framework; sourceTree = "<group>"; };
 		F382FB7F2E340BDE004C6137 /* decoder_aiff.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = decoder_aiff.c; path = ../src/decoder_aiff.c; sourceTree = SOURCE_ROOT; };
@@ -187,8 +194,6 @@
 		F3D87C0A281DFAD4005DA540 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		F3D87C0C281DFADB005DA540 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		F3E29D022882107B0006D108 /* xmp.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = xmp.xcodeproj; path = xmp/xmp.xcodeproj; sourceTree = "<group>"; };
-		F59C710300D5CB5801000001 /* ReadMe.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = ReadMe.txt; sourceTree = "<group>"; };
-		F59C710400D5CB5801000001 /* Welcome.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Welcome.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -307,6 +312,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		F31BA93C2F2039F500646176 /* framework */ = {
+			isa = PBXGroup;
+			children = (
+				F31BA93B2F2039F500646176 /* INSTALL.md */,
+			);
+			path = framework;
+			sourceTree = "<group>";
+		};
 		F3968B91281F817E00661875 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -342,9 +355,11 @@
 		F59C710100D5CB5801000001 /* resources */ = {
 			isa = PBXGroup;
 			children = (
+				F31BA93C2F2039F500646176 /* framework */,
 				F3249B36285C448100DB9B5C /* CMake */,
-				F59C710300D5CB5801000001 /* ReadMe.txt */,
-				F59C710400D5CB5801000001 /* Welcome.txt */,
+				F31BA9402F203ACA00646176 /* LICENSE.txt */,
+				F31BA9412F203ACA00646176 /* README.md */,
+				F31BA93F2F203AAF00646176 /* INSTALL.md */,
 			);
 			path = resources;
 			sourceTree = "<group>";
@@ -487,6 +502,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F31BA93D2F2039F500646176 /* INSTALL.md in Resources */,
+				F31BA9422F203ACA00646176 /* LICENSE.txt in Resources */,
+				F31BA9432F203ACA00646176 /* README.md in Resources */,
 				F3249B39285C448100DB9B5C /* CMake in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -538,7 +556,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -ex\n\nPRODUCT_NAME=SDL3_mixer\nOPTIONAL_FRAMEWORKS=\"FLAC gme mpg123 ogg opus vorbis wavpack xmp\"\n\nmkdir -p build/dmg-tmp/share/cmake/$PRODUCT_NAME\ncp -a build/$PRODUCT_NAME.xcframework build/dmg-tmp/\ncp pkg-support/resources/ReadMe.txt build/dmg-tmp\ncp pkg-support/share/cmake/${PRODUCT_NAME}/${PRODUCT_NAME}Config.cmake build/dmg-tmp/share/cmake/${PRODUCT_NAME}\ncp pkg-support/share/cmake/${PRODUCT_NAME}/${PRODUCT_NAME}ConfigVersion.cmake build/dmg-tmp/share/cmake/${PRODUCT_NAME}\nfor i in $OPTIONAL_FRAMEWORKS; do\n    if [ -d build/$i.xcframework ]; then\n        mkdir -p build/dmg-tmp/optional\n        cp -a build/$i.xcframework build/dmg-tmp/optional/\n    fi\ndone\n\n# remove the .DS_Store files if any (we may want to provide one in the future for fancy .dmgs)\nrm -rf build/dmg-tmp/.DS_Store\n\n# create the dmg\nhdiutil create -ov -fs HFS+ -volname $PRODUCT_NAME -srcfolder build/dmg-tmp build/$PRODUCT_NAME.dmg\n\n# clean up\nrm -rf build/dmg-tmp\n";
+			shellScript = "set -ex\n\nPRODUCT_NAME=SDL3_mixer\nOPTIONAL_FRAMEWORKS=\"gme ogg opus wavpack xmp\"\n\nmkdir -p build/dmg-tmp/share/cmake/$PRODUCT_NAME\ncp -a build/$PRODUCT_NAME.xcframework build/dmg-tmp/\n\ncp ../LICENSE.txt build/dmg-tmp\ncp ../README.md build/dmg-tmp\ncp pkg-support/resources/INSTALL.md build/dmg-tmp\ncp pkg-support/resources/share/cmake/${PRODUCT_NAME}/${PRODUCT_NAME}Config.cmake build/dmg-tmp/share/cmake/${PRODUCT_NAME}\ncp pkg-support/resources/share/cmake/${PRODUCT_NAME}/${PRODUCT_NAME}ConfigVersion.cmake build/dmg-tmp/share/cmake/${PRODUCT_NAME}\nfor i in $OPTIONAL_FRAMEWORKS; do\n    if [ -d build/$i.xcframework ]; then\n        mkdir -p build/dmg-tmp/optional\n        cp -a build/$i.xcframework build/dmg-tmp/optional/\n    fi\ndone\n\n# remove the .DS_Store files if any (we may want to provide one in the future for fancy .dmgs)\nrm -rf build/dmg-tmp/.DS_Store\n\n# for fancy .dmg\nmkdir -p build/dmg-tmp/.logo\ncp pkg-support/resources/SDL_DS_Store build/dmg-tmp/.DS_Store\ncp pkg-support/sdl_logo.pdf build/dmg-tmp/.logo\n\n# create the dmg\nhdiutil create -ov -fs HFS+ -volname $PRODUCT_NAME -srcfolder build/dmg-tmp build/$PRODUCT_NAME.dmg\n\n# clean up\nrm -rf build/dmg-tmp\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
