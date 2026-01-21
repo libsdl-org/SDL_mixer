@@ -63,7 +63,7 @@
         "build-scripts/pkg-support/mingw/INSTALL.md.in:INSTALL.md",
         "build-scripts/pkg-support/mingw/Makefile",
         "LICENSE.txt",
-        "README.md",
+        "README.md"
       ],
       "cmake": [
         "build-scripts/pkg-support/mingw/cmake/SDL3_mixerConfig.cmake",
