@@ -124,11 +124,13 @@ option(SDLMIXER_WAVE "Enable WAVE audio" ON)
 option(SDLMIXER_VOC "Enable VOC audio" ON)
 option(SDLMIXER_AU "Enable AU audio" ON)
 
+option(SDLMIXER_FLAC "Enable FLAC audio" ON)
+
 # Decoders that use third-party dependencies, even if they are compiled in, vendored, etc.
-option(SDLMIXER_FLAC_LIBFLAC "Enable FLAC audio using libFLAC" ON)
+cmake_dependent_option(SDLMIXER_FLAC_LIBFLAC "Enable FLAC audio using libFLAC" ON SDLMIXER_FLAC OFF)
 cmake_dependent_option(SDLMIXER_FLAC_LIBFLAC_SHARED "Dynamically load LIBFLAC" "${SDLMIXER_DEPS_SHARED}" SDLMIXER_FLAC_LIBFLAC OFF)
 
-option(SDLMIXER_FLAC_DRFLAC "Enable FLAC audio using drflac" ON)
+cmake_dependent_option(SDLMIXER_FLAC_DRFLAC "Enable FLAC audio using drflac" ON SDLMIXER_FLAC OFF)
 
 option(SDLMIXER_GME "Support loading GME audio via game-music-emu" ON)
 option(SDLMIXER_GME_SHARED "Dynamically load libgme" "${SDLMIXER_DEPS_SHARED}")
