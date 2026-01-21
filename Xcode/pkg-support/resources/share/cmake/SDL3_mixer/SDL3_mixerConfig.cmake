@@ -101,7 +101,6 @@ set(SDLMIXER_MP3_MPG123            FALSE)
 
 set(SDLMIXER_MIDI                  TRUE)
 set(SDLMIXER_MIDI_FLUIDSYNTH       FALSE)
-set(SDLMIXER_MIDI_NATIVE           TRUE)
 set(SDLMIXER_MIDI_TIMIDITY         FALSE)
 
 set(SDLMIXER_OPUS                  TRUE)
