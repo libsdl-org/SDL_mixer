@@ -145,10 +145,12 @@ cmake_dependent_option(SDLMIXER_MP3_DRMP3 "Support loading MP3 audio via dr_mp3"
 cmake_dependent_option(SDLMIXER_MP3_MPG123 "Support loading MP3 audio via libmpg123" ON SDLMIXER_MP3 OFF)
 cmake_dependent_option(SDLMIXER_MP3_MPG123_SHARED "Dynamically load mpg123" "${SDLMIXER_DEPS_SHARED}" SDLMIXER_MP3_MPG123 OFF)
 
-cmake_dependent_option(SDLMIXER_MIDI_FLUIDSYNTH "Support FluidSynth MIDI output" ON "NOT SDLMIXER_VENDORED" OFF)
+option(SDLMIXER_MIDI "Enable MIDI audio" ON)
+
+cmake_dependent_option(SDLMIXER_MIDI_FLUIDSYNTH "Support FluidSynth MIDI output" ON "SDLMIXER_MIDI;NOT SDLMIXER_VENDORED" OFF)
 cmake_dependent_option(SDLMIXER_MIDI_FLUIDSYNTH_SHARED "Dynamically load libfluidsynth" "${SDLMIXER_DEPS_SHARED}" SDLMIXER_MIDI_FLUIDSYNTH OFF)
 
-option(SDLMIXER_MIDI_TIMIDITY "Support timidity MIDI output" ON)
+cmake_dependent_option(SDLMIXER_MIDI_TIMIDITY "Support timidity MIDI output" ON SDLMIXER_MIDI OFF)
 
 option(SDLMIXER_OPUS "Enable Opus audio via libopus" ON)
 cmake_dependent_option(SDLMIXER_OPUS_SHARED "Dynamically load libopus" "${SDLMIXER_DEPS_SHARED}" SDLMIXER_OPUS OFF)
