@@ -398,6 +398,9 @@ if(SDLMIXER_OPUS)
         if(NOT SDLMIXER_OPUS_SHARED)
             list(APPEND PC_LIBS -l$<TARGET_FILE_BASE_NAME:opusfile> -l$<TARGET_FILE_BASE_NAME:opus> -l$<TARGET_FILE_BASE_NAME:ogg>)
         endif()
+    elseif(SDLMIXER_OPUS_SHARED AND DEFINED SDLMIXER_DYNAMIC_OPUSFILE AND EXISTS "${SDLMIXER_DYNAMIC_OPUSFILE}")
+        message(STATUS "${PROJECT_NAME}: Using opusfile from CMake variable")
+        set(SDLMIXER_OPUS_ENABLED TRUE)
     else()
         find_package(OpusFile ${required})
         if(OpusFile_FOUND AND Ogg_FOUND)
@@ -413,17 +416,19 @@ if(SDLMIXER_OPUS)
     if(SDLMIXER_OPUS_ENABLED)
         target_compile_definitions(${sdl3_mixer_target_name} PRIVATE DECODER_OPUS)
         if(SDLMIXER_OPUS_SHARED)
-            target_include_directories(${sdl3_mixer_target_name} PRIVATE
-                $<TARGET_PROPERTY:OpusFile::opusfile,INCLUDE_DIRECTORIES>
-                $<TARGET_PROPERTY:OpusFile::opusfile,INTERFACE_INCLUDE_DIRECTORIES>
-                $<TARGET_PROPERTY:OpusFile::opusfile,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
-            )
-            target_get_dynamic_library(dynamic_opusfile OpusFile::opusfile)
-            message(STATUS "Dynamic opus (opusfile): ${dynamic_opusfile}")
-            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "OPUS_DYNAMIC=\"${dynamic_opusfile}\"")
-            if(SDLMIXER_VENDORED)
-                add_dependencies(${sdl3_mixer_target_name} OpusFile::opusfile)
+            if(NOT DEFINED SDLMIXER_DYNAMIC_OPUSFILE)
+                target_include_directories(${sdl3_mixer_target_name} PRIVATE
+                    $<TARGET_PROPERTY:OpusFile::opusfile,INCLUDE_DIRECTORIES>
+                    $<TARGET_PROPERTY:OpusFile::opusfile,INTERFACE_INCLUDE_DIRECTORIES>
+                    $<TARGET_PROPERTY:OpusFile::opusfile,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
+                )
+                if(SDLMIXER_VENDORED)
+                    add_dependencies(${sdl3_mixer_target_name} OpusFile::opusfile)
+                endif()
             endif()
+            target_get_dynamic_library(SDLMIXER_DYNAMIC_OPUSFILE OpusFile::opusfile)
+            message(STATUS "Dynamic opus (opusfile): ${SDLMIXER_DYNAMIC_OPUSFILE}")
+            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "OPUS_DYNAMIC=\"${SDLMIXER_DYNAMIC_OPUSFILE}\"")
         else()
             target_link_libraries(${sdl3_mixer_target_name} PRIVATE OpusFile::opusfile)
         endif()
@@ -467,6 +472,9 @@ if(SDLMIXER_VORBIS_TREMOR)
         if(NOT SDLMIXER_VORBIS_TREMOR_SHARED)
             list(APPEND PC_LIBS -l$<TARGET_FILE_BASE_NAME:vorbisidec> -l$<TARGET_FILE_BASE_NAME:ogg>)
         endif()
+    elseif(SDLMIXER_VORBIS_TREMOR_SHARED AND DEFINED SDLMIXER_DYNAMIC_VORBIS_TREMOR AND EXISTS "${SDLMIXER_DYNAMIC_VORBIS_TREMOR}")
+        message(STATUS "${PROJECT_NAME}: Using tremor from CMake variable")
+        set(SDLMIXER_VORBIS_TREMOR_ENABLED TRUE)
     else()
         message(STATUS "Using system tremor")
         find_package(tremor ${required})
@@ -482,17 +490,19 @@ if(SDLMIXER_VORBIS_TREMOR)
     if(SDLMIXER_VORBIS_TREMOR_ENABLED)
         target_compile_definitions(${sdl3_mixer_target_name} PRIVATE DECODER_OGGVORBIS_VORBISFILE VORBIS_USE_TREMOR)
         if(SDLMIXER_VORBIS_TREMOR_SHARED)
-            target_include_directories(${sdl3_mixer_target_name} PRIVATE
-                $<TARGET_PROPERTY:tremor::tremor,INCLUDE_DIRECTORIES>
-                $<TARGET_PROPERTY:tremor::tremor,INTERFACE_INCLUDE_DIRECTORIES>
-                $<TARGET_PROPERTY:tremor::tremor,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
-            )
-            target_get_dynamic_library(dynamic_tremor tremor::tremor)
-            message(STATUS "Dynamic vorbis (tremor): ${dynamic_tremor}")
-            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "VORBIS_DYNAMIC=\"${dynamic_tremor}\"")
-            if(SDLMIXER_VENDORED)
-                add_dependencies(${sdl3_mixer_target_name} tremor::tremor)
+            if(NOT DEFINED SDLMIXER_DYNAMIC_VORBIS_TREMOR)
+                target_include_directories(${sdl3_mixer_target_name} PRIVATE
+                    $<TARGET_PROPERTY:tremor::tremor,INCLUDE_DIRECTORIES>
+                    $<TARGET_PROPERTY:tremor::tremor,INTERFACE_INCLUDE_DIRECTORIES>
+                    $<TARGET_PROPERTY:tremor::tremor,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
+                )
+                if(SDLMIXER_VENDORED)
+                    add_dependencies(${sdl3_mixer_target_name} tremor::tremor)
+                endif()
             endif()
+            target_get_dynamic_library(SDLMIXER_DYNAMIC_VORBIS_TREMOR tremor::tremor)
+            message(STATUS "Dynamic vorbis (tremor): ${SDLMIXER_DYNAMIC_VORBIS_TREMOR}")
+            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "VORBIS_DYNAMIC=\"${SDLMIXER_DYNAMIC_VORBIS_TREMOR}\"")
         else()
             target_link_libraries(${sdl3_mixer_target_name} PRIVATE tremor::tremor)
         endif()
@@ -522,6 +532,9 @@ if(SDLMIXER_VORBIS_VORBISFILE)
         if(NOT SDLMIXER_VORBIS_VORBISFILE_SHARED)
             list(APPEND PC_LIBS -l$<TARGET_FILE_BASE_NAME:vorbisfile>)
         endif()
+    elseif(SDLMIXER_VORBIS_VORBISFILE_SHARED AND DEFINED SDLMIXER_DYNAMIC_VORBIS_VORBISFILE AND EXISTS "${SDLMIXER_DYNAMIC_VORBIS_VORBISFILE}")
+        message(STATUS "${PROJECT_NAME}: Using vorbisfile from CMake variable")
+        set(SDLMIXER_VORBIS_VORBISFILE_ENABLED TRUE)
     else()
         find_package(Vorbis ${required})
         if(Vorbis_FOUND)
@@ -537,17 +550,19 @@ if(SDLMIXER_VORBIS_VORBISFILE)
     if(SDLMIXER_VORBIS_VORBISFILE_ENABLED)
         target_compile_definitions(${sdl3_mixer_target_name} PRIVATE DECODER_OGGVORBIS_VORBISFILE)
         if(SDLMIXER_VORBIS_VORBISFILE_SHARED)
-            target_include_directories(${sdl3_mixer_target_name} PRIVATE
-                $<TARGET_PROPERTY:Vorbis::vorbisfile,INCLUDE_DIRECTORIES>
-                $<TARGET_PROPERTY:Vorbis::vorbisfile,INTERFACE_INCLUDE_DIRECTORIES>
-                $<TARGET_PROPERTY:Vorbis::vorbisfile,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
-            )
-            target_get_dynamic_library(dynamic_vorbisfile Vorbis::vorbisfile)
-            message(STATUS "Dynamic vorbisfile: ${dynamic_vorbisfile}")
-            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "VORBIS_DYNAMIC=\"${dynamic_vorbisfile}\"")
-            if(SDLMIXER_VENDORED)
-                add_dependencies(${sdl3_mixer_target_name} Vorbis::vorbisfile)
+            if(NOT DEFINED SDLMIXER_DYNAMIC_VORBIS_VORBISFILE)
+                target_include_directories(${sdl3_mixer_target_name} PRIVATE
+                    $<TARGET_PROPERTY:Vorbis::vorbisfile,INCLUDE_DIRECTORIES>
+                    $<TARGET_PROPERTY:Vorbis::vorbisfile,INTERFACE_INCLUDE_DIRECTORIES>
+                    $<TARGET_PROPERTY:Vorbis::vorbisfile,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
+                )
+                if(SDLMIXER_VENDORED)
+                    add_dependencies(${sdl3_mixer_target_name} Vorbis::vorbisfile)
+                endif()
             endif()
+            target_get_dynamic_library(SDLMIXER_DYNAMIC_VORBIS_VORBISFILE Vorbis::vorbisfile)
+            message(STATUS "Dynamic vorbisfile: ${SDLMIXER_DYNAMIC_VORBIS_VORBISFILE}")
+            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "VORBIS_DYNAMIC=\"${SDLMIXER_DYNAMIC_VORBIS_VORBISFILE}\"")
         else()
             target_link_libraries(${sdl3_mixer_target_name} PRIVATE Vorbis::vorbisfile)
         endif()
@@ -586,6 +601,9 @@ if(SDLMIXER_FLAC_LIBFLAC)
         if(NOT SDLMIXER_FLAC_LIBFLAC_SHARED)
             list(APPEND PC_LIBS -l$<TARGET_FILE_BASE_NAME:FLAC::FLAC> -l$<TARGET_FILE_BASE_NAME:ogg>)
         endif()
+    elseif(SDLMIXER_FLAC_LIBFLAC_SHARED AND DEFINED SDLMIXER_DYNAMIC_FLAC_LIBFLAC AND EXISTS "${SDLMIXER_DYNAMIC_FLAC_LIBFLAC}")
+        message(STATUS "${PROJECT_NAME}: Using libflac from CMake variable")
+        set(SDLMIXER_FLAC_LIBFLAC_ENABLED TRUE)
     else()
         find_package(FLAC ${required})
         if(FLAC_FOUND)
@@ -607,17 +625,19 @@ if(SDLMIXER_FLAC_LIBFLAC)
     if(SDLMIXER_FLAC_LIBFLAC_ENABLED)
         target_compile_definitions(${sdl3_mixer_target_name} PRIVATE DECODER_FLAC_LIBFLAC)
         if(SDLMIXER_FLAC_LIBFLAC_SHARED)
-            target_include_directories(${sdl3_mixer_target_name} PRIVATE
-                $<TARGET_PROPERTY:FLAC::FLAC,INCLUDE_DIRECTORIES>
-                $<TARGET_PROPERTY:FLAC::FLAC,INTERFACE_INCLUDE_DIRECTORIES>
-                $<TARGET_PROPERTY:FLAC::FLAC,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
-            )
-            target_get_dynamic_library(dynamic_flac FLAC::FLAC)
-            message(STATUS "Dynamic libflac: ${dynamic_flac}")
-            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "FLAC_DYNAMIC=\"${dynamic_flac}\"")
-            if(SDLMIXER_VENDORED)
-                add_dependencies(${sdl3_mixer_target_name} FLAC)
+            if(NOT DEFINED SDLMIXER_DYNAMIC_FLAC_LIBFLAC)
+                target_include_directories(${sdl3_mixer_target_name} PRIVATE
+                    $<TARGET_PROPERTY:FLAC::FLAC,INCLUDE_DIRECTORIES>
+                    $<TARGET_PROPERTY:FLAC::FLAC,INTERFACE_INCLUDE_DIRECTORIES>
+                    $<TARGET_PROPERTY:FLAC::FLAC,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
+                )
+                if(SDLMIXER_VENDORED)
+                    add_dependencies(${sdl3_mixer_target_name} FLAC)
+                endif()
             endif()
+            target_get_dynamic_library(SDLMIXER_DYNAMIC_FLAC_LIBFLAC FLAC::FLAC)
+            message(STATUS "Dynamic libflac: ${SDLMIXER_DYNAMIC_FLAC_LIBFLAC}")
+            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "FLAC_DYNAMIC=\"${SDLMIXER_DYNAMIC_FLAC_LIBFLAC}\"")
         else()
             target_link_libraries(${sdl3_mixer_target_name} PRIVATE FLAC::FLAC)
         endif()
@@ -665,6 +685,9 @@ if(SDLMIXER_GME)
         if(NOT SDLMIXER_GME_SHARED)
             list(APPEND PC_LIBS -l$<TARGET_FILE_BASE_NAME:gme>)
         endif()
+    elseif(SDLMIXER_GME_SHARED AND DEFINED SDLMIXER_DYNAMIC_GME AND EXISTS "${SDLMIXER_DYNAMIC_GME}")
+        message(STATUS "${PROJECT_NAME}: Using libgme from CMake variable")
+        set(SDLMIXER_GME_ENABLED TRUE)
     else()
         find_package(gme ${required})
         if(gme_FOUND)
@@ -680,17 +703,19 @@ if(SDLMIXER_GME)
     if(SDLMIXER_GME_ENABLED)
         target_compile_definitions(${sdl3_mixer_target_name} PRIVATE DECODER_GME)
         if(SDLMIXER_GME_SHARED)
-            target_include_directories(${sdl3_mixer_target_name} PRIVATE
-                $<TARGET_PROPERTY:gme::gme,INCLUDE_DIRECTORIES>
-                $<TARGET_PROPERTY:gme::gme,INTERFACE_INCLUDE_DIRECTORIES>
-                $<TARGET_PROPERTY:gme::gme,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
-            )
-            target_get_dynamic_library(dynamic_gme gme::gme)
-            message(STATUS "Dynamic libgme: ${dynamic_gme}")
-            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "GME_DYNAMIC=\"${dynamic_gme}\"")
-            if(SDLMIXER_VENDORED)
-                add_dependencies(${sdl3_mixer_target_name} gme::gme)
+            if(NOT DEFINED SDLMIXER_DYNAMIC_GME)
+                target_include_directories(${sdl3_mixer_target_name} PRIVATE
+                    $<TARGET_PROPERTY:gme::gme,INCLUDE_DIRECTORIES>
+                    $<TARGET_PROPERTY:gme::gme,INTERFACE_INCLUDE_DIRECTORIES>
+                    $<TARGET_PROPERTY:gme::gme,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
+                )
+                if(SDLMIXER_VENDORED)
+                  add_dependencies(${sdl3_mixer_target_name} gme::gme)
+                endif()
             endif()
+            target_get_dynamic_library(SDLMIXER_DYNAMIC_GME gme::gme)
+            message(STATUS "Dynamic libgme: ${SDLMIXER_DYNAMIC_GME}")
+            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "GME_DYNAMIC=\"${SDLMIXER_DYNAMIC_GME}\"")
         else()
             target_link_libraries(${sdl3_mixer_target_name} PRIVATE gme::gme)
         endif()
@@ -738,6 +763,9 @@ if(SDLMIXER_MOD_XMP)
             else()
                 message(${fatal_error} "libxmp-lite NOT found")
             endif()
+        elseif(SDLMIXER_MOD_XMP_SHARED AND DEFINED SDLMIXER_DYNAMIC_MOD_XMP AND EXISTS "${SDLMIXER_DYNAMIC_MOD_XMP}")
+            message(STATUS "${PROJECT_NAME}: Using libxmp from CMake variable")
+            set(SDLMIXER_MOD_XMP_ENABLED TRUE)
         else()
             find_package(libxmp ${required})
             if(libxmp_FOUND)
@@ -762,17 +790,21 @@ if(SDLMIXER_MOD_XMP)
     if(SDLMIXER_MOD_XMP_ENABLED)
         target_compile_definitions(${sdl3_mixer_target_name} PRIVATE DECODER_MOD_XMP)
         if(SDLMIXER_MOD_XMP_SHARED)
-            target_include_directories(${sdl3_mixer_target_name} PRIVATE
-                $<TARGET_PROPERTY:${tgt_xmp},INCLUDE_DIRECTORIES>
-                $<TARGET_PROPERTY:${tgt_xmp},INTERFACE_INCLUDE_DIRECTORIES>
-                $<TARGET_PROPERTY:${tgt_xmp},INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
-            )
-            target_get_dynamic_library(dynamic_xmp ${tgt_xmp})
-            message(STATUS "Dynamic ${xmp_name}: ${dynamic_xmp}")
-            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "XMP_DYNAMIC=\"${dynamic_xmp}\"")
-            if(SDLMIXER_VENDORED)
-                add_dependencies(${sdl3_mixer_target_name} ${tgt_xmp})
+            if(NOT DEFINED SDLMIXER_DYNAMIC_MOD_XMP)
+                target_include_directories(${sdl3_mixer_target_name} PRIVATE
+                    $<TARGET_PROPERTY:${tgt_xmp},INCLUDE_DIRECTORIES>
+                    $<TARGET_PROPERTY:${tgt_xmp},INTERFACE_INCLUDE_DIRECTORIES>
+                    $<TARGET_PROPERTY:${tgt_xmp},INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
+                )
+                if(SDLMIXER_VENDORED)
+                  add_dependencies(${sdl3_mixer_target_name} ${tgt_xmp})
+                endif()
+            else()
+                set(tgt_xmp dont_care)
             endif()
+            target_get_dynamic_library(SDLMIXER_DYNAMIC_MOD_XMP ${tgt_xmp})
+            message(STATUS "Dynamic ${xmp_name}: ${SDLMIXER_DYNAMIC_MOD_XMP}")
+            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "XMP_DYNAMIC=\"${SDLMIXER_DYNAMIC_MOD_XMP}\"")
         else()
             target_link_libraries(${sdl3_mixer_target_name} PRIVATE ${tgt_xmp})
         endif()
@@ -812,6 +844,9 @@ if(SDLMIXER_MP3_MPG123)
         if(NOT SDLMIXER_MP3_MPG123_SHARED)
             list(APPEND PC_LIBS -l$<TARGET_FILE_BASE_NAME:MPG123::mpg123>)
         endif()
+    elseif(SDLMIXER_MP3_MPG123_SHARED AND DEFINED SDLMIXER_DYNAMIC_MP3_MPG123 AND EXISTS "${SDLMIXER_DYNAMIC_MP3_MPG123}")
+        message(STATUS "${PROJECT_NAME}: Using mpg123 from CMake variable")
+        set(SDLMIXER_MP3_MPG123_ENABLED TRUE)
     else()
         find_package(mpg123 ${required})
         if(mpg123_FOUND)
@@ -827,17 +862,19 @@ if(SDLMIXER_MP3_MPG123)
     if(SDLMIXER_MP3_MPG123_ENABLED)
         target_compile_definitions(${sdl3_mixer_target_name} PRIVATE DECODER_MP3_MPG123)
         if(SDLMIXER_MP3_MPG123_SHARED)
-            target_include_directories(${sdl3_mixer_target_name} PRIVATE
-                $<TARGET_PROPERTY:MPG123::libmpg123,INCLUDE_DIRECTORIES>
-                $<TARGET_PROPERTY:MPG123::libmpg123,INTERFACE_INCLUDE_DIRECTORIES>
-                $<TARGET_PROPERTY:MPG123::libmpg123,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
-            )
-            target_get_dynamic_library(dynamic_mpg123 MPG123::libmpg123)
-            message(STATUS "Dynamic mpg123: ${dynamic_mpg123}")
-            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "MPG123_DYNAMIC=\"${dynamic_mpg123}\"")
-            if(SDLMIXER_VENDORED)
-                add_dependencies(${sdl3_mixer_target_name} MPG123::libmpg123)
+            if(NOT DEFINED SDLMIXER_DYNAMIC_MP3_MPG123)
+                target_include_directories(${sdl3_mixer_target_name} PRIVATE
+                    $<TARGET_PROPERTY:MPG123::libmpg123,INCLUDE_DIRECTORIES>
+                    $<TARGET_PROPERTY:MPG123::libmpg123,INTERFACE_INCLUDE_DIRECTORIES>
+                    $<TARGET_PROPERTY:MPG123::libmpg123,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
+                )
+                if(SDLMIXER_VENDORED)
+                  add_dependencies(${sdl3_mixer_target_name} MPG123::libmpg123)
+                endif()
             endif()
+            target_get_dynamic_library(SDLMIXER_DYNAMIC_MP3_MPG123 MPG123::libmpg123)
+            message(STATUS "Dynamic mpg123: ${SDLMIXER_DYNAMIC_MP3_MPG123}")
+            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "MPG123_DYNAMIC=\"${SDLMIXER_DYNAMIC_MP3_MPG123}\"")
         else()
             target_link_libraries(${sdl3_mixer_target_name} PRIVATE MPG123::libmpg123)
         endif()
@@ -856,6 +893,9 @@ if(SDLMIXER_MIDI_FLUIDSYNTH)
         message(STATUS "Using vendored FluidSynth")
         message(${fatal_error} "FluidSynth is not vendored.")
         set(SDLMIXER_MIDI_FLUIDSYNTH_ENABLED FALSE)
+    elseif(SDLMIXER_MIDI_FLUIDSYNTH_SHARED AND DEFINED SDLMIXER_DYNAMIC_MIDI_FLUIDSYNTH AND EXISTS "${SDLMIXER_DYNAMIC_MIDI_FLUIDSYNTH}")
+        message(STATUS "${PROJECT_NAME}: Using FluidSynth from CMake variable")
+        set(SDLMIXER_MIDI_FLUIDSYNTH_ENABLED TRUE)
     else()
         find_package(FluidSynth "2.2.0" ${required})
         if(FluidSynth_FOUND)
@@ -871,17 +911,19 @@ if(SDLMIXER_MIDI_FLUIDSYNTH)
     if(SDLMIXER_MIDI_FLUIDSYNTH_ENABLED)
         target_compile_definitions(${sdl3_mixer_target_name} PRIVATE DECODER_MIDI_FLUIDSYNTH)
         if(SDLMIXER_MIDI_FLUIDSYNTH_SHARED)
-            target_include_directories(${sdl3_mixer_target_name} PRIVATE
-                $<TARGET_PROPERTY:FluidSynth::libfluidsynth,INCLUDE_DIRECTORIES>
-                $<TARGET_PROPERTY:FluidSynth::libfluidsynth,INTERFACE_INCLUDE_DIRECTORIES>
-                $<TARGET_PROPERTY:FluidSynth::libfluidsynth,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
-            )
-            target_get_dynamic_library(dynamic_fluidsynth FluidSynth::libfluidsynth)
-            message(STATUS "Dynamic fluidsynth: ${dynamic_fluidsynth}")
-            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "FLUIDSYNTH_DYNAMIC=\"${dynamic_fluidsynth}\"")
-            if(SDLMIXER_VENDORED)
-                add_dependencies(${sdl3_mixer_target_name} FluidSynth::libfluidsynth)
+            if(NOT DEFINED SDLMIXER_DYNAMIC_MIDI_FLUIDSYNTH)
+                target_include_directories(${sdl3_mixer_target_name} PRIVATE
+                    $<TARGET_PROPERTY:FluidSynth::libfluidsynth,INCLUDE_DIRECTORIES>
+                    $<TARGET_PROPERTY:FluidSynth::libfluidsynth,INTERFACE_INCLUDE_DIRECTORIES>
+                    $<TARGET_PROPERTY:FluidSynth::libfluidsynth,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
+                )
+                if(SDLMIXER_VENDORED)
+                  add_dependencies(${sdl3_mixer_target_name} FluidSynth::libfluidsynth)
+                endif()
             endif()
+            target_get_dynamic_library(SDLMIXER_DYNAMIC_MIDI_FLUIDSYNTH FluidSynth::libfluidsynth)
+            message(STATUS "Dynamic fluidsynth: ${SDLMIXER_DYNAMIC_MIDI_FLUIDSYNTH}")
+            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "FLUIDSYNTH_DYNAMIC=\"${SDLMIXER_DYNAMIC_MIDI_FLUIDSYNTH}\"")
         else()
             target_link_libraries(${sdl3_mixer_target_name} PRIVATE FluidSynth::libfluidsynth)
         endif()
@@ -960,6 +1002,9 @@ if(SDLMIXER_WAVPACK)
             list(APPEND PC_LIBS -l$<TARGET_FILE_BASE_NAME:WavPack::WavPack>)
         endif()
         target_compile_definitions(${sdl3_mixer_target_name} PRIVATE HAVE_WAVPACK_H)
+    elseif(SDLMIXER_WAVPACK_SHARED AND DEFINED SDLMIXER_DYNAMIC_WAVPACK AND EXISTS "${SDLMIXER_DYNAMIC_WAVPACK}")
+        message(STATUS "${PROJECT_NAME}: Using wavpack from CMake variable")
+        set(SDLMIXER_WAVPACK_ENABLED TRUE)
     else()
         find_package(wavpack ${required})
         if(wavpack_FOUND)
@@ -978,17 +1023,19 @@ if(SDLMIXER_WAVPACK)
           target_compile_definitions(${sdl3_mixer_target_name} PRIVATE DECODER_WAVPACK_DSD)
         endif()
         if(SDLMIXER_WAVPACK_SHARED)
-            target_include_directories(${sdl3_mixer_target_name} PRIVATE
-                $<TARGET_PROPERTY:WavPack::WavPack,INCLUDE_DIRECTORIES>
-                $<TARGET_PROPERTY:WavPack::WavPack,INTERFACE_INCLUDE_DIRECTORIES>
-                $<TARGET_PROPERTY:WavPack::WavPack,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
-            )
-            target_get_dynamic_library(dynamic_wavpack WavPack::WavPack)
-            message(STATUS "Dynamic WavPack: ${dynamic_wavpack}")
-            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "WAVPACK_DYNAMIC=\"${dynamic_wavpack}\"")
-            if(SDLMIXER_VENDORED)
-                add_dependencies(${sdl3_mixer_target_name} WavPack::WavPack)
+            if(NOT DEFINED SDLMIXER_DYNAMIC_WAVPACK)
+                target_include_directories(${sdl3_mixer_target_name} PRIVATE
+                    $<TARGET_PROPERTY:WavPack::WavPack,INCLUDE_DIRECTORIES>
+                    $<TARGET_PROPERTY:WavPack::WavPack,INTERFACE_INCLUDE_DIRECTORIES>
+                    $<TARGET_PROPERTY:WavPack::WavPack,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
+                )
+                if(SDLMIXER_VENDORED)
+                    add_dependencies(${sdl3_mixer_target_name} WavPack::WavPack)
+                endif()
             endif()
+            target_get_dynamic_library(SDLMIXER_DYNAMIC_WAVPACK WavPack::WavPack)
+            message(STATUS "Dynamic WavPack: ${SDLMIXER_DYNAMIC_WAVPACK}")
+            target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "WAVPACK_DYNAMIC=\"${SDLMIXER_DYNAMIC_WAVPACK}\"")
         else()
             target_link_libraries(${sdl3_mixer_target_name} PRIVATE WavPack::WavPack)
         endif()

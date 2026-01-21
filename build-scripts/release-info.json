@@ -56,7 +56,12 @@
         "-DSDLMIXER_WAVPACK=ON",
         "-DSDLMIXER_RELOCATABLE=ON",
         "-DSDLMIXER_TESTS=OFF",
-        "-DSDLMIXER_VENDORED=ON"
+        "-DSDLMIXER_VENDORED=OFF",
+        "-DCMAKE_C_FLAGS=-I@<@PROJECT_ROOT@>@/VisualC/external/include",
+        "-DSDLMIXER_DYNAMIC_GME=@<@PROJECT_ROOT@>@/VisualC/external/optional/@<@ARCH@>@/libgme.dll",
+        "-DSDLMIXER_DYNAMIC_WAVPACK=@<@PROJECT_ROOT@>@/VisualC/external/optional/@<@ARCH@>@/libwavpack-1.dll",
+        "-DSDLMIXER_DYNAMIC_OPUSFILE=@<@PROJECT_ROOT@>@/VisualC/external/optional/@<@ARCH@>@/libopusfile-0.dll",
+        "-DSDLMIXER_DYNAMIC_MOD_XMP=@<@PROJECT_ROOT@>@/VisualC/external/optional/@<@ARCH@>@/libxmp.dll"
       ],
       "shared-static": "args"
     },
