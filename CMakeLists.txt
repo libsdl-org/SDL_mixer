@@ -810,7 +810,7 @@ if(SDLMIXER_MP3_MPG123)
                 $<TARGET_PROPERTY:MPG123::libmpg123,INTERFACE_SYSTEM_INCLUDE_DIRECTORIES>
             )
             target_get_dynamic_library(dynamic_mpg123 MPG123::libmpg123)
-            message(STATUS "Dynamic mpg123}: ${dynamic_mpg123}")
+            message(STATUS "Dynamic mpg123: ${dynamic_mpg123}")
             target_compile_definitions(${sdl3_mixer_target_name} PRIVATE "MPG123_DYNAMIC=\"${dynamic_mpg123}\"")
             if(SDLMIXER_VENDORED)
                 add_dependencies(${sdl3_mixer_target_name} MPG123::libmpg123)
