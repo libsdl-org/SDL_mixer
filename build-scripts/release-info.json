@@ -53,7 +53,7 @@
         "-DSDLMIXER_WAVE=ON",
         "-DSDLMIXER_WAVPACK=OFF",
         "-DSDLMIXER_RELOCATABLE=ON",
-        "-DSDLMIXER_SAMPLES=OFF",
+        "-DSDLMIXER_TESTS=OFF",
         "-DSDLMIXER_VENDORED=ON"
       ],
       "shared-static": "args"
@@ -153,7 +153,7 @@
         "-DSDLMIXER_WAVE=ON",
         "-DSDLMIXER_WAVPACK=ON",
         "-DSDLMIXER_RELOCATABLE=ON",
-        "-DSDLMIXER_SAMPLES=OFF",
+        "-DSDLMIXER_TESTS=OFF",
         "-DSDLMIXER_DEPS_SHARED=ON",
         "-DSDLMIXER_VENDORED=ON"
       ],
@@ -258,7 +258,7 @@
         "-DSDLMIXER_VORBIS_VORBISFILE=OFF",
         "-DSDLMIXER_WAVE=ON",
         "-DSDLMIXER_WAVPACK=OFF",
-        "-DSDLMIXER_SAMPLES=OFF",
+        "-DSDLMIXER_TESTS=OFF",
         "-DSDLMIXER_VENDORED=ON"
       ]
     },
