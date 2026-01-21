@@ -168,12 +168,12 @@
           "bin/opus-0.dll",
           "bin/opusfile-0.dll",
           "bin/libwavpack-1.dll",
-          "VisualC/external/optional/x86/LICENSE.gme.txt",
-          "VisualC/external/optional/x86/LICENSE.ogg-vorbis.txt",
-          "VisualC/external/optional/x86/LICENSE.opus.txt",
-          "VisualC/external/optional/x86/LICENSE.opusfile.txt",
-          "VisualC/external/optional/x86/LICENSE.wavpack.txt",
-          "VisualC/external/optional/x86/LICENSE.xmp.txt"
+          "share/licenses/SDL3_mixer/optional/LICENSE.gme.txt",
+          "share/licenses/SDL3_mixer/optional/LICENSE.ogg-vorbis.txt",
+          "share/licenses/SDL3_mixer/optional/LICENSE.opus.txt",
+          "share/licenses/SDL3_mixer/optional/LICENSE.opusfile.txt",
+          "share/licenses/SDL3_mixer/optional/LICENSE.wavpack.txt",
+          "share/licenses/SDL3_mixer/optional/LICENSE.xmp.txt"
         ]
       },
       "files-devel": {
@@ -189,12 +189,12 @@
           "bin/opus-0.dll",
           "bin/opusfile-0.dll",
           "bin/libwavpack-1.dll",
-          "VisualC/external/optional/x86/LICENSE.gme.txt",
-          "VisualC/external/optional/x86/LICENSE.ogg-vorbis.txt",
-          "VisualC/external/optional/x86/LICENSE.opus.txt",
-          "VisualC/external/optional/x86/LICENSE.opusfile.txt",
-          "VisualC/external/optional/x86/LICENSE.wavpack.txt",
-          "VisualC/external/optional/x86/LICENSE.xmp.txt"
+          "share/licenses/SDL3_mixer/optional/LICENSE.gme.txt",
+          "share/licenses/SDL3_mixer/optional/LICENSE.ogg-vorbis.txt",
+          "share/licenses/SDL3_mixer/optional/LICENSE.opus.txt",
+          "share/licenses/SDL3_mixer/optional/LICENSE.opusfile.txt",
+          "share/licenses/SDL3_mixer/optional/LICENSE.wavpack.txt",
+          "share/licenses/SDL3_mixer/optional/LICENSE.xmp.txt"
         ]
       }
     },
