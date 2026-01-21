@@ -139,8 +139,10 @@ option(SDLMIXER_MOD_XMP "Support loading MOD audio via libxmp" ON)
 cmake_dependent_option(SDLMIXER_MOD_XMP_LITE "Use libxmp-lite instead of libxmp" OFF "SDLMIXER_MOD_XMP;NOT SDLMIXER_VENDORED" OFF)
 cmake_dependent_option(SDLMIXER_MOD_XMP_SHARED "Dynamically load libxmp(-lite)" "${SDLMIXER_DEPS_SHARED}" SDLMIXER_MOD_XMP OFF)
 
-option(SDLMIXER_MP3_DRMP3 "Support loading MP3 audio via dr_mp3" ON)
-option(SDLMIXER_MP3_MPG123 "Support loading MP3 audio via libmpg123" ON)
+option(SDLMIXER_MP3 "Enable MP3 audio" ON)
+
+cmake_dependent_option(SDLMIXER_MP3_DRMP3 "Support loading MP3 audio via dr_mp3" ON SDLMIXER_MP3 OFF)
+cmake_dependent_option(SDLMIXER_MP3_MPG123 "Support loading MP3 audio via libmpg123" ON SDLMIXER_MP3 OFF)
 cmake_dependent_option(SDLMIXER_MP3_MPG123_SHARED "Dynamically load mpg123" "${SDLMIXER_DEPS_SHARED}" SDLMIXER_MP3_MPG123 OFF)
 
 cmake_dependent_option(SDLMIXER_MIDI_FLUIDSYNTH "Support FluidSynth MIDI output" ON "NOT SDLMIXER_VENDORED" OFF)
