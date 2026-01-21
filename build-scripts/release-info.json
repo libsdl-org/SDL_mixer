@@ -167,7 +167,13 @@
           "bin/ogg-0.dll",
           "bin/opus-0.dll",
           "bin/opusfile-0.dll",
-          "bin/libwavpack-1.dll"
+          "bin/libwavpack-1.dll",
+          "VisualC/external/optional/x86/LICENSE.gme.txt",
+          "VisualC/external/optional/x86/LICENSE.ogg-vorbis.txt",
+          "VisualC/external/optional/x86/LICENSE.opus.txt",
+          "VisualC/external/optional/x86/LICENSE.opusfile.txt",
+          "VisualC/external/optional/x86/LICENSE.wavpack.txt",
+          "VisualC/external/optional/x86/LICENSE.xmp.txt"
         ]
       },
       "files-devel": {
@@ -182,7 +188,13 @@
           "bin/ogg-0.dll",
           "bin/opus-0.dll",
           "bin/opusfile-0.dll",
-          "bin/libwavpack-1.dll"
+          "bin/libwavpack-1.dll",
+          "VisualC/external/optional/x86/LICENSE.gme.txt",
+          "VisualC/external/optional/x86/LICENSE.ogg-vorbis.txt",
+          "VisualC/external/optional/x86/LICENSE.opus.txt",
+          "VisualC/external/optional/x86/LICENSE.opusfile.txt",
+          "VisualC/external/optional/x86/LICENSE.wavpack.txt",
+          "VisualC/external/optional/x86/LICENSE.xmp.txt"
         ]
       }
     },
