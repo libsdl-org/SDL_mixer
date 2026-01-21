@@ -135,7 +135,9 @@ cmake_dependent_option(SDLMIXER_FLAC_DRFLAC "Enable FLAC audio using drflac" ON 
 option(SDLMIXER_GME "Support loading GME audio via game-music-emu" ON)
 option(SDLMIXER_GME_SHARED "Dynamically load libgme" "${SDLMIXER_DEPS_SHARED}")
 
-option(SDLMIXER_MOD_XMP "Support loading MOD audio via libxmp" ON)
+option(SDLMIXER_MOD "Support MOD audio" ON)
+
+cmake_dependent_option(SDLMIXER_MOD_XMP "Support loading MOD audio via libxmp" ON SDLMIXER_MOD OFF)
 cmake_dependent_option(SDLMIXER_MOD_XMP_LITE "Use libxmp-lite instead of libxmp" OFF "SDLMIXER_MOD_XMP;NOT SDLMIXER_VENDORED" OFF)
 cmake_dependent_option(SDLMIXER_MOD_XMP_SHARED "Dynamically load libxmp(-lite)" "${SDLMIXER_DEPS_SHARED}" SDLMIXER_MOD_XMP OFF)
 
