@@ -572,6 +572,9 @@ jobs:
           mkdir -p /tmp/tardir
           tar -C /tmp/tardir -v -x -f "${{ github.workspace }}/${{ needs.src.outputs.src-tar-gz }}"
           echo "path=/tmp/tardir/${{ needs.src.outputs.project }}-${{ needs.src.outputs.version }}" >>$GITHUB_OUTPUT
+      - name: 'Download external dependencies'
+        run: |
+          sh "${{ steps.tar.outputs.path }}/external/download.sh" --depth 1
       - name: 'Build MinGW binary archives'
         id: releaser
         env:
