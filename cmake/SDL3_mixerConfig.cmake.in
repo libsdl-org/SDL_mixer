@@ -8,7 +8,7 @@ set_package_properties(SDL3_mixer PROPERTIES
     DESCRIPTION "SDL_mixer is a sample multi-channel audio mixer library"
 )
 
-set(SDL3_mixer_FOUND                ON)
+set(SDL3_mixer_FOUND               ON)
 
 set(SDLMIXER_VENDORED              @SDLMIXER_VENDORED@)
 
@@ -28,7 +28,6 @@ set(SDLMIXER_MP3_MPG123            @SDLMIXER_MP3_MPG123_ENABLED@)
 
 set(SDLMIXER_MIDI                  @SDLMIXER_MIDI_ENABLED@)
 set(SDLMIXER_MIDI_FLUIDSYNTH       @SDLMIXER_MIDI_FLUIDSYNTH_ENABLED@)
-set(SDLMIXER_MIDI_NATIVE           @SDLMIXER_MIDI_NATIVE_ENABLED@)
 set(SDLMIXER_MIDI_TIMIDITY         @SDLMIXER_MIDI_TIMIDITY_ENABLED@)
 
 set(SDLMIXER_OPUS                  @SDLMIXER_OPUS_ENABLED@)
