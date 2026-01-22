@@ -222,7 +222,7 @@
       ],
       "cmake": [
         "build-scripts/pkg-support/msvc/cmake/SDL3_mixerConfig.cmake.in:SDL3_mixerConfig.cmake",
-        "build-scripts/pkg-support/msvc/cmake/SDL3_mixerConfigVersion.cmake.in:SDL3_mixerConvigVersion.cmake",
+        "build-scripts/pkg-support/msvc/cmake/SDL3_mixerConfigVersion.cmake.in:SDL3_mixerConfigVersion.cmake",
         "cmake/sdlcpu.cmake"
       ],
       "include/SDL3_mixer": [
