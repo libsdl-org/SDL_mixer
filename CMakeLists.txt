@@ -117,6 +117,7 @@ endif()
 
 option(SDLMIXER_TESTS "Build unit tests?" OFF)
 option(SDLMIXER_TESTS_INSTALL "Install unit tests?" OFF)
+option(SDLMIXER_EXAMPLES "Build the examples directory" OFF)
 
 # These are implemented in SDL_mixer itself, not using a third-party library.
 option(SDLMIXER_AIFF "Enable AIFF audio" ON)
@@ -1201,6 +1202,13 @@ endif()
 
 if(SDLMIXER_TESTS)
   add_subdirectory(test)
+endif()
+
+##### Examples subproject (must appear after the install/uninstall targets) #####
+
+if(SDLMIXER_EXAMPLES)
+  set(HAVE_EXAMPLES ON)
+  add_subdirectory(examples)
 endif()
 
 set(available_deps)
