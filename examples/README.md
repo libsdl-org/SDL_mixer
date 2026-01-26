@@ -73,10 +73,10 @@ everything consistent. You can ignore it.
   Arcade Music Loop.wav by joshuaempyre ( https://www.empyreanma.com/welcome )
   (We converted this to MP3 format.)
   Original: https://freesound.org/s/251461/
-  License: https://creativecommons.org/licenses/by/3.0/
+  License: https://creativecommons.org/licenses/by/4.0/
 
 - sword.wav:
   sword04.wav by Erdie
   Original: https://freesound.org/s/27858/
-  License: https://creativecommons.org/licenses/by/3.0/
+  License: https://creativecommons.org/licenses/by/4.0/
 
