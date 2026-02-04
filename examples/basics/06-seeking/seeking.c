@@ -96,7 +96,7 @@ static void seek_audio(float x, float y)
     if (SDL_PointInRectFloat(&pt, &progressbar)) {
         /* seek to a new position in the track, based on where the mouse clicked/dragged in the progress bar. */
         const float pct = (pt.x - progressbar.x) / progressbar.w;
-        MIX_SetTrackPlaybackPosition(track, (Sint64) ((float) MIX_GetAudioDuration(audio)) * pct);
+        MIX_SetTrackPlaybackPosition(track, (Sint64) ((float) MIX_GetAudioDuration(audio) * pct));
     }
 }
 
