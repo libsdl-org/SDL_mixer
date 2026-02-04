@@ -115,9 +115,10 @@ if(SDLMIXER_STRICT)
   set(fatal_error "FATAL_ERROR")
 endif()
 
-option(SDLMIXER_TESTS "Build unit tests?" OFF)
-option(SDLMIXER_TESTS_INSTALL "Install unit tests?" OFF)
-option(SDLMIXER_EXAMPLES "Build the examples directory" OFF)
+option(SDLMIXER_TESTS "Build unit tests?" ${SDLMIXER_ROOTPROJECT})
+cmake_dependent_option(SDLMIXER_TESTS_INSTALL "Install unit tests?" ${SDLMIXER_ROOTPROJECT} "SDLMIXER_INSTALL;SDLMIXER_TESTS" OFF)
+option(SDLMIXER_EXAMPLES "Build the examples directory" ${SDLMIXER_ROOTPROJECT})
+cmake_dependent_option(SDLMIXER_EXAMPLES_INSTALL "Install SDL3_mixer examples" ${SDLMIXER_ROOTPROJECT} "SDLMIXER_INSTALL;SDLMIXER_EXAMPLES" OFF)
 
 # These are implemented in SDL_mixer itself, not using a third-party library.
 option(SDLMIXER_AIFF "Enable AIFF audio" ON)

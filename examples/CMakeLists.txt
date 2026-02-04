@@ -7,19 +7,6 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../cmake")
 include(CheckIncludeFile)
 include(CheckStructHasMember)
 include(CMakePushCheckState)
-# !!! FIXME: @madebr, do we need this, or was this only needed in SDL itself?
-#include(sdlcompilers)
-
-set(SDLMIXER_EXAMPLES_LINK_SHARED On)  # !!! FIXME: save me, @madebr, this needs plumbing through the main cmake file.
-
-if(SDLMIXER_EXAMPLES_LINK_SHARED)
-    set(sdl_name_component SDL3-shared)
-    set(sdlmixer_name_component SDL3_mixer-shared)
-else()
-    set(sdl_name_component SDL3-static)
-    set(sdlmixer_name_component SDL3_mixer-static)
-endif()
-set(HAVE_EXAMPLES_LINK_SHARED "${SDLMIXER_EXAMPLES_LINK_SHARED}" PARENT_SCOPE)
 
 set(SDLMIXER_EXAMPLE_EXECUTABLES)
 
@@ -54,6 +41,8 @@ add_custom_target(copy-sdlmixer-example-resources
     DEPENDS "${RESOURCE_FILES_BINDIR}"
 )
 
+set(SDLMIXER_EXAMPLE_EXECUTABLES)
+
 macro(add_sdlmixer_example_executable TARGET)
     cmake_parse_arguments(AST "BUILD_DEPENDENT" "" "SOURCES;DATAFILES" ${ARGN})
     if(AST_UNPARSED_ARGUMENTS)
@@ -68,9 +57,6 @@ macro(add_sdlmixer_example_executable TARGET)
         add_executable(${TARGET} ${AST_SOURCES} ${AST_DATAFILES})
     endif()
 
-    # !!! FIXME: @madebr, do we need this, or was this only needed in SDL itself?
-    #SDL_AddCommonCompilerFlags(${TARGET})
-
     target_compile_definitions(${TARGET}
         PRIVATE
             $<TARGET_PROPERTY:${sdl3_mixer_target_name},COMPILE_DEFINITIONS>
@@ -79,7 +65,7 @@ macro(add_sdlmixer_example_executable TARGET)
 
     target_link_libraries(${TARGET} PRIVATE SDL3_mixer::SDL3_mixer SDL3::SDL3)
 
-    list(APPEND SDL_EXAMPLE_EXECUTABLES ${TARGET})
+    list(APPEND SDLMIXER_EXAMPLE_EXECUTABLES ${TARGET})
     if(AST_DATAFILES)
         if(PSP OR PS2)
             add_custom_command(TARGET ${TARGET} POST_BUILD
@@ -160,7 +146,7 @@ add_sdlmixer_example_executable(basics-seeking SOURCES basics/06-seeking/seeking
 
 if(PSP)
     # Build EBOOT files if building for PSP
-    foreach(APP ${SDL_EXAMPLE_EXECUTABLES})
+    foreach(APP ${SDLMIXER_EXAMPLE_EXECUTABLES})
         create_pbp_file(
             TARGET          ${APP}
             TITLE           SDL-${APP}
@@ -174,7 +160,7 @@ endif()
 
 if(RISCOS)
     set(SDL_EXAMPLE_EXECUTABLES_AIF)
-    foreach(APP ${SDL_EXAMPLE_EXECUTABLES})
+    foreach(APP ${SDLMIXER_EXAMPLE_EXECUTABLES})
         set_property(TARGET ${APP} APPEND_STRING PROPERTY LINK_FLAGS " -static")
         add_custom_command(
             OUTPUT ${APP},ff8
@@ -186,160 +172,25 @@ if(RISCOS)
     endforeach()
 endif()
 
-if(SDL_INSTALL_EXAMPLES)
+if(SDLMIXER_EXAMPLES_INSTALL)
     if(RISCOS)
         install(
             FILES ${SDL_EXAMPLE_EXECUTABLES_AIF}
-            DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/installed-examples/SDL3
+            DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/installed-examples/SDL3_mixer
         )
     else()
         install(
-            TARGETS ${SDL_EXAMPLE_EXECUTABLES}
-            DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/installed-examples/SDL3
+            TARGETS ${SDLMIXER_EXAMPLE_EXECUTABLES}
+            DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/installed-examples/SDL3_mixer
         )
     endif()
     if(MSVC)
-        foreach(example IN LISTS SDL_EXAMPLE_EXECUTABLES)
-            SDL_install_pdb(${example} "${CMAKE_INSTALL_LIBEXECDIR}/installed-examples/SDL3")
+        foreach(example IN LISTS SDLMIXER_EXAMPLE_EXECUTABLES)
+            SDL_install_pdb(${example} "${CMAKE_INSTALL_LIBEXECDIR}/installed-examples/SDL3_mixer")
         endforeach()
     endif()
     install(
         FILES ${RESOURCE_FILES}
-        DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/installed-examples/SDL3
+        DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/installed-examples/SDL3_mixer
     )
-endif()
-
-if(ANDROID AND TARGET SDL3::Jar)
-    list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../cmake/android")
-    find_package(SdlAndroid MODULE)
-    if(SdlAndroid_FOUND)
-        set(apks "")
-        set(packages "")
-
-        include(SdlAndroidFunctions)
-        sdl_create_android_debug_keystore(SDL_example-debug-keystore)
-        sdl_android_compile_resources(SDL_example-resources RESFOLDER ${CMAKE_CURRENT_SOURCE_DIR}/../test/android/res)
-        add_custom_target(sdl-example-apks)
-        foreach(EXAMPLE ${SDL_EXAMPLE_EXECUTABLES})
-            set(ANDROID_MANIFEST_APP_NAME "${EXAMPLE}")
-            set(ANDROID_MANIFEST_LABEL "${EXAMPLE}")
-            set(ANDROID_MANIFEST_LIB_NAME "$<TARGET_FILE_BASE_NAME:${EXAMPLE}>")
-            set(ANDROID_MANIFEST_PACKAGE "org.libsdl.sdl.example.${EXAMPLE}")
-            set(generated_manifest_path "${CMAKE_CURRENT_BINARY_DIR}/android/${EXAMPLE}-src/AndroidManifest.xml")
-            string(REPLACE "." "/" JAVA_PACKAGE_DIR "${ANDROID_MANIFEST_PACKAGE}")
-            set(GENERATED_SRC_FOLDER "${CMAKE_CURRENT_BINARY_DIR}/android/${EXAMPLE}-src")
-            set(GENERATED_RES_FOLDER "${GENERATED_SRC_FOLDER}/res")
-            set(JAVA_PACKAGE_DIR "${GENERATED_SRC_FOLDER}/${JAVA_PACKAGE_DIR}")
-            configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../test/android/cmake/SDLEntryTestActivity.java.cmake "${JAVA_PACKAGE_DIR}/SDLEntryTestActivity.java" @ONLY)
-            configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../test/android/cmake/SDLTestActivity.java.cmake "${JAVA_PACKAGE_DIR}/SDLTestActivity.java" @ONLY)
-            configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../test/android/cmake/res/values/strings.xml.cmake android/res/values/strings-${EXAMPLE}.xml @ONLY)
-            configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../test/android/cmake/res/xml/shortcuts.xml.cmake "${GENERATED_RES_FOLDER}/xml/shortcuts.xml" @ONLY)
-            configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../test/android/cmake/AndroidManifest.xml.cmake "${generated_manifest_path}" @ONLY)
-            file(GENERATE
-                OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/android/${EXAMPLE}-$<CONFIG>/res/values/strings.xml"
-                INPUT "${CMAKE_CURRENT_BINARY_DIR}/android/res/values/strings-${EXAMPLE}.xml"
-            )
-
-            sdl_android_compile_resources(${EXAMPLE}-resources
-                RESOURCES
-                    "${CMAKE_CURRENT_BINARY_DIR}/android/${EXAMPLE}-$<CONFIG>/res/values/strings.xml"
-                    "${GENERATED_RES_FOLDER}/xml/shortcuts.xml"
-            )
-
-            sdl_android_link_resources(${EXAMPLE}-apk-linked
-                MANIFEST "${generated_manifest_path}"
-                PACKAGE ${ANDROID_MANIFEST_PACKAGE}
-                RES_TARGETS SDL_example-resources ${EXAMPLE}-resources
-                TARGET_SDK_VERSION 31
-            )
-
-            set(CMAKE_JAVA_COMPILE_FLAGS "-encoding;utf-8")
-            set(classes_path "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${EXAMPLE}-java.dir/classes")
-            # Some CMake versions have a slow `cmake -E make_directory` implementation
-            if(NOT IS_DIRECTORY "${classes_path}")
-                execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory "${classes_path}")
-            endif()
-            set(OUT_JAR "${CMAKE_CURRENT_BINARY_DIR}/${EXAMPLE}.jar")
-            add_custom_command(
-                OUTPUT "${OUT_JAR}"
-                COMMAND ${CMAKE_COMMAND} -E rm -rf "${classes_path}"
-                COMMAND ${CMAKE_COMMAND} -E make_directory "${classes_path}"
-                COMMAND ${Java_JAVAC_EXECUTABLE}
-                    -source 1.8 -target 1.8
-                    -bootclasspath "$<TARGET_PROPERTY:SDL3::Jar,JAR_FILE>"
-                    "${JAVA_PACKAGE_DIR}/SDLEntryTestActivity.java"
-                    "${JAVA_PACKAGE_DIR}/SDLTestActivity.java"
-                    $<TARGET_PROPERTY:${EXAMPLE}-apk-linked,JAVA_R>
-                    -cp "$<TARGET_PROPERTY:SDL3::Jar,JAR_FILE>:${SDL_ANDROID_PLATFORM_ANDROID_JAR}"
-                    -d "${classes_path}"
-                COMMAND ${Java_JAR_EXECUTABLE} cf "${OUT_JAR}" -C "${classes_path}" .
-                DEPENDS $<TARGET_PROPERTY:${EXAMPLE}-apk-linked,OUTPUTS> "$<TARGET_PROPERTY:SDL3::Jar,JAR_FILE>" "${JAVA_PACKAGE_DIR}/SDLTestActivity.java" "${JAVA_PACKAGE_DIR}/SDLEntryTestActivity.java"
-            )
-            add_custom_target(${EXAMPLE}-jar DEPENDS "${OUT_JAR}")
-            set_property(TARGET ${EXAMPLE}-jar PROPERTY OUTPUT "${OUT_JAR}")
-
-            set(dexworkdir "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${EXAMPLE}-dex.dir")
-            # Some CMake versions have a slow `cmake -E make_directory` implementation
-            if(NOT IS_DIRECTORY "${dexworkdir}")
-                execute_process(COMMAND "${CMAKE_COMMAND}" -E make_directory "${dexworkdir}")
-            endif()
-            set(classes_dex_base_name "classes.dex")
-            set(classes_dex "${dexworkdir}/${classes_dex_base_name}")
-            add_custom_command(
-                OUTPUT "${classes_dex}"
-                COMMAND SdlAndroid::d8
-                    $<TARGET_PROPERTY:${EXAMPLE}-jar,OUTPUT>
-                    $<TARGET_PROPERTY:SDL3::Jar,JAR_FILE>
-                    --lib "${SDL_ANDROID_PLATFORM_ANDROID_JAR}"
-                    --output "${dexworkdir}"
-                DEPENDS $<TARGET_PROPERTY:${EXAMPLE}-jar,OUTPUT> $<TARGET_PROPERTY:SDL3::Jar,JAR_FILE>
-            )
-            add_custom_target(${EXAMPLE}-dex DEPENDS "${classes_dex}")
-            set_property(TARGET ${EXAMPLE}-dex PROPERTY OUTPUT "${classes_dex}")
-            set_property(TARGET ${EXAMPLE}-dex PROPERTY OUTPUT_BASE_NAME "${classes_dex_base_name}")
-
-            sdl_add_to_apk_unaligned(${EXAMPLE}-unaligned-apk
-                APK_IN ${EXAMPLE}-apk-linked
-                OUTDIR "${CMAKE_CURRENT_BINARY_DIR}/intermediates"
-                ASSETS ${RESOURCE_FILES}
-                NATIVE_LIBS SDL3::SDL3-shared ${EXAMPLE}
-                DEX ${EXAMPLE}-dex
-            )
-
-            sdl_apk_align(${EXAMPLE}-aligned-apk ${EXAMPLE}-unaligned-apk
-                OUTDIR "${CMAKE_CURRENT_BINARY_DIR}/intermediates"
-            )
-            sdl_apk_sign(${EXAMPLE}-apk ${EXAMPLE}-aligned-apk
-                KEYSTORE SDL_example-debug-keystore
-            )
-            add_dependencies(sdl-example-apks ${EXAMPLE}-apk)
-
-            if(TARGET SdlAndroid::adb)
-                add_custom_target(install-${EXAMPLE}
-                    COMMAND "${CMAKE_COMMAND}" -DACTION=install "-DAPKS=$<TARGET_PROPERTY:${EXAMPLE}-apk,OUTPUT>" -P "${SDL3_SOURCE_DIR}/cmake/android/SdlAndroidScript.cmake"
-                    DEPENDS "${EXAMPLE}-apk"
-                )
-                add_custom_target(start-${EXAMPLE}
-                    COMMAND "${ADB_BIN}" shell am start-activity -S "${ANDROID_MANIFEST_PACKAGE}/.SDLTestActivity"
-                )
-                add_custom_target(build-install-start-${EXAMPLE}
-                    COMMAND "${CMAKE_COMMAND}" -DACTION=build-install-run "-DEXECUTABLES=${EXAMPLE}" "-DBUILD_FOLDER=${CMAKE_BINARY_DIR}" -P "${SDL3_SOURCE_DIR}/cmake/android/SdlAndroidScript.cmake"
-                )
-            endif()
-
-            list(APPEND packages "${ANDROID_MANIFEST_PACKAGE}")
-            list(APPEND install_targets install-${EXAMPLE})
-        endforeach()
-
-        if(TARGET SdlAndroid::adb)
-            add_custom_target(install-sdl-example-apks
-                DEPENDS ${install_targets}
-                VERBATIM
-            )
-            add_custom_target(uninstall-sdl-example-apks
-                COMMAND "${CMAKE_COMMAND}" "-DADB=$<TARGET_FILE:SdlAndroid::adb>" -DACTION=uninstall "-DPACKAGES=${packages}" -P "${SDL3_SOURCE_DIR}/cmake/android/SdlAndroidScript.cmake"
-                VERBATIM
-            )
-        endif()
-    endif()
 endif()
