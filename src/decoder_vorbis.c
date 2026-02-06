@@ -249,6 +249,49 @@ static bool SDLCALL VORBIS_init_track(void *audio_userdata, SDL_IOStream *io, co
     return true;
 }
 
+static void UpdateVorbisStreamFormat(SDL_AudioStream *stream, const SDL_AudioSpec *spec)
+{
+    static const int vorbis_chmap_3[] = { 0, 2, 1, -1, -1, -1 };  // SDL=FL,FR,FC,LFE,RL,RR  VORBIS=FL,FC,FR
+    static const int vorbis_chmap_5[] = { 0, 2, 1, 4, 5, -1};  // SDL=FL,FR,FC,LFE,RL,RR  VORBIS=FL,FC,FR,RL,RR
+    static const int vorbis_chmap_6[] = { 0, 2, 1, 4, 5, 3 };  // SDL=FL,FR,FC,LFE,RL,RR  VORBIS=FL,FC,FR,RL,RR,LFE
+    static const int vorbis_chmap_7[] = { 0, 2, 1, 5, 6, 4, 3 };  // SDL=FL,FR,FC,LFE,RC,SL,SR  VORBIS=FL,FC,FR,SL,SR,RC,LFE
+    static const int vorbis_chmap_8[] = { 0, 2, 1, 6, 7, 4, 5, 3 };  // SDL=FL,FR,FC,LFE,RL,RR,SL,SR  VORBIS=FL,FC,FR,SL,SR,RL,RR,LFE
+
+    SDL_AudioSpec bumped_spec;
+    const int *chmap = NULL;
+    switch (spec->channels) {
+        // 3 and 5 channel audio offers a Front Center channel, which SDL doesn't have until 5.1 (6 channels), so bump the spec
+        //  to 5.1 and provide NULL planar channels where appropriate.
+        // !!! FIXME: Since Tremor doesn't provide planar data, we just pass this through in the wrong channel order there,
+        // !!! FIXME: which is dumb but who is using these formats in the first place, let alone with low-powered Tremor?
+        #ifndef VORBIS_USE_TREMOR
+        case 3:
+            SDL_copyp(&bumped_spec, spec);
+            bumped_spec.channels = 6;
+            spec = &bumped_spec;
+            chmap = vorbis_chmap_3;
+            break;
+        case 5:
+            SDL_copyp(&bumped_spec, spec);
+            bumped_spec.channels = 6;
+            spec = &bumped_spec;
+            chmap = vorbis_chmap_5;
+            break;
+        #endif
+
+        case 6: chmap = vorbis_chmap_6; break;
+        case 7: chmap = vorbis_chmap_7; break;
+        case 8: chmap = vorbis_chmap_8; break;
+        default:
+            // no special mapping, pass through as-is.
+            break;
+    }
+
+    SDL_SetAudioStreamFormat(stream, spec, NULL);
+    SDL_SetAudioStreamInputChannelMap(stream, chmap, spec->channels);
+}
+
+
 static bool SDLCALL VORBIS_seek(void *track_userdata, Uint64 frame);
 
 static bool SDLCALL VORBIS_decode(void *track_userdata, SDL_AudioStream *stream)
@@ -277,9 +320,9 @@ static bool SDLCALL VORBIS_decode(void *track_userdata, SDL_AudioStream *stream)
         if (vi) {  // this _shouldn't_ be NULL, but if it is, we're just going on without it and hoping the stream format didn't change.
             if ((tdata->current_channels != vi->channels) || (tdata->current_freq != vi->rate)) {
                 const SDL_AudioSpec spec = { VORBIS_AUDIO_FORMAT, vi->channels, vi->rate };
-                SDL_SetAudioStreamFormat(stream, &spec, NULL);
                 tdata->current_channels = vi->channels;
                 tdata->current_freq = vi->rate;
+                UpdateVorbisStreamFormat(stream, &spec);
             }
         }
         tdata->current_bitstream = bitstream;
@@ -335,7 +378,7 @@ static bool SDLCALL VORBIS_decode(void *track_userdata, SDL_AudioStream *stream)
         #ifdef VORBIS_USE_TREMOR
         SDL_PutAudioStreamData(stream, samples, amount / framesize);
         #else
-        SDL_PutAudioStreamPlanarData(stream, (const void * const *) pcm_channels, -1, amount);
+        SDL_PutAudioStreamPlanarData(stream, (const void * const *) pcm_channels, tdata->current_channels, amount);
         #endif
         tdata->current_iteration_frames += amount;
     }
