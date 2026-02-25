@@ -30,7 +30,7 @@ endfunction()
 
 add_sdl_mixer_test_executable(testaudiodecoder testaudiodecoder.c)
 add_sdl_mixer_test_executable(testmixer testmixer.c)
-add_sdl_mixer_test_executable(testspacialization testspatialization.c)
+add_sdl_mixer_test_executable(testspatialization testspatialization.c)
 
 if(SDLMIXER_TESTS_INSTALL)
     install(
