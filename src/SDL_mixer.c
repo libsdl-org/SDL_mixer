@@ -528,11 +528,12 @@ static void MixFloat32Audio(float *dst, const float *src, const int buffer_size,
 // SDL calls this function from the audio device thread as more data is needed the mixer.
 static void SDLCALL MixerCallback(void *userdata, SDL_AudioStream *stream, int additional_amount, int total_amount)
 {
+    MIX_Mixer *mixer = (MIX_Mixer *) userdata;
+    mixer->actual_mixed_bytes = 0;
+
     if (additional_amount == 0) {
         return;  // nothing to actually do yet. This was a courtesy call; the stream still has enough buffered.
     }
-
-    MIX_Mixer *mixer = (MIX_Mixer *) userdata;
 
     // it should be asking for float data...
     SDL_assert((additional_amount % sizeof (float)) == 0);
@@ -603,6 +604,10 @@ static void SDLCALL MixerCallback(void *userdata, SDL_AudioStream *stream, int a
             }
         }
 
+        if (group_bytes > mixer->actual_mixed_bytes) {
+            mixer->actual_mixed_bytes = group_bytes;
+        }
+
         if (group->postmix_callback) {
             group->postmix_callback(group->postmix_callback_userdata, group, &mixer->spec, group_mixbuf, additional_amount / sizeof (float));
         }
@@ -619,14 +624,21 @@ static void SDLCALL MixerCallback(void *userdata, SDL_AudioStream *stream, int a
     SDL_PutAudioStreamData(stream, final_mixbuf, additional_amount);
 }
 
-bool MIX_Generate(MIX_Mixer *mixer, void *buffer, int buflen)
+int MIX_Generate(MIX_Mixer *mixer, void *buffer, int buflen)
 {
+    SDL_AudioSpec output_spec;
     if (!CheckMixerParam(mixer)) {
-        return false;
+        return -1;
     } else if (mixer->device_id) {
-        return SDL_SetError("Can't use MIX_Generate with a MIX_Mixer from MIX_CreateMixerDevice");
+        SDL_SetError("Can't use MIX_Generate with a MIX_Mixer from MIX_CreateMixerDevice");
+        return -1;
+    } else if (!SDL_GetAudioStreamFormat(mixer->output_stream, NULL, &output_spec)) {
+        return -1;
+    } else if (!SDL_GetAudioStreamData(mixer->output_stream, buffer, buflen)) {  // will fire MixerCallback() to generate audio.
+        return -1;
     }
-    return SDL_GetAudioStreamData(mixer->output_stream, buffer, buflen);  // will fire MixerCallback() to generate audio.
+
+    return (mixer->actual_mixed_bytes / sizeof (float)) * SDL_AUDIO_BYTESIZE(output_spec.format);
 }
 
 static void InitDecoders(void)

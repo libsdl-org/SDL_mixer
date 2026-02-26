@@ -264,11 +264,13 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 {
     #if USE_MIX_GENERATE
     float buf[1024];
-    if (!MIX_Generate(mixer, buf, sizeof (buf))) {
+    const int br = MIX_Generate(mixer, buf, sizeof (buf));
+    if (br == -1) {
         SDL_Log("MIX_Generate failed: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
-    SDL_WriteIO(io, buf, sizeof (buf));
+    //SDL_Log("MIX_Generate() came through with %d bytes vs %d requested", br, (int) sizeof (buf));
+    SDL_WriteIO(io, buf, br);
     #endif
 
 //    SDL_RenderClear(renderer);

@@ -205,6 +205,7 @@ struct MIX_Mixer
     void *postmix_callback_userdata;
     float *mix_buffer;
     size_t mix_buffer_allocation;
+    int actual_mixed_bytes;   // on each iteration of the mixer, number of bytes of real mixed audio, ignoring silence at end if no audio was available to mix there.
     float gain;
     MIX_VBAP2D vbap2d;
     MIX_Mixer *prev;  // double-linked list for all_mixers.
