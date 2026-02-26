@@ -189,7 +189,7 @@
 		F382FB952E340BDE004C6137 /* SDL_mixer_spatialization.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = SDL_mixer_spatialization.c; path = ../src/SDL_mixer_spatialization.c; sourceTree = SOURCE_ROOT; };
 		F3968B90281F817E00661875 /* opus.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = opus.xcodeproj; path = opus/opus.xcodeproj; sourceTree = "<group>"; };
 		F3968D71281FB5E100661875 /* config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = config.xcconfig; sourceTree = "<group>"; };
-		F3B38D97296F97BB005DA6D3 /* ogg.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ogg.xcodeproj; path = /Users/valve/projects/SDL_mixer/Xcode/ogg/ogg.xcodeproj; sourceTree = "<absolute>"; };
+		F3B38D97296F97BB005DA6D3 /* ogg.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ogg.xcodeproj; path = ogg/ogg.xcodeproj; sourceTree = "<group>"; };
 		F3D87C08281DFABD005DA540 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		F3D87C0A281DFAD4005DA540 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		F3D87C0C281DFADB005DA540 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };

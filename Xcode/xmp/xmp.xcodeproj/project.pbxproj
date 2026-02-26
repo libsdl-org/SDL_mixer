@@ -82,6 +82,7 @@
 		631064AF2A98B0A00082F715 /* voltable.c in Sources */ = {isa = PBXBuildFile; fileRef = 631064A32A98B0A00082F715 /* voltable.c */; };
 		631064B02A98B0A00082F715 /* vorbis.c in Sources */ = {isa = PBXBuildFile; fileRef = 631064A42A98B0A00082F715 /* vorbis.c */; };
 		631064B12A98B0A00082F715 /* xmf_load.c in Sources */ = {isa = PBXBuildFile; fileRef = 631064A52A98B0A00082F715 /* xmf_load.c */; };
+		631F06822F4FEEFE00AA5114 /* path.c in Sources */ = {isa = PBXBuildFile; fileRef = 631F06812F4FEEFE00AA5114 /* path.c */; };
 		F3023FB22881D74E002F32D6 /* xmp.h in Headers */ = {isa = PBXBuildFile; fileRef = F3023FB12881D74E002F32D6 /* xmp.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3023FCE2881DB7C002F32D6 /* effects.c in Sources */ = {isa = PBXBuildFile; fileRef = F3023FB42881DB7C002F32D6 /* effects.c */; };
 		F3023FD02881DB7C002F32D6 /* smix.c in Sources */ = {isa = PBXBuildFile; fileRef = F3023FB62881DB7C002F32D6 /* smix.c */; };
@@ -177,6 +178,7 @@
 		631064A32A98B0A00082F715 /* voltable.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = voltable.c; path = ../../external/libxmp/src/loaders/voltable.c; sourceTree = SOURCE_ROOT; };
 		631064A42A98B0A00082F715 /* vorbis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vorbis.c; path = ../../external/libxmp/src/loaders/vorbis.c; sourceTree = SOURCE_ROOT; };
 		631064A52A98B0A00082F715 /* xmf_load.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xmf_load.c; path = ../../external/libxmp/src/loaders/xmf_load.c; sourceTree = SOURCE_ROOT; };
+		631F06812F4FEEFE00AA5114 /* path.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = path.c; path = ../../external/libxmp/src/path.c; sourceTree = SOURCE_ROOT; };
 		F3023FB12881D74E002F32D6 /* xmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = xmp.h; path = ../../external/libxmp/include/xmp.h; sourceTree = "<group>"; };
 		F3023FB42881DB7C002F32D6 /* effects.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = effects.c; path = ../../external/libxmp/src/effects.c; sourceTree = "<group>"; };
 		F3023FB62881DB7C002F32D6 /* smix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = smix.c; path = ../../external/libxmp/src/smix.c; sourceTree = "<group>"; };
@@ -199,8 +201,8 @@
 		F33AA32D2881F70D00F836D8 /* it_load.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = it_load.c; path = ../../external/libxmp/src/loaders/it_load.c; sourceTree = "<group>"; };
 		F33AA32E2881F70D00F836D8 /* xm_load.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xm_load.c; path = ../../external/libxmp/src/loaders/xm_load.c; sourceTree = "<group>"; };
 		F33AA3302881F70D00F836D8 /* s3m_load.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = s3m_load.c; path = ../../external/libxmp/src/loaders/s3m_load.c; sourceTree = "<group>"; };
-		F341229E2D406C2000D6C2B7 /* rng.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = rng.c; path = ../../external/libxmp/src/rng.c; sourceTree = "<absolute>"; };
-		F34122A02D406C6500D6C2B7 /* flow.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = flow.c; path = ../../external/libxmp/src/flow.c; sourceTree = "<absolute>"; };
+		F341229E2D406C2000D6C2B7 /* rng.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = rng.c; path = ../../external/libxmp/src/rng.c; sourceTree = "<group>"; };
+		F34122A02D406C6500D6C2B7 /* flow.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = flow.c; path = ../../external/libxmp/src/flow.c; sourceTree = "<group>"; };
 		F3968D85281FBB1900661875 /* xmp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = xmp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3E29CE52881FB370006D108 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README; path = ../../external/libxmp/README; sourceTree = "<group>"; };
 		F3E29CE72881FB610006D108 /* format.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = format.c; path = ../../external/libxmp/src/format.c; sourceTree = "<group>"; };
@@ -334,6 +336,7 @@
 				F3023FC52881DB7C002F32D6 /* mix_all.c */,
 				6310643F2A98AF6F0082F715 /* mix_paula.c */,
 				F3023FC92881DB7C002F32D6 /* mixer.c */,
+				631F06812F4FEEFE00AA5114 /* path.c */,
 				F3023FBE2881DB7C002F32D6 /* period.c */,
 				F3023FC72881DB7C002F32D6 /* player.c */,
 				F3023FC42881DB7C002F32D6 /* read_event.c */,
@@ -556,6 +559,7 @@
 				631064AF2A98B0A00082F715 /* voltable.c in Sources */,
 				631064B02A98B0A00082F715 /* vorbis.c in Sources */,
 				631064B12A98B0A00082F715 /* xmf_load.c in Sources */,
+				631F06822F4FEEFE00AA5114 /* path.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
