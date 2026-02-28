@@ -451,7 +451,7 @@ static bool parse_id3v2(SDL_PropertiesID props, SDL_IOStream *io)
     if ((version_major > 2) && ((flags & ID3v2_FLAG_HAS_EXTRA_HEAD) == ID3v2_FLAG_HAS_EXTRA_HEAD)) {
         if (SDL_ReadIO(io, buffer + ID3v2_FIELD_EXTRA_HEADER_LENGTH, 4) != 4) {
             return false;
-        } else if (SDL_SeekIO(io, -4, SDL_IO_SEEK_CUR) == -1) {
+        } else if (SDL_SeekIO(io, -4, SDL_IO_SEEK_CUR) < 0) {
             return false;
         }
         tag_extended_len = id3v2_synchsafe_decode(buffer + ID3v2_FIELD_EXTRA_HEADER_LENGTH); // Length of an extended header
@@ -459,7 +459,7 @@ static bool parse_id3v2(SDL_PropertiesID props, SDL_IOStream *io)
 
     if (tag_extended_len) {
         tag_len -= tag_extended_len; // Subtract the size of extended header
-        if (SDL_SeekIO(io, tag_extended_len, SDL_IO_SEEK_CUR) == -1) { // Skip extended header and it's size value
+        if (SDL_SeekIO(io, tag_extended_len, SDL_IO_SEEK_CUR) < 0) { // Skip extended header and it's size value
             return false;
         }
     }
@@ -671,7 +671,7 @@ static bool parse_ape(SDL_PropertiesID props, SDL_IOStream *io, Sint64 ape_head_
         if (tag_item_size == 0) {
             break;
         }
-        if (SDL_SeekIO(io, cur_tag + tag_item_size + 4, SDL_IO_SEEK_SET) == -1) {
+        if (SDL_SeekIO(io, cur_tag + tag_item_size + 4, SDL_IO_SEEK_SET) < 0) {
             return false;
         }
     }
@@ -716,7 +716,7 @@ static Sint64 get_lyrics3v1_len(SDL_IOStream *io)
         return -1;
     }
     Sint64 len = SDL_min(flen, LYRICS3v1_SEARCH_BUFFER);
-    if (SDL_SeekIO(io, -len, SDL_IO_SEEK_END) == -1) {
+    if (SDL_SeekIO(io, -len, SDL_IO_SEEK_END) < 0) {
         return -1;
     }
 
@@ -767,8 +767,8 @@ static bool verify_lyrics3v2(const Uint8 *data, size_t length)
 
 static bool is_musicmatch(const Uint8 *data, Sint64 length)
 {
-  /* From docs/musicmatch.txt in id3lib: https://sourceforge.net/projects/id3lib/
-     Overall tag structure:
+   /* From docs/musicmatch.txt in id3lib: https://sourceforge.net/projects/id3lib/
+      Overall tag structure:
 
       +-----------------------------+
       |           Header            |
@@ -820,7 +820,7 @@ static Sint64 get_musicmatch_len(SDL_IOStream *io)
     Sint64 len = 0;
     Sint32 i, j;
 
-    if (SDL_SeekIO(io, -68, SDL_IO_SEEK_END) == -1) {
+    if (SDL_SeekIO(io, -68, SDL_IO_SEEK_END) < 0) {
         return -1;
     } else if (SDL_ReadIO(io, buf, 20) != 20) {
         return -1;
@@ -842,7 +842,7 @@ static Sint64 get_musicmatch_len(SDL_IOStream *io)
     for (i = 0; i < 4; ++i) {
         // 48: footer, 20: offsets, 256: version info
         len = metasizes[i] + MUSICMATCH_FOOTER_SIZE + MUSICMATCH_OFFSETS_SIZE + MUSICMATCH_VERSION_INFO_SIZE;
-        if (SDL_SeekIO(io, -len, SDL_IO_SEEK_END) == -1) {
+        if (SDL_SeekIO(io, -len, SDL_IO_SEEK_END) < 0) {
             return -1;
         } else if (SDL_ReadIO(io, buf, MUSICMATCH_VERSION_INFO_SIZE) != MUSICMATCH_VERSION_INFO_SIZE) {
             return -1;
@@ -866,7 +866,7 @@ static Sint64 get_musicmatch_len(SDL_IOStream *io)
 
     #ifdef MMTAG_PARANOID
     // unused section: (4 bytes of 0x00)
-    if (SDL_SeekIO(io, -(len + 4), SDL_IO_SEEK_END) == -1) {
+    if (SDL_SeekIO(io, -(len + 4), SDL_IO_SEEK_END) < 0) {
         return -1;
     } else if (SDL_ReadIO(io, &j, 4) != 4) {
         return -1;
@@ -876,7 +876,7 @@ static Sint64 get_musicmatch_len(SDL_IOStream *io)
     #endif
 
     len += (version_ofs - imgext_ofs);
-    if (SDL_SeekIO(io, -len, SDL_IO_SEEK_END) == -1) {
+    if (SDL_SeekIO(io, -len, SDL_IO_SEEK_END) < 0) {
         return -1;
     } else if (SDL_ReadIO(io, buf, 8) != 8) {
         return -1;
@@ -887,7 +887,7 @@ static Sint64 get_musicmatch_len(SDL_IOStream *io)
     // without this, we may land at a wrong place.
     if (j + 12 != version_ofs - imgext_ofs) return -1;
     // try finding the optional header
-    if (SDL_SeekIO(io, -(len + MUSICMATCH_HEADER_SIZE), SDL_IO_SEEK_END) == -1) {
+    if (SDL_SeekIO(io, -(len + MUSICMATCH_HEADER_SIZE), SDL_IO_SEEK_END) < 0) {
         return -1;
     } else if (SDL_ReadIO(io, buf, MUSICMATCH_HEADER_SIZE) != MUSICMATCH_HEADER_SIZE) {
         return -1;
@@ -913,7 +913,7 @@ static Sint64 get_musicmatch_len(SDL_IOStream *io)
 
 static int probe_id3v1(SDL_PropertiesID props, SDL_IOStream *io, Uint8 *buf, int atend, MIX_IoClamp *clamp)
 {
-    if (SDL_SeekIO(io, -ID3v1_TAG_SIZE, SDL_IO_SEEK_END) == -1) {
+    if (SDL_SeekIO(io, -ID3v1_TAG_SIZE, SDL_IO_SEEK_END) < 0) {
         return TAG_INVALID;
     } else if (SDL_ReadIO(io, buf, ID3v1_TAG_SIZE) != ID3v1_TAG_SIZE) {
         return TAG_INVALID;
@@ -937,7 +937,7 @@ static int probe_id3v1(SDL_PropertiesID props, SDL_IOStream *io, Uint8 *buf, int
 static int probe_mmtag(SDL_PropertiesID props, SDL_IOStream *io, Uint8 *buf, MIX_IoClamp *clamp)
 {
     (void)props; // !!! FIXME: Implement reading tag contents.
-    if (SDL_SeekIO(io, -MUSICMATCH_FOOTER_SIZE, SDL_IO_SEEK_END) == -1) {
+    if (SDL_SeekIO(io, -MUSICMATCH_FOOTER_SIZE, SDL_IO_SEEK_END) < 0) {
         return TAG_INVALID;
     } else if (SDL_ReadIO(io, buf, MUSICMATCH_FOOTER_SIZE) != MUSICMATCH_FOOTER_SIZE) {
         return TAG_INVALID;
@@ -955,7 +955,7 @@ static int probe_mmtag(SDL_PropertiesID props, SDL_IOStream *io, Uint8 *buf, MIX
 static int probe_apetag(SDL_PropertiesID props, SDL_IOStream *io, Uint8 *buf, MIX_IoClamp *clamp)
 {
     // APE tag may be at the end: read the footer
-    if (SDL_SeekIO(io, -APE_HEADER_SIZE, SDL_IO_SEEK_END) == -1) {
+    if (SDL_SeekIO(io, -APE_HEADER_SIZE, SDL_IO_SEEK_END) < 0) {
         return TAG_INVALID;
     } else if (SDL_ReadIO(io, buf, APE_HEADER_SIZE) != APE_HEADER_SIZE) {
         return TAG_INVALID;
@@ -967,7 +967,7 @@ static int probe_apetag(SDL_PropertiesID props, SDL_IOStream *io, Uint8 *buf, MI
         Uint32 v = 0;
         const Sint64 len = get_ape_len(buf, &v);
         if (v == APE_V2) { // verify header :
-            if (SDL_SeekIO(io, -len, SDL_IO_SEEK_END) == -1) {
+            if (SDL_SeekIO(io, -len, SDL_IO_SEEK_END) < 0) {
                 return TAG_INVALID;
             } else if (SDL_ReadIO(io, buf, APE_HEADER_SIZE) != APE_HEADER_SIZE) {
                 return TAG_INVALID;
@@ -977,7 +977,7 @@ static int probe_apetag(SDL_PropertiesID props, SDL_IOStream *io, Uint8 *buf, MI
                 retval = TAG_FOUND;
             }
         } else {
-            if (SDL_SeekIO(io, -APE_HEADER_SIZE, SDL_IO_SEEK_END) == -1) {
+            if (SDL_SeekIO(io, -APE_HEADER_SIZE, SDL_IO_SEEK_END) < 0) {
                 return TAG_INVALID;
             } else if (parse_ape(props, io, SDL_TellIO(io), APE_V1)) {
                 retval = TAG_FOUND;
@@ -991,7 +991,7 @@ static int probe_apetag(SDL_PropertiesID props, SDL_IOStream *io, Uint8 *buf, MI
 
 static int probe_lyrics3(SDL_IOStream *io, Uint8 *buf, MIX_IoClamp *clamp)
 {
-    if (SDL_SeekIO(io, -LYRICS3_FOOTER_SIZE, SDL_IO_SEEK_END) == -1) {
+    if (SDL_SeekIO(io, -LYRICS3_FOOTER_SIZE, SDL_IO_SEEK_END) < 0) {
         return TAG_INVALID;
     } else if (SDL_ReadIO(io, buf, LYRICS3_FOOTER_SIZE) != LYRICS3_FOOTER_SIZE) {
         return TAG_INVALID;
@@ -1002,7 +1002,7 @@ static int probe_lyrics3(SDL_IOStream *io, Uint8 *buf, MIX_IoClamp *clamp)
         const Sint64 len = get_lyrics3v2_len(buf, LYRICS3v2_TAG_SIZE_VALUE);
         if (len < LYRICS3_FOOTER_SIZE) {
             return TAG_INVALID;
-        } else if (SDL_SeekIO(io, -len, SDL_IO_SEEK_END) == -1) {
+        } else if (SDL_SeekIO(io, -len, SDL_IO_SEEK_END) < 0) {
             return TAG_INVALID;
         } else if (SDL_ReadIO(io, buf, LYRICS3v1_HEAD_SIZE) != LYRICS3v1_HEAD_SIZE) {
             return TAG_INVALID;

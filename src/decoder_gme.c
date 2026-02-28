@@ -121,7 +121,7 @@ static bool SDLCALL GME_init_audio(SDL_IOStream *io, SDL_AudioSpec *spec, SDL_Pr
             *duration_frames = MIX_DURATION_INFINITE;
         } else if (info->length >= 0) {
             *duration_frames = MIX_MSToFrames(spec->freq, info->length);
-            if (*duration_frames == -1) {
+            if (*duration_frames < 0) {
                 *duration_frames = 0;
             }
         }

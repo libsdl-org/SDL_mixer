@@ -188,7 +188,7 @@ static bool SDLCALL XMP_init_audio(SDL_IOStream *io, SDL_AudioSpec *spec, SDL_Pr
     libxmp.xmp_get_frame_info(ctx, &frame_info);
 
     *duration_frames = MIX_MSToFrames(spec->freq, (Sint64) frame_info.total_time);   // closest we can get.
-    if (*duration_frames == -1) {
+    if (*duration_frames < 0) {
         *duration_frames = 0;
     }
 
@@ -270,7 +270,7 @@ static bool SDLCALL XMP_seek(void *track_userdata, Uint64 frame)
 {
     XMP_TrackData *tdata = (XMP_TrackData *) track_userdata;
     Sint64 ms = MIX_FramesToMS(tdata->freq, (Sint64) frame);
-    if (ms == -1) {
+    if (ms < 0) {
         ms = 0;
     }
     const int err = libxmp.xmp_seek_time(tdata->ctx, (int) ms);
