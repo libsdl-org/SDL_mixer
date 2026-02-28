@@ -148,7 +148,7 @@ static bool SDLCALL FLUIDSYNTH_init_audio(SDL_IOStream *io, SDL_AudioSpec *spec,
     }
 
     // Go back and do a proper load now to get metadata.
-    if (SDL_SeekIO(io, SDL_IO_SEEK_SET, 0) == -1) {
+    if (SDL_SeekIO(io, SDL_IO_SEEK_SET, 0) < 0) {
         if (sfio && closesfio) { SDL_CloseIO(sfio); }
         return false;
     }

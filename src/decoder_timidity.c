@@ -91,7 +91,7 @@ static bool SDLCALL TIMIDITY_init_audio(SDL_IOStream *io, SDL_AudioSpec *spec, S
     }
 
     song_length_in_frames = MIX_MSToFrames(spec->freq, Timidity_GetSongLength(song));
-    if (song_length_in_frames == -1) {
+    if (song_length_in_frames < 0) {
         song_length_in_frames = 0;
     }
     Timidity_FreeSong(song);
@@ -142,7 +142,7 @@ static bool SDLCALL TIMIDITY_seek(void *track_userdata, Uint64 frame)
 {
     TIMIDITY_TrackData *tdata = (TIMIDITY_TrackData *) track_userdata;
     Sint64 ticks = MIX_FramesToMS(tdata->freq, frame);
-    if (ticks == -1) {
+    if (ticks < 0) {
         ticks = 0;
     }
     Timidity_Seek(tdata->song, (Uint32)ticks);  // !!! FIXME: this returns void, what happens if we seek past EOF?

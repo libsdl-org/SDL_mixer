@@ -145,7 +145,7 @@ static bool SDLCALL DRFLAC_init_audio(SDL_IOStream *io, SDL_AudioSpec *spec, SDL
     }
 
     // Go back and do a proper load now to get metadata.
-    if (SDL_SeekIO(io, SDL_IO_SEEK_SET, 0) == -1) {
+    if (SDL_SeekIO(io, SDL_IO_SEEK_SET, 0) < 0) {
         return false;
     }
 
