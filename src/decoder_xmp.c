@@ -275,7 +275,7 @@ static bool SDLCALL XMP_seek(void *track_userdata, Uint64 frame)
     }
     const int err = libxmp.xmp_seek_time(tdata->ctx, (int) ms);
     libxmp.xmp_play_buffer(tdata->ctx, NULL, 0, 0); // reset the internal state.
-    return err ? SetLibXmpError("xmp_seek_time", err) : true;
+    return err < 0 ? SetLibXmpError("xmp_seek_time", err) : true;
 }
 
 static void SDLCALL XMP_quit_track(void *track_userdata)
@@ -306,4 +306,3 @@ const MIX_Decoder MIX_Decoder_XMP = {
 };
 
 #endif
-
