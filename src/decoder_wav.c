@@ -64,6 +64,21 @@
 #define WAVE_MONO   1
 #define WAVE_STEREO 2
 
+
+// channel mask bits in WAV file
+#define WAV_SPEAKER_FRONT_LEFT            (1 << 0)
+#define WAV_SPEAKER_FRONT_RIGHT           (1 << 1)
+#define WAV_SPEAKER_FRONT_CENTER          (1 << 2)
+#define WAV_SPEAKER_LOW_FREQUENCY         (1 << 3)
+#define WAV_SPEAKER_BACK_LEFT             (1 << 4)
+#define WAV_SPEAKER_BACK_RIGHT            (1 << 5)
+#define WAV_SPEAKER_FRONT_LEFT_OF_CENTER  (1 << 6)
+#define WAV_SPEAKER_FRONT_RIGHT_OF_CENTER (1 << 7)
+#define WAV_SPEAKER_BACK_CENTER           (1 << 8)
+#define WAV_SPEAKER_SIDE_LEFT             (1 << 9)
+#define WAV_SPEAKER_SIDE_RIGHT            (1 << 10)
+
+
 #pragma pack(push, 1)
 typedef struct {
     // Not saved in the chunk we read:
@@ -199,6 +214,7 @@ typedef struct WAV_AudioData
     WAVLoopPoint *loops;
     unsigned int num_seekblocks;
     WAVSeekBlock *seekblocks;
+    Uint32 channelmask;
 } WAV_AudioData;
 
 struct WAV_TrackData
@@ -209,6 +225,8 @@ struct WAV_TrackData
     const WAVSeekBlock *seekblock;  // current seekblock we're decoding.
     Uint32 current_iteration;        // current loop iteration in seekblock
     Uint32 current_iteration_frames;  // current framecount into seekblock.
+    int channels;
+    bool must_set_channel_map;
 };
 
 static bool IsADPCM(const Uint16 encoding)
@@ -807,6 +825,22 @@ static int FetchFloat64LE(WAV_TrackData *tdata, Uint8 *buffer, int buflen)
     return length / 2;
 }
 
+static Uint32 StandardSDLWavChannelMask(int channels)
+{
+    switch (channels) {
+        case 1: return WAV_SPEAKER_FRONT_CENTER;
+        case 2: return WAV_SPEAKER_FRONT_LEFT|WAV_SPEAKER_FRONT_RIGHT;
+        case 3: return WAV_SPEAKER_FRONT_LEFT|WAV_SPEAKER_FRONT_RIGHT|WAV_SPEAKER_LOW_FREQUENCY;
+        case 4: return WAV_SPEAKER_FRONT_LEFT|WAV_SPEAKER_FRONT_RIGHT|WAV_SPEAKER_BACK_LEFT|WAV_SPEAKER_BACK_RIGHT;
+        case 5: return WAV_SPEAKER_FRONT_LEFT|WAV_SPEAKER_FRONT_RIGHT|WAV_SPEAKER_BACK_LEFT|WAV_SPEAKER_BACK_RIGHT|WAV_SPEAKER_LOW_FREQUENCY;
+        case 6: return WAV_SPEAKER_FRONT_LEFT|WAV_SPEAKER_FRONT_RIGHT|WAV_SPEAKER_FRONT_CENTER|WAV_SPEAKER_BACK_LEFT|WAV_SPEAKER_BACK_RIGHT|WAV_SPEAKER_LOW_FREQUENCY;
+        case 7: return WAV_SPEAKER_FRONT_LEFT|WAV_SPEAKER_FRONT_RIGHT|WAV_SPEAKER_FRONT_CENTER|WAV_SPEAKER_BACK_CENTER|WAV_SPEAKER_SIDE_LEFT|WAV_SPEAKER_SIDE_RIGHT|WAV_SPEAKER_LOW_FREQUENCY;
+        case 8: return WAV_SPEAKER_FRONT_LEFT|WAV_SPEAKER_FRONT_RIGHT|WAV_SPEAKER_FRONT_CENTER|WAV_SPEAKER_BACK_LEFT|WAV_SPEAKER_BACK_RIGHT|WAV_SPEAKER_SIDE_LEFT|WAV_SPEAKER_SIDE_RIGHT|WAV_SPEAKER_LOW_FREQUENCY;
+        default: return (channels < 32) ? (Uint32)((1 << channels) - 1) : (Uint32) 0xFFFFFFFF;   // mark all available channels as used by default.
+    }
+    SDL_assert(!"shouldn't hit this.");
+    return 0;
+}
 
 static bool ParseFMT(WAV_AudioData *adata, SDL_IOStream *io, SDL_AudioSpec *spec, Uint32 chunk_length)
 {
@@ -838,6 +872,9 @@ static bool ParseFMT(WAV_AudioData *adata, SDL_IOStream *io, SDL_AudioSpec *spec
             return SDL_SetError("Wave format chunk too small");
         }
         adata->encoding = (Uint16)SDL_Swap32LE(fmt.subencoding);
+        adata->channelmask = SDL_Swap32LE(fmt.channelsmask);
+    } else {
+        adata->channelmask = StandardSDLWavChannelMask(fmt.format.channels);
     }
 
     // Decode the audio data format
@@ -1350,6 +1387,156 @@ static bool SDLCALL WAV_init_audio(SDL_IOStream *io, SDL_AudioSpec *spec, SDL_Pr
     return true;
 }
 
+static int SpeakerBitToSDLChannelIndex(int channels, Uint32 newbit)
+{
+    switch (channels) {
+        case 1:
+            return 0;  // always speaker 0, I dunno.
+
+        case 2:
+            switch (newbit) {
+                case WAV_SPEAKER_FRONT_LEFT: return 0;
+                case WAV_SPEAKER_FRONT_RIGHT: return 1;
+                default: break;
+            }
+            return -1;
+
+        case 3:
+            switch (newbit) {
+                case WAV_SPEAKER_FRONT_LEFT: return 0;
+                case WAV_SPEAKER_FRONT_RIGHT: return 1;
+                case WAV_SPEAKER_LOW_FREQUENCY: return 2;
+                default: break;
+            }
+            return -1;
+
+        case 4:
+            switch (newbit) {
+                case WAV_SPEAKER_FRONT_LEFT: return 0;
+                case WAV_SPEAKER_FRONT_RIGHT: return 1;
+                case WAV_SPEAKER_BACK_LEFT: return 2;
+                case WAV_SPEAKER_BACK_RIGHT: return 3;
+                default: break;
+            }
+            return -1;
+
+        case 5:
+            switch (newbit) {
+                case WAV_SPEAKER_FRONT_LEFT: return 0;
+                case WAV_SPEAKER_FRONT_RIGHT: return 1;
+                case WAV_SPEAKER_LOW_FREQUENCY: return 2;
+                case WAV_SPEAKER_BACK_LEFT: return 3;
+                case WAV_SPEAKER_BACK_RIGHT: return 4;
+                default: break;
+            }
+            return -1;
+
+        case 6:
+            switch (newbit) {
+                case WAV_SPEAKER_FRONT_LEFT: return 0;
+                case WAV_SPEAKER_FRONT_RIGHT: return 1;
+                case WAV_SPEAKER_FRONT_CENTER: return 2;
+                case WAV_SPEAKER_LOW_FREQUENCY: return 3;
+                case WAV_SPEAKER_BACK_LEFT: return 4;
+                case WAV_SPEAKER_BACK_RIGHT: return 5;
+                default: break;
+            }
+            return -1;
+
+        case 7:
+            switch (newbit) {
+                case WAV_SPEAKER_FRONT_LEFT: return 0;
+                case WAV_SPEAKER_FRONT_RIGHT: return 1;
+                case WAV_SPEAKER_FRONT_CENTER: return 2;
+                case WAV_SPEAKER_LOW_FREQUENCY: return 3;
+                case WAV_SPEAKER_BACK_CENTER: return 4;
+                case WAV_SPEAKER_SIDE_LEFT: return 5;
+                case WAV_SPEAKER_SIDE_RIGHT: return 6;
+                default: break;
+            }
+            return -1;
+
+        case 8:
+            switch (newbit) {
+                case WAV_SPEAKER_FRONT_LEFT: return 0;
+                case WAV_SPEAKER_FRONT_RIGHT: return 1;
+                case WAV_SPEAKER_FRONT_CENTER: return 2;
+                case WAV_SPEAKER_LOW_FREQUENCY: return 3;
+                case WAV_SPEAKER_BACK_LEFT: return 4;
+                case WAV_SPEAKER_BACK_RIGHT: return 5;
+                case WAV_SPEAKER_SIDE_LEFT: return 6;
+                case WAV_SPEAKER_SIDE_RIGHT: return 7;
+                default: break;
+            }
+            return -1;
+
+        default: break;
+    }
+
+    return -1;
+}
+
+
+static void SetAudioStreamChannelMapForWav(SDL_AudioStream *stream, int channels, Uint32 channelmask)
+{
+    // WAV files can provide whatever channels they want, setting the provided channels in a bitmask,
+    // but they have to provide the data for those channels a specific order.
+    // Generally this lines up with SDL, but we need to make sure that unexpected channels in the
+    // bitmask are handled.
+
+    if (channels == 1) {
+        return; // don't remap mono stream (what would you remap it to!?), in case something reports front-center vs front-left or whatever.
+    }
+
+    Uint32 standardmap = StandardSDLWavChannelMask(channels);
+    if (channelmask == standardmap) {
+        return;  // no remapping needed!
+    }
+
+    int chmap[32];
+    channels = SDL_min(channels, SDL_arraysize(chmap));
+
+    int current_channel = 0;
+    for (int i = 0; i < 32; i++) {
+        const Uint32 channelbit = channelmask & (1 << i);
+
+        if (channelbit) {  // wav file uses this speaker?
+            int remapping = -1;   // drop it by default.
+            if (standardmap & (1 << i)) {  // SDL offers this same speaker.
+                remapping = SpeakerBitToSDLChannelIndex(channels, channelbit);
+            } else {
+                // see if we can bump this channel into something unused that we _do_ have (like, side_left can become back_left, better than nothing).
+                Uint32 newbit = 0;  // no remapping by default.
+                switch (channelbit) {
+                    case WAV_SPEAKER_BACK_LEFT: if (!(standardmap & WAV_SPEAKER_SIDE_LEFT)) { newbit = WAV_SPEAKER_SIDE_LEFT; } break;
+                    case WAV_SPEAKER_BACK_RIGHT: if (!(standardmap & WAV_SPEAKER_SIDE_RIGHT)) { newbit = WAV_SPEAKER_SIDE_RIGHT; } break;
+                    case WAV_SPEAKER_FRONT_LEFT_OF_CENTER: if (!(standardmap & WAV_SPEAKER_FRONT_LEFT)) { newbit = WAV_SPEAKER_FRONT_LEFT; } break;
+                    case WAV_SPEAKER_FRONT_RIGHT_OF_CENTER: if (!(standardmap & WAV_SPEAKER_FRONT_RIGHT)) { newbit = WAV_SPEAKER_FRONT_RIGHT; } break;
+                    case WAV_SPEAKER_SIDE_LEFT: if (!(standardmap & WAV_SPEAKER_BACK_LEFT)) { newbit = WAV_SPEAKER_BACK_LEFT; } break;
+                    case WAV_SPEAKER_SIDE_RIGHT: if (!(standardmap & WAV_SPEAKER_BACK_RIGHT)) { newbit = WAV_SPEAKER_BACK_RIGHT; } break;
+                    default: break;
+                }
+                if (newbit) {
+                    remapping = SpeakerBitToSDLChannelIndex(channels, newbit);
+                    standardmap |= newbit;  // mark it as used so we don't try to use it for a later missing speaker.
+                }
+            }
+
+            chmap[current_channel++] = remapping;
+            if (current_channel >= channels) {
+                break;  // we got them all.
+            }
+        }
+    }
+
+    while (current_channel < channels) {
+        chmap[current_channel++] = -1;  // dump anything that wasn't set up for some reason.
+    }
+
+    SDL_SetAudioStreamInputChannelMap(stream, chmap, channels);
+}
+
+
 static bool SDLCALL WAV_init_track(void *audio_userdata, SDL_IOStream *io, const SDL_AudioSpec *spec, SDL_PropertiesID props, void **track_userdata)
 {
     const WAV_AudioData *adata = (const WAV_AudioData *) audio_userdata;
@@ -1363,6 +1550,8 @@ static bool SDLCALL WAV_init_track(void *audio_userdata, SDL_IOStream *io, const
     tdata->seekblock = &adata->seekblocks[0];
     tdata->current_iteration = 0;
     tdata->current_iteration_frames = 0;
+    tdata->must_set_channel_map = true;     // !!! FIXME: why aren't we passing the AudioStream in during init_track, so we don't have to do this check?
+    tdata->channels = spec->channels;     // !!! FIXME: why aren't we passing the AudioStream in during init_track, so we don't have to do this check?
 
     ADPCM_DecoderState *state = &tdata->adpcm_state;
     state->info = &adata->adpcm_info;
@@ -1409,6 +1598,12 @@ static bool SDLCALL WAV_decode(void *track_userdata, SDL_AudioStream *stream)
 {
     WAV_TrackData *tdata = (WAV_TrackData *) track_userdata;
     const WAVSeekBlock *seekblock = tdata->seekblock;
+
+    // !!! FIXME: why aren't we passing the AudioStream in during init_track, so we don't have to do this check?
+    if (tdata->must_set_channel_map) {
+        SetAudioStreamChannelMapForWav(stream, tdata->channels, tdata->adata->channelmask);
+        tdata->must_set_channel_map = false;
+    }
 
     // see if we are at the end of a loop, etc.
     SDL_assert(tdata->current_iteration_frames <= seekblock->num_frames);
