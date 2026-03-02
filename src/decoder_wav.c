@@ -1494,7 +1494,7 @@ static void SetAudioStreamChannelMapForWav(SDL_AudioStream *stream, int channels
     }
 
     int chmap[32];
-    channels = SDL_min(channels, SDL_arraysize(chmap));
+    channels = SDL_min(channels, (int)SDL_arraysize(chmap));
 
     int current_channel = 0;
     for (int i = 0; i < 32; i++) {
