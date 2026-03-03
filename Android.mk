@@ -45,6 +45,11 @@ XMP_LIBRARY_PATH := external/libxmp
 SUPPORT_MID_TIMIDITY ?= false
 TIMIDITY_LIBRARY_PATH := src/timidity
 
+# Enable this if you want to support Opus via libopus
+SUPPORT_OPUS ?= false
+OPUS_LIBRARY_PATH := external/opus
+OPUSFILE_LIBRARY_PATH := external/opusfile
+
 
 # Make sure we don't build both libtremor and libvorbis. Different implementations of same API.
 ifeq ($(SUPPORT_VORBIS_LIBTREMOR),true)
@@ -106,6 +111,12 @@ endif
 # Build the library
 ifeq ($(SUPPORT_MID_TIMIDITY),true)
     include $(SDL_MIXER_LOCAL_PATH)/$(TIMIDITY_LIBRARY_PATH)/Android.mk
+endif
+
+# Build the library
+ifeq ($(SUPPORT_OPUS),true)
+    include $(SDL_MIXER_LOCAL_PATH)/$(OPUS_LIBRARY_PATH)/Android.mk
+    include $(SDL_MIXER_LOCAL_PATH)/$(OPUSFILE_LIBRARY_PATH)/Android.mk
 endif
 
 # Restore local path
@@ -194,6 +205,14 @@ ifeq ($(SUPPORT_MID_TIMIDITY),true)
     LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(TIMIDITY_LIBRARY_PATH)
     LOCAL_CFLAGS += -DDECODER_MIDI_TIMIDITY
     LOCAL_STATIC_LIBRARIES += timidity
+endif
+
+ifeq ($(SUPPORT_OPUS),true)
+    LOCAL_CFLAGS += -DDECODER_OPUS
+    LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(OPUS_LIBRARY_PATH)/include
+    LOCAL_STATIC_LIBRARIES += opus
+    LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(OPUSFILE_LIBRARY_PATH)/include
+    LOCAL_STATIC_LIBRARIES += opusfile
 endif
 
 LOCAL_EXPORT_C_INCLUDES += $(LOCAL_PATH)/include
