@@ -12,12 +12,15 @@ SUPPORT_FLAC_LIBFLAC ?= false
 FLAC_LIBRARY_PATH := external/flac
 
 # Enable this if you want to support loading OGG Vorbis music via stb_vorbis
-SUPPORT_OGG_STB ?= true
+SUPPORT_VORBIS_STB ?= true
 
-# Enable this if you want to support loading OGG Vorbis music via Tremor
-SUPPORT_OGG ?= false
-OGG_LIBRARY_PATH := external/ogg
-VORBIS_LIBRARY_PATH := external/tremor
+# Enable this if you want to support loading OGG Vorbis music via libvorbis
+SUPPORT_VORBIS_LIBVORBIS ?= false
+LIBVORBIS_LIBRARY_PATH := external/vorbis
+
+# Enable this if you want to support loading OGG Vorbis music via Tremor (FOR ARM DEVICES WITHOUT A HARDWARE FLOATING POINT UNIT ONLY!)
+SUPPORT_VORBIS_LIBTREMOR ?= false
+LIBTREMOR_LIBRARY_PATH := external/tremor
 
 # Enable this if you want to support loading MP3 music via dr_mp3
 SUPPORT_MP3_DRMP3 ?= true
@@ -43,14 +46,40 @@ SUPPORT_MID_TIMIDITY ?= false
 TIMIDITY_LIBRARY_PATH := src/timidity
 
 
+# Make sure we don't build both libtremor and libvorbis. Different implementations of same API.
+ifeq ($(SUPPORT_VORBIS_LIBTREMOR),true)
+    ifeq ($(SUPPORT_VORBIS_LIBVORBIS),true)
+        $(error Both libtremor and libvorbis support are enabled. Please choose one)
+    endif
+endif
+
+# Multiple things need libogg.
+SUPPORT_LIBOGG := false
+OGG_LIBRARY_PATH := external/ogg
+ifeq ($(SUPPORT_FLAC_LIBFLAC),true)
+    SUPPORT_LIBOGG := true
+endif
+ifeq ($(SUPPORT_VORBIS_LIBTREMOR),true)
+    SUPPORT_LIBOGG := true
+	VORBIS_LIBRARY_PATH := $(LIBTREMOR_LIBRARY_PATH)
+endif
+ifeq ($(SUPPORT_VORBIS_LIBVORBIS),true)
+    SUPPORT_LIBOGG := true
+	VORBIS_LIBRARY_PATH := $(LIBVORBIS_LIBRARY_PATH)
+endif
+
 # Build the library
 ifeq ($(SUPPORT_FLAC_LIBFLAC),true)
     include $(SDL_MIXER_LOCAL_PATH)/$(FLAC_LIBRARY_PATH)/Android.mk
 endif
 
 # Build the library
-ifeq ($(SUPPORT_OGG),true)
+ifeq ($(SUPPORT_LIBOGG),true)
     include $(SDL_MIXER_LOCAL_PATH)/$(OGG_LIBRARY_PATH)/Android.mk
+endif
+
+# Build the library (libvorbis or libtremor)
+ifneq ($(VORBIS_LIBRARY_PATH),)
     include $(SDL_MIXER_LOCAL_PATH)/$(VORBIS_LIBRARY_PATH)/Android.mk
 endif
 
@@ -113,15 +142,25 @@ ifeq ($(SUPPORT_FLAC_LIBFLAC),true)
     LOCAL_STATIC_LIBRARIES += libFLAC
 endif
 
-ifeq ($(SUPPORT_OGG_STB),true)
+ifeq ($(SUPPORT_VORBIS_STB),true)
     LOCAL_CFLAGS += -DDECODER_OGGVORBIS_STB
 endif
 
-ifeq ($(SUPPORT_OGG),true)
+ifeq ($(SUPPORT_LIBOGG),true)
     LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(OGG_LIBRARY_PATH)/include
+    LOCAL_STATIC_LIBRARIES += ogg
+endif
+
+ifeq ($(SUPPORT_VORBIS_LIBTREMOR),true)
     LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(VORBIS_LIBRARY_PATH)
     LOCAL_CFLAGS += -DDECODER_OGGVORBIS_VORBISFILE -DVORBIS_USE_TREMOR -DVORBIS_HEADER="<ivorbisfile.h>"
-    LOCAL_STATIC_LIBRARIES += ogg vorbisidec
+    LOCAL_STATIC_LIBRARIES += vorbisidec
+endif
+
+ifeq ($(SUPPORT_VORBIS_LIBVORBIS),true)
+    LOCAL_C_INCLUDES += $(LOCAL_PATH)/$(VORBIS_LIBRARY_PATH)/include
+    LOCAL_CFLAGS += -DDECODER_OGGVORBIS_VORBISFILE -DVORBIS_HEADER="<vorbis/vorbisfile.h>"
+    LOCAL_STATIC_LIBRARIES += vorbisdec
 endif
 
 ifeq ($(SUPPORT_MP3_DRMP3),true)
