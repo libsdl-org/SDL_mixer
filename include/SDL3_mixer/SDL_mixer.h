@@ -623,8 +623,8 @@ extern SDL_DECLSPEC MIX_Audio * SDLCALL MIX_LoadAudio(MIX_Mixer *mixer, const ch
  *
  * This function is meant to maximize efficiency: if the data is already in
  * memory and can remain there, don't copy it. This data can be in any
- * supported audio file format (WAV, MP3, etc); it will be decoded on the
- * fly while mixing. Unlike MIX_LoadAudio(), there is no `predecode` option
+ * supported audio file format (WAV, MP3, etc); it will be decoded on the fly
+ * while mixing. Unlike MIX_LoadAudio(), there is no `predecode` option
  * offered here, as this is meant to optimize for data that's already in
  * memory and intends to exist there for significant time; since predecoding
  * would only need the file format data once, upfront, one could simply wrap
@@ -637,12 +637,12 @@ extern SDL_DECLSPEC MIX_Audio * SDLCALL MIX_LoadAudio(MIX_Mixer *mixer, const ch
  *
  * If `free_when_done` is true, SDL_mixer will call `SDL_free(data)` when the
  * returned MIX_Audio is eventually destroyed. This can be useful when the
- * data is not static, but rather loaded elsewhere for this specific
- * MIX_Audio and simply wants to avoid the extra copy.
+ * data is not static, but rather loaded elsewhere for this specific MIX_Audio
+ * and simply wants to avoid the extra copy.
  *
- * As audio format information is obtained from the file format metadata,
- * this isn't useful for raw PCM data; in that case, use
- * MIX_LoadRawAudioNoCopy() instead, which offers an SDL_AudioSpec.
+ * As audio format information is obtained from the file format metadata, this
+ * isn't useful for raw PCM data; in that case, use MIX_LoadRawAudioNoCopy()
+ * instead, which offers an SDL_AudioSpec.
  *
  * Once a MIX_Audio is created, it can be assigned to a MIX_Track with
  * MIX_SetTrackAudio(), or played without any management with MIX_PlayAudio().
