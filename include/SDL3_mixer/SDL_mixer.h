@@ -268,7 +268,7 @@ extern SDL_DECLSPEC int SDLCALL MIX_Version(void);
  *
  * \returns true on success, false on error; call SDL_GetError() for details.
  *
- * \threadsafety It is safe to call this function from any thread.
+ * \threadsafety This function is not thread safe.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  *
@@ -304,7 +304,7 @@ extern SDL_DECLSPEC bool SDLCALL MIX_Init(void);
  * encouraged to manage their resources carefully and clean up first, treating
  * this function as a safety net against memory leaks.
  *
- * \threadsafety It is safe to call this function from any thread.
+ * \threadsafety This function is not thread safe.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  *
@@ -403,7 +403,7 @@ extern SDL_DECLSPEC const char * SDLCALL MIX_GetAudioDecoder(int index);
  * \returns a mixer that can be used to play audio, or NULL on failure; call
  *          SDL_GetError() for more information.
  *
- * \threadsafety It is safe to call this function from any thread.
+ * \threadsafety This function should only be called on the main thread.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  *
@@ -455,7 +455,11 @@ extern SDL_DECLSPEC MIX_Mixer * SDLCALL MIX_CreateMixer(const SDL_AudioSpec *spe
  * \param mixer the mixer to destroy.
  *
  * \threadsafety It is safe to call this function from any thread.
- *
+ * \threadsafety If this is used with a MIX_Mixer from MIX_CreateMixerDevice,
+ *               then this function should only be called on the main thread.
+ *               If this is used with a MIX_Mixer from MIX_CreateMixer, then
+ *               it is safe to call this function from any thread.
+
  * \since This function is available since SDL_mixer 3.0.0.
  *
  * \sa MIX_CreateMixerDevice
