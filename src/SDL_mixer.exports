@@ -90,4 +90,5 @@ _MIX_GetTrackTags
 _MIX_GetTaggedTracks
 _MIX_SetMixerFrequencyRatio
 _MIX_GetMixerFrequencyRatio
+_MIX_LoadAudioNoCopy
 # extra symbols go here (don't modify this line)

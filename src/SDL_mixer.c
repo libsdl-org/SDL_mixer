@@ -1185,6 +1185,37 @@ MIX_Audio *MIX_LoadAudio(MIX_Mixer *mixer, const char *path, bool predecode)
     return retval;
 }
 
+MIX_Audio *MIX_LoadAudioNoCopy(MIX_Mixer *mixer, const void *data, size_t datalen, bool free_when_done)
+{
+    if (!data) {
+        SDL_InvalidParamError("data");
+        return NULL;
+    }
+
+    SDL_IOStream *io = SDL_IOFromConstMem(data, datalen);
+    if (!io) {
+        return NULL;
+    }
+
+    const SDL_PropertiesID props = SDL_CreateProperties();
+    SDL_SetPointerProperty(props, MIX_PROP_AUDIO_LOAD_PREFERRED_MIXER_POINTER, mixer);
+    SDL_SetPointerProperty(props, MIX_PROP_AUDIO_LOAD_IOSTREAM_POINTER, io);
+    SDL_SetBooleanProperty(props, MIX_PROP_AUDIO_LOAD_CLOSEIO_BOOLEAN, true);
+    SDL_SetBooleanProperty(props, MIX_PROP_AUDIO_LOAD_ONDEMAND_BOOLEAN, true);  // so it doesn't make a copy to precache
+    MIX_Audio *audio = MIX_LoadAudioWithProperties(props);
+    SDL_DestroyProperties(props);
+
+    if (!audio) {
+        return NULL;
+    }
+
+    audio->precache = data;
+    audio->precachelen = datalen;
+    audio->free_precache = free_when_done;
+
+    return audio;
+}
+
 MIX_Audio *MIX_LoadRawAudio_IO(MIX_Mixer *mixer, SDL_IOStream *io, const SDL_AudioSpec *spec, bool closeio)
 {
     if (!CheckInitialized()) {

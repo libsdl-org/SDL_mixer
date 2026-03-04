@@ -610,6 +610,65 @@ extern SDL_DECLSPEC MIX_Audio * SDLCALL MIX_LoadAudio_IO(MIX_Mixer *mixer, SDL_I
 extern SDL_DECLSPEC MIX_Audio * SDLCALL MIX_LoadAudio(MIX_Mixer *mixer, const char *path, bool predecode);
 
 /**
+ * Load audio for playback from a memory buffer without making a copy.
+ *
+ * When loading audio through most other LoadAudio functions, the data will be
+ * cached fully in RAM in its original data format, for decoding on-demand.
+ * This function does most of the same work as those functions, but instead
+ * uses a buffer of memory provided by the app that it does not make a copy
+ * of.
+ *
+ * This buffer must live for the entire time the returned MIX_Audio lives, as
+ * the mixer will access the buffer whenever it needs to mix more data.
+ *
+ * This function is meant to maximize efficiency: if the data is already in
+ * memory and can remain there, don't copy it. This data can be in any
+ * supported audio file format (WAV, MP3, etc); it will be decoded on the
+ * fly while mixing. Unlike MIX_LoadAudio(), there is no `predecode` option
+ * offered here, as this is meant to optimize for data that's already in
+ * memory and intends to exist there for significant time; since predecoding
+ * would only need the file format data once, upfront, one could simply wrap
+ * it in SDL_CreateIOFromConstMem() and pass that to MIX_LoadAudio_IO().
+ *
+ * MIX_Audio objects can be shared between multiple mixers. The `mixer`
+ * parameter just suggests the most likely mixer to use this audio, in case
+ * some optimization might be applied, but this is not required, and a NULL
+ * mixer may be specified.
+ *
+ * If `free_when_done` is true, SDL_mixer will call `SDL_free(data)` when the
+ * returned MIX_Audio is eventually destroyed. This can be useful when the
+ * data is not static, but rather loaded elsewhere for this specific
+ * MIX_Audio and simply wants to avoid the extra copy.
+ *
+ * As audio format information is obtained from the file format metadata,
+ * this isn't useful for raw PCM data; in that case, use
+ * MIX_LoadRawAudioNoCopy() instead, which offers an SDL_AudioSpec.
+ *
+ * Once a MIX_Audio is created, it can be assigned to a MIX_Track with
+ * MIX_SetTrackAudio(), or played without any management with MIX_PlayAudio().
+ *
+ * When done with a MIX_Audio, it can be freed with MIX_DestroyAudio().
+ *
+ * \param mixer a mixer this audio is intended to be used with. May be NULL.
+ * \param data the buffer where the audio data lives.
+ * \param datalen the size, in bytes, of the buffer.
+ * \param free_when_done if true, `data` will be given to SDL_free() when the
+ *                       MIX_Audio is destroyed.
+ * \returns an audio object that can be used to make sound on a mixer, or NULL
+ *          on failure; call SDL_GetError() for more information.
+ *
+ * \threadsafety It is safe to call this function from any thread.
+ *
+ * \since This function is available since SDL_mixer 3.0.0.
+ *
+ * \sa MIX_DestroyAudio
+ * \sa MIX_SetTrackAudio
+ * \sa MIX_LoadRawAudioNoCopy
+ * \sa MIX_LoadAudio_IO
+ */
+extern SDL_DECLSPEC MIX_Audio * SDLCALL MIX_LoadAudioNoCopy(MIX_Mixer *mixer, const void *data, size_t datalen, bool free_when_done);
+
+/**
  * Load audio for playback through a collection of properties.
  *
  * Please see MIX_LoadAudio_IO() for a description of what the various
@@ -740,7 +799,7 @@ extern SDL_DECLSPEC MIX_Audio * SDLCALL MIX_LoadRawAudio(MIX_Mixer *mixer, const
  * Load raw PCM data from a memory buffer without making a copy.
  *
  * This buffer must live for the entire time the returned MIX_Audio lives, as
- * it will access it whenever it needs to mix more data.
+ * the mixer will access the buffer whenever it needs to mix more data.
  *
  * This function is meant to maximize efficiency: if the data is already in
  * memory and can remain there, don't copy it. But it can also lead to some

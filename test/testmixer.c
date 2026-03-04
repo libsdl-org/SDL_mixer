@@ -158,7 +158,18 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     SDL_Log("%s", "");
 
     const char *audiofname = argv[1];
+#if 1
     MIX_Audio *audio = MIX_LoadAudio(mixer, audiofname, false);
+#else
+    size_t databuffersize = 0;
+    void *databuffer = SDL_LoadFile(audiofname, &databuffersize);
+    if (!databuffer) {
+        SDL_Log("Failed to load file '%s' from disk: %s", audiofname, SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+    MIX_Audio *audio = MIX_LoadAudioNoCopy(mixer, databuffer, databuffersize, true);
+#endif
+
     //MIX_Audio *audio = MIX_CreateSineWaveAudio(mixer, 300, 0.25f, 5000);
     if (!audio) {
         SDL_Log("Failed to load '%s': %s", audiofname, SDL_GetError());
