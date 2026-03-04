@@ -454,12 +454,11 @@ extern SDL_DECLSPEC MIX_Mixer * SDLCALL MIX_CreateMixer(const SDL_AudioSpec *spe
  *
  * \param mixer the mixer to destroy.
  *
- * \threadsafety It is safe to call this function from any thread.
  * \threadsafety If this is used with a MIX_Mixer from MIX_CreateMixerDevice,
  *               then this function should only be called on the main thread.
  *               If this is used with a MIX_Mixer from MIX_CreateMixer, then
  *               it is safe to call this function from any thread.
-
+ *
  * \since This function is available since SDL_mixer 3.0.0.
  *
  * \sa MIX_CreateMixerDevice
