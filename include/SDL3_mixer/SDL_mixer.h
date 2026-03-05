@@ -1798,6 +1798,24 @@ extern SDL_DECLSPEC Sint64 SDLCALL MIX_FramesToMS(int sample_rate, Sint64 frames
  *   MIX_PROP_PLAY_APPEND_SILENCE_FRAMES_NUMBER property, but the value is
  *   specified in milliseconds instead of sample frames. If both properties
  *   are specified, the sample frames value is favored. Default 0.
+ * - `MIX_PROP_PLAY_HALT_WHEN_EXHAUSTED_BOOLEAN`: If true, when input is
+ *   completely consumed for the track, the mixer will mark the track as
+ *   stopped (and call any appropriate MIX_TrackStoppedCallback, etc); to play
+ *   more, the track will need to be restarted. If false, the track will just
+ *   not contribute to the mix, but it will not be marked as stopped. There
+ *   may be clever logic tricks this exposes generally, but this property is
+ *   specifically useful when the track's input is an SDL_AudioStream assigned
+ *   via MIX_SetTrackAudioStream(). Setting this property to true can be
+ *   useful when pushing a complete piece of audio to the stream that has a
+ *   definite ending, as the track will operate like any other audio was
+ *   applied. Setting to false means as new data is added to the stream, the
+ *   mixer will start using it as soon as possible, which is useful when audio
+ *   should play immediately as it drips in: new VoIP packets, etc. Note that
+ *   in this situation, if the audio runs out when needed, there _will_ be gaps
+ *   in the mixed output, so try to buffer enough data to avoid this when
+ *   possible. Note that a track is not consider exhausted until all its loops
+ *   and appended silence have been mixed (and also, that loops don't mean
+ *   anything when the input is an AudioStream). Default true.
  *
  * If this function fails, mixing of this track will not start (or restart, if
  * it was already started).
@@ -1830,7 +1848,7 @@ extern SDL_DECLSPEC bool SDLCALL MIX_PlayTrack(MIX_Track *track, SDL_PropertiesI
 #define MIX_PROP_PLAY_FADE_IN_START_GAIN_FLOAT "SDL_mixer.play.fade_in_start_gain"
 #define MIX_PROP_PLAY_APPEND_SILENCE_FRAMES_NUMBER "SDL_mixer.play.append_silence_frames"
 #define MIX_PROP_PLAY_APPEND_SILENCE_MILLISECONDS_NUMBER "SDL_mixer.play.append_silence_milliseconds"
-
+#define MIX_PROP_PLAY_HALT_WHEN_EXHAUSTED_BOOLEAN "SDL_mixer.play.halt_when_exhausted"
 
 /**
  * Start (or restart) mixing all tracks with a specific tag for playback.

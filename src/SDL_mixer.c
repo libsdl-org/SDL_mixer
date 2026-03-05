@@ -462,7 +462,11 @@ static void SDLCALL TrackGetCallback(void *userdata, SDL_AudioStream *stream, in
             }
 
             if (track_stopped) {
-                TrackStopped(track);
+                if (track->halt_when_exhausted) {
+                    TrackStopped(track);
+                } else {
+                    break;  // done with this track for now, but don't halt the track. We'll try it again later.
+                }
             }
         }
     }
@@ -1421,6 +1425,7 @@ MIX_Track *MIX_CreateTrack(MIX_Mixer *mixer)
     SDL_SetAudioStreamGetCallback(track->output_stream, TrackGetCallback, track);
 
     track->mixer = mixer;
+    track->halt_when_exhausted = true;
 
     LockMixer(mixer);
     track->next = mixer->all_tracks;
@@ -2224,6 +2229,8 @@ bool MIX_PlayTrack(MIX_Track *track, SDL_PropertiesID options)
     Sint64 fade_in = 0;
     Sint64 append_silence_frames = 0;
     float fade_start_gain = 0.0f;
+    bool halt_when_exhausted = true;
+
     LockTrack(track);
     if (options) {
         loops = (int) SDL_GetNumberProperty(options, MIX_PROP_PLAY_LOOPS_NUMBER, loops);
@@ -2231,8 +2238,9 @@ bool MIX_PlayTrack(MIX_Track *track, SDL_PropertiesID options)
         start_pos = GetTrackOptionFramesOrTicks(track, options, MIX_PROP_PLAY_START_FRAME_NUMBER, MIX_PROP_PLAY_START_MILLISECOND_NUMBER, start_pos);
         loop_start = GetTrackOptionFramesOrTicks(track, options, MIX_PROP_PLAY_LOOP_START_FRAME_NUMBER, MIX_PROP_PLAY_LOOP_START_MILLISECOND_NUMBER, loop_start);
         fade_in = GetTrackOptionFramesOrTicks(track, options, MIX_PROP_PLAY_FADE_IN_FRAMES_NUMBER, MIX_PROP_PLAY_FADE_IN_MILLISECONDS_NUMBER, fade_in);
-        fade_start_gain = SDL_GetFloatProperty(options, MIX_PROP_PLAY_FADE_IN_START_GAIN_FLOAT, 0.0f);
+        fade_start_gain = SDL_GetFloatProperty(options, MIX_PROP_PLAY_FADE_IN_START_GAIN_FLOAT, fade_start_gain);
         append_silence_frames = GetTrackOptionFramesOrTicks(track, options, MIX_PROP_PLAY_APPEND_SILENCE_FRAMES_NUMBER, MIX_PROP_PLAY_APPEND_SILENCE_MILLISECONDS_NUMBER, append_silence_frames);
+        halt_when_exhausted = SDL_GetBooleanProperty(options, MIX_PROP_PLAY_HALT_WHEN_EXHAUSTED_BOOLEAN, halt_when_exhausted);
 
         if (start_pos < 0) {
             start_pos = 0;
@@ -2267,6 +2275,7 @@ bool MIX_PlayTrack(MIX_Track *track, SDL_PropertiesID options)
     track->silence_frames = (append_silence_frames > 0) ? -append_silence_frames : 0;  // negative means "there is still actual audio data to play", positive means "we're done with actual data, feed silence now." Zero means no silence (left) to feed.
     track->state = MIX_STATE_PLAYING;
     track->position = start_pos;
+    track->halt_when_exhausted = halt_when_exhausted;
 
     UnlockTrack(track);
     return true;
@@ -2769,7 +2778,6 @@ bool MIX_SetTrackStereo(MIX_Track *track, const MIX_StereoGains *gains)
     return true;
 
 }
-
 
 bool MIX_SetTrack3DPosition(MIX_Track *track, const MIX_Point3D *position)
 {

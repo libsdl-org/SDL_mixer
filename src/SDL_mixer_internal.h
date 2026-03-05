@@ -148,6 +148,7 @@ struct MIX_Track
     SDL_IOStream *io;  // used for MIX_SetTrackAudio and MIX_SetTrackIOStream. Might be owned by us (SDL_IOFromConstMem of MIX_Audio::precache), or owned by the app.
     MIX_IoClamp ioclamp;  // used for MIX_SetTrackAudio and MIX_SetTrackIOStream.
     bool closeio;  // true if we should close `io` when changing track data.
+    bool halt_when_exhausted;  // true if we should stop the track when input runs out.
     SDL_AudioStream *input_stream;  // used for both MIX_SetTrackAudio and MIX_SetTrackAudioStream. Maybe not owned by SDL_mixer!
     SDL_AudioStream *internal_stream;  // used with MIX_SetTrackAudio, where it is also assigned to input_stream. Owned by SDL_mixer!
     void *decoder_userdata;  // MIX_Decoder-specific data for this run, if any.
