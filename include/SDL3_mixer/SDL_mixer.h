@@ -580,7 +580,7 @@ extern SDL_DECLSPEC void SDLCALL MIX_LockMixer(MIX_Mixer *mixer);
  *
  * \param mixer the mixer to unlock. May be NULL.
  *
- * \threadsafety It is safe to call this function from any thread.
+ * \threadsafety This call must be paired with a previous MIX_LockMixer call on the same thread.
  *
  * \since This function is available since SDL_mixer 3.0.0.
  *
