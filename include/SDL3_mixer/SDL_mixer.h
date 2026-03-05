@@ -1811,8 +1811,8 @@ extern SDL_DECLSPEC Sint64 SDLCALL MIX_FramesToMS(int sample_rate, Sint64 frames
  *   applied. Setting to false means as new data is added to the stream, the
  *   mixer will start using it as soon as possible, which is useful when audio
  *   should play immediately as it drips in: new VoIP packets, etc. Note that
- *   in this situation, if the audio runs out when needed, there _will_ be gaps
- *   in the mixed output, so try to buffer enough data to avoid this when
+ *   in this situation, if the audio runs out when needed, there _will_ be
+ *   gaps in the mixed output, so try to buffer enough data to avoid this when
  *   possible. Note that a track is not consider exhausted until all its loops
  *   and appended silence have been mixed (and also, that loops don't mean
  *   anything when the input is an AudioStream). Default true.
