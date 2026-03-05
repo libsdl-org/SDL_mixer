@@ -92,6 +92,8 @@ SDL3_mixer_0.0.0 {
     MIX_SetMixerFrequencyRatio;
     MIX_GetMixerFrequencyRatio;
     MIX_LoadAudioNoCopy;
+    MIX_LockMixer;
+    MIX_UnlockMixer;
     # extra symbols go here (don't modify this line)
   local: *;
 };

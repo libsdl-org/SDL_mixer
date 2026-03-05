@@ -102,6 +102,16 @@ is well-prepared to manage any input or output formats it ends up with.
 
 Mix_QuerySpec() has been replaced by MIX_GetMixerFormat().
 
+
+## Locking
+
+SDL2_mixer expected you to lock the SDL audio device directly if you needed
+explicit synchronization. SDL3 doesn't have a direct equivalent of SDL2's
+SDL_LockAudioDevice(), and SDL3_mixer might be operating without an audio
+device at all, so there are now explicit MIX_LockMixer() and MIX_UnlockMixer()
+API calls available.
+
+
 ## Music vs chunks
 
 SDL2_mixer made a distinction between "chunks" (uncompressed audio sitting in

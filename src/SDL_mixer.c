@@ -926,6 +926,20 @@ bool MIX_GetMixerFormat(MIX_Mixer *mixer, SDL_AudioSpec *spec)
     return SDL_GetAudioStreamFormat(mixer->output_stream, NULL, spec);
 }
 
+void MIX_LockMixer(MIX_Mixer *mixer)
+{
+    if (mixer) {
+        LockMixer(mixer);
+    }
+}
+
+void MIX_UnlockMixer(MIX_Mixer *mixer)
+{
+    if (mixer) {
+        UnlockMixer(mixer);
+    }
+}
+
 static const MIX_Decoder *PrepareDecoder(SDL_IOStream *io, MIX_Audio *audio)
 {
     const char *decoder_name = SDL_GetStringProperty(audio->props, MIX_PROP_AUDIO_DECODER_STRING, NULL);
