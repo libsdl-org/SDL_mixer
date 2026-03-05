@@ -1,3 +1,17 @@
+/*
+  PLEASE NOTE THAT THE CODE IN THIS FILE IS ATROCIOUS, DON'T USE IT AS A
+  FOUNDATION FOR YOUR OWN PROGRAMS.
+
+  This is mostly just meant to test various things in quick-and-dirty ways.
+
+  I might delete it later.
+
+  I strongly recommend you use the programs in the "examples" directory to
+  get started. You can see them running in your web browser at:
+
+  https://examples.libsdl.org/SDL3_mixer/
+*/
+
 #define SDL_MAIN_USE_CALLBACKS 1  /* use the callbacks instead of main() */
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
