@@ -21,8 +21,6 @@
         `MAJOR_VERSION`, `MINOR_VERSION`, `MICRO_VERSION`
     * `src/version.rc`:
         `FILEVERSION`, `PRODUCTVERSION`, `FileVersion`, `ProductVersion`
-    * `VisualC/Version.rc`:
-        `FILEVERSION`, `PRODUCTVERSION`, `FileVersion`, `ProductVersion`
     * `Xcode/Info-Framework.plist`:
         `CFBundleShortVersionString`, `CFBundleVersion`
 
