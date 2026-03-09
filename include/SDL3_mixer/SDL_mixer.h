@@ -551,7 +551,7 @@ extern SDL_DECLSPEC bool SDLCALL MIX_GetMixerFormat(MIX_Mixer *mixer, SDL_AudioS
  * locked until the final matching unlock call.
  *
  * Do not lock the mixer for significant amounts of time, or it can cause
- * audio dropouts. Just do simply things quickly and unlock again.
+ * audio dropouts. Just do simple things quickly and unlock again.
  *
  * Locking a NULL mixer is a safe no-op.
  *
