@@ -127,9 +127,9 @@ static bool ParseVocFile(SDL_IOStream *io, VOC_AudioData *adata, SDL_PropertiesI
         Uint8 block;
         Uint32 blen = 0;
         if (SDL_ReadIO(io, &block, 1) != 1) {
-            return true;   // assume that's the end of the file.
+            break;   // assume that's the end of the file.
         } else if (block == VOC_TERM) {
-            return true;  // that's the (optional) end.
+            break;  // that's the (optional) end.
         } else if (block != VOC_LOOPEND) {  // TERM and LOOPEND don't have a size field.
             Uint8 bits24[3];
             if (SDL_ReadIO(io, bits24, sizeof(bits24)) != sizeof(bits24)) {
