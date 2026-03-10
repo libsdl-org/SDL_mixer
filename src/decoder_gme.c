@@ -222,6 +222,7 @@ const MIX_Decoder MIX_Decoder_GME = {
     GME_init_track,
     GME_decode,
     GME_seek,
+    NULL,  // jump_to_order
     GME_quit_track,
     GME_quit_audio,
     GME_quit

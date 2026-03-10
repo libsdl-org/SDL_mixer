@@ -590,6 +590,7 @@ const MIX_Decoder MIX_Decoder_VOC = {
     VOC_init_track,
     VOC_decode,
     VOC_seek,
+    NULL,  // jump_to_order
     VOC_quit_track,
     VOC_quit_audio,
     NULL  // quit

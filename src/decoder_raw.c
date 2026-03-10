@@ -137,6 +137,7 @@ const MIX_Decoder MIX_Decoder_RAW = {
     RAW_init_track,
     RAW_decode,
     RAW_seek,
+    NULL,  // jump_to_order
     RAW_quit_track,
     RAW_quit_audio,
     NULL  // quit

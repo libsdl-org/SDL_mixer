@@ -269,6 +269,7 @@ const MIX_Decoder MIX_Decoder_AU = {
     AU_init_track,
     AU_decode,
     AU_seek,
+    NULL,  // jump_to_order
     AU_quit_track,
     AU_quit_audio,
     NULL  // quit

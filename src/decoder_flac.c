@@ -507,6 +507,7 @@ const MIX_Decoder MIX_Decoder_FLAC = {
     FLAC_init_track,
     FLAC_decode,
     FLAC_seek,
+    NULL,  // jump_to_order
     FLAC_quit_track,
     FLAC_quit_audio,
     FLAC_quit

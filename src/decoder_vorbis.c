@@ -439,6 +439,7 @@ const MIX_Decoder MIX_Decoder_VORBIS = {
     VORBIS_init_track,
     VORBIS_decode,
     VORBIS_seek,
+    NULL,  // jump_to_order
     VORBIS_quit_track,
     VORBIS_quit_audio,
     VORBIS_quit

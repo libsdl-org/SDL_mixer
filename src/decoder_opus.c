@@ -357,6 +357,7 @@ const MIX_Decoder MIX_Decoder_OPUS = {
     OPUS_init_track,
     OPUS_decode,
     OPUS_seek,
+    NULL,  // jump_to_order
     OPUS_quit_track,
     OPUS_quit_audio,
     OPUS_quit

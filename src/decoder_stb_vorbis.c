@@ -349,6 +349,7 @@ const MIX_Decoder MIX_Decoder_STBVORBIS = {
     STBVORBIS_init_track,
     STBVORBIS_decode,
     STBVORBIS_seek,
+    NULL,  // jump_to_order
     STBVORBIS_quit_track,
     STBVORBIS_quit_audio,
     STBVORBIS_quit

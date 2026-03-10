@@ -581,6 +581,7 @@ const MIX_Decoder MIX_Decoder_AIFF = {
     AIFF_init_track,
     AIFF_decode,
     AIFF_seek,
+    NULL,  // jump_to_order
     AIFF_quit_track,
     AIFF_quit_audio,
     NULL  // quit

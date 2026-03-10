@@ -331,6 +331,7 @@ const MIX_Decoder MIX_Decoder_DRFLAC = {
     DRFLAC_init_track,
     DRFLAC_decode,
     DRFLAC_seek,
+    NULL,  // jump_to_order
     DRFLAC_quit_track,
     DRFLAC_quit_audio,
     NULL  // quit

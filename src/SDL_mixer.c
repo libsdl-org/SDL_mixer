@@ -2242,6 +2242,7 @@ bool MIX_PlayTrack(MIX_Track *track, SDL_PropertiesID options)
     Sint64 loop_start = 0;
     Sint64 fade_in = 0;
     Sint64 append_silence_frames = 0;
+    int start_order = -1;
     float fade_start_gain = 0.0f;
     bool halt_when_exhausted = true;
 
@@ -2255,6 +2256,7 @@ bool MIX_PlayTrack(MIX_Track *track, SDL_PropertiesID options)
         fade_start_gain = SDL_GetFloatProperty(options, MIX_PROP_PLAY_FADE_IN_START_GAIN_FLOAT, fade_start_gain);
         append_silence_frames = GetTrackOptionFramesOrTicks(track, options, MIX_PROP_PLAY_APPEND_SILENCE_FRAMES_NUMBER, MIX_PROP_PLAY_APPEND_SILENCE_MILLISECONDS_NUMBER, append_silence_frames);
         halt_when_exhausted = SDL_GetBooleanProperty(options, MIX_PROP_PLAY_HALT_WHEN_EXHAUSTED_BOOLEAN, halt_when_exhausted);
+        start_order = (int) SDL_GetNumberProperty(options, MIX_PROP_PLAY_START_ORDER_NUMBER, start_order);
 
         if (start_pos < 0) {
             start_pos = 0;
@@ -2271,7 +2273,14 @@ bool MIX_PlayTrack(MIX_Track *track, SDL_PropertiesID options)
         fade_start_gain = SDL_clamp(fade_start_gain, 0.0f, 1.0f);
     }
 
-    if (track->input_audio && (!track->input_audio->decoder->seek(track->decoder_userdata, start_pos))) {
+    if ((start_order >= 0) && (!track->input_audio || !track->input_audio->decoder->jump_to_order)) {
+        start_order = -1;  // ignore this option, it doesn't mean anything on this decoder.
+    }
+
+    if ((start_order >= 0) && !track->input_audio->decoder->jump_to_order(track->decoder_userdata, start_order)) {
+        UnlockTrack(track);
+        return false;
+    } else if (track->input_audio && (!track->input_audio->decoder->seek(track->decoder_userdata, start_pos))) {
         UnlockTrack(track);
         return false;
     } else if (!track->input_audio && (start_pos != 0)) {
