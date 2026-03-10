@@ -1885,14 +1885,14 @@ extern SDL_DECLSPEC Sint64 SDLCALL MIX_FramesToMS(int sample_rate, Sint64 frames
  *   possible. Note that a track is not consider exhausted until all its loops
  *   and appended silence have been mixed (and also, that loops don't mean
  *   anything when the input is an AudioStream). Default true.
- * - `MIX_PROP_PLAY_START_ORDER_NUMBER`: This is a special-case property
- *   that most apps can ignore. For mod file formats, start mixing from a
- *   specific "order" index instead of the start of the file. A value < 0 will
- *   cause this property to be ignored. If the decoder doesn't support this
- *   property, it will also be ignored. If this property is _not_ ignored,
- *   the MIX_PROP_PLAY_START_FRAME_NUMBER and
- *   MIX_PROP_PLAY_START_MILLISECOND_NUMBER properties will be ignored instead.
- *   Default -1. Since SDL_mixer 3.2.2.
+ * - `MIX_PROP_PLAY_START_ORDER_NUMBER`: This is a special-case property that
+ *   most apps can ignore. For mod file formats, start mixing from a specific
+ *   "order" index instead of the start of the file. A value < 0 will cause
+ *   this property to be ignored. If the decoder doesn't support this
+ *   property, it will also be ignored. If this property is _not_ ignored, the
+ *   MIX_PROP_PLAY_START_FRAME_NUMBER and
+ *   MIX_PROP_PLAY_START_MILLISECOND_NUMBER properties will be ignored
+ *   instead. Default -1. Since SDL_mixer 3.2.2.
  *
  * If this function fails, mixing of this track will not start (or restart, if
  * it was already started).
