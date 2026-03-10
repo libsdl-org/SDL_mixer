@@ -874,7 +874,7 @@ static bool ParseFMT(WAV_AudioData *adata, SDL_IOStream *io, SDL_AudioSpec *spec
         adata->encoding = (Uint16)SDL_Swap32LE(fmt.subencoding);
         adata->channelmask = SDL_Swap32LE(fmt.channelsmask);
     } else {
-        adata->channelmask = StandardSDLWavChannelMask(fmt.format.channels);
+        adata->channelmask = StandardSDLWavChannelMask((int) SDL_Swap16LE(fmt.format.channels));
     }
 
     // Decode the audio data format
