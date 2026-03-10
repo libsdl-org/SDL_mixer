@@ -459,6 +459,7 @@ const MIX_Decoder MIX_Decoder_MPG123 = {
     MPG123_init_track,
     MPG123_decode,
     MPG123_seek,
+    NULL,  // jump_to_order
     MPG123_quit_track,
     MPG123_quit_audio,
     MPG123_quit

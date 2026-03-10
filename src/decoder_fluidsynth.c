@@ -451,6 +451,7 @@ const MIX_Decoder MIX_Decoder_FLUIDSYNTH = {
     FLUIDSYNTH_init_track,
     FLUIDSYNTH_decode,
     FLUIDSYNTH_seek,
+    NULL,  // jump_to_order
     FLUIDSYNTH_quit_track,
     FLUIDSYNTH_quit_audio,
     FLUIDSYNTH_quit

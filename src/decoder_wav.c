@@ -1785,6 +1785,7 @@ const MIX_Decoder MIX_Decoder_WAV = {
     WAV_init_track,
     WAV_decode,
     WAV_seek,
+    NULL,  // jump_to_order
     WAV_quit_track,
     WAV_quit_audio,
     NULL  // quit

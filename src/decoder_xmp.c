@@ -65,6 +65,7 @@ struct xmp_callbacks {
     MIX_LOADER_FUNCTION(true,int,xmp_play_frame,(xmp_context)) \
     MIX_LOADER_FUNCTION(true,int,xmp_play_buffer,(xmp_context, void *, int, int)) \
     MIX_LOADER_FUNCTION(true,int,xmp_seek_time,(xmp_context, int)) \
+    MIX_LOADER_FUNCTION(true,int,xmp_set_position,(xmp_context, int)) \
     MIX_LOADER_FUNCTION(true,void,xmp_get_frame_info,(xmp_context, struct xmp_frame_info *)) \
     MIX_LOADER_FUNCTION(true,void,xmp_stop_module,(xmp_context)) \
     MIX_LOADER_FUNCTION(true,void,xmp_release_module,(xmp_context)) \
@@ -278,6 +279,12 @@ static bool SDLCALL XMP_seek(void *track_userdata, Uint64 frame)
     return err < 0 ? SetLibXmpError("xmp_seek_time", err) : true;
 }
 
+static bool SDLCALL XMP_jump_to_order(void *track_userdata, int order)
+{
+    XMP_TrackData *tdata = (XMP_TrackData *) track_userdata;
+    return libxmp.xmp_set_position(tdata->ctx, order);
+}
+
 static void SDLCALL XMP_quit_track(void *track_userdata)
 {
     XMP_TrackData *tdata = (XMP_TrackData *) track_userdata;
@@ -300,6 +307,7 @@ const MIX_Decoder MIX_Decoder_XMP = {
     XMP_init_track,
     XMP_decode,
     XMP_seek,
+    XMP_jump_to_order,
     XMP_quit_track,
     XMP_quit_audio,
     XMP_quit

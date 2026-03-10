@@ -169,6 +169,7 @@ const MIX_Decoder MIX_Decoder_TIMIDITY = {
     TIMIDITY_init_track,
     TIMIDITY_decode,
     TIMIDITY_seek,
+    NULL,  // jump_to_order
     TIMIDITY_quit_track,
     TIMIDITY_quit_audio,
     TIMIDITY_quit

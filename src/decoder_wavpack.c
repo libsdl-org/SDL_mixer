@@ -633,6 +633,7 @@ const MIX_Decoder MIX_Decoder_WAVPACK = {
     WAVPACK_init_track,
     WAVPACK_decode,
     WAVPACK_seek,
+    NULL,  // jump_to_order
     WAVPACK_quit_track,
     WAVPACK_quit_audio,
     WAVPACK_quit

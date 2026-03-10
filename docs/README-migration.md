@@ -17,8 +17,8 @@ think that once you move to them, you'll be quite happy you did.
 There are a lot of things that don't have simple replacements that can be
 changed mechanically to migrate to SDL3_mixer. The new API is in many ways
 more powerful, but also much simpler. For example, there's no equivalent of
-Mix_ModMusicJumpToOrder(), because messing with the specifics
-of MOD files in the public API is both uncommon and generally pretty messy.
+Mix_GetNumTracks(), because messing with the specifics of MOD files in the
+public API is both uncommon and generally pretty messy.
 
 This migration guide will attempt to walk through the important details but
 it's possible that some things can't be done the same way. Feel free to open
@@ -34,10 +34,8 @@ function name and a brief explanation about what to do with it.
   and packaged it as a separate library that can be used alongside SDL3_mixer,
   or without SDL_mixer at all: https://github.com/libsdl-org/SDL_native_midi
 
-- Mix_GetNumTracks(), Mix_StartTrack(), and Mix_ModMusicJumpToOrder() have
-  been removed; these were decoder-specific APIs.
-
-- Mix_SetSoundFonts(), Mix_GetSoundFonts(), Mix_EachSoundFont(),
+- Mix_GetNumTracks(), Mix_StartTrack(), Mix_ModMusicJumpToOrder(),
+  Mix_SetSoundFonts(), Mix_GetSoundFonts(), Mix_EachSoundFont(),
   Mix_SetTimidityCfg(), Mix_GetTimidityCfg(): these have been removed, but
   decoder-specific settings can be passed on in a generic way in SDL3_mixer,
   using SDL properties.
@@ -392,7 +390,7 @@ can discuss it!
 - Mix_ResumeMusic => MIX_ResumeTrack
 - Mix_RewindMusic => MIX_SetTrackPlaybackPosition(track, 0)
 - Mix_PausedMusic => MIX_TrackPaused
-- Mix_ModMusicJumpToOrder => no equivalent in SDL3_mixer.
+- Mix_ModMusicJumpToOrder => MIX_PlayTrack with MIX_PROP_PLAY_START_ORDER_NUMBER property set.
 - Mix_StartTrack => no equivalent in SDL3_mixer.
 - Mix_GetNumTracks => no equivalent in SDL3_mixer.
 - Mix_SetMusicPosition => MIX_SetTrackPlaybackPosition

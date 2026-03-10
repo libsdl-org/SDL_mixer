@@ -195,6 +195,7 @@ const MIX_Decoder MIX_Decoder_DRMP3 = {
     DRMP3_init_track,
     DRMP3_decode,
     DRMP3_seek,
+    NULL,  // jump_to_order
     DRMP3_quit_track,
     DRMP3_quit_audio,
     NULL  // quit

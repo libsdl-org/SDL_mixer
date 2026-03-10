@@ -160,6 +160,7 @@ const MIX_Decoder MIX_Decoder_SINEWAVE = {
     SINEWAVE_init_track,
     SINEWAVE_decode,
     SINEWAVE_seek,
+    NULL,  // jump_to_order
     SINEWAVE_quit_track,
     SINEWAVE_quit_audio,
     NULL  // quit
