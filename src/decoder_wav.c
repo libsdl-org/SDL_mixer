@@ -950,7 +950,7 @@ static bool ParseFMT(WAV_AudioData *adata, SDL_IOStream *io, SDL_AudioSpec *spec
         case 32:
             switch(adata->encoding) {
             case PCM_CODE:   spec->format = SDL_AUDIO_S32LE; break;
-            case IEEE_FLOAT_CODE: spec->format = SDL_AUDIO_F32; break;
+            case IEEE_FLOAT_CODE: spec->format = SDL_AUDIO_F32LE; break;
             default: unknown_bits = true; break;
             }
             break;
