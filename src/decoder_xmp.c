@@ -282,7 +282,13 @@ static bool SDLCALL XMP_seek(void *track_userdata, Uint64 frame)
 static bool SDLCALL XMP_jump_to_order(void *track_userdata, int order)
 {
     XMP_TrackData *tdata = (XMP_TrackData *) track_userdata;
-    return libxmp.xmp_set_position(tdata->ctx, order);
+    int err = libxmp.xmp_set_position(tdata->ctx, order);
+    switch (err) {
+    case -XMP_ERROR_STATE:
+    case -XMP_ERROR_INVALID:
+        return SetLibXmpError("xmp_set_position", err);
+    }
+    return true;
 }
 
 static void SDLCALL XMP_quit_track(void *track_userdata)
