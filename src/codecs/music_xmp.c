@@ -150,7 +150,7 @@ typedef struct
 static int XMP_Seek(void *ctx, double pos);
 static void XMP_Delete(void *ctx);
 
-static void libxmp_set_error(int e)
+static int libxmp_set_error(int e)
 {
     const char *msg;
     switch (e) {
@@ -179,7 +179,7 @@ static void libxmp_set_error(int e)
         msg = "Unknown error";
         break;
     }
-    Mix_SetError("XMP: %s", msg);
+    return Mix_SetError("XMP: %s", msg);
 }
 
 static unsigned long xmp_fread(void *dst, unsigned long len, unsigned long nmemb, void *src)
@@ -372,7 +372,13 @@ static int XMP_GetAudio(void *context, void *data, int bytes)
 static int XMP_Jump(void *context, int order)
 {
     XMP_Music *music = (XMP_Music *)context;
-    return libxmp.xmp_set_position(music->ctx, order);
+    int err = libxmp.xmp_set_position(music->ctx, order);
+    switch (err) {
+    case -XMP_ERROR_STATE:
+    case -XMP_ERROR_INVALID:
+        return libxmp_set_error(err);
+    }
+    return 0;
 }
 
 /* Jump (seek) to a given position */
