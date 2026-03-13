@@ -30,7 +30,9 @@ function name and a brief explanation about what to do with it.
 
 ## Things that are totally gone
 
-- Native MIDI has been removed. We have ripped this piece out of SDL2_mixer
+- Native MIDI has been removed (we can still play midi files like
+other file formats, just not to native midi hardware). We have
+ripped this piece out of SDL2_mixer
   and packaged it as a separate library that can be used alongside SDL3_mixer,
   or without SDL_mixer at all: https://github.com/libsdl-org/SDL_native_midi
 
