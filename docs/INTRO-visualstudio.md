@@ -3,6 +3,8 @@
 
 The easiest way to use SDL_mixer is to include it along with SDL as subprojects in your project.
 
+First, make sure you have downloaded the external dependencies. You can do that by running Get-GitModules.ps1 in the external directory.
+
 We'll start by creating a simple project to build and run [hello.c](hello.c)
 
 - Create a new project in Visual Studio, using the C++ Empty Project template
