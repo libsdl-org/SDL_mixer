@@ -410,4 +410,6 @@ can discuss it!
 - Mix_GetTimidityCfg => no equivalent in SDL3_mixer.
 - Mix_GetChunk => MIX_GetTrackAudio or MIX_GetTrackAudioStream
 - Mix_CloseAudio => MIX_DestroyMixer
+- Mix_GetError => SDL_GetError
+- Mix_SetError => SDL_SetError
 
