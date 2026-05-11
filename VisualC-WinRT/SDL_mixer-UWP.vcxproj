@@ -52,6 +52,7 @@
     <ClCompile Include="..\src\codecs\music_wav.c" />
     <ClCompile Include="..\src\codecs\music_wavpack.c" />
     <ClCompile Include="..\src\codecs\music_xmp.c" />
+    <ClCompile Include="..\src\codecs\remap_channels.c" />
     <ClCompile Include="..\src\codecs\timidity\common.c" />
     <ClCompile Include="..\src\codecs\timidity\instrum.c" />
     <ClCompile Include="..\src\codecs\timidity\mix.c" />
@@ -82,6 +83,7 @@
     <ClInclude Include="..\src\codecs\music_wav.h" />
     <ClInclude Include="..\src\codecs\music_wavpack.h" />
     <ClInclude Include="..\src\codecs\music_xmp.h" />
+    <ClInclude Include="..\src\codecs\remap_channels.h" />
     <ClInclude Include="..\src\utils.h" />
     <ClInclude Include="..\src\codecs\timidity\common.h" />
     <ClInclude Include="..\src\codecs\timidity\instrum.h" />
