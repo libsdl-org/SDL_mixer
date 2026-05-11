@@ -68,6 +68,7 @@ libmpg123_la_SOURCES = \
 	abi_align.h \
 	mangle.h \
 	aarch64_defs.h \
+	x86_64_defs.h \
 	getcpuflags.h \
 	index.h \
 	index.c

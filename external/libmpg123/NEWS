@@ -8,6 +8,7 @@
 
 1.22.x-sezero (backports)
 ---
+- Announce support for shadow stack / IBT in x86-64 assembly.
 - Prevent premature application of header info into decoding structure,
   at worst having triggered out-of-bounds writes of decoded PCM data
   (bug 322, again).
