@@ -173,7 +173,7 @@
 		F3968D57281FB3B300661875 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README; path = ../../external/mpg123/README; sourceTree = "<group>"; };
 		F3968D58281FB3B300661875 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING; path = ../../external/mpg123/COPYING; sourceTree = "<group>"; };
 		F3B38D8D296F970B005DA6D3 /* synth_stereo_avx_accurate.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_avx_accurate.S; path = ../../external/mpg123/src/libmpg123/synth_stereo_avx_accurate.S; sourceTree = "<group>"; };
-		F3DC38BD2E4BED4F00CD73DE /* lfs_wrap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = lfs_wrap.c; path = /Users/valve/projects/SDL_mixer/external/mpg123/src/libmpg123/lfs_wrap.c; sourceTree = "<absolute>"; };
+		F3DC38BD2E4BED4F00CD73DE /* lfs_wrap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = lfs_wrap.c; path = ../../external/mpg123/src/libmpg123/lfs_wrap.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
