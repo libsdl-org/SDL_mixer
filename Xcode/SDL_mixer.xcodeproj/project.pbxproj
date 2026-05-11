@@ -107,6 +107,10 @@
 		F382335E2731963000F7F527 /* music_opus.c in Sources */ = {isa = PBXBuildFile; fileRef = 630FBD8220D52105009867AB /* music_opus.c */; };
 		F382335F2731963800F7F527 /* native_midi.h in Headers */ = {isa = PBXBuildFile; fileRef = F51BFB0101F724BE01D3D55B /* native_midi.h */; };
 		F38233602731963800F7F527 /* native_midi.h in Headers */ = {isa = PBXBuildFile; fileRef = F51BFB0101F724BE01D3D55B /* native_midi.h */; };
+		F396DBEB2FB287B100CAF637 /* remap_channels.h in Headers */ = {isa = PBXBuildFile; fileRef = F396DBE92FB287B100CAF637 /* remap_channels.h */; };
+		F396DBEC2FB287B100CAF637 /* remap_channels.c in Sources */ = {isa = PBXBuildFile; fileRef = F396DBEA2FB287B100CAF637 /* remap_channels.c */; };
+		F396DBED2FB287B100CAF637 /* remap_channels.c in Sources */ = {isa = PBXBuildFile; fileRef = F396DBEA2FB287B100CAF637 /* remap_channels.c */; };
+		F396DBEE2FB287B100CAF637 /* remap_channels.h in Headers */ = {isa = PBXBuildFile; fileRef = F396DBE92FB287B100CAF637 /* remap_channels.h */; };
 		F3D87C09281DFABD005DA540 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87C08281DFABD005DA540 /* AudioToolbox.framework */; };
 		F3D87C0B281DFAD4005DA540 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87C0A281DFAD4005DA540 /* AudioUnit.framework */; platformFilters = (macos, ); };
 		F3D87C0D281DFADB005DA540 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3D87C0C281DFADB005DA540 /* CoreServices.framework */; };
@@ -210,6 +214,8 @@
 		F37A8DB42838AD1200C38E95 /* music_ogg_stb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = music_ogg_stb.c; sourceTree = "<group>"; };
 		F3968B90281F817E00661875 /* opus.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = opus.xcodeproj; path = opus/opus.xcodeproj; sourceTree = "<group>"; };
 		F3968D71281FB5E100661875 /* config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = config.xcconfig; sourceTree = "<group>"; };
+		F396DBE92FB287B100CAF637 /* remap_channels.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = remap_channels.h; sourceTree = "<group>"; };
+		F396DBEA2FB287B100CAF637 /* remap_channels.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = remap_channels.c; sourceTree = "<group>"; };
 		F3D87C08281DFABD005DA540 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		F3D87C0A281DFAD4005DA540 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		F3D87C0C281DFADB005DA540 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
@@ -301,43 +307,45 @@
 		6398B0BB238528360024EEA1 /* codecs */ = {
 			isa = PBXGroup;
 			children = (
-				AAE405BE1F9607BF00EDAF53 /* load_aiff.c */,
 				AAE405D21F9607C100EDAF53 /* load_aiff.h */,
-				AAE405CC1F9607C000EDAF53 /* load_voc.c */,
+				AAE405BE1F9607BF00EDAF53 /* load_aiff.c */,
 				AAE405C31F9607C000EDAF53 /* load_voc.h */,
-				639197EF239FE66700F1D8F8 /* mp3utils.c */,
+				AAE405CC1F9607C000EDAF53 /* load_voc.c */,
 				639197F0239FE66700F1D8F8 /* mp3utils.h */,
-				AAE405DE1F9607C300EDAF53 /* music_cmd.c */,
+				639197EF239FE66700F1D8F8 /* mp3utils.c */,
 				AAE405DB1F9607C200EDAF53 /* music_cmd.h */,
-				F37A8D492838A23400C38E95 /* music_drflac.c */,
+				AAE405DE1F9607C300EDAF53 /* music_cmd.c */,
 				F37A8D412838A23400C38E95 /* music_drflac.h */,
-				AAE405D41F9607C100EDAF53 /* music_flac.c */,
+				F37A8D492838A23400C38E95 /* music_drflac.c */,
 				AAE405C71F9607C000EDAF53 /* music_flac.h */,
-				AAE405C61F9607C000EDAF53 /* music_fluidsynth.c */,
+				AAE405D41F9607C100EDAF53 /* music_flac.c */,
 				AAE405BF1F9607BF00EDAF53 /* music_fluidsynth.h */,
-				635731D12AD5B66A000AC38E /* music_gme.c */,
+				AAE405C61F9607C000EDAF53 /* music_fluidsynth.c */,
 				635731D22AD5B66A000AC38E /* music_gme.h */,
-				F307A4E32B546F710012534B /* music_minimp3.c */,
+				635731D12AD5B66A000AC38E /* music_gme.c */,
 				F307A4E42B546F710012534B /* music_minimp3.h */,
-				AAE405C41F9607C000EDAF53 /* music_modplug.c */,
+				F307A4E32B546F710012534B /* music_minimp3.c */,
 				AAE405C51F9607C000EDAF53 /* music_modplug.h */,
-				AAE405DF1F9607C300EDAF53 /* music_mpg123.c */,
+				AAE405C41F9607C000EDAF53 /* music_modplug.c */,
 				AAE405D31F9607C100EDAF53 /* music_mpg123.h */,
-				AAE405D51F9607C100EDAF53 /* music_nativemidi.c */,
+				AAE405DF1F9607C300EDAF53 /* music_mpg123.c */,
 				AAE405DA1F9607C200EDAF53 /* music_nativemidi.h */,
-				F37A8DB42838AD1200C38E95 /* music_ogg_stb.c */,
-				AAE405D91F9607C200EDAF53 /* music_ogg.c */,
+				AAE405D51F9607C100EDAF53 /* music_nativemidi.c */,
 				AAE405D11F9607C100EDAF53 /* music_ogg.h */,
-				630FBD8220D52105009867AB /* music_opus.c */,
+				AAE405D91F9607C200EDAF53 /* music_ogg.c */,
+				F37A8DB42838AD1200C38E95 /* music_ogg_stb.c */,
 				630FBD8420D5211F009867AB /* music_opus.h */,
-				AAE405D71F9607C200EDAF53 /* music_timidity.c */,
+				630FBD8220D52105009867AB /* music_opus.c */,
 				AAE405D61F9607C100EDAF53 /* music_timidity.h */,
-				AAE405C91F9607C000EDAF53 /* music_wav.c */,
+				AAE405D71F9607C200EDAF53 /* music_timidity.c */,
 				AAE405C81F9607C000EDAF53 /* music_wav.h */,
-				635731CB2AD5B658000AC38E /* music_wavpack.c */,
+				AAE405C91F9607C000EDAF53 /* music_wav.c */,
 				635731CC2AD5B658000AC38E /* music_wavpack.h */,
-				F30240622881DF95002F32D6 /* music_xmp.c */,
+				635731CB2AD5B658000AC38E /* music_wavpack.c */,
 				F302405F2881DF94002F32D6 /* music_xmp.h */,
+				F30240622881DF95002F32D6 /* music_xmp.c */,
+				F396DBE92FB287B100CAF637 /* remap_channels.h */,
+				F396DBEA2FB287B100CAF637 /* remap_channels.c */,
 			);
 			name = codecs;
 			path = ../src/codecs;
@@ -442,6 +450,7 @@
 			files = (
 				AAE405E31F9607C300EDAF53 /* music_fluidsynth.h in Headers */,
 				AAE405F61F9607C300EDAF53 /* load_aiff.h in Headers */,
+				F396DBEB2FB287B100CAF637 /* remap_channels.h in Headers */,
 				F307A4E72B546F710012534B /* music_minimp3.h in Headers */,
 				AAE405E71F9607C300EDAF53 /* load_voc.h in Headers */,
 				AAE405EC1F9607C300EDAF53 /* music_wav.h in Headers */,
@@ -493,6 +502,7 @@
 				F3823344273195EE00F7F527 /* music_cmd.h in Headers */,
 				F38233582731962100F7F527 /* music_wav.h in Headers */,
 				635731D02AD5B658000AC38E /* music_wavpack.h in Headers */,
+				F396DBEE2FB287B100CAF637 /* remap_channels.h in Headers */,
 				635731D62AD5B66A000AC38E /* music_gme.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -683,6 +693,10 @@
 			buildActionMask = 12;
 			files = (
 			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "PRODUCT_NAME=SDL2_mixer\nOPTIONAL_FRAMEWORKS=\"gme ogg opus wavpack xmp\"\n\n# Sign framework\nif [ \"$SDL_CODESIGN_IDENTITY\" != \"\" ]; then\n    codesign --force --deep --sign \"$SDL_CODESIGN_IDENTITY\" --preserve-metadata\\=identifier,entitlements,flags --generate-entitlement-der $TARGET_BUILD_DIR/$PRODUCT_NAME.framework/Versions/A || exit $?\nfi\n\n# clean up the framework, remove headers, extra files\nmkdir -p build/dmg-tmp\ncp -a $TARGET_BUILD_DIR/$PRODUCT_NAME.framework build/dmg-tmp/\ncp pkg-support/resources/ReadMe.txt build/dmg-tmp\nfor i in $OPTIONAL_FRAMEWORKS; do\n    if [ -d $TARGET_BUILD_DIR/$i.framework ]; then\n        if [ \"$SDL_CODESIGN_IDENTITY\" != \"\" ]; then\n            codesign --force --deep --sign \"$SDL_CODESIGN_IDENTITY\"  --preserve-metadata\\=identifier,entitlements,flags --generate-entitlement-der $TARGET_BUILD_DIR/$i.framework/Versions/A\n        fi\n        mkdir -p build/dmg-tmp/optional\n        cp -a $TARGET_BUILD_DIR/$i.framework build/dmg-tmp/optional/\n    fi\ndone\n\n# remove the .DS_Store files if any (we may want to provide one in the future for fancy .dmgs)\nrm -rf build/dmg-tmp/.DS_Store\n\n# create the dmg\nhdiutil create -ov -fs HFS+ -volname $PRODUCT_NAME -srcfolder build/dmg-tmp build/$PRODUCT_NAME.dmg\n\n# clean up\nrm -rf build/dmg-tmp\n";
@@ -715,6 +729,7 @@
 				AAE405E51F9607C300EDAF53 /* mixer.c in Sources */,
 				F307A4E52B546F710012534B /* music_minimp3.c in Sources */,
 				0448E8AE108B937A00C9D3EA /* native_midi_macosx.c in Sources */,
+				F396DBEC2FB287B100CAF637 /* remap_channels.c in Sources */,
 				630FBD8320D52105009867AB /* music_opus.c in Sources */,
 				639008C82385A822009019FA /* utils.c in Sources */,
 				639197F1239FE66700F1D8F8 /* mp3utils.c in Sources */,
@@ -748,6 +763,7 @@
 				F38233572731961F00F7F527 /* music_wav.c in Sources */,
 				F307A4E62B546F710012534B /* music_minimp3.c in Sources */,
 				F38233512731961100F7F527 /* music_nativemidi.c in Sources */,
+				F396DBED2FB287B100CAF637 /* remap_channels.c in Sources */,
 				F38233532731961600F7F527 /* music_ogg.c in Sources */,
 				F3823337273195CC00F7F527 /* utils.c in Sources */,
 				F3823339273195D200F7F527 /* effect_position.c in Sources */,
