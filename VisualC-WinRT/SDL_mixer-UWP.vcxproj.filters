@@ -103,6 +103,9 @@
     <ClCompile Include="..\src\codecs\music_xmp.c">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\codecs\remap_channels.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\codecs\timidity\common.h">
@@ -193,6 +196,9 @@
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="..\src\codecs\music_xmp.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\codecs\remap_channels.h">
       <Filter>Sources</Filter>
     </ClInclude>
   </ItemGroup>
