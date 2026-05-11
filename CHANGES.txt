@@ -1,3 +1,7 @@
+2.8.2:
+ * Improved OGG decoding speed when using stb_vorbis
+ * Updated to newer versions of decoding libraries
+
 2.8.1:
  * Added Stop/Start/Pause/Resume for Fluidsynth
 
