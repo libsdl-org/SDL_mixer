@@ -219,6 +219,7 @@
     <ClInclude Include="..\src\codecs\music_wav.h" />
     <ClInclude Include="..\src\codecs\music_wavpack.h" />
     <ClInclude Include="..\src\codecs\music_xmp.h" />
+    <ClInclude Include="..\src\codecs\remap_channels.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Version.rc" />
@@ -267,6 +268,7 @@
     <ClCompile Include="..\src\codecs\music_wav.c" />
     <ClCompile Include="..\src\codecs\music_wavpack.c" />
     <ClCompile Include="..\src\codecs\music_xmp.c" />
+    <ClCompile Include="..\src\codecs\remap_channels.c" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="external\optional\x64\libxmp.dll">
