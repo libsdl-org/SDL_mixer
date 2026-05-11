@@ -89,11 +89,12 @@
 		F3968D4E281FB05200661875 /* compat_str.c in Sources */ = {isa = PBXBuildFile; fileRef = F3968D4C281FB05200661875 /* compat_str.c */; };
 		F3968D50281FB25300661875 /* synth_neon_float.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968D4F281FB25300661875 /* synth_neon_float.S */; };
 		F3968D52281FB28C00661875 /* dct64_neon_float.S in Sources */ = {isa = PBXBuildFile; fileRef = F3968D51281FB28C00661875 /* dct64_neon_float.S */; };
-		F3968D54281FB35400661875 /* mpg123.h in Headers */ = {isa = PBXBuildFile; fileRef = F3968D53281FB35400661875 /* mpg123.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F3968D54281FB35400661875 /* ../../external/mpg123/src/include/mpg123.h in Headers */ = {isa = PBXBuildFile; fileRef = F3968D53281FB35400661875 /* ../../external/mpg123/src/include/mpg123.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3968D56281FB37200661875 /* fmt123.h in Headers */ = {isa = PBXBuildFile; fileRef = F3968D55281FB37200661875 /* fmt123.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3968D59281FB3B300661875 /* README in Resources */ = {isa = PBXBuildFile; fileRef = F3968D57281FB3B300661875 /* README */; };
 		F3968D5A281FB3B300661875 /* COPYING in Resources */ = {isa = PBXBuildFile; fileRef = F3968D58281FB3B300661875 /* COPYING */; };
 		F3B38D8E296F970B005DA6D3 /* synth_stereo_avx_accurate.S in Sources */ = {isa = PBXBuildFile; fileRef = F3B38D8D296F970B005DA6D3 /* synth_stereo_avx_accurate.S */; };
+		F3DC38BE2E4BED4F00CD73DE /* lfs_wrap.c in Sources */ = {isa = PBXBuildFile; fileRef = F3DC38BD2E4BED4F00CD73DE /* lfs_wrap.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -167,11 +168,12 @@
 		F3968D4C281FB05200661875 /* compat_str.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = compat_str.c; path = ../../external/mpg123/src/compat/compat_str.c; sourceTree = "<group>"; };
 		F3968D4F281FB25300661875 /* synth_neon_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_neon_float.S; path = ../../external/mpg123/src/libmpg123/synth_neon_float.S; sourceTree = "<group>"; };
 		F3968D51281FB28C00661875 /* dct64_neon_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct64_neon_float.S; path = ../../external/mpg123/src/libmpg123/dct64_neon_float.S; sourceTree = "<group>"; };
-		F3968D53281FB35400661875 /* mpg123.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mpg123.h; sourceTree = "<group>"; };
-		F3968D55281FB37200661875 /* fmt123.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmt123.h; path = ../../external/mpg123/src/libmpg123/fmt123.h; sourceTree = "<group>"; };
+		F3968D53281FB35400661875 /* ../../external/mpg123/src/include/mpg123.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ../../external/mpg123/src/include/mpg123.h; sourceTree = "<group>"; };
+		F3968D55281FB37200661875 /* fmt123.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fmt123.h; path = ../../external/mpg123/src/include/fmt123.h; sourceTree = "<group>"; };
 		F3968D57281FB3B300661875 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README; path = ../../external/mpg123/README; sourceTree = "<group>"; };
 		F3968D58281FB3B300661875 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING; path = ../../external/mpg123/COPYING; sourceTree = "<group>"; };
 		F3B38D8D296F970B005DA6D3 /* synth_stereo_avx_accurate.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_avx_accurate.S; path = ../../external/mpg123/src/libmpg123/synth_stereo_avx_accurate.S; sourceTree = "<group>"; };
+		F3DC38BD2E4BED4F00CD73DE /* lfs_wrap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = lfs_wrap.c; path = /Users/valve/projects/SDL_mixer/external/mpg123/src/libmpg123/lfs_wrap.c; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -208,21 +210,21 @@
 			isa = PBXGroup;
 			children = (
 				F3968D04281FAF0A00661875 /* check_neon.S */,
-				F3968D4C281FB05200661875 /* compat_str.c */,
 				F3968D4B281FB05200661875 /* compat.c */,
+				F3968D4C281FB05200661875 /* compat_str.c */,
 				F3968CED281FAF0A00661875 /* dct36_avx.S */,
 				F3968D02281FAF0A00661875 /* dct36_neon.S */,
 				F3968CDC281FAF0A00661875 /* dct36_neon64.S */,
 				F3968D03281FAF0A00661875 /* dct36_x86_64.S */,
-				F3968CEC281FAF0A00661875 /* dct64_avx_float.S */,
-				F3968D0A281FAF0A00661875 /* dct64_avx.S */,
-				F3968D51281FB28C00661875 /* dct64_neon_float.S */,
-				F3968CF9281FAF0A00661875 /* dct64_neon.S */,
-				F3968D0F281FAF0A00661875 /* dct64_neon64_float.S */,
-				F3968CE6281FAF0A00661875 /* dct64_neon64.S */,
-				F3968CF4281FAF0A00661875 /* dct64_x86_64_float.S */,
-				F3968CEB281FAF0A00661875 /* dct64_x86_64.S */,
 				F3968CE8281FAF0A00661875 /* dct64.c */,
+				F3968D0A281FAF0A00661875 /* dct64_avx.S */,
+				F3968CEC281FAF0A00661875 /* dct64_avx_float.S */,
+				F3968CF9281FAF0A00661875 /* dct64_neon.S */,
+				F3968D51281FB28C00661875 /* dct64_neon_float.S */,
+				F3968CE6281FAF0A00661875 /* dct64_neon64.S */,
+				F3968D0F281FAF0A00661875 /* dct64_neon64_float.S */,
+				F3968CEB281FAF0A00661875 /* dct64_x86_64.S */,
+				F3968CF4281FAF0A00661875 /* dct64_x86_64_float.S */,
 				F3968CE9281FAF0A00661875 /* dither.c */,
 				F3968CD9281FAF0A00661875 /* equalizer.c */,
 				F3968CF5281FAF0A00661875 /* feature.c */,
@@ -237,44 +239,45 @@
 				F3968CF1281FAF0A00661875 /* layer1.c */,
 				F3968CFA281FAF0A00661875 /* layer2.c */,
 				F3968D0D281FAF0A00661875 /* layer3.c */,
+				F3DC38BD2E4BED4F00CD73DE /* lfs_wrap.c */,
 				F3968D06281FAF0A00661875 /* libmpg123.c */,
 				F3968CE7281FAF0A00661875 /* ntom.c */,
 				F3968CDD281FAF0A00661875 /* optimize.c */,
 				F3968CF3281FAF0A00661875 /* parse.c */,
 				F3968CF6281FAF0A00661875 /* readers.c */,
 				F3968CD7281FAF0A00661875 /* stringbuf.c */,
+				F3968CF2281FAF0A00661875 /* synth.c */,
 				F3968CE0281FAF0A00661875 /* synth_8bit.c */,
+				F3968CFF281FAF0A00661875 /* synth_neon.S */,
 				F307EE1C282732DB003915D7 /* synth_neon_accurate.S */,
 				F3968D4F281FB25300661875 /* synth_neon_float.S */,
 				F3968CDA281FAF0A00661875 /* synth_neon_s32.S */,
-				F3968CFF281FAF0A00661875 /* synth_neon.S */,
+				F3968CE5281FAF0A00661875 /* synth_neon64.S */,
 				F307EE1D282732DB003915D7 /* synth_neon64_accurate.S */,
 				F3968D01281FAF0A00661875 /* synth_neon64_float.S */,
 				F3968CF7281FAF0A00661875 /* synth_neon64_s32.S */,
-				F3968CE5281FAF0A00661875 /* synth_neon64.S */,
 				F3968D0B281FAF0A00661875 /* synth_real.c */,
 				F3968CE3281FAF0A00661875 /* synth_s32.c */,
+				F3968CDF281FAF0A00661875 /* synth_stereo_avx.S */,
 				F3B38D8D296F970B005DA6D3 /* synth_stereo_avx_accurate.S */,
 				F3968D09281FAF0A00661875 /* synth_stereo_avx_float.S */,
 				F3968CF0281FAF0A00661875 /* synth_stereo_avx_s32.S */,
-				F3968CDF281FAF0A00661875 /* synth_stereo_avx.S */,
+				F3968D00281FAF0A00661875 /* synth_stereo_neon.S */,
 				F307EE23282733AD003915D7 /* synth_stereo_neon_accurate.S */,
 				F3968D07281FAF0A00661875 /* synth_stereo_neon_float.S */,
 				F3968CD8281FAF0A00661875 /* synth_stereo_neon_s32.S */,
-				F3968D00281FAF0A00661875 /* synth_stereo_neon.S */,
+				F3968D05281FAF0A00661875 /* synth_stereo_neon64.S */,
 				F307EE22282733AD003915D7 /* synth_stereo_neon64_accurate.S */,
 				F3968CFC281FAF0A00661875 /* synth_stereo_neon64_float.S */,
 				F3968D08281FAF0A00661875 /* synth_stereo_neon64_s32.S */,
-				F3968D05281FAF0A00661875 /* synth_stereo_neon64.S */,
+				F3968CDE281FAF0A00661875 /* synth_stereo_x86_64.S */,
 				F307EE24282733AD003915D7 /* synth_stereo_x86_64_accurate.S */,
 				F3968CDB281FAF0A00661875 /* synth_stereo_x86_64_float.S */,
 				F3968D0C281FAF0A00661875 /* synth_stereo_x86_64_s32.S */,
-				F3968CDE281FAF0A00661875 /* synth_stereo_x86_64.S */,
+				F3968D10281FAF0A00661875 /* synth_x86_64.S */,
 				F307EE1E282732DB003915D7 /* synth_x86_64_accurate.S */,
 				F3968CF8281FAF0A00661875 /* synth_x86_64_float.S */,
 				F3968D0E281FAF0A00661875 /* synth_x86_64_s32.S */,
-				F3968D10281FAF0A00661875 /* synth_x86_64.S */,
-				F3968CF2281FAF0A00661875 /* synth.c */,
 				F3968CEE281FAF0A00661875 /* tabinit.c */,
 			);
 			name = Source;
@@ -284,7 +287,7 @@
 			isa = PBXGroup;
 			children = (
 				F3968D55281FB37200661875 /* fmt123.h */,
-				F3968D53281FB35400661875 /* mpg123.h */,
+				F3968D53281FB35400661875 /* ../../external/mpg123/src/include/mpg123.h */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
@@ -306,7 +309,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3968D56281FB37200661875 /* fmt123.h in Headers */,
-				F3968D54281FB35400661875 /* mpg123.h in Headers */,
+				F3968D54281FB35400661875 /* ../../external/mpg123/src/include/mpg123.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -414,6 +417,7 @@
 				F3968D1A281FAF0A00661875 /* synth_8bit.c in Sources */,
 				F3968D3C281FAF0A00661875 /* dct36_neon.S in Sources */,
 				F3968D48281FAF0A00661875 /* synth_x86_64_s32.S in Sources */,
+				F3DC38BE2E4BED4F00CD73DE /* lfs_wrap.c in Sources */,
 				F3968D1F281FAF0A00661875 /* synth_neon64.S in Sources */,
 				F3968D43281FAF0A00661875 /* synth_stereo_avx_float.S in Sources */,
 				F3968D2B281FAF0A00661875 /* layer1.c in Sources */,
