@@ -92,6 +92,17 @@ else
     not_ok "Info-Framework.plist CFBundleVersion $version disagrees with SDL_mixer.h $ref_version"
 fi
 
+marketing=$(sed -Ene 's/.*MARKETING_VERSION = (.*);/\1/p' Xcode/SDL_mixer.xcodeproj/project.pbxproj)
+
+ref="$ref_version
+$ref_version"
+
+if [ "$ref" = "$marketing" ]; then
+    ok "project.pbxproj MARKETING_VERSION is consistent"
+else
+    not_ok "project.pbxproj MARKETING_VERSION is inconsistent, expected $ref, got $marketing"
+fi
+
 # For simplicity this assumes we'll never break ABI before SDL 3.
 dylib_compat=$(sed -Ene 's/.*DYLIB_COMPATIBILITY_VERSION = (.*);$/\1/p' Xcode/SDL_mixer.xcodeproj/project.pbxproj)
 
