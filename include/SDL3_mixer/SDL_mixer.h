@@ -747,7 +747,6 @@ extern SDL_DECLSPEC MIX_Audio * SDLCALL MIX_LoadAudioNoCopy(MIX_Mixer *mixer, co
  * SDL_PropertiesID are discussed in
  * [SDL's documentation](https://wiki.libsdl.org/SDL3/CategoryProperties)
  * .
- *
  * These are the supported properties:
  *
  * - `MIX_PROP_AUDIO_LOAD_IOSTREAM_POINTER`: a pointer to an SDL_IOStream to
@@ -763,6 +762,11 @@ extern SDL_DECLSPEC MIX_Audio * SDLCALL MIX_LoadAudioNoCopy(MIX_Mixer *mixer, co
  *   metadata tags, like ID3 and APE tags. This can be used to speed up
  *   loading _if the data definitely doesn't have these tags_. Some decoders
  *   will fail if these tags are present when this property is true.
+ * - `MIX_PROP_AUDIO_LOAD_IGNORE_LOOPS_BOOLEAN`: true to ignore metadata in
+ *   the audio data specifying loop points. This will make a file decode from
+ *   start to finish without looping, even if the file specified it should
+ *   have. This audio can still be looped at playback time via MIX_Track loop
+ *   settings, regardless of this setting. Default false.
  * - `MIX_PROP_AUDIO_DECODER_STRING`: the name of the decoder to use for this
  *   data. Optional. If not specified, SDL_mixer will examine the data and
  *   choose the best decoder. These names are the same returned from
@@ -791,6 +795,7 @@ extern SDL_DECLSPEC MIX_Audio * SDLCALL MIX_LoadAudioWithProperties(SDL_Properti
 #define MIX_PROP_AUDIO_LOAD_PREDECODE_BOOLEAN "SDL_mixer.audio.load.predecode"
 #define MIX_PROP_AUDIO_LOAD_PREFERRED_MIXER_POINTER "SDL_mixer.audio.load.preferred_mixer"
 #define MIX_PROP_AUDIO_LOAD_SKIP_METADATA_TAGS_BOOLEAN "SDL_mixer.audio.load.skip_metadata_tags"
+#define MIX_PROP_AUDIO_LOAD_IGNORE_LOOPS_BOOLEAN "SDL_mixer.audio.load.ignore_loops"
 #define MIX_PROP_AUDIO_DECODER_STRING "SDL_mixer.audio.decoder"
 
 /**
@@ -3244,8 +3249,9 @@ extern SDL_DECLSPEC MIX_AudioDecoder * SDLCALL MIX_CreateAudioDecoder(const char
  *
  * This function allows properties to be specified. This is intended to supply
  * file-specific settings, such as where to find SoundFonts for a MIDI file,
- * etc. In most cases, the caller should pass a zero to specify no extra
- * properties.
+ * etc. Most of the properties available to MIX_LoadAudioWithProperties()
+ * apply here, too. In most cases, the caller should pass a zero to specify no
+ * extra properties.
  *
  * If `closeio` is true, then `io` will be closed when this decoder is done
  * with it. If this function fails and `closeio` is true, then `io` will be
