@@ -746,8 +746,7 @@ extern SDL_DECLSPEC MIX_Audio * SDLCALL MIX_LoadAudioNoCopy(MIX_Mixer *mixer, co
  *
  * SDL_PropertiesID are discussed in
  * [SDL's documentation](https://wiki.libsdl.org/SDL3/CategoryProperties)
- * .
- * These are the supported properties:
+ * . These are the supported properties:
  *
  * - `MIX_PROP_AUDIO_LOAD_IOSTREAM_POINTER`: a pointer to an SDL_IOStream to
  *   be used to load audio data. Required. This stream must be able to seek!
