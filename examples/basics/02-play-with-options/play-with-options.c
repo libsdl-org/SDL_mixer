@@ -81,7 +81,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     /* note these all use MILLISECONDS, since the track is generic, but you can use equivalent FRAMES properties, for frame-perfect mixing. */
     SDL_SetNumberProperty(options, MIX_PROP_PLAY_START_MILLISECOND_NUMBER, 1000);  /* start the first loop 1 second into the audio. */
-    SDL_SetNumberProperty(options, MIX_PROP_PLAY_MAX_MILLISECONDS_NUMBER, 10000);  /* play at most 10 seconds of audio before ending/looping (since we started 1000 in, this will be the eleventh second). */
+    SDL_SetNumberProperty(options, MIX_PROP_PLAY_MAX_MILLISECONDS_NUMBER, 11000);  /* play at most 10 seconds of audio before ending/looping (since we started 1000 in, go to 11 seconds in, hence 11000). */
     SDL_SetNumberProperty(options, MIX_PROP_PLAY_LOOPS_NUMBER, 2);  /* loop 2 times, 3rd time through doesn't loop. */
     SDL_SetNumberProperty(options, MIX_PROP_PLAY_LOOP_START_MILLISECOND_NUMBER, 2000); /* when looping, start again here instead of the start of the track. */
     SDL_SetNumberProperty(options, MIX_PROP_PLAY_FADE_IN_MILLISECONDS_NUMBER, 5000);  /* fade-in the first loop over five seconds. No fade on the loops, unless the initial fade is still in progress! */
