@@ -2999,17 +2999,17 @@ bool MIX_SetTrackGroup(MIX_Track *track, MIX_Group *group)
     MIX_Group *oldgroup = track->group;
     if (group != oldgroup) {
         if (oldgroup) {   // remove from current group, if in one.
-            if (track->group_prev) {
-                track->group_prev->group_next = track->group_next;
-                track->group_prev = NULL;
-            } else {
-                oldgroup->tracks = track->group_next;
-            }
             if (track->group_next) {
                 track->group_next->group_prev = track->group_prev;
             }
+            if (track->group_prev) {
+                track->group_prev->group_next = track->group_next;
+            } else {
+                oldgroup->tracks = track->group_next;
+            }
         }
 
+        track->group_prev = NULL;
         track->group_next = group->tracks;
         if (group->tracks) {
             group->tracks->group_prev = track;
