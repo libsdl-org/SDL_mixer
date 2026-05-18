@@ -1,5 +1,8 @@
 # To build and use SDL_mixer:
 
+Please make sure you have at least SDL 3.4.0. SDL 3.2.x does not have API
+functions that SDL3_mixer requires!
+
 SDL_mixer supports a number of development environments:
 - [CMake](docs/INTRO-cmake.md)
 - [Visual Studio on Windows](docs/INTRO-visualstudio.md)

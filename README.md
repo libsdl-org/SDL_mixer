@@ -15,6 +15,8 @@ opinion, a significant improvement in power and ease of use. Please refer to
 docs/README-migration.md for details on how to migrate your program to the new
 API.
 
+SDL3_mixer requires SDL 3.4.0 or later.
+
 The latest version of this library is available from GitHub:
 https://github.com/libsdl-org/SDL_mixer/releases
 
