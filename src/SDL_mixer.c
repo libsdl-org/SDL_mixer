@@ -233,7 +233,7 @@ static void TrackStopped(MIX_Track *track)
         SDL_assert(track->fire_and_forget_next == NULL);  // shouldn't be in the list at all right now.
         MIX_SetTrackAudio(track, NULL);
         MIX_Mixer *mixer = track->mixer;
-        LockMixer(mixer);
+        LockMixer(mixer);  // !!! FIXME: this locks the mixer after the track; everything else locks in the other order! But StopTrack() is the only place outside the mixer thread (which holds both locks already) that calls this, and it shouldn't be able to call it for fire-and-forget tracks. Clean this up or at least document this better.
         track->fire_and_forget_next = mixer->fire_and_forget_pool;
         mixer->fire_and_forget_pool = track;
         UnlockMixer(mixer);
