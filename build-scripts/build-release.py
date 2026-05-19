@@ -175,11 +175,12 @@ class VisualStudio:
         assert msbuild_path.is_file(), "MSBuild.exe does not exist"
         return msbuild_path
 
-    def build(self, arch_platform: VsArchPlatformConfig, projects: list[Path]):
+    def build(self, arch_platform: VsArchPlatformConfig, projects: list[Path], args: list[str]):
         assert projects, "Need at least one project to build"
+        joined_args = shlex.join(args)
 
         vsdev_cmd_str = f"\"{self.vsdevcmd}\" -arch={arch_platform.arch}"
-        msbuild_cmd_str = " && ".join([f"\"{self.msbuild}\" \"{project}\" /m /p:BuildInParallel=true /p:Platform={arch_platform.platform} /p:Configuration={arch_platform.configuration}" for project in projects])
+        msbuild_cmd_str = " && ".join([f"\"{self.msbuild}\" \"{project}\" /m /p:BuildInParallel=true /p:Platform={arch_platform.platform} /p:Configuration={arch_platform.configuration} {joined_args}" for project in projects])
         bat_contents = f"{vsdev_cmd_str} && {msbuild_cmd_str}\n"
         bat_path = Path(tempfile.gettempdir()) / "cmd.bat"
         with bat_path.open("w") as f:
@@ -1238,7 +1239,8 @@ class Releaser:
                 shutil.copy(src=src, dst=dir_b_props)
 
         with self.section_printer.group(f"Build {arch_platform.arch} VS binary"):
-            vs.build(arch_platform=arch_platform, projects=projects)
+            extra_msbuild_args = self.release_info["msvc"]["msbuild"].get("msbuild-arguments", [])
+            vs.build(arch_platform=arch_platform, projects=projects, args=extra_msbuild_args)
 
         if self.dry:
             for b in built_paths:

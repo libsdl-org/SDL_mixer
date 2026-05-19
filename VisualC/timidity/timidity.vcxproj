@@ -21,6 +21,13 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemDefinitionGroup Condition="'$(BuildWithoutCLibrary)'!=''">
+    <ClCompile>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <PreprocessorDefinitions>SDL_SLOW_MEMCPY;SDL_SLOW_MEMMOVE;SDL_SLOW_MEMSET;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>/Gs1048576 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\timidity\common.c" />
     <ClCompile Include="..\..\src\timidity\instrum.c" />

@@ -6,6 +6,7 @@ include(CMakePushCheckState)
 if(NOT CMAKE_VERSION VERSION_LESS "3.18")
   include(CheckLinkerFlag)
 endif()
+include("${CMAKE_CURRENT_LIST_DIR}/sdlcpu.cmake")
 
 macro(sdl_calculate_derived_version_variables MAJOR MINOR MICRO)
     set(SO_VERSION_MAJOR "0")
@@ -313,7 +314,7 @@ endfunction()
 function(sdl_add_warning_options TARGET)
     cmake_parse_arguments(ARGS "" "WARNING_AS_ERROR" "" ${ARGN})
     if(MSVC)
-        target_compile_options(${TARGET} PRIVATE /W2)
+        target_compile_options(${TARGET} PRIVATE $<$<COMPILE_LANGUAGE:C,CXX>:/W2>)
     else()
         target_compile_options(${TARGET} PRIVATE -Wall -Wextra -Wno-unused-parameter)
     endif()
@@ -375,3 +376,81 @@ function(SDL_install_pdb TARGET DIRECTORY)
         endif()
     endif()
 endfunction()
+
+macro(SDL_disable_libc TARGET)
+  SDL_DetectTargetCPUArchitectures(SDL_CPUS)
+  # Make sure /RTC1 is disabled, otherwise it will use functions from the CRT
+  foreach(flag_var
+          CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
+          CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO
+          CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+          CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+    string(REGEX REPLACE "/RTC(su|[1su])" "" ${flag_var} "${${flag_var}}")
+  endforeach(flag_var)
+  set_property(TARGET ${TARGET} PROPERTY MSVC_RUNTIME_CHECKS "")
+  target_sources(${TARGET} PRIVATE src/nolibc/SDL_mslibc.c)
+  target_compile_definitions(${TARGET} PRIVATE
+    SDL_SLOW_MEMCPY
+    SDL_SLOW_MEMMOVE
+    SDL_SLOW_MEMSET
+  )
+  if(MSVC)
+    if(SDL_CPU_X64)
+      enable_language(ASM_MASM)
+      set(asm_src "${PROJECT_SOURCE_DIR}/src/nolibc/SDL_mslibc_x64.masm")
+      target_compile_options(${TARGET} PRIVATE "$<$<COMPILE_LANGUAGE:ASM_MASM>:/nologo>")
+      set_property(SOURCE "${asm_src}" PROPERTY LANGUAGE "ASM_MASM")
+      target_sources(${TARGET} PRIVATE "${asm_src}")
+    elseif(SDL_CPU_ARM64)
+      enable_language(ASM_MARMASM)
+      set(asm_src "${PROJECT_SOURCE_DIR}/src/nolibc/SDL_mslibc_arm64.masm")
+      target_compile_options(${TARGET} PRIVATE "$<$<COMPILE_LANGUAGE:ASM_MARMASM>:/nologo>")
+      set_property(SOURCE "${asm_src}" PROPERTY LANGUAGE "ASM_MARMASM")
+      target_sources(${TARGET} PRIVATE "${asm_src}")
+    elseif(SDL_CPU_ARM32)
+      # FIXME
+    endif()
+
+    # for VS >= 17.14 targeting ARM64: inline the Interlocked funcs
+    if(MSVC_VERSION GREATER 1943 AND SDL_CPU_ARM64)
+      target_compile_options(${TARGET} PRIVATE "/forceInterlockedFunctions-")
+    endif()
+
+    # Prevent codegen that would use the VC runtime libraries.
+    target_compile_options(${TARGET} PRIVATE $<$<COMPILE_LANGUAGE:C,CXX>:/GS-> $<$<COMPILE_LANGUAGE:C,CXX>:/Gs1048576>)
+    if(SDL_CPU_X86)
+      target_compile_options(${TARGET} PRIVATE "/arch:SSE")
+    endif()
+    if(NOT CMAKE_C_COMPILER_ID MATCHES "Clang|IntelLLVM")
+      # Don't try to link with the default set of libraries.
+      # Note: The clang toolset for Visual Studio does not support /NODEFAULTLIB.
+      target_link_options(${TARGET} PRIVATE "/NODEFAULTLIB")
+      if(SDL_CPU_ARM32)
+        # linking to msvcrt.lib avoid unresolved external symbols
+        # (__rt_sdiv, __rt_udiv, __rt_sdiv64, _rt_udiv64, __dtou64, __u64tod, __i64tos)
+        target_link_libraries(${TARGET} PRIVATE msvcrt.lib)
+      endif()
+      find_library(HAVE_ONECORE_LIB NAMES "onecore.lib")
+      if(HAVE_ONECORE_LIB)
+        # SDL_malloc.c: __imp_MapViewOfFileNuma2 referenced in function MapViewOfFile2
+        target_link_libraries(${TARGET} PRIVATE onecore.lib)
+      endif()
+      find_library(HAVE_VOLATILEACCESSU_LIB NAMES "volatileaccessu.lib")
+      if(HAVE_VOLATILEACCESSU_LIB)
+        # SDL_malloc.c : RtlSetVolatileMemory referenced in function RtlFillVolatileMemory
+        # SDL_malloc.c : RtlFillDeviceMemory referenced in function RtlZeroDeviceMemory
+        target_link_libraries(${TARGET} PRIVATE volatileaccessu.lib)
+      endif()
+      check_c_compiler_flag("/Q_no-use-libirc" HAS_Q_NO_USE_LIBIRC)
+      if(HAS_Q_NO_USE_LIBIRC)
+        target_compile_options(${TARGET} PRIVATE /Q_no-use-libirc)
+      endif()
+    endif()
+  else()
+    target_link_options(${TARGET} PRIVATE -nostdlib)
+    if(CMAKE_C_COMPILER_ID MATCHES "GNU")
+      target_link_options(${TARGET} PRIVATE -static-libgcc)
+      target_link_libraries(${TARGET} PRIVATE gcc)
+    endif()
+  endif()
+endmacro()

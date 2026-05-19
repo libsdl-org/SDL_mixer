@@ -103,7 +103,8 @@ cmake_dependent_option(SDLMIXER_INSTALL "Enable SDL3mixer install target" ${SDLM
 cmake_dependent_option(SDLMIXER_INSTALL_CPACK "Create binary SDL3_mixer archive using CPack" ${SDLMIXER_ROOTPROJECT} "SDLMIXER_INSTALL" OFF)
 cmake_dependent_option(SDLMIXER_INSTALL_MAN "Install man pages for SDL3_mixer" OFF "SDLMIXER_INSTALL" OFF)
 cmake_dependent_option(SDLMIXER_DEPS_SHARED "Load dependencies dynamically" ON PLATFORM_SUPPORTS_SHARED OFF)
-cmake_dependent_option(SDLMIXER_RELOCATABLE "Create relocatable SDL_mixer package" "${MSVC}" SDLMIXER_INSTALL OFF)
+cmake_dependent_option(SDLMIXER_RELOCATABLE "Create relocatable SDL_mixer package" "${MSVC}" "SDLMIXER_INSTALL" OFF)
+cmake_dependent_option(SDLMIXER_LIBC "Use the system C library" ON "BUILD_SHARED_LIBS;SDLMIXER_DEPS_SHARED" ON)
 option(SDLMIXER_VENDORED "Use vendored third-party libraries" ${vendored_default})
 option(SDLMIXER_WERROR "Treat warnings as errors" OFF)
 
@@ -1065,6 +1066,12 @@ if(SDLMIXER_WAVPACK)
             target_link_libraries(${sdl3_mixer_target_name} PRIVATE WavPack::WavPack)
         endif()
     endif()
+endif()
+
+if(NOT SDLMIXER_LIBC)
+  list(APPEND SDLMIXER_BACKENDS LIBC)
+  list(APPEND SDLMIXER_LIBC_ENABLED FALSE)
+  SDL_disable_libc(${sdl3_mixer_target_name})
 endif()
 
 # Restore BUILD_SHARED_LIBS

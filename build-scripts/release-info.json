@@ -57,6 +57,7 @@
         "-DSDLMIXER_RELOCATABLE=ON",
         "-DSDLMIXER_TESTS=OFF",
         "-DSDLMIXER_VENDORED=OFF",
+        "-DSDLMIXER_LIBC=OFF",
         "-DCMAKE_C_FLAGS=-I@<@PROJECT_ROOT@>@/VisualC/external/include",
         "-DSDLMIXER_DYNAMIC_GME=@<@PROJECT_ROOT@>@/VisualC/external/optional/@<@ARCH@>@/libgme.dll",
         "-DSDLMIXER_DYNAMIC_WAVPACK=@<@PROJECT_ROOT@>@/VisualC/external/optional/@<@ARCH@>@/libwavpack-1.dll",
@@ -89,6 +90,9 @@
       "archs": [
         "x86",
         "x64"
+      ],
+      "msbuild-arguments": [
+        "-p:BuildWithoutCLibrary=true"
       ],
       "projects": [
         "VisualC/SDL_mixer.vcxproj"
@@ -142,7 +146,6 @@
         "arm64"
       ],
       "args": [
-        "-DSDLMIXER_SNDFILE=ON",
         "-DSDLMIXER_FLAC=ON",
         "-DSDLMIXER_FLAC_DRFLAC=ON",
         "-DSDLMIXER_FLAC_LIBFLAC=OFF",
@@ -164,6 +167,7 @@
         "-DSDLMIXER_RELOCATABLE=ON",
         "-DSDLMIXER_TESTS=OFF",
         "-DSDLMIXER_DEPS_SHARED=ON",
+        "-DSDLMIXER_LIBC=OFF",
         "-DSDLMIXER_VENDORED=ON"
       ],
       "files-lib": {
@@ -249,7 +253,6 @@
     "cmake": {
       "args": [
         "-DBUILD_SHARED_LIBS=ON",
-        "-DSDLMIXER_SNDFILE=ON",
         "-DSDLMIXER_FLAC=ON",
         "-DSDLMIXER_FLAC_DRFLAC=ON",
         "-DSDLMIXER_FLAC_LIBFLAC=OFF",
