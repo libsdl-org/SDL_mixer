@@ -132,6 +132,7 @@ add_sdlmixer_example_executable(basics-play-multiple-sounds SOURCES basics/03-pl
 add_sdlmixer_example_executable(basics-metadata SOURCES basics/04-metadata/metadata.c DATAFILES ${CMAKE_CURRENT_SOURCE_DIR}/music.mp3)
 add_sdlmixer_example_executable(basics-sinewave SOURCES basics/05-sinewave/sinewave.c)
 add_sdlmixer_example_executable(basics-seeking SOURCES basics/06-seeking/seeking.c DATAFILES ${CMAKE_CURRENT_SOURCE_DIR}/music.mp3)
+add_sdlmixer_example_executable(advanced-tag-tracks SOURCES advanced/01-tag-tracks/tag-tracks.c DATAFILES ${CMAKE_CURRENT_SOURCE_DIR}/music.mp3 ${CMAKE_CURRENT_SOURCE_DIR}/sword.wav ${CMAKE_CURRENT_SOURCE_DIR}/spring.wav ${CMAKE_CURRENT_SOURCE_DIR}/splash.wav)
 
 # When you add an example, remember to add the Visual Studio project as well:
 # - Add a new example in examples/
