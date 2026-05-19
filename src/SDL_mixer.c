@@ -242,6 +242,8 @@ static void TrackStopped(MIX_Track *track)
 
 static void ApplyFade(MIX_Track *track, int channels, float *pcm, int frames)
 {
+    SDL_assert(frames >= 0);
+
     // !!! FIXME: this is probably pretty naive.
 
     if (track->fade_direction == 0) {
@@ -412,6 +414,9 @@ static void SDLCALL TrackGetCallback(void *userdata, SDL_AudioStream *stream, in
                 const Sint64 newpos = (Sint64)(track->position + frames_read);
                 if (newpos >= maxpos) {  // we read past the end of the fade out or maxframes, we need to clamp.
                     br -= (int)(((newpos - maxpos) * raw_channels) * sizeof(float));
+                    if (br < 0) {
+                        br = 0;
+                    }
                     frames_read = br / (sizeof (float) * raw_channels);
                     end_of_audio = true;
                 }
