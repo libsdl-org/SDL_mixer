@@ -148,7 +148,7 @@ struct MIX_Track
     MIX_Audio *input_audio;    // non-NULL if used with MIX_SetTrackAudioStream. Holds a reference.
     SDL_IOStream *io;  // used for MIX_SetTrackAudio and MIX_SetTrackIOStream. Might be owned by us (SDL_IOFromConstMem of MIX_Audio::precache), or owned by the app.
     MIX_IoClamp ioclamp;  // used for MIX_SetTrackAudio and MIX_SetTrackIOStream.
-    bool currently_mixing;  // true when the mixer is running on this track.
+    bool currently_inuse;  // true when we want to delay an app's MIX_DestroyTrack request (they destroyed it from a mixer callback).
     bool destroy_requested;  // true if MIX_DestroyTrack called while the track is actively mixing.
     bool closeio;  // true if we should close `io` when changing track data.
     bool halt_when_exhausted;  // true if we should stop the track when input runs out.
