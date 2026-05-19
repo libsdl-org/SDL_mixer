@@ -576,7 +576,7 @@ static void SDLCALL MixerCallback(void *userdata, SDL_AudioStream *stream, int a
         for (MIX_Track *track = group->tracks; track; track = next_track) {
             next_track = track->group_next;  // this won't save you from a callback going totally rogue, but it'll deal with the current track leaving the group.
 
-            track->currently_mixing = true;
+            track->currently_inuse = true;
 
             const int to_be_read = (additional_amount / SDL_AUDIO_FRAMESIZE(mixer->spec)) * SDL_AUDIO_FRAMESIZE(track->output_spec);
             const int br = SDL_GetAudioStreamData(track->output_stream, getbuf, to_be_read);
@@ -610,7 +610,7 @@ static void SDLCALL MixerCallback(void *userdata, SDL_AudioStream *stream, int a
                 }
             }
 
-            track->currently_mixing = false;
+            track->currently_inuse = false;
             if (track->destroy_requested) {  // callback asked to destroy the track while we were still using it.
                 MIX_DestroyTrack(track);  // actually kill it now.
             }
@@ -1515,7 +1515,7 @@ void MIX_DestroyTrack(MIX_Track *track)
     // handle the case where someone destroys a track during a mixer callback.  :O
     //  tracks are not currently reference-counted like MIX_Audio objects are, but
     //  we'll catch this specific case for now.
-    if (track->currently_mixing) {
+    if (track->currently_inuse) {
         track->destroy_requested = true;
         UnlockMixer(mixer);
         return;
@@ -2399,7 +2399,9 @@ static void StopTrack(MIX_Track *track, Sint64 fadeOut)
             if (track->internal_stream) {
                 SDL_ClearAudioStream(track->internal_stream);  // make sure we don't leave old data hanging around.
             }
+            track->currently_inuse = true;
             TrackStopped(track);
+            track->currently_inuse = false;
         } else {
             track->total_fade_frames = fadeOut;
             track->fade_frames = fadeOut;
@@ -2408,6 +2410,10 @@ static void StopTrack(MIX_Track *track, Sint64 fadeOut)
         }
     }
     UnlockTrack(track);
+
+    if (track->destroy_requested) {  // callback asked to destroy the track while we were still touching it.
+        MIX_DestroyTrack(track);  // actually kill it now.
+    }
 }
 
 bool MIX_StopTrack(MIX_Track *track, Sint64 fade_out_frames)
