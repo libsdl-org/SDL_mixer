@@ -80,3 +80,13 @@ everything consistent. You can ignore it.
   Original: https://freesound.org/s/27858/
   License: https://creativecommons.org/licenses/by/4.0/
 
+- splash.wav:
+  SPLASH.wav by petenice
+  Original: https://freesound.org/s/9508/
+  License: https://creativecommons.org/publicdomain/zero/1.0/
+
+- spring.wav:
+  Game Over Arcade.wav by myfox14
+  Original: https://freesound.org/s/382310/
+  License: https://creativecommons.org/publicdomain/zero/1.0/
+
