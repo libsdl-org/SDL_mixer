@@ -2396,11 +2396,11 @@ bool MIX_PlayAudio(MIX_Mixer *mixer, MIX_Audio *audio)
     return retval;
 }
 
-static void StopTrack(MIX_Track *track, Sint64 fadeOut)
+static void StopTrack(MIX_Track *track, Sint64 fade_out_frames)
 {
     LockTrack(track);
     if (track->state != MIX_STATE_STOPPED) {
-        if (fadeOut <= 0) {  // stop immediately.
+        if (fade_out_frames <= 0) {  // stop immediately.
             if (track->internal_stream) {
                 SDL_ClearAudioStream(track->internal_stream);  // make sure we don't leave old data hanging around.
             }
@@ -2408,8 +2408,8 @@ static void StopTrack(MIX_Track *track, Sint64 fadeOut)
             TrackStopped(track);
             track->currently_inuse = false;
         } else {
-            track->total_fade_frames = fadeOut;
-            track->fade_frames = fadeOut;
+            track->total_fade_frames = fade_out_frames;
+            track->fade_frames = fade_out_frames;
             track->fade_direction = -1;
             track->fade_start_gain = 0.0f;  // only used for fade-ins.
         }
