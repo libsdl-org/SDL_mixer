@@ -50,6 +50,7 @@ SDL_ELF_NOTE_DLOPEN(
     MIX_LOADER_FUNCTION(true,int,fluid_player_get_total_ticks,(fluid_player_t *)) \
     MIX_LOADER_FUNCTION(true,int,fluid_settings_setint,(fluid_settings_t*, const char*, int)) \
     MIX_LOADER_FUNCTION(true,int,fluid_settings_setnum,(fluid_settings_t*, const char*, double)) \
+    MIX_LOADER_FUNCTION(true,int,fluid_settings_setstr,(fluid_settings_t*, const char*, const char *)) \
     MIX_LOADER_FUNCTION(true,int,fluid_settings_getnum,(fluid_settings_t*, const char*, double*)) \
     MIX_LOADER_FUNCTION(true,int,fluid_sfloader_set_callbacks,(fluid_sfloader_t *,fluid_sfloader_callback_open_t,fluid_sfloader_callback_read_t,fluid_sfloader_callback_seek_t,fluid_sfloader_callback_tell_t,fluid_sfloader_callback_close_t)) \
     MIX_LOADER_FUNCTION(true,void,fluid_synth_add_sfloader,(fluid_synth_t *, fluid_sfloader_t *)) \
@@ -258,6 +259,9 @@ static void SDLCALL SetCustomFluidsynthProperties(void *userdata, SDL_Properties
             break;
         case SDL_PROPERTY_TYPE_FLOAT:
             fluidsynth.fluid_settings_setnum(tdata->settings, name, (double) SDL_GetFloatProperty(props, name, 0.0f));
+            break;
+        case SDL_PROPERTY_TYPE_STRING:
+            fluidsynth.fluid_settings_setstr(tdata->settings, name, SDL_GetStringProperty(props, name, ""));
             break;
         default: break;  // oh well.
     }
