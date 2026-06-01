@@ -129,9 +129,15 @@ static bool SDLCALL FLUIDSYNTH_init_audio(SDL_IOStream *io, SDL_AudioSpec *spec,
         }
     }
 
-    #ifdef SDL_PLATFORM_UNIX  // this happens to be where Ubuntu stores a usable soundfont, at least on my laptop. Try it if nothing else worked out.
-    if (!sfio) {
+    #ifdef SDL_PLATFORM_UNIX
+    if (!sfio) {  // this happens to be where Ubuntu stores a usable soundfont, at least on my laptop. Try it if nothing else worked out.
         sfio = SDL_IOFromFile("/usr/share/sounds/sf2/default-GM.sf2", "rb");
+    }
+    if (!sfio) { // Fedora is storing it here.
+        sfio = SDL_IOFromFile("/usr/share/soundfonts/default.sf2", "rb");
+    }
+    if (!sfio) { // Fedora is _also_ storing it here. Both are symlinks to the same thing elsewhere, but try both in case one was an older path.
+        sfio = SDL_IOFromFile("/usr/share/sounds/sf2/default.sf2", "rb");
     }
     #endif
 
