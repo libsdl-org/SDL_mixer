@@ -3097,23 +3097,16 @@ MIX_AudioDecoder * MIX_CreateAudioDecoder_IO(SDL_IOStream *io, bool closeio, SDL
     if (!audiodecoder->audio) {
         SDL_free(audiodecoder);
         return NULL;
-    }
-
-    if (!audiodecoder->audio->decoder->init_track(audiodecoder->audio->decoder_userdata, io, &audiodecoder->audio->spec, audiodecoder->audio->props, &audiodecoder->track_userdata)) {
+    } else if (!audiodecoder->audio->decoder->init_track(audiodecoder->audio->decoder_userdata, io, &audiodecoder->audio->spec, audiodecoder->audio->props, &audiodecoder->track_userdata)) {
         MIX_DestroyAudio(audiodecoder->audio);
         SDL_free(audiodecoder);
         return NULL;
-    }
-
-    if (!audiodecoder->audio->decoder->seek(audiodecoder->track_userdata, 0)) {
+    } else if (!audiodecoder->audio->decoder->seek(audiodecoder->track_userdata, 0)) {
         audiodecoder->audio->decoder->quit_track(audiodecoder->track_userdata);
         MIX_DestroyAudio(audiodecoder->audio);
         SDL_free(audiodecoder);
         return NULL;
-    }
-
-    audiodecoder->stream = SDL_CreateAudioStream(&audiodecoder->audio->spec, &audiodecoder->audio->spec);
-    if (!audiodecoder->stream) {
+    } else if ((audiodecoder->stream = SDL_CreateAudioStream(&audiodecoder->audio->spec, &audiodecoder->audio->spec)) == NULL) {
         audiodecoder->audio->decoder->quit_track(audiodecoder->track_userdata);
         MIX_DestroyAudio(audiodecoder->audio);
         SDL_free(audiodecoder);
