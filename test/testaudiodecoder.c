@@ -30,11 +30,8 @@ static SDL_AudioSpec spec;
 static void SDLCALL AudioDeviceCallback(void *userdata, SDL_AudioStream *stream, int additional_amount, int total_amount)
 {
     MIX_AudioDecoder *audiodecoder = (MIX_AudioDecoder *) userdata;
-    if (!additional_amount) {
-        return;
-    }
-
     Uint8 buffer[1024];
+
     while (additional_amount > 0) {
         const int needed = SDL_min((int)sizeof(buffer), additional_amount);
         const int br = MIX_DecodeAudio(audiodecoder, buffer, needed, &spec);
