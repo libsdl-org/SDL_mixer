@@ -725,12 +725,13 @@ void MIX_Quit(void)
     }
 
     // actually shutting down now.
-    while (all_audiodecoders) {
-        MIX_DestroyAudioDecoder(all_audiodecoders);
-    }
 
     while (all_mixers) {
         MIX_DestroyMixer(all_mixers);
+    }
+
+    while (all_audiodecoders) {
+        MIX_DestroyAudioDecoder(all_audiodecoders);
     }
 
     while (all_audios) {
