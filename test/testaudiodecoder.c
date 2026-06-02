@@ -24,6 +24,7 @@
 #include <SDL3/SDL_main.h>
 #include "SDL3_mixer/SDL_mixer.h"
 
+static SDL_AudioStream *stream = NULL;
 static SDL_AtomicInt done;  /* the device callback happens in another thread, so use an atomic int for this flag. */
 static SDL_AudioSpec spec;
 
@@ -71,7 +72,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
         return SDL_APP_FAILURE;
     }
 
-    SDL_AudioStream *stream = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, NULL, AudioDeviceCallback, audiodecoder);
+    stream = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, NULL, AudioDeviceCallback, audiodecoder);
     if (!stream) {
         SDL_Log("Failed to open audio device: %s", SDL_GetError());
         return SDL_APP_FAILURE;
@@ -101,7 +102,10 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 
 void SDL_AppQuit(void *appstate, SDL_AppResult result)
 {
-    // SDL will clean up the audio device for us.
+    // SDL and MIX_Quit will normally clean up everything we used here, but
+    //  we need to make sure the callback doesn't fire while MIX_Quit is
+    //  destroying things, so we destroy the audio stream manually.
+    SDL_DestroyAudioStream(stream);
     MIX_Quit();    // SDL_mixer will clean up the audiodecoder.
 }
 
