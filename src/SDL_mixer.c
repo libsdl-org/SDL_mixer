@@ -3105,6 +3105,13 @@ MIX_AudioDecoder * MIX_CreateAudioDecoder_IO(SDL_IOStream *io, bool closeio, SDL
         return NULL;
     }
 
+    if (!audiodecoder->audio->decoder->seek(audiodecoder->track_userdata, 0)) {
+        audiodecoder->audio->decoder->quit_track(audiodecoder->track_userdata);
+        MIX_DestroyAudio(audiodecoder->audio);
+        SDL_free(audiodecoder);
+        return NULL;
+    }
+
     audiodecoder->stream = SDL_CreateAudioStream(&audiodecoder->audio->spec, &audiodecoder->audio->spec);
     if (!audiodecoder->stream) {
         audiodecoder->audio->decoder->quit_track(audiodecoder->track_userdata);
