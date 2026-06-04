@@ -312,6 +312,7 @@ static int OGG_GetSome(void *context, void *data, int bytes, bool *done)
     OGG_music *music = (OGG_music *)context;
     bool looped = false;
     int filled, amount, result;
+    int has_deferred;
     int section;
     Sint64 pcmPos;
 
@@ -327,10 +328,13 @@ static int OGG_GetSome(void *context, void *data, int bytes, bool *done)
     }
 
     section = music->section;
-    amount = stb_vorbis_get_samples_float_interleaved(music->vf,
+    do {
+        has_deferred = music->vf->discard_samples_deferred > 0;
+        amount = stb_vorbis_get_samples_float_interleaved(music->vf,
                                                 music->vi.channels,
                                                 (float *)music->buffer,
                                                 4096/*music_spec.samples*/ * music->vi.channels);
+    } while ((amount == 0) && has_deferred);  /* if it's still flushing out garbage at the start of the stream, keep trying. */
 
     amount *= music->vi.channels * sizeof(float);
 
