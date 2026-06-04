@@ -224,7 +224,13 @@ static bool SDLCALL STBVORBIS_decode(void *track_userdata, SDL_AudioStream *stre
 
     float **pcm_channels = NULL;
     int num_channels = 0;
-    int amount = stb_vorbis_get_frame_float(tdata->vorbis, &num_channels, &pcm_channels);
+    int amount, has_deferred;
+
+    do {
+        has_deferred = tdata->vorbis->discard_samples_deferred > 0;
+        amount = stb_vorbis_get_frame_float(tdata->vorbis, &num_channels, &pcm_channels);
+    } while ((amount == 0) && has_deferred);  /* if it's still flushing out garbage at the start of the stream, keep trying. */
+
     if (amount <= 0) {
         return false;  // EOF
     }
