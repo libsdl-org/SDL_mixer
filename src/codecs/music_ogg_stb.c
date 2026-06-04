@@ -318,6 +318,7 @@ static int OGG_GetSome(void *context, void *data, int bytes, SDL_bool *done)
     OGG_music *music = (OGG_music *)context;
     SDL_bool looped = SDL_FALSE;
     int filled, amount, samples, result;
+    int has_deferred;
     Sint64 pcmPos;
 
     filled = SDL_AudioStreamGet(music->stream, data, bytes);
@@ -331,10 +332,13 @@ static int OGG_GetSome(void *context, void *data, int bytes, SDL_bool *done)
         return 0;
     }
 
-    samples = stb_vorbis_get_samples_float_interleaved(music->vf,
+    do {
+        has_deferred = music->vf->discard_samples_deferred > 0;
+        samples = stb_vorbis_get_samples_float_interleaved(music->vf,
                                                        music->vi.channels,
                                                        (float *)music->buffer,
                                                        music->buffer_size / (int)sizeof(float));
+    } while ((samples == 0) && has_deferred);  /* if it's still flushing out garbage at the start of the stream, keep trying. */
 
     if (OGG_UpdateSection(music) < 0) {
         return -1;
