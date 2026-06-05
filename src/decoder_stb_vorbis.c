@@ -70,6 +70,7 @@ typedef Uint16 uint16;
 typedef Sint16 int16;
 typedef Uint32 uint32;
 typedef Sint32 int32;
+typedef Uint64 uint64;
 
 #include "stb_vorbis/stb_vorbis.h"
 
