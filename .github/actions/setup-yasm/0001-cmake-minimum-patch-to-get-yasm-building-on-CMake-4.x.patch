@@ -1,0 +1,93 @@
+From 2046b625f15f46a25521db8a9c87cc984397d3f0 Mon Sep 17 00:00:00 2001
+From: Anonymous Maarten <anonymous.maarten@gmail.com>
+Date: Sat, 13 Jun 2026 19:13:57 +0200
+Subject: [PATCH] cmake: minimum patch to get yasm building on CMake 4.x
+
+---
+ CMakeLists.txt                       | 2 +-
+ ConfigureChecks.cmake                | 3 ++-
+ cmake/modules/YasmMacros.cmake       | 9 +++------
+ modules/preprocs/nasm/CMakeLists.txt | 4 +---
+ 4 files changed, 7 insertions(+), 11 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 8df871cf..9e1bb76b 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,5 +1,5 @@
++CMAKE_MINIMUM_REQUIRED(VERSION 2.4...4.0)
+ PROJECT(yasm)
+-CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
+ if (COMMAND cmake_policy)
+     cmake_policy(SET CMP0003 NEW)
+ endif (COMMAND cmake_policy)
+diff --git a/ConfigureChecks.cmake b/ConfigureChecks.cmake
+index 73a1a4c2..b8b26367 100644
+--- a/ConfigureChecks.cmake
++++ b/ConfigureChecks.cmake
+@@ -35,7 +35,8 @@ CONFIGURE_FILE(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+ 
+ ADD_DEFINITIONS(-DHAVE_CONFIG_H)
+ 
+-INCLUDE(FindPythonInterp)
++FIND_PACKAGE(Python3)
++set(PYTHON_EXECUTABLE "${Python3_EXECUTABLE}")
+ IF (NOT PYTHON_EXECUTABLE)
+     MESSAGE(FATAL_ERROR "Could not find Python executable")
+ ENDIF (NOT PYTHON_EXECUTABLE)
+diff --git a/cmake/modules/YasmMacros.cmake b/cmake/modules/YasmMacros.cmake
+index ab1be00e..5cf949c9 100644
+--- a/cmake/modules/YasmMacros.cmake
++++ b/cmake/modules/YasmMacros.cmake
+@@ -58,30 +58,27 @@ macro (YASM_ADD_MODULE _module_NAME)
+ endmacro (YASM_ADD_MODULE)
+ 
+ macro (YASM_GENPERF _in_NAME _out_NAME)
+-    get_target_property(_tmp_GENPERF_EXE genperf LOCATION)
+     add_custom_command(
+         OUTPUT ${_out_NAME}
+-        COMMAND ${_tmp_GENPERF_EXE} ${_in_NAME} ${_out_NAME}
++        COMMAND genperf ${_in_NAME} ${_out_NAME}
+         DEPENDS ${_tmp_GENPERF_EXE}
+         MAIN_DEPENDENCY ${_in_NAME}
+         )
+ endmacro (YASM_GENPERF)
+ 
+ macro (YASM_RE2C _in_NAME _out_NAME)
+-    get_target_property(_tmp_RE2C_EXE re2c LOCATION)
+     add_custom_command(
+         OUTPUT ${_out_NAME}
+-        COMMAND ${_tmp_RE2C_EXE} ${ARGN} -o ${_out_NAME} ${_in_NAME}
++        COMMAND re2c ${ARGN} -o ${_out_NAME} ${_in_NAME}
+         DEPENDS ${_tmp_RE2C_EXE}
+         MAIN_DEPENDENCY ${_in_NAME}
+         )
+ endmacro (YASM_RE2C)
+ 
+ macro (YASM_GENMACRO _in_NAME _out_NAME _var_NAME)
+-    get_target_property(_tmp_GENMACRO_EXE genmacro LOCATION)
+     add_custom_command(
+         OUTPUT ${_out_NAME}
+-        COMMAND ${_tmp_GENMACRO_EXE} ${_out_NAME} ${_var_NAME} ${_in_NAME}
++        COMMAND genmacro ${_out_NAME} ${_var_NAME} ${_in_NAME}
+         DEPENDS ${_tmp_GENMACRO_EXE}
+         MAIN_DEPENDENCY ${_in_NAME}
+         )
+diff --git a/modules/preprocs/nasm/CMakeLists.txt b/modules/preprocs/nasm/CMakeLists.txt
+index e10a9dd1..bba54145 100644
+--- a/modules/preprocs/nasm/CMakeLists.txt
++++ b/modules/preprocs/nasm/CMakeLists.txt
+@@ -1,9 +1,7 @@
+ add_executable(genversion preprocs/nasm/genversion.c)
+-get_target_property(_tmp_GENVERSION_EXE genversion LOCATION)
+ add_custom_command(
+     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/version.mac
+-    COMMAND ${_tmp_GENVERSION_EXE} ${CMAKE_CURRENT_BINARY_DIR}/version.mac
+-    DEPENDS ${_tmp_GENVERSION_EXE}
++    COMMAND genversion ${CMAKE_CURRENT_BINARY_DIR}/version.mac
+     )
+ 
+ YASM_GENMACRO(
+-- 
+2.54.0
+
