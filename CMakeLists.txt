@@ -140,7 +140,7 @@ option(SDL2MIXER_MIDI "Enable MIDI music" ON)
 cmake_dependent_option(SDL2MIXER_MIDI_FLUIDSYNTH "Support FluidSynth MIDI output" ON "SDL2MIXER_MIDI;NOT SDL2MIXER_VENDORED" OFF)
 cmake_dependent_option(SDL2MIXER_MIDI_FLUIDSYNTH_SHARED "Dynamically load libfluidsynth" "${SDL2MIXER_DEPS_SHARED}" SDL2MIXER_MIDI_FLUIDSYNTH OFF)
 
-if(WIN32 OR APPLE OR HAIKU)
+if(WIN32 OR APPLE OR HAIKU)  # keep in sync with error message
     cmake_dependent_option(SDL2MIXER_MIDI_NATIVE "Support native MIDI output" ON SDL2MIXER_MIDI OFF)
 else()
     set(SDL2MIXER_MIDI_NATIVE OFF)
@@ -149,7 +149,7 @@ endif()
 cmake_dependent_option(SDL2MIXER_MIDI_TIMIDITY "Support timidity MIDI output" ON SDL2MIXER_MIDI OFF)
 
 if(SDL2MIXER_MIDI AND NOT (SDL2MIXER_MIDI_TIMIDITY OR SDL2MIXER_MIDI_NATIVE OR SDL2MIXER_MIDI_FLUIDSYNTH))
-    message(FATAL_ERROR "MIDI support was enabled (SDL2MIXER_MIDI) but neither FluidSynth (SDL2MIXER_MIDI_FLUIDSYNTH), native (SDL2MIXER_MIDI_NATIVE) or timidity (SDL2MIXER_MIDI_TIMIDITY) was enabled")
+    message(FATAL_ERROR "MIDI support was enabled (SDL2MIXER_MIDI) but neither FluidSynth (SDL2MIXER_MIDI_FLUIDSYNTH), native (SDL2MIXER_MIDI_NATIVE) (limited to win32, apple & haiku) or timidity (SDL2MIXER_MIDI_TIMIDITY) was enabled.")
 endif()
 
 option(SDL2MIXER_OPUS "Enable Opus music" ON)
