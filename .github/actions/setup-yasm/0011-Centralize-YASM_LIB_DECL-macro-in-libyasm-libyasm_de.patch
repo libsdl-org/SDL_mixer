@@ -1,0 +1,578 @@
+From a841942b6579034d9636ed799ce2275aa99361b8 Mon Sep 17 00:00:00 2001
+From: Anonymous Maarten <anonymous.maarten@gmail.com>
+Date: Fri, 17 Jul 2026 22:38:41 +0200
+Subject: [PATCH 11/12] Centralize YASM_LIB_DECL macro in
+ libyasm/libyasm_decl.h
+
+There was a problem related to dllimport/dllexport
+in floatnum_test
+---
+ libyasm/CMakeLists.txt        |  4 ++-
+ libyasm/Makefile.inc          |  2 ++
+ libyasm/assocdat.h            |  4 +--
+ libyasm/bitvect.h             |  5 ++--
+ libyasm/bytecode.h            |  4 +--
+ libyasm/coretype.h            |  4 +--
+ libyasm/errwarn.h             |  4 +--
+ libyasm/expr.h                |  4 +--
+ libyasm/file.h                |  4 +--
+ libyasm/floatnum.c            | 18 +-----------
+ libyasm/floatnum.h            |  4 +--
+ libyasm/floatnum_internal.h   | 54 ++++++++++++++++++++++++++++++++++
+ libyasm/hamt.h                |  4 +--
+ libyasm/insn.h                |  4 +--
+ libyasm/intnum.h              |  4 +--
+ libyasm/inttree.h             |  4 +--
+ libyasm/libyasm_decl.h        | 55 +++++++++++++++++++++++++++++++++++
+ libyasm/linemap.h             |  4 +--
+ libyasm/md5.h                 |  4 +--
+ libyasm/module.h              |  4 +--
+ libyasm/phash.h               |  4 +--
+ libyasm/section.h             |  4 +--
+ libyasm/symrec.c              |  2 +-
+ libyasm/symrec.h              |  4 +--
+ libyasm/tests/floatnum_test.c |  3 +-
+ libyasm/valparam.h            |  4 +--
+ libyasm/value.h               |  4 +--
+ tools/genperf/CMakeLists.txt  |  2 +-
+ 28 files changed, 140 insertions(+), 81 deletions(-)
+ create mode 100644 libyasm/floatnum_internal.h
+ create mode 100644 libyasm/libyasm_decl.h
+
+diff --git a/libyasm/CMakeLists.txt b/libyasm/CMakeLists.txt
+index 0299ac56..41994702 100644
+--- a/libyasm/CMakeLists.txt
++++ b/libyasm/CMakeLists.txt
+@@ -34,7 +34,7 @@ ADD_LIBRARY(libyasm
+ IF(BUILD_SHARED_LIBS)
+     SET_TARGET_PROPERTIES(libyasm PROPERTIES
+         OUTPUT_NAME "yasm"
+-        COMPILE_FLAGS -DYASM_LIB_SOURCE
++        DEFINE_SYMBOL ""
+         )
+     if(WIN32)
+         SET_PROPERTY(TARGET libyasm PROPERTY PREFIX "")
+@@ -43,7 +43,9 @@ ELSE(BUILD_SHARED_LIBS)
+     SET_TARGET_PROPERTIES(libyasm PROPERTIES
+         COMPILE_FLAGS -DYASM_LIB_SOURCE
+         )
++    TARGET_COMPILE_DEFINITIONS(libyasm PRIVATE LIBYASM_STATIC)
+ ENDIF(BUILD_SHARED_LIBS)
++TARGET_COMPILE_DEFINITIONS(libyasm PRIVATE YASM_LIB_SOURCE)
+ 
+ INSTALL(TARGETS libyasm
+     RUNTIME DESTINATION bin
+diff --git a/libyasm/Makefile.inc b/libyasm/Makefile.inc
+index 042dd390..41ca831b 100644
+--- a/libyasm/Makefile.inc
++++ b/libyasm/Makefile.inc
+@@ -62,6 +62,7 @@ modinclude_HEADERS += libyasm/hamt.h
+ modinclude_HEADERS += libyasm/insn.h
+ modinclude_HEADERS += libyasm/intnum.h
+ modinclude_HEADERS += libyasm/inttree.h
++modinclude_HEADERS += libyasm/libyasm_decl.h
+ modinclude_HEADERS += libyasm/linemap.h
+ modinclude_HEADERS += libyasm/listfmt.h
+ modinclude_HEADERS += libyasm/md5.h
+@@ -75,6 +76,7 @@ modinclude_HEADERS += libyasm/symrec.h
+ modinclude_HEADERS += libyasm/valparam.h
+ modinclude_HEADERS += libyasm/value.h
+ 
++EXTRA_DIST += libyasm/floatnum_internal.h
+ EXTRA_DIST += libyasm/tests/Makefile.inc
+ 
+ include libyasm/tests/Makefile.inc
+diff --git a/libyasm/assocdat.h b/libyasm/assocdat.h
+index cf423867..6a13b060 100644
+--- a/libyasm/assocdat.h
++++ b/libyasm/assocdat.h
+@@ -30,9 +30,7 @@
+ #ifndef YASM_ASSOCDAT_H
+ #define YASM_ASSOCDAT_H
+ 
+-#ifndef YASM_LIB_DECL
+-#define YASM_LIB_DECL
+-#endif
++#include <libyasm/libyasm_decl.h>
+ 
+ /** Associated data container. */
+ typedef struct yasm__assoc_data yasm__assoc_data;
+diff --git a/libyasm/bitvect.h b/libyasm/bitvect.h
+index c48a84e2..4c20340e 100644
+--- a/libyasm/bitvect.h
++++ b/libyasm/bitvect.h
+@@ -13,9 +13,8 @@
+ /*        and your own application(s) which might - directly or indirectly - */
+ /*        include this definitions file.                                     */
+ /*****************************************************************************/
+-#ifndef YASM_LIB_DECL
+-#define YASM_LIB_DECL
+-#endif
++
++#include <libyasm/libyasm_decl.h>
+ 
+ typedef  unsigned   char    N_char;
+ typedef  unsigned   char    N_byte;
+diff --git a/libyasm/bytecode.h b/libyasm/bytecode.h
+index 47cd2624..763ca36c 100644
+--- a/libyasm/bytecode.h
++++ b/libyasm/bytecode.h
+@@ -30,9 +30,7 @@
+ #ifndef YASM_BYTECODE_H
+ #define YASM_BYTECODE_H
+ 
+-#ifndef YASM_LIB_DECL
+-#define YASM_LIB_DECL
+-#endif
++#include <libyasm/libyasm_decl.h>
+ 
+ /** A data value (opaque type). */
+ typedef struct yasm_dataval yasm_dataval;
+diff --git a/libyasm/coretype.h b/libyasm/coretype.h
+index 624e3c44..c1e6e8ec 100644
+--- a/libyasm/coretype.h
++++ b/libyasm/coretype.h
+@@ -30,9 +30,7 @@
+ #ifndef YASM_CORETYPE_H
+ #define YASM_CORETYPE_H
+ 
+-#ifndef YASM_LIB_DECL
+-#define YASM_LIB_DECL
+-#endif
++#include <libyasm/libyasm_decl.h>
+ 
+ /** Architecture instance (mostly opaque type).  \see arch.h for details. */
+ typedef struct yasm_arch yasm_arch;
+diff --git a/libyasm/errwarn.h b/libyasm/errwarn.h
+index 25f68226..93a368bb 100644
+--- a/libyasm/errwarn.h
++++ b/libyasm/errwarn.h
+@@ -30,9 +30,7 @@
+ #ifndef YASM_ERRWARN_H
+ #define YASM_ERRWARN_H
+ 
+-#ifndef YASM_LIB_DECL
+-#define YASM_LIB_DECL
+-#endif
++#include <libyasm/libyasm_decl.h>
+ 
+ /** Warning classes (that may be enabled/disabled). */
+ typedef enum yasm_warn_class {
+diff --git a/libyasm/expr.h b/libyasm/expr.h
+index 0de62dfe..11c9ad50 100644
+--- a/libyasm/expr.h
++++ b/libyasm/expr.h
+@@ -30,9 +30,7 @@
+ #ifndef YASM_EXPR_H
+ #define YASM_EXPR_H
+ 
+-#ifndef YASM_LIB_DECL
+-#define YASM_LIB_DECL
+-#endif
++#include <libyasm/libyasm_decl.h>
+ 
+ /** Type of an expression item.  Types are listed in canonical sorting order.
+  * See expr_order_terms().
+diff --git a/libyasm/file.h b/libyasm/file.h
+index 1e9b87b0..8881bd35 100644
+--- a/libyasm/file.h
++++ b/libyasm/file.h
+@@ -30,9 +30,7 @@
+ #ifndef YASM_FILE_H
+ #define YASM_FILE_H
+ 
+-#ifndef YASM_LIB_DECL
+-#define YASM_LIB_DECL
+-#endif
++#include <libyasm/libyasm_decl.h>
+ 
+ /** Re2c scanner state. */
+ typedef struct yasm_scanner {
+diff --git a/libyasm/floatnum.c b/libyasm/floatnum.c
+index ab67c2b2..e4f7d337 100644
+--- a/libyasm/floatnum.c
++++ b/libyasm/floatnum.c
+@@ -36,23 +36,7 @@
+ 
+ #include "errwarn.h"
+ #include "floatnum.h"
+-
+-
+-/* 97-bit internal floating point format:
+- * 0000000s eeeeeeee eeeeeeee m.....................................m
+- * Sign          exponent     mantissa (80 bits)
+- *                            79                                    0
+- *
+- * Only L.O. bit of Sign byte is significant.  The rest is zero.
+- * Exponent is bias 32767.
+- * Mantissa does NOT have an implied one bit (it's explicit).
+- */
+-struct yasm_floatnum {
+-    /*@only@*/ wordptr mantissa;        /* Allocated to MANT_BITS bits */
+-    unsigned short exponent;
+-    unsigned char sign;
+-    unsigned char flags;
+-};
++#include "floatnum_internal.h"
+ 
+ /* constants describing parameters of internal floating point format */
+ #define MANT_BITS       80
+diff --git a/libyasm/floatnum.h b/libyasm/floatnum.h
+index d2c70420..ebacb6cc 100644
+--- a/libyasm/floatnum.h
++++ b/libyasm/floatnum.h
+@@ -32,9 +32,7 @@
+ #ifndef YASM_FLOATNUM_H
+ #define YASM_FLOATNUM_H
+ 
+-#ifndef YASM_LIB_DECL
+-#define YASM_LIB_DECL
+-#endif
++#include <libyasm/libyasm_decl.h>
+ 
+ /** Initialize floatnum internal data structures. */
+ YASM_LIB_DECL
+diff --git a/libyasm/floatnum_internal.h b/libyasm/floatnum_internal.h
+new file mode 100644
+index 00000000..0d146912
+--- /dev/null
++++ b/libyasm/floatnum_internal.h
+@@ -0,0 +1,54 @@
++/**
++ * \file libyasm/floatnum_internal.h
++ * \brief YASM floating point (IEEE) privateinterface.
++ *
++ * \license
++ *  Copyright (C) 2001-2007  Peter Johnson
++ *  Copyright (C) 2026       yasm developers
++ *
++ *  Based on public-domain x86 assembly code by Randall Hyde (8/28/91).
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ *  - Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ *  - Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND OTHER CONTRIBUTORS ``AS IS''
++ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR OTHER CONTRIBUTORS BE
++ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++ * POSSIBILITY OF SUCH DAMAGE.
++ * \endlicense
++ */
++#ifndef YASM_FLOATNUM_INTERNAL_H
++#define YASM_FLOATNUM_INTERNAL_H
++
++#include <libyasm/bitvect.h>
++
++/* 97-bit internal floating point format:
++ * 0000000s eeeeeeee eeeeeeee m.....................................m
++ * Sign          exponent     mantissa (80 bits)
++ *                            79                                    0
++ *
++ * Only L.O. bit of Sign byte is significant.  The rest is zero.
++ * Exponent is bias 32767.
++ * Mantissa does NOT have an implied one bit (it's explicit).
++ */
++struct yasm_floatnum {
++    /*@only@*/ wordptr mantissa;        /* Allocated to MANT_BITS bits */
++    unsigned short exponent;
++    unsigned char sign;
++    unsigned char flags;
++};
++
++#endif
+diff --git a/libyasm/hamt.h b/libyasm/hamt.h
+index 1ce9b775..bd44927c 100644
+--- a/libyasm/hamt.h
++++ b/libyasm/hamt.h
+@@ -30,9 +30,7 @@
+ #ifndef YASM_HAMT_H
+ #define YASM_HAMT_H
+ 
+-#ifndef YASM_LIB_DECL
+-#define YASM_LIB_DECL
+-#endif
++#include <libyasm/libyasm_decl.h>
+ 
+ /** Hash array mapped trie data structure (opaque type). */
+ typedef struct HAMT HAMT;
+diff --git a/libyasm/insn.h b/libyasm/insn.h
+index d2d175d0..661f9eb4 100644
+--- a/libyasm/insn.h
++++ b/libyasm/insn.h
+@@ -30,9 +30,7 @@
+ #ifndef YASM_INSN_H
+ #define YASM_INSN_H
+ 
+-#ifndef YASM_LIB_DECL
+-#define YASM_LIB_DECL
+-#endif
++#include <libyasm/libyasm_decl.h>
+ 
+ /** Base structure for an effective address.  As with all base
+  * structures, must be present as the first element in any
+diff --git a/libyasm/intnum.h b/libyasm/intnum.h
+index bec832cf..2a8aecdc 100644
+--- a/libyasm/intnum.h
++++ b/libyasm/intnum.h
+@@ -30,9 +30,7 @@
+ #ifndef YASM_INTNUM_H
+ #define YASM_INTNUM_H
+ 
+-#ifndef YASM_LIB_DECL
+-#define YASM_LIB_DECL
+-#endif
++#include <libyasm/libyasm_decl.h>
+ 
+ /** Initialize intnum internal data structures. */
+ YASM_LIB_DECL
+diff --git a/libyasm/inttree.h b/libyasm/inttree.h
+index f7a76515..3e43928c 100644
+--- a/libyasm/inttree.h
++++ b/libyasm/inttree.h
+@@ -1,9 +1,7 @@
+ #ifndef YASM_INTTREE_H
+ #define YASM_INTTREE_H
+ 
+-#ifndef YASM_LIB_DECL
+-#define YASM_LIB_DECL
+-#endif
++#include <libyasm/libyasm_decl.h>
+ 
+ /* The interval_tree.h and interval_tree.cc files contain code for 
+  * interval trees implemented using red-black-trees as described in
+diff --git a/libyasm/libyasm_decl.h b/libyasm/libyasm_decl.h
+new file mode 100644
+index 00000000..385bee5b
+--- /dev/null
++++ b/libyasm/libyasm_decl.h
+@@ -0,0 +1,55 @@
++/**
++ * \file libyasm.h
++ * \brief YASM library decl macro.
++ *
++ * \license
++ *  Copyright (C) 2026       yasm developers
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ *  - Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ *  - Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND OTHER CONTRIBUTORS ``AS IS''
++ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR OTHER CONTRIBUTORS BE
++ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++ * POSSIBILITY OF SUCH DAMAGE.
++ * \endlicense
++ */
++#ifndef YASM_DECL_H
++#define YASM_DECL_H
++
++#ifndef YASM_LIB_DECL
++#ifdef _WIN32
++#ifndef LIBYASM_STATIC
++#ifdef YASM_LIB_SOURCE
++#define YASM_LIB_DECL __declspec(dllexport)
++#else
++#define YASM_LIB_DECL __declspec(dllimport)
++#endif
++#endif
++#else
++#ifndef LIBYASM_STATIC
++#ifdef YASM_LIB_SOURCE
++#define YASM_LIB_DECL __attribute__((visibility("default")))
++#endif
++#endif
++#endif
++#endif
++
++#ifndef YASM_LIB_DECL
++#define YASM_LIB_DECL
++#endif
++
++#endif
+diff --git a/libyasm/linemap.h b/libyasm/linemap.h
+index 1c5aa462..56d7efe3 100644
+--- a/libyasm/linemap.h
++++ b/libyasm/linemap.h
+@@ -30,9 +30,7 @@
+ #ifndef YASM_LINEMAP_H
+ #define YASM_LINEMAP_H
+ 
+-#ifndef YASM_LIB_DECL
+-#define YASM_LIB_DECL
+-#endif
++#include <libyasm/libyasm_decl.h>
+ 
+ /** Create a new line mapping repository.
+  * \return New repository.
+diff --git a/libyasm/md5.h b/libyasm/md5.h
+index 7872fda7..7cc91475 100644
+--- a/libyasm/md5.h
++++ b/libyasm/md5.h
+@@ -3,9 +3,7 @@
+ #ifndef YASM_MD5_H
+ #define YASM_MD5_H
+ 
+-#ifndef YASM_LIB_DECL
+-#define YASM_LIB_DECL
+-#endif
++#include <libyasm/libyasm_decl.h>
+ 
+ /* Unlike previous versions of this code, uint32 need not be exactly
+    32 bits, merely 32 bits or more.  Choosing a data type which is 32
+diff --git a/libyasm/module.h b/libyasm/module.h
+index 220017de..f202efe7 100644
+--- a/libyasm/module.h
++++ b/libyasm/module.h
+@@ -27,9 +27,7 @@
+ #ifndef YASM_MODULE_H
+ #define YASM_MODULE_H
+ 
+-#ifndef YASM_LIB_DECL
+-#define YASM_LIB_DECL
+-#endif
++#include <libyasm/libyasm_decl.h>
+ 
+ typedef enum yasm_module_type {
+     YASM_MODULE_ARCH = 0,
+diff --git a/libyasm/phash.h b/libyasm/phash.h
+index 2273a5df..084ee2f8 100644
+--- a/libyasm/phash.h
++++ b/libyasm/phash.h
+@@ -8,9 +8,7 @@ Source is http://burtleburtle.net/bob/c/lookupa.h
+ ------------------------------------------------------------------------------
+ */
+ 
+-#ifndef YASM_LIB_DECL
+-#define YASM_LIB_DECL
+-#endif
++#include <libyasm/libyasm_decl.h>
+ 
+ YASM_LIB_DECL
+ unsigned long phash_lookup(const char *k, size_t length,
+diff --git a/libyasm/section.h b/libyasm/section.h
+index 2c7faa4d..92d6005f 100644
+--- a/libyasm/section.h
++++ b/libyasm/section.h
+@@ -30,9 +30,7 @@
+ #ifndef YASM_SECTION_H
+ #define YASM_SECTION_H
+ 
+-#ifndef YASM_LIB_DECL
+-#define YASM_LIB_DECL
+-#endif
++#include <libyasm/libyasm_decl.h>
+ 
+ /** Basic YASM relocation.  Object formats will need to extend this
+  * structure with additional fields for relocation type, etc.
+diff --git a/libyasm/symrec.c b/libyasm/symrec.c
+index 694f0c67..e8425e10 100644
+--- a/libyasm/symrec.c
++++ b/libyasm/symrec.c
+@@ -550,7 +550,7 @@ yasm_symrec_get_label(const yasm_symrec *sym,
+ {
+     if (!(sym->type == SYM_LABEL || sym->type == SYM_CURPOS)
+         || !sym->value.precbc) {
+-        *precbc = (yasm_symrec_get_label_bytecodep)0xDEADBEEF;
++        *precbc = (yasm_symrec_get_label_bytecodep)(uintptr_t)0xDEADBEEF;
+         return 0;
+     }
+     *precbc = sym->value.precbc;
+diff --git a/libyasm/symrec.h b/libyasm/symrec.h
+index b1f797c6..5e201056 100644
+--- a/libyasm/symrec.h
++++ b/libyasm/symrec.h
+@@ -30,9 +30,7 @@
+ #ifndef YASM_SYMREC_H
+ #define YASM_SYMREC_H
+ 
+-#ifndef YASM_LIB_DECL
+-#define YASM_LIB_DECL
+-#endif
++#include <libyasm/libyasm_decl.h>
+ 
+ /** Symbol status.  YASM_SYM_DEFINED is set by yasm_symtab_define_label(),
+  * yasm_symtab_define_equ(), or yasm_symtab_declare()/yasm_symrec_declare()
+diff --git a/libyasm/tests/floatnum_test.c b/libyasm/tests/floatnum_test.c
+index 2447e90b..50a3a8f3 100644
+--- a/libyasm/tests/floatnum_test.c
++++ b/libyasm/tests/floatnum_test.c
+@@ -27,7 +27,8 @@
+ #include <stdlib.h>
+ #include <string.h>
+ 
+-#include "libyasm/floatnum.c"
++#include <libyasm.h>
++#include "libyasm/floatnum_internal.h"
+ 
+ /* constants describing parameters of internal floating point format.
+  *  (these should match those in src/floatnum.c !)
+diff --git a/libyasm/valparam.h b/libyasm/valparam.h
+index d7343d49..0945ed98 100644
+--- a/libyasm/valparam.h
++++ b/libyasm/valparam.h
+@@ -30,9 +30,7 @@
+ #ifndef YASM_VALPARAM_H
+ #define YASM_VALPARAM_H
+ 
+-#ifndef YASM_LIB_DECL
+-#define YASM_LIB_DECL
+-#endif
++#include <libyasm/libyasm_decl.h>
+ 
+ /** Value/parameter pair.  \internal */
+ struct yasm_valparam {
+diff --git a/libyasm/value.h b/libyasm/value.h
+index 4dc294bc..74c8deb0 100644
+--- a/libyasm/value.h
++++ b/libyasm/value.h
+@@ -30,9 +30,7 @@
+ #ifndef YASM_VALUE_H
+ #define YASM_VALUE_H
+ 
+-#ifndef YASM_LIB_DECL
+-#define YASM_LIB_DECL
+-#endif
++#include <libyasm/libyasm_decl.h>
+ 
+ /** Initialize a #yasm_value with just an expression.  No processing is
+  * performed, the expression is simply stuck into value.abs and the other
+diff --git a/tools/genperf/CMakeLists.txt b/tools/genperf/CMakeLists.txt
+index c9db7c11..185451ba 100644
+--- a/tools/genperf/CMakeLists.txt
++++ b/tools/genperf/CMakeLists.txt
+@@ -5,7 +5,7 @@ add_executable(genperf
+     ../../libyasm/xmalloc.c
+     ../../libyasm/xstrdup.c
+     )
+-set_target_properties(genperf PROPERTIES COMPILE_FLAGS -DYASM_LIB_DECL=)
++target_compile_definitions(genperf PRIVATE YASM_LIB_DECL=)
+ 
+ if(CMAKE_CROSSCOMPILING)
+     find_program(GENPERF_BIN NAMES genperf REQUIRED)
+-- 
+2.50.0.windows.2
+

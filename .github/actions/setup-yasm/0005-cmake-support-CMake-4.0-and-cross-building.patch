@@ -1,0 +1,206 @@
+From a6d3c2913068cf418e41658bbbb8dd1ba08df01a Mon Sep 17 00:00:00 2001
+From: Anonymous Maarten <anonymous.maarten@gmail.com>
+Date: Fri, 17 Jul 2026 21:05:04 +0200
+Subject: [PATCH 05/12] cmake: support CMake 4.0 and cross building
+
+---
+ CMakeLists.txt                       |  2 +-
+ ConfigureChecks.cmake                |  3 ++-
+ cmake/modules/YasmMacros.cmake       | 13 +++----------
+ libyasm/CMakeLists.txt               |  3 +++
+ modules/CMakeLists.txt               |  1 +
+ modules/preprocs/nasm/CMakeLists.txt | 12 +++++++++---
+ plugins/dbg/CMakeLists.txt           |  3 +++
+ plugins/x86/CMakeLists.txt           |  4 ++++
+ tools/genmacro/CMakeLists.txt        |  8 ++++++++
+ tools/genperf/CMakeLists.txt         |  8 ++++++++
+ tools/re2c/CMakeLists.txt            |  8 ++++++++
+ 11 files changed, 50 insertions(+), 15 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 8df871cf..9e1bb76b 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,5 +1,5 @@
++CMAKE_MINIMUM_REQUIRED(VERSION 2.4...4.0)
+ PROJECT(yasm)
+-CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
+ if (COMMAND cmake_policy)
+     cmake_policy(SET CMP0003 NEW)
+ endif (COMMAND cmake_policy)
+diff --git a/ConfigureChecks.cmake b/ConfigureChecks.cmake
+index 73a1a4c2..1eb43acf 100644
+--- a/ConfigureChecks.cmake
++++ b/ConfigureChecks.cmake
+@@ -35,7 +35,8 @@ CONFIGURE_FILE(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+ 
+ ADD_DEFINITIONS(-DHAVE_CONFIG_H)
+ 
+-INCLUDE(FindPythonInterp)
++FIND_PACKAGE(Python3 REQUIRED COMPONENTS Interpreter)
++set(PYTHON_EXECUTABLE "${Python3_EXECUTABLE}")
+ IF (NOT PYTHON_EXECUTABLE)
+     MESSAGE(FATAL_ERROR "Could not find Python executable")
+ ENDIF (NOT PYTHON_EXECUTABLE)
+diff --git a/cmake/modules/YasmMacros.cmake b/cmake/modules/YasmMacros.cmake
+index ab1be00e..0214c908 100644
+--- a/cmake/modules/YasmMacros.cmake
++++ b/cmake/modules/YasmMacros.cmake
+@@ -58,31 +58,24 @@ macro (YASM_ADD_MODULE _module_NAME)
+ endmacro (YASM_ADD_MODULE)
+ 
+ macro (YASM_GENPERF _in_NAME _out_NAME)
+-    get_target_property(_tmp_GENPERF_EXE genperf LOCATION)
+     add_custom_command(
+         OUTPUT ${_out_NAME}
+-        COMMAND ${_tmp_GENPERF_EXE} ${_in_NAME} ${_out_NAME}
+-        DEPENDS ${_tmp_GENPERF_EXE}
++        COMMAND yasm::genperf ${_in_NAME} ${_out_NAME}
+         MAIN_DEPENDENCY ${_in_NAME}
+         )
+ endmacro (YASM_GENPERF)
+ 
+ macro (YASM_RE2C _in_NAME _out_NAME)
+-    get_target_property(_tmp_RE2C_EXE re2c LOCATION)
+     add_custom_command(
+         OUTPUT ${_out_NAME}
+-        COMMAND ${_tmp_RE2C_EXE} ${ARGN} -o ${_out_NAME} ${_in_NAME}
+-        DEPENDS ${_tmp_RE2C_EXE}
+-        MAIN_DEPENDENCY ${_in_NAME}
++        COMMAND yasm::re2c ${ARGN} -o ${_out_NAME} ${_in_NAME}
+         )
+ endmacro (YASM_RE2C)
+ 
+ macro (YASM_GENMACRO _in_NAME _out_NAME _var_NAME)
+-    get_target_property(_tmp_GENMACRO_EXE genmacro LOCATION)
+     add_custom_command(
+         OUTPUT ${_out_NAME}
+-        COMMAND ${_tmp_GENMACRO_EXE} ${_out_NAME} ${_var_NAME} ${_in_NAME}
+-        DEPENDS ${_tmp_GENMACRO_EXE}
++        COMMAND yasm::genmacro ${_out_NAME} ${_var_NAME} ${_in_NAME}
+         MAIN_DEPENDENCY ${_in_NAME}
+         )
+ endmacro (YASM_GENMACRO)
+diff --git a/libyasm/CMakeLists.txt b/libyasm/CMakeLists.txt
+index bd9b7b28..0299ac56 100644
+--- a/libyasm/CMakeLists.txt
++++ b/libyasm/CMakeLists.txt
+@@ -36,6 +36,9 @@ IF(BUILD_SHARED_LIBS)
+         OUTPUT_NAME "yasm"
+         COMPILE_FLAGS -DYASM_LIB_SOURCE
+         )
++    if(WIN32)
++        SET_PROPERTY(TARGET libyasm PROPERTY PREFIX "")
++    endif()
+ ELSE(BUILD_SHARED_LIBS)
+     SET_TARGET_PROPERTIES(libyasm PROPERTIES
+         COMPILE_FLAGS -DYASM_LIB_SOURCE
+diff --git a/modules/CMakeLists.txt b/modules/CMakeLists.txt
+index b6eceb0e..6e59cb52 100644
+--- a/modules/CMakeLists.txt
++++ b/modules/CMakeLists.txt
+@@ -90,6 +90,7 @@ IF(BUILD_SHARED_LIBS)
+     TARGET_LINK_LIBRARIES(yasmstd libyasm)
+ 
+     IF(WIN32)
++        SET_PROPERTY(TARGET yasmstd PROPERTY PREFIX "")
+         INSTALL(TARGETS yasmstd LIBRARY DESTINATION bin)
+     ELSE(WIN32)
+         INSTALL(TARGETS yasmstd LIBRARY DESTINATION lib)
+diff --git a/modules/preprocs/nasm/CMakeLists.txt b/modules/preprocs/nasm/CMakeLists.txt
+index e10a9dd1..d135ddfe 100644
+--- a/modules/preprocs/nasm/CMakeLists.txt
++++ b/modules/preprocs/nasm/CMakeLists.txt
+@@ -1,9 +1,15 @@
+ add_executable(genversion preprocs/nasm/genversion.c)
+-get_target_property(_tmp_GENVERSION_EXE genversion LOCATION)
++if(CMAKE_CROSSCOMPILING)
++    find_program(GENVERSION_BIN NAMES genversion REQUIRED)
++    add_executable(yasm::genversion IMPORTED GLOBAL)
++    set_property(TARGET yasm::genversion PROPERTY IMPORTED_LOCATION "${GENVERSION_BIN}")
++else()
++    add_executable(yasm::genversion ALIAS genversion)
++endif()
++
+ add_custom_command(
+     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/version.mac
+-    COMMAND ${_tmp_GENVERSION_EXE} ${CMAKE_CURRENT_BINARY_DIR}/version.mac
+-    DEPENDS ${_tmp_GENVERSION_EXE}
++    COMMAND yasm::genversion ${CMAKE_CURRENT_BINARY_DIR}/version.mac
+     )
+ 
+ YASM_GENMACRO(
+diff --git a/plugins/dbg/CMakeLists.txt b/plugins/dbg/CMakeLists.txt
+index 3d4fe681..b0b9653f 100644
+--- a/plugins/dbg/CMakeLists.txt
++++ b/plugins/dbg/CMakeLists.txt
+@@ -54,3 +54,6 @@ ADD_LIBRARY(dbgmod MODULE
+     dbg-objfmt.c
+     )
+ TARGET_LINK_LIBRARIES(dbgmod ${YASM_LIBRARY})
++if(WIN32)
++    SET_PROPERTY(TARGET dbgmod PROPERTY PREFIX "")
++endif()
+diff --git a/plugins/x86/CMakeLists.txt b/plugins/x86/CMakeLists.txt
+index d0e10dae..87343dd3 100644
+--- a/plugins/x86/CMakeLists.txt
++++ b/plugins/x86/CMakeLists.txt
+@@ -143,3 +143,7 @@ ADD_LIBRARY(x86mod MODULE
+     x86regtmod.c
+     )
+ TARGET_LINK_LIBRARIES(x86mod ${YASM_LIBRARY})
++
++if(WIN32)
++    SET_PROPERTY(TARGET x86mod PROPERTY PREFIX "")
++endif()
+diff --git a/tools/genmacro/CMakeLists.txt b/tools/genmacro/CMakeLists.txt
+index 27ba5996..9e8933b0 100644
+--- a/tools/genmacro/CMakeLists.txt
++++ b/tools/genmacro/CMakeLists.txt
+@@ -1,3 +1,11 @@
+ add_executable(genmacro
+     genmacro.c
+     )
++
++if(CMAKE_CROSSCOMPILING)
++    find_program(GENMACRO_BIN NAMES genmacro REQUIRED)
++    add_executable(yasm::genmacro IMPORTED GLOBAL)
++    set_property(TARGET yasm::genmacro PROPERTY IMPORTED_LOCATION "${GENMACRO_BIN}")
++else()
++    add_executable(yasm::genmacro ALIAS genmacro)
++endif()
+diff --git a/tools/genperf/CMakeLists.txt b/tools/genperf/CMakeLists.txt
+index 6f50989e..c9db7c11 100644
+--- a/tools/genperf/CMakeLists.txt
++++ b/tools/genperf/CMakeLists.txt
+@@ -6,3 +6,11 @@ add_executable(genperf
+     ../../libyasm/xstrdup.c
+     )
+ set_target_properties(genperf PROPERTIES COMPILE_FLAGS -DYASM_LIB_DECL=)
++
++if(CMAKE_CROSSCOMPILING)
++    find_program(GENPERF_BIN NAMES genperf REQUIRED)
++    add_executable(yasm::genperf IMPORTED GLOBAL)
++    set_property(TARGET yasm::genperf PROPERTY IMPORTED_LOCATION "${GENPERF_BIN}")
++else()
++    add_executable(yasm::genperf ALIAS genperf)
++endif()
+diff --git a/tools/re2c/CMakeLists.txt b/tools/re2c/CMakeLists.txt
+index 7125d496..2a25f733 100644
+--- a/tools/re2c/CMakeLists.txt
++++ b/tools/re2c/CMakeLists.txt
+@@ -9,3 +9,11 @@ add_executable(re2c
+     substr.c
+     translate.c
+     )
++
++if(CMAKE_CROSSCOMPILING)
++    find_program(RE2C_BIN NAMES re2c REQUIRED)
++    add_executable(yasm::re2c IMPORTED GLOBAL)
++    set_property(TARGET yasm::re2c PROPERTY IMPORTED_LOCATION "${RE2C_BIN}")
++else()
++    add_executable(yasm::re2c ALIAS re2c)
++endif()
+-- 
+2.50.0.windows.2
+

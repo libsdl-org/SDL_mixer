@@ -1,0 +1,54 @@
+From 04b93da1db5bffb819ac47798832d75579904908 Mon Sep 17 00:00:00 2001
+From: Anonymous Maarten <anonymous.maarten@gmail.com>
+Date: Thu, 16 Jul 2026 14:53:50 +0200
+Subject: [PATCH 07/12] cmake: add build dependency of the frontends to yasmstd
+ and add its directory to RUNPATH
+
+---
+ frontends/tasm/CMakeLists.txt   | 2 ++
+ frontends/vsyasm/CMakeLists.txt | 2 ++
+ frontends/yasm/CMakeLists.txt   | 2 ++
+ 3 files changed, 6 insertions(+)
+
+diff --git a/frontends/tasm/CMakeLists.txt b/frontends/tasm/CMakeLists.txt
+index e275ab84..627f9f2f 100644
+--- a/frontends/tasm/CMakeLists.txt
++++ b/frontends/tasm/CMakeLists.txt
+@@ -28,6 +28,8 @@ ELSE(BUILD_SHARED_LIBS)
+         tasm-options.c
+         )
+     TARGET_LINK_LIBRARIES(ytasm yasmstd libyasm)
++    ADD_DEPENDENCIES(ytasm yasmstd)
++    SET_PROPERTY(TARGET ytasm APPEND PROPERTY BUILD_RPATH "$<TARGET_FILE_DIR:yasmstd>")
+ ENDIF(BUILD_SHARED_LIBS)
+ 
+ SET_SOURCE_FILES_PROPERTIES(tasm.c PROPERTIES
+diff --git a/frontends/vsyasm/CMakeLists.txt b/frontends/vsyasm/CMakeLists.txt
+index 6815b18d..f5c1f15c 100644
+--- a/frontends/vsyasm/CMakeLists.txt
++++ b/frontends/vsyasm/CMakeLists.txt
+@@ -22,6 +22,8 @@ IF(BUILD_SHARED_LIBS)
+         ${yasm_SOURCE_DIR}/frontends/yasm/yasm-plugin.c
+         )
+     TARGET_LINK_LIBRARIES(vsyasm libyasm ${LIBDL})
++    ADD_DEPENDENCIES(vsyasm yasmstd)
++    SET_PROPERTY(TARGET vsyasm APPEND PROPERTY BUILD_RPATH "$<TARGET_FILE_DIR:yasmstd>")
+ ELSE(BUILD_SHARED_LIBS)
+     ADD_EXECUTABLE(vsyasm
+         vsyasm.c
+diff --git a/frontends/yasm/CMakeLists.txt b/frontends/yasm/CMakeLists.txt
+index b11d7f82..6da0cd49 100644
+--- a/frontends/yasm/CMakeLists.txt
++++ b/frontends/yasm/CMakeLists.txt
+@@ -19,6 +19,8 @@ IF(BUILD_SHARED_LIBS)
+         yasm-plugin.c
+         )
+     TARGET_LINK_LIBRARIES(yasm libyasm ${LIBDL})
++    ADD_DEPENDENCIES(yasm yasmstd)
++    SET_PROPERTY(TARGET yasm APPEND PROPERTY BUILD_RPATH "$<TARGET_FILE_DIR:yasmstd>")
+ ELSE(BUILD_SHARED_LIBS)
+     ADD_EXECUTABLE(yasm
+         yasm.c
+-- 
+2.50.0.windows.2
+

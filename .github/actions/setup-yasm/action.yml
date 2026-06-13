@@ -29,6 +29,20 @@ runs:
       with:
         repository: yasm/yasm
         path: yasm-src
+
+
+    - name: 'Apply patch to get yasm building on CMake 4.x'
+      if: ${{ !steps.restore-yasm.outputs.cache-hit }}
+      shell: pwsh
+      run: |
+        git -C yasm-src config user.email "actions@github.com"
+        git -C yasm-src config user.name "GitHub Actions"
+        git -C yasm-src am ${{ github.workspace }}/.github/actions/setup-yasm/0002-bool-is-a-C-keyword-from-C23-onwards.patch
+        git -C yasm-src am ${{ github.workspace }}/.github/actions/setup-yasm/0005-cmake-support-CMake-4.0-and-cross-building.patch
+        git -C yasm-src am ${{ github.workspace }}/.github/actions/setup-yasm/0006-cmake-register-all-modules-in-yasm_init_plugin.patch
+        git -C yasm-src am ${{ github.workspace }}/.github/actions/setup-yasm/0007-cmake-add-build-dependency-of-the-frontends-to-yasms.patch
+        git -C yasm-src am ${{ github.workspace }}/.github/actions/setup-yasm/0009-subminor-of-a-macho-buildversion-is-optional.patch
+        git -C yasm-src am ${{ github.workspace }}/.github/actions/setup-yasm/0011-Centralize-YASM_LIB_DECL-macro-in-libyasm-libyasm_de.patch
     - name: 'Configure, build and install yasm'
       if: ${{ !steps.restore-yasm.outputs.cache-hit }}
       shell: pwsh

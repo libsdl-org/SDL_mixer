@@ -1,0 +1,39 @@
+From b62e7ce64cb9214119ef68dfb280d1da1f3c89f0 Mon Sep 17 00:00:00 2001
+From: Anonymous Maarten <anonymous.maarten@gmail.com>
+Date: Fri, 17 Jul 2026 05:05:48 +0200
+Subject: [PATCH 09/12] subminor of a macho buildversion is optional
+
+This fixes a difference in behavior between yasm built by autotools and cmake (due to different compile flags)
+---
+ modules/objfmts/macho/macho-objfmt.c                        | 1 +
+ modules/objfmts/macho/tests/nasm64/macho64-buildversion.hex | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/modules/objfmts/macho/macho-objfmt.c b/modules/objfmts/macho/macho-objfmt.c
+index 74ac3573..7fec0147 100644
+--- a/modules/objfmts/macho/macho-objfmt.c
++++ b/modules/objfmts/macho/macho-objfmt.c
+@@ -1605,6 +1605,7 @@ parse_version(unsigned long *out, const yasm_valparam *vp)
+         return;
+     }
+ 
++    subminor = 0;
+     m = sscanf(vp->param.str, "%lu.%lu.%lu", &major, &minor, &subminor);
+     if (m < 2) {
+         yasm_error_set(YASM_ERROR_VALUE,
+diff --git a/modules/objfmts/macho/tests/nasm64/macho64-buildversion.hex b/modules/objfmts/macho/tests/nasm64/macho64-buildversion.hex
+index bbb9efaa..c8ed6de9 100644
+--- a/modules/objfmts/macho/tests/nasm64/macho64-buildversion.hex
++++ b/modules/objfmts/macho/tests/nasm64/macho64-buildversion.hex
+@@ -46,7 +46,7 @@ fe
+ 0e 
+ 0a 
+ 00 
+-02 
++00 
+ 07 
+ 0a 
+ 00 
+-- 
+2.50.0.windows.2
+

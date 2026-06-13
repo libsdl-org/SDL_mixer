@@ -1,0 +1,35 @@
+From f2dba873ec880437689b5ba673c595ba9c1040b9 Mon Sep 17 00:00:00 2001
+From: Anonymous Maarten <anonymous.maarten@gmail.com>
+Date: Wed, 15 Jul 2026 16:50:56 +0200
+Subject: [PATCH 02/12] bool is a C keyword from C23 onwards
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This fixes the following error:
+> In file included from frontends/yasm/yasm.c:31:
+> ./libyasm/bitvect.h:86:32: error: cannot use keyword ‘false’ as enumeration constant
+>    86 |         typedef enum boolean { false = FALSE, true = TRUE } boolean;
+>       |                                ^~~~~
+> ./libyasm/bitvect.h:86:32: note: ‘false’ is a keyword with ‘-std=c23’ onwards
+---
+ libyasm/bitvect.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/libyasm/bitvect.h b/libyasm/bitvect.h
+index 3aee3a53..c48a84e2 100644
+--- a/libyasm/bitvect.h
++++ b/libyasm/bitvect.h
+@@ -82,6 +82,9 @@ typedef  Z_longword         *Z_longwordptr;
+ #else
+     #ifdef MACOS_TRADITIONAL
+         #define boolean Boolean
++    #elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
++        #include <stdbool.h>
++        typedef bool boolean;
+     #else
+         typedef enum boolean { false = FALSE, true = TRUE } boolean;
+     #endif
+-- 
+2.50.0.windows.2
+
