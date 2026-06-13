@@ -29,6 +29,13 @@ runs:
       with:
         repository: yasm/yasm
         path: yasm-src
+    - name: 'Apply patch to get yasm building on CMake 4.x'
+      if: ${{ !steps.restore-yasm.outputs.cache-hit }}
+      shell: pwsh
+      run: |
+        git -C yasm-src config user.email "actions@github.com"
+        git -C yasm-src config user.name "GitHub Actions"
+        git -C yasm-src am ${{ github.workspace }}/.github/actions/setup-yasm/0001-cmake-minimum-patch-to-get-yasm-building-on-CMake-4.x.patch
     - name: 'Configure, build and install yasm'
       if: ${{ !steps.restore-yasm.outputs.cache-hit }}
       shell: pwsh
