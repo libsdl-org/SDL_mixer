@@ -9,8 +9,10 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "SDL_Init: could not initialize SDL: %s\n", SDL_GetError());
         return 1;
     }
-    if (Mix_Init(0) == 0) {
-        fprintf(stderr, "Mix_Init: no sound/music loaders supported (%s)\n", Mix_GetError());
+    if (Mix_Init(MIX_INIT_OGG) & MIX_INIT_OGG) {
+        fprintf(stderr, "Mix_Init: Ogg Vorbis supported\n");
+    } else {
+        fprintf(stderr, "Mix_Init: Ogg Vorbis not supported (%s)\n", Mix_GetError());
     }
     Mix_Quit();
     SDL_Quit();
