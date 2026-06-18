@@ -106,7 +106,7 @@ static VOC_Block *AddVocLoopBlock(VOC_AudioData *adata, int loop_count)
 // this runs during VOC_audio_init to walk the whole .VOC for metadata and sanity checks.
 static bool ParseVocFile(SDL_IOStream *io, VOC_AudioData *adata, SDL_PropertiesID props, SDL_AudioSpec *spec, Sint64 *duration_frames)
 {
-    const bool ignore_loops = SDL_GetBooleanProperty(props, MIX_PROP_AUDIO_LOAD_IGNORE_LOOPS_BOOLEAN, false);
+    const bool ignore_loops = SDL_GetBooleanProperty(props, MIX_PROP_AUDIO_LOAD_IGNORE_LOOPS_BOOLEAN, true);
     Sint64 total_frames = 0;
     VOC_Block *loop_start = NULL;
     int loop_start_loop_count = 0;
@@ -477,7 +477,7 @@ static bool SDLCALL VOC_decode(void *userdata, SDL_AudioStream *stream)
             return true;  // try again on new block.
         }
     }
-            
+
     // still here? Feed data.
     SDL_assert(tdata->frame_pos <= block->frames);
     const Uint64 available = block->frames - tdata->frame_pos;
