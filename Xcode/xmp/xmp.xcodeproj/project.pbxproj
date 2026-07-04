@@ -82,6 +82,7 @@
 		631064AF2A98B0A00082F715 /* voltable.c in Sources */ = {isa = PBXBuildFile; fileRef = 631064A32A98B0A00082F715 /* voltable.c */; };
 		631064B02A98B0A00082F715 /* vorbis.c in Sources */ = {isa = PBXBuildFile; fileRef = 631064A42A98B0A00082F715 /* vorbis.c */; };
 		631064B12A98B0A00082F715 /* xmf_load.c in Sources */ = {isa = PBXBuildFile; fileRef = 631064A52A98B0A00082F715 /* xmf_load.c */; };
+		6312F8832FF9B2AE0071CE8D /* flt_extras.c in Sources */ = {isa = PBXBuildFile; fileRef = 6312F8822FF9B2AE0071CE8D /* flt_extras.c */; };
 		631F06822F4FEEFE00AA5114 /* path.c in Sources */ = {isa = PBXBuildFile; fileRef = 631F06812F4FEEFE00AA5114 /* path.c */; };
 		F3023FB22881D74E002F32D6 /* xmp.h in Headers */ = {isa = PBXBuildFile; fileRef = F3023FB12881D74E002F32D6 /* xmp.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F3023FCE2881DB7C002F32D6 /* effects.c in Sources */ = {isa = PBXBuildFile; fileRef = F3023FB42881DB7C002F32D6 /* effects.c */; };
@@ -178,6 +179,7 @@
 		631064A32A98B0A00082F715 /* voltable.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = voltable.c; path = ../../external/libxmp/src/loaders/voltable.c; sourceTree = SOURCE_ROOT; };
 		631064A42A98B0A00082F715 /* vorbis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vorbis.c; path = ../../external/libxmp/src/loaders/vorbis.c; sourceTree = SOURCE_ROOT; };
 		631064A52A98B0A00082F715 /* xmf_load.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xmf_load.c; path = ../../external/libxmp/src/loaders/xmf_load.c; sourceTree = SOURCE_ROOT; };
+		6312F8822FF9B2AE0071CE8D /* flt_extras.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = flt_extras.c; path = ../../external/libxmp/src/flt_extras.c; sourceTree = SOURCE_ROOT; };
 		631F06812F4FEEFE00AA5114 /* path.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = path.c; path = ../../external/libxmp/src/path.c; sourceTree = SOURCE_ROOT; };
 		F3023FB12881D74E002F32D6 /* xmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = xmp.h; path = ../../external/libxmp/include/xmp.h; sourceTree = "<group>"; };
 		F3023FB42881DB7C002F32D6 /* effects.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = effects.c; path = ../../external/libxmp/src/effects.c; sourceTree = "<group>"; };
@@ -319,6 +321,7 @@
 				F3023FB42881DB7C002F32D6 /* effects.c */,
 				631064382A98AF290082F715 /* extras.c */,
 				6310643A2A98AF6F0082F715 /* far_extras.c */,
+				6312F8822FF9B2AE0071CE8D /* flt_extras.c */,
 				F3E29D6E288237030006D108 /* filetype.c */,
 				F3023FBC2881DB7C002F32D6 /* filter.c */,
 				F34122A02D406C6500D6C2B7 /* flow.c */,
@@ -560,6 +563,7 @@
 				631064B02A98B0A00082F715 /* vorbis.c in Sources */,
 				631064B12A98B0A00082F715 /* xmf_load.c in Sources */,
 				631F06822F4FEEFE00AA5114 /* path.c in Sources */,
+				6312F8832FF9B2AE0071CE8D /* flt_extras.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -716,7 +720,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 4.5.0;
+				MARKETING_VERSION = 4.7.1;
 				PRODUCT_BUNDLE_IDENTIFIER = org.libxmp.xmp;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -742,7 +746,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 4.5.0;
+				MARKETING_VERSION = 4.7.1;
 				PRODUCT_BUNDLE_IDENTIFIER = org.libxmp.xmp;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
