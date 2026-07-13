@@ -215,6 +215,16 @@ static void SDLCALL GME_quit_audio(void *audio_userdata)
     SDL_assert(audio_userdata == NULL);  // no state.
 }
 
+static bool SDLCALL GME_jump_to_order(void *track_userdata, int order)
+{
+    Music_Emu *emu = (Music_Emu *) track_userdata;
+    gme_err_t err = gme.gme_start_track(emu, order);
+    if (err) {
+        return SDL_SetError("gme_start_track failed: %s", err);
+    }
+    return true;
+}
+
 const MIX_Decoder MIX_Decoder_GME = {
     "GME",
     GME_init,
@@ -222,7 +232,7 @@ const MIX_Decoder MIX_Decoder_GME = {
     GME_init_track,
     GME_decode,
     GME_seek,
-    NULL,  // jump_to_order
+    GME_jump_to_order,
     GME_quit_track,
     GME_quit_audio,
     GME_quit
