@@ -1046,6 +1046,17 @@ static bool ParseSMPL(WAV_AudioData *adata, SDL_IOStream *io, Uint32 chunk_lengt
     return loaded;
 }
 
+static Uint32 Swap32LEUnaligned(const void *data)
+{
+    if ((((size_t) data) & (sizeof (Uint32) - 1)) == 0) {
+        const Uint32 val = *((const Uint32 *) data);
+        return SDL_Swap32LE(val);
+    }
+    // read as bytes, swap ourselves.
+    const Uint8 *ui8 = (const Uint8 *) data;
+    return (((Uint32) ui8[0]) << 0) | (((Uint32) ui8[1]) << 8) | (((Uint32) ui8[2]) << 16) | (((Uint32) ui8[3]) << 24);
+}
+
 static bool CheckWAVMetadataField(const char *wantedtag, const char *propname, SDL_PropertiesID props, size_t *i, Uint32 chunk_length, Uint8 *data)
 {
     SDL_assert(SDL_strlen(wantedtag) == 4);
@@ -1055,10 +1066,11 @@ static bool CheckWAVMetadataField(const char *wantedtag, const char *propname, S
         return false;
     }
 
-    Uint32 len = 0;
-    char *field = NULL;
     *i += 4;
-    len = SDL_Swap32LE(*((Uint32 *)(data + *i)));  // LIST
+
+    const Uint32 len = Swap32LEUnaligned(data + *i);
+    char *field = NULL;
+
     if (len > chunk_length) {
         *i -= 4;  // move back so we can resync.
         return false; // Do nothing due to broken length
