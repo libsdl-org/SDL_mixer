@@ -587,9 +587,9 @@ static void SDLCALL VOC_quit_track(void *userdata)
 
 static void SDLCALL VOC_quit_audio(void *audio_userdata)
 {
-    VOC_AudioData *tdata = (VOC_AudioData *) audio_userdata;
-    SDL_free(tdata->blocks);
-    SDL_free(tdata);
+    VOC_AudioData *adata = (VOC_AudioData *) audio_userdata;
+    SDL_free(adata->blocks);
+    SDL_free(adata);
 }
 
 const MIX_Decoder MIX_Decoder_VOC = {
