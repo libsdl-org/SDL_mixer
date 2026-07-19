@@ -176,7 +176,7 @@ static bool SDLCALL DRFLAC_init_audio(SDL_IOStream *io, SDL_AudioSpec *spec, SDL
 
     adata->framesize = SDL_AUDIO_FRAMESIZE(*spec);
 
-    const bool ignore_loops = SDL_GetBooleanProperty(props, MIX_PROP_AUDIO_LOAD_IGNORE_LOOPS_BOOLEAN, false);
+    const bool ignore_loops = SDL_GetBooleanProperty(props, MIX_PROP_AUDIO_LOAD_IGNORE_LOOPS_BOOLEAN, true);
     if (ignore_loops || (adata->loop.end > (Sint64)decoder->totalPCMFrameCount)) {
         adata->loop.active = false;
     }
