@@ -99,10 +99,6 @@ jobs:
       if: ${{ runner.os == 'Linux' }}
       run: ./build-scripts/test-versioning.sh
 
-    - name: Set up yasm for mpg123 (MSVC only)
-      uses: ./.github/actions/setup-yasm
-      if: ${{ matrix.platform.msvc }}
-
     - name: Configure (CMake)
       run: |
         set -- \
