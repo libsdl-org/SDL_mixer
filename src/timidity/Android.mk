@@ -16,6 +16,8 @@ LOCAL_SRC_FILES += \
     playmidi.c \
     readmidi.c \
     resample.c \
+    readsbk.c \
+    sndfont.c \
     tables.c \
     timidity.c
 
