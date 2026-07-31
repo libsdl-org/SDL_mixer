@@ -549,10 +549,26 @@ int Timidity_Init(const char *config_file)
   if (rc != 0) {
       return rc;
   }
+  if (sf_file) {
+      /* a soundfont specified by mid_set_soundfont().
+       * skip config parsing. */
+      return 0;
+  }
   if (config_file == NULL || *config_file == '\0') {
       return init_with_config(TIMIDITY_CFG);
   }
   return init_with_config(config_file);
+}
+
+int Timidity_SetSoundfont(const char *file)
+{
+  if (file) {
+      char *fname = SDL_strdup(file);
+      if (!fname) return -1;
+      SDL_free(sf_file);
+      sf_file = fname;
+  }
+  return 0;
 }
 
 static void do_song_load(SDL_RWops *rw, SDL_AudioSpec *audio, MidiSong **out)
