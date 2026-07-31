@@ -46,6 +46,11 @@ typedef struct TIMIDITY_TrackData
 
 static bool SDLCALL TIMIDITY_init(void)
 {
+    const char *sf2 = SDL_getenv("TIMIDITY_SOUNDFONT");
+    if (sf2) {
+        Timidity_SetSoundfont(sf2); // user override, no cfg
+    }
+
     const char *cfg = SDL_getenv("TIMIDITY_CFG");  // see if the user had one.
     if (cfg) {
         return (Timidity_Init(cfg) == 0); // env or user override: no other tries
