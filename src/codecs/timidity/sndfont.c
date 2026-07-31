@@ -864,7 +864,7 @@ static void convert_tremolo(MidiSong *song, Layer *lay, SFInfo *sf, SampleList *
 	if (sf->version == 1)
 		level = (120 * level) / 64;  /* to centibel */
 	/* centibel to linear */
-	sp->v.tremolo_depth = TO_LINEAR(level);
+	sp->v.tremolo_depth = (Uint8) TO_LINEAR(level);
 
 	/* frequency in mHz */
 	if (lay->set[SF_freqLfo1]) {
