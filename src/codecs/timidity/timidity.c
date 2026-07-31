@@ -306,7 +306,10 @@ static int read_config_file(const char *name, int rcf_count)
 	SNDDBG(("%s: line %d: No soundfont file given\n", name, line));
 	goto fail;
       }
-      SDL_free(sf_file);
+      if (sf_file) {
+	SNDDBG(("%s: line %d: Ignoring multiple \"soundfont\" directives.\n", name, line));
+      }
+     else {
       sf_file=SDL_strdup(w[1]);
       for (j = 2; j < words; j++) {
 	if (!(cp = SDL_strchr(w[j], '='))) {
@@ -323,6 +326,7 @@ static int read_config_file(const char *name, int rcf_count)
 	  sf_order = k;
 	}
       }
+     }
     }
     else if (!SDL_strcmp(w[0], "font"))
     {
