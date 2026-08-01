@@ -552,7 +552,7 @@ static int fill_bank(MidiSong *song, int dr, int b)
 							(dr)? b : i,
 							(dr)? i : -1);
 	      if (bank->instrument[i])
-		continue;
+		  continue;
 	      /* try gus patch */
 	      load_instrument(song,
 				     bank->tone[i].name,
@@ -571,7 +571,7 @@ static int fill_bank(MidiSong *song, int dr, int b)
 				     ((dr) ? 1 : -1),
 				     bank->tone[i].strip_tail);
 	      if (bank->instrument[i])
-		continue;
+		  continue;
 	      /* no patch; search soundfont again. */
 	      bank->instrument[i] = load_soundfont(song, 1,
 							(dr)? 128 : b,
