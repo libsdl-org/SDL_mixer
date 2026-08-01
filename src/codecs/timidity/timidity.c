@@ -311,6 +311,7 @@ static int read_config_file(const char *name, int rcf_count)
       }
      else {
       sf_file=SDL_strdup(w[1]);
+      if (!sf_file) goto fail;
       for (j = 2; j < words; j++) {
 	if (!(cp = SDL_strchr(w[j], '='))) {
 	  SNDDBG(("%s: line %d: bad patch option %s\n", name, line, w[j]));
