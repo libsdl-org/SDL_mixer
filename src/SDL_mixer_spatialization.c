@@ -410,7 +410,7 @@ void MIX_Spatialize(const MIX_VBAP2D *vbap2d, const float *position, float *pann
 {
     const int output_channels = vbap2d->speaker_count;
 
-    SDL_assert( (((size_t) position) % 16) == 0 );  // must be aligned for SIMD access.
+    SDL_assert( (((size_t) position) % SDL_GetSIMDAlignment()) == 0 );  // must be aligned for SIMD access.
     SDL_assert(output_channels > 0);
 
     float gain, radians;
