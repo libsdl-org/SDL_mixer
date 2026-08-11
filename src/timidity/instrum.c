@@ -22,7 +22,7 @@
 #include "resample.h"
 #include "tables.h"
 
-static void free_instrument(Instrument *ip)
+void free_instrument(Instrument *ip)
 {
   Sample *sp;
   int i;
