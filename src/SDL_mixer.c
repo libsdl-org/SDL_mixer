@@ -720,10 +720,8 @@ void MIX_Quit(void)
     SDL_assert(mixer_initialized >= 0);
 
     if (mixer_initialized <= 0) {
-        return;   // not mixer_initialized
-    }
-
-    if (mixer_initialized > 1) {
+        return;   // not initialized.
+    } else if (mixer_initialized > 1) {
         mixer_initialized--;
         return;  // more refcounts to go.
     }
