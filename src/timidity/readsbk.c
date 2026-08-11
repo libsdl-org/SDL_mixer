@@ -138,22 +138,21 @@ static void debugval(const char *tag, int v)
 
 int load_sbk(SDL_IOStream *io, SFInfo *sf)
 {
+	const Sint64 ioend = SDL_GetIOSize(io);
 	tchunk chunk, subchunk;
-	Sint64 len;
 
-	len = SDL_GetIOSize(io);
-	if (len < 32) /* better?? */
+	if (ioend < 32) /* better?? */
 		return -1;
 
 	if (READCHUNK(&chunk, io) < 0) return -1;
 	if (getchunk(chunk.id) != RIFF_ID) return -1;
-	if (chunk.size != len - 8) return -1;
+	if (chunk.size != ioend - 8) return -1;
 
 	if (READID(chunk.id, io) < 0) return -1;
 	if (getchunk(chunk.id) != SFBK_ID) return -1;
 
 	sf->in_rom = 1;
-	while (SDL_GetIOStatus(io) != SDL_IO_STATUS_EOF) {
+	while (SDL_TellIO(io) < ioend) {
 		if (READID(chunk.id, io) < 0) return -1;
 		switch (getchunk(chunk.id)) {
 		case LIST_ID:
@@ -383,6 +382,7 @@ static int load_sample_info(int size, SFInfo *sf, SDL_IOStream *io)
 
 static int process_chunk(int id, int s, SFInfo *sf, SDL_IOStream *io)
 {
+	const Sint64 ioend = SDL_GetIOSize(io);
 	int cid;
 	tchunk subchunk;
 
@@ -410,7 +410,7 @@ static int process_chunk(int id, int s, SFInfo *sf, SDL_IOStream *io)
 				break;
 			}
 			READCHUNK(&subchunk, io);
-			if (SDL_GetIOStatus(io) == SDL_IO_STATUS_EOF)
+			if (SDL_TellIO(io) >= ioend)
 				return 0;
 		}
 		SDL_SeekIO(io, -8, SDL_IO_SEEK_CUR); /* seek back */
@@ -435,7 +435,7 @@ static int process_chunk(int id, int s, SFInfo *sf, SDL_IOStream *io)
 				SDL_SeekIO(io, subchunk.size, SDL_IO_SEEK_CUR);
 			}
 			READCHUNK(&subchunk, io);
-			if (SDL_GetIOStatus(io) == SDL_IO_STATUS_EOF)
+			if (SDL_TellIO(io) >= ioend)
 				return 0;
 		}
 		SDL_SeekIO(io, -8, SDL_IO_SEEK_CUR); /* seek back */
@@ -498,7 +498,7 @@ static int process_chunk(int id, int s, SFInfo *sf, SDL_IOStream *io)
 				break;
 			}
 			READCHUNK(&subchunk, io);
-			if (SDL_GetIOStatus(io) == SDL_IO_STATUS_EOF) {
+			if (SDL_TellIO(io) >= ioend) {
 				debugid("file", "EOF");
 				return 0;
 			}
