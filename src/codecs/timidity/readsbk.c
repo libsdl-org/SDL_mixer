@@ -25,23 +25,38 @@
 
 static int READCHUNK(tchunk *vp, SDL_RWops *rw)
 {
-	if (SDL_RWread(rw, vp, 1, 8) != 8) return -1;
+	if (SDL_RWread(rw, vp, 1, 8) != 8) {
+		SDL_memset(vp, 0, sizeof(*vp));
+		return -1;
+	}
 	vp->size = SDL_SwapLE32(vp->size);
-	return 1;
+	return 0;
+}
+
+static int READID(char var[4], SDL_RWops *rw)
+{
+	if ((SDL_RWread(rw, var, 1, 4)) != 4) return -1;
+	return 0;
 }
 
 static int READDW(Sint32 *vp, SDL_RWops *rw)
 {
 	if (SDL_RWread(rw, vp, 1, 4) != 4) return -1;
 	*vp = SDL_SwapLE32(*vp);
-	return 1;
+	return 0;
 }
 
 static int READW(Uint16 *vp, SDL_RWops *rw)
 {
 	if (SDL_RWread(rw, vp, 1, 2) != 2) return -1;
 	*vp = SDL_SwapLE16(*vp);
-	return 1;
+	return 0;
+}
+
+static int READB(Uint8 *vp, SDL_RWops *rw)
+{
+	if (SDL_RWread(rw, vp, 1, 1) != 1) return -1;
+	return 0;
 }
 
 static int READSTR(char *str, SDL_RWops *rw)
@@ -53,11 +68,9 @@ static int READSTR(char *str, SDL_RWops *rw)
 	while (n > 0 && str[n - 1] == ' ')
 		n--;
 	str[n] = '\0';
-	return n;
+	return 0;
 }
 
-#define READID(var,rw)	SDL_RWread(rw, var, 1, 4)
-#define READB(var,rw)	SDL_RWread(rw, var, 1, 1)
 #define SKIPB(rw)	SDL_RWseek(rw, 1, RW_SEEK_CUR);
 #define SKIPW(rw)	SDL_RWseek(rw, 2, RW_SEEK_CUR);
 #define SKIPDW(rw)	SDL_RWseek(rw, 4, RW_SEEK_CUR);
