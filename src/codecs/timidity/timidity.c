@@ -344,7 +344,8 @@ static int read_config_file(const char *name, int rcf_count)
 	bank = SDL_atoi(w[2]);
 	preset = (words >= 4)? SDL_atoi(w[3]) : -1;
 	keynote = (words >= 5)? SDL_atoi(w[4]) : -1;
-	exclude_soundfont(bank, preset, keynote);
+	if (exclude_soundfont(bank, preset, keynote) < 0)
+	  goto fail;
       } else if (!SDL_strcmp(w[1], "order")) {
 	int order;
 	if (words < 4) {
@@ -355,7 +356,8 @@ static int read_config_file(const char *name, int rcf_count)
 	bank = SDL_atoi(w[3]);
 	preset = (words >= 5)? SDL_atoi(w[4]) : -1;
 	keynote = (words >= 6)? SDL_atoi(w[5]) : -1;
-	order_soundfont(bank, preset, keynote, order);
+	if (order_soundfont(bank, preset, keynote, order) < 0)
+	  goto fail;
       }
     }
     else
@@ -681,8 +683,10 @@ static void do_song_load(SDL_RWops *rw, SDL_AudioSpec *audio, MidiSong **out)
   song->default_instrument = NULL;
   song->default_program = DEFAULT_PROGRAM;
 
-  if (sf_file)
-    init_soundfont(song, sf_file, sf_order);
+  if (sf_file) {
+    if (init_soundfont(song, sf_file, sf_order) < 0)
+      goto fail;
+  }
 
   if (*def_instr_name)
     set_default_instrument(song, def_instr_name);
