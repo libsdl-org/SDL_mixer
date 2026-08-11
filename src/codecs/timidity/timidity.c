@@ -421,6 +421,8 @@ static int read_config_file(const char *name, int rcf_count)
     }
   }
 
+  (void) line;
+
   r = 0; /* we're good. */
 fail:
   SDL_RWclose(rw);
