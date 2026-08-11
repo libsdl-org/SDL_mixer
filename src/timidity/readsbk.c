@@ -76,13 +76,13 @@ static int READSTR(char *str, SDL_IOStream *io)
 #define SKIPDW(io)	SDL_SeekIO(io, 4, SDL_IO_SEEK_CUR);
 
 static int getchunk(const char *id);
-static void process_chunk(int id, int s, SFInfo *sf, SDL_IOStream *io);
-static void load_sample_names(int size, SFInfo *sf, SDL_IOStream *io);
-static void load_preset_header(int size, SFInfo *sf, SDL_IOStream *io);
-static void load_inst_header(int size, SFInfo *sf, SDL_IOStream *io);
-static void load_bag(int size, SFInfo *sf, SDL_IOStream *io, int *totalp, Uint16 **bufp);
-static void load_gen(int size, SFInfo *sf, SDL_IOStream *io, int *totalp, tgenrec **bufp);
-static void load_sample_info(int size, SFInfo *sf, SDL_IOStream *io);
+static int process_chunk(int id, int s, SFInfo *sf, SDL_IOStream *io);
+static int load_sample_names(int size, SFInfo *sf, SDL_IOStream *io);
+static int load_preset_header(int size, SFInfo *sf, SDL_IOStream *io);
+static int load_inst_header(int size, SFInfo *sf, SDL_IOStream *io);
+static int load_bag(int size, SFInfo *sf, SDL_IOStream *io, int *totalp, Uint16 **bufp);
+static int load_gen(int size, SFInfo *sf, SDL_IOStream *io, int *totalp, tgenrec **bufp);
+static int load_sample_info(int size, SFInfo *sf, SDL_IOStream *io);
 
 
 enum {
@@ -145,21 +145,22 @@ int load_sbk(SDL_IOStream *io, SFInfo *sf)
 	if (len < 32) /* better?? */
 		return -1;
 
-	READCHUNK(&chunk, io);
+	if (READCHUNK(&chunk, io) < 0) return -1;
 	if (getchunk(chunk.id) != RIFF_ID) return -1;
 	if (chunk.size != len - 8) return -1;
 
-	READID(chunk.id, io);
+	if (READID(chunk.id, io) < 0) return -1;
 	if (getchunk(chunk.id) != SFBK_ID) return -1;
 
 	sf->in_rom = 1;
 	while (SDL_GetIOStatus(io) != SDL_IO_STATUS_EOF) {
-		READID(chunk.id, io);
+		if (READID(chunk.id, io) < 0) return -1;
 		switch (getchunk(chunk.id)) {
 		case LIST_ID:
-			READDW(&chunk.size, io);
-			READID(subchunk.id, io);
-			process_chunk(getchunk(subchunk.id), chunk.size - 4, sf, io);
+			if (READDW(&chunk.size, io) < 0) return -1;
+			if (READID(subchunk.id, io) < 0) return -1;
+			if (process_chunk(getchunk(subchunk.id), chunk.size - 4, sf, io) < 0)
+				return -1;
 			break;
 		}
 	}
@@ -243,45 +244,52 @@ static int getchunk(const char *id)
 }
 
 
-static void load_sample_names(int size, SFInfo *sf, SDL_IOStream *io)
+static int load_sample_names(int size, SFInfo *sf, SDL_IOStream *io)
 {
 	int i;
 	sf->nrsamples = size / 20;
 	sf->samplenames = NEW(tsamplenames, sf->nrsamples);
+	if (!sf->samplenames) return -1;
 	for (i = 0; i < sf->nrsamples; i++) {
-		READSTR(sf->samplenames[i].name, io);
+		if (READSTR(sf->samplenames[i].name, io) < 0)
+			return -1;
 	}
+	return 0;
 }
 
-static void load_preset_header(int size, SFInfo *sf, SDL_IOStream *io)
+static int load_preset_header(int size, SFInfo *sf, SDL_IOStream *io)
 {
 	int i;
 	sf->nrpresets = size / 38;
 	sf->presethdr = NEW(tpresethdr, sf->nrpresets);
+	if (!sf->presethdr) return -1;
 	for (i = 0; i < sf->nrpresets; i++) {
-		READSTR(sf->presethdr[i].name, io);
-		READW(&sf->presethdr[i].preset, io);
-		READW(&sf->presethdr[i].bank, io);
-		READW(&sf->presethdr[i].bagNdx, io);
+		if (READSTR(sf->presethdr[i].name, io) < 0) return -1;
+		if (READW(&sf->presethdr[i].preset, io) < 0) return -1;
+		if (READW(&sf->presethdr[i].bank, io) < 0) return -1;
+		if (READW(&sf->presethdr[i].bagNdx, io) < 0) return -1;
 		SKIPDW(io); /* lib */
 		SKIPDW(io); /* genre */
 		SKIPDW(io); /* morph */
 	}
+	return 0;
 }
 
-static void load_inst_header(int size, SFInfo *sf, SDL_IOStream *io)
+static int load_inst_header(int size, SFInfo *sf, SDL_IOStream *io)
 {
 	int i;
 
 	sf->nrinsts = size / 22;
 	sf->insthdr = NEW(tinsthdr, sf->nrinsts);
+	if (!sf->insthdr) return -1;
 	for (i = 0; i < sf->nrinsts; i++) {
-		READSTR(sf->insthdr[i].name, io);
-		READW(&sf->insthdr[i].bagNdx, io);
+		if (READSTR(sf->insthdr[i].name, io)  < 0) return -1;
+		if (READW(&sf->insthdr[i].bagNdx, io) < 0) return -1;
 	}
+	return 0;
 }
 
-static void load_bag(int size, SFInfo *sf, SDL_IOStream *io, int *totalp, Uint16 **bufp)
+static int load_bag(int size, SFInfo *sf, SDL_IOStream *io, int *totalp, Uint16 **bufp)
 {
 	Uint16 *buf;
 	int i;
@@ -290,15 +298,18 @@ static void load_bag(int size, SFInfo *sf, SDL_IOStream *io, int *totalp, Uint16
 	debugval("bagsize", size);
 	size /= 4;
 	buf = NEW(Uint16, size);
+	if (!buf) return -1;
 	for (i = 0; i < size; i++) {
-		READW(&buf[i], io);
+		if (READW(&buf[i],io) < 0)
+			return -1;
 		SKIPW(io); /* mod */
 	}
 	*totalp = size;
 	*bufp = buf;
+	return 0;
 }
 
-static void load_gen(int size, SFInfo *sf, SDL_IOStream *io, int *totalp, tgenrec **bufp)
+static int load_gen(int size, SFInfo *sf, SDL_IOStream *io, int *totalp, tgenrec **bufp)
 {
 	tgenrec *buf;
 	int i;
@@ -307,15 +318,17 @@ static void load_gen(int size, SFInfo *sf, SDL_IOStream *io, int *totalp, tgenre
 	debugval("gensize", size);
 	size /= 4;
 	buf = NEW(tgenrec, size);
+	if (!buf) return -1;
 	for (i = 0; i < size; i++) {
-		READW((Uint16 *)&buf[i].oper, io);
-		READW((Uint16 *)&buf[i].amount, io);
+		if (READW((Uint16 *)&buf[i].oper, io)   < 0) return -1;
+		if (READW((Uint16 *)&buf[i].amount, io) < 0) return -1;
 	}
 	*totalp = size;
 	*bufp = buf;
+	return 0;
 }
 
-static void load_sample_info(int size, SFInfo *sf, SDL_IOStream *io)
+static int load_sample_info(int size, SFInfo *sf, SDL_IOStream *io)
 {
 	int i;
 
@@ -325,25 +338,31 @@ static void load_sample_info(int size, SFInfo *sf, SDL_IOStream *io)
 		sf->nrsamples = sf->nrinfos;
 		sf->sampleinfo = NEW(tsampleinfo, sf->nrinfos);
 		sf->samplenames = NEW(tsamplenames, sf->nrsamples);
+		if (!sf->sampleinfo || !sf->samplenames)
+			return -1;
 	}
 	else  {
 		sf->nrinfos = size / 16;
 		sf->sampleinfo = NEW(tsampleinfo, sf->nrinfos);
+		if (!sf->sampleinfo)
+			return -1;
 	}
 
 	for (i = 0; i < sf->nrinfos; i++) {
-		if (sf->version > 1)
-			READSTR(sf->samplenames[i].name, io);
-		READDW(&sf->sampleinfo[i].startsample, io);
-		READDW(&sf->sampleinfo[i].endsample, io);
-		READDW(&sf->sampleinfo[i].startloop, io);
-		READDW(&sf->sampleinfo[i].endloop, io);
 		if (sf->version > 1) {
-			READDW(&sf->sampleinfo[i].samplerate, io);
-			READB(&sf->sampleinfo[i].originalPitch, io);
-			READB(&sf->sampleinfo[i].pitchCorrection, io);
-			READW(&sf->sampleinfo[i].samplelink, io);
-			READW(&sf->sampleinfo[i].sampletype, io);
+			if (READSTR(sf->samplenames[i].name, io) < 0)
+				return -1;
+		}
+		if (READDW(&sf->sampleinfo[i].startsample, io) < 0) return -1;
+		if (READDW(&sf->sampleinfo[i].endsample, io) < 0) return -1;
+		if (READDW(&sf->sampleinfo[i].startloop, io) < 0) return -1;
+		if (READDW(&sf->sampleinfo[i].endloop, io) < 0) return -1;
+		if (sf->version > 1) {
+			if (READDW(&sf->sampleinfo[i].samplerate, io) < 0) return -1;
+			if (READB(&sf->sampleinfo[i].originalPitch, io) < 0) return -1;
+			if (READB(&sf->sampleinfo[i].pitchCorrection, io) < 0) return -1;
+			if (READW(&sf->sampleinfo[i].samplelink, io) < 0) return -1;
+			if (READW(&sf->sampleinfo[i].sampletype, io) < 0) return -1;
 		} else {
 			if (sf->sampleinfo[i].startsample == 0)
 				sf->in_rom = 0;
@@ -359,9 +378,10 @@ static void load_sample_info(int size, SFInfo *sf, SDL_IOStream *io)
 				sf->sampleinfo[i].sampletype = 1;
 		}
 	}
+	return 0;
 }
 
-static void process_chunk(int id, int s, SFInfo *sf, SDL_IOStream *io)
+static int process_chunk(int id, int s, SFInfo *sf, SDL_IOStream *io)
 {
 	int cid;
 	tchunk subchunk;
@@ -374,12 +394,13 @@ static void process_chunk(int id, int s, SFInfo *sf, SDL_IOStream *io)
 		while ((cid = getchunk(subchunk.id)) != LIST_ID) {
 			switch (cid) {
 			case IFIL_ID:
-				READW(&sf->version, io);
-				READW(&sf->minorversion, io);
+				if (READW(&sf->version, io) < 0) return -1;
+				if (READW(&sf->minorversion, io) < 0) return -1;
 				break;
 			/*
 			case INAM_ID:
 				sf->sf_name = (char *)SDL_malloc(subchunk.size + 1);
+				if (!sf->sf_name) return -1;
 				SDL_ReadIO(io, sf->sf_name, subchunk.size);
 				sf->sf_name[subchunk.size] = 0;
 				break;
@@ -390,7 +411,7 @@ static void process_chunk(int id, int s, SFInfo *sf, SDL_IOStream *io)
 			}
 			READCHUNK(&subchunk, io);
 			if (SDL_GetIOStatus(io) == SDL_IO_STATUS_EOF)
-				return;
+				return 0;
 		}
 		SDL_SeekIO(io, -8, SDL_IO_SEEK_CUR); /* seek back */
 		break;
@@ -403,8 +424,10 @@ static void process_chunk(int id, int s, SFInfo *sf, SDL_IOStream *io)
 				if (sf->version > 1) {
 					SNDDBG(("**** version 2 has obsolete format??\n"));
 					SDL_SeekIO(io, subchunk.size, SDL_IO_SEEK_CUR);
-				} else
-					load_sample_names(subchunk.size, sf, io);
+				} else {
+					if (load_sample_names(subchunk.size, sf, io) < 0)
+						return -1;
+				}
 				break;
 			case SMPL_ID:
 				sf->samplepos = SDL_TellIO(io);
@@ -413,7 +436,7 @@ static void process_chunk(int id, int s, SFInfo *sf, SDL_IOStream *io)
 			}
 			READCHUNK(&subchunk, io);
 			if (SDL_GetIOStatus(io) == SDL_IO_STATUS_EOF)
-				return;
+				return 0;
 		}
 		SDL_SeekIO(io, -8, SDL_IO_SEEK_CUR); /* seek back */
 		break;
@@ -423,12 +446,14 @@ static void process_chunk(int id, int s, SFInfo *sf, SDL_IOStream *io)
 		while ((cid = getchunk(subchunk.id)) != LIST_ID) {
 			switch (cid) {
 			case PHDR_ID:
-				load_preset_header(subchunk.size, sf, io);
+				if (load_preset_header(subchunk.size, sf, io) < 0)
+					return -1;
 				break;
 
 			case PBAG_ID:
-				load_bag(subchunk.size, sf, io,
-					 &sf->nrpbags, &sf->presetbag);
+				if (load_bag(subchunk.size, sf, io,
+					 &sf->nrpbags, &sf->presetbag) < 0)
+					return -1;
 				break;
 
 			case PMOD_ID: /* ignored */
@@ -436,17 +461,20 @@ static void process_chunk(int id, int s, SFInfo *sf, SDL_IOStream *io)
 				break;
 
 			case PGEN_ID:
-				load_gen(subchunk.size, sf, io,
-					 &sf->nrpgens, &sf->presetgen);
+				if (load_gen(subchunk.size, sf, io,
+					 &sf->nrpgens, &sf->presetgen) < 0)
+					return -1;
 				break;
 
 			case INST_ID:
-				load_inst_header(subchunk.size, sf, io);
+				if (load_inst_header(subchunk.size, sf, io) < 0)
+					return -1;
 				break;
 
 			case IBAG_ID:
-				load_bag(subchunk.size, sf, io,
-					 &sf->nribags, &sf->instbag);
+				if (load_bag(subchunk.size, sf, io,
+					 &sf->nribags, &sf->instbag) < 0)
+					return -1;
 				break;
 
 			case IMOD_ID: /* ingored */
@@ -454,12 +482,14 @@ static void process_chunk(int id, int s, SFInfo *sf, SDL_IOStream *io)
 				break;
 
 			case IGEN_ID:
-				load_gen(subchunk.size, sf, io,
-					 &sf->nrigens, &sf->instgen);
+				if (load_gen(subchunk.size, sf, io,
+					 &sf->nrigens, &sf->instgen) < 0)
+					return -1;
 				break;
 
 			case SHDR_ID:
-				load_sample_info(subchunk.size, sf, io);
+				if (load_sample_info(subchunk.size, sf, io) < 0)
+					return -1;
 				break;
 
 			default:
@@ -470,11 +500,12 @@ static void process_chunk(int id, int s, SFInfo *sf, SDL_IOStream *io)
 			READCHUNK(&subchunk, io);
 			if (SDL_GetIOStatus(io) == SDL_IO_STATUS_EOF) {
 				debugid("file", "EOF");
-				return;
+				return 0;
 			}
 		}
 		SDL_SeekIO(io, -8, SDL_IO_SEEK_CUR); /* rewind */
 		break;
 	}
+	return 0;
 }
 
