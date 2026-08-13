@@ -2539,7 +2539,7 @@ extern SDL_DECLSPEC bool SDLCALL MIX_SetTrackFrequencyRatio(MIX_Track *track, fl
  *
  * \since This function is available since SDL_mixer 3.0.0.
  *
- * \sa MIX_GetTrackFrequencyRatio
+ * \sa MIX_SetTrackFrequencyRatio
  */
 extern SDL_DECLSPEC float SDLCALL MIX_GetTrackFrequencyRatio(MIX_Track *track);
 
