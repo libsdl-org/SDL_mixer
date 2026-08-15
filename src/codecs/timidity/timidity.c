@@ -310,11 +310,11 @@ static int read_config_file(const char *name, int rcf_count)
 	SNDDBG(("%s: line %d: Ignoring multiple \"soundfont\" directives.\n", name, line));
       }
      else {
-      sf_file=SDL_strdup(w[1]);
-      if (!sf_file) goto fail;
+      if (Timidity_SetSoundfont(w[1]) < 0) goto fail;
       for (j = 2; j < words; j++) {
 	if (!(cp = SDL_strchr(w[j], '='))) {
 	  SNDDBG(("%s: line %d: bad patch option %s\n", name, line, w[j]));
+	  end_sbk();
 	  goto fail;
 	}
 	*cp++=0;
@@ -322,6 +322,7 @@ static int read_config_file(const char *name, int rcf_count)
 	  k = SDL_atoi(cp);
 	  if (k < 0 || (*cp < '0' || *cp > '9')) {
 	    SNDDBG(("%s: line %d: order must be a digit", name, line));
+	    end_sbk();
 	    goto fail;
 	  }
 	  sf_order = k;
@@ -565,10 +566,18 @@ int Timidity_Init(const char *config_file)
 
 int Timidity_SetSoundfont(const char *file)
 {
+  if (sf_file) { /* just in case ... */
+      end_sbk();
+      SDL_free(sf_file);
+      sf_file = NULL;
+  }
   if (file) {
       char *fname = SDL_strdup(file);
       if (!fname) return -1;
-      SDL_free(sf_file);
+      if (init_sbk(file) < 0) {
+          SDL_free(fname);
+          return -1;
+      }
       sf_file = fname;
   }
   return 0;
@@ -684,7 +693,7 @@ static void do_song_load(SDL_RWops *rw, SDL_AudioSpec *audio, MidiSong **out)
   song->default_program = DEFAULT_PROGRAM;
 
   if (sf_file) {
-    if (init_soundfont(song, sf_file, sf_order) < 0)
+    if (init_soundfont(song, sf_order) < 0)
       goto fail;
   }
 
@@ -767,6 +776,7 @@ void Timidity_Exit(void)
   }
 
   end_soundfont();
+  end_sbk();
   SDL_free(sf_file);
   sf_file = NULL;
   sf_order = 0;

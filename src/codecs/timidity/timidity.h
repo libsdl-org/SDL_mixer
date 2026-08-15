@@ -157,7 +157,9 @@ typedef struct {
 
 extern int Timidity_Init(const char *config_file);
 extern int Timidity_Init_NoConfig(void);
-/* Set the full path of a soundfont (sf2) to use. Must be called before Timidity_Init().
+/* Set the full path of a soundfont (sf2) to use, and do a preliminary load of
+ * the specified file:  MUST BE called before Timidity_Init(). If loading fails
+ * the soundfont will NOT be set.
  * If a soundfont is set, config file will not be parsed by Timidity_Init(). */
 extern int Timidity_SetSoundfont(const char *sf2_file);
 extern void Timidity_SetVolume(MidiSong *song, int volume);
