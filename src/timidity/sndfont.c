@@ -139,19 +139,17 @@ int init_soundfont(MidiSong *song, const char *fname, int order)
 
 	SNDDBG(("init soundfonts `%s'\n", fname));
 
+	SDL_memset(&sfinfo, 0, sizeof(sfinfo));
+
 	if ((sfrec.io = timi_openfile(fname)) == NULL) {
 		SNDDBG(("can't open soundfont file %s\n", fname));
 		return -1;
 	}
 	sfrec.fname = SDL_strdup(fname);
+	if (!sfrec.fname) goto nomem;
 	if (load_sbk(sfrec.io, &sfinfo) < 0) {
 		SNDDBG(("%s: bad soundfont file\n", fname));
-		SDL_CloseIO(sfrec.io);
-		sfrec.io = NULL;
-		SDL_free(sfrec.fname);
-		sfrec.fname = NULL;
-		free_sbk(&sfinfo);
-		return -1;
+		goto fail;
 	}
 
 	for (i = 0; i < sfinfo.nrpresets - 1; i++) {
@@ -162,16 +160,16 @@ int init_soundfont(MidiSong *song, const char *fname, int order)
 		if (bank == 128) {
 			if (!song->drumset[preset]) {
 				song->drumset[preset] = (ToneBank*)SDL_calloc(1, sizeof(ToneBank));
-				if (!song->drumset[preset]) goto fail;
+				if (!song->drumset[preset]) goto nomem;
 				song->drumset[preset]->tone = (ToneBankElement *) SDL_calloc(128, sizeof(ToneBankElement));
-				if (!song->drumset[preset]->tone) goto fail;
+				if (!song->drumset[preset]->tone) goto nomem;
 			}
 		} else {
 			if (!song->tonebank[bank]) {
 				song->tonebank[bank] = (ToneBank*)SDL_calloc(1, sizeof(ToneBank));
-				if (!song->tonebank[bank]) goto fail;
+				if (!song->tonebank[bank]) goto nomem;
 				song->tonebank[bank]->tone = (ToneBankElement *) SDL_calloc(128, sizeof(ToneBankElement));
-				if (!song->tonebank[bank]->tone) goto fail;
+				if (!song->tonebank[bank]->tone) goto nomem;
 			}
 		}
 		parse_preset(song, &sfrec, &sfinfo, i, order);
@@ -190,10 +188,14 @@ int init_soundfont(MidiSong *song, const char *fname, int order)
 	sfrec.io = NULL;
 #endif
 	return 0;
-fail:
+nomem:
 	song->oom = 1;
+fail:	SDL_CloseIO(sfrec.io);
+	sfrec.io = NULL;
+	SDL_free(sfrec.fname);
+	sfrec.fname = NULL;
+	free_sbk(&sfinfo);
 	return -1;
-
 }
 
 
