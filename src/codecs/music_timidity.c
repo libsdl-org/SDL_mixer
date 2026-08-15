@@ -65,7 +65,9 @@ static int TIMIDITY_Open(const SDL_AudioSpec *spec)
 
     sf2 = SDL_getenv("TIMIDITY_SOUNDFONT");
     if (sf2) {
-        Timidity_SetSoundfont(sf2); /* user override, no cfg */
+        if (Timidity_SetSoundfont(sf2) < 0) { /* user override, no cfg */
+            return -1;
+        }
     }
 
     cfg = SDL_getenv("TIMIDITY_CFG");
