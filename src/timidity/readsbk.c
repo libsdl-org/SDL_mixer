@@ -164,6 +164,11 @@ int load_sbk(SDL_IOStream *io, SFInfo *sf)
 		}
 	}
 
+	if (sf->version < 1 || sf->version > 2) {
+		SNDDBG(("Unsupported soundfont version %u.\n", sf->version));
+		return -1;
+	}
+
 	return 0;
 }
 
@@ -396,6 +401,10 @@ static int process_chunk(int id, int s, SFInfo *sf, SDL_IOStream *io)
 			case IFIL_ID:
 				if (READW(&sf->version, io) < 0) return -1;
 				if (READW(&sf->minorversion, io) < 0) return -1;
+				if (sf->version > 2) {
+					SNDDBG(("Unsupported soundfont version %u.\n", sf->version));
+					return -1;
+				}
 				break;
 			/*
 			case INAM_ID:
