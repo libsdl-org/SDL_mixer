@@ -27,6 +27,8 @@
 
 #include "timidity/timidity.h"
 
+#define SAMPLES_PER_DECODE 256
+
 // Config file should contain any other directory that needs
 //  to be added to the search path. The library adds the path
 //  of the config file to its search path, too.
@@ -38,7 +40,6 @@ static const char *timidity_cfgs[] = { "/etc/timidity.cfg", "/etc/timidity/timid
 
 typedef struct TIMIDITY_TrackData
 {
-    Sint32 samples[4096 * 2];   // !!! FIXME: there's a hardcoded thing about buffer_size in our copy of timidity that needs to be fixed; it's hardcoded to this at the moment.
     MidiSong *song;
     int freq;
 } TIMIDITY_TrackData;
@@ -92,7 +93,7 @@ static bool SDLCALL TIMIDITY_init_audio(SDL_IOStream *io, SDL_AudioSpec *spec, S
     // Use the device's current sample rate, already set in spec->freq
 
     Sint64 song_length_in_frames = -1;
-    MidiSong *song = Timidity_LoadSong(io, spec);
+    MidiSong *song = Timidity_LoadSong(io, spec, SAMPLES_PER_DECODE);
     if (!song) {
         return false;
     }
@@ -117,7 +118,7 @@ static bool SDLCALL TIMIDITY_init_track(void *audio_userdata, SDL_IOStream *io, 
         return false;
     }
 
-    tdata->song = Timidity_LoadSong(io, spec);
+    tdata->song = Timidity_LoadSong(io, spec, SAMPLES_PER_DECODE);
     if (!tdata->song) {
         SDL_free(tdata);
         return SDL_SetError("Timidity_LoadSong failed");
@@ -135,13 +136,13 @@ static bool SDLCALL TIMIDITY_init_track(void *audio_userdata, SDL_IOStream *io, 
 static bool SDLCALL TIMIDITY_decode(void *track_userdata, SDL_AudioStream *stream)
 {
     TIMIDITY_TrackData *tdata = (TIMIDITY_TrackData *) track_userdata;
-    //Sint32 samples[256];  // !!! FIXME: there's a hardcoded thing about buffer_size in our copy of timidity that needs to be fixed; it's hardcoded at the moment, so we use tdata->samples.
-    const int amount = Timidity_PlaySome(tdata->song, tdata->samples, sizeof (tdata->samples));
+    Sint32 samples[SAMPLES_PER_DECODE * 2/*channels*/];
+    const int amount = Timidity_PlaySome(tdata->song, samples, sizeof (samples));
     if (amount <= 0) {
         return false;  // EOF or error, we're done either way.
     }
 
-    SDL_PutAudioStreamData(stream, tdata->samples, amount);
+    SDL_PutAudioStreamData(stream, samples, amount);
     return true;
 }
 

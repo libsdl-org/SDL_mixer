@@ -164,7 +164,7 @@ extern int Timidity_Init_NoConfig(void);
 extern int Timidity_SetSoundfont(const char *sf2_file);
 extern void Timidity_SetVolume(MidiSong *song, int volume);
 extern int Timidity_PlaySome(MidiSong *song, void *stream, Sint32 len);
-extern MidiSong *Timidity_LoadSong(SDL_IOStream *io, const SDL_AudioSpec *audio);
+extern MidiSong *Timidity_LoadSong(SDL_IOStream *io, const SDL_AudioSpec *audio, int samples);
 extern void Timidity_Start(MidiSong *song);
 extern void Timidity_Seek(MidiSong *song, Uint32 ms);
 extern Uint32 Timidity_GetSongLength(MidiSong *song); /* returns millseconds */
