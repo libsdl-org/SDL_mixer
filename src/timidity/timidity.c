@@ -504,7 +504,7 @@ int Timidity_Init(const char *config_file)
   return init_with_config(config_file);
 }
 
-static void do_song_load(SDL_IOStream *io, const SDL_AudioSpec *audio, MidiSong **out)
+static void do_song_load(SDL_IOStream *io, const SDL_AudioSpec *audio, MidiSong **out, int samples)
 {
   MidiSong *song;
   int i;
@@ -582,10 +582,10 @@ static void do_song_load(SDL_IOStream *io, const SDL_AudioSpec *audio, MidiSong 
     goto fail;
   }
 
-  song->buffer_size = 4096/*audio->samples*/;
-  song->resample_buffer = SDL_malloc(4096/*audio->samples*/ * sizeof(sample_t));
+  song->buffer_size = samples;
+  song->resample_buffer = SDL_malloc(samples * sizeof(sample_t));
   if (!song->resample_buffer) goto fail;
-  song->common_buffer = SDL_malloc(4096/*audio->samples*/ * 2 * sizeof(Sint32));
+  song->common_buffer = SDL_malloc(samples * 2 * sizeof(Sint32));
   if (!song->common_buffer) goto fail;
 
   song->control_ratio = audio->freq / CONTROLS_PER_SECOND;
@@ -619,10 +619,10 @@ fail: Timidity_FreeSong(song);
   }
 }
 
-MidiSong *Timidity_LoadSong(SDL_IOStream *io, const SDL_AudioSpec *audio)
+MidiSong *Timidity_LoadSong(SDL_IOStream *io, const SDL_AudioSpec *audio, int samples)
 {
   MidiSong *song;
-  do_song_load(io, audio, &song);
+  do_song_load(io, audio, &song, samples);
   return song;
 }
 
