@@ -36,7 +36,7 @@
 #define SDL_MAIN_USE_CALLBACKS 1  /* use the callbacks instead of main() */
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
-#include "SDL3_mixer/SDL_mixer.h"
+#include <SDL3_mixer/SDL_mixer.h>
 
 #define USE_MIX_GENERATE 0
 #define TEST_TAGS 0
@@ -144,17 +144,55 @@ static void showtags(MIX_Track *track, const char *when)
 }
 #endif
 
+static void print_usage(const char *argv0)
+{
+        SDL_Log("USAGE: %s [--decoder DECODER] <file_to_play1> [file_to_play2]", argv0);
+}
+
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
     SDL_SetAppMetadata("Test SDL_mixer", "1.0", "org.libsdl.testmixer");
 #if USE_MIX_GENERATE
     const SDL_AudioSpec spec = { SDL_AUDIO_S16, 2, 48000 };
 #endif
+    const char *decoder = NULL;
+    const char *filenames[2] = { 0 };
+    bool accept_optionals = true;
 
-    if ((argc != 2) && (argc != 3)) {
-        SDL_Log("USAGE: %s <file_to_play1> [file_to_play2]", argv[0]);
+    for (int i = 1; i < argc; ) {
+        int consumed = -1;
+        if (accept_optionals && argv[i][0] == '-') {
+            if (SDL_strcmp(argv[i], "--help") == 0) {
+                print_usage(argv[0]);
+                return SDL_APP_SUCCESS;
+            } else if (SDL_strcmp(argv[i], "--decoder") == 0 && i + 1 < argc) {
+                decoder = argv[i+1];
+                consumed = 2;
+            } else if (SDL_strcmp(argv[i], "--") == 0) {
+                accept_optionals = false;
+                consumed = 1;
+            }
+        } else {
+            if (filenames[0] == NULL) {
+                filenames[0] = argv[i];
+                consumed = 1;
+            } else if (filenames[1] == NULL) {
+                filenames[1] = argv[i];
+                consumed = 1;
+            }
+        }
+        if (consumed <= 0) {
+            print_usage(argv[0]);
+            return SDL_APP_FAILURE;
+        }
+        i += consumed;
+    }
+    if (!filenames[0]) {
+        print_usage(argv[0]);
         return SDL_APP_FAILURE;
-    } else if (!SDL_Init(SDL_INIT_VIDEO)) {   // it's safe to SDL_INIT_AUDIO, but MIX_Init will do it for us.
+    }
+
+    if (!SDL_Init(SDL_INIT_VIDEO)) {   // it's safe to SDL_INIT_AUDIO, but MIX_Init will do it for us.
         SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     } else if (!MIX_Init()) {
@@ -192,9 +230,26 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     }
     SDL_Log("%s", "");
 
-    const char *audiofname = argv[1];
+    const char *audiofname = filenames[0];
 #if 1
-    MIX_Audio *audio = MIX_LoadAudio(mixer, audiofname, false);
+    MIX_Audio *audio;
+    {
+        SDL_IOStream *file = SDL_IOFromFile(audiofname, "rb");
+        if (!file) {
+            SDL_Log("Failed to open '%s': %s", audiofname, SDL_GetError());
+            return SDL_APP_FAILURE;
+        }
+        SDL_PropertiesID props = SDL_CreateProperties();
+        SDL_SetPointerProperty(props, MIX_PROP_AUDIO_LOAD_PREFERRED_MIXER_POINTER, mixer);
+        SDL_SetPointerProperty(props, MIX_PROP_AUDIO_LOAD_IOSTREAM_POINTER, file);
+        SDL_SetBooleanProperty(props, MIX_PROP_AUDIO_LOAD_CLOSEIO_BOOLEAN, true);
+        SDL_SetBooleanProperty(props, MIX_PROP_AUDIO_LOAD_PREDECODE_BOOLEAN, false);
+        if (decoder) {
+            SDL_SetStringProperty(props, MIX_PROP_AUDIO_DECODER_STRING, decoder);
+        }
+        audio = MIX_LoadAudioWithProperties(props);
+        SDL_DestroyProperties(props);
+    }
 #else
     size_t databuffersize = 0;
     void *databuffer = SDL_LoadFile(audiofname, &databuffersize);
@@ -247,7 +302,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     //const int chmap[] = { 1, 0 }; MIX_SetTrackOutputChannelMap(track1, chmap, SDL_arraysize(chmap));
     MIX_SetTrackAudio(track1, audio);
-    if (argv[2]) {
+    if (filenames[1]) {
         track2 = MIX_CreateTrack(mixer);
         MIX_SetTrackIOStream(track2, SDL_IOFromFile(argv[2], "rb"), true);
     }
