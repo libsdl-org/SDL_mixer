@@ -1,6 +1,6 @@
 /* Game music emulator library C interface (also usable from C++) */
 
-/* Game_Music_Emu 0.6.4 */
+/* Game_Music_Emu 0.6.5 */
 #ifndef GME_H
 #define GME_H
 
@@ -8,7 +8,7 @@
 	extern "C" {
 #endif
 
-#define GME_VERSION 0x000604 /* 1 byte major, 1 byte minor, 1 byte patch-level */
+#define GME_VERSION 0x000605 /* 1 byte major, 1 byte minor, 1 byte patch-level */
 
 /* Error string returned by library functions, or NULL if no error (success) */
 typedef const char* gme_err_t;
@@ -91,11 +91,19 @@ BLARGG_EXPORT int gme_tell( Music_Emu const* );
 /* Number of samples generated since beginning of track */
 BLARGG_EXPORT int gme_tell_samples( Music_Emu const* );
 
+/* Number of milliseconds played since beginning of track (scaled with tempo).
+ * @since 0.6.5 */
+BLARGG_EXPORT int gme_tell_scaled( Music_Emu const* );
+
 /* Seek to new time in track. Seeking backwards or far forward can take a while. */
 BLARGG_EXPORT gme_err_t gme_seek( Music_Emu*, int msec );
 
 /* Equivalent to restarting track then skipping n samples */
 BLARGG_EXPORT gme_err_t gme_seek_samples( Music_Emu*, int n );
+
+/* Seek to new time in track (scaled with tempo).
+ * @since 0.6.5 */
+BLARGG_EXPORT gme_err_t gme_seek_scaled( Music_Emu*, int msec );
 
 
 /******** Informational ********/
@@ -227,7 +235,7 @@ BLARGG_EXPORT gme_type_t gme_type( Music_Emu const* );
 
 /* Pointer to array of all music types, with NULL entry at end. Allows a player linked
 to this library to support new music types without having to be updated. */
-BLARGG_EXPORT gme_type_t const* gme_type_list();
+BLARGG_EXPORT gme_type_t const* gme_type_list( void );
 
 /* Name of game system for this music file type */
 BLARGG_EXPORT const char* gme_type_system( gme_type_t );
