@@ -34,7 +34,7 @@ WAVPACK_LIBRARY_PATH := external/wavpack
 SUPPORT_GME ?= false
 GME_LIBRARY_PATH := external/libgme
 
-# Enable this if you want to support loading MOD music via XMP-lite
+# Enable this if you want to support loading MOD music via libxmp
 SUPPORT_MOD_XMP ?= false
 XMP_LIBRARY_PATH := external/libxmp
 
