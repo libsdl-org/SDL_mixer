@@ -5561,6 +5561,7 @@ static drflac_result drflac__decode_flac_frame(drflac* pFlac)
 #endif
 
     /* This function should be called while the stream is sitting on the first byte after the frame header. */
+    pFlac->currentFLACFrame.pcmFramesRemaining = 0;
     DRFLAC_ZERO_MEMORY(pFlac->currentFLACFrame.subframes, sizeof(pFlac->currentFLACFrame.subframes));
 
     /* The frame block size must never be larger than the maximum block size defined by the FLAC stream. */
@@ -5608,6 +5609,7 @@ static drflac_result drflac__decode_flac_frame(drflac* pFlac)
 
 static drflac_result drflac__seek_flac_frame(drflac* pFlac)
 {
+    drflac_result result;
     int channelCount;
     int i;
     drflac_uint16 desiredCRC16;
@@ -5615,16 +5617,20 @@ static drflac_result drflac__seek_flac_frame(drflac* pFlac)
     drflac_uint16 actualCRC16;
 #endif
 
+    pFlac->currentFLACFrame.pcmFramesRemaining = 0;
+
     channelCount = drflac__get_channel_count_from_channel_assignment(pFlac->currentFLACFrame.header.channelAssignment);
     for (i = 0; i < channelCount; ++i) {
         if (!drflac__seek_subframe(&pFlac->bs, &pFlac->currentFLACFrame, i)) {
-            return DRFLAC_ERROR;
+            result = DRFLAC_ERROR;
+            goto error;
         }
     }
 
     /* Padding. */
     if (!drflac__seek_bits(&pFlac->bs, DRFLAC_CACHE_L1_BITS_REMAINING(&pFlac->bs) & 7)) {
-        return DRFLAC_ERROR;
+        result = DRFLAC_ERROR;
+        goto error;
     }
 
     /* CRC. */
@@ -5632,16 +5638,22 @@ static drflac_result drflac__seek_flac_frame(drflac* pFlac)
     actualCRC16 = drflac__flush_crc16(&pFlac->bs);
 #endif
     if (!drflac__read_uint16(&pFlac->bs, 16, &desiredCRC16)) {
-        return DRFLAC_AT_END;
+        result = DRFLAC_AT_END;
+        goto error;
     }
 
 #ifndef DR_FLAC_NO_CRC
     if (actualCRC16 != desiredCRC16) {
-        return DRFLAC_CRC_MISMATCH;    /* CRC mismatch. */
+        result = DRFLAC_CRC_MISMATCH;   /* CRC mismatch. */
+        goto error;
     }
 #endif
 
     return DRFLAC_SUCCESS;
+
+error:
+    DRFLAC_ZERO_MEMORY(pFlac->currentFLACFrame.subframes, sizeof(pFlac->currentFLACFrame.subframes));
+    return result;
 }
 
 static drflac_bool32 drflac__read_and_decode_next_flac_frame(drflac* pFlac)
@@ -9875,6 +9887,23 @@ static DRFLAC_INLINE void drflac_read_pcm_frames_s32__decode_independent_stereo(
 }
 
 
+static drflac_bool32 drflac__is_current_flac_frame_valid(drflac* pFlac)
+{
+    drflac_uint32 iChannel;
+
+    if (pFlac->currentFLACFrame.header.blockSizeInPCMFrames > pFlac->maxBlockSizeInPCMFrames || pFlac->currentFLACFrame.pcmFramesRemaining > pFlac->currentFLACFrame.header.blockSizeInPCMFrames) {
+        return DRFLAC_FALSE;
+    }
+
+    for (iChannel = 0; iChannel < pFlac->channels; iChannel += 1) {
+        if (pFlac->currentFLACFrame.subframes[iChannel].pSamplesS32 == NULL) {
+            return DRFLAC_FALSE;
+        }
+    }
+
+    return DRFLAC_TRUE;
+}
+
 DRFLAC_API drflac_uint64 drflac_read_pcm_frames_s32(drflac* pFlac, drflac_uint64 framesToRead, drflac_int32* pBufferOut)
 {
     drflac_uint64 framesRead;
@@ -11784,23 +11813,25 @@ DRFLAC_API drflac_bool32 drflac_seek_to_pcm_frame(drflac* pFlac, drflac_uint64 p
         }
 
         /* If the target sample and the current sample are in the same frame we just move the position forward. */
-        if (pcmFrameIndex > pFlac->currentPCMFrame) {
-            /* Forward. */
-            drflac_uint32 offset = (drflac_uint32)(pcmFrameIndex - pFlac->currentPCMFrame);
-            if (pFlac->currentFLACFrame.pcmFramesRemaining >  offset) {
-                pFlac->currentFLACFrame.pcmFramesRemaining -= offset;
-                pFlac->currentPCMFrame = pcmFrameIndex;
-                return DRFLAC_TRUE;
-            }
-        } else {
-            /* Backward. */
-            drflac_uint32 offsetAbs = (drflac_uint32)(pFlac->currentPCMFrame - pcmFrameIndex);
-            drflac_uint32 currentFLACFramePCMFrameCount = pFlac->currentFLACFrame.header.blockSizeInPCMFrames;
-            drflac_uint32 currentFLACFramePCMFramesConsumed = currentFLACFramePCMFrameCount - pFlac->currentFLACFrame.pcmFramesRemaining;
-            if (currentFLACFramePCMFramesConsumed > offsetAbs) {
-                pFlac->currentFLACFrame.pcmFramesRemaining += offsetAbs;
-                pFlac->currentPCMFrame = pcmFrameIndex;
-                return DRFLAC_TRUE;
+        if (drflac__is_current_flac_frame_valid(pFlac)) {
+            if (pcmFrameIndex > pFlac->currentPCMFrame) {
+                /* Forward. */
+                drflac_uint32 offset = (drflac_uint32)(pcmFrameIndex - pFlac->currentPCMFrame);
+                if (pFlac->currentFLACFrame.pcmFramesRemaining > offset) {
+                    pFlac->currentFLACFrame.pcmFramesRemaining -= offset;
+                    pFlac->currentPCMFrame = pcmFrameIndex;
+                    return DRFLAC_TRUE;
+                }
+            } else {
+                /* Backward. */
+                drflac_uint32 offsetAbs = (drflac_uint32)(pFlac->currentPCMFrame - pcmFrameIndex);
+                drflac_uint32 currentFLACFramePCMFrameCount = pFlac->currentFLACFrame.header.blockSizeInPCMFrames;
+                drflac_uint32 currentFLACFramePCMFramesConsumed = currentFLACFramePCMFrameCount - pFlac->currentFLACFrame.pcmFramesRemaining;
+                if (currentFLACFramePCMFramesConsumed > offsetAbs) {
+                    pFlac->currentFLACFrame.pcmFramesRemaining += offsetAbs;
+                    pFlac->currentPCMFrame = pcmFrameIndex;
+                    return DRFLAC_TRUE;
+                }
             }
         }
 
@@ -12236,6 +12267,7 @@ v0.13.4 - TBD
   - Fix a possible overflow error when parsing picture metadata.
   - Fix an error with seek point parsing.
   - Fix a possible deadlock when seeking.
+  - Fix an error where the decoder can be put into a bad state when seeking fails which then results in a crash when reading and seeking.
 
 v0.13.3 - 2026-01-17
   - Fix a compiler compatibility issue with some inlined assembly.
