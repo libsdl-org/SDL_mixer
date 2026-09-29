@@ -18,8 +18,10 @@
 	return value: number of clipped samples
 */
 
+#ifndef _WIN32
 	.code 32
-#ifndef __APPLE__
+#endif
+#ifdef __ELF__
 	.fpu neon
 #endif
 
@@ -34,7 +36,13 @@ ASM_NAME(synth_1to1_s_neon_accurate_asm):
 	ldr			r4, [sp, #84]
 	mov			r7, sp
 	sub			sp, sp, #16
+#ifdef _WIN32
+	mov			r12, sp
+	bic			r12, r12, #0xff
+	mov			sp, r12
+#else
 	bic			sp, #0xff
+#endif
 	
 	add			WINDOW, WINDOW, #64
 	sub			WINDOW, WINDOW, r4, lsl #2

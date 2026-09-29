@@ -9,10 +9,10 @@
 
 #include "mangle.h"
 
-#ifndef _M_ARM
+#ifndef _WIN32
 	.code 32
 #endif
-#ifndef __APPLE__
+#ifdef __ELF__
 	.fpu neon
 #endif
 	
