@@ -19,7 +19,7 @@ https://wiki.libsdl.org/SDL3_mixer
 
 There are simple example programs in the examples directory.
 
-If you're using CMake, you can build them adding `-DSDLMIXER_SAMPLES=ON` to the CMake command line when building SDL_mixer.
+If you're using CMake, you can build them adding `-DSDLMIXER_EXAMPLES=ON` to the CMake command line when building SDL_mixer.
 
 If you're using Visual Studio there are separate projects in the VisualC directory.
 
