@@ -106,7 +106,7 @@ static SAMPLE* Sample_LoadGeneric_internal(MREADER* reader)
 				wh.wFormatTag,wh.nBlockAlign,wh.nFormatSpecific);
 #endif
 
-			if((have_fmt)||(wh.nChannels>1)) {
+			if((have_fmt)||(wh.nChannels!=1)) {
 				_mm_errno=MMERR_UNKNOWN_WAVE_TYPE;
 				return NULL;
 			}

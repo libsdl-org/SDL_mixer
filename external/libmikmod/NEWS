@@ -1,3 +1,16 @@
+Summary of changes between libmikmod 3.1.24 and libmikmod 3.1.25:
+========================================================================
+
+libmikmod v3.1.25 was released on Oct. 10, 2026.
+
+- Fix out-of-bounds writes in unimod version 6 loader with crafted files.
+- Reject zero-channel samples to avoid division by zero.
+
+Thanks to:
+- Louis Clinckx for the unimod v6 bug report.
+- Suk Eunho for the 0-channel samples report.
+
+
 Summary of changes between libmikmod 3.1.23 and libmikmod 3.1.24:
 ========================================================================
 
@@ -7,8 +20,10 @@ libmikmod v3.1.24 was released on Sep. 11, 2026.
 - Add bounding checks for DSMI AMF channel remap table.
 - Add limit check to numchan in DSM loader.
 - Fix IT pattern loader allocation to match maximum allowed row count
+  (CVE-2026-105838.)
 - Fix ULT loader numchn, numpat, numtrk calculations corner cases.
 - Fix DSM and OKT loaders numtrk integer overflow with crafted files
+  (CVE-2026-105837, CVE-2026-105839.)
 - Fixed windows builds against newer mingw-w64 versions.
 - Updated OS2 EMX makefile for KLIBC environment (build tested with
   cross-os2emx toolchain at https://github.com/komh/cross-os2emx )

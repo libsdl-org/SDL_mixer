@@ -593,6 +593,10 @@ static BOOL UNI_Load(BOOL curious)
 	/* positions */
 	if(!AllocPositions(of.numpos)) return 0;
 	if(universion>=6) {
+		if(mh.numchn>UF_MAXCHAN) {
+			_mm_errno=MMERR_LOADING_HEADER;
+			return 0;
+		}
 		if(universion>=0x100)
 			_mm_read_M_UWORDS(of.positions,of.numpos,modreader);
 		else
