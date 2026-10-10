@@ -180,7 +180,7 @@ These properties offer both low-level tag information and a standard property
 for well-known metadata types. For example, if your MP3 has an ID3v2 tag, you
 might end up with a property named "SDL_mixer.metadata.id3v2.TIT2" and the
 same info in a standard "SDL_mixer.metadata.title" property (which there's a
-standard symbol for: `MIX_PROP_METADATA_TITLE_STRING`. This allows SDL3_mixer
+standard symbol for: `MIX_PROP_METADATA_TITLE_STRING`). This allows SDL3_mixer
 to expose non-standard information, but also offer easy lookup of the most
 common, and most important, metadata.
 
