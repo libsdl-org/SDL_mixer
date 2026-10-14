@@ -326,11 +326,11 @@ can discuss it!
 - Mix_PauseAudio => MIX_PauseAllTracks
 - Mix_QuerySpec => MIX_GetMixerFormat
 - Mix_AllocateChannels => MIX_CreateTrack
-- Mix_LoadWAV_IO => MIX_LoadAudio_IO
+- Mix_LoadWAV_RW => MIX_LoadAudio_IO
 - Mix_LoadWAV => MIX_LoadAudio
-- Mix_LoadMUS_IO => MIX_LoadAudio_IO
+- Mix_LoadMUS_RW => MIX_LoadAudio_IO
 - Mix_LoadMUS => MIX_LoadAudio
-- Mix_LoadMUSType_IO => MIX_LoadAudioWithProperties with MIX_PROP_AUDIO_DECODER_STRING property set.
+- Mix_LoadMUSType_RW => MIX_LoadAudioWithProperties with MIX_PROP_AUDIO_DECODER_STRING property set.
 - Mix_QuickLoad_WAV => MIX_LoadAudio_IO with an SDL_IOFromConstMem() and closeio=true.
 - Mix_QuickLoad_RAW => MIX_LoadRawAudioNoCopy
 - Mix_FreeChunk => MIX_DestroyAudio
