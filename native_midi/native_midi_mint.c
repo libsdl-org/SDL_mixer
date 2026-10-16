@@ -46,6 +46,13 @@ static int umidi_volume(int volume)
     return volume * UMIDI_MAX_VOLUME / MIX_MAX_VOLUME;
 }
 
+/* microseconds to uMIDI's timer periods, rounded up */
+static Uint32 umidi_periods(Uint32 us)
+{
+    return us / 1000000 * UMIDI_TIMER_HZ
+         + (us % 1000000 * UMIDI_TIMER_HZ + 999999) / 1000000;
+}
+
 /* Builds the blocks of a song from the event list: channel messages only,
  * their tick times turned into microseconds with the tempo changes applied.
  * An empty block at the time of the last event (end of track) keeps the
@@ -55,7 +62,7 @@ static int convert_events(UMidiSong *song, const MIDIEvent *events, Uint16 divis
     const MIDIEvent *ev;
     UMidiBlock *blocks;
     Uint8 *data;
-    Uint32 numEvents = 0, numBlocks = 0, size = 0;
+    Uint32 numEvents = 0, numBlocks = 0, size = 0, i;
     Uint32 tick = 0, time = 0, rem = 0;
     Uint32 usPerTick, usRem;
 
@@ -136,6 +143,9 @@ static int convert_events(UMidiSong *song, const MIDIEvent *events, Uint16 divis
         blocks[numBlocks].end = size;
         numBlocks++;
     }
+
+    for (i = 0; i < numBlocks; i++)
+        blocks[i].time = umidi_periods(blocks[i].time);
 
     song->blocks = blocks;
     song->data = data;
