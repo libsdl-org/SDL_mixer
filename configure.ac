@@ -401,8 +401,7 @@ if test x$enable_music_midi = xyes; then
                 PC_LIBS="$PC_LIBS -lmidi"
                 ;;
             *-*-mint*)
-                use_music_native_midi=yes
-                SOURCES_ASM="$SOURCES_ASM $srcdir/native_midi/*.S"
+                AC_CHECK_HEADER([umidi.h], [use_music_native_midi=yes])
                 ;;
         esac
         if test x$use_music_native_midi = xyes; then
@@ -728,15 +727,6 @@ $(objects)/\2.lo: \1/\2.cpp \$(objects)/.created\\
 	\$(LIBTOOL) --mode=compile \$(CXX) \$(CFLAGS) \$(EXTRA_CFLAGS) '"$DEPENDENCY_TRACKING_OPTIONS"' -c \$< -o \$@,g'`
 OBJECTS="$OBJECTS $OBJECTS_CXX"
 DEPENDS="$DEPENDS $DEPENDS_CXX"
-
-OBJECTS_ASM=`echo $SOURCES_ASM`
-DEPENDS_ASM=`echo $SOURCES_ASM`
-OBJECTS_ASM=`echo "$OBJECTS_ASM" | sed 's,[[^ ]]*/\([[^ ]]*\)\.S,$(objects)/\1.lo,g'`
-DEPENDS_ASM=`echo "$DEPENDS_ASM" | sed 's,\([[^ ]]*\)/\([[^ ]]*\)\.S,\\
-$(objects)/\2.lo: \1/\2.S \$(objects)/.created\\
-	\$(LIBTOOL) --mode=compile \$(CC) \$(CFLAGS) \$(EXTRA_CFLAGS) -c \$< -o \$@,g'`
-OBJECTS="$OBJECTS $OBJECTS_ASM"
-DEPENDS="$DEPENDS $DEPENDS_ASM"
 DEPENDS=`echo "$DEPENDS" | sed 's,\\$,\\\\$,g'`
 
 VERSION_OBJECTS=`echo $VERSION_SOURCES`
