@@ -1,4 +1,4 @@
-%define version 3.1.25
+%define version 3.1.26
 %define release 1
 
 Summary:    sound library for module files

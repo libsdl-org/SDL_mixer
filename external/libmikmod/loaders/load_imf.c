@@ -702,8 +702,8 @@ static BOOL IMF_Load(BOOL curious)
 			if(d->samplenumber[t]>=of.numsmp)
 				d->samplenote[t]=255;
 			else if (of.flags&UF_LINEAR) {
-				int note=(int)d->samplenote[u]+noteindex[d->samplenumber[u]];
-				d->samplenote[u]=(note<0)?0:(note>255?255:note);
+				int note=(int)d->samplenote[t]+noteindex[d->samplenumber[t]];
+				d->samplenote[t]=(note<0)?0:(note>255?255:note);
 			} else
 				d->samplenote[t]=t;
 		}
