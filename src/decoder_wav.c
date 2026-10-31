@@ -754,7 +754,7 @@ static int FetchXLaw(WAV_TrackData *tdata, Uint8 *buffer, int buflen, const floa
     if (length % tdata->adata->framesize != 0) {
         length -= length % tdata->adata->framesize;
     }
-    float *out = (float *) &buffer[(length - 1) * 4];
+    float *out = (float *) buffer;
     for (int i = length - 1; i >= 0; i--) {
         out[i] = lut[buffer[i]];
     }
