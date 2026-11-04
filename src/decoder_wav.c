@@ -786,7 +786,7 @@ static int FetchPCM24LE(WAV_TrackData *tdata, Uint8 *buffer, int buflen)
     int i = 0, o = 0;
     for (i = length - 3, o = ((length - 3) / 3) * 4; i >= 0; i -= 3, o -= 4) {
         const Uint8 *x = &buffer[i];
-        const Sint32 in = ((Sint32)(Sint8)x[2] << 16) | ((int32_t)x[1] << 8) | x[0];
+        const Sint32 in = (((Sint32)(Sint8)x[2] * 65536) | ((Sint32)x[1] << 8) | x[0]);  // `* 65536` because apparently `<< 16` on a negative number is undefined behavior. Whatever.
         float *out = (float *) &buffer[o];
         *out = ((float) in) / 8388608.0f;
     }
