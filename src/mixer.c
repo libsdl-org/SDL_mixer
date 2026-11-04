@@ -787,8 +787,8 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
     SDL_AudioSpec wavespec, *loaded;
     SDL_AudioCVT wavecvt;
     int samplesize;
+    int allocation_size = 0;
     int wavfree;        /* to decide how to free chunk->abuf. */
-    Uint8 *resized_buf;
 
     /* rcg06012001 Make sure src is valid */
     if (!src) {
@@ -864,9 +864,10 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
             SDL_free(chunk);
             return NULL;
         }
+        allocation_size = wavecvt.len*wavecvt.len_mult;
         samplesize = ((wavespec.format & 0xFF)/8)*wavespec.channels;
         wavecvt.len = chunk->alen & ~(samplesize - 1);
-        wavecvt.buf = (Uint8 *)SDL_calloc(1, wavecvt.len*wavecvt.len_mult);
+        wavecvt.buf = (Uint8 *)SDL_calloc(1, allocation_size);
         if (wavecvt.buf == NULL) {
             Mix_OutOfMemory();
             if (wavfree) {
@@ -891,12 +892,14 @@ Mix_Chunk *Mix_LoadWAV_RW(SDL_RWops *src, int freesrc)
             return NULL;
         }
 
-        resized_buf = SDL_realloc(wavecvt.buf, wavecvt.len_cvt);
-        if (resized_buf == NULL) {
-            chunk->abuf = wavecvt.buf;
-        } else {
-            chunk->abuf = resized_buf;
+        chunk->abuf = wavecvt.buf;
+        if ((wavecvt.len_cvt > 0) && (wavecvt.len_cvt < allocation_size))  {  /* see if we can shrink this allocation. */
+            Uint8 *resized_buf = SDL_realloc(wavecvt.buf, wavecvt.len_cvt);
+            if (resized_buf != NULL) {
+                chunk->abuf = resized_buf;
+            }
         }
+
         chunk->alen = wavecvt.len_cvt;
         wavfree = 0;
     }
