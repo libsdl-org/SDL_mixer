@@ -1254,7 +1254,7 @@ static bool BuildSeekBlocks(WAV_AudioData *adata)
 
 static bool WAV_init_audio_internal(WAV_AudioData *adata, SDL_IOStream *io, SDL_AudioSpec *spec, SDL_PropertiesID props)
 {
-    const bool ignore_loops = SDL_GetBooleanProperty(props, MIX_PROP_AUDIO_LOAD_IGNORE_LOOPS_BOOLEAN, false);
+    const bool ignore_loops = SDL_GetBooleanProperty(props, MIX_PROP_AUDIO_LOAD_IGNORE_LOOPS_BOOLEAN, true);
     Sint64 flen = SDL_GetIOSize(io);
     bool found_FMT = false;
     bool found_DATA = false;
