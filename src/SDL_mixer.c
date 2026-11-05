@@ -3186,9 +3186,9 @@ int MIX_DecodeAudio(MIX_AudioDecoder *audiodecoder, void *buffer, int buflen, co
 {
     if (!CheckAudioDecoderParam(audiodecoder)) {
         return -1;
+    } else if (!SDL_SetAudioStreamFormat(audiodecoder->stream, NULL, spec)) {
+        return -1;  // error string will be set by SDL.
     }
-
-    SDL_SetAudioStreamFormat(audiodecoder->stream, NULL, spec);
 
     while (SDL_GetAudioStreamAvailable(audiodecoder->stream) < buflen) {
         if (!audiodecoder->audio->decoder->decode(audiodecoder->track_userdata, audiodecoder->stream)) {
