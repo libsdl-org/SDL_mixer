@@ -2854,7 +2854,7 @@ bool MIX_SetTrack3DPosition(MIX_Track *track, const MIX_Point3D *position)
         track->position3d[0] = track->position3d[1] = track->position3d[2] = 0.0f;
     } else {
         float *tposition3d = track->position3d;
-        if (toggling || ((tposition3d[0] != position->x) || (tposition3d[2] != position->y) || (tposition3d[2] != position->z))) {
+        if (toggling || ((tposition3d[0] != position->x) || (tposition3d[1] != position->y) || (tposition3d[2] != position->z))) {
             tposition3d[0] = position->x;
             tposition3d[1] = position->y;
             tposition3d[2] = position->z;
