@@ -85,7 +85,7 @@ Also you can use ``MINIMP3_ONLY_MP3`` define to strip MP1/MP2 decoding code.
 MINIMP3_ONLY_SIMD define controls generic (non SSE/NEON) code generation (always enabled on x64/arm64 targets).
 In case you do not want any platform-specific SIMD optimizations, you can define ``MINIMP3_NO_SIMD``.
 MINIMP3_NONSTANDARD_BUT_LOGICAL define saves some code bytes, and enforces non-standard but logical behaviour of mono-stereo transition (rare case).
-MINIMP3_FLOAT_OUTPUT makes ``mp3dec_decode_frame()`` output to be float instead of short and additional function mp3dec_f32_to_s16 will be available for float->short conversion if needed.
+MINIMP3_FLOAT_OUTPUT makes ``mp3dec_decode_frame()`` output to be float instead of short and additional function mp3dec_f32_to_s16 will be available for float->short conversion if needed. Float output is not clipped to ``[-1, 1]``; clip it yourself if required.
 
 Then. we decode the input stream frame-by-frame:
 
@@ -147,6 +147,20 @@ If ``frame_bytes == 0``, the other fields may be uninitialized or unchanged; if
 As a special case, the decoder supports already split MP3 streams (for example,
 after doing an MP4 demux). In this case, the input buffer must contain _exactly
 one_ non-free-format frame.
+
+## Installing minimp3 (vcpkg)
+
+Alternatively, you can build and install minimp3 using [vcpkg](https://github.com/Microsoft/vcpkg/) dependency manager:
+
+```sh or powershell
+    git clone https://github.com/Microsoft/vcpkg.git
+    cd vcpkg
+    ./bootstrap-vcpkg.sh # "./bootstrap-vcpkg.bat" for powershell
+    ./vcpkg integrate install
+    ./vcpkg install minimp3
+```
+
+The minimp3 port in vcpkg is kept up to date by Microsoft team members and community contributors. If the version is out of date, please [create an issue or pull request](https://github.com/Microsoft/vcpkg) on the vcpkg repository.
 
 ## Seeking
 
@@ -286,6 +300,7 @@ Example of file decoding with seek capability:
 ## Bindings
 
  * https://github.com/tosone/minimp3 - go bindings
+ * https://github.com/cowork-ai/go-minimp3 - go bindings
  * https://github.com/notviri/rmp3 - rust `no_std` bindings which don't allocate.
  * https://github.com/germangb/minimp3-rs - rust bindings
  * https://github.com/johangu/node-minimp3 - NodeJS bindings
