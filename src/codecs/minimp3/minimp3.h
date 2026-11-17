@@ -1574,7 +1574,7 @@ static void mp3d_synth(float *xl, mp3d_sample_t *dstl, int nch, float *lins)
 
 #else /* MINIMP3_FLOAT_OUTPUT */
 
-            static const f4 g_scale = VSET(1.0f/32768.0f);
+            const f4 g_scale = VSET(1.0f/32768.0f);
             a = VMUL(a, g_scale);
             b = VMUL(b, g_scale);
 #if HAVE_SSE
@@ -1823,7 +1823,7 @@ void mp3dec_f32_to_s16(const float *in, int16_t *out, int num_samples)
     int aligned_count = num_samples & ~7;
     for(; i < aligned_count; i += 8)
     {
-        static const f4 g_scale = VSET(32768.0f);
+        const f4 g_scale = VSET(32768.0f);
         f4 a = VMUL(VLD(&in[i  ]), g_scale);
         f4 b = VMUL(VLD(&in[i+4]), g_scale);
 #if HAVE_SSE
@@ -1831,14 +1831,7 @@ void mp3dec_f32_to_s16(const float *in, int16_t *out, int num_samples)
         static const f4 g_min = { -32768.0f, -32768.0f, -32768.0f, -32768.0f };
         __m128i pcm8 = _mm_packs_epi32(_mm_cvtps_epi32(_mm_max_ps(_mm_min_ps(a, g_max), g_min)),
                                        _mm_cvtps_epi32(_mm_max_ps(_mm_min_ps(b, g_max), g_min)));
-        out[i  ] = _mm_extract_epi16(pcm8, 0);
-        out[i+1] = _mm_extract_epi16(pcm8, 1);
-        out[i+2] = _mm_extract_epi16(pcm8, 2);
-        out[i+3] = _mm_extract_epi16(pcm8, 3);
-        out[i+4] = _mm_extract_epi16(pcm8, 4);
-        out[i+5] = _mm_extract_epi16(pcm8, 5);
-        out[i+6] = _mm_extract_epi16(pcm8, 6);
-        out[i+7] = _mm_extract_epi16(pcm8, 7);
+        _mm_storeu_si128( (__m128i *)(&out[i]), pcm8 );
 #else /* HAVE_SSE */
         int16x4_t pcma, pcmb;
         a = VADD(a, VSET(0.5f));
