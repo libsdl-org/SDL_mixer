@@ -1,6 +1,6 @@
 /*
 FLAC audio decoder. Choice of public domain or MIT-0. See license statements at the end of this file.
-dr_flac - v0.13.4 - 2026-10-31
+dr_flac - v0.13.5 - TBD
 
 David Reid - mackron@gmail.com
 
@@ -126,7 +126,7 @@ extern "C" {
 
 #define DRFLAC_VERSION_MAJOR     0
 #define DRFLAC_VERSION_MINOR     13
-#define DRFLAC_VERSION_REVISION  4
+#define DRFLAC_VERSION_REVISION  5
 #define DRFLAC_VERSION_STRING    DRFLAC_XSTRINGIFY(DRFLAC_VERSION_MAJOR) "." DRFLAC_XSTRINGIFY(DRFLAC_VERSION_MINOR) "." DRFLAC_XSTRINGIFY(DRFLAC_VERSION_REVISION)
 
 #include <stddef.h> /* For size_t. */
@@ -1863,8 +1863,13 @@ static DRFLAC_INLINE drflac_uint32 drflac__be2host_32(drflac_uint32 n)
 
 static DRFLAC_INLINE drflac_uint32 drflac__be2host_32_ptr_unaligned(const void* pData)
 {
-    const drflac_uint8* pNum = (drflac_uint8*)pData;
-    return *(pNum) << 24 | *(pNum+1) << 16 | *(pNum+2) << 8 | *(pNum+3);
+    const drflac_uint8* pData8 = (const drflac_uint8*)pData;
+
+    return
+        (drflac_uint32)pData8[0] << 24 |
+        (drflac_uint32)pData8[1] << 16 |
+        (drflac_uint32)pData8[2] <<  8 |
+        (drflac_uint32)pData8[3] <<  0;
 }
 
 static DRFLAC_INLINE drflac_uint64 drflac__be2host_64(drflac_uint64 n)
@@ -1888,8 +1893,13 @@ static DRFLAC_INLINE drflac_uint32 drflac__le2host_32(drflac_uint32 n)
 
 static DRFLAC_INLINE drflac_uint32 drflac__le2host_32_ptr_unaligned(const void* pData)
 {
-    const drflac_uint8* pNum = (drflac_uint8*)pData;
-    return *pNum | *(pNum+1) << 8 |  *(pNum+2) << 16 | *(pNum+3) << 24;
+    const drflac_uint8* pData8 = (const drflac_uint8*)pData;
+
+    return
+        (drflac_uint32)pData8[0] <<  0 |
+        (drflac_uint32)pData8[1] <<  8 |
+        (drflac_uint32)pData8[2] << 16 |
+        (drflac_uint32)pData8[3] << 24;
 }
 
 
@@ -6309,16 +6319,21 @@ static drflac_bool32 drflac__seek_to_pcm_frame__binary_search_internal(drflac* p
                             break;  /* Failed to seek to FLAC frame. */
                         }
                     } else {
-                        const double approxCompressionRatio = (drflac_int64)(lastSuccessfulSeekOffset - pFlac->firstFLACFramePosInBytes) / ((drflac_int64)(pcmRangeLo * pFlac->channels * pFlac->bitsPerSample)/8.0);
-
                         byteRangeLo = lastSuccessfulSeekOffset;
                         if (byteRangeHi < byteRangeLo) {
                             byteRangeHi = byteRangeLo;
                         }
 
-                        targetByte = lastSuccessfulSeekOffset + (drflac_uint64)(((drflac_int64)((pcmFrameIndex-pcmRangeLo) * pFlac->channels * pFlac->bitsPerSample)/8.0) * approxCompressionRatio);
-                        if (targetByte > byteRangeHi) {
-                            targetByte = byteRangeHi;
+                        if (pcmRangeLo > 0) {
+                            const double approxCompressionRatio = (drflac_int64)(lastSuccessfulSeekOffset - pFlac->firstFLACFramePosInBytes) / ((drflac_int64)(pcmRangeLo * pFlac->channels * pFlac->bitsPerSample)/8.0);
+
+                            targetByte = lastSuccessfulSeekOffset + (drflac_uint64)(((drflac_int64)((pcmFrameIndex-pcmRangeLo) * pFlac->channels * pFlac->bitsPerSample)/8.0) * approxCompressionRatio);
+                            if (targetByte > byteRangeHi) {
+                                targetByte = byteRangeHi;
+                            }
+                        } else {
+                            /* A frame at PCM position zero cannot provide a compression ratio. Use the midpoint instead. */
+                            targetByte = byteRangeLo + ((byteRangeHi - byteRangeLo) / 2);
                         }
 
                         if (closestSeekOffsetBeforeTargetPCMFrame < lastSuccessfulSeekOffset) {

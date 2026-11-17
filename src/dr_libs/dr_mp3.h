@@ -1,6 +1,6 @@
 /*
 MP3 audio decoder. Choice of public domain or MIT-0. See license statements at the end of this file.
-dr_mp3 - v0.7.4 - 2026-10-31
+dr_mp3 - v0.7.5 - UNRELEASED
 
 David Reid - mackron@gmail.com
 
@@ -72,7 +72,7 @@ extern "C" {
 
 #define DRMP3_VERSION_MAJOR     0
 #define DRMP3_VERSION_MINOR     7
-#define DRMP3_VERSION_REVISION  4
+#define DRMP3_VERSION_REVISION  5
 #define DRMP3_VERSION_STRING    DRMP3_XSTRINGIFY(DRMP3_VERSION_MAJOR) "." DRMP3_XSTRINGIFY(DRMP3_VERSION_MINOR) "." DRMP3_XSTRINGIFY(DRMP3_VERSION_REVISION)
 
 #include <stddef.h> /* For size_t. */
@@ -338,7 +338,8 @@ typedef enum
     DRMP3_METADATA_TYPE_ID3V2,
     DRMP3_METADATA_TYPE_APE,
     DRMP3_METADATA_TYPE_XING,
-    DRMP3_METADATA_TYPE_VBRI
+    DRMP3_METADATA_TYPE_VBRI,
+    DRMP3_METADATA_TYPE_LYRICS3V2
 } drmp3_metadata_type;
 
 typedef struct
@@ -389,6 +390,7 @@ typedef drmp3_bool32 (* drmp3_tell_proc)(void* pUserData, drmp3_int64* pCursor);
 Callback for when metadata is read.
 
 Only the raw data is provided. The client is responsible for parsing the contents of the data themsevles.
+Lyrics3v2 data includes the LYRICSBEGIN header, fields, size descriptor and LYRICS200 footer.
 */
 typedef void (* drmp3_meta_proc)(void* pUserData, const drmp3_metadata* pMetadata);
 
@@ -417,7 +419,7 @@ typedef struct
     drmp3_uint8 pcmFrames[sizeof(float)*DRMP3_MAX_SAMPLES_PER_FRAME];  /* <-- Multipled by sizeof(float) to ensure there's enough room for DR_MP3_FLOAT_OUTPUT. */
     drmp3_uint64 currentPCMFrame;       /* The current PCM frame, globally. */
     drmp3_uint64 streamCursor;          /* The current byte the decoder is sitting on in the raw stream. */
-    drmp3_uint64 streamLength;          /* The length of the stream in bytes. dr_mp3 will not read beyond this. If a ID3v1 or APE tag is present, this will be set to the first byte of the tag. */
+    drmp3_uint64 streamLength;          /* The length of the stream in bytes, excluding recognized trailing tags. dr_mp3 will not read beyond this. */
     drmp3_uint64 streamStartOffset;     /* The offset of the start of the MP3 data. This is used for skipping ID3v2 and VBR tags. */
     drmp3_seek_point* pSeekPoints;      /* NULL by default. Set with drmp3_bind_seek_table(). Memory is owned by the client. dr_mp3 will never attempt to free this pointer. */
     drmp3_uint32 seekPointCount;        /* The number of items in pSeekPoints. When set to 0 assumes to no seek table. Defaults to zero. */
@@ -510,7 +512,7 @@ DRMP3_API drmp3_bool32 drmp3_seek_to_pcm_frame(drmp3* pMP3, drmp3_uint64 frameIn
 
 /*
 Calculates the total number of PCM frames in the MP3 stream. Cannot be used for infinite streams such as internet
-radio. Runs in linear time. Returns 0 on error.
+radio. Should be considered a hint. Unreliable for malformed streams. Runs in linear time. Returns 0 on error.
 */
 DRMP3_API drmp3_uint64 drmp3_get_pcm_frame_count(drmp3* pMP3);
 
@@ -1538,7 +1540,8 @@ static void drmp3_L3_stereo_top_band(const float *right, const drmp3_uint8 *sfb,
 static void drmp3_L3_stereo_process(float *left, const drmp3_uint8 *ist_pos, const drmp3_uint8 *sfb, const drmp3_uint8 *hdr, int max_band[3], int mpeg2_sh)
 {
     static const float g_pan[7*2] = { 0,1,0.21132487f,0.78867513f,0.36602540f,0.63397460f,0.5f,0.5f,0.63397460f,0.36602540f,0.78867513f,0.21132487f,1,0 };
-    unsigned i, max_pos = DRMP3_HDR_TEST_MPEG1(hdr) ? 7 : 64;
+    const drmp3_uint8 mpeg1 = DRMP3_HDR_TEST_MPEG1(hdr);
+    unsigned i, max_pos = mpeg1 ? 7 : 64;
 
     for (i = 0; sfb[i]; i++)
     {
@@ -1546,7 +1549,7 @@ static void drmp3_L3_stereo_process(float *left, const drmp3_uint8 *ist_pos, con
         if ((int)i > max_band[i % 3] && ipos < max_pos)
         {
             float kl, kr, s = DRMP3_HDR_TEST_MS_STEREO(hdr) ? 1.41421356f : 1;
-            if (DRMP3_HDR_TEST_MPEG1(hdr))
+            if (mpeg1)
             {
                 kl = g_pan[2*ipos];
                 kr = g_pan[2*ipos + 1];
@@ -2321,6 +2324,8 @@ DRMP3_API int drmp3dec_decode_frame(drmp3dec *dec, const drmp3_uint8 *mp3, int m
     const drmp3_uint8 *hdr;
     drmp3_bs bs_frame[1];
 
+    DRMP3_ZERO_MEMORY(dec->scratch.ist_pos, sizeof(dec->scratch.ist_pos));
+
     info->layer = 0;
 
     if (mp3_bytes > 4 && dec->header[0] == 0xff && drmp3_hdr_compare(dec->header, mp3))
@@ -2369,7 +2374,7 @@ DRMP3_API int drmp3dec_decode_frame(drmp3dec *dec, const drmp3_uint8 *mp3, int m
         {
             for (igr = 0; igr < (DRMP3_HDR_TEST_MPEG1(hdr) ? 2 : 1); igr++, pcm = DRMP3_OFFSET_PTR(pcm, sizeof(drmp3d_sample_t)*576*info->channels))
             {
-                DRMP3_ZERO_MEMORY(dec->scratch.grbuf[0], 576*2*sizeof(float));
+                DRMP3_ZERO_MEMORY(dec->scratch.grbuf, sizeof(dec->scratch.grbuf));
                 drmp3_L3_decode(dec, &dec->scratch, dec->scratch.gr_info + igr*info->channels, info->channels);
                 drmp3d_synth_granule(dec->qmf_state, dec->scratch.grbuf[0], 18, info->channels, (drmp3d_sample_t*)pcm, dec->scratch.syn[0]);
             }
@@ -2388,7 +2393,7 @@ DRMP3_API int drmp3dec_decode_frame(drmp3dec *dec, const drmp3_uint8 *mp3, int m
 
         drmp3_L12_read_scale_info(hdr, bs_frame, sci);
 
-        DRMP3_ZERO_MEMORY(dec->scratch.grbuf[0], 576*2*sizeof(float));
+        DRMP3_ZERO_MEMORY(dec->scratch.grbuf, sizeof(dec->scratch.grbuf));
         for (i = 0, igr = 0; igr < 3; igr++)
         {
             if (12 == (i += drmp3_L12_dequantize_granule(dec->scratch.grbuf[0] + i, bs_frame, sci, info->layer | 1)))
@@ -2396,7 +2401,7 @@ DRMP3_API int drmp3dec_decode_frame(drmp3dec *dec, const drmp3_uint8 *mp3, int m
                 i = 0;
                 drmp3_L12_apply_scf_384(sci, sci->scf + igr, dec->scratch.grbuf[0]);
                 drmp3d_synth_granule(dec->qmf_state, dec->scratch.grbuf[0], 12, info->channels, (drmp3d_sample_t*)pcm, dec->scratch.syn[0]);
-                DRMP3_ZERO_MEMORY(dec->scratch.grbuf[0], 576*2*sizeof(float));
+                DRMP3_ZERO_MEMORY(dec->scratch.grbuf, sizeof(dec->scratch.grbuf));
                 pcm = DRMP3_OFFSET_PTR(pcm, sizeof(drmp3d_sample_t)*384*info->channels);
             }
             if (bs_frame->pos > bs_frame->limit)
@@ -2987,7 +2992,7 @@ static drmp3_bool32 drmp3_init_internal(drmp3* pMP3, drmp3_read_proc onRead, drm
     pMP3->paddingInPCMFrames = 0;
     pMP3->totalPCMFrameCount = DRMP3_UINT64_MAX;
 
-    /* We'll first check for any ID3v1 or APE tags. */
+    /* We'll first check for trailing tags. */
     #if 1
     if (onSeek != NULL && onTell != NULL) {
         if (onSeek(pUserData, 0, DRMP3_SEEK_END)) {
@@ -2996,72 +3001,153 @@ static drmp3_bool32 drmp3_init_internal(drmp3* pMP3, drmp3_read_proc onRead, drm
         
             /* First get the length of the stream. We need this so we can ensure the stream is big enough to store the tags. */
             if (onTell(pUserData, &streamLen)) {
-                /* ID3v1 */
-                if (streamLen > 128) {
-                    char id3[3];
-                    if (onSeek(pUserData, streamEndOffset - 128, DRMP3_SEEK_END)) {
-                        if (onRead(pUserData, id3, 3) == 3 && id3[0] == 'T' && id3[1] == 'A' && id3[2] == 'G') {
-                            /* We have an ID3v1 tag. */
-                            streamEndOffset -= 128;
-                            streamLen       -= 128;
+                /* Run this in a loop because removing a tag can expose another tag at the new end of the stream. */
+                for (;;) {
+                    drmp3_int64 streamLenBeforeTags = streamLen;
 
-                            /* Fire a metadata callback for the TAG data. */
-                            if (onMeta != NULL) {
-                                drmp3_uint8 tag[128];
-                                tag[0] = 'T'; tag[1] = 'A'; tag[2] = 'G';
+                    /* ID3v1 */
+                    if (streamLen > 128 && streamEndOffset >= INT_MIN + 128) {
+                        char id3[3];
+                        if (onSeek(pUserData, streamEndOffset - 128, DRMP3_SEEK_END)) {
+                            if (onRead(pUserData, id3, 3) == 3 && id3[0] == 'T' && id3[1] == 'A' && id3[2] == 'G') {
+                                /* We have an ID3v1 tag. */
+                                streamEndOffset -= 128;
+                                streamLen       -= 128;
 
-                                if (onRead(pUserData, tag + 3, 125) == 125) {
-                                    drmp3__on_meta(pMP3, DRMP3_METADATA_TYPE_ID3V1, tag, 128);
-                                }
-                            }
-                        } else {
-                            /* No ID3v1 tag. */
-                        }
-                    } else {
-                        /* Failed to seek to the ID3v1 tag. */
-                    }
-                } else {
-                    /* Stream too short. No ID3v1 tag. */
-                }
-
-                /* APE */
-                if (streamLen > 32) {
-                    char ape[32];   /* The footer. */
-                    if (onSeek(pUserData, streamEndOffset - 32, DRMP3_SEEK_END)) {
-                        if (onRead(pUserData, ape, 32) == 32 && ape[0] == 'A' && ape[1] == 'P' && ape[2] == 'E' && ape[3] == 'T' && ape[4] == 'A' && ape[5] == 'G' && ape[6] == 'E' && ape[7] == 'X') {
-                            /* We have an APE tag. */
-                            drmp3_uint32 tagSize =
-                                ((drmp3_uint32)ape[24] << 0)  |
-                                ((drmp3_uint32)ape[25] << 8)  |
-                                ((drmp3_uint32)ape[26] << 16) |
-                                ((drmp3_uint32)ape[27] << 24);
-
-                            if (32 + tagSize < streamLen) {
-                                streamEndOffset -= 32 + tagSize;
-                                streamLen       -= 32 + tagSize;
-                                
-                                /* Fire a metadata callback for the APE data. Must include both the main content and footer. */
+                                /* Fire a metadata callback for the TAG data. */
                                 if (onMeta != NULL) {
-                                    /* We first need to seek to the start of the APE tag. */
-                                    if (onSeek(pUserData, streamEndOffset, DRMP3_SEEK_END)) {
-                                        size_t apeTagSize = (size_t)tagSize + 32;
-                                        drmp3_uint8* pTagData = (drmp3_uint8*)drmp3_malloc(apeTagSize, pAllocationCallbacks);
-                                        if (pTagData != NULL) {
-                                            if (onRead(pUserData, pTagData, apeTagSize) == apeTagSize) {
-                                                drmp3__on_meta(pMP3, DRMP3_METADATA_TYPE_APE, pTagData, apeTagSize);
-                                            }
+                                    drmp3_uint8 tag[128];
+                                    tag[0] = 'T'; tag[1] = 'A'; tag[2] = 'G';
 
-                                            drmp3_free(pTagData, pAllocationCallbacks);
-                                        }
+                                    if (onRead(pUserData, tag + 3, 125) == 125) {
+                                        drmp3__on_meta(pMP3, DRMP3_METADATA_TYPE_ID3V1, tag, 128);
                                     }
                                 }
                             } else {
-                                /* The tag size is larger than the stream. Invalid APE tag. */
+                                /* No ID3v1 tag. */
+                            }
+                        } else {
+                            /* Failed to seek to the ID3v1 tag. */
+                        }
+                    } else {
+                        /* Stream too short or seek offset out of range. No ID3v1 tag. */
+                    }
+
+                    /* APE */
+                    if (streamLen > 32 && streamEndOffset >= INT_MIN + 32) {
+                        drmp3_uint8 ape[32];   /* The footer. */
+                        if (onSeek(pUserData, streamEndOffset - 32, DRMP3_SEEK_END)) {
+                            if (onRead(pUserData, ape, 32) == 32 && ape[0] == 'A' && ape[1] == 'P' && ape[2] == 'E' && ape[3] == 'T' && ape[4] == 'A' && ape[5] == 'G' && ape[6] == 'E' && ape[7] == 'X') {
+                                drmp3_uint32 apeVersion;
+                                drmp3_uint32 tagSize;
+                                drmp3_int64 totalTagSize;
+
+                                apeVersion =
+                                    ((drmp3_uint32)ape[8]  << 0)  |
+                                    ((drmp3_uint32)ape[9]  << 8)  |
+                                    ((drmp3_uint32)ape[10] << 16) |
+                                    ((drmp3_uint32)ape[11] << 24);
+
+                                tagSize =
+                                    ((drmp3_uint32)ape[12] << 0)  |
+                                    ((drmp3_uint32)ape[13] << 8)  |
+                                    ((drmp3_uint32)ape[14] << 16) |
+                                    ((drmp3_uint32)ape[15] << 24);
+
+                                /* The tag size includes the footer, but not the optional APEv2 header. */
+                                totalTagSize = tagSize;
+                                if (apeVersion >= 2000 && (ape[23] & 0x80) != 0) {
+                                    totalTagSize += 32;
+                                }
+
+                                /* The tag must contain a footer, and the end-relative seek offset must fit in an int. */
+                                if (tagSize >= 32 && totalTagSize < streamLen && totalTagSize <= (drmp3_int64)streamEndOffset - INT_MIN) {
+                                    streamEndOffset = (int)(streamEndOffset - totalTagSize);
+                                    streamLen -= totalTagSize;
+
+                                    /* Fire a metadata callback for the APE data. Must include both the main content and footer. */
+                                    if (onMeta != NULL) {
+                                        /* We first need to seek to the start of the APE tag. */
+                                        if (onSeek(pUserData, streamEndOffset, DRMP3_SEEK_END)) {
+                                            size_t apeTagSize = (size_t)totalTagSize;
+                                            drmp3_uint8* pTagData;
+                                            
+                                            pTagData = (drmp3_uint8*)drmp3_malloc(apeTagSize, pAllocationCallbacks);
+                                            if (pTagData != NULL) {
+                                                if (onRead(pUserData, pTagData, apeTagSize) == apeTagSize) {
+                                                    drmp3__on_meta(pMP3, DRMP3_METADATA_TYPE_APE, pTagData, apeTagSize);
+                                                }
+
+                                                drmp3_free(pTagData, pAllocationCallbacks);
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    /* Invalid or unsupported APE tag size. */
+                                }
                             }
                         }
+                    } else {
+                        /* Stream too short or seek offset out of range. No APE tag. */
                     }
-                } else {
-                    /* Stream too short. No APE tag. */
+
+                    /* Lyrics3v2 */
+                    if (streamLen > 15 && streamEndOffset >= INT_MIN + 15) {
+                        drmp3_uint8 footer[15];
+                        
+                        if (onSeek(pUserData, streamEndOffset - 15, DRMP3_SEEK_END)) {
+                            if (onRead(pUserData, footer, 15) == 15 && memcmp(footer + 6, "LYRICS200", 9) == 0) {
+                                drmp3_uint32 tagSize = 0;
+                                drmp3_uint32 totalTagSize;
+                                int i;
+
+                                /* The six-digit size includes the header and fields, but not the 15-byte footer. */
+                                for (i = 0; i < 6; i += 1) {
+                                    if (footer[i] < '0' || footer[i] > '9') {
+                                        break;
+                                    }
+
+                                    tagSize = tagSize * 10 + (footer[i] - '0');
+                                }
+
+                                totalTagSize = tagSize + 15;
+                                if (i == 6 && tagSize >= 11 && totalTagSize < streamLen && totalTagSize <= (drmp3_int64)streamEndOffset - INT_MIN) {
+                                    drmp3_uint8 header[11];
+                                    int tagOffset;
+
+                                    tagOffset = streamEndOffset - (int)totalTagSize;
+                                    if (onSeek(pUserData, tagOffset, DRMP3_SEEK_END)) {
+                                        if (onRead(pUserData, header, 11) == 11 && memcmp(header, "LYRICSBEGIN", 11) == 0) {
+                                            streamEndOffset = tagOffset;
+                                            streamLen -= totalTagSize;
+
+                                            /* Include the header, fields, size descriptor and footer in the callback. */
+                                            if (onMeta != NULL) {
+                                                drmp3_uint8* pTagData;
+
+                                                pTagData = (drmp3_uint8*)drmp3_malloc(totalTagSize, pAllocationCallbacks);
+                                                if (pTagData != NULL) {
+                                                    DRMP3_COPY_MEMORY(pTagData, header, 11);
+
+                                                    if (onRead(pUserData, pTagData + 11, totalTagSize - 11) == totalTagSize - 11) {
+                                                        drmp3__on_meta(pMP3, DRMP3_METADATA_TYPE_LYRICS3V2, pTagData, totalTagSize);
+                                                    }
+
+                                                    drmp3_free(pTagData, pAllocationCallbacks);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        /* Stream too short or seek offset out of range. No Lyrics3v2 tag. */
+                    }
+
+                    if (streamLen == streamLenBeforeTags) {
+                        break;
+                    }
                 }
 
                 /* Seek back to the start. */
@@ -3075,16 +3161,16 @@ static drmp3_bool32 drmp3_init_internal(drmp3* pMP3, drmp3_read_proc onRead, drm
                     pMP3->memory.dataSize = (size_t)pMP3->streamLength;
                 }
             } else {
-                /* Failed to get the length of the stream. ID3v1 and APE tags cannot be skipped. */
+                /* Failed to get the length of the stream. Trailing tags cannot be skipped. */
                 if (!onSeek(pUserData, 0, DRMP3_SEEK_SET)) {
                     return DRMP3_FALSE; /* Failed to seek back to the start. */
                 }
             }
         } else {
-            /* Failed to seek to the end. Cannot skip ID3v1 or APE tags. */
+            /* Failed to seek to the end. Cannot skip trailing tags. */
         }
     } else {
-        /* No onSeek or onTell callback. Cannot skip ID3v1 or APE tags. */
+        /* No onSeek or onTell callback. Cannot skip trailing tags. */
     }
     #endif
 
@@ -3317,7 +3403,7 @@ static drmp3_bool32 drmp3_init_internal(drmp3* pMP3, drmp3_read_proc onRead, drm
                         drmp3_metadata_type metadataType = isXing ? DRMP3_METADATA_TYPE_XING : DRMP3_METADATA_TYPE_VBRI;
                         size_t tagDataSize;
                     
-                        tagDataSize  = (size_t)firstFrameInfo.frame_bytes;
+                        tagDataSize  = frameBytes;
                         tagDataSize -= (size_t)(pTagDataBeg - pFirstFrameData);
 
                         drmp3__on_meta(pMP3, metadataType, pTagDataBeg, tagDataSize);
@@ -3326,8 +3412,8 @@ static drmp3_bool32 drmp3_init_internal(drmp3* pMP3, drmp3_read_proc onRead, drm
                     /* Since this was identified as a tag, we don't want to treat it as audio. We need to clear out the PCM cache. */
                     pMP3->pcmFramesRemainingInMP3Frame = 0;
 
-                    /* The start offset needs to be moved to the end of this frame so it's not included in any audio processing after seeking. */
-                    pMP3->streamStartOffset += (drmp3_uint32)(firstFrameInfo.frame_bytes);
+                    /* Start after this frame, including any bytes skipped before it, so seeking does not decode the tag as audio. */
+                    pMP3->streamStartOffset = pMP3->streamCursor - pMP3->dataSize;
 
                     /*
                     The internal decoder needs to be reset to clear out any state. If we don't reset this state, it's possible for
@@ -3457,7 +3543,7 @@ DRMP3_API drmp3_bool32 drmp3_init_memory_with_metadata(drmp3* pMP3, const void* 
         return DRMP3_FALSE;
     }
 
-    /* Adjust the length of the memory stream to account for ID3v1 and APE tags. */
+    /* Adjust the length of the memory stream to account for trailing tags. */
     if (pMP3->streamLength <= (drmp3_uint64)DRMP3_SIZE_MAX) {
         pMP3->memory.dataSize = (size_t)pMP3->streamLength; /* Safe cast. */
     }
