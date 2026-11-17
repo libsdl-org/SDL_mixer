@@ -39,6 +39,13 @@
 #endif
 #define STBV_CDECL SDLCALL /* for SDL_qsort() */
 
+/* stb_vorbis unconditionally includes some libc headers:
+ * include math.h here so that we don't choke on ldexp()
+ * in bits/mathcalls.h, and stdlib.h so that MSVC doesn't
+ * choke on qsort() calling convention.  */
+#include <math.h>
+#include <stdlib.h>
+
 #ifdef assert
 #undef assert
 #endif
@@ -56,7 +63,6 @@
 #define malloc SDL_malloc
 #define realloc SDL_realloc
 #define free SDL_free
-
 #define pow SDL_pow
 #define floor SDL_floor
 #define ldexp(v, e) SDL_scalbn((v), (e))
