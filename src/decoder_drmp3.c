@@ -37,6 +37,7 @@
 #define DRMP3_ASSERT(expression) SDL_assert((expression))
 #define DRMP3_COPY_MEMORY(dst, src, sz) SDL_memcpy((dst), (src), (sz))
 #define DRMP3_MOVE_MEMORY(dst, src, sz) SDL_memmove((dst), (src), (sz))
+#define DRMP3_CMP_MEMORY(src1,src2, sz) SDL_memcmp((src1),(src2), (sz))
 #define DRMP3_ZERO_MEMORY(p, sz) SDL_memset((p), 0, (sz))
 #define DRMP3_MALLOC(sz) SDL_malloc((sz))
 #define DRMP3_REALLOC(p, sz) SDL_realloc((p), (sz))
