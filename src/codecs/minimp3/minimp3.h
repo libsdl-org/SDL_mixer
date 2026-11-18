@@ -1663,6 +1663,23 @@ static void mp3d_synth_granule(float *qmf_state, float *grbuf, int nbands, int n
     }
 }
 
+static int hdr_is_null(const uint8_t *hdr)
+{
+    return !hdr[0] && !hdr[1] && !hdr[2] && !hdr[3];
+}
+
+static int hdr_is_id3v1(const uint8_t *hdr, int bytes_left)
+{
+    /* same signature mp3dec_skip_id3v1() uses; pinning the size to a whole 128-byte tag
+       keeps a random "TAG" in audio data from being mistaken for end-of-stream */
+    return 128 == bytes_left && !memcmp(hdr, "TAG", 3);
+}
+
+static int hdr_is_null_or_tag(const uint8_t *hdr, int bytes_left)
+{
+    return hdr_is_null(hdr) || hdr_is_id3v1(hdr, bytes_left);
+}
+
 static int mp3d_match_frame(const uint8_t *hdr, int mp3_bytes, int frame_bytes)
 {
     int i, nmatch;
@@ -1670,6 +1687,8 @@ static int mp3d_match_frame(const uint8_t *hdr, int mp3_bytes, int frame_bytes)
     {
         i += hdr_frame_bytes(hdr + i, frame_bytes) + hdr_padding(hdr + i);
         if (i + HDR_SIZE > mp3_bytes)
+            return nmatch > 0;
+        if (hdr_is_null_or_tag(hdr + i, mp3_bytes - i))
             return nmatch > 0;
         if (!hdr_compare(hdr, hdr + i))
             return 0;
