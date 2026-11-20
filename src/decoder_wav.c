@@ -1295,13 +1295,19 @@ static bool WAV_init_audio_internal(WAV_AudioData *adata, SDL_IOStream *io, SDL_
             return false;
         }
 
-        if (chunk_length == 0) {
-            break;
-        } else if (((chunk_start_position + (Sint64)chunk_length) - (Sint64)(sizeof(Uint32) * 2)) > flen) {
+        if (chunk_length != 0 &&
+            (((chunk_start_position + (Sint64)chunk_length) - (Sint64)(sizeof(Uint32) * 2)) > flen)) {
             return SDL_SetError("Corrupt WAV file (chunk goes past EOF)");
         }
 
         bool chunk_okay = true;
+        // A zero-length chunk is not the end of the file. Some WAV writers
+        // (including 1990s-era tools) emit empty metadata chunks (LIST, cue,
+        // JUNK, ...) before the data chunk; bailing out of the chunk walk
+        // here rejects otherwise-valid files before fmt/data are found.
+        // Zero-length chunks have nothing to parse: skip them and continue
+        // with the next chunk.
+        if (chunk_length > 0) {
         switch (chunk_type) {
         case FMT:
             found_FMT = true;
@@ -1330,6 +1336,7 @@ static bool WAV_init_audio_internal(WAV_AudioData *adata, SDL_IOStream *io, SDL_
 
         if (!chunk_okay) {
             return false;
+        }
         }
 
         // move to start of next chunk.
