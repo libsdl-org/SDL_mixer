@@ -569,8 +569,6 @@ enum STBVorbisError
 // #define STB_VORBIS_NO_DEFER_FLOOR
 
 
-
-
 //////////////////////////////////////////////////////////////////////////////
 
 #ifndef STB_VORBIS_NO_STDIO
@@ -3811,6 +3809,7 @@ static int start_decoder(vorb *f)
 
    for(i=0; i < f->comment_list_length; ++i) {
       len = get32_packet(f);
+      if (len < 0 || len == INT_MAX)                return error(f, VORBIS_invalid_setup);
       f->comment_list[i] = (char*)setup_malloc(f, sizeof(char) * (len+1));
       if (f->comment_list[i] == NULL)               return error(f, VORBIS_outofmem);
 
@@ -5586,7 +5585,7 @@ int stb_vorbis_decode_filename(const char *filename, int *channels, int *sample_
    data = (short *) malloc(total * sizeof(*data));
    if (data == NULL) {
       stb_vorbis_close(v);
-      return -2;
+      return -VORBIS_outofmem;
    }
    for (;;) {
       int n = stb_vorbis_get_frame_short_interleaved(v, v->channels, data+offset, total-offset);
@@ -5600,7 +5599,7 @@ int stb_vorbis_decode_filename(const char *filename, int *channels, int *sample_
          if (data2 == NULL) {
             free(data);
             stb_vorbis_close(v);
-            return -2;
+            return -VORBIS_outofmem;
          }
          data = data2;
       }
@@ -5810,3 +5809,4 @@ ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ------------------------------------------------------------------------------
 */
+
