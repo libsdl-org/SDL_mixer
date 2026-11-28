@@ -15,6 +15,11 @@ opinion, a significant improvement in power and ease of use. Please refer to
 docs/README-migration.md for details on how to migrate your program to the new
 API.
 
+This is designed as a convenience library for loading audio from trusted sources.
+Crashes or other issues with invalid content should not be considered security issues.
+If you want to load arbitrary audio you should use an audio loading library designed
+with security in mind.
+
 SDL3_mixer requires SDL 3.4.0 or later.
 
 The latest version of this library is available from GitHub:
