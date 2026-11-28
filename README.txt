@@ -7,6 +7,8 @@ https://github.com/libsdl-org/SDL_mixer/releases
 Due to popular demand, here is a simple multi-channel audio mixer.
 It supports 8 channels of 16 bit stereo audio, plus a single channel of music. It can load FLAC, MP3, Ogg, VOC, and WAV format audio. It can also load MIDI, MOD, and Opus audio, depending on build options (see the note below for details.)
 
+This is designed as a convenience library for loading audio from trusted sources. Crashes or other issues with invalid content should not be considered security issues. If you want to load arbitrary audio you should use an audio loading library designed with security in mind.
+
 See the header file SDL_mixer.h and the examples playwave.c and playmus.c for documentation on this mixer library. This documentation is also available online at https://wiki.libsdl.org/SDL2_mixer
 
 The process of mixing MIDI files to wave output is very CPU intensive, so if playing regular WAVE files sound great, but playing MIDI files sound choppy, try using 8-bit audio, mono audio, or lower frequencies.
